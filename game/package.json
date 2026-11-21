@@ -1,0 +1,9 @@
+{
+  "name": "english-quest-game",
+  "private": true,
+  "type": "module",
+  "description": "ビルドは不要。このファイルは node --test でテストを動かすためだけにある",
+  "scripts": {
+    "test": "node --test tests/*.test.js"
+  }
+}
