@@ -1,0 +1,105 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { Scheduler } from '../js/srs.js';
+import { LearningStore } from '../js/storage.js';
+import { QuestionPicker, REASON } from '../js/picker.js';
+import { makeQuestion, DIRECTION, editDistance } from '../js/quiz.js';
+import { readJson, realLexicon, MemoryStorage, seededRng, DAY, T0 } from './helpers.js';
+
+const lex = realLexicon();
+const srs = readJson('srs.json');
+const sch = new Scheduler(srs);
+
+test('4択：選択肢は4つ、正解は1つ、同じ表示はない', () => {
+  const rng = seededRng(7);
+  for (const w of lex.words) {
+    for (const direction of [DIRECTION.EN_JA, DIRECTION.JA_EN]) {
+      for (const familiar of [false, true]) {
+        const q = makeQuestion(w, lex, { direction, familiar, rng });
+        assert.equal(q.choices.length, 4);
+        assert.equal(new Set(q.choices.map((c) => c.text)).size, 4);
+        assert.equal(q.choices[q.answerIndex].id, w.id);
+        assert.equal(q.prompt, direction === DIRECTION.EN_JA ? w.en : w.ja);
+      }
+    }
+  }
+});
+
+test('慣れないうちは別の石から、慣れたら同じ石から', () => {
+  const w = lex.wordsByStone.get('rs_2_001')[0];
+  const rng = seededRng(3);
+  const early = makeQuestion(w, lex, { direction: DIRECTION.EN_JA, familiar: false, rng });
+  const late = makeQuestion(w, lex, { direction: DIRECTION.EN_JA, familiar: true, rng });
+  const stoneOf = (id) => lex.wordsById.get(id).stoneId;
+  assert.ok(early.choices.filter((c) => c.id !== w.id).every((c) => stoneOf(c.id) !== w.stoneId));
+  assert.ok(late.choices.every((c) => stoneOf(c.id) === w.stoneId));
+});
+
+test('慣れたら、つづりの似た単語が選ばれやすい', () => {
+  const w = lex.words.find((x) => x.en === 'resign');
+  const q = makeQuestion(w, lex, { direction: DIRECTION.JA_EN, familiar: true, rng: seededRng(1) });
+  // 同じ石の word の中でつづりの近いもの（reschedule / request など）が入る
+  const avg = q.choices.filter((c) => c.id !== w.id)
+    .reduce((a, c) => a + editDistance(w.en, c.text), 0) / 3;
+  const all = lex.wordsByStone.get(w.stoneId).filter((x) => x.id !== w.id);
+  const avgAll = all.reduce((a, x) => a + editDistance(w.en, x.en), 0) / all.length;
+  assert.ok(avg < avgAll, `${avg} < ${avgAll}`);
+});
+
+test('初回：新しい単語は上限まで、そのあとは練習', () => {
+  const store = new LearningStore(new MemoryStorage());
+  const p = new QuestionPicker({ lex, store, scheduler: sch, stoneId: 'rs_1_001', nowMs: T0 });
+  const reasons = [];
+  for (let i = 0; i < 20; i++) {
+    const { word, reason } = p.next();
+    reasons.push(reason);
+    store.set(word.id, sch.review(store.get(word.id), true, T0));
+    p.report(word.id, true);
+  }
+  const limit = srs.new_per_run[1];
+  assert.equal(reasons.filter((r) => r === REASON.NEW).length, limit);
+  assert.ok(reasons.slice(0, limit).every((r) => r === REASON.NEW));
+  assert.ok(reasons.slice(limit).every((r) => r === REASON.PRACTICE));
+});
+
+test('復習優先：かすれたルーン（ほかの石も）を先に出す', () => {
+  const store = new LearningStore(new MemoryStorage());
+  const dueIds = ['lx_r2_001', 'lx_r3_005', 'lx_r1_010'];
+  for (const id of dueIds) store.set(id, sch.review(null, true, T0));
+  store.set('lx_r1_011', sch.review(null, true, T0 + 30 * DAY)); // まだ時期ではない
+  const p = new QuestionPicker({ lex, store, scheduler: sch, stoneId: 'rs_1_001', nowMs: T0 + 30 * DAY });
+  const first = [p.next(), p.next(), p.next()];
+  assert.deepEqual(new Set(first.map((x) => x.word.id)), new Set(dueIds));
+  assert.ok(first.every((x) => x.reason === REASON.DUE));
+  const fourth = p.next();
+  assert.equal(fourth.reason, REASON.NEW);
+  assert.equal(fourth.word.stoneId, 'rs_1_001');
+});
+
+test('かすれたルーンが多いときは新出を減らす', () => {
+  const store = new LearningStore(new MemoryStorage());
+  const n = srs.reduce_new_when_due_over + 1;
+  for (const w of lex.words.filter((x) => x.stoneId !== 'rs_1_001').slice(0, n)) {
+    store.words.set(w.id, sch.review(null, true, T0));
+  }
+  const p = new QuestionPicker({ lex, store, scheduler: sch, stoneId: 'rs_1_001', nowMs: T0 + 60 * DAY });
+  assert.equal(p.newLimit, srs.reduced_new_per_run);
+});
+
+test('間違えた単語はあとでもう一度出る', () => {
+  const store = new LearningStore(new MemoryStorage());
+  const p = new QuestionPicker({ lex, store, scheduler: sch, stoneId: 'rs_1_001', nowMs: T0 });
+  const first = p.next();
+  store.set(first.word.id, sch.review(null, false, T0));
+  p.report(first.word.id, false);
+  const seq = [];
+  for (let i = 0; i < sch.retryGap + 1; i++) {
+    const x = p.next();
+    seq.push(x);
+    store.set(x.word.id, sch.review(store.get(x.word.id), true, T0));
+    p.report(x.word.id, true);
+  }
+  const last = seq[seq.length - 1];
+  assert.equal(last.word.id, first.word.id);
+  assert.equal(last.reason, REASON.RETRY);
+});
