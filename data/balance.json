@@ -38,22 +38,22 @@
   }
  },
  "player": {
-  "_note": "レベルの上限は999（2026-11-22 決定）。ランクごとの上限はなし。式の Lv は表示のレベルを10で割った値（P）を使う。敵のレベルも表示は10倍",
+  "_note": "レベルの上限は99（2026-11-22 決定）。ランクごとの上限はなし。育ちすぎは経験値の減り方で防ぐ",
   "grade_points": {
    "A": 4,
    "B": 3,
    "C": 2,
    "D": 1
   },
-  "level_cap": 999,
-  "hp": "70 + g*30 + (P-1)*g*9   （P = Lv/10）",
-  "other_stats": "8 + g*6 + (P-1)*g*1.6",
-  "mp": "12 + gMAG*6 + (P-1)*2",
-  "xp_to_next": "2.5 * P^1.5   （表示の1レベルごと）"
+  "level_cap": 99,
+  "hp": "70 + g*30 + (Lv-1)*g*9",
+  "other_stats": "8 + g*6 + (Lv-1)*g*1.6",
+  "mp": "12 + gMAG*6 + (Lv-1)*2",
+  "xp_to_next": "25 * Lv^1.5"
  },
  "rewards": {
   "xp_per_enemy": "6 + 3.2*enemyLv (boss x5)",
-  "overlevel_penalty_per_level": "経験値 × max(0, 1 - 0.25 × max(0, (自分のP - 敵のP) - 1))。自分が敵より表示で10レベル以上高いと減り始め、50レベル高いと0",
+  "overlevel_penalty_per_level": "経験値 × max(0, 1 - 0.25 × max(0, (自分のLv - 敵のLv) - 1))。敵より2レベル高いと減り始め、5レベル高いと0",
   "overlevel_min": 0,
   "gold_per_enemy": "run_income * dungeon.income_mul * gold_share / 27 (boss x boss_gold_mul)",
   "ap_per_battle": 1,
