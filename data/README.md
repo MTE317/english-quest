@@ -1,4 +1,4 @@
-# English Quest 仮データ（2026-11-22 夜間シミュレーション後）
+# English Quest 仮データ（2026-11-22 ★12版）
 
 シミュレーションとゲームの両方が読む「正」のデータです。数値はすべて叩き台です。
 上級ジョブ・特殊ダンジョン・レジェンド級の装備はここに入っていません（ネタバレ防止のため別ファイル）。
@@ -16,28 +16,34 @@
 
 | ファイル | 中身 |
 |---|---|
-| balance.json | 敵の強さ・経験値・お金・全滅の扱いなどの式 |
+| balance.json | 敵の強さ・経験値・お金・全滅の扱いなどの式。レベルの上限は99 |
 | targets.csv | 合格ライン13項目（シミュレーションの判定に使う） |
 | elements.csv / seasons.csv | 属性12種 / 季節4つ |
 | jobs.csv / jobs_mid.csv | 基本ジョブ8種・中級ジョブ6種の能力値・初期装備 |
 | job_unlocks.csv | 中級ジョブの解放条件（素材 or 奥地で発見） |
 | job_weapon_aptitude.csv / job_armor_aptitude.csv / aptitude.csv | 装備の適正と倍率 |
-| skills.csv | 14ジョブのスキルツリー（効果は effect_json） |
+| skills.csv | 14ジョブのスキルツリー（5段目まで。効果は effect_json） |
 | common_tree.csv | 全ジョブ共通のパッシブ |
 | weapon_types.csv / armor_weights.csv | 武器14種・防具の重さ |
-| equipment.csv | 装備140種（武器14種×5段階・防具・マント・アクセサリ） |
+| equipment.csv | 装備672種（24段階＝★ごとに2段階。武器14種・防具9種・マント・アクセサリー4種） |
+| uniques.csv | 固有装備108（ボスと賞金首が落とす。効果は固定） |
+| sets.csv / set_items.csv | セット装備20セット（4部位） |
+| enchant_sources.csv | エンチャントで素材から付く効果の系統 |
+| quest_chains.csv | 連続クエスト（★ごとに2つ） |
+| job_mastery.csv | ジョブを極めたときの、全ジョブへのボーナス |
 | affixes.csv | 装備につく追加効果 |
 | type_bonus.csv | 特効（種別に+30%） |
 | status_effects.csv | 状態異常21種と効き方 |
-| monster_types.csv / monsters.csv | 種別18種 / モンスター70体（季節の入れ替え・ボスを含む） |
-| materials.csv | 素材140種 |
-| dungeons.csv | ダンジョン10か所（★ごとに2つ）。enemy_mul＝敵の強さ、income_mul＝お金の倍率 |
+| monster_types.csv / monsters.csv | 種別18種 / モンスター384体（role：normal 180・season 96・boss 60・bounty 48）。名前は仮 |
+| elite_prefixes.csv | 強い個体の冠（どのモンスターにもつく） |
+| materials.csv | 素材768種 |
+| dungeons.csv | ダンジョン60か所（★ごとに5つ：標準・深層・近場・素材の宝庫・季節の地）。enemy_mul＝敵の強さ、income_mul＝お金の倍率 |
 | dungeon_floors.csv / drop_tables.csv | 階ごとの敵Lv・戦闘数 / ドロップ率 |
 | items.csv / shop_inventory.csv | 消耗品 / 店の品ぞろえ |
 | inn_rooms.csv / facilities.csv / facility_ranks.csv / facility_effects.csv | 宿屋・町の施設 |
 | enhance_rates.csv / rarities.csv / recipes.csv | 強化・レアリティ・制作 |
 | economy_by_rank.csv | ★ごとのお金の目安 |
-| adventurer_ranks.csv | 冒険者ランク11段階・必要ポイント・特典（quest_bonus / shop_discount / perk） |
+| adventurer_ranks.csv | 冒険者ランク25段階（★ごとに本ランクと＋、最後にS）。昇格試験・特典 |
 | quest_types.csv / quests.csv | クエスト |
 | rune_stones.csv | ルーンストーン（単語セット）。★・テーマ・種類・大きさ |
 | lexicon.csv | 単語とフレーズ。stone_id でルーンストーンに属する。kind は word / phrasal_verb / idiom / phrase |
