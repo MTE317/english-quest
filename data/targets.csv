@@ -1,0 +1,13 @@
+metric,accuracy,op,value,description
+wipe_rate_per_rank_max,0.8,<=,0.1,正答率80%：どの★も全滅率10%以下
+wipe_rate_per_rank_max,0.5,<=,0.35,正答率50%：どの★も全滅率35%以下
+clear5_month,0.8,between,4|6,正答率80%：★5のボスまで4〜6か月
+clear5_month,0.5,<=,8,正答率50%：★5のボスまで8か月以内
+rounds_per_battle,0.8,between,2.5|3.5,正答率80%：1戦が約3巡
+questions_per_battle,0.8,between,8|12,正答率80%：1戦が約10問
+same_role_job_gap,0.65,<=,10,同じ役割のジョブどうしの差が±10ポイント以内
+monster_strength_spread,0.8,<=,0.3,同じ★の通常モンスターの強さが平均の±30%以内
+season_gap,0.65,<=,15,季節による踏破率の差が15ポイント以内
+overdue_month_rate,0.8,<=,0.05,滞納する月が5%以下
+longest_run_minutes_p95,0.5,<=,30,正答率50%：長い遠征でも30分以内（1問10秒）
+mid_job_unlock_month,0.8,<=,4,正答率80%：中級ジョブが4か月目までに1つ以上解放

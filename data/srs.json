@@ -1,0 +1,20 @@
+{
+ "_note": "出題と復習の設定（仮）。FSRSを参考にする",
+ "desired_retention": 0.9,
+ "learned_rule": "日を空けて3回続けて正解したら習得（仮）",
+ "new_per_run": [
+  10,
+  15
+ ],
+ "review_first": true,
+ "reduce_new_when_due_over": 50,
+ "reduced_new_per_run": 5,
+ "training_advances_day": false,
+ "stone_star_must_be_gte_dungeon_star": true,
+ "distractors": {
+  "early": "他の石から",
+  "late": "同じ石の似た単語から"
+ },
+ "wipe_keeps_learning_record": true,
+ "storage": "単語ごとに段階・次の復習日・連続正解数などを保存（15,000語で1MB未満）"
+}

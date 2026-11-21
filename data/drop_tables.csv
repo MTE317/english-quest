@@ -1,0 +1,11 @@
+﻿dungeon_id,gear_drop_rate_per_battle,material_rate_per_enemy,rare_material_rate,gold_share_of_run_income,boss_gold_mul,boss_gear_drop
+mossy_cave,0.3,0.55,0.06,0.55,4,1.0
+sunlit_forest,0.3,0.55,0.06,0.4675,4,1.0
+ruined_fort,0.3,0.55,0.06,0.55,4,1.0
+misty_marsh,0.3,0.715,0.06,0.6050000000000001,4,1.0
+howling_canyon,0.3,0.55,0.06,0.55,4,1.0
+ancient_library,0.3,0.55,0.09,0.7150000000000001,4,1.0
+sunken_temple,0.3,0.55,0.06,0.55,4,1.0
+clockwork_mine,0.3,0.55,0.06,0.49500000000000005,4,1.0
+obsidian_volcano,0.3,0.55,0.06,0.55,4,1.0
+frozen_peak,0.3,0.55,0.06,0.7150000000000001,4,1.0

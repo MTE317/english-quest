@@ -1,0 +1,8 @@
+﻿id,name,drop_weight_pct,random_effects
+common,コモン,50,0
+uncommon,アンコモン,25,1
+rare,レア,13,2
+epic,エピック,7,3
+legendary,レジェンダリー,3.5,4
+artifact,アーティファクト,1.3,4
+origin,オリジン,0.2,5

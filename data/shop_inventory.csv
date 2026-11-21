@@ -1,0 +1,3 @@
+﻿shop,unlocked_by,items
+weapon_armor_shop,冒険者ランクで開く★,その★の装備Lv下限+3の、効果なしの武器・防具（頭・体・腕）
+item_shop,道具屋ランク,items.csv の shop_rank 以下のもの

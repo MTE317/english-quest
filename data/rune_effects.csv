@@ -1,0 +1,11 @@
+﻿id,stat,label_ja,per_star,resonance_count,resonance_bonus,glow_bonus
+str,STR,力,0.004,3,0.03,0.2
+mag,MAG,魔力,0.004,3,0.03,0.2
+def,DEF,守り,0.004,3,0.03,0.2
+res,RES,魔法の守り,0.004,3,0.03,0.2
+spd,SPD,素早さ,0.003,3,0.02,0.2
+luk,LUK,運,0.004,3,0.03,0.2
+hp,HP,体力,0.005,3,0.04,0.2
+sres,STATUS_RES,状態異常の耐性,0.005,3,0.04,0.2
+exp,EXP,経験値,0.003,3,0.02,0.2
+gold,GOLD,お金,0.003,3,0.02,0.2

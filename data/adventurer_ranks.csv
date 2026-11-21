@@ -1,0 +1,12 @@
+﻿id,title,title_en,points_required,max_dungeon_rank,needs_boss_clear,quest_bonus,shop_discount,perk
+E,見習い,Apprentice,0,1,0,0,0,クエスト掲示板 2件
+E+,駆け出し,Rookie,3,1,0,0,0,クエスト掲示板 3件
+D,一人前,Journeyman,7,2,1,0,0,★2へ入れる
+D+,熟練,Adept,12,2,0,0,0.05,ギルド商店 5%引き
+C,歴戦,Veteran,18,3,1,0,0.05,★3へ入れる
+C+,精鋭,Elite,25,3,0,0.10,0.05,クエスト報酬 +10%
+B,達人,Expert,32,4,1,0.10,0.05,★4へ入れる
+B+,英傑,Champion,45,4,0,0.10,0.10,ギルド商店 10%引き・掲示板 4件
+A,英雄,Hero,55,5,1,0.10,0.10,★5へ入れる
+A+,覇者,Conqueror,68,5,0,0.20,0.10,クエスト報酬 +20%
+S,伝説,Legend,85,5,1,0.20,0.15,称号「伝説」・商店 15%引き・記念の看板

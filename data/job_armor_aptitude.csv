@@ -1,0 +1,15 @@
+﻿job_id,heavy,medium,light
+warrior,S,A,C
+knight,S,A,C
+black_mage,×,B,S
+white_mage,×,B,S
+thief,×,S,A
+monk,×,S,A
+hunter,C,S,A
+bard,×,B,S
+elementalist,×,B,S
+gunner,C,S,A
+dancer,×,B,S
+spellblade,A,S,C
+hexer,×,B,S
+apothecary,B,S,A

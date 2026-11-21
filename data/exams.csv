@@ -1,0 +1,4 @@
+﻿id,kind,questions,pass_rate,retry_after_days,unlock,note
+awakening,覚醒の試練,20,0.8,1,石のルーンをすべて読み解いた,合格で石が覚醒
+promotion,昇格試験,25,0.8,1,その★のルーンの8割を習得,本ランクに上がるとき。問題数は仮
+final,最終試験（Sランク）,50,0.8,1,★12の昇格試験に合格,ボス戦＋全範囲の総復習。問題数は仮

@@ -1,0 +1,10 @@
+﻿id,name,weapon_type,workshop_rank,derive_from,materials,gold,added_element,base_stat_bonus_pct
+iron_sword,鉄の剣,sword,1,,goblin_mat:2|cave_rat_mat:2,40,,15
+steel_sword,鋼の剣,sword,2,iron_sword,fort_bandit_mat:3|skeleton_mat:1,53,,15
+windcutter_sword,風切りの剣,sword,3,steel_sword,canyon_wolf_mat:3|rock_troll_mat:2,95,,15
+tidal_sword,潮騒の剣,sword,4,windcutter_sword,fishman_mat:3|guardian_automaton_mat:2,168,,15
+obsidian_sword,黒曜の剣,sword,5,tidal_sword,obsidian_dragoon_mat:3|lava_golem_mat:2,301,,15
+flame_sword,炎の剣,sword,2,steel_sword,fire_lizard_mat:2,53,fire,15
+storm_sword,嵐の剣,sword,3,windcutter_sword,wind_spirit_mat:3,95,wind,15
+earth_sword,大地の剣,sword,3,windcutter_sword,mandragora_mat:3,95,earth,15
+mirror_sword,水鏡の剣,sword,4,tidal_sword,sea_serpent_mat:3,168,water,15

@@ -1,0 +1,6 @@
+secret/
+__pycache__/
+*.pyc
+sim/*.json
+sim/*.txt
+.DS_Store

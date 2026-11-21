@@ -1,0 +1,16 @@
+﻿id,type,rank,target,count_min,count_max,reward_gold_pct_of_run_income,reward_item,rank_points
+q1_hunt,hunt,1,その★の通常モンスター,3,6,15,,1
+q1_gather,gather,1,その★の通常素材,3,5,0,まれな素材1,1
+q1_boss,boss,1,その★のボス,1,1,35,,3
+q2_hunt,hunt,2,その★の通常モンスター,3,6,15,,1
+q2_gather,gather,2,その★の通常素材,3,5,0,まれな素材1,1
+q2_boss,boss,2,その★のボス,1,1,35,,3
+q3_hunt,hunt,3,その★の通常モンスター,3,6,15,,1
+q3_gather,gather,3,その★の通常素材,3,5,0,まれな素材1,1
+q3_boss,boss,3,その★のボス,1,1,35,,3
+q4_hunt,hunt,4,その★の通常モンスター,3,6,15,,1
+q4_gather,gather,4,その★の通常素材,3,5,0,まれな素材1,1
+q4_boss,boss,4,その★のボス,1,1,35,,3
+q5_hunt,hunt,5,その★の通常モンスター,3,6,15,,1
+q5_gather,gather,5,その★の通常素材,3,5,0,まれな素材1,1
+q5_boss,boss,5,その★のボス,1,1,35,,3

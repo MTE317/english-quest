@@ -1,0 +1,89 @@
+{
+ "_note": "シミュレーションで決めた仮の式。Lvは敵のレベル（2026-11-22 夜間シミュレーション後）",
+ "enemy": {
+  "hp": "(150 + 6.5*Lv) * hp_mul * 1.68 * dungeon.enemy_mul",
+  "boss_hp_mul": 4.5,
+  "str_mag": "(15 + 4.5*Lv + 0.22*Lv^2) * atk_mul * dungeon.enemy_mul",
+  "boss_atk_mul": 1.25,
+  "def_res": "(6 + 3.2*Lv) * def_mul / res_mul",
+  "spd": "(10 + 3.6*Lv) * spd_mul",
+  "damage_to_party": "STR(or MAG) * 1.62 * 100/(100 + DEF or RES) * rand(0.9,1.1)"
+ },
+ "player": {
+  "grade_points": {
+   "A": 4,
+   "B": 3,
+   "C": 2,
+   "D": 1
+  },
+  "hp": "70 + g*30 + (Lv-1)*g*9",
+  "other_stats": "8 + g*6 + (Lv-1)*g*1.6",
+  "mp": "12 + gMAG*6 + (Lv-1)*2",
+  "xp_to_next": "25 * Lv^1.5"
+ },
+ "rewards": {
+  "xp_per_enemy": "6 + 3.2*enemyLv (boss x5)",
+  "overlevel_penalty_per_level": 0.1,
+  "overlevel_min": 0.1,
+  "gold_per_enemy": "run_income * dungeon.income_mul * gold_share / 27 (boss x boss_gold_mul)",
+  "ap_per_battle": 1,
+  "ap_per_boss_battle": 3
+ },
+ "battle": {
+  "wrong_answer_mult": [
+   0.1,
+   0.5
+  ],
+  "crit_mult": 1.5,
+  "buff_cap": 0.6,
+  "weak": 1.5,
+  "resist": 0.5,
+  "immune": 0.0,
+  "knight_cover_rate": 0.5,
+  "knight_cover_cut": 0.5,
+  "bard_song": 0.2,
+  "dual_wield_second_hit": 0.5,
+  "mastery_per_level": 0.02,
+  "mastery_max": 0.2
+ },
+ "weapon_power": "(8 + 1.6*itemLv) * quality(作った装備1.15) * (1 + 0.05*強化値) * power_mul * 適正",
+ "armor_value": "(6 + 1.3*itemLv) * def_res_mul * quality * (1 + 0.05*強化値) * 1.6",
+ "dungeon": {
+  "floor1_enemies": 2,
+  "other_floor_enemies": 3,
+  "boss_battle": "boss + 1"
+ },
+ "shop_gear_price": {
+  "weapon": "(8 + 1.6*itemLv) * 4.5",
+  "armor": "(6 + 1.3*itemLv) * 4.5",
+  "shop_item_lv": "その★の装備Lv下限 + 3"
+ },
+ "bank": {
+  "loan_interest_monthly": 0.03,
+  "overdue_interest_monthly": 0.1
+ },
+ "training": {
+  "questions": [
+   5,
+   10,
+   15
+  ],
+  "efficiency_vs_dungeon": 0.8,
+  "days": 1
+ },
+ "accuracy_drop_per_rank": 0.03,
+ "_accuracy_note": "単語は仮置き。★が1つ上がるごとに正答率が3%下がる仮の設定",
+ "items_in_battle": "1行動・1問として使える。不正解だと効果×0.1〜0.5（ほかの行動と同じ）",
+ "wipe": {
+  "rollback": "ダンジョンに入る前の状態に戻る（お金・素材・ドロップ・経験値・日数すべて）",
+  "xp_keep": 0.0,
+  "mercy_per_step": 0.0,
+  "_note": "ストイック方針（2026-11-22決定）：全滅したら全部ロスト、連続全滅の救済なし。そのぶん英語に触れる回数が増える",
+  "_retry_note": "全滅したら★を1つ下げて鍛え直すのが基本（ゲーム内でもそうヒントを出す）。シミュレーターは下の★で2回遠征してから戻る"
+ },
+ "guild_points": {
+  "same_rank": 1.0,
+  "one_rank_lower": 0.5,
+  "_note": "今の上限の★のクエストは満点、1つ下の★は半分のポイント"
+ }
+}

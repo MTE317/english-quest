@@ -1,0 +1,4 @@
+﻿id,name,def_res_mul,spd_mod,evasion_bonus,examples
+heavy,重装,1.0,-3,0.0,兜|鎧|鉄の籠手
+medium,中装,0.65,0,0.03,革の帽子|革鎧|革の籠手
+light,軽装,0.35,0,0.08,帽子|ローブ|手袋|リストバンド

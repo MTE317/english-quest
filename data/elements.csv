@@ -1,0 +1,13 @@
+﻿id,name,kind
+slash,斬撃,物理
+pierce,刺突,物理
+blunt,打撃,物理
+fire,炎,魔法
+ice,氷,魔法
+wind,風,魔法
+earth,土,魔法
+thunder,雷,魔法
+water,水,魔法
+light,光,魔法
+dark,闇,魔法
+none,無,魔法
