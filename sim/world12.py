@@ -42,7 +42,9 @@ class Game12(Game):
         c = min(s.party, key=lambda c: (c.lv, c.xp))
         s.L.set_day(s.real_day())
         ok = sum(s.L.ask(s.tier(), "train") for _ in range(15))
-        if c.lv < ADV[s.adv]["cap"]: c.gain_xp(s.xpq * 0.8 * (ok + 0.3 * (15 - ok)))
+        ref = max(DUNGEONS[d]["el"] + DUNGEONS[d]["floors"] - 1 for d in db.BY_RANK[s.tier()])
+        mult = max(T.get("xp_pen_min", 0.1), 1 - T["xp_pen"] * max(0, c.lv - ref - T.get("xp_free", 0)))
+        if c.lv < (ADV[s.adv]["cap"] if T.get("rank_cap", 1) else 99): c.gain_xp(s.xpq * 0.8 * (ok + 0.3 * (15 - ok)) * mult)
         c.ap[c.job] += 3
         s.S["q"] += 15; s.G["train_days"] += 1; s.G["real_q"] += 15; s.G["train_sessions"] += 1
     # ---------------------------------------------------------------- 昇格（昇格試験つき）
@@ -131,7 +133,7 @@ class Game12(Game):
             for k in ("overdue", "bank"):
                 pay = min(getattr(s, k), max(0, s.gold - s.fixed_cost())); setattr(s, k, getattr(s, k) - pay); s.gold -= pay
             s.invest(); s.craft(); s.shop_gear(); s.inn(); s.enhance(); s.runes()
-            cap = ADV[s.adv]["cap"]           # ランクごとのレベル上限
+            cap = ADV[s.adv]["cap"] if T.get("rank_cap", 1) else 99   # ランクごとのレベル上限（999方式ではなし）
             for c in s.party:
                 if c.lv > cap: c.lv = cap; c.xp = 0
                 elif c.lv == cap: c.xp = 0

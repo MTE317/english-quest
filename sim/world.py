@@ -147,7 +147,7 @@ class Game:
                     loot["gold"] += ECON[r]["run_income"] * D["income"] * dr["gold"] / 27 * (dr["boss_gold"] if e.boss else 1) * rnd(rng, 0.8, 1.2)
                     x = (6 + 3.2 * e.L) * T["xp_k"] * (5 if e.boss else 1); loot["xp"] += x
                     for c in s.party:
-                        if c.hp > 0: c.gain_xp(x * max(0.1, 1 - T["xp_pen"] * max(0, c.lv - e.L)))
+                        if c.hp > 0: c.gain_xp(x * max(T.get("xp_pen_min", 0.1), 1 - T["xp_pen"] * max(0, c.lv - e.L - T.get("xp_free", 0))))
                     cm_, rm_ = e.m["mat"]
                     if e.boss:
                         loot["mats"][cm_] += rng.choice([1, 2]); loot["boss"] = True

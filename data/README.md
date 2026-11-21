@@ -16,7 +16,7 @@
 
 | ファイル | 中身 |
 |---|---|
-| balance.json | 敵の強さ・経験値・お金・全滅の扱いなどの式 |
+| balance.json | 敵の強さ・経験値・お金・全滅の扱いなどの式。レベルは上限999で、式は Lv/10 を使う |
 | targets.csv | 合格ライン13項目（シミュレーションの判定に使う） |
 | elements.csv / seasons.csv | 属性12種 / 季節4つ |
 | jobs.csv / jobs_mid.csv | 基本ジョブ8種・中級ジョブ6種の能力値・初期装備 |
@@ -43,7 +43,7 @@
 | inn_rooms.csv / facilities.csv / facility_ranks.csv / facility_effects.csv | 宿屋・町の施設 |
 | enhance_rates.csv / rarities.csv / recipes.csv | 強化・レアリティ・制作 |
 | economy_by_rank.csv | ★ごとのお金の目安 |
-| adventurer_ranks.csv | 冒険者ランク25段階（★ごとに本ランクと＋、最後にS）。昇格試験・レベル上限・特典 |
+| adventurer_ranks.csv | 冒険者ランク25段階（★ごとに本ランクと＋、最後にS）。昇格試験・特典 |
 | quest_types.csv / quests.csv | クエスト |
 | rune_stones.csv | ルーンストーン（単語セット）。★・テーマ・種類・大きさ |
 | lexicon.csv | 単語とフレーズ。stone_id でルーンストーンに属する。kind は word / phrasal_verb / idiom / phrase |
