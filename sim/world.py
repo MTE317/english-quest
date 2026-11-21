@@ -24,11 +24,11 @@ PROFILES = {
     "のんびり": dict(no_good_room=1, stock_k=0.5, no_enhance=1),
 }
 CORE_PARTY = ["戦士", "ナイト", "黒魔道士", "白魔道士"]
-JOB_SWITCH = {"戦士": ["魔法剣士", "上級A"], "黒魔道士": ["精霊術士", "上級B"], "白魔道士": ["上級B"], "ナイト": ["上級C"],
-              "盗賊": ["銃士"], "狩人": ["銃士"], "吟遊詩人": ["踊り子"], "武闘家": ["上級C"]}
+JOB_SWITCH = {"戦士": ["魔法剣士", "上級A"], "黒魔道士": ["精霊術士", "上級B", "上級F"], "白魔道士": ["上級B"], "ナイト": ["上級C", "上級D"],
+              "盗賊": ["銃士"], "狩人": ["銃士", "上級E"], "吟遊詩人": ["踊り子"], "武闘家": ["上級C", "上級G"]}
 UPPER_ALIAS = {}
 for j in db.UPPER_JOBS:
-    UPPER_ALIAS["上級" + "ABC"[db.UPPER_JOBS.index(j)]] = j
+    UPPER_ALIAS["上級" + "ABCDEFG"[db.UPPER_JOBS.index(j)]] = j
 
 def season_of(day): return SEASONS[(day // 30) % 4]
 
@@ -54,7 +54,7 @@ class Game:
     def fixed_cost(s): t = s.fee_tier(); return ECON[t]["guild_fee"] + ECON[t]["storage_fee"]
     def stock_cost(s, r):
         k = s.P.get("stock_k", 1.0)
-        return sum(ITEMS[i]["price"] * n * k for i, n in STOCK[r].items() if ITEMS[i]["rank"] <= s.fac["item"])
+        return sum(ITEMS[i]["price"] * n * k for i, n in STOCK[min(r, 5)].items() if ITEMS[i]["rank"] <= s.fac["item"])
     def reserve(s): return s.fixed_cost() + 0.5 * s.stock_cost(s.tier())
     def acc_now(s, r):
         a = s.acc0 + s.acc_growth * s.G["attempts"]
@@ -86,7 +86,7 @@ class Game:
         def score(d):
             D = DUNGEONS[d]; ok = 1.0 if lv >= D["el"] + 2 else (0.6 if lv >= D["el"] - margin else 0.3)
             need = 1.3 if (d in [u["dungeon"] for j, u in UNLOCKS.items() if u["method"] == "発見" and j not in s.unlocked]) else 1.0
-            return D["income"] / D["days"] * ok * need * 0.93 ** (D["floors"] - 5) * (1 + 0.25 * s.rng.random())
+            return D["income"] / D["days"] * ok * need * 0.93 ** (D["floors"] - 5) * (1 + 0.5 * s.rng.random())
         return max(cands, key=score)
     # ---------------------------------------------------------------- アイテム（戦闘の合間）
     def use_items(s):
@@ -238,14 +238,14 @@ class Game:
         return True
     def sell_or_salvage(s, it):
         if it.get("rar", 0) >= 2:     # レア以上は分解して素材に
-            r = min(5, max(1, (it["ilvl"] + 4) // 11 + 1)); s.mats[f"_salvage_{r}"] += it["rar"]; s.G["salvage"] += 1
+            r = min(12, max(1, (it["ilvl"] + 4) // 11 + 1)); s.mats[f"_salvage_{r}"] += it["rar"]; s.G["salvage"] += 1
         else:
-            p = round(ECON[min(5, max(1, (it["ilvl"] + 4) // 11 + 1))]["run_income"] * 0.04 * (1 + 0.8 * it.get("rar", 0)))
+            p = round(ECON[min(12, max(1, (it["ilvl"] + 4) // 11 + 1))]["run_income"] * 0.04 * (1 + 0.8 * it.get("rar", 0)))
             s.gold += p; s.G["earn"]["売却"] += p
     # ---------------------------------------------------------------- 町
     def buy_stock(s, r):
         spent = 0; k = s.P.get("stock_k", 1.0)
-        for i, n in STOCK[r].items():
+        for i, n in STOCK[min(r, 5)].items():
             n = max(0, round(n * k))
             if ITEMS[i]["rank"] > s.fac["item"]:
                 i = ALT.get(i)
@@ -273,7 +273,7 @@ class Game:
         return None
     def craft(s):
         if s.P.get("no_craft"): return
-        for r in range(min(5, max(s.fac["weapon"], s.fac["armor"])), 0, -1):
+        for r in range(min(12, max(s.fac["weapon"], s.fac["armor"])), 0, -1):
             il = FAC[r]["craft_item_lv"]; cost = ECON[r]["craft_gold"]
             for c in sorted(s.party, key=lambda c: s.main_stat(c) != "STR"):
                 if s.fac["weapon"] >= r:
@@ -344,7 +344,7 @@ class Game:
         if s.overdue > 0 or s.P.get("no_invest"): return
         t = s.tier()
         for _ in range(3):
-            cands = [(k, v) for k, v in s.fac.items() if v < min(5, t + (1 if k in ("weapon", "armor") else 0))]
+            cands = [(k, v) for k, v in s.fac.items() if v < min(len(FAC), t + (1 if k in ("weapon", "armor") else 0))]
             if not cands: return
             order = ["weapon", "armor", "item", "inn", "acc"]
             k, v = min(cands, key=lambda x: (x[1], order.index(x[0])))

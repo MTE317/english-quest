@@ -5,7 +5,8 @@ from db import JOBS, WEAPONS, ARMOR_W, BY_JOB, STAGE_AP, TIER
 
 T = dict(
     mercy=0.0, wipe_xp_keep=0.0, farm_after_wipe=2, e_hp=1.68, hp0=150, hp1=6.5, s0=15, s1=4.5, s2=0.22, e_atk=1.62, boss_hp=4.5, boss_atk=1.25,
-    hp_rank_mul={1: 1.0, 2: 1.0, 3: 1.0, 4: 1.0, 5: 1.0},   # ★ごとの敵HP補正（調整用）
+    hp_rank_mul={1: 1.6, 2: 2.3, 3: 2.0, 4: 2.0, 5: 2.0, 6: 2.6, 7: 3.3, 8: 3.3, 9: 3.3, 10: 3.3, 11: 2.6, 12: 3.3},   # ★ごとの敵HP補正（★12版で前線から調整）
+    atk_rank_mul={1: 1.491, 2: 2.029, 3: 1.803, 4: 1.803, 5: 1.803, 6: 2.25, 7: 2.756, 8: 2.756, 9: 2.756, 10: 2.756, 11: 2.25, 12: 2.756},
     xp_k=1.0, xp_pen=0.10, lv_margin=0, mp_regen=0.10,
     acc_drop=db.BAL.get("accuracy_drop_per_rank", 0.03),
     borrow=1,            # ほかのジョブのスキルを持ち出す
@@ -24,7 +25,7 @@ def xp_need(lv): return round(25 * lv ** 1.5)
 def learned(job, ap):
     costs = STAGE_AP[TIER[job]]; left = ap
     out = [s for s in BY_JOB[job] if s["stage"] == 1]
-    for st in range(2, 5):
+    for st in range(2, 6):
         for s in BY_JOB[job]:
             if s["stage"] == st and left >= costs[st - 1]: left -= costs[st - 1]; out.append(s)
     return out
@@ -89,7 +90,7 @@ class Char:
         v = (70 + g * 30 + (s.lv - 1) * g * 9) if k == "HP" else (8 + g * 6 + (s.lv - 1) * g * 1.6)
         return v + s.aff(k)
     def maxhp(s):
-        return max(1, round(s.base("HP") * (1 + s.room.get("hp", 0) + s.mods.get("hp", 0) - (0.2 if "衰弱" in s.persist else 0))))
+        return max(1, round(s.base("HP") * (1 + s.room.get("hp", 0) + s.mods.get("hp", 0) + (s.rune.get("HP", 0) if getattr(s, "rune", None) else 0) - (0.2 if "衰弱" in s.persist else 0))))
     def maxmp(s): return round((12 + s.grade("MAG") * 6 + (s.lv - 1) * 2) * (1 + s.room.get("mp", 0)))
     def mastery_lv(s, t=None): return min(10, s.mastery.get(t or s.weapon["t"], 0) // 30)
     def wapt(s, t): return APT.get(JOBS[s.job]["w"].get(t, ""), 0)
@@ -111,7 +112,7 @@ class Char:
         if k == "DEF": v *= 1 + s.mods.get("def", 0)
         if k == "RES": v *= 1 + s.mods.get("res", 0)
         if k == "MAG": v *= 1 + s.mods.get("mag", 0)
-        return v
+        return v * (1 + s.rune.get(k, 0)) if getattr(s, "rune", None) else v
     def scale(s): return 20 + 6 * s.lv
     def crt(s): return 0.03 + 0.15 * s.stat("LUK") / s.scale() + WEAPONS[s.weapon["t"]].get("crt", 0) + s.aff("CRT") / 100 + s.mods.get("crt", 0)
     def eva(s):
@@ -123,9 +124,11 @@ class Char:
         need = max(0, (w["ilvl"] - T["gate_base"]) // T["gate_div"])
         return s.mastery_lv(w["t"]) >= need
     def gain_xp(s, x):
-        x *= 1 + s.mods.get("xp", 0) + s.aff("EXP") / 100
+        x *= 1 + s.mods.get("xp", 0) + s.aff("EXP") / 100 + (s.rune.get("EXP", 0) if getattr(s, "rune", None) else 0)
+        if s.lv >= 99: return
         s.xp += x
         while s.xp >= xp_need(s.lv):
+            if s.lv >= 99: s.xp = 0; return
             s.xp -= xp_need(s.lv); oh, om = s.maxhp(), s.maxmp(); s.lv += 1
             if s.hp > 0: s.hp += s.maxhp() - oh
             s.mp += s.maxmp() - om
@@ -135,7 +138,7 @@ class Enemy:
         s.m, s.name, s.L, s.boss = m, m["name"], L, m["boss"]
         bh = T["boss_hp"] if s.boss else 1.0; ba = T["boss_atk"] if s.boss else 1.0
         s.maxhp = s.hp = (T["hp0"] + T["hp1"] * L) * m["hp"] * T["e_hp"] * bh * T["hp_rank_mul"].get(rank, 1.0) * dm
-        s.STR = (T["s0"] + T["s1"] * L + T["s2"] * L * L) * m["atk"] * ba * dm; s.MAG = s.STR
+        s.STR = (T["s0"] + T["s1"] * L + T["s2"] * L * L) * m["atk"] * ba * dm * T.get("atk_rank_mul", {}).get(rank, 1.0); s.MAG = s.STR
         s.DEF = (6 + 3.2 * L) * m["df"]; s.RES = (6 + 3.2 * L) * m["rs"]
         s.SPD = (10 + 3.6 * L) * m["sp"]
         s.weak, s.resist = m["weak"], m["resist"]; s.types = m["types"]

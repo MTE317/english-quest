@@ -59,7 +59,7 @@ for j, d in JOBS.items():
     d["start_weapon"] = best
     d["arm"] = max(d["armor"], key=lambda a: {"S": 3, "A": 2, "B": 1, "C": 0, "×": -1}[d["armor"][a]])
 BASE_JOBS = [j for j in JOBS if TIER[j] == "基本"]; MID_JOBS = [j for j in JOBS if TIER[j] == "中級"]; UPPER_JOBS = [j for j in JOBS if TIER[j] == "上級"]
-STAGE_AP = {"基本": [0, 10, 20, 30], "中級": [0, 20, 30, 40], "上級": [0, 20, 30, 40]}
+STAGE_AP = {"基本": [0, 10, 20, 30, 45], "中級": [0, 20, 30, 40, 50], "上級": [0, 20, 30, 40, 55]}
 
 # ---- スキル
 KIND = {"attack": "atk", "heal": "heal", "heal_all": "healall", "revive": "revive", "cure": "cure", "cure_all": "cureall", "party_buff": "pbuff",
@@ -75,6 +75,9 @@ def _skill(r, jobname):
         els = EL(r["element"])
         if s["k"] == "imbue": s["el"] = els[0]
         else: s["el"] = els
+    if "el" not in s and ("element" in eff or s.get("base") == "mag"):
+        e = eff.get("element", "none")
+        s["el"] = EL("fire|ice|wind|earth|thunder|water|light|dark" if e == "best" else e)
     if "st" in s:
         n = s["st"][0]
         if n in STATUS: n = STATUS[n]["name"]
@@ -105,7 +108,7 @@ DUNGEONS = {}
 for r in R(f"{D}/dungeons.csv"):
     DUNGEONS[r["id"]] = dict(id=r["id"], rank=int(r["rank"]), name=r["name"], days=int(r["days"]), floors=int(r["floors"]), el=int(r["enemy_lv_floor1"]),
                              ilvl=(int(r["item_lv_min"]), int(r["item_lv_max"])), rp=int(r["return_point_floor"]) if r["return_point_floor"] else None,
-                             boss=r["boss_id"], income=f(r["income_mul"], 1), emul=f(r.get("enemy_mul") or "", 1), floor_rows=[], drop=None)
+                             boss=r["boss_id"], income=f(r["income_mul"], 1), emul=f(r.get("enemy_mul") or "", 1), floor_rows=[], drop=None, kind=r.get("kind", "標準"))
 for r in R(f"{D}/dungeon_floors.csv"):
     DUNGEONS[r["dungeon_id"]]["floor_rows"].append(dict(floor=int(r["floor"]), lv=int(r["enemy_level"]), battles=int(r["battles"]),
                                                        n=int(r["enemies_per_battle"]), boss=r["last_battle_is_boss"] == "1", rp=r["return_point_after"] == "1"))
@@ -126,7 +129,7 @@ ITEMS = {r["name"]: dict(id=r["id"], price=int(r["price"]), rank=int(r["shop_ran
 ECON = {int(r["dungeon_rank"]): {k: f(v) for k, v in r.items()} for r in R(f"{D}/economy_by_rank.csv")}
 FAC = {int(r["rank"]): {k: f(v) for k, v in r.items()} for r in R(f"{D}/facility_ranks.csv")}
 INN = {int(r["inn_rank"]): {k: f(v) for k, v in r.items() if k != "description"} for r in R(f"{D}/inn_rooms.csv")}
-ADV = [dict(id=r["id"], title=r["title"], pts=int(r["points_required"]), maxr=int(r["max_dungeon_rank"]), boss=r["needs_boss_clear"] == "1", qb=f(r.get("quest_bonus", "")), disc=f(r.get("shop_discount", ""))) for r in R(f"{D}/adventurer_ranks.csv")]
+ADV = [dict(id=r["id"], title=r["title"], pts=int(r["points_required"]), maxr=int(r["max_dungeon_rank"]), boss=r["needs_boss_clear"] == "1", exam=r.get("needs_exam", "0") == "1", cap=int(r.get("level_cap") or 99), qb=f(r.get("quest_bonus", "")), disc=f(r.get("shop_discount", ""))) for r in R(f"{D}/adventurer_ranks.csv")]
 RAR = [dict(id=r["id"], name=r["name"], w=f(r["drop_weight_pct"]), n=int(r["random_effects"])) for r in R(f"{D}/rarities.csv")]
 ENH = [f(r["success_rate"]) for r in R(f"{D}/enhance_rates.csv")]
 AFFIX = {}
