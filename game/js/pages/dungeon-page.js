@@ -6,16 +6,16 @@ import { Scheduler } from '../srs.js?v=features-2';
 import { LearningStore, now, loadSettings } from '../storage.js?v=rune-study-1';
 import { QuestionPicker } from '../picker.js';
 import { GameSession } from '../save.js?v=rune-study-1';
-import { normalizeGame } from '../game-state.js?v=rune-study-1';
+import { normalizeGame } from '../game-state.js?v=build36-1';
 import {
   allowedDungeons, startRun, startNextBattle, afterBattle, returnToTown, continueRun, resolveLoot,
   isBossBattle, runFloorRow, runFloorCount, returnItems, currentRank, useItemOutsideBattle, FIELD_ITEM_EFFECTS,
-} from '../dungeon.js?v=rune-study-1';
-import { backpackSlots, backpackUsed, addItem } from '../loot.js?v=rune-study-1';
-import { maxHp, maxMp } from '../character.js?v=rune-study-1';
-import { createBattleView } from '../ui/battle-view.js?v=rune-study-1';
-import { createVictoryView } from '../ui/victory-view.js?v=rune-study-1';
-import { stoneAllowed } from '../study.js?v=rune-study-1';
+} from '../dungeon.js?v=build36-1';
+import { backpackSlots, backpackUsed, addItem } from '../loot.js?v=build36-1';
+import { maxHp, maxMp } from '../character.js?v=build36-1';
+import { createBattleView } from '../ui/battle-view.js?v=build36-1';
+import { createVictoryView } from '../ui/victory-view.js?v=build36-1';
+import { stoneAllowed } from '../study.js?v=build36-1';
 import { el, render, stars } from '../dom.js';
 import { setSceneMusic } from '../battle-music.js?v=rune-study-1';
 
@@ -244,7 +244,7 @@ function battleView() {
           el('p', {}, 'ダンジョンに入る前の状態に戻った（お金・素材・拾った装備・経験値・日数）。'),
           el('p', { class: 'muted small' }, '学習記録と、出会った魔物・判明した弱点や耐性は図鑑に残っています。受注中の依頼と保証金も維持されます。'),
           el('div', { class: 'panel small' }, `ヒント：図鑑を見て属性耐性や状態異常対策を準備しよう。育成が必要なら、${dg.rank > 1 ? '★を1つ下げたダンジョン' : '近場のダンジョン'}がおすすめ。`),
-          el('a', { class: 'btn', href: 'party.html' }, '編成とビルド手引き'),
+          el('a', { class: 'btn', href: 'party.html' }, '編成を見直す'),
           el('a', { class: 'btn primary', href: 'index.html' }, '町へ'));
         return;
       }

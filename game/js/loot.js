@@ -1,7 +1,8 @@
 // 戦闘の報酬（お金・素材・装備）とバックパック。
 // 式が data にないものは sim/world.py と同じ値を LOOT_FORMULAS に置く（docs/requests.md で依頼済み）。
 import { evaluate } from './expr.js';
-import { makeGear } from './character.js?v=rune-study-1';
+import { makeGear } from './character.js?v=build36-1';
+import { splitList } from './csv.js';
 
 export const LOOT_FORMULAS = Object.freeze({
   gold_per_enemy: 'run_income * income_mul * gold_share / reward_budget', // 実際の遠征経路へ一周の基準収入を分配
@@ -77,6 +78,19 @@ function rollRarity(data, dungeonId, floor, rng) {
   return weighted(rng, table, (r) => r.w);
 }
 
+/** 対象を持つ付与系統を、実際に働く効果IDへ展開する。ドロップと工房で共通。 */
+export function affixVariants(data, family) {
+  if (family === 'TYPE_BONUS') return [...data.monsterTypes.keys()].map((id) => `TYPE_BONUS:${id}`);
+  if (family === 'ELEMENT' || family === 'ELEM_RES') {
+    return [...data.elements.values()].filter((e) => e.kind === '魔法' && e.id !== 'none').map((e) => `${family}:${e.id}`);
+  }
+  if (family === 'VS_STATUS') {
+    return [...new Set((data.enchantSources ?? []).flatMap((row) => splitList(row.families))
+      .filter((key) => key.startsWith('VS_STATUS:') && data.statusEffects.has(key.slice(10))))];
+  }
+  return [family];
+}
+
 /** ランダム効果を n 個（同じ系統は1回まで） */
 export function rollAffixes(data, slot, n, itemLv, rarityIndex, rng) {
   const key = ['head', 'body', 'arm'].includes(slot) ? 'armor' : slot;
@@ -90,6 +104,11 @@ export function rollAffixes(data, slot, n, itemLv, rarityIndex, rng) {
     if (rarityIndex >= 5) v *= LOOT_FORMULAS.affix_high_rarity_mul;
     let stat = a.stat;
     if (stat === 'TYPE_BONUS') stat = `特効:${[...data.monsterTypes.keys()][Math.floor(rng() * data.monsterTypes.size)]}`;
+    if (stat === 'VS_STATUS' || stat === 'ELEM_RES') {
+      const variants = affixVariants(data, stat);
+      if (!variants.length) continue;
+      stat = variants[Math.floor(rng() * variants.length)];
+    }
     out[stat] = Math.round(((out[stat] ?? 0) + v) * 10) / 10;
   }
   return out;

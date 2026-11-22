@@ -1,6 +1,6 @@
 // 新しいゲームの進み具合（セーブの game の中身）
-import { createMember, maxHp, maxMp } from './character.js?v=rune-study-1';
-import { ensureLoadout } from './growth.js?v=rune-study-1';
+import { createMember, maxHp, maxMp } from './character.js?v=build36-1';
+import { ensureLoadout, jobSkills, isLearned } from './growth.js?v=build36-1';
 import { parseAmounts } from './csv.js';
 
 export const PARTY_SIZE = 4;
@@ -20,6 +20,7 @@ export function createNewGame(data, partySpecs) {
     party: [],
     storage: { gear: [], materials: {} },
     items: {},
+    contentUpdates: { build36: true },
     rank: data.ranks?.[0]?.id ?? null, // 冒険者ランク（adventurer_ranks.csv の最初）
     backpackTier: data.backpackTiers?.[0]?.tier ?? 1,
   };
@@ -51,10 +52,12 @@ export function normalizeGame(data, game, run = null) {
   game.titles ??= [];
   game.unlockedJobs = game.unlockedJobs ?? [];
   game.examsPassed = game.examsPassed ?? [];
+  preserveMasteredJobs(data, game);
   const retiredMembers = retireRuneBonuses(data, game);
   for (const m of game.party ?? []) {
     m.persist = m.persist ?? []; m.room = m.room ?? null; m.ap = m.ap ?? { [m.job]: 0 };
     m.learned = m.learned ?? []; m.common = m.common ?? []; m.mastery = m.mastery ?? {};
+    m.masteredJobs ??= [];
     if (data.skills) ensureLoadout(data, m);
     for (const gear of Object.values(m.equip ?? {})) alignCraftedEffects(data, gear);
     if (retiredMembers.has(m)) {
@@ -68,6 +71,25 @@ export function normalizeGame(data, game, run = null) {
   // 戦闘中の能力値は毎回 game.party から算出されるため、行動順や進行の記録は変えない。
   if (run?.snapshot && run.snapshot !== game) normalizeGame(data, run.snapshot);
   return game;
+}
+
+/** 新技能の追加前に極めていたジョブのボーナスを、一度だけ既得として記録する。 */
+function preserveMasteredJobs(data, game) {
+  if (game.contentUpdates?.build36) return;
+  const addedIds = data.balance?.content_updates?.build36_skills;
+  if (!data.skills || !addedIds?.length) return;
+  const added = new Set(addedIds);
+  const oldJobs = new Map((data.jobs ?? []).map((job) => job.id)
+    .map((jobId) => [jobId, jobSkills(data, jobId).filter((skill) => !added.has(skill.id))]));
+  for (const member of game.party ?? []) {
+    const mastered = new Set(member.masteredJobs ?? []);
+    for (const [jobId, skills] of oldJobs) {
+      if (skills.length && skills.every((skill) => isLearned(member, skill))) mastered.add(jobId);
+    }
+    member.masteredJobs = [...mastered];
+  }
+  game.contentUpdates ??= {};
+  game.contentUpdates.build36 = true;
 }
 
 /**

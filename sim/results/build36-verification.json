@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "purpose": "測定後にカタログの説明3項目だけを訂正。戦闘コード・データ・編成条件・自動方策は測定時と同一。",
+  "measuredSourceSha256": "74cce383f4da6a926168ee305410250b1edcd2aef3c16a4a550e560a1924c0c4",
+  "deliveredSourceSha256": "fdc9b0b284f259857a29596148b880fe53b8af8e1e8b6f5c106cb938c03485b5",
+  "verifiedResults": [
+    "sim/results/build36-comparison.json",
+    "sim/results/build36-standard-regression.json",
+    "sim/results/build36-probes.json"
+  ],
+  "sourceMatchesMeasuredWhenOriginalCatalogBytesAreUsed": true,
+  "catalogMatchesMeasuredAfterReversingListedWordingChanges": true,
+  "editorialChanges": [
+    {
+      "build": "first_strike_samurai",
+      "field": "playstyle",
+      "before": "戦闘最初の命中に会心付きの影縫いを合わせる。先制したい標的を開幕に選ぶ。",
+      "after": "戦闘最初の攻撃行動に会心付きの影縫いを合わせる。先制したい標的を開幕に選ぶ。"
+    },
+    {
+      "build": "resistance_specialist",
+      "field": "playstyle",
+      "before": "異常耐性と解毒の体質で自分が行動不能になる場面を減らし、応急手当と道具を確実に使う。",
+      "after": "異常耐性と解毒の体質で自分が行動不能になる場面を減らし、応急手当と道具を使える機会を増やす。"
+    },
+    {
+      "build": "cleansing_apothecary",
+      "field": "weakness",
+      "before": "自身が封じられると浄化できない。道具も技能も全ての異常を一律に治すわけではない。",
+      "after": "沈黙や行動不能で治療技能を使えなくなる。道具も技能も全ての異常を一律に治すわけではない。"
+    }
+  ]
+}

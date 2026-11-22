@@ -3,13 +3,15 @@
  * 冒険の初期所持金を資材予算に流用せず、組立費用は simulationFixture.assembly に記録する。
  * 専用レシピを使う探索比較は、standard も同じ素体の itemLv・品質・強化にそろえる。
  */
+import { readFileSync } from 'node:fs';
 import { createNewGame } from '../game/js/game-state.js';
-import { maxHp, maxMp, canEquip, equipFromStorage, SLOTS } from '../game/js/character.js';
-import { equipSkill, learnSkill, isLearned, capacity, usedCapacity, commonBlock, learnCommon } from '../game/js/growth.js';
+import { maxHp, maxMp, canEquip, equipFromStorage, affixSum, SLOTS } from '../game/js/character.js';
+import { equipSkill, learnSkill, isLearned, capacity, usedCapacity, commonBlock, learnCommon, changeJob } from '../game/js/growth.js';
 import { craft, enhance, enchant, enchantFamilies } from '../game/js/workshop.js';
 import { parseAmounts } from '../game/js/csv.js';
 
-export const PROFILES = Object.freeze({
+// 既存12編成のID・比較条件を残し、開発カタログの36編成を追加する。
+export const LEGACY_PROFILES = Object.freeze({
   balanced: { name: '基本編成', jobs: ['warrior', 'knight', 'black_mage', 'white_mage'], minStar: 1 },
   poison: { name: '毒刃の持久戦', jobs: ['thief', 'hexer', 'knight', 'white_mage'], weapons: ['dagger', 'tome', 'hammer', 'staff'], minStar: 3 },
   bleed: { name: '出血鎌の追い込み', jobs: ['warrior', 'hexer', 'bard', 'white_mage'], weapons: ['scythe', 'tome', 'instrument', 'staff'], minStar: 3 },
@@ -22,6 +24,24 @@ export const PROFILES = Object.freeze({
   magic: { name: '属性魔法', jobs: ['black_mage', 'elementalist', 'bard', 'white_mage'], weapons: ['tome', 'staff', 'instrument', 'staff'], minStar: 3 },
   supplies: { name: '銃・道具', jobs: ['gunner', 'apothecary', 'bard', 'white_mage'], weapons: ['gun', 'dagger', 'instrument', 'staff'], minStar: 3 },
   brawler: { name: '拳・速攻', jobs: ['monk', 'hunter', 'warrior', 'white_mage'], weapons: ['fist', 'bow', 'greatsword', 'staff'], minStar: 1 },
+});
+
+function freezeTree(value) {
+  if (value && typeof value === 'object') {
+    for (const child of Object.values(value)) freezeTree(child);
+    Object.freeze(value);
+  }
+  return value;
+}
+export const BUILD_CATALOG = freezeTree(JSON.parse(readFileSync(new URL('./build-catalog.json', import.meta.url), 'utf8')));
+export const BUILD_DEFINITIONS = Object.freeze(Object.fromEntries(BUILD_CATALOG.builds.map((build) => [build.id, build])));
+export const PROFILES = Object.freeze({
+  ...LEGACY_PROFILES,
+  ...Object.fromEntries(BUILD_CATALOG.builds.map((build) => [build.id, {
+    name: build.name, jobs: [build.job, ...build.allies.map((ally) => ally.job)],
+    weapons: [build.weapon, ...build.allies.map((ally) => ally.weapon)],
+    ...(build.offhand ? { offhands: [build.offhand] } : {}), minStar: build.minStar, catalogBuildId: build.id,
+  }])),
 });
 
 const CROSS_SKILLS = {
@@ -89,6 +109,67 @@ function materialFor(data, def, family, rank) {
     idx.materials.find((m) => m.rank <= rank && enchantFamilies(data, def, m).includes(family)) ?? null);
   return idx.materialChoices.get(key);
 }
+export function resolveBuildFamily(data, boss, family) {
+  if (family === 'TYPE_BONUS:$bossType') {
+    if (!boss.types[0]) throw new Error('種族特効の対象となるボス種族がありません。');
+    return `TYPE_BONUS:${boss.types[0]}`;
+  }
+  if (family === 'ELEMENT:$weakElement') {
+    return `ELEMENT:${boss.weak.find((id) => data.elements.get(id)?.kind === '魔法') ?? 'fire'}`;
+  }
+  if (family.includes('$')) throw new Error(`未定義の付与条件です: ${family}`);
+  return family;
+}
+function memberDefinitions(build) { return build ? [build, ...build.allies] : []; }
+function requiredSkills(definition) { return [...(definition?.actions ?? []), ...(definition?.passives ?? [])]; }
+function buildAffixes(data, boss, definition) {
+  return Object.fromEntries(Object.entries(definition?.affixes ?? {}).map(([slot, families]) =>
+    [slot, families.map((family) => resolveBuildFamily(data, boss, family))]));
+}
+function checkBuildProgress(data, build, rank, stage) {
+  for (const [i, definition] of memberDefinitions(build).entries()) {
+    for (const id of requiredSkills(definition)) {
+      const skill = data.skills.get(id);
+      if (!skill) throw new Error(`${build.id} の核心技能がありません: ${i + 1}人目/${id}`);
+      if (skill.stage > stage) throw new Error(`${build.id} の核心技能 ${id} には比較用技能段階${skill.stage}が必要です。`);
+      if (publicJobRank(data, skill.job) > rank) throw new Error(`${build.id} の核心技能 ${id} のジョブは現在の★で公開されていません。`);
+      if (skill.isFinal && skill.job !== definition.job) throw new Error(`${build.id} は他職の奥義 ${id} を持ち出せません。`);
+    }
+  }
+}
+
+/** 核心が技能枠や付与枠から落ちた比較結果を作らない。専用制作の固定効果だけで代用もしない。 */
+export function assertBuildCore(data, game) {
+  const fixture = game.simulationFixture;
+  const build = BUILD_DEFINITIONS[fixture?.catalogBuildId];
+  if (!build) throw new Error('検証する開発ビルドのIDがありません。');
+  const boss = data.monsters.get(fixture.bossId);
+  const verified = [];
+  for (const [i, definition] of memberDefinitions(build).entries()) {
+    const m = game.party[i];
+    if (!m || m.job !== definition.job || data.equipment.get(m.equip.weapon?.id)?.kind !== definition.weapon) {
+      throw new Error(`${build.id} の核心構成が異なります: ${i + 1}人目のジョブ・武器`);
+    }
+    if (definition.offhand && data.equipment.get(m.equip.offhand?.id)?.kind !== definition.offhand) {
+      throw new Error(`${build.id} の核心構成が異なります: ${i + 1}人目の副武器`);
+    }
+    for (const key of ['actions', 'passives']) for (const id of definition[key] ?? []) {
+      if (!m.loadout[key].includes(id) || !isLearned(m, data.skills.get(id))) {
+        throw new Error(`${build.id} の核心技能を装備できませんでした: ${i + 1}人目/${id}`);
+      }
+    }
+    const affixes = buildAffixes(data, boss, definition);
+    for (const [slot, families] of Object.entries(affixes)) for (const family of families) {
+      if (!m.equip[slot]?.enchants?.some((e) => e.stat === family && e.value > 0)) {
+        throw new Error(`${build.id} の核心付与を用意できませんでした: ${i + 1}人目/${slot}/${family}`);
+      }
+    }
+    const effects = (definition.coreEffects ?? []).map((family) => resolveBuildFamily(data, boss, family));
+    for (const family of effects) if (!(affixSum(m, family) > 0)) throw new Error(`${build.id} の核心効果がありません: ${family}`);
+    verified.push({ member: i, actions: [...(definition.actions ?? [])], passives: [...(definition.passives ?? [])], affixes, effects });
+  }
+  return verified;
+}
 function preferredArmor(data, job) {
   if (job.startArmorWeight) return job.startArmorWeight;
   const grades = data.jobArmorApt.get(job.id) ?? {};
@@ -132,6 +213,8 @@ export function prepareParty(data, dungeon, profileId = 'balanced', preparation 
   const stage = options.stage ?? Math.min(5, 1 + Math.floor(dungeon.rank / 3));
   if (!Number.isInteger(level) || level < 1 || level > data.balance.player.level_cap) throw new Error('比較用レベルが範囲外です。');
   if (!Number.isInteger(stage) || stage < 1 || stage > 5) throw new Error('比較用技能段階が範囲外です。');
+  const build = BUILD_DEFINITIONS[profileId];
+  if (build && preparation === 'prepared') checkBuildProgress(data, build, dungeon.rank, stage);
   const boss = data.monsters.get(dungeon.bossId);
   if (!boss) throw new Error(`ボスがありません: ${dungeon.bossId}`);
   const itemCap = dungeon.itemLvMin + 3;
@@ -147,9 +230,10 @@ export function prepareParty(data, dungeon, profileId = 'balanced', preparation 
   game.storage = { gear: [], materials: {} };
   const fixture = game.simulationFixture = {
     profile: profileId, preparation, dungeonId: dungeon.id, bossId: dungeon.bossId,
+    ...(build ? { catalogBuildId: build.id, catalogSchemaVersion: BUILD_CATALOG.schemaVersion } : {}),
     rank: dungeon.rank, level, stage, itemCap, enhancement,
     comparison: specialized ? '専用制作と同じ素体・品質・強化の通常制作を比較' : '同★の通常制作で基本と属性・状態耐性の準備を比較',
-    assembly: { gold: 0, byPurpose: {}, materials: {}, ap: {}, jp: 0 }, gear: [], enchants: [], skipped: [],
+    assembly: { gold: 0, byPurpose: {}, materials: {}, ap: {}, jp: 0, ...(build ? { jobTraining: [] } : {}) }, gear: [], enchants: [], skipped: [],
   };
   const grade = Number(data.enchantGrades.filter((r) => Number(r.workshop_rank) <= dungeon.rank)
     .sort((a, b) => Number(b.grade) - Number(a.grade))[0]?.grade ?? 1);
@@ -186,11 +270,18 @@ export function prepareParty(data, dungeon, profileId = 'balanced', preparation 
     transaction('craft', () => craft(data, game, def));
     return game.storage.gear.at(-1);
   };
-  const addEnchant = (m, gear, slot, family, memberIndex) => {
+  const addEnchant = (m, gear, slot, family, memberIndex, required = false) => {
     const def = data.equipment.get(gear.id);
-    if ((gear.enchants?.length ?? 0) >= 2 || gear.enchants?.some((entry) => entry.stat === family)) return;
+    if (gear.enchants?.some((entry) => entry.stat === family)) return;
+    if ((gear.enchants?.length ?? 0) >= 2) {
+      if (required) throw new Error(`${profileId} の核心付与が2枠に入りません: ${memberIndex + 1}人目/${slot}/${family}`);
+      return;
+    }
     const material = materialFor(data, def, family, dungeon.rank);
-    if (!material) { fixture.skipped.push({ member: memberIndex, slot, family, reason: '同★以下の対応素材なし' }); return; }
+    if (!material) {
+      if (required) throw new Error(`${profileId} の核心付与に同★以下の対応素材がありません: ${slot}/${family}`);
+      fixture.skipped.push({ member: memberIndex, slot, family, reason: '同★以下の対応素材なし' }); return;
+    }
     const enchantSlot = gear.enchants?.length ?? 0;
     supply(material.id, 1);
     transaction('enchant', () => enchant(data, game, gear, enchantSlot, material.id, family, grade));
@@ -200,11 +291,15 @@ export function prepareParty(data, dungeon, profileId = 'balanced', preparation 
 
   for (const [i, m] of game.party.entries()) {
     const job = data.jobsById.get(m.job);
+    const definition = memberDefinitions(build)[i];
+    const coreSkills = prepared ? requiredSkills(definition) : [];
     m.lv = level; m.equip = Object.fromEntries(SLOTS.map((slot) => [slot, null]));
     for (const node of [...data.commonTree].sort((a, b) => a.level - b.level)) if (!commonBlock(data, m, node)) learnCommon(data, m, node.id);
     const own = idx.skills.filter((s) => s.job === m.job && s.stage <= stage);
     const wanted = new Set(own.map((s) => s.id));
-    const cross = prepared && specialized && i === 0 ? [...(CROSS_SKILLS[profileId] ?? [])] : [];
+    const cross = prepared && definition ? [...new Set([...(definition.crossSkills ?? []),
+      ...coreSkills.filter((id) => data.skills.get(id).job !== m.job)])]
+      : prepared && specialized && i === 0 ? [...(CROSS_SKILLS[profileId] ?? [])] : [];
     if (prepared && specialized && ['black_mage', 'elementalist', 'hexer'].includes(m.job)) {
       const elemental = idx.skills.filter((s) => s.kind === 'attack' && s.effect.base === 'mag' && s.stage <= stage && !s.isFinal
         && s.elements.some((el) => boss.weak.includes(el)) && publicJobRank(data, s.job) <= dungeon.rank)
@@ -219,20 +314,49 @@ export function prepareParty(data, dungeon, profileId = 'balanced', preparation 
     }
     m.loadout = { actions: [], passives: [] }; m.learned = []; m.ap = {};
     const toLearn = [...wanted].map((id) => data.skills.get(id)).sort((a, b) => a.stage - b.stage || a.id.localeCompare(b.id));
+    // 新カタログの持ち出しは実際に転職してAP習得し、元の職へ戻るJPも計上する。
+    // 既存12編成の費用・生成順は従来の比較結果を保つため変えない。
+    const originalJob = m.job;
+    if (build) {
+      const jobOrder = [originalJob, ...new Set(toLearn.filter((s) => s.job !== originalJob).map((s) => s.job))];
+      toLearn.sort((a, b) => jobOrder.indexOf(a.job) - jobOrder.indexOf(b.job) || a.stage - b.stage || a.id.localeCompare(b.id));
+    }
+    const trainAs = (jobId) => {
+      if (!build || m.job === jobId) return;
+      const from = m.job;
+      const cost = data.jobsById.get(jobId).changeJp;
+      const originalJp = game.jp ?? 0;
+      game.jp = originalJp + cost;
+      changeJob(data, game, i, jobId);
+      if (game.jp !== originalJp) throw new Error('比較用転職費が実際のAPIと一致しません。');
+      fixture.assembly.jp += cost;
+      fixture.assembly.jobTraining.push({ member: i, from, to: jobId, jp: cost });
+    };
     fixture.assembly.ap[m.id] = {};
     for (const s of toLearn) {
       if (isLearned(m, s)) continue;
+      trainAs(s.job);
       m.ap[s.job] = (m.ap[s.job] ?? 0) + s.apToLearn;
       learnSkill(data, m, s.id);
       fixture.assembly.ap[m.id][s.job] = (fixture.assembly.ap[m.id][s.job] ?? 0) + s.apToLearn;
     }
+    trainAs(originalJob);
     m.loadout = { actions: [], passives: [] };
-    const preferred = prepared && specialized && i === 0 ? PRIMARY_PRIORITY[profileId] ?? [] : [];
+    const preferred = prepared && definition ? [...coreSkills, ...(definition.upgrades ?? [])]
+      : prepared && specialized && i === 0 ? PRIMARY_PRIORITY[profileId] ?? [] : [];
     const priority = (s) => genericPriority(s, m.job) + (preferred.includes(s.id) ? 100 : 0)
       + (prepared && specialized && s.kind === 'imbue' && s.elements.some((el) => boss.weak.includes(el)) ? 120 : 0)
       + (prepared && specialized && s.kind === 'attack' && s.effect.base === 'mag' && s.elements.some((el) => boss.weak.includes(el)) ? 45 : 0);
     const kinds = new Set();
+    // 核の低コスト技能をgenericの高段階技能で押し出さない。枠不足は失敗として返す。
+    for (const id of coreSkills) {
+      const s = data.skills.get(id);
+      try { equipSkill(data, m, id); }
+      catch (error) { throw new Error(`${profileId} の核心技能 ${i + 1}人目/${id}: ${error.message}`); }
+      kinds.add(s.kind);
+    }
     for (const s of toLearn.sort((a, b) => priority(b) - priority(a) || a.id.localeCompare(b.id))) {
+      if (m.loadout.actions.includes(s.id) || m.loadout.passives.includes(s.id)) continue;
       if (['heal', 'heal_all', 'revive', 'cure'].includes(s.kind) && kinds.has(s.kind)) continue;
       // 異なる歌・舞を組み合わせる枠は残す。基本編成だけは同種強化を一つに絞る。
       if (!specialized && s.kind === 'party_buff' && kinds.has(s.kind)) continue;
@@ -241,7 +365,8 @@ export function prepareParty(data, dungeon, profileId = 'balanced', preparation 
     }
     const weaponKind = profile.weapons?.[i] ?? job.startWeapon;
     const armorWeight = preferredArmor(data, job);
-    const wants = affixWants(m.job, profileId, i === 0);
+    const requiredAffixes = buildAffixes(data, boss, definition);
+    const wants = { ...affixWants(m.job, profileId, i === 0), ...requiredAffixes };
     for (const slot of ['weapon', ...(profile.offhands?.[i] ? ['offhand'] : []), 'head', 'body', 'arm', 'cloak', 'accessory1', 'accessory2']) {
       const actual = slot.startsWith('accessory') ? 'accessory' : slot === 'offhand' ? 'weapon' : slot;
       const kind = slot === 'offhand' ? profile.offhands[i] : weaponKind;
@@ -267,6 +392,7 @@ export function prepareParty(data, dungeon, profileId = 'balanced', preparation 
         transaction('enhance', () => enhance(data, game, gear, () => 0));
       }
       equipFromStorage(data, game, m, slot, gear.uid);
+      if (prepared) for (const family of requiredAffixes[slot] ?? []) addEnchant(m, gear, slot, family, i, true);
       if (slot === 'weapon' || slot === 'offhand') {
         const attribute = data.weaponTypes.get(def.kind).attackStat === 'mag' ? 'MAG' : 'STR';
         const family = prepared && specialized ? wants.weapon?.[0] ?? attribute : attribute;
@@ -299,8 +425,9 @@ export function prepareParty(data, dungeon, profileId = 'balanced', preparation 
   game.items = { [heal]: 3, [mana]: 2, revive_salts: 1, antidote: 2, ...(dungeon.rank >= 2 ? { panacea: 1 } : {}) };
   fixture.assembly.byPurpose.items = Object.entries(game.items).reduce((sum, [id, count]) => sum + data.items.get(id).price * count, 0);
   fixture.assembly.gold += fixture.assembly.byPurpose.items;
-  fixture.assembly.jp = [...new Set(game.party.map((m) => m.job))].filter((id) => data.jobsById.get(id).tier === 'mid')
+  fixture.assembly.jp += [...new Set(game.party.map((m) => m.job))].filter((id) => data.jobsById.get(id).tier === 'mid')
     .reduce((sum, id) => sum + data.jobsById.get(id).changeJp, 0);
+  if (build && prepared) fixture.core = assertBuildCore(data, game);
   game.gold = initialGold;
   return game;
 }

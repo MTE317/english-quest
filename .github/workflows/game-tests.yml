@@ -5,11 +5,13 @@ on:
     paths:
       - 'game/**'
       - 'data/**'
+      - 'sim/**'
       - '.github/workflows/game-tests.yml'
   pull_request:
     paths:
       - 'game/**'
       - 'data/**'
+      - 'sim/**'
       - '.github/workflows/game-tests.yml'
 
 jobs:

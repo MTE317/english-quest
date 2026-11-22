@@ -26,6 +26,9 @@
 |---|---|
 | [`balance.mjs`](balance.mjs) | 実戦闘エンジンによる遠征の比較、固定の行動方針、乱数、集計 |
 | [`party-fixtures.mjs`](party-fixtures.mjs) | 実際の制作・付与・装備・技能習得APIを通した比較用パーティ作成 |
+| [`build-catalog.json`](build-catalog.json) | 新36案の職・武器・核技能・付与・補助役・運用・弱点。ゲームには読み込まない |
+| [`build-balance.mjs`](build-balance.mjs) | 新36案を完成目安の進度と★12で通常／準備あり比較 |
+| [`build-probes.mjs`](build-probes.mjs) | 合法編成の核効果を制御した戦闘場面で発動確認。勝率とは別の検証 |
 | [`balance-worker.mjs`](balance-worker.mjs) | 遠征比較の並列実行。直接起動する必要はない |
 | [`calibrate.mjs`](calibrate.mjs) | ★ごとの係数候補を探索。採用前の候補をJSONへ出力 |
 | [`onboarding.mjs`](onboarding.mjs) | Lv1・初期装備・初期資金からの新規開始と継続プレイの確認 |
@@ -69,6 +72,22 @@ node sim/balance.mjs \
 
 ### ビルドの探索比較
 
+新36案の第一弾は、各案の比較進度と★12、通常／準備あり、各24seedで確認する。計144条件・3,456遠征。`minStar` はfixtureの技能進度の目安で、実ゲームへ新しい星制限を加える値ではない。主役一人の装備・技能の型を一ビルドと数え、固定の補助三人を付けて計測する。
+
+```sh
+node sim/build-probes.mjs --output sim/results/build36-probes.json
+node sim/build-balance.mjs --runs 24 --workers 2 --seed 927141 \
+  --output sim/results/build36-comparison.json
+```
+
+`prepared` はカタログにある全ての核技能・付与を通常のAPIで先に実現し、欠けたら失敗する。別職で有料技能を習得するための転職と、元の職へ戻すJPも記録する。対照群とLv・素体・品質・強化は同じだが、追加AP・JP・付与・素材の投資まで同額ではない。`fixture.assembly` を読み、初期資金だけで完成する条件と取り違えない。
+
+発動プローブは負傷、MP不足、状態異常、行動順を準備する。確率効果は発動した最初の固定seedを採るため、発動率や踏破率を評価するデータではない。実証値と条件は `build36-probes.json` に収録する。
+
+新36案の自動方策は新効果と武器特性、MP移譲、予告への障壁、睡眠・凍結を残す補助行動を扱う近似ルール。既存12編成の行動方策は引き続き従来のまま。異なる方策・ソースの結果を、そのままビルド間の順位として並べない。
+
+### 以前から維持している12編成
+
 ★3・6・12、12編成、準備あり、正答率80%、各24回。合計864回。
 
 ```sh
@@ -94,7 +113,7 @@ node sim/balance.mjs \
 | `supplies` | 銃士・薬師・吟遊詩人・白魔道士 | 3 |
 | `brawler` | 武闘家・狩人・戦士・白魔道士 | 1 |
 
-これは相性と組み合わせを調べるための固定編成例。ゲーム内の[ビルド手引き](../docs/build-guide.md)は候補を案内するため、同じ系統でも採用する仲間・武器・技能が完全一致するとは限らない。少数試行の差だけで、ジョブ全体の優劣や最強編成を決めない。
+これは以前から維持している12編成の比較例。新36案は [開発用カタログ](build-catalog.json) と [設計・検証資料](../docs/build-catalog.md) にまとめ、ゲーム内では読み込まない。少数試行の差だけで、ジョブ全体の優劣や最強編成を決めない。
 
 ### 個別の行先・全種類・季節
 

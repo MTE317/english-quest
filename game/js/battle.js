@@ -8,8 +8,8 @@
 //
 // 式・効果の上限は data/balance.json から読む。BATTLE_FORMULAS は旧データ向けの既定値。
 import { evaluate } from './expr.js';
-import { computeStats, gearDef, weaponPower, maxHp, maxMp, gearEffects, affixSum } from './character.js?v=rune-study-1';
-import { actionSkills, memberMods, addMasteryKill } from './growth.js?v=rune-study-1';
+import { computeStats, gearDef, weaponPower, maxHp, maxMp, gearEffects, affixSum } from './character.js?v=build36-1';
+import { actionSkills, memberMods, addMasteryKill } from './growth.js?v=build36-1';
 import { encounterMonsters, learnMonsterElements, hitEffectiveness } from './monster-knowledge.js';
 
 /** balance.json にまだ式がないもの（sim と同じ） */
@@ -50,6 +50,18 @@ export const BATTLE_FORMULAS = Object.freeze({
   extra_hit_cap: 0.4,
   counter_affix_cap: 0.35,
   counter_power: 0.75,
+  status_damage_cap: 0.6,
+  first_hit_cap: 0.5,
+  normal_skill_cap: 0.4,
+  evade_counter_cap: 0.35,
+  evade_counter_power: 0.65,
+  critical_mp_cap: 0.05,
+  bonus_mp_action_cap: 0.05,
+  attack_heal_rate_cap: 0.2,
+  attack_heal_action_cap: 0.08,
+  overheal_shield_rate_cap: 0.6,
+  overheal_shield_hp_cap: 0.2,
+  overheal_shield_turns: 2,
   imbue_mul: 1.1,
   confused_self_hit: 0.5,
   max_rounds: 30,
@@ -137,6 +149,7 @@ export function createBattle(data, game, { enemies, seed = Date.now(), canFlee =
     allies: game.party.map((m) => ({
       statuses: Object.fromEntries((m.persist ?? []).map((id) => [id, { turns: 99, n: 1 }])),
       buffs: {}, imbue: null, once: [], endured: false,
+      firstAttackUsed: false, normalSkillReady: false, evadeCounterRound: -1,
     })),
     enemies, partyBuffs: {}, delayed: [], pending: null, log: [],
   };
@@ -325,7 +338,17 @@ function allyTurnStart(data, game, b, i) {
 
 function damageAlly(data, game, b, i, amount, prefix, source) {
   const m = game.party[i];
-  const dmg = Math.max(1, Math.round(amount));
+  let dmg = Math.max(1, Math.round(amount));
+  const barrier = b.allies[i].buffs.barrier;
+  // 生命障壁は敵の直接攻撃だけを吸収する。継続ダメージ・反動・混乱は防がない。
+  if (m.hp > 0 && source?.side === 'enemy' && barrier?.[0] > 0) {
+    const absorbed = Math.min(dmg, barrier[0]);
+    dmg -= absorbed;
+    barrier[0] -= absorbed;
+    if (barrier[0] <= 0) delete b.allies[i].buffs.barrier;
+    log(b, `${m.name}の生命障壁が ${absorbed}のダメージを防いだ`);
+    if (dmg === 0) return;
+  }
   if (m.hp > 0) recordHit(b, 'ally', i, dmg, source);
   m.hp = Math.max(0, m.hp - dmg);
   log(b, `${prefix} ${dmg}のダメージ`);
@@ -340,14 +363,25 @@ function koAlly(game, b, i) {
   // 戦闘不能になると、戦闘のあとも残るもの以外の状態異常は消える
   b.allies[i].statuses = {};
   b.allies[i].buffs = {};
+  b.allies[i].normalSkillReady = false;
   log(b, `${m.name}は倒れた`);
 }
-function healAlly(data, game, b, i, amount) {
+function healAlly(data, game, b, i, amount, overhealRate = 0) {
   const m = game.party[i];
   if (m.hp <= 0) return 0;
   if (has(b.allies[i], 'noheal', data)) { log(b, `${m.name}は呪いで回復できない`); return 0; }
   const before = m.hp;
-  m.hp = Math.min(maxHp(data, m), Math.round(m.hp + amount));
+  const maximum = maxHp(data, m);
+  m.hp = Math.min(maximum, Math.round(m.hp + amount));
+  if (overhealRate > 0) {
+    const excess = Math.max(0, Math.round(amount) - (m.hp - before));
+    const shield = Math.min(Math.floor(maximum * f(data, 'overheal_shield_hp_cap')), Math.floor(excess * overhealRate));
+    if (shield > 0) {
+      const old = bval(b.allies[i].buffs, 'barrier');
+      putBuff(b.allies[i].buffs, 'barrier', shield, f(data, 'overheal_shield_turns') + 1);
+      if (shield > old) log(b, `${m.name}に ${shield}の生命障壁ができた`);
+    }
+  }
   return m.hp - before;
 }
 
@@ -459,6 +493,9 @@ export function resolvePending(data, game, b, correct) {
   const i = p.actor;
   const m = game.party[i];
   const a = b.allies[i];
+  // 通常攻撃の準備は次の選択行動だけに持ち越す。失敗・道具・回復で温存しない。
+  const normalSkillReady = a.normalSkillReady ?? false;
+  a.normalSkillReady = false;
   const cm = correct ? 1 : between(b, data.balance.battle.wrong_answer_mult);
   b.pending = null;
   b.turn = null;
@@ -492,7 +529,7 @@ export function resolvePending(data, game, b, correct) {
       }
     }
   }
-  else if (act.type === 'skill') doSkill(data, game, b, i, data.skills.get(act.skillId), act.target, cm);
+  else if (act.type === 'skill') doSkill(data, game, b, i, data.skills.get(act.skillId), act.target, cm, normalSkillReady);
   else if (act.type === 'item') doItem(data, game, b, i, data.items.get(act.itemId), act.target, cm);
   else if (act.type === 'flee') doFlee(data, game, b, correct, i);
   checkEnd(game, b);
@@ -520,7 +557,7 @@ function attackTargets(b, kind, target) {
  * 1回の攻撃のダメージ（会心・命中を含む）
  * @param skill null なら通常攻撃
  */
-function attackDamage(data, game, b, i, e, skill, cm, { offhand = false } = {}) {
+function attackDamage(data, game, b, i, e, skill, cm, { offhand = false, actionBonus = 0 } = {}) {
   const m = game.party[i];
   const a = b.allies[i];
   const st = battleStats(data, game, b, i);
@@ -572,6 +609,9 @@ function attackDamage(data, game, b, i, e, skill, cm, { offhand = false } = {}) 
   if (Object.keys(enemy.debuffs).length || Object.keys(enemy.statuses).length) {
     pm += affixSum(m, 'VS_DEBUFFED') / 100;
   }
+  // 睡眠・凍結は hitEnemy で解ける前に判定する。異常の種類を重ねても上限は共有。
+  const statusDamage = Object.keys(enemy.statuses).reduce((sum, id) => sum + Math.max(0, affixSum(m, `VS_STATUS:${id}`) / 100), 0);
+  pm += Math.min(f(data, 'status_damage_cap'), statusDamage) + actionBonus;
   if (base === 'weapon' && traits.vs_status && enemy.statuses[traits.vs_status.id]) pm += (traits.vs_status.mul ?? 1) - 1;
   if (!skill) pm += mods.normal_damage ?? 0;
   if (kind === 'mag') pm += mods.magic_damage ?? 0;
@@ -596,8 +636,8 @@ function attackDamage(data, game, b, i, e, skill, cm, { offhand = false } = {}) 
     const crit = chance(b, pc);
     const hit = !(kind === 'phys' && blind && chance(b, data.statusEffects.get(blind).value * (traits.blind_miss_mul ?? 1)))
       && !(kind === 'phys' && !enemy.statuses.bind && enemy.evasion > 0 && chance(b, enemy.evasion));
-    if (crit) crits += 1;
     if (!hit) { misses += 1; continue; }
+    if (crit) crits += 1;
     total += h * evaluate(f(data, 'ally_damage'), {
       atk, em, df, crit: crit ? Math.min(f(data, 'crit_multiplier_cap'), data.balance.battle.crit_mult + (mods.crit_dmg ?? 0)
         + (mods.crit_damage ?? 0) + affixSum(m, 'CRIT_DMG') / 100) : 1, r: between(b, f(data, 'ally_rand')),
@@ -632,19 +672,39 @@ function describeHit({ crits, em, misses }) {
   return [crits ? '会心！' : '', effectiveness === 'weak' ? '弱点！' : effectiveness === 'resist' ? '効きにくい…' : '', misses ? 'はずれた…' : ''].join('');
 }
 
-function doAttack(data, game, b, i, skill, target, cm) {
+function doAttack(data, game, b, i, skill, target, cm, { normalSkillReady = false, spentMp = 0 } = {}) {
   const m = game.party[i];
+  const a = b.allies[i];
   const kind = skill ? targetKind(data, { type: 'skill', skillId: skill.id }) : 'enemy';
   const mainDef = m.equip.weapon ? gearDef(data, m.equip.weapon) : null;
   const wt = mainDef ? data.weaponTypes.get(mainDef.kind) : null;
   const allMul = !skill && wt?.traits.normal_all_mul != null
     ? memberMods(data, m).whip ?? wt.traits.normal_all_mul : null; // 鞭などの通常全体攻撃
   if (!skill) log(b, `${m.name}の攻撃！`);
+  // 初撃は命中や正誤にかかわらず一行動で消費。全体・連打・二刀目には同じ倍率を渡す。
+  const firstBonus = a.firstAttackUsed ? 0 : Math.min(f(data, 'first_hit_cap'), Math.max(0, affixSum(m, 'FIRST_HIT') / 100));
+  const cycleBonus = skill && normalSkillReady ? Math.min(f(data, 'normal_skill_cap'), Math.max(0, affixSum(m, 'NORMAL_SKILL') / 100)) : 0;
+  const actionBonus = firstBonus + cycleBonus;
+  a.firstAttackUsed = true;
+  if (firstBonus > 0) log(b, `${m.name}は初撃に力を込めた！`);
+  if (cycleBonus > 0) log(b, `${m.name}は通常攻撃から技能へつないだ！`);
   let onHitMpGranted = false;
+  let criticalMpGranted = false;
   let extraHitGranted = false;
   let absorbedHp = 0;
-  const weaponHitBonus = (dealt) => {
+  let actualDamage = 0;
+  // 正解通常の基礎5%回復とは別の枠。会心と命中の追加回復はこの枠を共有する。
+  let mpRoom = skill ? spentMp : Math.ceil(maxMp(data, m) * f(data, 'bonus_mp_action_cap'));
+  const grantMp = (requested, prefix) => {
+    const recovery = Math.max(0, Math.min(mpRoom, maxMp(data, m) - m.mp, requested));
+    if (!recovery) return;
+    m.mp += recovery;
+    mpRoom -= recovery;
+    log(b, `${prefix}${m.name}のMPが${recovery}回復`);
+  };
+  const weaponHitBonus = (dealt, hit) => {
     if (dealt <= 0) return;
+    actualDamage += dealt;
     // 吸血は武器を使った攻撃（通常／武器スキル）のみ。オーバーキル分は吸収しない。
     if (!skill || (skill.effect.base ?? 'weapon') === 'weapon') {
       const rate = Math.min(f(data, 'lifesteal_rate_cap'), affixSum(m, 'LIFESTEAL') / 100);
@@ -657,47 +717,74 @@ function doAttack(data, game, b, i, skill, target, cm) {
     }
     // MP回復は通常攻撃1行動につき1回だけ。複数体攻撃で無限に増えない。
     if (!skill && cm === 1 && !onHitMpGranted && affixSum(m, 'MP_ON_HIT') > 0) {
-      const before = m.mp;
-      m.mp = Math.min(maxMp(data, m), m.mp + Math.ceil(maxMp(data, m) * Math.min(f(data, 'on_hit_mp_cap'), affixSum(m, 'MP_ON_HIT') / 100)));
-      if (m.mp > before) log(b, `${m.name}のMPが${m.mp - before}回復`);
+      grantMp(Math.ceil(maxMp(data, m) * Math.min(f(data, 'on_hit_mp_cap'), affixSum(m, 'MP_ON_HIT') / 100)), '');
       onHitMpGranted = true;
     }
+    if (cm === 1 && hit?.crits > 0 && !criticalMpGranted && affixSum(m, 'CRIT_MP') > 0) {
+      grantMp(Math.ceil(maxMp(data, m) * Math.min(f(data, 'critical_mp_cap'), affixSum(m, 'CRIT_MP') / 100)), '会心の余韻！');
+      criticalMpGranted = true;
+    }
+    // 吸魔と会心回復を合わせても、この技能で払ったMPを超えて回収しない。
+    if (cm === 1 && skill?.effect.drain) grantMp(Math.round(dealt * skill.effect.drain / 10), '');
+  };
+  const finishAttack = () => {
+    if (!skill && cm === 1 && actualDamage > 0 && affixSum(m, 'NORMAL_SKILL') > 0) {
+      a.normalSkillReady = true;
+      log(b, `${m.name}は次の攻撃技能に備えた`);
+    }
+    if (skill?.effect.selfcost) {
+      const before = m.hp;
+      m.hp = Math.max(1, Math.round(m.hp - maxHp(data, m) * skill.effect.selfcost));
+      recordHit(b, 'ally', i, before - m.hp);
+      log(b, `${m.name}は反動を受けた`);
+    }
+    const rate = Math.min(f(data, 'attack_heal_rate_cap'), affixSum(m, 'ATTACK_HEAL') / 100);
+    if (cm !== 1 || actualDamage <= 0 || rate <= 0) return;
+    const targets = game.party.map((member, index) => ({ member, index, max: maxHp(data, member) }))
+      .filter(({ member, max }) => member.hp > 0 && member.hp < max)
+      .sort((x, y) => x.member.hp / x.max - y.member.hp / y.max);
+    const weakest = targets[0];
+    if (!weakest) return;
+    const amount = Math.min(Math.floor(weakest.max * f(data, 'attack_heal_action_cap')), Math.round(actualDamage * rate));
+    const healed = healAlly(data, game, b, weakest.index, amount);
+    if (healed > 0) log(b, `${m.name}の攻撃が癒しとなり、${weakest.member.name}のHPが ${healed} 回復`);
   };
   if (skill?.effect.tgt === 'random') {
     for (let n = 0; n < (skill.effect.n ?? 1); n++) {
       const alive = livingEnemies(b);
       if (!alive.length) break;
       const e = pick(b, alive);
-      const r = attackDamage(data, game, b, i, e, skill, cm);
+      const r = attackDamage(data, game, b, i, e, skill, cm, { actionBonus });
       const before = b.enemies[e].hp;
       hitEnemy(data, game, b, i, e, r.damage, { ...r, prefix: describeHit(r) });
-      weaponHitBonus(Math.max(0, before - b.enemies[e].hp));
+      weaponHitBonus(Math.max(0, before - b.enemies[e].hp), r);
     }
+    finishAttack();
     return;
   }
   const targets = allMul ? livingEnemies(b) : attackTargets(b, kind, target);
   for (const e of targets) {
-    const r = attackDamage(data, game, b, i, e, skill, cm);
+    const r = attackDamage(data, game, b, i, e, skill, cm, { actionBonus });
     const before = b.enemies[e].hp;
     const primaryDamage = Math.round(r.damage * (allMul ?? 1));
     hitEnemy(data, game, b, i, e, primaryDamage, { ...r, prefix: describeHit(r) });
     const dealt = Math.max(0, before - b.enemies[e].hp);
-    weaponHitBonus(dealt);
+    weaponHitBonus(dealt, r);
     // 追撃は通常攻撃1行動につき最大1回。追加ヒットからの再発動はなし。
     if (!skill && !extraHitGranted && dealt > 0 && b.enemies[e].hp > 0
       && chance(b, Math.min(f(data, 'extra_hit_cap'), affixSum(m, 'EXTRA_HIT') / 100))) {
       extraHitGranted = true;
       const beforeExtra = b.enemies[e].hp;
       hitEnemy(data, game, b, i, e, Math.round(primaryDamage * 0.5), { ...r, prefix: '追加攻撃！' });
-      weaponHitBonus(Math.max(0, beforeExtra - b.enemies[e].hp));
+      weaponHitBonus(Math.max(0, beforeExtra - b.enemies[e].hp), r);
     }
     if (!skill && m.equip.offhand && b.enemies[e].hp > 0) {
-      const r2 = attackDamage(data, game, b, i, e, null, cm, { offhand: true });
+      const r2 = attackDamage(data, game, b, i, e, null, cm, { offhand: true, actionBonus });
       const secondDamage = Math.round(r2.damage * data.balance.battle.dual_wield_second_hit);
       const beforeSecond = b.enemies[e].hp;
       hitEnemy(data, game, b, i, e, secondDamage, { ...r2, prefix: `二刀目！${describeHit(r2)}` });
       const secondDealt = Math.max(0, beforeSecond - b.enemies[e].hp);
-      weaponHitBonus(secondDealt);
+      weaponHitBonus(secondDealt, r2);
       // サブ武器の通常攻撃固有効果も命中時に発動する（例：鎚のスタン）
       const offhandTrait = weaponTraits(data, m.equip.offhand).normal_status;
       if (secondDealt > 0 && b.enemies[e].hp > 0 && offhandTrait) {
@@ -734,21 +821,15 @@ function doAttack(data, game, b, i, skill, target, cm) {
       const others = livingEnemies(b).filter((j) => j !== e);
       if (others.length && chance(b, wt.traits.splash_chance)) {
         const other = pick(b, others);
-        const extra = attackDamage(data, game, b, i, other, null, cm);
+        const extra = attackDamage(data, game, b, i, other, null, cm, { actionBonus });
         const beforeOther = b.enemies[other].hp;
         hitEnemy(data, game, b, i, other, Math.round(extra.damage * (wt.traits.splash_mul ?? 0.5)),
           { ...extra, prefix: `貫通！${describeHit(extra)}` });
-        weaponHitBonus(Math.max(0, beforeOther - b.enemies[other].hp));
+        weaponHitBonus(Math.max(0, beforeOther - b.enemies[other].hp), extra);
       }
     }
-    if (skill?.effect.drain && cm === 1) m.mp = Math.min(maxMp(data, m), m.mp + Math.min(skillMp(data, m, skill), Math.round(dealt * skill.effect.drain / 10)));
   }
-  if (skill?.effect.selfcost) {
-    const before = m.hp;
-    m.hp = Math.max(1, Math.round(m.hp - maxHp(data, m) * skill.effect.selfcost));
-    recordHit(b, 'ally', i, before - m.hp);
-    log(b, `${m.name}は反動を受けた`);
-  }
+  finishAttack();
 }
 
 const CONTROL_KINDS = new Set(['skip_until_hit', 'skip_once', 'skip_chance', 'petrify', 'random_target', 'charm']);
@@ -807,15 +888,17 @@ function putBuff(buffs, key, value, turns) {
 }
 
 // ---------------- スキル ----------------
-function doSkill(data, game, b, i, s, target, cm) {
+function doSkill(data, game, b, i, s, target, cm, normalSkillReady = false) {
   const m = game.party[i];
   const a = b.allies[i];
   const block = skillBlock(data, game, b, i, s);
   if (block) { log(b, `${s.name}は使えなかった（${block}）`); return; }
-  m.mp -= skillMp(data, m, s);
+  const spentMp = skillMp(data, m, s);
+  m.mp -= spentMp;
   if (s.effect.once) a.once.push(s.id);
   log(b, `${m.name}の${s.name}！`);
   const e = s.effect;
+  const shieldRate = cm === 1 ? Math.min(f(data, 'overheal_shield_rate_cap'), affixSum(m, 'OVERHEAL_SHIELD') / 100) : 0;
   const allies = (pred = (j) => game.party[j].hp > 0) => game.party.map((x, j) => j).filter(pred);
   const healAmt = () => {
     const st = battleStats(data, game, b, i);
@@ -844,17 +927,17 @@ function doSkill(data, game, b, i, s, target, cm) {
       break;
     }
     case 'attack':
-      doAttack(data, game, b, i, s, target, cm);
+      doAttack(data, game, b, i, s, target, cm, { normalSkillReady, spentMp });
       break;
     case 'heal': {
       const t = game.party[target]?.hp > 0 ? target : i;
-      const v = healAlly(data, game, b, t, healAmt() * between(b, f(data, 'ally_rand')));
+      const v = healAlly(data, game, b, t, healAmt() * between(b, f(data, 'ally_rand')), shieldRate);
       log(b, `${game.party[t].name}のHPが ${v} 回復`);
       break;
     }
     case 'heal_all': {
       const amt = healAmt();
-      for (const j of allies()) healAlly(data, game, b, j, amt);
+      for (const j of allies()) healAlly(data, game, b, j, amt, shieldRate);
       if (e.cure) for (const j of allies()) cureAlly(data, game, b, j, () => chance(b, cm));
       if (e.revive_all) {
         for (const j of allies((x) => game.party[x].hp <= 0 && !isPetrified(b, x))) {
@@ -1110,7 +1193,20 @@ function enemyTurn(data, game, b, e) {
     const ta = b.allies[t];
     const ts = battleStats(data, game, b, t);
     const magic = chance(b, enemy.magicRate) && !enemy.statuses.silence;
-    if (!has(ta, 'noevade_noflee', data) && chance(b, ts.evasion)) { log(b, `${target.name}はひらりとかわした`); continue; }
+    if (!has(ta, 'noevade_noflee', data) && chance(b, ts.evasion)) {
+      log(b, `${target.name}はひらりとかわした`);
+      const retaliation = Math.min(f(data, 'evade_counter_cap'), affixSum(target, 'EVA_COUNTER') / 100);
+      if (!magic && enemy.hp > 0 && canAct(game, b, t) && ta.evadeCounterRound !== b.round
+        && retaliation > 0 && chance(b, retaliation)) {
+        ta.evadeCounterRound = b.round;
+        // 回避反撃は一巡一回。初撃・技能準備・追撃・吸収・MP回復を呼び出さない。
+        const r = attackDamage(data, game, b, t, e, null,
+          f(data, 'evade_counter_power') * (1 + (memberMods(data, target).counter_power ?? 0)));
+        hitEnemy(data, game, b, t, e, r.damage, { ...r, prefix: `${target.name}の回避反撃！${describeHit(r)}` });
+      }
+      if (enemy.hp <= 0) break;
+      continue;
+    }
     if (!magic && enemy.statuses.blind && chance(b, data.statusEffects.get('blind').value)) { log(b, `${enemy.name}の攻撃ははずれた`); continue; }
     const down = enemy.statuses.statdown ? 1 - (data.statusEffects.get('statdown')?.value ?? 0) : 1;
     const burn = !magic && enemy.statuses.burn ? 1 - (data.statusEffects.get('statdown')?.value ?? 0) : 1;
