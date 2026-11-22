@@ -5,8 +5,8 @@ from db import JOBS, WEAPONS, ARMOR_W, BY_JOB, STAGE_AP, TIER
 
 T = dict(
     mercy=0.0, wipe_xp_keep=0.0, farm_after_wipe=2, e_hp=1.478, hp0=150, hp1=6.5, s0=15, s1=4.5, s2=0.22, e_atk=1.62, boss_hp=4.5, boss_atk=1.25,
-    hp_rank_mul={1: 1.6, 2: 2.3, 3: 2.0, 4: 2.0, 5: 2.0, 6: 2.6, 7: 3.3, 8: 3.3, 9: 3.3, 10: 3.3, 11: 2.6, 12: 3.3},   # ★ごとの敵HP補正（★12版で前線から調整）
-    atk_rank_mul={1: 1.491, 2: 2.029, 3: 1.803, 4: 1.803, 5: 1.803, 6: 2.25, 7: 2.756, 8: 2.756, 9: 2.756, 10: 2.756, 11: 2.25, 12: 2.756},
+    hp_rank_mul={1: 1.6, 2: 2.34, 3: 2.14, 4: 2.16, 5: 2.18, 6: 2.87, 7: 2.86, 8: 3.05, 9: 3.01, 10: 2.78, 11: 2.84, 12: 3.07},   # ★ごとの敵HP補正（★12版で前線から調整）
+    atk_rank_mul={1: 1.491, 2: 2.06, 3: 1.909, 4: 1.924, 5: 1.939, 6: 2.45, 7: 2.443, 8: 2.58, 9: 2.551, 10: 2.385, 11: 2.428, 12: 2.595},
     enh_base=1.8, elite_rate=0.08, xp_k=1.0, xp_pen=0.25, xp_pen_min=0.0, xp_free=1, rank_cap=0, lv_margin=0, mp_regen=0.10, mp_atk=0.05, mp_lv=0.015,
     acc_drop=db.BAL.get("accuracy_drop_per_rank", 0.03),
     borrow=1,            # ほかのジョブのスキルを持ち出す
@@ -90,7 +90,7 @@ class Char:
         v = (70 + g * 30 + (s.lv - 1) * g * 9) if k == "HP" else (8 + g * 6 + (s.lv - 1) * g * 1.6)
         return v + s.aff(k)
     def maxhp(s):
-        return max(1, round(s.base("HP") * (1 + s.room.get("hp", 0) + s.mods.get("hp", 0) + (s.rune.get("HP", 0) if getattr(s, "rune", None) else 0) - (0.2 if "衰弱" in s.persist else 0))))
+        return max(1, round(s.base("HP") * (1 + T.get("xs", 0)) * (1 + s.room.get("hp", 0) + s.mods.get("hp", 0) + (s.rune.get("HP", 0) if getattr(s, "rune", None) else 0) - (0.2 if "衰弱" in s.persist else 0))))
     def maxmp(s): return round((12 + s.grade("MAG") * 6 + (s.lv - 1) * 2) * (1 + s.room.get("mp", 0)))
     def mastery_lv(s, t=None): return min(10, s.mastery.get(t or s.weapon["t"], 0) // 30)
     def wapt(s, t): return APT.get(JOBS[s.job]["w"].get(t, ""), 0)
@@ -112,6 +112,7 @@ class Char:
         if k == "DEF": v *= 1 + s.mods.get("def", 0)
         if k == "RES": v *= 1 + s.mods.get("res", 0)
         if k == "MAG": v *= 1 + s.mods.get("mag", 0)
+        v *= 1 + T.get("xs", 0)   # 固有・セット・振り直しなどの上乗せ（感度を見るため）
         return v * (1 + s.rune.get(k, 0)) if getattr(s, "rune", None) else v
     def scale(s): return 20 + 6 * s.lv
     def crt(s): return 0.03 + 0.15 * s.stat("LUK") / s.scale() + WEAPONS[s.weapon["t"]].get("crt", 0) + s.aff("CRT") / 100 + s.mods.get("crt", 0)
