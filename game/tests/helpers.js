@@ -38,5 +38,14 @@ export function realGameData() {
     equipment: readCsv('equipment.csv').rows,
     icons: readCsv('appearance_icons.csv').rows,
     rarities: readCsv('rarities.csv').rows,
+    monsters: readCsv('monsters.csv').rows,
+    monsterTypes: readCsv('monster_types.csv').rows,
+    elements: readCsv('elements.csv').rows,
+    statusEffects: readCsv('status_effects.csv').rows,
+    skills: readCsv('skills.csv').rows,
+    items: readCsv('items.csv').rows,
+    elitePrefixes: readCsv('elite_prefixes.csv').rows,
+    dungeons: readCsv('dungeons.csv').rows,
+    dungeonFloors: readCsv('dungeon_floors.csv').rows,
   });
 }

@@ -103,3 +103,16 @@ test('間違えた単語はあとでもう一度出る', () => {
   assert.equal(last.word.id, first.word.id);
   assert.equal(last.reason, REASON.RETRY);
 });
+
+test('出題の状態を保存して戻すと、続きから同じ順で出る', () => {
+  const store = new LearningStore(new MemoryStorage());
+  const p = new QuestionPicker({ lex, store, scheduler: sch, stoneId: 'rs_1_001', nowMs: T0 });
+  for (let i = 0; i < 4; i++) { const x = p.next(); store.set(x.word.id, sch.review(null, i % 2 === 0, T0)); p.report(x.word.id, i % 2 === 0); }
+  const saved = JSON.parse(JSON.stringify(p.toState()));
+  const q = new QuestionPicker({ lex, store, scheduler: sch, stoneId: 'rs_1_001', nowMs: T0, state: saved });
+  for (let i = 0; i < 6; i++) {
+    const a = p.next(); const b = q.next();
+    assert.equal(a.word.id, b.word.id); assert.equal(a.reason, b.reason);
+    p.report(a.word.id, true); q.report(b.word.id, true);
+  }
+});

@@ -10,6 +10,7 @@ test('四則・べき乗・かっこ・関数', () => {
   assert.equal(evaluate('-2^2'), -4);
   assert.equal(evaluate('max(0, 1 - 0.25*x)', { x: 8 }), 0);
   assert.equal(evaluate('a.b * 強化値', { 'a.b': 2, 強化値: 3 }), 6);
+  assert.equal(evaluate('x * hp_rank_mul[★]', { x: 2, 'hp_rank_mul[★]': 1.5 }), 3);
 });
 
 test('読めない式・変数がないときは例外', () => {
@@ -23,4 +24,6 @@ test('balance.json の能力値の式が読める', () => {
   const p = readJson('balance.json').player;
   for (const k of ['hp', 'other_stats', 'mp', 'xp_to_next']) assert.ok(isFormula(p[k]), k);
   assert.ok(isFormula(readJson('balance.json').armor_value));
+  const e = readJson('balance.json').enemy;
+  for (const k of ['hp', 'str_mag', 'spd']) assert.ok(isFormula(e[k]), k);
 });

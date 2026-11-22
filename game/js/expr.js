@@ -1,5 +1,5 @@
 // data/balance.json の式（"70 + g*30 + (Lv-1)*g*9" など）を計算する。eval は使わない。
-// 使えるもの：数、変数（英字・日本語。a.b のような名前も1つの変数）、+ - * / ^、かっこ、min / max / round / floor / ceil / abs / sqrt
+// 使えるもの：数、変数（英字・日本語。a.b や hp_rank_mul[★] のような名前も1つの変数）、+ - * / ^、かっこ、min / max / round / floor / ceil / abs / sqrt
 // 式として読めない文字列（説明の文が混ざっているもの）は例外を投げる。
 
 const FUNCS = {
@@ -8,7 +8,7 @@ const FUNCS = {
 
 function tokenize(src) {
   const tokens = [];
-  const re = /\s*(?:(\d+\.?\d*(?:[eE][-+]?\d+)?|\.\d+)|([\p{L}_][\p{L}\p{N}_.]*)|(\*\*|[-+*/^(),]))/uy;
+  const re = /\s*(?:(\d+\.?\d*(?:[eE][-+]?\d+)?|\.\d+)|([\p{L}_][\p{L}\p{N}_.]*(?:\[[^\]\s]*\])?)|(\*\*|[-+*/^(),]))/uy;
   let pos = 0;
   while (pos < src.length) {
     if (/^\s*$/.test(src.slice(pos))) break;
