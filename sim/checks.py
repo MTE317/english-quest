@@ -72,7 +72,7 @@ def summarize(gs):
         overdue=st.mean(G["overdue_months"] / max(1, G["months"]) for G in Gs), short=st.mean(G["short_months"] / max(1, G["months"]) for G in Gs),
         fixed_share=st.mean(G["spend"]["会費・倉庫"] for G in Gs) / earn, unlock=unlock, adv=adv,
         dungeon_use=dict(sum((G["dungeon_use"] for G in Gs), Counter())),
-        gate_block=st.mean(G["gate_block"] for G in Gs), item_battle=dict(sum((Counter(g.S.get("item_battle", {})) for g in gs), Counter())),
+        item_battle=dict(sum((Counter(g.S.get("item_battle", {})) for g in gs), Counter())),
         equip_src=dict(sum((G["equip_src"] for G in Gs), Counter())), crafts=dict(sum((G["crafts"] for G in Gs), Counter())),
         spend={k: v / len(Gs) / earn for k, v in sum((G["spend"] for G in Gs), Counter()).items()},
         earn={k: v / len(Gs) / earn for k, v in sum((G["earn"] for G in Gs), Counter()).items()},
