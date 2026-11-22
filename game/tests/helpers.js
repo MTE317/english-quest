@@ -47,5 +47,12 @@ export function realGameData() {
     elitePrefixes: readCsv('elite_prefixes.csv').rows,
     dungeons: readCsv('dungeons.csv').rows,
     dungeonFloors: readCsv('dungeon_floors.csv').rows,
+    dropTables: readCsv('drop_tables.csv').rows,
+    economy: readCsv('economy_by_rank.csv').rows,
+    materials: readCsv('materials.csv').rows,
+    affixes: readCsv('affixes.csv').rows,
+    uniques: readCsv('uniques.csv').rows,
+    backpack: readCsv('backpack.csv').rows,
+    ranks: readCsv('adventurer_ranks.csv').rows,
   });
 }

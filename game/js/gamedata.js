@@ -23,6 +23,13 @@ const FILES = {
   elitePrefixes: 'elite_prefixes.csv',
   dungeons: 'dungeons.csv',
   dungeonFloors: 'dungeon_floors.csv',
+  dropTables: 'drop_tables.csv',
+  economy: 'economy_by_rank.csv',
+  materials: 'materials.csv',
+  affixes: 'affixes.csv',
+  uniques: 'uniques.csv',
+  backpack: 'backpack.csv',
+  ranks: 'adventurer_ranks.csv',
 };
 
 const byId = (rows, key = 'id') => new Map(rows.map((r) => [r[key], r]));
@@ -57,10 +64,18 @@ export function buildGameData(raw) {
   const armorWeights = byId(raw.armorWeights.map((r) => ({
     id: r.id, name: r.name, defResMul: toNumber(r.def_res_mul, 1), spdMod: toNumber(r.spd_mod, 0), evasionBonus: toNumber(r.evasion_bonus, 0),
   })));
-  const equipment = byId(raw.equipment.map((r) => ({
-    id: r.id, name: r.name, slot: r.slot, kind: r.weapon_type_or_kind || null, armorWeight: r.armor_weight || null,
-    itemLv: toNumber(r.item_lv, 1), star: toNumber(r.star, 1), source: r.source,
-  })));
+  const equipment = byId([
+    ...raw.equipment.map((r) => ({
+      id: r.id, name: r.name, slot: r.slot, kind: r.weapon_type_or_kind || null, armorWeight: r.armor_weight || null,
+      itemLv: toNumber(r.item_lv, 1), star: toNumber(r.star, 1), source: r.source, unique: false,
+    })),
+    // 固有装備（ボス・賞金首が落とす）も同じ表で引けるようにする
+    ...(raw.uniques ?? []).map((r) => ({
+      id: r.id, name: r.name, slot: r.slot, kind: r.kind || null, armorWeight: r.armor_weight || null,
+      itemLv: toNumber(r.item_lv, 1), star: toNumber(r.star, 1), source: r.source, unique: true,
+      dropRate: toNumber(r.drop_rate, 0), fixedEffects: parseEffects(r.fixed_effects),
+    })),
+  ]);
   const aptTable = (rows) => new Map(rows.map((r) => [r.job_id, r]));
 
   return {
@@ -77,6 +92,17 @@ export function buildGameData(raw) {
     rarities: raw.rarities.map((r) => ({ id: r.id, name: r.name })),
     ...buildBattleData(raw),
   };
+}
+
+/** `STR:4|特効:beast:15` → { STR: 4, '特効:beast': 15 } */
+export function parseEffects(cell) {
+  const out = {};
+  for (const part of splitList(cell)) {
+    const bits = part.split(':').map((x) => x.trim());
+    const value = Number(bits.pop());
+    out[bits.join(':')] = (out[bits.join(':')] ?? 0) + value;
+  }
+  return out;
 }
 
 /**
@@ -139,7 +165,29 @@ function buildBattleData(raw) {
     dungeonId: r.dungeon_id, floor: toNumber(r.floor, 1), enemyLevel: toNumber(r.enemy_level, 1), battles: toNumber(r.battles, 1),
     enemiesPerBattle: toNumber(r.enemies_per_battle, 1), lastBattleIsBoss: r.last_battle_is_boss === '1', returnPointAfter: r.return_point_after === '1',
   }));
+  const loot = raw.dropTables ? {
+    dropTables: byId(raw.dropTables.map((r) => ({
+      dungeonId: r.dungeon_id, gearRate: toNumber(r.gear_drop_rate_per_battle, 0), materialRate: toNumber(r.material_rate_per_enemy, 0),
+      rareRate: toNumber(r.rare_material_rate, 0), goldShare: toNumber(r.gold_share_of_run_income, 0), bossGoldMul: toNumber(r.boss_gold_mul, 1),
+      bossGearDrop: toNumber(r.boss_gear_drop, 0), bountyChance: toNumber(r.bounty_chance_per_run, 0),
+    })), 'dungeonId'),
+    economy: new Map(raw.economy.map((r) => [toNumber(r.dungeon_rank, 1), Object.fromEntries(Object.entries(r).map(([k, v]) => [k, toNumber(v, v)]))])),
+    materials: byId(raw.materials.map((r) => ({
+      id: r.id, name: r.name, rank: toNumber(r.rank, 1), kind: r.kind, sourceMonster: r.source_monster, season: r.season, element: r.element,
+    }))),
+    affixes: raw.affixes.map((r) => ({
+      slot: r.slot, stat: r.stat, min: toNumber(r.min, 0), max: toNumber(r.max, 0), scales: r.scales_with_item_lv === '1', weight: toNumber(r.weight, 1),
+    })),
+    rarityTable: raw.rarities.map((r) => ({ id: r.id, name: r.name, weight: toNumber(r.drop_weight_pct, 0), effects: toNumber(r.random_effects, 0) })),
+    backpackTiers: raw.backpack.map((r) => ({ tier: toNumber(r.tier, 1), slots: toNumber(r.slots, 12), gold: toNumber(r.gold, 0), materials: r.materials, shopRank: toNumber(r.shop_rank, 1) })),
+    ranks: raw.ranks.map((r) => ({
+      id: r.id, title: r.title, pointsRequired: toNumber(r.points_required, 0), maxDungeonRank: toNumber(r.max_dungeon_rank, 1),
+      needsBossClear: r.needs_boss_clear === '1', needsExam: r.needs_exam === '1', questBonus: toNumber(r.quest_bonus, 0),
+      shopDiscount: toNumber(r.shop_discount, 0), perk: r.perk,
+    })),
+  } : {};
   return {
+    ...loot,
     monsters: byId(monsters),
     monsterTypes: byId(raw.monsterTypes.map((r) => ({ id: r.id, name: r.name }))),
     elements: byId(raw.elements.map((r) => ({ id: r.id, name: r.name, kind: r.kind }))),

@@ -174,9 +174,10 @@ export function computeStats(data, member) {
   out.attack = Math.round(weaponPower(data, member, member.equip.weapon));
   out.offhandAttack = Math.round(weaponPower(data, member, member.equip.offhand));
   const env = { LUK: out.luk, SPD: out.spd, Lv: member.lv, crit_bonus: wt?.critBonus ?? 0, armor_evasion: armorEva / ARMOR_SLOTS.length };
-  out.crit = evaluate(formula(data, 'crit'), env);
-  out.evasion = evaluate(formula(data, 'evasion'), env);
-  out.statusResist = evaluate(formula(data, 'status_resist'), env);
+  // 装備の効果（CRT・EVA・STATUS_RES は % の値）
+  out.crit = evaluate(formula(data, 'crit'), env) + affixSum(member, 'CRT') / 100;
+  out.evasion = evaluate(formula(data, 'evasion'), env) + affixSum(member, 'EVA') / 100;
+  out.statusResist = evaluate(formula(data, 'status_resist'), env) + affixSum(member, 'STATUS_RES') / 100;
   return out;
 }
 

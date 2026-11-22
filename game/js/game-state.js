@@ -18,6 +18,8 @@ export function createNewGame(data, partySpecs) {
     party: [],
     storage: { gear: [], materials: {} },
     items: {},
+    rank: data.ranks?.[0]?.id ?? null, // 冒険者ランク（adventurer_ranks.csv の最初）
+    backpackTier: data.backpackTiers?.[0]?.tier ?? 1,
   };
   game.party = partySpecs.map((spec, i) => createMember(data, game, spec, i));
   return game;
