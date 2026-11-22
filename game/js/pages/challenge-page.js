@@ -6,15 +6,16 @@ import { Scheduler } from '../srs.js?v=features-2';
 import { LearningStore, now } from '../storage.js?v=features-2';
 import { GameSession } from '../save.js?v=features-2';
 import { normalizeGame } from '../game-state.js?v=features-2';
-import { createBattle, makeEnemy, finishBattle } from '../battle.js?v=features-2';
-import { currentRank, useItemOutsideBattle, FIELD_ITEM_EFFECTS } from '../dungeon.js?v=features-2';
+import { createBattle, makeEnemy, finishBattle } from '../battle.js?v=jrpg-1';
+import { currentRank, useItemOutsideBattle, FIELD_ITEM_EFFECTS } from '../dungeon.js?v=jrpg-1';
 import { nextRankStatus, checkRankUp } from '../town.js?v=features-2';
 import { updateRuneModifiers } from '../temple.js?v=features-2';
-import { makeGear } from '../character.js?v=features-2';
+import { makeGear } from '../character.js?v=jrpg-1';
 import { examWords, starLearnedRatio } from '../study.js?v=features-2';
-import { createBattleView } from '../ui/battle-view.js?v=question-speech-1';
-import { runQuiz } from '../ui/quiz-runner.js?v=question-speech-1';
+import { createBattleView } from '../ui/battle-view.js?v=jrpg-1';
+import { runQuiz } from '../ui/quiz-runner.js?v=jrpg-1';
 import { el, render } from '../dom.js';
+import { setSceneMusic } from '../battle-music.js?v=jrpg-1';
 
 const view = document.getElementById('view');
 const session = new GameSession();
@@ -167,6 +168,7 @@ function draw() {
     return;
   }
   if (run?.battle) { createBattleView({ view, data, lex, store, scheduler, session, onEnd: endBattle }).start(); return; }
+  setSceneMusic(run ? 'dungeon' : 'facility');
   const banner = message ? el('p', { role: 'status' }, message) : null;
   if (run) {
     if (run.challenge === 'arena' && run.battlesDone >= run.battles.length) { completeArena(); return; }

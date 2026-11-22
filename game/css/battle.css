@@ -222,9 +222,9 @@ body:has(.battle-screen) { background: #10171e; }
 @keyframes battle-impact {
   0%, 22% {
     transform: scale(var(--battle-hit-scale, 1.04));
-    background: #582a31;
-    border-color: #ff8c82;
-    box-shadow: 0 0 0 2px #ff75634d, 0 0 14px #ff55494d;
+    background: var(--impact-bg, #582a31);
+    border-color: var(--impact-border, #ff8c82);
+    box-shadow: 0 0 0 2px #ff75634d, 0 0 14px var(--impact-glow, #ff55494d);
     opacity: 1;
   }
 }
@@ -463,3 +463,53 @@ body:has(.battle-screen) { background: #10171e; }
   .battle-party:is([data-count="5"], [data-count="6"]) .battle-ally { gap: 3px; padding-inline: 4px; }
   .battle-party:is([data-count="5"], [data-count="6"]) .battle-ally-icon { font-size: .9rem; }
 }
+
+.battle-screen button.battle-enemy[aria-haspopup] { border-color: #4e6262; background: #17282c9c; }
+.battle-inspect {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  color: var(--battle-dim);
+  font-size: .62rem;
+}
+.battle-known-weak { color: #ffdb87; font-size: .72rem; }
+.battle-hit-number small { display: inline-block; margin-right: 4px; font-size: .69em; }
+.battle-screen .battle-hit[data-impact="weak"] {
+  --impact-bg: #55421e;
+  --impact-border: #ffd67c;
+  --impact-glow: #ffb845;
+}
+.battle-screen .battle-hit[data-impact="resist"] {
+  --impact-bg: #233953;
+  --impact-border: #a0c9ed;
+  --impact-glow: #81b5e4;
+}
+.battle-hit[data-impact="weak"] .battle-hit-number { border-color: #ffd67c; color: #fff0bb; }
+.battle-hit[data-impact="resist"] .battle-hit-number { border-color: #a0c9ed; background: #202c41; color: #d0eaff; }
+
+.battle-encyclopedia {
+  width: min(92vw, 380px);
+  max-height: 85svh;
+  padding: 0;
+  border: 1px solid #b69b65;
+  border-radius: 13px;
+  background: var(--battle-bg);
+  color: var(--battle-ink);
+}
+.battle-encyclopedia::backdrop { background: #070c11bb; }
+.battle-encyclopedia-body { padding: 15px; }
+.battle-encyclopedia :is(h3, p) { margin: 4px 0 9px; }
+.battle-encyclopedia h3 { color: var(--battle-gold); }
+.battle-encyclopedia dl {
+  display: grid;
+  grid-template-columns: minmax(0, auto) 1fr;
+  gap: 6px 12px;
+  margin: 12px 0;
+  padding: 10px;
+  border: 1px solid var(--battle-line);
+  border-radius: 8px;
+  background: var(--battle-card);
+  font-size: .88rem;
+}
+.battle-encyclopedia dd { margin: 0; }
+.battle-encyclopedia dt { color: var(--battle-dim); }

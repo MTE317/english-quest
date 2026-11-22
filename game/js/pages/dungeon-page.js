@@ -10,14 +10,15 @@ import { normalizeGame } from '../game-state.js?v=features-2';
 import {
   allowedDungeons, startRun, startNextBattle, afterBattle, returnToTown, continueRun, resolveLoot,
   isBossBattle, runFloorRow, returnItems, currentRank, useItemOutsideBattle, FIELD_ITEM_EFFECTS,
-} from '../dungeon.js?v=features-2';
+} from '../dungeon.js?v=jrpg-1';
 import { backpackSlots, backpackUsed, addItem } from '../loot.js?v=features-2';
-import { maxHp, maxMp } from '../character.js?v=features-2';
-import { createBattleView } from '../ui/battle-view.js?v=question-speech-1';
+import { maxHp, maxMp } from '../character.js?v=jrpg-1';
+import { createBattleView } from '../ui/battle-view.js?v=jrpg-1';
 import { createVictoryView } from '../ui/victory-view.js?v=features-2';
 import { updateRuneModifiers } from '../temple.js?v=features-2';
 import { stoneAllowed } from '../study.js?v=features-2';
 import { el, render, stars } from '../dom.js';
+import { setSceneMusic } from '../battle-music.js?v=jrpg-1';
 
 const view = document.getElementById('view');
 const session = new GameSession();
@@ -35,6 +36,7 @@ function partyPanel() {
 
 // ---------------- 行き先を選ぶ（町） ----------------
 function showDeparture(message = null) {
+  setSceneMusic('dungeon');
   const g = session.game;
   if (!g?.party) {
     render(view, el('p', {}, 'まだパーティがいません。'), el('a', { class: 'btn primary', href: 'party.html' }, 'パーティを作る'));
@@ -104,6 +106,7 @@ function showRun(result = null) {
   if (!run) return showDeparture();
   if (run.battle) return battleView().start();
   if (run.state === 'ready' && run.battlesDone === 0) return beginBattle();
+  setSceneMusic('dungeon');
   if (run.state === 'loot') {
     render(view, lootActions(result));
     return;
@@ -158,6 +161,7 @@ function summary(run) {
 }
 
 function showReturned(pack) {
+  setSceneMusic('town');
   render(view,
     el('h2', {}, '町に帰った'),
     el('div', { class: 'panel small' },

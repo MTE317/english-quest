@@ -77,6 +77,12 @@ test('二刀流：片手武器だけ。両手武器・鞭は不可。武器を�
   g.storage.gear.push(sword2);
   equipFromStorage(data, g, w, 'offhand', sword2.uid);
   assert.ok(w.equip.offhand);
+  const replacement = makeGear(g, 'sword_t1');
+  const original = w.equip.weapon;
+  g.storage.gear.push(replacement);
+  equipFromStorage(data, g, w, 'weapon', replacement.uid);
+  assert.equal(w.equip.offhand, sword2);
+  assert.ok(g.storage.gear.includes(original));
   // 大剣（両手）に持ちかえるとサブ武器は倉庫へ
   const gs = makeGear(g, 'greatsword_t1');
   g.storage.gear.push(gs);

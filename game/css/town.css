@@ -139,3 +139,87 @@ body:has(.town-app) {
   .town-app { padding-inline: 10px; }
   .town-card { grid-template-columns: 20px minmax(0, 1fr); gap: 5px; }
 }
+
+/* 暖炉の色と木枠でギルド酒場の掲示板を作る。 */
+body:has(.guild-view) {
+  background: radial-gradient(ellipse at top, #663921, #281a19 34rem, #191416 70rem);
+}
+.guild-view {
+  --panel: #352420;
+  --panel-2: #48312a;
+  --line: #77523c;
+  --accent: #f4cc87;
+}
+.guild-view .town-header h1,
+.guild-board h2 {
+  font-family: Georgia, "Noto Serif JP", "Yu Mincho", serif;
+  font-weight: 700;
+}
+.guild-board {
+  padding: 12px;
+  border: 4px solid #936040;
+  border-radius: 8px;
+  background: repeating-linear-gradient(0deg, #65402f 0 36px, #4b2e24 36px 39px, #583526 39px 52px);
+  box-shadow: 0 5px 16px #0006, inset 0 2px 9px #23150f;
+}
+.guild-board header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 6px;
+  padding: 3px 1px 10px;
+  color: #ffdfa5;
+  font-size: .82rem;
+}
+.guild-board h2 { margin: 0; color: #ffe0a5; font-size: 1.3rem; }
+.guild-board-jump {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 10px;
+  margin-bottom: 8px;
+  border-radius: 6px;
+  background: #30211c;
+  color: #ffdb92;
+}
+.guild-contracts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 245px), 1fr));
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.guild-contract {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  padding: 11px 12px;
+  border: 1px solid #be925c;
+  border-radius: 5px;
+  color: #3d2720;
+  background: linear-gradient(155deg, #ffebc6, #e5c997);
+  box-shadow: 0 3px 6px #20140e70;
+  font-size: .83rem;
+}
+.guild-contract.reportable { outline: 2px solid #efbf64; outline-offset: -3px; }
+.guild-contract-meta {
+  display: flex;
+  justify-content: space-between;
+  color: #713c27;
+  font-weight: 700;
+}
+.guild-contract h3 { margin: 0; font-size: 1.02rem; overflow-wrap: anywhere; }
+.guild-contract p { margin: 0 0 3px; }
+.guild-contract button {
+  margin: auto 0 0;
+  border-color: #613425;
+  border-radius: 6px;
+  background: #7d352b;
+  color: #fff4dc;
+  font-weight: 700;
+}
+.guild-contract progress { width: 100%; accent-color: #8a3b28; }
+.guild-reports { scroll-margin-top: 12px; }

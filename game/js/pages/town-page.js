@@ -2,14 +2,14 @@
 import { loadGameData } from '../gamedata.js?v=features-2';
 import { GameSession } from '../save.js?v=features-2';
 import { normalizeGame } from '../game-state.js?v=features-2';
-import { currentRank, seededRng } from '../dungeon.js?v=features-2';
+import { currentRank, seededRng } from '../dungeon.js?v=jrpg-1';
 import {
   calendarOf, guildFee, fillBoard, boardSize, acceptQuest, canReport, reportQuest, questText, nextRankStatus, stayInn, revive, reviveCost, checkRankUp,
   itemShopStock, buyItem, gearShopStock, buyGear, sellGear, sellPrice, canExpandBackpack, expandBackpack, feeTier,
   nextBackpackTier,
 } from '../town.js?v=features-2';
 import { backpackSlots } from '../loot.js?v=features-2';
-import { maxHp, maxMp, gearDef, aptitudeGrade } from '../character.js?v=features-2';
+import { maxHp, maxMp, gearDef, aptitudeGrade } from '../character.js?v=jrpg-1';
 import { availableJobs, changeJob } from '../growth.js?v=features-2';
 import { loadCsv, loadJson } from '../data.js?v=features-2';
 import { buildLexicon } from '../lexicon.js';
@@ -19,6 +19,7 @@ import { chainStep, stepLabel, acceptChain, talkChain, deliverChain, claimChain 
 import { cureAtTemple, updateRuneModifiers } from '../temple.js?v=features-2';
 import { workshopView, managementView, templeExtras } from '../ui/facility-view.js?v=features-2';
 import { el, render, stars } from '../dom.js';
+import { setSceneMusic } from '../battle-music.js?v=jrpg-1';
 
 const view = document.getElementById('view');
 const session = new GameSession();
@@ -35,7 +36,7 @@ const rng = () => seededRng({ rng: (Date.now() ^ (Math.random() * 2 ** 32)) >>> 
 
 const facilityGroups = [
   { title: '冒険の準備', cards: [
-    { id: 'guild', name: '冒険者ギルド', icon: '📜', detail: '依頼の受注・報告、昇格', show: guild },
+    { id: 'guild', name: 'ギルド酒場', icon: '🍺', detail: '依頼の受注・報告、昇格', show: guild },
     { id: 'inn', name: '宿屋', icon: '🛏️', detail: 'HP・MPを回復', show: inn },
     { id: 'temple', name: '神殿', icon: '🏛️', detail: '復活・治療、転職・刻印', show: temple },
     { href: 'party.html', name: 'パーティ', icon: '🛡️', detail: '仲間の装備・スキル' },
@@ -146,20 +147,37 @@ function showHome(g) {
 function guild() {
   const g = session.game;
   const st = nextRankStatus(data, g);
+  const pending = g.quests.filter((q) => canReport(data, g, q)).length;
+  const card = (q, accepted) => {
+    const ready = accepted && canReport(data, g, q);
+    return el('li', { class: `guild-contract${ready ? ' reportable' : ''}` },
+      el('div', { class: 'guild-contract-meta' },
+        el('span', {}, `★${q.rank}`),
+        el('span', {}, accepted ? (ready ? '報告可' : '進行中') : '募集中')),
+      el('h3', {}, questText(data, q)),
+      el('p', {}, `報酬　${rewardText(q)}`),
+      accepted && q.type !== 'gather'
+        ? el('progress', { max: q.count, value: q.progress, 'aria-label': '討伐の進み具合' }) : null,
+      accepted && !ready && q.type !== 'gather' ? el('span', {}, `${q.progress} / ${q.count}`) : null,
+      accepted
+        ? ready ? el('button', { onclick: () => act((gg) => reportQuest(data, gg, q.uid, rng())) }, '報告する') : null
+        : el('button', { onclick: () => act((gg) => { acceptQuest(gg, q.uid); return 'クエストを受けた'; }) }, '依頼を受ける'));
+  };
   return [
-    el('h2', {}, '受けているクエスト'),
-    g.quests.length ? null : el('p', { class: 'muted small' }, 'なし'),
-    g.quests.map((q) => el('div', { class: 'panel small' },
-      el('div', {}, `★${q.rank} ${questText(data, q)}`),
-      q.type !== 'gather' ? el('div', { class: 'muted' }, `${q.progress} / ${q.count}`) : null,
-      el('button', { disabled: !canReport(data, g, q), onclick: () => act((gg) => reportQuest(data, gg, q.uid, rng())) }, canReport(data, g, q) ? '報告する' : 'まだ'))),
-    el('h2', {}, `掲示板（受けている ${g.quests.length} / ${boardSize(data, g)}件）`),
-    el('p', { class: 'muted small' }, '受けていない依頼は、ダンジョンから町に戻るたびに入れかわる。報告すると空いた枠に新しい依頼が入る。'),
-    g.board.length ? null : el('p', { class: 'muted small' }, '受けられる依頼は今はない（枠がいっぱい）'),
-    g.board.map((q) => el('div', { class: 'panel small' },
-      el('div', {}, `★${q.rank} ${questText(data, q)}`),
-      el('div', { class: 'muted' }, `報酬：${rewardText(q)}`),
-      el('button', { onclick: () => act((gg) => { acceptQuest(gg, q.uid); return 'クエストを受けた'; }) }, '受ける'))),
+    el('section', { class: 'guild-board', 'aria-labelledby': 'guild-board-title' },
+      el('header', {},
+        el('h2', { id: 'guild-board-title' }, '依頼掲示板'),
+        el('span', {}, `受注 ${g.quests.length} / ${boardSize(data, g)}件`)),
+      pending ? el('a', { class: 'guild-board-jump', href: '#guild-active' }, `報告できる依頼 ${pending}件 ↓`) : null,
+      g.board.length
+        ? el('ul', { class: 'guild-contracts' }, g.board.map((q) => card(q, false)))
+        : el('p', { class: 'small' }, '現在、受けられる依頼はありません。')),
+    el('section', { class: 'guild-reports', 'aria-labelledby': 'guild-active' },
+      el('h2', { id: 'guild-active' }, '受けている依頼'),
+      g.quests.length
+        ? el('ul', { class: 'guild-contracts' }, [...g.quests].sort((a, b) => Number(canReport(data, g, b)) - Number(canReport(data, g, a)))
+          .map((q) => card(q, true)))
+        : el('p', { class: 'muted small' }, '受けている依頼はありません。')),
     el('details', { class: 'panel small' }, el('summary', {}, '連続クエスト'),
       data.questChains.filter((chain) => Number(chain.star) <= currentRank(data, g).maxDungeonRank).map((chain) => {
         const state = g.chains?.[chain.id];
@@ -272,6 +290,9 @@ function storage() {
 
 function draw() {
   const g = session.game;
+  const inFacility = g?.party && facility && !session.inDungeon && !session.readOnly;
+  view.classList.toggle('guild-view', inFacility && facility.id === 'guild');
+  setSceneMusic(inFacility ? (facility.id === 'guild' ? 'tavern' : 'facility') : 'town');
   if (session.readOnly) {
     render(view, heading('冒険者の町'), el('p', { class: 'panel' }, 'このセーブは、より新しいバージョンのゲームで作成されています。'));
     return;

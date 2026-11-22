@@ -6,11 +6,11 @@
 //   'loot'         … 拾ったものがバックパックに入りきらない（入れ替えるかあきらめるかを選ぶ）
 //   'return_point' … 帰還ポイント（帰るか先へ進むかを選ぶ）
 //   'cleared'      … いちばん奥のボスを倒した（町に帰るだけ）
-import { createBattle, finishBattle, battleRewards } from './battle.js?v=features-2';
+import { createBattle, finishBattle, battleRewards } from './battle.js?v=jrpg-1';
 import { makeEncounter, floorRow, planBounty } from './encounter.js?v=features-2';
 import { rollBattleLoot, addToBackpack, swapIntoBackpack, unloadBackpack } from './loot.js?v=features-2';
-import { gainXp, maxHp, maxMp, affixSum } from './character.js?v=features-2';
-import { curedBy } from './battle.js?v=features-2';
+import { gainXp, maxHp, maxMp, affixSum } from './character.js?v=jrpg-1';
+import { curedBy } from './battle.js?v=jrpg-1';
 import { advanceDays, calendarOf, countKills, refreshBoard } from './town.js?v=features-2';
 import { updateChains } from './quest-chain.js?v=features-2';
 import { discoverJobs } from './temple.js?v=features-2';
@@ -82,8 +82,6 @@ export function startNextBattle(data, session) {
   const dungeon = data.dungeons.get(run.dungeonId);
   const season = dungeon.kind === '季節の地' ? calendarOf(data, session.game.day).season?.id : null;
   const enemies = makeEncounter(data, run.dungeonId, run.floor, rng, { boss: isBossBattle(data, run), season, bountyId: bounty, elites: true });
-  session.game.catalog ??= { gear: [], monsters: [] };
-  session.game.catalog.monsters = [...new Set([...session.game.catalog.monsters, ...enemies.map((enemy) => enemy.monsterId)])];
   session.setBattle(createBattle(data, session.game, { enemies, seed: Math.floor(rng() * 4294967296), firstBattle: run.battlesDone === 0 }));
 }
 

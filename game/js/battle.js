@@ -11,6 +11,7 @@
 import { evaluate } from './expr.js';
 import { computeStats, gearDef, weaponPower, maxHp, maxMp, gearEffects, affixSum } from './character.js?v=features-2';
 import { actionSkills, memberMods, addMasteryKill } from './growth.js?v=features-2';
+import { encounterMonsters, learnMonsterElements, hitEffectiveness } from './monster-knowledge.js';
 
 /** balance.json にまだ式がないもの（sim と同じ） */
 export const BATTLE_FORMULAS = Object.freeze({
@@ -116,6 +117,7 @@ export function makeEnemy(data, monsterId, { lv, dungeonId = null, boss = false,
  * @param seed 乱数の種（整数）
  */
 export function createBattle(data, game, { enemies, seed = Date.now(), canFlee = true, firstBattle = false } = {}) {
+  encounterMonsters(game, enemies);
   const b = {
     v: 1, rng: seed >>> 0, round: 0, queue: [], turn: null, result: null, canFlee, firstBattle,
     allies: game.party.map((m) => ({
@@ -152,8 +154,8 @@ export function collectBattleHits(b, advance) {
   }
 }
 
-function recordHit(b, side, i, damage, source) {
-  if (damage > 0) hitCollectors.get(b)?.push({ target: { side, i }, source, damage });
+function recordHit(b, side, i, damage, source, effectiveness = 'normal') {
+  if (damage > 0) hitCollectors.get(b)?.push({ target: { side, i }, source, damage, effectiveness });
 }
 
 // ---------------- 状態の見方 ----------------
@@ -222,7 +224,9 @@ function endRound(data, game, b) {
   // 時間差の攻撃
   for (const d of b.delayed) {
     d.turns -= 1;
-    if (d.turns === 0 && b.enemies[d.target].hp > 0) hitEnemy(data, game, b, d.actor, d.target, d.damage, '刻印が発動！');
+    if (d.turns === 0 && b.enemies[d.target].hp > 0) {
+      hitEnemy(data, game, b, d.actor, d.target, d.damage, { ...d, prefix: '刻印が発動！' });
+    }
   }
   b.delayed = b.delayed.filter((d) => d.turns > 0);
   tick(b.partyBuffs);
@@ -560,14 +564,17 @@ function attackDamage(data, game, b, i, e, skill, cm, { offhand = false } = {}) 
       atk, em, df, crit: crit ? data.balance.battle.crit_mult + (mods.crit_dmg ?? 0) + (mods.crit_damage ?? 0) : 1, r: between(b, f(data, 'ally_rand')),
     });
   }
-  return { damage: Math.round(total), crits, misses, em };
+  return { damage: Math.round(total), crits, misses, em, elements: els };
 }
 
-function hitEnemy(data, game, b, i, e, damage, prefix = '') {
+function hitEnemy(data, game, b, i, e, damage, { prefix = '', em = 1, elements = [] } = {}) {
   const enemy = b.enemies[e];
   if (damage <= 0) return;
   const wasAlive = enemy.hp > 0;
-  if (wasAlive) recordHit(b, 'enemy', e, damage, { side: 'ally', i });
+  if (wasAlive) {
+    learnMonsterElements(game, enemy, elements);
+    recordHit(b, 'enemy', e, damage, { side: 'ally', i }, hitEffectiveness(em));
+  }
   enemy.hp = Math.max(0, enemy.hp - damage);
   if (wasAlive && enemy.hp <= 0 && game.party[i]) {
     const m = game.party[i];
@@ -581,8 +588,9 @@ function hitEnemy(data, game, b, i, e, damage, prefix = '') {
   if (enemy.hp <= 0) log(b, `${enemy.name}を倒した！`);
 }
 
-function describeHit(r) {
-  return [r.crits ? '会心！' : '', r.em > 1 ? '弱点！' : r.em < 1 ? '効きにくい…' : '', r.misses ? 'はずれた…' : ''].join('');
+function describeHit({ crits, em, misses }) {
+  const effectiveness = hitEffectiveness(em);
+  return [crits ? '会心！' : '', effectiveness === 'weak' ? '弱点！' : effectiveness === 'resist' ? '効きにくい…' : '', misses ? 'はずれた…' : ''].join('');
 }
 
 function doAttack(data, game, b, i, skill, target, cm) {
@@ -598,17 +606,18 @@ function doAttack(data, game, b, i, skill, target, cm) {
       if (!alive.length) break;
       const e = pick(b, alive);
       const r = attackDamage(data, game, b, i, e, skill, cm);
-      hitEnemy(data, game, b, i, e, r.damage, describeHit(r));
+      hitEnemy(data, game, b, i, e, r.damage, { ...r, prefix: describeHit(r) });
     }
     return;
   }
   const targets = allMul ? livingEnemies(b) : attackTargets(b, kind, target);
   for (const e of targets) {
     const r = attackDamage(data, game, b, i, e, skill, cm);
-    hitEnemy(data, game, b, i, e, Math.round(r.damage * (allMul ?? 1)), describeHit(r));
+    hitEnemy(data, game, b, i, e, Math.round(r.damage * (allMul ?? 1)), { ...r, prefix: describeHit(r) });
     if (!skill && m.equip.offhand && b.enemies[e].hp > 0) {
       const r2 = attackDamage(data, game, b, i, e, null, cm, { offhand: true });
-      hitEnemy(data, game, b, i, e, Math.round(r2.damage * data.balance.battle.dual_wield_second_hit), `二刀目！${describeHit(r2)}`);
+      hitEnemy(data, game, b, i, e, Math.round(r2.damage * data.balance.battle.dual_wield_second_hit),
+        { ...r2, prefix: `二刀目！${describeHit(r2)}` });
     }
     if (skill?.effect.st && b.enemies[e].hp > 0) inflictEnemy(data, b, e, skill.effect.st, cm, memberMods(data, m).stat_rate);
     const ap = memberMods(data, m).auto_poison;
@@ -668,6 +677,7 @@ function doSkill(data, game, b, i, s, target, cm) {
       if (s.id === 'hunter_p2_s1') {
         if (!chance(b, cm)) { log(b, '弱点を見極められなかった'); break; }
         enemy.revealed = true;
+        learnMonsterElements(game, enemy, enemy.weak, true);
         const names = enemy.weak.map((id) => data.elements.get(id)?.name ?? id);
         log(b, `${enemy.name}の弱点：${names.join('・') || 'なし'}`);
       } else if (!enemy.stolen && chance(b, cm * 0.5)) {
@@ -761,14 +771,15 @@ function doSkill(data, game, b, i, s, target, cm) {
       for (const t of livingEnemies(b)) {
         const en = b.enemies[t];
         const em = s.elements.length ? elementMul(data, en, s.elements[0]) : 1;
-        hitEnemy(data, game, b, i, t, Math.round(evaluate(f(data, 'fixed_damage'), { itemLv, em, RES: en.res }) * cm * between(b, f(data, 'enemy_rand'))));
+        const damage = Math.round(evaluate(f(data, 'fixed_damage'), { itemLv, em, RES: en.res }) * cm * between(b, f(data, 'enemy_rand')));
+        hitEnemy(data, game, b, i, t, damage, { em, elements: s.elements.slice(0, 1) });
       }
       break;
     }
     case 'delayed':
       for (const t of livingEnemies(b)) {
         const r = attackDamage(data, game, b, i, t, { ...s, effect: { ...e, base: 'mag' } }, cm);
-        b.delayed.push({ turns: e.delay ?? 1, target: t, actor: i, damage: r.damage });
+        b.delayed.push({ turns: e.delay ?? 1, target: t, actor: i, damage: r.damage, em: r.em, elements: r.elements });
       }
       log(b, `${e.delay ?? 1}ターン後に発動する`);
       break;
@@ -907,7 +918,7 @@ function enemyTurn(data, game, b, e) {
   // 反撃
   if (!magic && ta.buffs.counter) {
     const r = attackDamage(data, game, b, t, e, null, 1);
-    hitEnemy(data, game, b, t, e, r.damage, `${target.name}の反撃！`);
+    hitEnemy(data, game, b, t, e, r.damage, { ...r, prefix: `${target.name}の反撃！${describeHit(r)}` });
   }
   // 状態異常
   if (enemy.status && !b.partyBuffs.immune) {

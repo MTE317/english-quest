@@ -233,9 +233,10 @@ export function equipFromStorage(data, game, member, slot, uid) {
   const gear = game.storage.gear[idx];
   const check = canEquip(data, member, slot, gear);
   if (!check.ok) throw new Error(check.reason);
+  const previous = member.equip[slot];
   game.storage.gear.splice(idx, 1);
-  unequip(data, game, member, slot);
   member.equip[slot] = gear;
+  if (previous) game.storage.gear.push(previous);
   // 両手武器にしたら、サブ武器は外す。二刀流できない武器にしたときも外す
   if (slot === 'weapon' && member.equip.offhand) {
     const wt = data.weaponTypes.get(gearDef(data, gear).kind);
