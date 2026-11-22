@@ -37,14 +37,10 @@ export const BATTLE_FORMULAS = Object.freeze({
   max_rounds: 30,
 });
 
-/** 武器の種類ごとの特別な扱い（weapon_types.csv には説明の文しかないので sim と同じ値。依頼済み） */
-export const WEAPON_TRAITS = Object.freeze({
-  magic: ['staff', 'tome', 'instrument'], // 通常攻撃が魔法（MAG と RES で計算）
-  heal_mul: { staff: 1.15 },
-  mag_mul: { tome: 1.1 },
-  str_mul: { gun: 0.5 },
-  hits_all_mul: { whip: 0.5 },
-});
+/** 武器種ごとの特性は data/weapon_types.csv の traits_json に集約する。 */
+const weaponTraits = (data, gear) => gear
+  ? data.weaponTypes.get(gearDef(data, gear).kind)?.traits ?? {}
+  : {};
 
 /** スキルの st にある名前で、status_effects.csv にないもの（sim と同じ扱い） */
 export const STATUS_ALIASES = Object.freeze({ DEFダウン: { debuff: { def: 0.25 }, turns: 3 } });
@@ -509,12 +505,13 @@ function attackDamage(data, game, b, i, e, skill, cm, { offhand = false } = {}) 
   const weapon = offhand ? m.equip.offhand : m.equip.weapon;
   const wdef = weapon ? gearDef(data, weapon) : null;
   const wt = wdef ? data.weaponTypes.get(wdef.kind) : null;
+  const traits = wt?.traits ?? {};
   const base = skill?.effect.base ?? 'weapon';
   const mods = memberMods(data, m);
   let kind; let els; let hits;
   let imb = 1;
   if (base === 'weapon') {
-    kind = wt && WEAPON_TRAITS.magic.includes(wt.id) ? 'mag' : 'phys';
+    kind = wt?.attackStat === 'mag' ? 'mag' : 'phys';
     els = (wt?.elements ?? []).filter((x) => x !== 'none');
     if (wdef?.addedElement) els = [...new Set([...els, wdef.addedElement])];
     if (weapon) els = [...new Set([...els, ...Object.keys(gearEffects(weapon)).filter((key) => key.startsWith('ELEMENT:')).map((key) => key.slice(8))])];
@@ -528,10 +525,11 @@ function attackDamage(data, game, b, i, e, skill, cm, { offhand = false } = {}) 
   if (skill?.effect.hits) hits = skill.effect.hits;
   const mult = skill?.effect.m ?? 1;
   const statVal = kind === 'phys'
-    ? (skill?.effect.beststat ? Math.max(st.str, st.mag) : st.str) * (WEAPON_TRAITS.str_mul[wt?.id] ?? 1) + st.mag * (mods.mag2phys ?? 0)
-    : st.mag * (WEAPON_TRAITS.mag_mul[wt?.id] ?? 1) * (1 + bval(a.buffs, 'magb'));
+    ? (skill?.effect.beststat ? Math.max(st.str, st.mag) : st.str) * (traits.str_mul ?? 1) + st.mag * (mods.mag2phys ?? 0)
+    : st.mag * (traits.mag_mul ?? 1) * (1 + bval(a.buffs, 'magb'));
   const wpow = weaponPower(data, m, weapon) + st.mag * (mods.mag_to_atk ?? 0);
-  const song = game.party.some((x, j) => x.job === 'bard' && canAct(game, b, j)) ? data.balance.battle.bard_song : 0;
+  const bard = game.party.find((x, j) => x.job === 'bard' && canAct(game, b, j));
+  const song = bard ? data.balance.battle.bard_song + (weaponTraits(data, bard.equip.weapon).song_bonus ?? 0) : 0;
   const dm = 1 + Math.min(data.balance.battle.buff_cap, song + bval(b.partyBuffs, 'dmg') + (kind === 'phys' ? bval(a.buffs, 'str') : 0));
   // パッシブ：武器・属性・種別へのダメージ、ピンチのときのダメージ
   let pm = 1;
@@ -542,6 +540,7 @@ function attackDamage(data, game, b, i, e, skill, cm, { offhand = false } = {}) 
   if (wt?.id === 'gun' && base === 'phys' && skill) pm += mods.bullet ?? 0;
   if (els.some((id) => ['wind', 'earth', 'water'].includes(id) && enemy.weak.includes(id))) pm += mods.weak_wew ?? 0;
   if (Object.keys(enemy.debuffs).length || enemy.statuses.poison) pm += mods.vs_debuffed ?? 0;
+  if (base === 'weapon' && traits.vs_status && enemy.statuses[traits.vs_status.id]) pm += (traits.vs_status.mul ?? 1) - 1;
   if (!skill) pm += mods.normal_damage ?? 0;
   if (kind === 'mag') pm += mods.magic_damage ?? 0;
   if (mods.lowhp_dmg && m.hp < maxHp(data, m) * 0.5) pm += mods.lowhp_dmg;
@@ -550,6 +549,7 @@ function attackDamage(data, game, b, i, e, skill, cm, { offhand = false } = {}) 
   const df = kind === 'phys' ? enemy.def * (1 - pierce) * (1 - bval(enemy.debuffs, 'def')) : enemy.res * (1 - bval(enemy.debuffs, 'res'));
   let em = els.length ? els.reduce((x, el) => x + elementMul(data, enemy, el), 0) / els.length : 1;
   if (em > 1 && mods.weak_all) em *= 1 + mods.weak_all;
+  if (base === 'weapon' && em > 1) em *= traits.weak_damage_mul ?? 1;
   const pc = st.crit + (skill?.effect.crt ?? 0);
   const blind = statusOfKind(a, 'blind', data);
   let total = 0;
@@ -557,7 +557,7 @@ function attackDamage(data, game, b, i, e, skill, cm, { offhand = false } = {}) 
   let misses = 0;
   for (const h of hits) {
     const crit = chance(b, pc);
-    const hit = !(kind === 'phys' && blind && chance(b, data.statusEffects.get(blind).value));
+    const hit = !(kind === 'phys' && blind && chance(b, data.statusEffects.get(blind).value * (traits.blind_miss_mul ?? 1)));
     if (crit) crits += 1;
     if (!hit) { misses += 1; continue; }
     total += h * evaluate(f(data, 'ally_damage'), {
@@ -598,7 +598,8 @@ function doAttack(data, game, b, i, skill, target, cm) {
   const kind = skill ? targetKind(data, { type: 'skill', skillId: skill.id }) : 'enemy';
   const mainDef = m.equip.weapon ? gearDef(data, m.equip.weapon) : null;
   const wt = mainDef ? data.weaponTypes.get(mainDef.kind) : null;
-  const allMul = !skill && wt ? (wt.id === 'whip' ? memberMods(data, m).whip ?? WEAPON_TRAITS.hits_all_mul.whip : null) : null; // 鞭：通常攻撃が全体に
+  const allMul = !skill && wt?.traits.normal_all_mul != null
+    ? memberMods(data, m).whip ?? wt.traits.normal_all_mul : null; // 鞭などの通常全体攻撃
   if (!skill) log(b, `${m.name}の攻撃！`);
   if (skill?.effect.tgt === 'random') {
     for (let n = 0; n < (skill.effect.n ?? 1); n++) {
@@ -622,6 +623,22 @@ function doAttack(data, game, b, i, skill, target, cm) {
     if (skill?.effect.st && b.enemies[e].hp > 0) inflictEnemy(data, b, e, skill.effect.st, cm, memberMods(data, m).stat_rate);
     const ap = memberMods(data, m).auto_poison;
     if (!skill && ap && b.enemies[e].hp > 0) inflictEnemy(data, b, e, [data.statusEffects.get('poison').name, ap], cm);
+    // 通常攻撃で発動する武器固有の状態異常（鎚・鎌）
+    if (!skill && r.damage > 0 && b.enemies[e].hp > 0 && wt?.traits.normal_status) {
+      const effect = wt.traits.normal_status;
+      const status = data.statusEffects.get(effect.id);
+      if (status) inflictEnemy(data, b, e, [status.name, effect.chance], cm, memberMods(data, m).stat_rate);
+    }
+    // 槍の貫通：通常攻撃時に別の敵へ追加攻撃（連鎖しない）
+    if (!skill && r.damage > 0 && wt?.traits.splash_chance) {
+      const others = livingEnemies(b).filter((j) => j !== e);
+      if (others.length && chance(b, wt.traits.splash_chance)) {
+        const other = pick(b, others);
+        const extra = attackDamage(data, game, b, i, other, null, cm);
+        hitEnemy(data, game, b, i, other, Math.round(extra.damage * (wt.traits.splash_mul ?? 0.5)),
+          { ...extra, prefix: `貫通！${describeHit(extra)}` });
+      }
+    }
     if (skill?.effect.drain) m.mp = Math.min(maxMp(data, m), m.mp + Math.min(10, Math.round(r.damage * skill.effect.drain / 10)));
   }
   if (skill?.effect.selfcost) {
@@ -667,8 +684,8 @@ function doSkill(data, game, b, i, s, target, cm) {
   const allies = (pred = (j) => game.party[j].hp > 0) => game.party.map((x, j) => j).filter(pred);
   const healAmt = () => {
     const st = battleStats(data, game, b, i);
-    const wt = m.equip.weapon ? data.weaponTypes.get(gearDef(data, m.equip.weapon).kind) : null;
-    return evaluate(f(data, 'heal'), { MAG: st.mag, wpow: st.attack, m: e.m ?? 1, heal_mul: WEAPON_TRAITS.heal_mul[wt?.id] ?? 1 }) * cm * (1 + (memberMods(data, m).healp ?? 0));
+    const traits = weaponTraits(data, m.equip.weapon);
+    return evaluate(f(data, 'heal'), { MAG: st.mag, wpow: st.attack, m: e.m ?? 1, heal_mul: traits.heal_mul ?? 1 }) * cm * (1 + (memberMods(data, m).healp ?? 0));
   };
   switch (s.kind) {
     case 'utility': {
@@ -724,13 +741,16 @@ function doSkill(data, game, b, i, s, target, cm) {
       for (const j of ts) cureAlly(data, game, b, j, (st) => curedBy(st, s.name) && chance(b, cm));
       break;
     }
-    case 'party_buff':
+    case 'party_buff': {
+      const traitMul = weaponTraits(data, m.equip.weapon).party_buff_mul ?? 1;
       for (const [k, v] of Object.entries(e.buff ?? {})) {
         const song = s.job === 'bard' ? memberMods(data, m) : {};
-        b.partyBuffs[k] = [(v + (k === 'dmg' ? song.song ?? 0 : 0)) * cm, (e.turns ?? 1) + 1 + (song.song_turns ?? 0)];
+        const base = (v + (k === 'dmg' ? song.song ?? 0 : 0)) * traitMul * cm;
+        b.partyBuffs[k] = [Math.min(data.balance.battle.buff_cap, base), (e.turns ?? 1) + 1 + (song.song_turns ?? 0)];
       }
       log(b, '味方全員が力を得た');
       break;
+    }
     case 'self_buff':
       for (const [k, v] of Object.entries(e.buff ?? {})) a.buffs[k] = [v * cm, (e.turns ?? 1) + 1];
       log(b, `${m.name}は構えた`);
