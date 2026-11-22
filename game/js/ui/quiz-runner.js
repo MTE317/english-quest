@@ -1,6 +1,6 @@
 // 4択を続けて出す部品（覚醒の試練・昇格試験・鍛錬で使う）。答えは学習記録にも入る。
-import { now } from '../storage.js?v=features-1';
-import { makePracticeQuestion, questionDirection, DIRECTION } from '../quiz.js?v=features-1';
+import { now } from '../storage.js?v=features-2';
+import { makePracticeQuestion, questionDirection, DIRECTION } from '../quiz.js?v=features-2';
 import { speak, canSpeak } from '../speech.js';
 import { REASON_LABEL } from '../picker.js';
 import { el, render } from '../dom.js';

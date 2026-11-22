@@ -1,10 +1,10 @@
-import { loadCsv, loadJson } from '../data.js?v=features-1';
+import { loadCsv, loadJson } from '../data.js?v=features-2';
 import { splitList } from '../csv.js';
-import { GameSession } from '../save.js?v=features-1';
-import { Scheduler } from '../srs.js?v=features-1';
-import { now } from '../storage.js?v=features-1';
+import { GameSession } from '../save.js?v=features-2';
+import { Scheduler } from '../srs.js?v=features-2';
+import { now } from '../storage.js?v=features-2';
 import { speak, canSpeak } from '../speech.js';
-import { chantDay, nextChant, recordChant } from '../chant.js?v=features-1';
+import { chantDay, nextChant, recordChant } from '../chant.js?v=features-2';
 import { el, render } from '../dom.js';
 
 const view = document.getElementById('view');

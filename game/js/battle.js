@@ -9,8 +9,8 @@
 // 式は data/balance.json から読む。balance.json に式として書かれていないもの（説明の文だけのもの）は、
 // シミュレーター（sim/battle.py・sim/core.py）と同じ式を BATTLE_FORMULAS に置いて使う（docs/requests.md で依頼済み）。
 import { evaluate } from './expr.js';
-import { computeStats, gearDef, weaponPower, maxHp, maxMp, gearEffects, affixSum } from './character.js?v=features-1';
-import { actionSkills, memberMods, addMasteryKill } from './growth.js?v=features-1';
+import { computeStats, gearDef, weaponPower, maxHp, maxMp, gearEffects, affixSum } from './character.js?v=features-2';
+import { actionSkills, memberMods, addMasteryKill } from './growth.js?v=features-2';
 
 /** balance.json にまだ式がないもの（sim と同じ） */
 export const BATTLE_FORMULAS = Object.freeze({

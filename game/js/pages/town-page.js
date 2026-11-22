@@ -1,23 +1,23 @@
 // 町の画面：ギルド（クエスト・ランク）・宿屋・道具屋・武器防具屋・神殿（復活）・倉庫
-import { loadGameData } from '../gamedata.js?v=features-1';
-import { GameSession } from '../save.js?v=features-1';
-import { normalizeGame } from '../game-state.js?v=features-1';
-import { currentRank, seededRng } from '../dungeon.js?v=features-1';
+import { loadGameData } from '../gamedata.js?v=features-2';
+import { GameSession } from '../save.js?v=features-2';
+import { normalizeGame } from '../game-state.js?v=features-2';
+import { currentRank, seededRng } from '../dungeon.js?v=features-2';
 import {
-  calendarOf, guildFee, makeBoard, acceptQuest, canReport, reportQuest, questText, nextRankStatus, stayInn, revive, reviveCost, checkRankUp,
+  calendarOf, guildFee, fillBoard, boardSize, acceptQuest, canReport, reportQuest, questText, nextRankStatus, stayInn, revive, reviveCost, checkRankUp,
   itemShopStock, buyItem, gearShopStock, buyGear, sellGear, sellPrice, canExpandBackpack, expandBackpack, feeTier,
   nextBackpackTier, daysPerMonth,
-} from '../town.js?v=features-1';
-import { backpackSlots } from '../loot.js?v=features-1';
-import { maxHp, maxMp, gearDef, aptitudeGrade } from '../character.js?v=features-1';
-import { availableJobs, changeJob } from '../growth.js?v=features-1';
-import { loadCsv, loadJson } from '../data.js?v=features-1';
+} from '../town.js?v=features-2';
+import { backpackSlots } from '../loot.js?v=features-2';
+import { maxHp, maxMp, gearDef, aptitudeGrade } from '../character.js?v=features-2';
+import { availableJobs, changeJob } from '../growth.js?v=features-2';
+import { loadCsv, loadJson } from '../data.js?v=features-2';
 import { buildLexicon } from '../lexicon.js';
-import { Scheduler } from '../srs.js?v=features-1';
-import { LearningStore, now } from '../storage.js?v=features-1';
-import { chainStep, stepLabel, acceptChain, talkChain, deliverChain, claimChain } from '../quest-chain.js?v=features-1';
-import { cureAtTemple, updateRuneModifiers } from '../temple.js?v=features-1';
-import { workshopView, managementView, templeExtras } from '../ui/facility-view.js?v=features-1';
+import { Scheduler } from '../srs.js?v=features-2';
+import { LearningStore, now } from '../storage.js?v=features-2';
+import { chainStep, stepLabel, acceptChain, talkChain, deliverChain, claimChain } from '../quest-chain.js?v=features-2';
+import { cureAtTemple, updateRuneModifiers } from '../temple.js?v=features-2';
+import { workshopView, managementView, templeExtras } from '../ui/facility-view.js?v=features-2';
 import { el, render, stars } from '../dom.js';
 
 const view = document.getElementById('view');
@@ -63,7 +63,8 @@ function head() {
 
 function guild() {
   const g = session.game;
-  if (!g.board) { g.board = makeBoard(data, g, rng()); session.save(); }
+  // 空いている枠があれば埋める（はじめて・ランクが上がったとき）
+  if ((g.board?.length ?? 0) + g.quests.length < boardSize(data, g)) { fillBoard(data, g, rng()); session.save(); }
   const st = nextRankStatus(data, g);
   return [
     el('a', { class: 'btn primary', href: 'study.html' }, 'ギルドの学び舎（資料室・石碑の間・訓練場・昇格試験）'),
@@ -73,8 +74,9 @@ function guild() {
       el('div', {}, `★${q.rank} ${questText(data, q)}`),
       q.type !== 'gather' ? el('div', { class: 'muted' }, `${q.progress} / ${q.count}`) : null,
       el('button', { disabled: !canReport(data, g, q), onclick: () => act((gg) => reportQuest(data, gg, q.uid, rng())) }, canReport(data, g, q) ? '報告する' : 'まだ'))),
-    el('h2', {}, `掲示板（${g.board.length}件・月が変わると入れかわる）`),
-    g.board.length ? null : el('p', { class: 'muted small' }, '今月の依頼はもうない'),
+    el('h2', {}, `掲示板（受けている ${g.quests.length} / ${boardSize(data, g)}件）`),
+    el('p', { class: 'muted small' }, '受けていない依頼は、ダンジョンから町に戻るたびに入れかわる。報告すると空いた枠に新しい依頼が入る。'),
+    g.board.length ? null : el('p', { class: 'muted small' }, '受けられる依頼は今はない（枠がいっぱい）'),
     g.board.map((q) => el('div', { class: 'panel small' },
       el('div', {}, `★${q.rank} ${questText(data, q)}`),
       el('div', { class: 'muted' }, `報酬：${rewardText(q)}`),

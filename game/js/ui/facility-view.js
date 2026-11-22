@@ -1,7 +1,7 @@
 import { el, render } from '../dom.js';
-import { craft, brew, enhance, dismantle, reroll, enchant, enchantFamilies, facilityUpgrade } from '../workshop.js?v=features-1';
-import { borrow, repayLoan, loanLimit, payOverdue } from '../town.js?v=features-1';
-import { chooseRuneEffect, runeChangeCost, equipRune, openRuneSlot, unlockJob } from '../temple.js?v=features-1';
+import { craft, brew, enhance, dismantle, reroll, enchant, enchantFamilies, facilityUpgrade } from '../workshop.js?v=features-2';
+import { borrow, repayLoan, loanLimit, payOverdue } from '../town.js?v=features-2';
+import { chooseRuneEffect, runeChangeCost, equipRune, openRuneSlot, unlockJob } from '../temple.js?v=features-2';
 
 const heading = (text) => el('h2', {}, text);
 const btn = (text, onclick, disabled = false) => el('button', { onclick, disabled }, text);

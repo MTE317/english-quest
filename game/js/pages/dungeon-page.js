@@ -1,22 +1,22 @@
 // ダンジョンの画面：行き先とルーンストーンを選ぶ → 階を進む → 戦闘 → 帰還ポイント・ボス → 町へ
-import { loadGameData } from '../gamedata.js?v=features-1';
-import { loadCsv, loadJson } from '../data.js?v=features-1';
+import { loadGameData } from '../gamedata.js?v=features-2';
+import { loadCsv, loadJson } from '../data.js?v=features-2';
 import { buildLexicon } from '../lexicon.js';
-import { Scheduler } from '../srs.js?v=features-1';
-import { LearningStore, now, loadSettings } from '../storage.js?v=features-1';
+import { Scheduler } from '../srs.js?v=features-2';
+import { LearningStore, now, loadSettings } from '../storage.js?v=features-2';
 import { QuestionPicker } from '../picker.js';
-import { GameSession } from '../save.js?v=features-1';
-import { normalizeGame } from '../game-state.js?v=features-1';
+import { GameSession } from '../save.js?v=features-2';
+import { normalizeGame } from '../game-state.js?v=features-2';
 import {
   allowedDungeons, startRun, startNextBattle, afterBattle, returnToTown, continueRun, resolveLoot,
   isBossBattle, runFloorRow, returnItems, currentRank, useItemOutsideBattle, FIELD_ITEM_EFFECTS,
-} from '../dungeon.js?v=features-1';
-import { backpackSlots, backpackUsed, addItem } from '../loot.js?v=features-1';
-import { maxHp, maxMp } from '../character.js?v=features-1';
+} from '../dungeon.js?v=features-2';
+import { backpackSlots, backpackUsed, addItem } from '../loot.js?v=features-2';
+import { maxHp, maxMp } from '../character.js?v=features-2';
 import { createBattleView } from '../ui/battle-view.js?v=hit-effects-1';
-import { createVictoryView } from '../ui/victory-view.js?v=features-1';
-import { updateRuneModifiers } from '../temple.js?v=features-1';
-import { stoneAllowed } from '../study.js?v=features-1';
+import { createVictoryView } from '../ui/victory-view.js?v=features-2';
+import { updateRuneModifiers } from '../temple.js?v=features-2';
+import { stoneAllowed } from '../study.js?v=features-2';
 import { el, render, stars } from '../dom.js';
 
 const view = document.getElementById('view');

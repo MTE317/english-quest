@@ -1,7 +1,7 @@
 // 戦闘の報酬（お金・素材・装備）とバックパック。
 // 式が data にないものは sim/world.py と同じ値を LOOT_FORMULAS に置く（docs/requests.md で依頼済み）。
 import { evaluate } from './expr.js';
-import { makeGear } from './character.js?v=features-1';
+import { makeGear } from './character.js?v=features-2';
 
 export const LOOT_FORMULAS = Object.freeze({
   gold_per_enemy: 'run_income * income_mul * gold_share / 27', // balance.json の「(boss x boss_gold_mul)」は文なので、ボスの倍率は下でかける
