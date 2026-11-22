@@ -145,6 +145,17 @@ def allowed(u, s, ctx):
     if not magicish and s["k"] in ("atk", "fixed", "sbuff", "imbue") and "封印" in sd: return False
     return True
 
+import db as _db
+HP_ITEMS = sorted([n for n, it in _db.ITEMS.items() if it["effect"] == "heal_hp"], key=lambda n: -float(_db.ITEMS[n]["value"]))   # 店で買う固定量（シミュレーターは固定量だけ使う）
+MP_ITEMS = sorted([n for n, it in _db.ITEMS.items() if it["effect"] == "heal_mp"], key=lambda n: -float(_db.ITEMS[n]["value"]))
+def item_amount(n, mx):
+    it = _db.ITEMS[n]; v = float(it["value"])
+    return mx * v / 100 if it["effect"].endswith("_pct") else v
+def best_hp_item(items, need):
+    own = [n for n in HP_ITEMS if items.get(n, 0) > 0]
+    if not own: return None
+    enough = [n for n in own if float(_db.ITEMS[n]["value"]) >= need * 0.8]
+    return enough[-1] if enough else own[0]
 def use_item(u, party, ctx, cm, S, items):
     """戦闘中のアイテム。使ったらTrue"""
     if not T["items_in_battle"] or items is None: return False
@@ -163,9 +174,9 @@ def use_item(u, party, ctx, cm, S, items):
     low = [c for c in alive if c.hp < 0.35 * c.maxhp() and "呪い" not in ctx.pst[id(c)]]
     if low and not healers:
         c = min(low, key=lambda c: c.hp / c.maxhp())
-        for k, fr in (("上回復薬", 0.7), ("回復薬", 0.4)):
-            if items.get(k, 0) > 0:
-                take(k); heal_to(c, c.maxhp() * fr * factor * know, ctx); return True
+        k = best_hp_item(items, c.maxhp() - c.hp)
+        if k:
+            take(k); heal_to(c, item_amount(k, c.maxhp()) * factor * know, ctx); return True
     bad = [c for c in alive if any(k in ("石化", "呪い", "猛毒", "死の宣告") for k in ctx.pst[id(c)])]
     if bad and items.get("万能薬", 0) > 0 and cm == 1:
         take("万能薬"); c = bad[0]

@@ -125,7 +125,7 @@ def pool(did, season):
     return [m for m in base if m["id"] not in gone] + sea
 
 # ---- アイテム・経済・施設・ランク・クエスト
-ITEMS = {r["name"]: dict(id=r["id"], price=int(r["price"]), rank=int(r["shop_rank"]), effect=r["effect"], value=r["value"], target=r["target"]) for r in R(f"{D}/items.csv")}
+ITEMS = {r["name"]: dict(id=r["id"], price=int(r["price"] or 0), rank=int(r["shop_rank"] or 99), effect=r["effect"], value=r["value"], target=r["target"]) for r in R(f"{D}/items.csv")}
 ECON = {int(r["dungeon_rank"]): {k: f(v) for k, v in r.items()} for r in R(f"{D}/economy_by_rank.csv")}
 FAC = {int(r["rank"]): {k: f(v) for k, v in r.items()} for r in R(f"{D}/facility_ranks.csv")}
 INN = {int(r["inn_rank"]): {k: f(v) for k, v in r.items() if k != "description"} for r in R(f"{D}/inn_rooms.csv")}

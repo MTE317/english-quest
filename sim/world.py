@@ -7,6 +7,7 @@ from core import T, Char, Enemy, rnd, APT
 import battle as B
 
 SEASONS = ["春", "夏", "秋", "冬"]
+EGRADE = {int(r["grade"]): float(r["gold"]) for r in db.R(f"{db.D}/enchant_grades.csv")} if hasattr(db, "R") else {}
 STOCK = {
     1: {"回復薬": 3, "魔力の水": 2, "帰還の羽": 1},
     2: {"上回復薬": 2, "回復薬": 2, "魔力の水": 3, "気付け薬": 1, "万能薬": 1, "帰還の羽": 1},
@@ -52,9 +53,22 @@ class Game:
     def tier(s): return ADV[s.adv]["maxr"]
     def fee_tier(s): return max(s.cleared | {1})
     def fixed_cost(s): t = s.fee_tier(); return ECON[t]["guild_fee"] + ECON[t]["storage_fee"]
+    def stock_plan(s, r):
+        av = lambda names: [n for n in names if ITEMS[n]["rank"] <= s.fac["item"]]
+        hp = av(B.HP_ITEMS); mp = av(B.MP_ITEMS)
+        plan = Counter()
+        if hp: plan[hp[0]] += 3 + r // 2
+        if len(hp) > 1: plan[hp[1]] += 2
+        if mp and r >= 2: plan[mp[0]] += 2 + r // 3
+        rv = "命の雫" if ITEMS["命の雫"]["rank"] <= s.fac["item"] and r >= 5 else "気付け薬"
+        if r >= 2: plan[rv] += 1 + r // 3
+        if r >= 2 and ITEMS["万能薬"]["rank"] <= s.fac["item"]: plan["万能薬"] += 2
+        if ITEMS["癒しの香"]["rank"] <= s.fac["item"] and r >= 4: plan["大いなる癒しの香" if ITEMS["大いなる癒しの香"]["rank"] <= s.fac["item"] else "癒しの香"] += 1
+        plan["帰還の羽"] += 1
+        return plan
     def stock_cost(s, r):
         k = s.P.get("stock_k", 1.0)
-        return sum(ITEMS[i]["price"] * n * k for i, n in STOCK[min(r, 5)].items() if ITEMS[i]["rank"] <= s.fac["item"])
+        return sum(ITEMS[i]["price"] * n * k for i, n in s.stock_plan(r).items())
     def reserve(s): return s.fixed_cost() + 0.5 * s.stock_cost(s.tier())
     def acc_now(s, r):
         a = s.acc0 + s.acc_growth * s.G["attempts"]
@@ -98,26 +112,26 @@ class Game:
         for c in s.party:
             if c.hp <= 0 or "呪い" in c.persist: continue
             r = c.hp / c.maxhp()
-            if r < 0.35 and it["上回復薬"] > 0: it["上回復薬"] -= 1; used["上回復薬"] += 1; c.hp = min(c.maxhp(), c.hp + 0.7 * know * c.maxhp())
-            elif r < 0.5 and it["回復薬"] > 0: it["回復薬"] -= 1; used["回復薬"] += 1; c.hp = min(c.maxhp(), c.hp + 0.4 * know * c.maxhp())
-            elif r < 0.5 and it["上回復薬"] > 0: it["上回復薬"] -= 1; used["上回復薬"] += 1; c.hp = min(c.maxhp(), c.hp + 0.7 * know * c.maxhp())
+            if r < 0.5:
+                k = B.best_hp_item(it, c.maxhp() - c.hp)
+                if k: it[k] -= 1; used[k] += 1; c.hp = min(c.maxhp(), c.hp + B.item_amount(k, c.maxhp()) * know)
             if c.maxmp() > 40 and c.mp < c.maxmp() * 0.15:
-                for k, f_ in (("魔力の霊水", 0.6), ("魔力の水", 0.3)):
-                    if it[k] > 0: it[k] -= 1; used[k] += 1; c.mp = min(c.maxmp(), c.mp + f_ * c.maxmp()); break
+                for k in B.MP_ITEMS:
+                    if it[k] > 0: it[k] -= 1; used[k] += 1; c.mp = min(c.maxmp(), c.mp + B.item_amount(k, c.maxmp())); break
         for c in s.party:
             if c.persist & {"石化", "呪い"} and it["万能薬"] > 0: it["万能薬"] -= 1; used["万能薬"] += 1; c.persist.clear()
         return used
     def danger(s):
         alive = [c for c in s.party if c.hp > 0 and "石化" not in c.persist]
         ko = len(s.party) - len(alive); revives = s.items["気付け薬"] + s.items["命の雫"]
-        heals = s.items["回復薬"] + s.items["上回復薬"]
+        heals = sum(s.items[k] for k in B.HP_ITEMS)
         avg = sum(c.hp / c.maxhp() for c in alive) / max(1, len(alive))
         healer = any(any(sk["k"] in ("heal", "healall") for sk in c.A) and c.mp >= 4 for c in alive)
         return ko - revives >= 2 or (avg < s.P.get("return_hp", 0.4) and heals == 0 and not healer) or len(alive) <= 1
     def danger_boss(s):
         alive = [c for c in s.party if c.hp > 0]
         avg = sum(c.hp / c.maxhp() for c in alive) / 4
-        return avg < 0.45 and s.items["回復薬"] + s.items["上回復薬"] <= 1
+        return avg < 0.45 and sum(s.items[k] for k in B.HP_ITEMS) <= 1
     # ---------------------------------------------------------------- ダンジョン
     def run(s, did):
         D = DUNGEONS[did]; r = D["rank"]; season = season_of(s.day); pool = db.pool(did, season); rng = s.rng
@@ -144,8 +158,8 @@ class Game:
                     s.G["fled"] += 1; continue
                 for e in enemies:
                     loot["kills"][e.name] += 1
-                    loot["gold"] += ECON[r]["run_income"] * D["income"] * dr["gold"] / 27 * (dr["boss_gold"] if e.boss else 1) * rnd(rng, 0.8, 1.2)
-                    x = (6 + 3.2 * e.L) * T["xp_k"] * (5 if e.boss else 1); loot["xp"] += x
+                    loot["gold"] += ECON[r]["run_income"] * D["income"] * dr["gold"] / 27 * (dr["boss_gold"] if e.boss else 1) * getattr(e, "rmul", 1) * rnd(rng, 0.8, 1.2)
+                    x = (6 + 3.2 * e.L) * T["xp_k"] * (5 if e.boss else 1) * getattr(e, "rmul", 1); loot["xp"] += x
                     for c in s.party:
                         if c.hp > 0: c.gain_xp(x * max(T.get("xp_pen_min", 0.1), 1 - T["xp_pen"] * max(0, c.lv - e.L - T.get("xp_free", 0))))
                     cm_, rm_ = e.m["mat"]
@@ -245,11 +259,8 @@ class Game:
     # ---------------------------------------------------------------- 町
     def buy_stock(s, r):
         spent = 0; k = s.P.get("stock_k", 1.0)
-        for i, n in STOCK[min(r, 5)].items():
+        for i, n in s.stock_plan(r).items():
             n = max(0, round(n * k))
-            if ITEMS[i]["rank"] > s.fac["item"]:
-                i = ALT.get(i)
-                if not i: continue
             need = max(0, n - s.items[i]); price = ITEMS[i]["price"] * (1 - ADV[s.adv]["disc"])
             can = min(need, int(max(0, s.gold) // price)); s.items[i] += can; s.gold -= can * price; spent += can * price
         s.G["spend"]["道具"] += spent
@@ -296,8 +307,10 @@ class Game:
         # 付与（まれな素材で効果を足す）
         for c in s.party:
             for it, key in ((c.weapon, s.main_stat(c)), (c.parts["body"], "HP")):
-                if it.get("src") == "制作" and len(it["aff"]) < 2:
-                    r = it["r"]; cost = ECON[r]["craft_gold"] * 0.5
+                g = s.fac["weapon"] if it is c.weapon else s.fac["armor"]
+                if it.get("src") == "制作" and (len(it["aff"]) < 2 or it.get("eg", 0) < g):
+                    r = it["r"]; cost = EGRADE.get(g, 150)
+                    it["eg"] = g
                     rk = [k for k, v in s.mats.items() if v > s.rsv(k) and k in MAT and MAT[k]["kind"] == "rare" and int(MAT[k]["rank"]) <= r]
                     if rk and s.gold - cost > s.reserve():
                         s.mats[rk[0]] -= 1; s.gold -= cost; s.G["spend"]["制作"] += cost
@@ -333,7 +346,7 @@ class Game:
             cands = []
             for c in s.party:
                 for it, kind in [(c.weapon, "weapon")] + [(p, "armor") for p in c.parts.values()]:
-                    if it["enh"] < cap[kind]: cands.append((round((20 + it["ilvl"] * 4) * (1 + it["enh"] * 0.6)) * (1 if kind == "weapon" else 0.5), it))
+                    if it["enh"] < cap[kind]: cands.append((round((20 + it["ilvl"] * 4) * T.get("enh_base", 1.6) ** it["enh"]) * (1 if kind == "weapon" else 0.5), it))
             if not cands: return
             cost, it = min(cands, key=lambda x: x[0])
             if s.gold - cost < s.reserve(): return
@@ -378,7 +391,7 @@ class Game:
     def temple(s):
         r = s.fee_tier()
         for c in s.party:
-            if c.hp <= 0: s.gold -= ECON[r]["revive_per_person"]; s.G["spend"]["神殿"] += ECON[r]["revive_per_person"]; s.G["temple"]["復活"] += 1; c.hp = 1
+            if c.hp <= 0: rv = 30 * c.lv; s.gold -= rv; s.G["spend"]["神殿"] += rv; s.G["temple"]["復活"] += 1; c.hp = 1
             if c.persist:
                 cost = ECON[r]["curse_cure"] * len(c.persist); s.gold -= cost; s.G["spend"]["神殿"] += cost
                 for p in c.persist: s.G["temple"][p] += 1

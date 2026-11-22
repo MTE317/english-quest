@@ -5,7 +5,7 @@
 
 ## 決まりごと
 
-- 文字コードは UTF-8（BOMつき）。Excelで開いても文字化けしません。コードで読むときは先頭のBOMを取り除いてください。
+- CSV の文字コードは UTF-8（BOMつき）。JSON はBOMなし。Excelで開いても文字化けしません。コードで読むときは先頭のBOMを取り除いてください。
 - 1列目は英字のID。ほかのファイルからはIDで参照します。日本語の名前は自由に変えてかまいません。
 - 1つのセルに複数の値があるときは `|` で区切ります（例：`fire|slash`）。
 - 素材と個数は `素材ID:個数` の形にします（例：`goblin_mat:2|cave_rat_mat:2`）。
@@ -39,9 +39,11 @@
 | materials.csv | 素材768種 |
 | dungeons.csv | ダンジョン60か所（★ごとに5つ：標準・深層・近場・素材の宝庫・季節の地）。enemy_mul＝敵の強さ、income_mul＝お金の倍率 |
 | dungeon_floors.csv / drop_tables.csv | 階ごとの敵Lv・戦闘数 / ドロップ率 |
-| items.csv / shop_inventory.csv | 消耗品 / 店の品ぞろえ |
+| items.csv / shop_inventory.csv | 消耗品（回復は固定量と割合の2種類。能力を上げる薬は調合のみ）/ 店の品ぞろえ |
+| alchemy_recipes.csv | 調合のレシピ（素材は種別と★で指定） |
 | inn_rooms.csv / facilities.csv / facility_ranks.csv / facility_effects.csv | 宿屋・町の施設 |
-| enhance_rates.csv / rarities.csv / recipes.csv | 強化・レアリティ・制作 |
+| enhance_rates.csv / rarities.csv / recipes.csv | 強化（費用は1.8^強化値で増える）・レアリティ・制作 |
+| enchant_grades.csv | エンチャントのグレード（工房のランク）ごとの費用 |
 | economy_by_rank.csv | ★ごとのお金の目安 |
 | adventurer_ranks.csv | 冒険者ランク25段階（★ごとに本ランクと＋、最後にS）。昇格試験・特典 |
 | quest_types.csv / quests.csv | クエスト |
