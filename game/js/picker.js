@@ -4,7 +4,6 @@
 //   2. この回で間違えた単語（retry_gap 問あけてからもう一度）
 //   3. 選んだ石の未解読の単語 … 1回で初めて出すのは newLimitFor(かすれた数) 語まで
 //   4. 選んだ石の、もう見たことのある単語 … 思い出せる確率が低い順、直前に出したものは避ける
-import { dayIndex } from './srs.js';
 
 export const REASON = Object.freeze({
   DUE: 'due', // かすれたルーン（復習）
@@ -32,7 +31,7 @@ export class QuestionPicker {
     this.store = store;
     this.scheduler = scheduler;
     this.stoneId = stoneId;
-    this.today = dayIndex(nowMs);
+    this.today = scheduler.dayOf(nowMs);
     this.asked = 0; // 出した問題の数
     this.lastAskedAt = new Map(); // id → 何問目に出したか
     this.retry = []; // { id, after }

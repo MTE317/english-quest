@@ -1,10 +1,12 @@
 // ブラウザへの保存（localStorage）。
 // 学習記録とゲームの進み具合は別のキーに保存する。全滅でゲームの進み具合を戻しても、学習記録はそのまま残すため。
-//   学習記録   … LEARNING_KEY（単語ごとの状態・次の復習日・連続正解数・正誤の数）
-//   進み具合   … PROGRESS_KEY（まだ使っていない。町・ダンジョンを作るときに使う）
+//   学習記録   … LEARNING_KEY（単語ごとの状態・次の復習日・連続正解数・正誤の数、日ごとの合計）
+//   進み具合   … SAVE_KEY（save.js が扱う。自動保存は1つだけ）
 
 export const LEARNING_KEY = 'englishQuest.learning.v1';
-export const PROGRESS_KEY = 'englishQuest.progress.v1';
+export const SAVE_KEY = 'englishQuest.save.v1';
+/** @deprecated SAVE_KEY と同じ */
+export const PROGRESS_KEY = SAVE_KEY;
 const DEBUG_DAY_OFFSET_KEY = 'englishQuest.debug.dayOffset';
 
 // 1語ぶんの記録は配列で保存して小さくする（15,000語で1MB未満にするため）
@@ -22,7 +24,7 @@ function unpack(a) {
   };
 }
 
-function safeStorage(storage) {
+export function safeStorage(storage) {
   if (storage) return storage;
   try { return globalThis.localStorage ?? null; } catch { return null; }
 }
@@ -32,16 +34,19 @@ export class LearningStore {
   constructor(storage) {
     this.storage = safeStorage(storage);
     this.words = new Map();
+    this.daily = new Map(); // 学習の日付 → { answered, correct }
     this.load();
   }
   load() {
     this.words.clear();
+    this.daily.clear();
     if (!this.storage) return;
     try {
       const raw = this.storage.getItem(LEARNING_KEY);
       if (!raw) return;
       const obj = JSON.parse(raw);
       for (const [id, a] of Object.entries(obj.words ?? {})) this.words.set(id, unpack(a));
+      for (const [day, a] of Object.entries(obj.daily ?? {})) this.daily.set(Number(day), { answered: a[0], correct: a[1] });
     } catch (e) {
       console.warn('学習記録を読めなかった', e);
     }
@@ -50,20 +55,31 @@ export class LearningStore {
     if (!this.storage) return;
     const words = {};
     for (const [id, rec] of this.words) words[id] = pack(rec);
-    this.storage.setItem(LEARNING_KEY, JSON.stringify({ v: 1, words }));
+    const daily = {};
+    for (const [day, t] of this.daily) daily[day] = [t.answered, t.correct];
+    this.storage.setItem(LEARNING_KEY, JSON.stringify({ v: 1, words, daily }));
   }
   get(id) { return this.words.get(id) ?? null; }
   set(id, rec) { this.words.set(id, rec); this.save(); }
+  /** 1問答えたことを記録する：単語の記録を置きかえ、その日の合計（解いた数・正解数）を足して保存 */
+  recordAnswer(id, rec, day, correct) {
+    this.words.set(id, rec);
+    const t = this.daily.get(day) ?? { answered: 0, correct: 0 };
+    this.daily.set(day, { answered: t.answered + 1, correct: t.correct + (correct ? 1 : 0) });
+    this.save();
+  }
+  /** その日の合計 */
+  dailyTotal(day) { return this.daily.get(day) ?? { answered: 0, correct: 0 }; }
   entries() { return this.words.entries(); }
   get size() { return this.words.size; }
   /** 保存している文字数（容量の目安） */
   byteSize() { return this.storage?.getItem(LEARNING_KEY)?.length ?? 0; }
-  clear() { this.words.clear(); this.storage?.removeItem(LEARNING_KEY); }
+  clear() { this.words.clear(); this.daily.clear(); this.storage?.removeItem(LEARNING_KEY); }
 }
 
-/** ゲームの進み具合だけを消す（全滅したときなど）。学習記録には触らない。 */
+/** ゲームの進み具合（自動保存）だけを消す。学習記録には触らない。 */
 export function clearProgress(storage) {
-  safeStorage(storage)?.removeItem(PROGRESS_KEY);
+  safeStorage(storage)?.removeItem(SAVE_KEY);
 }
 
 // ---- 動作確認用：日付をずらす ----
