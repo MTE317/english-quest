@@ -103,6 +103,7 @@ function showRun(result = null) {
   const run = session.run;
   if (!run) return showTown();
   if (run.battle) return battleView().start();
+  if (run.state === 'ready' && run.battlesDone === 0) return beginBattle();
   if (run.state === 'loot') {
     render(view, lootActions(result));
     return;
@@ -120,7 +121,7 @@ function showRun(result = null) {
   if (run.state === 'ready') {
     const boss = isBossBattle(data, run);
     actions = [
-      el('button', { class: 'primary', onclick: () => { startNextBattle(data, session); battleView().start(); } }, boss ? '👑 ボスに挑む' : '次の戦闘へ'),
+      el('button', { class: 'primary', onclick: beginBattle }, boss ? '👑 ボスに挑む' : '次の戦闘へ'),
       el('button', { onclick: () => showFieldItems(result) }, '道具を使う'),
       ...returnItems(data, g).map((id) => el('button', {
         onclick: () => { if (confirm(`${data.items.get(id).name}で町に帰りますか？`)) { const pack = summary(run); returnToTown(data, session, id); showReturned(pack); } },
@@ -203,6 +204,11 @@ function showFieldItems(result) {
 }
 
 // ---------------- 戦闘 ----------------
+function beginBattle() {
+  startNextBattle(data, session);
+  battleView().start();
+}
+
 function battleView() {
   return createBattleView({
     view, data, lex, scheduler, store, session,
