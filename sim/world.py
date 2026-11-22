@@ -52,7 +52,7 @@ class Game:
     # ---------------------------------------------------------------- 便利
     def tier(s): return ADV[s.adv]["maxr"]
     def fee_tier(s): return max(s.cleared | {1})
-    def fixed_cost(s): t = s.fee_tier(); return ECON[t]["guild_fee"] + ECON[t]["storage_fee"]
+    def fixed_cost(s): t = s.fee_tier(); return ECON[t]["guild_fee"] + ECON[t].get("storage_fee", 0)
     def stock_plan(s, r):
         av = lambda names: [n for n in names if ITEMS[n]["rank"] <= s.fac["item"]]
         hp = av(B.HP_ITEMS); mp = av(B.MP_ITEMS)

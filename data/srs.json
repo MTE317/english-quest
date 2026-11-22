@@ -17,5 +17,17 @@
  },
  "wipe_keeps_learning_record": true,
  "storage": "単語ごとに段階・次の復習日・連続正解数などを保存（15,000語で1MB未満）",
- "stones_ahead": "今の★の石を全部読んだら、1つ上の★の石も持ち込める（ダンジョンの★以上ならよい）"
+ "stones_ahead": "今の★の石を全部読んだら、1つ上の★の石も持ち込める（ダンジョンの★以上ならよい）",
+ "fsrs_w": "FSRS-5 の公開されている初期値（ゲーム側の FALLBACK を正とする）",
+ "maximum_interval_days": 36500,
+ "learned_streak": 3,
+ "learned_min_gap_days": 1,
+ "familiar_streak": 1,
+ "retry_gap": 3,
+ "new_per_run_rule": "普段は15語。かすれたルーンが増えるにつれて10語まで減らし、reduce_new_when_due_over を超えたら reduced_new_per_run（5語）",
+ "day_boundary_hour": 4,
+ "_day_note": "復習の日数は現実の日付で数える。日付の切り替わりは午前4時",
+ "learned_wrong": "習得した単語を間違えたら学習中に戻し、連続正解数を0にする",
+ "wrong_next": "間違えた単語は次の日に復習",
+ "history": "1回ごとの記録は残さない。単語ごとの正解数・不正解数と、日ごとの合計（解いた数・正解数）を残す"
 }
