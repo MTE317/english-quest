@@ -18,6 +18,48 @@ LEARNERS = {   # 学び方のタイプ
     "得意": dict(prior0=0.80, prior_drop=0.06, p_new=0.45, grow=2.7),
 }
 
+# ---------------------------------------------------------------- 強い個体（冠）
+import core as _core
+ELITES = [dict(id=r["id"], pre=r["prefix"], mods=r["mods"], min=int(r["min_star"]), p=float(r["appear_rate"]), rm=float(r["reward_mul"])) for r in R("elite_prefixes.csv")]
+_BaseEnemy = _core.Enemy
+def apply_elite(e, el):
+    for part in el["mods"].split("|"):
+        k, *v = part.split(":")
+        if k == "hp_mul": e.maxhp *= float(v[0]); e.hp = e.maxhp
+        elif k == "atk_mul": e.STR *= float(v[0]); e.MAG *= float(v[0])
+        elif k == "def_mul" and hasattr(e, "DEF"): e.DEF *= float(v[0])
+        elif k == "res_mul" and hasattr(e, "RES"): e.RES *= float(v[0])
+        elif k == "spd_mul" and hasattr(e, "SPD"): e.SPD *= float(v[0])
+        elif k == "status": e.m = dict(e.m, st=(db.STATUS[v[0]]["name"], float(v[1])))
+        elif k == "element": e.m = dict(e.m, elem=db.ELEM.get(v[0]))
+    e.rmul = el["rm"]; e.name = el["pre"] + e.name; e.elite = el["id"]
+def EnemyF(m, L, rng, rank=1, dm=1.0):
+    e = _BaseEnemy(m, L, rng, rank, dm)
+    if e.boss and T.get("_bmul"):
+        e.maxhp *= T["_bmul"]; e.hp = e.maxhp; e.STR *= T["_bmul"] ** 0.5; e.MAG *= T["_bmul"] ** 0.5
+    if T.get("elites", 1) and not e.boss and rng.random() < T.get("elite_rate", 0.08):
+        ok = [el for el in ELITES if el["min"] <= rank]
+        el = rng.choices(ok, weights=[x["p"] for x in ok])[0]
+        apply_elite(e, el)
+    return e
+world.Enemy = EnemyF
+
+# ---------------------------------------------------------------- ボスダンジョン（ネタバレ：secret/）
+BOSSD = {}
+_bp = os.path.join(db.SEC, "boss_dungeons.csv")
+if os.path.exists(_bp):
+    for r in csv.DictReader(open(_bp, encoding="utf-8-sig")):
+        k = int(r["star"]); L = int(r["enemy_lv"]); bid = r["id"]
+        fr = [dict(floor=f, lv=L + f - 1, battles=2 if f < 3 else 1, n=3, boss=1 if f == 3 else 0, rp=0) for f in range(1, 4)]
+        base = DUNGEONS[next(d for d in db.BY_RANK[k] if DUNGEONS[d]["kind"] == "標準")]
+        DUNGEONS[bid] = dict(base, id=bid, name=r["name"], floors=3, el=L, rp=None, boss=r["boss_id"], emul=float(r["enemy_mul"]),
+                             floor_rows=fr, kind="ボス", bmul=float(r["boss_mul"]), income=2.0, pool_from=base["id"])
+        BOSSD[k] = bid
+_pool0 = db.pool
+def _pool(did, season):
+    return _pool0(DUNGEONS[did].get("pool_from", did), season)
+db.pool = _pool
+
 SNAP = None   # 調整用：★ごとに前線15回目の状態を取っておく
 
 class Q(QSource):
@@ -101,7 +143,7 @@ class Game12(Game):
             fe = s.G.setdefault("front", Counter()); fw = s.G.setdefault("front_w", Counter())
             if r == s.tier() and fe[r] < 40:
                 fe[r] += 1; fw[r] += res == "wipe"
-                if fe[r] == 15 and SNAP is not None and r not in SNAP: SNAP[r] = (world.copy.deepcopy(s), did)
+                if fe[r] == 35 and SNAP is not None and r not in SNAP: SNAP[r] = (world.copy.deepcopy(s), did)
             s.in_run = False
             s.G["attempts"] += 1; s.G["attempts_by_rank"][r] += 1; s.G["real_q"] += s.S["q"] - q0; s.G["run_q"].append((r, s.S["q"] - q0, res))
             s.G["first_enter"].setdefault(r, (s.real_day(), s.G["attempts"], s.G["real_q"])); s.G["dungeon_use"][did] += 1
