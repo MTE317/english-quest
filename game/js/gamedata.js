@@ -35,6 +35,8 @@ const FILES = {
   innRooms: 'inn_rooms.csv',
   seasons: 'seasons.csv',
   facilities: 'facilities.csv',
+  commonTree: 'common_tree.csv',
+  jobMastery: 'job_mastery.csv',
 };
 
 const byId = (rows, key = 'id') => new Map(rows.map((r) => [r[key], r]));
@@ -204,9 +206,14 @@ function buildBattleData(raw) {
     seasons: raw.seasons.map((r) => ({ id: r.id, name: r.name, monthInYear: toNumber(r.month_in_year, 1) })).sort((a, b) => a.monthInYear - b.monthInYear),
     facilities: raw.facilities.map((r) => ({ id: r.id, name: r.name, role: r.role })),
   } : {};
+  const growth = raw.commonTree ? {
+    commonTree: raw.commonTree.map((r) => ({ id: r.id, name: r.name, level: toNumber(r.level, 1), points: toNumber(r.points, 1), kind: r.kind, effect: r.effect })),
+    jobMastery: raw.jobMastery.map((r) => ({ job: r.job, condition: r.condition, bonus: r.bonus_all_jobs })),
+  } : {};
   return {
     ...loot,
     ...town,
+    ...growth,
     monsters: byId(monsters),
     monsterTypes: byId(raw.monsterTypes.map((r) => ({ id: r.id, name: r.name }))),
     elements: byId(raw.elements.map((r) => ({ id: r.id, name: r.name, kind: r.kind }))),

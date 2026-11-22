@@ -1,0 +1,237 @@
+// 成長：スキルツリーと AP・スキルの枠・共通ツリー・ジョブを極めたボーナス・武器の熟練度・ジョブチェンジ。
+// data に数として書かれていないものは GROWTH_FORMULAS に置く（docs/requests.md で依頼済み）。
+import { gearDef, aptitudeMul, unequip, maxHp, maxMp } from './character.js';
+
+export const GROWTH_FORMULAS = Object.freeze({
+  action_capacity: 10, // 通常スキルの枠（スキルの cost の合計。sim の cap_a）
+  passive_capacity: 10, // パッシブの枠（sim の cap_p）
+  common_points_per_level: 1, // 共通ツリーのポイント：Lv2 から1レベルごとに1（common_tree.csv に入手の決まりがないので仮）
+  mastery_kills_per_level: 30, // 武器の熟練度：その種類の武器で30体倒すごとに1つ上がる（sim と同じ）
+  mastery_gate_base: 15, // 装備Lvがこれより上の武器は、熟練度が必要（sim と同じ）
+  mastery_gate_div: 6, //   必要な熟練度 = (装備Lv - 15) ÷ 6
+});
+
+// ---------------- 文で書かれた効果を読む（common_tree.csv の effect、job_mastery.csv の bonus_all_jobs） ----------------
+const BONUS_PATTERNS = [
+  [/最大HP\+(\d+(?:\.\d+)?)%|^HP\+(\d+(?:\.\d+)?)%/, (v) => ({ hp: v })],
+  [/^MP\+(\d+(?:\.\d+)?)%/, (v) => ({ mp: v })],
+  [/STRとMAG\+(\d+(?:\.\d+)?)%/, (v) => ({ str: v, mag: v })],
+  [/^(STR|MAG|DEF|RES|SPD|LUK)\+(\d+(?:\.\d+)?)%/, (v, m) => ({ [m[1].toLowerCase()]: Number(m[2]) / 100 })],
+  [/MP(?:最大の)?(\d+(?:\.\d+)?)%回復|MP回復(\d+(?:\.\d+)?)%/, (v) => ({ mp_regen: v })],
+  [/鍛錬の経験値・AP\+(\d+(?:\.\d+)?)%/, (v) => ({ training: v })],
+  [/状態異常にかける確率\+(\d+(?:\.\d+)?)%/, (v) => ({ stat_rate: v })],
+  [/状態異常-(\d+(?:\.\d+)?)%/, (v) => ({ sres: v })],
+  [/素材\+(\d+(?:\.\d+)?)%/, (v) => ({ drop: v })],
+  [/通常枠\+(\d+)/, (v, m) => ({ cap_action: Number(m[1]) })],
+  [/パッシブ枠\+(\d+)/, (v, m) => ({ cap_passive: Number(m[1]) })],
+  [/回復量\+(\d+(?:\.\d+)?)%/, (v) => ({ healp: v })],
+  [/会心率\+(\d+(?:\.\d+)?)%/, (v) => ({ crt: v })],
+  [/会心ダメージ\+(\d+(?:\.\d+)?)%/, (v) => ({ crit_dmg: v })],
+  [/弱点へのダメージ\+(\d+(?:\.\d+)?)%/, (v) => ({ weak_all: v })],
+  [/道具の効果\+(\d+(?:\.\d+)?)%/, (v) => ({ itemp: v })],
+];
+/** 「最大HP+5%」→ { hp: 0.05 }。読めない文は {} */
+export function parseBonusText(text) {
+  for (const [re, fn] of BONUS_PATTERNS) {
+    const m = re.exec(String(text ?? '').trim());
+    if (m) {
+      const num = Number(m.slice(1).find((x) => x != null && /^\d/.test(x)));
+      return fn(num / 100, m);
+    }
+  }
+  return {};
+}
+
+// ---------------- スキルツリー ----------------
+export function jobSkills(data, jobId) {
+  return [...data.skills.values()].filter((s) => s.job === jobId).sort((a, b) => a.path.localeCompare(b.path) || a.stage - b.stage);
+}
+export function jobPaths(data, jobId) {
+  const out = new Map();
+  for (const s of jobSkills(data, jobId)) { if (!out.has(s.path)) out.set(s.path, []); out.get(s.path).push(s); }
+  return out;
+}
+/** 覚えているか（ap_to_learn が0のものは最初から） */
+export function isLearned(member, skill) {
+  return skill.apToLearn === 0 || (member.learned ?? []).includes(skill.id);
+}
+/** 覚えられるか → 理由（覚えられるなら ''） */
+export function learnBlock(data, member, skill) {
+  if (isLearned(member, skill)) return '覚えている';
+  const prev = jobSkills(data, skill.job).find((s) => s.path === skill.path && s.stage === skill.stage - 1);
+  if (prev && !isLearned(member, prev)) return `先に「${prev.name}」を覚える`;
+  const ap = member.ap?.[skill.job] ?? 0;
+  if (ap < skill.apToLearn) return `${data.jobsById.get(skill.job).name}の AP が ${ap} / ${skill.apToLearn}`;
+  return '';
+}
+/** AP を使って覚える。枠に空きがあれば自動でつける */
+export function learnSkill(data, member, skillId) {
+  const s = data.skills.get(skillId);
+  const block = learnBlock(data, member, s);
+  if (block) throw new Error(block);
+  member.ap[s.job] -= s.apToLearn;
+  member.learned = [...(member.learned ?? []), s.id];
+  if (!equipBlock(data, member, s)) equipSkill(data, member, s.id);
+}
+
+// ---------------- スキルの枠（ほかのジョブのスキルも持ち出せる） ----------------
+export function ensureLoadout(data, member) {
+  if (member.loadout) return member.loadout;
+  // はじめて：今のジョブの覚えているスキルを入るだけつける
+  member.loadout = { actions: [], passives: [] };
+  for (const s of jobSkills(data, member.job)) if (isLearned(member, s) && !equipBlock(data, member, s)) equipSkill(data, member, s.id);
+  return member.loadout;
+}
+const isPassive = (s) => s.kind === 'passive';
+export function capacity(data, member) {
+  const m = commonMods(data, member);
+  return {
+    actions: GROWTH_FORMULAS.action_capacity + (m.cap_action ?? 0),
+    passives: GROWTH_FORMULAS.passive_capacity + (m.cap_passive ?? 0),
+  };
+}
+export function usedCapacity(data, member) {
+  const lo = member.loadout ?? { actions: [], passives: [] };
+  const sum = (ids) => ids.reduce((a, id) => a + (data.skills.get(id)?.cost ?? 0), 0);
+  return { actions: sum(lo.actions), passives: sum(lo.passives) };
+}
+/** 枠につけられるか → 理由 */
+export function equipBlock(data, member, skill) {
+  const lo = member.loadout ?? { actions: [], passives: [] };
+  const list = isPassive(skill) ? lo.passives : lo.actions;
+  if (list.includes(skill.id)) return 'つけている';
+  if (!isLearned(member, skill)) return '覚えていない';
+  if (skill.isFinal && skill.job !== member.job) return 'ほかのジョブの奥義は持ち出せない';
+  const cap = capacity(data, member);
+  const used = usedCapacity(data, member);
+  const key = isPassive(skill) ? 'passives' : 'actions';
+  if (used[key] + skill.cost > cap[key]) return `枠が足りない（${used[key]} + ${skill.cost} > ${cap[key]}）`;
+  return '';
+}
+export function equipSkill(data, member, skillId) {
+  const s = data.skills.get(skillId);
+  member.loadout = member.loadout ?? { actions: [], passives: [] };
+  const block = equipBlock(data, member, s);
+  if (block) throw new Error(block);
+  (isPassive(s) ? member.loadout.passives : member.loadout.actions).push(s.id);
+}
+export function unequipSkill(member, skillId) {
+  if (!member.loadout) return;
+  member.loadout.actions = member.loadout.actions.filter((x) => x !== skillId);
+  member.loadout.passives = member.loadout.passives.filter((x) => x !== skillId);
+}
+/** 戦闘で使えるスキル（つけている通常スキル） */
+export function actionSkills(data, member) {
+  const lo = member.loadout ?? ensureLoadout(data, member);
+  return lo.actions.map((id) => data.skills.get(id)).filter(Boolean);
+}
+
+// ---------------- 共通ツリー ----------------
+export function commonPoints(data, member) {
+  const earned = Math.max(0, member.lv - 1) * GROWTH_FORMULAS.common_points_per_level;
+  const spent = (member.common ?? []).reduce((a, id) => a + (data.commonTree.find((n) => n.id === id)?.points ?? 0), 0);
+  return { earned, spent, left: earned - spent };
+}
+export function commonBlock(data, member, node) {
+  if ((member.common ?? []).includes(node.id)) return '覚えている';
+  if (member.lv < node.level) return `Lv${node.level}から`;
+  if (commonPoints(data, member).left < node.points) return 'ポイントが足りない';
+  return '';
+}
+export function learnCommon(data, member, nodeId) {
+  const node = data.commonTree.find((n) => n.id === nodeId);
+  const block = commonBlock(data, member, node);
+  if (block) throw new Error(block);
+  member.common = [...(member.common ?? []), node.id];
+}
+function commonMods(data, member) {
+  const out = {};
+  for (const id of member.common ?? []) add(out, parseBonusText(data.commonTree.find((n) => n.id === id)?.effect));
+  return out;
+}
+
+// ---------------- ジョブを極める ----------------
+export function isJobMastered(data, member, jobId) {
+  const skills = jobSkills(data, jobId);
+  return skills.length > 0 && skills.every((s) => isLearned(member, s));
+}
+
+// ---------------- まとめた補正（パッシブ・共通ツリー・ジョブを極めたボーナス） ----------------
+function add(out, mods) {
+  for (const [k, v] of Object.entries(mods)) {
+    if (typeof v === 'number') out[k] = (out[k] ?? 0) + v;
+    else if (Array.isArray(v)) out[k] = [...(out[k] ?? []), v];
+    else out[k] = v;
+  }
+}
+/**
+ * キャラの補正の合計。数の補正は足し、wdmg / edmg / tdmg は [[対象, 値], ...] にまとめる
+ */
+export function memberMods(data, member) {
+  const out = {};
+  if (!data.skills) return out;
+  for (const id of member.loadout?.passives ?? []) {
+    const mod = data.skills.get(id)?.effect.mod ?? {};
+    for (const [k, v] of Object.entries(mod)) {
+      if (['wdmg', 'edmg', 'tdmg'].includes(k)) out[k] = [...(out[k] ?? []), v];
+      else if (typeof v === 'number') out[k] = (out[k] ?? 0) + v;
+    }
+  }
+  add(out, commonMods(data, member));
+  for (const j of data.jobMastery ?? []) if (isJobMastered(data, member, j.job)) add(out, parseBonusText(j.bonus));
+  return out;
+}
+
+// ---------------- 武器の熟練度 ----------------
+export function masteryLevel(data, member, weaponType) {
+  const max = Math.round(data.balance.battle.mastery_max / data.balance.battle.mastery_per_level);
+  return Math.min(max, Math.floor((member.mastery?.[weaponType] ?? 0) / GROWTH_FORMULAS.mastery_kills_per_level));
+}
+/** 熟練度による攻撃力の倍率 */
+export function masteryMul(data, member, weaponType) {
+  return 1 + data.balance.battle.mastery_per_level * masteryLevel(data, member, weaponType);
+}
+/** その武器を装備するのに必要な熟練度 */
+export function masteryNeeded(def) {
+  return Math.max(0, Math.floor((def.itemLv - GROWTH_FORMULAS.mastery_gate_base) / GROWTH_FORMULAS.mastery_gate_div));
+}
+/** 倒したときに熟練度を数える（今の武器の種類） */
+export function addMasteryKill(data, member) {
+  if (!member.equip.weapon) return;
+  const t = gearDef(data, member.equip.weapon).kind;
+  member.mastery = member.mastery ?? {};
+  member.mastery[t] = (member.mastery[t] ?? 0) + 1;
+}
+
+// ---------------- ジョブチェンジ（神殿） ----------------
+/** 選べるジョブ：基本ジョブと、解放した中級ジョブ */
+export function availableJobs(data, game) {
+  const unlocked = new Set(game.unlockedJobs ?? []);
+  return data.jobs.filter((j) => j.tier === 'base' || unlocked.has(j.id));
+}
+
+/**
+ * ジョブを変える。新しいジョブで装備できない（適正×）物は倉庫へ。
+ * ほかのジョブの奥義はスキルの枠から外す。
+ */
+export function changeJob(data, game, index, jobId) {
+  const m = game.party[index];
+  if (!availableJobs(data, game).some((j) => j.id === jobId)) throw new Error('そのジョブはまだ選べない');
+  if (m.job === jobId) throw new Error('今のジョブと同じ');
+  m.job = jobId;
+  m.ap[jobId] = m.ap[jobId] ?? 0;
+  for (const slot of ['offhand', 'weapon', 'head', 'body', 'arm']) {
+    const g = m.equip[slot];
+    if (g && aptitudeMul(data, jobId, gearDef(data, g)) == null) unequip(data, game, m, slot);
+  }
+  if (m.loadout) {
+    for (const id of [...m.loadout.actions, ...m.loadout.passives]) {
+      const s = data.skills.get(id);
+      if (s?.isFinal && s.job !== jobId) unequipSkill(m, id);
+    }
+  }
+  // 新しいジョブの最初のスキル（ap_to_learn 0）を、枠に空きがあればつける
+  for (const s of jobSkills(data, jobId)) if (isLearned(m, s) && !equipBlock(data, m, s)) equipSkill(data, m, s.id);
+  m.hp = Math.min(m.hp, maxHp(data, m));
+  m.mp = Math.min(m.mp, maxMp(data, m));
+}

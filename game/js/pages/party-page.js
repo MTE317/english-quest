@@ -6,6 +6,10 @@ import {
   computeStats, SLOTS, SLOT_LABEL, STAT_LABEL, canEquip, equipFromStorage, unequip, gearDef,
   aptitudeGrade, xpToNext, levelCap, gainXp, makeGear,
 } from '../character.js';
+import {
+  jobPaths, isLearned, learnBlock, learnSkill, equipBlock, equipSkill, unequipSkill, capacity, usedCapacity,
+  commonPoints, commonBlock, learnCommon, masteryLevel, isJobMastered,
+} from '../growth.js';
 import { el, render, stars } from '../dom.js';
 
 const view = document.getElementById('view');
@@ -114,6 +118,9 @@ function showMember(index) {
     ),
     el('h2', {}, '能力値'),
     el('table', { class: 'stat-table' }, el('tbody', {}, statRows.map(([k, v]) => el('tr', {}, el('th', {}, k), el('td', {}, String(v)))))),
+    el('div', { class: 'row' },
+      el('button', { onclick: () => showSkills(index) }, 'スキル'),
+      el('button', { onclick: () => showCommon(index) }, '共通ツリー')),
     el('h2', {}, '装備（8枠）'),
     el('ul', { class: 'choice-list' },
       SLOTS.map((slot) => {
@@ -123,6 +130,67 @@ function showMember(index) {
             el('div', { class: 'muted small' }, SLOT_LABEL[slot]),
             el('div', {}, gear ? gearLabel(gear, m.job) : '―　なし')));
       })),
+  );
+  window.scrollTo(0, 0);
+}
+
+// ---------------- スキルツリー ----------------
+function showSkills(index, msg = null) {
+  const g = session.game;
+  const m = g.party[index];
+  const cap = capacity(data, m);
+  const used = usedCapacity(data, m);
+  const doIt = (fn) => { try { session.update((game) => fn(game.party[index])); showSkills(index); } catch (e) { showSkills(index, e.message); } };
+  const jobsWithAp = Object.keys(m.ap).filter((j) => data.jobsById.has(j));
+  const skillRow = (s) => {
+    const learned = isLearned(m, s);
+    const on = m.loadout.actions.includes(s.id) || m.loadout.passives.includes(s.id);
+    const lb = learnBlock(data, m, s);
+    const eb = equipBlock(data, m, s);
+    return el('div', { class: `skill ${learned ? 'learned' : ''}` },
+      el('div', {}, `${s.stage}. ${s.name}`, el('span', { class: 'tiny muted' }, `　${s.kind === 'passive' ? 'パッシブ' : `MP${s.mp}`}・枠${s.cost}${s.isFinal ? '・奥義' : ''}`)),
+      !learned ? el('button', { disabled: !!lb, onclick: () => doIt((mm) => learnSkill(data, mm, s.id)) }, lb || `覚える（AP ${s.apToLearn}）`)
+        : on ? el('button', { class: 'ghost', onclick: () => doIt((mm) => unequipSkill(mm, s.id)) }, 'つけている（外す）')
+          : el('button', { disabled: !!eb, onclick: () => doIt((mm) => equipSkill(data, mm, s.id)) }, eb || 'つける'));
+  };
+  render(view,
+    el('button', { class: 'ghost', onclick: () => showMember(index) }, `← ${m.name}へ`),
+    msg ? el('div', { class: 'panel small error' }, msg) : null,
+    el('div', { class: 'panel small' },
+      el('div', {}, `AP：${jobsWithAp.map((j) => `${jobName(j)} ${m.ap[j]}`).join('・')}`),
+      el('div', {}, `枠：通常 ${used.actions} / ${cap.actions}・パッシブ ${used.passives} / ${cap.passives}`),
+      el('div', { class: 'muted' }, '戦闘で AP がたまる。ほかのジョブで覚えたスキルも、枠の範囲でつけられる（奥義は今のジョブだけ）。')),
+    jobsWithAp.map((jobId) => [
+      el('h2', {}, `${jobName(jobId)}${isJobMastered(data, m, jobId) ? '（極めた！）' : ''}`),
+      [...jobPaths(data, jobId).entries()].map(([path, skills]) => el('div', { class: 'panel small' }, el('div', { class: 'choice-title' }, path), skills.map(skillRow))),
+    ]),
+  );
+  window.scrollTo(0, 0);
+}
+
+function showCommon(index, msg = null) {
+  const g = session.game;
+  const m = g.party[index];
+  const pts = commonPoints(data, m);
+  const weaponTypes = Object.keys(m.mastery ?? {});
+  render(view,
+    el('button', { class: 'ghost', onclick: () => showMember(index) }, `← ${m.name}へ`),
+    msg ? el('div', { class: 'panel small error' }, msg) : null,
+    el('h2', {}, `共通ツリー（ポイント ${pts.left}）`),
+    el('p', { class: 'muted small' }, 'レベルが上がるとポイントが入る。どのジョブでも効く。'),
+    data.commonTree.map((n) => {
+      const has = (m.common ?? []).includes(n.id);
+      const block = commonBlock(data, m, n);
+      return el('div', { class: `skill ${has ? 'learned' : ''}` },
+        el('div', {}, n.name, el('span', { class: 'tiny muted' }, `　Lv${n.level}・${n.points}pt　${n.effect}`)),
+        has ? el('span', { class: 'tiny' }, '覚えている') : el('button', {
+          disabled: !!block,
+          onclick: () => { try { session.update((game) => learnCommon(data, game.party[index], n.id)); showCommon(index); } catch (e) { showCommon(index, e.message); } },
+        }, block || '覚える'));
+    }),
+    el('h2', {}, '武器の熟練度'),
+    weaponTypes.length ? el('div', { class: 'panel small' }, weaponTypes.map((t) => el('div', {}, `${data.weaponTypes.get(t)?.name ?? t}：熟練度 ${masteryLevel(data, m, t)}（倒した数 ${m.mastery[t]}）`)))
+      : el('p', { class: 'muted small' }, 'まだない（敵を倒すとその武器の熟練度が上がる）'),
   );
   window.scrollTo(0, 0);
 }
