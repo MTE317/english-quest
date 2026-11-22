@@ -5,7 +5,6 @@ const victoryTrack = new URL('../audio/english-quest-victory.mp3', import.meta.u
 
 let player;
 let screen;
-let speaking;
 
 function play() {
   return player.play().catch(() => false);
@@ -41,7 +40,7 @@ export function startBattleMusic(target) {
   screen = target;
   player.src = battleTrack.href;
   player.loop = true;
-  player.muted = Boolean(speaking);
+  player.muted = false;
   playBattle();
 }
 
@@ -55,15 +54,6 @@ export function finishBattleMusic(result) {
   play();
 }
 
-export function muteMusicForSpeech(utterance) {
-  if (!screen || !utterance) return;
-  speaking = utterance;
-  player.muted = true;
-  const restoreMusic = () => {
-    if (speaking !== utterance) return;
-    speaking = null;
-    player.muted = false;
-  };
-  utterance.addEventListener('end', restoreMusic, { once: true });
-  utterance.addEventListener('error', restoreMusic, { once: true });
+export function setBattleSpeechPlaying(playing) {
+  if (screen) player.muted = playing;
 }

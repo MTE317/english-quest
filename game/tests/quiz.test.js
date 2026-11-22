@@ -4,12 +4,31 @@ import { buildLexicon } from '../js/lexicon.js';
 import { Scheduler } from '../js/srs.js';
 import { LearningStore } from '../js/storage.js';
 import { QuestionPicker, REASON } from '../js/picker.js';
-import { makeQuestion, DIRECTION, editDistance } from '../js/quiz.js';
+import { makeQuestion, questionSpeech, DIRECTION, editDistance } from '../js/quiz.js';
 import { readJson, realLexicon, MemoryStorage, seededRng, DAY, T0 } from './helpers.js';
 
 const lex = realLexicon();
 const srs = readJson('srs.json');
 const sch = new Scheduler(srs);
+
+test('読み上げは表示した英語を使い、日本語の問題では回答まで正解を伏せる', () => {
+  const prompt = 'I left my current job.';
+  assert.deepEqual(questionSpeech({ direction: DIRECTION.EN_JA, prompt }), { prompt, answer: prompt });
+  for (const format of ['meaning', 'situation']) {
+    assert.deepEqual(questionSpeech({
+      direction: DIRECTION.JA_EN, format, prompt: '今の仕事を辞めました。',
+      choices: [{ text: 'I am looking for a job.' }, { text: prompt }], answerIndex: 1,
+    }), { prompt: null, answer: prompt });
+  }
+});
+
+test('穴埋めは空欄のまま出題を読み、回答後に完成した英文を読む', () => {
+  const q = {
+    direction: DIRECTION.JA_EN, format: 'cloze', prompt: '私はサポートを担当しています。\nI am ＿＿＿ support.',
+    choices: [{ text: 'responsible for' }], answerIndex: 0,
+  };
+  assert.deepEqual(questionSpeech(q), { prompt: 'I am blank support.', answer: 'I am responsible for support.' });
+});
 
 test('4択：選択肢は4つ、正解は1つ、同じ表示はない', () => {
   const rng = seededRng(7);

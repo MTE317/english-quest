@@ -3,7 +3,7 @@ import { splitList } from '../csv.js';
 import { GameSession } from '../save.js?v=features-2';
 import { Scheduler } from '../srs.js?v=features-2';
 import { now } from '../storage.js?v=features-2';
-import { speak, canSpeak } from '../speech.js';
+import { speak, canSpeak } from '../speech.js?v=question-speech-1';
 import { chantDay, nextChant, recordChant } from '../chant.js?v=features-2';
 import { el, render } from '../dom.js';
 

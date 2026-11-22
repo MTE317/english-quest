@@ -12,8 +12,8 @@ import { nextRankStatus, checkRankUp } from '../town.js?v=features-2';
 import { updateRuneModifiers } from '../temple.js?v=features-2';
 import { makeGear } from '../character.js?v=features-2';
 import { examWords, starLearnedRatio } from '../study.js?v=features-2';
-import { createBattleView } from '../ui/battle-view.js?v=hit-sound-1';
-import { runQuiz } from '../ui/quiz-runner.js?v=features-2';
+import { createBattleView } from '../ui/battle-view.js?v=question-speech-1';
+import { runQuiz } from '../ui/quiz-runner.js?v=question-speech-1';
 import { el, render } from '../dom.js';
 
 const view = document.getElementById('view');
