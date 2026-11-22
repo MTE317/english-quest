@@ -55,6 +55,7 @@ function guild() {
   if (!g.board) { g.board = makeBoard(data, g, rng()); session.save(); }
   const st = nextRankStatus(data, g);
   return [
+    el('a', { class: 'btn primary', href: 'study.html' }, 'ギルドの学び舎（資料室・石碑の間・訓練場・昇格試験）'),
     el('h2', {}, '受けているクエスト'),
     g.quests.length ? null : el('p', { class: 'muted small' }, 'なし'),
     g.quests.map((q) => el('div', { class: 'panel small' },

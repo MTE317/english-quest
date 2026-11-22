@@ -135,3 +135,6 @@ details summary { cursor: pointer; min-height: 44px; display: flex; align-items:
 .skill { display: flex; flex-direction: column; gap: 2px; padding: 6px 0; border-top: 1px dashed var(--line); }
 .skill.learned > div:first-child { color: var(--accent); }
 .skill button { min-height: 40px; margin: 2px 0; }
+.tabs.four { grid-template-columns: repeat(2, 1fr); }
+.card .prompt { margin-top: 8px; }
+.panel.awakened { border-color: var(--accent); }
