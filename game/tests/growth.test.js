@@ -3,10 +3,10 @@ import assert from 'node:assert/strict';
 import { createNewGame } from '../js/game-state.js';
 import {
   learnBlock, learnSkill, isLearned, jobSkills, equipBlock, equipSkill, unequipSkill, capacity, usedCapacity, actionSkills,
-  commonPoints, learnCommon, commonBlock, memberMods, parseBonusText, isJobMastered, masteryLevel, masteryNeeded, addMasteryKill,
+  commonPoints, learnCommon, commonBlock, memberMods, parseBonusText, isJobMastered, masteryLevel, addMasteryKill,
   changeJob, availableJobs, GROWTH_FORMULAS,
 } from '../js/growth.js';
-import { computeStats, maxHp, canEquip, makeGear, gainXp, weaponPower } from '../js/character.js';
+import { computeStats, maxHp, canEquip, makeGear, equipFromStorage, gainXp, weaponPower } from '../js/character.js';
 import { realGameData } from './helpers.js';
 
 const data = realGameData();
@@ -77,14 +77,21 @@ test('ジョブを極めると、全ジョブにボーナス（戦士：STR+3%�
   assert.ok(computeStats(data, w).str > str0);
 });
 
-test('武器の熟練度：30体ごとに上がり、攻撃力+2%。高い武器は熟練度が必要', () => {
+test('武器熟練度：高レベル武器は熟練度0でも装備可能、30体ごとに威力+2%（最大+20%）', () => {
   const g = fresh(); const w = g.party[0];
+  const top = makeGear(g, 'sword_t24'); // ★12・剣の熟練度0
+  assert.equal(masteryLevel(data, w, 'sword'), 0);
+  assert.equal(canEquip(data, w, 'weapon', top).ok, true);
+  g.storage.gear.push(top);
+  equipFromStorage(data, g, w, 'weapon', top.uid);
+  assert.equal(w.equip.weapon.id, 'sword_t24');
   const p0 = weaponPower(data, w, w.equip.weapon);
   for (let k = 0; k < 60; k++) addMasteryKill(data, w);
   assert.equal(masteryLevel(data, w, 'sword'), 2);
   assert.ok(Math.abs(weaponPower(data, w, w.equip.weapon) / p0 - 1.04) < 1e-9);
-  const big = [...data.equipment.values()].find((e) => e.kind === 'sword' && masteryNeeded(e) > 2);
-  assert.match(canEquip(data, w, 'weapon', makeGear(g, big.id)).reason, /熟練度/);
+  for (let k = 0; k < 300; k++) addMasteryKill(data, w);
+  assert.equal(masteryLevel(data, w, 'sword'), 10);
+  assert.ok(Math.abs(weaponPower(data, w, w.equip.weapon) / p0 - 1.20) < 1e-9);
 });
 
 test('ジョブチェンジ：基本ジョブは選べる。装備できない物は倉庫へ', () => {
