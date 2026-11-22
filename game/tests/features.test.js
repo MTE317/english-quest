@@ -4,13 +4,13 @@ import { buildGameData, GAME_FILES } from '../js/gamedata.js';
 import { createNewGame } from '../js/game-state.js';
 import { GameSession } from '../js/save.js';
 import { makeEnemy, createBattle, setPending, resolvePending, skillMp } from '../js/battle.js';
-import { maxHp, makeGear } from '../js/character.js';
+import { makeGear } from '../js/character.js';
 import { Scheduler } from '../js/srs.js';
 import { recordChant, nextChant } from '../js/chant.js';
 import { changeJob } from '../js/growth.js';
 import { craft, enhance, brew, dismantle, facilityUpgrade } from '../js/workshop.js';
 import { borrow, repayLoan } from '../js/town.js';
-import { chooseRuneEffect, equipRune, openRuneSlot, unlockJob, updateRuneModifiers } from '../js/temple.js';
+import { unlockJob } from '../js/temple.js';
 import { makeEncounter, monsterPool } from '../js/encounter.js';
 import { acceptChain, chainStep, claimChain, talkChain, updateChains } from '../js/quest-chain.js';
 import { makePracticeQuestion, DIRECTION } from '../js/quiz.js';
@@ -93,22 +93,11 @@ test('制作、分解、強化、調合と施設投資が在庫や資金に反�
   assert.equal(g.gold, money + 10);
 });
 
-test('素材で解放したジョブは選べ、刻印は覚醒と枠を満たすと能力を上げる', () => {
+test('素材で中級ジョブを解放できる', () => {
   const g = game();
   g.storage.materials = { poison_spider_mat: 4, skeleton_mat: 3 };
   unlockJob(data, g, 'apothecary');
   assert.ok(g.unlockedJobs.includes('apothecary'));
-  const lex = realLexicon();
-  const stone = lex.stones[0];
-  const store = { awakened: { [stone.id]: { day: 1 } }, get: () => null };
-  const m = g.party[0];
-  const before = maxHp(data, m);
-  chooseRuneEffect(data, g, stone, 'hp', store.awakened);
-  openRuneSlot(data, g, m, store.awakened);
-  equipRune(g, m, stone.id);
-  updateRuneModifiers(data, g, lex, store, new Scheduler(), 1);
-  assert.ok(maxHp(data, m) > before);
-  assert.throws(() => equipRune(g, { runeSlots: 1 }, stone.id), /ほかの仲間/);
 });
 
 test('季節の敵、賞金首、連続クエストの進行と報告', () => {

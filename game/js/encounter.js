@@ -1,5 +1,5 @@
 // 出てくる敵を決める（ダンジョンと階から）。
-import { makeEnemy } from './battle.js?v=balance-builds-1';
+import { makeEnemy } from './battle.js?v=rune-study-1';
 
 /** そのダンジョンにふだん出るモンスター */
 export function monsterPool(data, dungeonId, season) {

@@ -1,9 +1,9 @@
 import { parseAmounts, splitList } from './csv.js';
-import { makeGear } from './character.js?v=balance-builds-1';
-import { rollAffixes } from './loot.js?v=balance-builds-1';
-import { matchesNeed, parseMaterialNeed } from './town.js?v=balance-builds-1';
-import { currentRank } from './dungeon.js?v=balance-builds-1';
-import { consumeMaterials } from './temple.js?v=balance-builds-1';
+import { makeGear } from './character.js?v=rune-study-1';
+import { rollAffixes } from './loot.js?v=rune-study-1';
+import { matchesNeed, parseMaterialNeed } from './town.js?v=rune-study-1';
+import { currentRank } from './dungeon.js?v=rune-study-1';
+import { consumeMaterials } from './temple.js?v=rune-study-1';
 import { describeEffect } from './equipment-effects.js?v=balance-builds-1';
 
 const facilityFor = (def) => def.slot === 'weapon' ? 'weapon_workshop'

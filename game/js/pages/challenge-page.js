@@ -1,21 +1,20 @@
-import { loadGameData } from '../gamedata.js?v=features-2';
+import { loadGameData } from '../gamedata.js?v=rune-study-1';
 import { loadCsv, loadJson, loadOptional } from '../data.js?v=features-2';
 import { splitList } from '../csv.js';
 import { buildLexicon } from '../lexicon.js';
 import { Scheduler } from '../srs.js?v=features-2';
-import { LearningStore, now } from '../storage.js?v=features-2';
-import { GameSession } from '../save.js?v=balance-builds-1';
-import { normalizeGame } from '../game-state.js?v=balance-builds-1';
-import { createBattle, makeEnemy, finishBattle } from '../battle.js?v=balance-builds-1';
-import { currentRank, useItemOutsideBattle, FIELD_ITEM_EFFECTS } from '../dungeon.js?v=balance-builds-1';
-import { nextRankStatus, checkRankUp } from '../town.js?v=balance-builds-1';
-import { updateRuneModifiers } from '../temple.js?v=balance-builds-1';
-import { makeGear } from '../character.js?v=balance-builds-1';
-import { examWords, starLearnedRatio } from '../study.js?v=balance-builds-1';
-import { createBattleView } from '../ui/battle-view.js?v=balance-builds-1';
-import { runQuiz } from '../ui/quiz-runner.js?v=atlas-1';
+import { LearningStore, now } from '../storage.js?v=rune-study-1';
+import { GameSession } from '../save.js?v=rune-study-1';
+import { normalizeGame } from '../game-state.js?v=rune-study-1';
+import { createBattle, makeEnemy, finishBattle } from '../battle.js?v=rune-study-1';
+import { currentRank, useItemOutsideBattle, FIELD_ITEM_EFFECTS } from '../dungeon.js?v=rune-study-1';
+import { nextRankStatus, checkRankUp } from '../town.js?v=rune-study-1';
+import { makeGear } from '../character.js?v=rune-study-1';
+import { examWords, starLearnedRatio, arenaReviewWords } from '../study.js?v=rune-study-1';
+import { createBattleView } from '../ui/battle-view.js?v=rune-study-1';
+import { runQuiz } from '../ui/quiz-runner.js?v=rune-study-1';
 import { el, render } from '../dom.js';
-import { setSceneMusic } from '../battle-music.js?v=jrpg-1';
+import { setSceneMusic } from '../battle-music.js?v=rune-study-1';
 
 import { installGameShell } from '../ui/game-shell.js';
 
@@ -68,10 +67,7 @@ function arena(tier, direction, timed) {
     const [id, lvl] = token.split(':');
     return { id, lv: Number(lvl), boss: data.monsters.get(id)?.isBoss ?? false };
   }));
-  const awakened = lex.stones.filter((s) => store.awakened[s.id]);
-  const books = awakened.length ? awakened : lex.stones.filter((s) => lex.wordsByStone.get(s.id)?.some((w) => store.isRead(w.id)));
-  const ids = new Set(books.map((s) => s.id));
-  start('arena', tier.name, battles, lex.words.filter((w) => ids.has(w.stoneId)).map((w) => w.id),
+  start('arena', tier.name, battles, arenaReviewWords(lex, store).map((w) => w.id),
     { arenaTier: tier.id, direction, timeLimit: timed ? 10 : 0, arenaReward: {
       medalsFirst: Math.max(0, Number(tier.first_medals) || 0), medalsRepeat: Math.max(0, Number(tier.repeat_medals) || 0),
       title: tier.title, gear: tier.gear_id, timedTitle: tier.timed_title, directionTitle: tier.direction_title,
@@ -191,6 +187,7 @@ function draw() {
     !rankCanAttemptFinal() && game.rank !== 'S' ? el('p', { class: 'muted small' }, '★12のルーンを80%習得し、Sランクに必要なギルドポイントと踏破条件を満たすと挑めます。') : null,
     el('h2', {}, '闘技場'),
     el('p', { class: 'muted small' }, '同じ階級の5連戦です。HP・MPは持ち越し、戦闘の合間に道具を使えます。回復薬とエーテルを用意し、最後のチャンピオンに合わせて装備を整えましょう。'),
+    el('p', { class: 'muted small' }, '問題は読み解いたルーンから総復習。確認テストを受けていなくても挑戦できます。'),
     tiers.length ? [mode, tiers.map((tier) => {
       const required = Number(tier.rank);
       const locked = required > config.tiers - 1 ? game.rank !== 'S' : currentRank(data, game).maxDungeonRank < required;
@@ -221,7 +218,7 @@ function draw() {
   tiers = t?.rows ?? []; matches = m?.rows ?? []; shop = s?.rows ?? [];
   if (session.game && !session.readOnly) {
     normalizeGame(data, session.game, session.run);
-    updateRuneModifiers(data, session.game, lex, store, scheduler, scheduler.dayOf(now()));
+    session.save();
   }
   draw();
 })().catch((error) => render(view, el('p', { class: 'error' }, error.message)));

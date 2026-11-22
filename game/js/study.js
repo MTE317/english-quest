@@ -1,11 +1,11 @@
-// 学習の町機能：資料室の予習・石碑の間（石の進み具合）・覚醒の試練・鍛錬・昇格試験。
-// 学習の記録（読み解いた・覚醒・試験の結果）は LearningStore に入れる（ゲームの進み具合とは別。全滅しても残る）。
+// 学習の町機能：資料室の予習・石碑の間（石の進み具合）・任意の確認テスト・鍛錬・昇格試験。
+// 学習の記録（読み解いた・確認テスト・試験の結果）は LearningStore に入れる（ゲームの進み具合とは別。全滅しても残る）。
 // 予習カードを見ただけでは報酬は出ない（CLAUDE.md）。強くなるのは問題に正解したときだけ。
 import { evaluate } from './expr.js';
-import { gainXp } from './character.js?v=balance-builds-1';
-import { memberMods } from './growth.js?v=balance-builds-1';
-import { BATTLE_FORMULAS } from './battle.js?v=balance-builds-1';
-import { currentRank } from './dungeon.js?v=balance-builds-1';
+import { gainXp } from './character.js?v=rune-study-1';
+import { memberMods } from './growth.js?v=rune-study-1';
+import { BATTLE_FORMULAS } from './battle.js?v=rune-study-1';
+import { currentRank } from './dungeon.js?v=rune-study-1';
 
 export const STUDY_FORMULAS = Object.freeze({
   promotion_learned_ratio: 0.8, // exams.csv の unlock「その★のルーンの8割を習得」
@@ -19,7 +19,7 @@ const exam = (data, id) => data.exams.find((e) => e.id === id);
 // ---------------- 石の進み具合 ----------------
 export function stoneProgress(lex, store, scheduler, stoneId, today) {
   const words = lex.wordsByStone.get(stoneId) ?? [];
-  const p = { total: words.length, read: 0, new: 0, learning: 0, learned: 0, due: 0, awakened: !!store.awakened[stoneId] };
+  const p = { total: words.length, read: 0, new: 0, learning: 0, learned: 0, due: 0, test: store.confirmationResult(stoneId) };
   for (const w of words) {
     const rec = store.get(w.id);
     if (store.isRead(w.id)) p.read += 1;
@@ -46,7 +46,12 @@ export function stoneAllowed(lex, store, scheduler, stone, dungeonRank, rankStar
   return below.length > 0 && below.every((s) => stoneProgress(lex, store, scheduler, s.id, today).allRead);
 }
 
-// ---------------- 試験（覚醒の試練・昇格試験） ----------------
+/** 闘技場の総復習。セットの所属や確認テストの合否ではなく、項目ごとの学習記録で選ぶ。 */
+export function arenaReviewWords(lex, store) {
+  return lex.words.filter((word) => store.isRead(word.id));
+}
+
+// ---------------- 試験（任意の確認テスト・昇格試験） ----------------
 /** 再挑戦できる日か（落ちた日から retry_after_days 日あける） */
 function retryBlock(data, store, key, examId, today) {
   const e = store.exams[key];
@@ -56,10 +61,7 @@ function retryBlock(data, store, key, examId, today) {
 }
 
 export function trialBlock(data, lex, store, scheduler, stoneId, today) {
-  const p = stoneProgress(lex, store, scheduler, stoneId, today);
-  if (p.awakened) return 'もう覚醒している';
-  if (!p.allRead) return `ルーンをすべて読み解く（${p.read} / ${p.total}）`;
-  return retryBlock(data, store, `awakening:${stoneId}`, 'awakening', today);
+  return lex.wordsByStone.get(stoneId)?.length ? '' : 'この石には教材がありません。';
 }
 
 /** 試験の問題にする単語（重ならないように選ぶ。足りなければくり返す） */
@@ -74,13 +76,20 @@ export function examWords(words, n, rng) {
 }
 
 export function trialPlan(data, lex, stoneId, rng) {
-  const e = exam(data, 'awakening');
-  return { key: `awakening:${stoneId}`, examId: 'awakening', words: examWords(lex.wordsByStone.get(stoneId) ?? [], e.questions, rng).map((w) => w.id), passRate: e.passRate };
+  const words = lex.wordsByStone.get(stoneId) ?? [];
+  if (!words.length) throw new Error('この石には教材がありません。');
+  // 旧データファイルも読み込めるように、設定ID awakening を互換で扱う。
+  const e = exam(data, 'confirmation') ?? exam(data, 'awakening');
+  return { key: `confirmation:${stoneId}`, examId: 'confirmation', stoneId, words: examWords(words, e.questions, rng).map((w) => w.id), passRate: e.passRate };
 }
 
 /** 試験の結果を記録する → 合格したか */
 export function finishExam(data, store, plan, correct, today, onPass) {
-  const passed = correct >= Math.ceil(plan.words.length * plan.passRate - 1e-9);
+  const passed = plan.words.length > 0 && correct >= Math.ceil(plan.words.length * plan.passRate - 1e-9);
+  if (plan.examId === 'confirmation') {
+    store.recordConfirmation(plan.stoneId, { correct, total: plan.words.length, day: today, passed });
+    return passed;
+  }
   if (passed) { store.setExam(plan.key, { passedDay: today, lastFailDay: null }); onPass?.(); } else store.setExam(plan.key, { lastFailDay: today });
   return passed;
 }

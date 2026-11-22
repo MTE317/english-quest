@@ -8,8 +8,8 @@
 //
 // 式・効果の上限は data/balance.json から読む。BATTLE_FORMULAS は旧データ向けの既定値。
 import { evaluate } from './expr.js';
-import { computeStats, gearDef, weaponPower, maxHp, maxMp, gearEffects, affixSum } from './character.js?v=balance-builds-1';
-import { actionSkills, memberMods, addMasteryKill } from './growth.js?v=balance-builds-1';
+import { computeStats, gearDef, weaponPower, maxHp, maxMp, gearEffects, affixSum } from './character.js?v=rune-study-1';
+import { actionSkills, memberMods, addMasteryKill } from './growth.js?v=rune-study-1';
 import { encounterMonsters, learnMonsterElements, hitEffectiveness } from './monster-knowledge.js';
 
 /** balance.json にまだ式がないもの（sim と同じ） */

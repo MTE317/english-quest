@@ -1,6 +1,6 @@
 import { el, render } from '../dom.js';
 import { describeFixedEffects, effectLabel } from '../equipment-effects.js?v=balance-builds-1';
-import { enchantFamilies } from '../workshop.js?v=balance-builds-1';
+import { enchantFamilies } from '../workshop.js?v=rune-study-1';
 import { weaponIcon } from './weapon-icons.js';
 
 const publicJob = (data, id) => ['base', 'mid'].includes(data.jobsById.get(id)?.tier);

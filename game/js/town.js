@@ -1,10 +1,10 @@
 // 町の基本：暦と月末の会費・ギルドのクエストと冒険者ランク・宿屋・道具屋・武器防具屋・神殿の復活。
 // data に数や式として書かれていないものは、シミュレーター（sim/world.py）と同じ値を TOWN_FORMULAS に置く（docs/requests.md で依頼済み）。
 import { evaluate } from './expr.js';
-import { makeGear, maxHp, maxMp, gearDef } from './character.js?v=balance-builds-1';
-import { addItem } from './loot.js?v=balance-builds-1';
-import { currentRank } from './dungeon.js?v=balance-builds-1';
-import { monsterPool } from './encounter.js?v=balance-builds-1';
+import { makeGear, maxHp, maxMp, gearDef } from './character.js?v=rune-study-1';
+import { addItem } from './loot.js?v=rune-study-1';
+import { currentRank } from './dungeon.js?v=rune-study-1';
+import { monsterPool } from './encounter.js?v=rune-study-1';
 
 export const TOWN_FORMULAS = Object.freeze({
   days_per_month: 30, // balance.json の calendar.days_per_month があればそちらを使う

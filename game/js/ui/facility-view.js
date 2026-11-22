@@ -1,7 +1,7 @@
 import { el, render } from '../dom.js';
-import { craft, brew, enhance, dismantle, reroll, enchant, enchantFamilies, facilityUpgrade } from '../workshop.js?v=balance-builds-1';
-import { borrow, repayLoan, loanLimit, payOverdue } from '../town.js?v=balance-builds-1';
-import { chooseRuneEffect, runeChangeCost, equipRune, openRuneSlot, unlockJob, jobDiscoveryProgress } from '../temple.js?v=balance-builds-1';
+import { craft, brew, enhance, dismantle, reroll, enchant, enchantFamilies, facilityUpgrade } from '../workshop.js?v=rune-study-1';
+import { borrow, repayLoan, loanLimit, payOverdue } from '../town.js?v=rune-study-1';
+import { unlockJob, jobDiscoveryProgress } from '../temple.js?v=rune-study-1';
 import { describeFixedEffects, effectLabel, describeEffect } from '../equipment-effects.js?v=balance-builds-1';
 import { equipmentIcon } from './equipment-icons.js';
 
@@ -155,8 +155,7 @@ export function managementView(data, g, act) {
   ];
 }
 
-export function templeExtras(data, g, act, lex, store) {
-  const stones = lex.stones.filter((stone) => store.awakened[stone.id]);
+export function templeExtras(data, g, act) {
   return [
     panel('中級ジョブの解放', [...data.jobUnlocks.values()].filter((rule) => data.jobsById.get(rule.job_id)?.tier === 'mid').map((rule) => {
       const name = data.jobsById.get(rule.job_id).name;
@@ -177,22 +176,5 @@ export function templeExtras(data, g, act, lex, store) {
       return el('div', {}, el('p', {}, `${name} ・ ${rule.materials}`),
         btn('素材を捧げて解放', () => act((game) => unlockJob(data, game, rule.job_id))));
     })),
-    panel('刻印', stones.length ? [
-      stones.map((stone) => {
-        const current = g.runeEffects?.[stone.id];
-        return select(`${stone.name}${current ? `（刻み直し ${runeChangeCost(data, stone)} G）` : ''}`,
-          [['', '効果を選ぶ'], ...[...data.runeEffects.values()].map((effect) => [effect.id, effect.label_ja])],
-          (id) => { if (id) act((game) => chooseRuneEffect(data, game, stone, id, store.awakened)); }, current);
-      }),
-      g.party.map((member) => {
-        const slots = member.runeSlots ?? 0;
-        const next = data.kokuinSlots.find((row) => Number(row.slot) === slots + 1);
-        return el('div', { class: 'panel small' }, `${member.name} ・ ${member.runes?.length ?? 0} / ${slots}枠`,
-          next ? btn(`刻印枠を増やす（${next.gold} G）`, () => act((game) => openRuneSlot(data, game, member, store.awakened))) : null,
-          stones.filter((stone) => g.runeEffects?.[stone.id]).map((stone) => btn(
-            `${stone.name}を${member.runes?.includes(stone.id) ? '外す' : '装着'}`,
-            () => act((game) => equipRune(game, member, stone.id)))));
-      }),
-    ] : el('p', {}, '石碑の間で石を覚醒させると使えます。')),
   ];
 }

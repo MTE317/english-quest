@@ -1,24 +1,23 @@
 // ダンジョンの画面：行き先とルーンストーンを選ぶ → 階を進む → 戦闘 → 帰還ポイント・ボス → 町へ
-import { loadGameData } from '../gamedata.js?v=features-2';
+import { loadGameData } from '../gamedata.js?v=rune-study-1';
 import { loadCsv, loadJson } from '../data.js?v=features-2';
 import { buildLexicon } from '../lexicon.js';
 import { Scheduler } from '../srs.js?v=features-2';
-import { LearningStore, now, loadSettings } from '../storage.js?v=features-2';
+import { LearningStore, now, loadSettings } from '../storage.js?v=rune-study-1';
 import { QuestionPicker } from '../picker.js';
-import { GameSession } from '../save.js?v=balance-builds-1';
-import { normalizeGame } from '../game-state.js?v=balance-builds-1';
+import { GameSession } from '../save.js?v=rune-study-1';
+import { normalizeGame } from '../game-state.js?v=rune-study-1';
 import {
   allowedDungeons, startRun, startNextBattle, afterBattle, returnToTown, continueRun, resolveLoot,
   isBossBattle, runFloorRow, runFloorCount, returnItems, currentRank, useItemOutsideBattle, FIELD_ITEM_EFFECTS,
-} from '../dungeon.js?v=balance-builds-1';
-import { backpackSlots, backpackUsed, addItem } from '../loot.js?v=balance-builds-1';
-import { maxHp, maxMp } from '../character.js?v=balance-builds-1';
-import { createBattleView } from '../ui/battle-view.js?v=balance-builds-1';
-import { createVictoryView } from '../ui/victory-view.js?v=balance-builds-1';
-import { updateRuneModifiers } from '../temple.js?v=balance-builds-1';
-import { stoneAllowed } from '../study.js?v=balance-builds-1';
+} from '../dungeon.js?v=rune-study-1';
+import { backpackSlots, backpackUsed, addItem } from '../loot.js?v=rune-study-1';
+import { maxHp, maxMp } from '../character.js?v=rune-study-1';
+import { createBattleView } from '../ui/battle-view.js?v=rune-study-1';
+import { createVictoryView } from '../ui/victory-view.js?v=rune-study-1';
+import { stoneAllowed } from '../study.js?v=rune-study-1';
 import { el, render, stars } from '../dom.js';
-import { setSceneMusic } from '../battle-music.js?v=jrpg-1';
+import { setSceneMusic } from '../battle-music.js?v=rune-study-1';
 
 import { expeditionScene } from '../ui/scenery.js';
 import { installGameShell } from '../ui/game-shell.js';
@@ -267,7 +266,6 @@ function battleView() {
     lex = buildLexicon(stones.rows, lexicon.rows);
     store = new LearningStore();
     if (session.game && !session.readOnly) { normalizeGame(data, session.game, session.run);
-      updateRuneModifiers(data, session.game, lex, store, scheduler, scheduler.dayOf(now()));
       session.save(); }
     if (session.inDungeon && session.run.backpack) showRun();
     else if (session.inDungeon) { session.leaveDungeon(); showDeparture(); } // 古い形の遠征（セーブの確認画面で始めたもの）は終わらせる

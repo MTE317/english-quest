@@ -46,8 +46,7 @@ const FILES = {
   enchantSources: 'enchant_sources.csv',
   facilityRanks: 'facility_ranks.csv',
   facilityEffects: 'facility_effects.csv',
-  kokuinSlots: 'kokuin_slots.csv',
-  runeEffects: 'rune_effects.csv',
+  kokuinSlots: 'kokuin_slots.csv', // 旧セーブの刻印枠費用を返還するためだけに読む。
   sets: 'sets.csv',
   setItems: 'set_items.csv',
   questChains: 'quest_chains.csv',
@@ -146,7 +145,6 @@ export function buildGameData(raw) {
     facilityRanks: raw.facilityRanks ?? [],
     facilityEffects: raw.facilityEffects ?? [],
     kokuinSlots: raw.kokuinSlots ?? [],
-    runeEffects: byId(raw.runeEffects ?? []),
     sets: byId(raw.sets ?? []),
     questChains: raw.questChains ?? [],
     ...buildBattleData(raw),

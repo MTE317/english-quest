@@ -1,25 +1,25 @@
 // パーティの画面：キャラメイク（仮）・4人の一覧・能力値・装備8枠
-import { loadGameData } from '../gamedata.js?v=features-2';
+import { loadGameData } from '../gamedata.js?v=rune-study-1';
 import { loadJson } from '../data.js';
-import { GameSession } from '../save.js?v=balance-builds-1';
-import { createNewGame, PARTY_SIZE, normalizeGame } from '../game-state.js?v=balance-builds-1';
+import { GameSession } from '../save.js?v=rune-study-1';
+import { createNewGame, PARTY_SIZE, normalizeGame } from '../game-state.js?v=rune-study-1';
 import {
   computeStats, SLOTS, SLOT_LABEL, STAT_LABEL, canEquip, equipFromStorage, unequip, gearDef,
   aptitudeGrade, xpToNext, levelCap, gainXp, makeGear,
-} from '../character.js?v=balance-builds-1';
+} from '../character.js?v=rune-study-1';
 import {
   jobPaths, isLearned, learnBlock, learnSkill, equipBlock, equipSkill, unequipSkill, capacity, usedCapacity,
   commonPoints, commonBlock, learnCommon, masteryLevel, isJobMastered,
-} from '../growth.js?v=balance-builds-1';
-import { skillMp } from '../battle.js?v=balance-builds-1';
+} from '../growth.js?v=rune-study-1';
+import { skillMp } from '../battle.js?v=rune-study-1';
 import { el, render, stars } from '../dom.js';
 import { describeFixedEffects } from '../equipment-effects.js?v=balance-builds-1';
 
-import { setSceneMusic } from '../battle-music.js?v=jrpg-1';
+import { setSceneMusic } from '../battle-music.js?v=rune-study-1';
 
 import { installGameShell } from '../ui/game-shell.js';
 import { weaponIcon } from '../ui/weapon-icons.js';
-import { buildGuideView } from '../ui/build-guide.js?v=balance-builds-1';
+import { buildGuideView } from '../ui/build-guide.js?v=rune-study-1';
 import { armorIcon, equipmentIcon } from '../ui/equipment-icons.js';
 
 const view = document.getElementById('view');

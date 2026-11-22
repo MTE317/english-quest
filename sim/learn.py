@@ -26,7 +26,7 @@ class Learner:
         s.end_of = {k: s.next_new[k] + WORDS_NEW[k - 1] + PHRASES for k in range(1, 13)}
         s.learned_by_star = [0] * 13; s.size_by_star = [0] + [WORDS_NEW[k - 1] + PHRASES for k in range(1, 13)]
         s.new_this_run = 0; s.day = 0; s.asked_today = set(); s.stats = dict(q=0, ok=0, new=0, review=0, filler=0)
-        s.awake = set(); s.stone_seen = {}
+        s.confirmations = {}; s.stone_seen = {}
     # ---------------------------------------------------------------- 日付
     def set_day(s, day):
         if day != s.day: s.day = day; s.asked_today = set()
@@ -98,20 +98,24 @@ class Learner:
             if not s.seen[i]: ok += s.rng.random() < 0.3
             else: ok += s.rng.random() < s.p_correct(i)
         return ok >= need * n
-    def stones_ready(s):
-        """全部見た石（覚醒の試練を受けられる）"""
-        out = []
-        for (k, j), n in s.stone_seen.items():
-            if (k, j) in s.awake: continue
-            size = min(STONE, s.size_by_star[k] - j * STONE)
-            if n >= size: out.append((k, j))
-        return out
-    def trial(s, kj, n=20, need=0.8):
+    def available_stones(s):
+        """確認テストは予習や過去の合否によらず、教材があれば受けられる。"""
+        return sorted(set(s.stone))
+    def confirmation(s, kj, n=20, need=0.8):
+        if kj not in s.available_stones(): raise ValueError("確認する教材がない")
         k, j = kj; base = s.end_of[k] - s.size_by_star[k] + j * STONE
         size = min(STONE, s.size_by_star[k] - j * STONE)
-        ok = sum(s.rng.random() < s.p_correct(base + s.rng.randrange(size)) for _ in range(n))
-        if ok >= need * n: s.awake.add(kj); return True
-        return False
+        questions = []
+        while len(questions) < n:
+            questions.extend(s.rng.sample(range(base, base + size), min(size, n - len(questions))))
+        ok = sum(s.answer(i) for i in questions)
+        passed = ok >= need * n
+        previous = s.confirmations.get(kj, {})
+        record = dict(previous, attempts=previous.get("attempts", 0) + 1, last_day=s.day,
+                      last_correct=ok, total=n, best_rate=max(previous.get("best_rate", 0), ok / n))
+        if passed: record.setdefault("first_passed_day", s.day)
+        s.confirmations[kj] = record
+        return passed
 
 class QSource:
     """battle() の `rng.random() < acc` の acc の代わり。比べるたびに1問解く"""

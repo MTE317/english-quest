@@ -1,23 +1,23 @@
-// ギルドの学び舎：資料室（予習）・石碑の間（石の一覧と覚醒の試練）・訓練場（鍛錬）・昇格試験
-import { loadGameData } from '../gamedata.js?v=features-2';
+// ギルドの学び舎：資料室（予習）・石碑の間（教材セットと任意の確認テスト）・訓練場（鍛錬）・昇格試験
+import { loadGameData } from '../gamedata.js?v=rune-study-1';
 import { loadCsv, loadJson } from '../data.js?v=features-2';
 import { buildLexicon } from '../lexicon.js';
 import { Scheduler, STAGE_LABEL } from '../srs.js?v=features-2';
-import { LearningStore, now } from '../storage.js?v=features-2';
+import { LearningStore, now } from '../storage.js?v=rune-study-1';
 import { QuestionPicker } from '../picker.js';
-import { GameSession } from '../save.js?v=balance-builds-1';
-import { normalizeGame } from '../game-state.js?v=balance-builds-1';
-import { seededRng, currentRank } from '../dungeon.js?v=balance-builds-1';
-import { checkRankUp } from '../town.js?v=balance-builds-1';
+import { GameSession } from '../save.js?v=rune-study-1';
+import { normalizeGame } from '../game-state.js?v=rune-study-1';
+import { seededRng, currentRank } from '../dungeon.js?v=rune-study-1';
+import { checkRankUp } from '../town.js?v=rune-study-1';
 import {
   stoneProgress, nextUnread, trialBlock, trialPlan, finishExam, promotionBlock, promotionPlan, starLearnedRatio,
   trainingReward, applyTraining,
-} from '../study.js?v=balance-builds-1';
-import { runQuiz } from '../ui/quiz-runner.js?v=atlas-1';
-import { speak, canSpeak } from '../speech.js?v=jrpg-1';
+} from '../study.js?v=rune-study-1';
+import { runQuiz } from '../ui/quiz-runner.js?v=rune-study-1';
+import { speak, canSpeak } from '../speech.js?v=rune-study-1';
 import { el, render, stars } from '../dom.js';
 
-import { setSceneMusic } from '../battle-music.js?v=jrpg-1';
+import { setSceneMusic } from '../battle-music.js?v=rune-study-1';
 
 import { installGameShell } from '../ui/game-shell.js';
 
@@ -79,17 +79,22 @@ function showCards(stoneId) {
 // ---------------- 石碑の間 ----------------
 function hall() {
   return [
-    el('p', { class: 'muted small' }, 'ルーンストーンの一覧。すべて読み解いた石は「覚醒の試練」を受けられる。'),
+    el('p', { class: 'muted small' }, 'ルーンストーンごとに学習の進み具合を確認できます。確認テストは任意です。予習前でも、合格後でも、何度でも受けられます。'),
     lex.stones.map((s) => {
       const p = stoneProgress(lex, store, scheduler, s.id, today());
       const block = trialBlock(data, lex, store, scheduler, s.id, today());
-      return el('div', { class: `panel small ${p.awakened ? 'awakened' : ''}` },
-        el('div', { class: 'choice-title' }, `${stars(s.star)} ${s.name}${p.awakened ? '　✨覚醒' : ''}`),
+      const passed = p.test?.firstPassedDay != null || p.test?.passedDay != null;
+      return el('div', { class: `panel small ${passed ? 'confirmed' : ''}` },
+        el('div', { class: 'choice-title' }, `${stars(s.star)} ${s.name}`),
         el('div', { class: 'stats' },
           el('span', {}, `読み解いた ${p.read}/${p.total}`),
           el('span', {}, `${STAGE_LABEL.learning} ${p.learning}`), el('span', {}, `${STAGE_LABEL.learned} ${p.learned}`),
           p.due ? el('span', { class: 'error' }, `かすれ ${p.due}`) : null),
-        p.awakened ? null : el('button', { disabled: !!block, onclick: () => startTrial(s.id) }, block || '覚醒の試練を受ける'));
+        passed ? el('p', { class: 'small' }, '✓ 確認テストの合格記録あり') : null,
+        p.test?.lastTotal > 0 ? el('p', { class: 'muted small' },
+          `前回 ${p.test.lastCorrect} / ${p.test.lastTotal}問正解 ・ ${p.test.legacyImported ? '記録分の最高' : '最高'} ${Math.round(p.test.bestRate * 100)}%`)
+          : p.test?.legacyImported ? el('p', { class: 'muted small' }, '以前のテスト記録を引き継いでいます。') : null,
+        el('button', { disabled: !!block, onclick: () => startTrial(s.id) }, block || '確認テストを受ける（任意）'));
     }),
   ];
 }
@@ -98,20 +103,15 @@ function startTrial(stoneId) {
   const plan = trialPlan(data, lex, stoneId, rng());
   let i = 0;
   runQuiz({
-    view, lex, scheduler, store, total: plan.words.length, format: 'mixed', title: '覚醒の試練',
+    view, lex, scheduler, store, total: plan.words.length, format: 'mixed', title: '確認テスト',
     next: () => ({ word: lex.wordsById.get(plan.words[i++]) }),
     onDone: (correct, total) => {
-      const passed = finishExam(data, store, plan, correct, today(), () => {
-        store.setAwakened(stoneId, today());
-        session.update((game) => {
-          const title = 'ルーンを覚醒させし者';
-          if (!game.titles.includes(title)) game.titles.push(title);
-        });
-      });
+      const passed = finishExam(data, store, plan, correct, today());
       render(view,
-        el('h2', {}, passed ? '✨ 石が覚醒した！' : '試練に失敗…'),
+        el('h2', {}, passed ? '確認テスト合格！' : '確認テストの結果'),
         el('div', { class: 'panel center' }, el('div', { class: 'prompt' }, `${correct} / ${total}`), el('div', { class: 'muted' }, `合格は ${Math.round(plan.passRate * 100)}%`)),
-        passed ? el('p', { class: 'small' }, '神殿で刻印にはめられます。') : el('p', { class: 'small' }, '次の日に再挑戦できる。'),
+        el('p', { class: 'small' }, '結果と回答したルーンの学習記録を保存しました。何度でも受け直せます。'),
+        el('button', { onclick: () => startTrial(stoneId) }, 'もう一度受ける'),
         el('button', { class: 'primary', onclick: () => { tab = 'hall'; draw(); } }, '石碑の間へ'));
     },
   });
