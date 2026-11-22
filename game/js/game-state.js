@@ -22,5 +22,26 @@ export function createNewGame(data, partySpecs) {
     backpackTier: data.backpackTiers?.[0]?.tier ?? 1,
   };
   game.party = partySpecs.map((spec, i) => createMember(data, game, spec, i));
+  return normalizeGame(data, game);
+}
+
+/**
+ * 古いセーブにない項目を足す（あとから増えた項目。セーブを読んだら呼ぶ）
+ */
+export function normalizeGame(data, game) {
+  if (!game) return game;
+  game.storage = game.storage ?? { gear: [], materials: {} };
+  game.items = game.items ?? {};
+  game.rank = game.rank ?? data.ranks?.[0]?.id ?? null;
+  game.rankPoints = game.rankPoints ?? 0;
+  game.backpackTier = game.backpackTier ?? data.backpackTiers?.[0]?.tier ?? 1;
+  game.facilities = game.facilities ?? {};
+  for (const f of data.facilities ?? []) game.facilities[f.id] = game.facilities[f.id] ?? 1;
+  game.quests = game.quests ?? [];
+  game.board = game.board ?? null;
+  game.cleared = game.cleared ?? {};
+  game.overdue = game.overdue ?? 0;
+  game.notices = game.notices ?? [];
+  for (const m of game.party ?? []) { m.persist = m.persist ?? []; m.room = m.room ?? null; m.ap = m.ap ?? { [m.job]: 0 }; }
   return game;
 }

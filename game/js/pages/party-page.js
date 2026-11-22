@@ -1,7 +1,7 @@
 // パーティの画面：キャラメイク（仮）・4人の一覧・能力値・装備8枠
 import { loadGameData } from '../gamedata.js';
 import { GameSession } from '../save.js';
-import { createNewGame, PARTY_SIZE } from '../game-state.js';
+import { createNewGame, PARTY_SIZE, normalizeGame } from '../game-state.js';
 import {
   computeStats, SLOTS, SLOT_LABEL, STAT_LABEL, canEquip, equipFromStorage, unequip, gearDef,
   aptitudeGrade, xpToNext, levelCap, gainXp, makeGear,
@@ -199,6 +199,7 @@ function debugTools() {
 (async () => {
   try {
     data = await loadGameData();
+    if (session.game?.party && !session.readOnly) { normalizeGame(data, session.game); session.save(); }
     if (session.hasSave && session.game?.party) showParty();
     else showCreate();
   } catch (e) {

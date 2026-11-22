@@ -11,6 +11,7 @@ import { makeEncounter, floorRow } from './encounter.js';
 import { rollBattleLoot, addToBackpack, swapIntoBackpack, unloadBackpack } from './loot.js';
 import { gainXp, maxHp, maxMp } from './character.js';
 import { curedBy } from './battle.js';
+import { advanceDays, countKills } from './town.js';
 
 /** 乱数の種から 0〜1 の乱数を返す関数（状態は obj[key] に入れて保存できる） */
 export function seededRng(obj, key = 'rng') {
@@ -55,7 +56,7 @@ export function startRun(data, session, { dungeonId, stoneId, quizState, seed })
     run.pendingLoot = [];
     run.quiz = quizState;
     run.rng = seed >>> 0;
-    game.day += dg.days;
+    run.notices = advanceDays(data, game, dg.days);
   });
 }
 
@@ -74,7 +75,7 @@ export function startNextBattle(data, session) {
   if (run.state !== 'ready') throw new Error('今は戦闘を始められない');
   const rng = seededRng(run);
   const enemies = makeEncounter(data, run.dungeonId, run.floor, rng, { boss: isBossBattle(data, run) });
-  session.setBattle(createBattle(data, session.game, { enemies, seed: Math.floor(rng() * 4294967296) }));
+  session.setBattle(createBattle(data, session.game, { enemies, seed: Math.floor(rng() * 4294967296), firstBattle: run.battlesDone === 0 }));
 }
 
 /**
@@ -93,6 +94,7 @@ export function afterBattle(data, session) {
   let loot = null;
   session.endBattle((g, run) => {
     if (b.result === 'win') {
+      countKills(g, b.enemies);
       const r = battleRewards(data, g, b);
       g.party.forEach((m, i) => {
         const ups = gainXp(data, m, r.xp[i]);
@@ -160,6 +162,7 @@ export function returnToTown(data, session, useItem = null) {
       if (game.items[useItem] <= 0) delete game.items[useItem];
     }
     unloadBackpack(game, run.backpack);
+    for (const m of game.party) m.room = null; // 宿屋の良い部屋の効果は1回の遠征だけ
     if (run.cleared) {
       game.cleared = game.cleared ?? {};
       game.cleared[run.dungeonId] = (game.cleared[run.dungeonId] ?? 0) + 1;

@@ -6,6 +6,7 @@ import { Scheduler } from '../srs.js';
 import { LearningStore, now } from '../storage.js';
 import { QuestionPicker } from '../picker.js';
 import { GameSession } from '../save.js';
+import { normalizeGame } from '../game-state.js';
 import {
   allowedDungeons, allowedStones, startRun, startNextBattle, afterBattle, returnToTown, continueRun, resolveLoot,
   isBossBattle, runFloorRow, returnItems, currentRank, useItemOutsideBattle, FIELD_ITEM_EFFECTS,
@@ -215,6 +216,7 @@ function battleView() {
     scheduler = new Scheduler(srs);
     lex = buildLexicon(stones.rows, lexicon.rows);
     store = new LearningStore();
+    if (session.game && !session.readOnly) { normalizeGame(data, session.game); session.save(); }
     if (session.inDungeon && session.run.backpack) showRun();
     else if (session.inDungeon) { session.leaveDungeon(); showTown(); } // 古い形の遠征（セーブの確認画面で始めたもの）は終わらせる
     else showTown();

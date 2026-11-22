@@ -30,6 +30,11 @@ const FILES = {
   uniques: 'uniques.csv',
   backpack: 'backpack.csv',
   ranks: 'adventurer_ranks.csv',
+  quests: 'quests.csv',
+  questTypes: 'quest_types.csv',
+  innRooms: 'inn_rooms.csv',
+  seasons: 'seasons.csv',
+  facilities: 'facilities.csv',
 };
 
 const byId = (rows, key = 'id') => new Map(rows.map((r) => [r[key], r]));
@@ -186,8 +191,22 @@ function buildBattleData(raw) {
       shopDiscount: toNumber(r.shop_discount, 0), perk: r.perk,
     })),
   } : {};
+  const town = raw.quests ? {
+    quests: raw.quests.map((r) => ({
+      id: r.id, type: r.type, rank: toNumber(r.rank, 1), target: r.target, countMin: toNumber(r.count_min, 1), countMax: toNumber(r.count_max, 1),
+      rewardGoldPct: toNumber(r.reward_gold_pct_of_run_income, 0), rewardItem: r.reward_item ?? '', rankPoints: toNumber(r.rank_points, 0),
+    })),
+    questTypes: raw.questTypes.map((r) => ({ id: r.id, name: r.name })),
+    innRooms: raw.innRooms.map((r) => ({
+      innRank: toNumber(r.inn_rank, 1), maxHpPct: toNumber(r.max_hp_pct, 0), maxMpPct: toNumber(r.max_mp_pct, 0),
+      firstBattleSpdPct: toNumber(r.first_battle_spd_pct, 0), statusResistPct: toNumber(r.status_resist_pct, 0), description: r.description,
+    })),
+    seasons: raw.seasons.map((r) => ({ id: r.id, name: r.name, monthInYear: toNumber(r.month_in_year, 1) })).sort((a, b) => a.monthInYear - b.monthInYear),
+    facilities: raw.facilities.map((r) => ({ id: r.id, name: r.name, role: r.role })),
+  } : {};
   return {
     ...loot,
+    ...town,
     monsters: byId(monsters),
     monsterTypes: byId(raw.monsterTypes.map((r) => ({ id: r.id, name: r.name }))),
     elements: byId(raw.elements.map((r) => ({ id: r.id, name: r.name, kind: r.kind }))),

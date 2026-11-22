@@ -125,3 +125,8 @@ details summary { cursor: pointer; min-height: 44px; display: flex; align-items:
 
 .compact-head { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 4px 12px; background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 6px 10px; }
 .compact-head + * { margin-top: 8px; }
+
+/* 町のタブ */
+.tabs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin: 8px 0; }
+.tabs button { margin: 0; min-height: 44px; padding: 6px; font-size: .9rem; }
+.tabs button.on { border-color: var(--accent); color: var(--accent); font-weight: bold; }
