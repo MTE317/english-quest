@@ -1,8 +1,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { parseCsv, parseCsvRecords, splitList, parseAmounts, stripBom, toValue } from '../js/csv.js';
-import { DATA_FILES } from '../js/manifest.js';
-import { readCsv, readJson } from './helpers.js';
+import { readFileSync } from 'node:fs';
+import { dataPath, readCsv, readJson } from './helpers.js';
+
+const DATA_FILES = readJson('manifest.json');
 
 test('BOM を取り除く（なくても読める）', () => {
   assert.equal(parseCsv('id,a\nx,1').rows[0].id, 'x');
@@ -37,10 +39,10 @@ test('toValue', () => {
   assert.equal(toValue('rs_1_001'), 'rs_1_001');
 });
 
-test('data/ のファイルがすべて読めて、列の数がそろっている', () => {
+test('manifest.json のファイルがすべて読めて、列の数がそろっている', () => {
   for (const name of DATA_FILES) {
     if (name.endsWith('.json')) { readJson(name); continue; }
-    // BOM はあってもなくても読める（targets.csv には BOM がない。docs/requests.md 参照）
+    if (name.endsWith('.csv')) assert.equal(readFileSync(dataPath(name), 'utf8').charCodeAt(0), 0xfeff, `${name} は BOM つきのはず`);
     const { header, rows, errors } = readCsv(name);
     assert.deepEqual(errors, [], name);
     assert.ok(rows.length > 0, name);

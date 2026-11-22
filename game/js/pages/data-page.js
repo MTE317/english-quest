@@ -1,6 +1,5 @@
 // データ確認画面：data/ のファイルごとの行数と、中身の表
-import { DATA_FILES } from '../manifest.js';
-import { loadFiles } from '../data.js';
+import { loadFiles, loadJson } from '../data.js';
 import { splitList, parseAmounts } from '../csv.js';
 import { buildLexicon } from '../lexicon.js';
 import { Scheduler } from '../srs.js';
@@ -8,6 +7,7 @@ import { el, render } from '../dom.js';
 
 const view = document.getElementById('view');
 let loaded = null;
+let DATA_FILES = []; // data/manifest.json の一覧
 
 function summaryOf(file) {
   if (file.type === 'csv') return `${file.rows.length}行・${file.header.length}列`;
@@ -126,6 +126,7 @@ function showFile(name) {
 
 (async () => {
   try {
+    DATA_FILES = (await loadJson('manifest.json')).data;
     loaded = await loadFiles(DATA_FILES);
     showList();
   } catch (e) {

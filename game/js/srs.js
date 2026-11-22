@@ -1,9 +1,10 @@
 // 単語ごとの復習の時期の計算（FSRS を参考にした実装）。
-// 設定は data/srs.json を読む。srs.json にまだない項目だけ、下の FALLBACK を使う
-// （どれを使ったかは scheduler.usedFallbacks で分かる。srs.json への追加は docs/requests.md で依頼済み）。
+// 設定は data/srs.json を読む。srs.json にない項目（数ではなく説明の文だけが入っている項目も）は下の FALLBACK を使う
+// （どれを使ったかは scheduler.usedFallbacks で分かる）。fsrs_w は FALLBACK の値を正とする（docs/checklist.md の回答）。
 //
 // 4択なので評価は2段階：正解＝Good(3)、不正解＝Again(1)。
 // 日数は「現実の日付」で数える（記憶は現実の時間で薄れるため。ゲーム内の日数とは別）。
+// 日付の切り替わりは srs.json の day_boundary_hour（午前4時）。
 
 /** srs.json に項目がないときだけ使う値（FSRS-5 の公開されている初期値など） */
 export const FALLBACK = Object.freeze({
@@ -22,6 +23,7 @@ export const FALLBACK = Object.freeze({
   new_per_run: [10, 15],
   reduce_new_when_due_over: 50,
   reduced_new_per_run: 5,
+  day_boundary_hour: 4,
 });
 
 const DECAY = -0.5;
@@ -31,9 +33,9 @@ const DAY_MS = 86400000;
 export const STAGE = Object.freeze({ NEW: 'new', LEARNING: 'learning', LEARNED: 'learned' });
 export const STAGE_LABEL = Object.freeze({ new: '未解読', learning: '学習中', learned: '習得' });
 
-/** ローカル時間の日付の通し番号（1970-01-01 = 0） */
-export function dayIndex(ms) {
-  const d = new Date(ms);
+/** ローカル時間の日付の通し番号（1970-01-01 = 0）。boundaryHour 時より前は前の日として数える */
+export function dayIndex(ms, boundaryHour = 0) {
+  const d = new Date(ms - boundaryHour * 3600000);
   return Math.floor(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / DAY_MS);
 }
 
@@ -50,7 +52,9 @@ export class Scheduler {
   constructor(srsJson = {}) {
     this.usedFallbacks = [];
     const pick = (key) => {
-      if (srsJson[key] !== undefined) return srsJson[key];
+      const v = srsJson[key];
+      // 型が FALLBACK と同じときだけ srs.json の値を使う（説明の文が入っている項目は使わない）
+      if (v !== undefined && Array.isArray(v) === Array.isArray(FALLBACK[key]) && typeof v === typeof FALLBACK[key]) return v;
       this.usedFallbacks.push(key);
       return FALLBACK[key];
     };
@@ -64,6 +68,7 @@ export class Scheduler {
     this.newPerRun = pick('new_per_run');
     this.reduceNewWhenDueOver = pick('reduce_new_when_due_over');
     this.reducedNewPerRun = pick('reduced_new_per_run');
+    this.dayBoundaryHour = pick('day_boundary_hour');
     this.reviewFirst = srsJson.review_first !== false;
     if (!Array.isArray(this.w) || this.w.length < 19) throw new Error('srs.json の fsrs_w は19個の数が必要');
   }
@@ -104,8 +109,11 @@ export class Scheduler {
    * @param correct 正解か
    * @param nowMs いまの時刻
    */
+  /** 学習の日付（午前4時で切り替わる）の通し番号 */
+  dayOf(nowMs) { return dayIndex(nowMs, this.dayBoundaryHour); }
+
   review(rec, correct, nowMs) {
-    const today = dayIndex(nowMs);
+    const today = this.dayOf(nowMs);
     const g = correct ? 3 : 1;
     let s;
     let d;
@@ -163,9 +171,16 @@ export class Scheduler {
   }
   /** 慣れたか（誤答の選択肢を同じ石の似た単語にするか） */
   isFamiliar(rec) { return !!rec && rec.streak >= this.familiarStreak; }
-  /** かすれたルーンの数に応じた、1回の遠征で初めて出してよい単語の数 */
+  /**
+   * かすれたルーンの数に応じた、1回の遠征で初めて出してよい単語の数（srs.json の new_per_run_rule）
+   * 普段は new_per_run の上限。かすれたルーンが増えるにつれて下限まで減らし、
+   * reduce_new_when_due_over を超えたら reduced_new_per_run。
+   */
   newLimitFor(dueCount) {
     if (dueCount > this.reduceNewWhenDueOver) return this.reducedNewPerRun;
-    return this.newPerRun[this.newPerRun.length - 1];
+    const lo = this.newPerRun[0];
+    const hi = this.newPerRun[this.newPerRun.length - 1];
+    const ratio = this.reduceNewWhenDueOver > 0 ? dueCount / this.reduceNewWhenDueOver : 1;
+    return Math.round(hi - (hi - lo) * ratio);
   }
 }

@@ -1,7 +1,7 @@
 // 動作確認用：ルーンストーンを選んで10問解く画面
 import { loadCsv, loadJson } from '../data.js';
 import { buildLexicon } from '../lexicon.js';
-import { Scheduler, STAGE_LABEL, dayIndex, dayToString } from '../srs.js';
+import { Scheduler, STAGE_LABEL, dayToString } from '../srs.js';
 import { LearningStore, now, getDebugDayOffset, setDebugDayOffset } from '../storage.js';
 import { QuestionPicker, REASON_LABEL } from '../picker.js';
 import { makeQuestion, DIRECTION, DIRECTION_LABEL } from '../quiz.js';
@@ -43,7 +43,7 @@ function daysLabel(days) {
 
 // ---------------- 石を選ぶ画面 ----------------
 function showSelect() {
-  const today = dayIndex(now());
+  const today = scheduler.dayOf(now());
   const offset = getDebugDayOffset();
   const due = totalDue(today);
   const dirButton = (value, label) => el('button', {
@@ -56,6 +56,7 @@ function showSelect() {
       el('div', {}, `今日：${dayToString(today)}`, offset ? el('span', { class: 'error' }, `（テスト用に${offset}日ずらし中）`) : null),
       el('div', {}, `かすれたルーン（復習の時期が来た単語）：${due}語`),
       el('div', { class: 'muted small' }, `1回で初めて出す単語：${scheduler.newLimitFor(due)}語まで`),
+      el('div', { class: 'muted small' }, `今日解いた数：${store.dailyTotal(today).answered}問（正解 ${store.dailyTotal(today).correct}）`),
     ),
     el('h2', {}, 'ルーンストーンを選ぶ'),
     el('ul', { class: 'choice-list' },
@@ -122,7 +123,7 @@ function startTest() {
     const q = makeQuestion(next.word, lex, { direction: dir, familiar: scheduler.isFamiliar(rec) });
     showQuestion(q, next.reason, results.length + 1, (correct) => {
       const newRec = scheduler.review(rec, correct, now());
-      store.set(next.word.id, newRec);
+      store.recordAnswer(next.word.id, newRec, scheduler.dayOf(now()), correct);
       picker.report(next.word.id, correct);
       results.push({ word: next.word, correct, rec: newRec, reason: next.reason });
       return newRec;
@@ -148,7 +149,7 @@ function showQuestion(q, reason, number, onAnswer, onNext) {
         else if (j === i) b.classList.add('wrong');
       });
       const rec = onAnswer(correct);
-      const today = dayIndex(now());
+      const today = scheduler.dayOf(now());
       feedback.className = `feedback ${correct ? 'good' : 'bad'}`;
       feedback.textContent = correct ? '正解！ ルーンが輝いた' : `ざんねん… 正解は「${q.choices[q.answerIndex].text}」`;
       render(after,
@@ -183,7 +184,7 @@ function showQuestion(q, reason, number, onAnswer, onNext) {
 
 // ---------------- 結果 ----------------
 function showResult(results) {
-  const today = dayIndex(now());
+  const today = scheduler.dayOf(now());
   const ok = results.filter((r) => r.correct).length;
   render(view,
     el('h2', {}, '結果'),
