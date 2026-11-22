@@ -10,8 +10,6 @@ T = dict(
     enh_base=1.8, elite_rate=0.08, xp_k=1.0, xp_pen=0.25, xp_pen_min=0.0, xp_free=1, rank_cap=0, lv_margin=0, mp_regen=0.10, mp_atk=0.05, mp_lv=0.015,
     acc_drop=db.BAL.get("accuracy_drop_per_rank", 0.03),
     borrow=1,            # ほかのジョブのスキルを持ち出す
-    mastery_gate=1,      # 熟練度による装備条件
-    gate_div=6, gate_base=15,
     items_in_battle=1,
     flee=0,              # 逃げる（遊び方で切り替え）
     song=0.30, whip=0.5,
@@ -120,10 +118,6 @@ class Char:
         pe = sum(ARMOR_W[p["w"]]["eva"] for p in s.parts.values()) / 3
         return min(0.45, 0.02 + 0.08 * s.stat("SPD") / s.scale() + pe + s.aff("EVA") / 100 + s.mods.get("eva", 0))
     def sres(s): return min(0.8, 0.25 * s.stat("LUK") / s.scale() + s.room.get("sres", 0) + s.mods.get("sres", 0) + s.aff("STATUS_RES") / 100)
-    def gate_ok(s, w):
-        if not T["mastery_gate"]: return True
-        need = max(0, (w["ilvl"] - T["gate_base"]) // T["gate_div"])
-        return s.mastery_lv(w["t"]) >= need
     def gain_xp(s, x):
         x *= 1 + s.mods.get("xp", 0) + s.aff("EXP") / 100 + (s.rune.get("EXP", 0) if getattr(s, "rune", None) else 0)
         if s.lv >= 99: return
