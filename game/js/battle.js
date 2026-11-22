@@ -617,8 +617,14 @@ function doAttack(data, game, b, i, skill, target, cm) {
     hitEnemy(data, game, b, i, e, Math.round(r.damage * (allMul ?? 1)), { ...r, prefix: describeHit(r) });
     if (!skill && m.equip.offhand && b.enemies[e].hp > 0) {
       const r2 = attackDamage(data, game, b, i, e, null, cm, { offhand: true });
-      hitEnemy(data, game, b, i, e, Math.round(r2.damage * data.balance.battle.dual_wield_second_hit),
-        { ...r2, prefix: `二刀目！${describeHit(r2)}` });
+      const secondDamage = Math.round(r2.damage * data.balance.battle.dual_wield_second_hit);
+      hitEnemy(data, game, b, i, e, secondDamage, { ...r2, prefix: `二刀目！${describeHit(r2)}` });
+      // サブ武器の通常攻撃固有効果も命中時に発動する（例：鎚のスタン）
+      const offhandTrait = weaponTraits(data, m.equip.offhand).normal_status;
+      if (secondDamage > 0 && b.enemies[e].hp > 0 && offhandTrait) {
+        const status = data.statusEffects.get(offhandTrait.id);
+        if (status) inflictEnemy(data, b, e, [status.name, offhandTrait.chance], cm, memberMods(data, m).stat_rate);
+      }
     }
     if (skill?.effect.st && b.enemies[e].hp > 0) inflictEnemy(data, b, e, skill.effect.st, cm, memberMods(data, m).stat_rate);
     const ap = memberMods(data, m).auto_poison;
