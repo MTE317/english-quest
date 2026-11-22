@@ -46,7 +46,7 @@ class Game:
         s.G = dict(spend=Counter(), earn=Counter(), months=0, short_months=0, overdue_months=0, crafts=Counter(), equip_src=Counter(),
                    attempts=0, wipes=0, returns=0, clears=Counter(), first_enter={}, first_clear={}, runs=[], wipes_by_rank=Counter(),
                    attempts_by_rank=Counter(), train_days=0, real_q=0, adv_log=[], unlock_log={}, switch_log=[], gold_log=[], max_streak=0,
-                   run_q=[], invest_log=[], enh_ok=0, enh_ng=0, salvage=0, reroll=0, gate_block=0, temple=Counter(), dungeon_use=Counter(),
+                   run_q=[], invest_log=[], enh_ok=0, enh_ng=0, salvage=0, reroll=0, temple=Counter(), dungeon_use=Counter(),
                    item_battle=Counter(), fled=0, good_room=0, inn_stays=0)
         s.allow_switch = allow_switch; s.endgame_days = endgame_days; s.max_days = max_days; s.clear5_day = None
     # ---------------------------------------------------------------- 便利
@@ -222,7 +222,6 @@ class Game:
         return s.MAIN.get(c.job, "MAG" if JOBS[c.job]["g"].split()[2] in ("A",) else "STR")
     def score_w(s, c, w):
         if w["t"] not in JOBS[c.job]["w"]: return -1
-        if not c.gate_ok(w): return -1
         old = c.weapon; c.weapon = w; v = c.wpow() + w["aff"].get(s.main_stat(c), 0) + 0.4 * sum(x for k, x in w["aff"].items() if not k.startswith("特効")) + 8 * any(k.startswith("特効") for k in w["aff"]); c.weapon = old
         return v
     def score_p(s, c, p, part):
@@ -236,7 +235,6 @@ class Game:
         for c in s.party:
             sl = it["slot"]
             if sl == "weapon":
-                if it["t"] in JOBS[c.job]["w"] and not c.gate_ok(it) and APT.get(JOBS[c.job]["w"][it["t"]], 0) >= 1: s.G["gate_block"] += 1
                 g = s.score_w(c, it) - s.score_w(c, c.weapon)
             elif sl in ("head", "body", "arm"): g = s.score_p(c, it, sl) - s.score_p(c, c.parts[sl], sl)
             elif sl == "cloak": g = s.score_x(c, it) - s.score_x(c, c.cloak)
@@ -427,7 +425,7 @@ class Game:
             if TIER[c.job] == "中級" and TIER[j] == "中級": continue
             old = c.job; c.change_job(j); s.G["switch_log"].append((s.day, old, j))
             if c.weapon["t"] not in JOBS[j]["w"]:
-                t = JOBS[j]["start_weapon"]; il = max(3, c.weapon["ilvl"] - 10) if not T["mastery_gate"] else 3
+                t = JOBS[j]["start_weapon"]; il = max(3, c.weapon["ilvl"] - 10)
                 c.weapon = dict(t=t, ilvl=il, q=1.0, enh=0, aff={}, el=None, src="ジョブチェンジ", rar=0)
     def train(s):
         c = min(s.party, key=lambda c: (c.lv, c.xp))
