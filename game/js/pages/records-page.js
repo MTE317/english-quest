@@ -31,6 +31,8 @@ async function show() {
     el('h2', {}, 'ダンジョンの出題設定'),
     control('翻訳の方向', 'direction', [[DIRECTION.EN_JA, '英→日'], [DIRECTION.JA_EN, '日→英'], ['mixed', '混ぜる']]),
     control('出題形式', 'format', [['meaning', '意味の4択'], ['mixed', '意味・空欄・場面を混ぜる'], ['cloze', '空欄を優先'], ['situation', '場面を優先']]),
+    el('h2', {}, '音の設定'),
+    control('戦闘BGM・勝利ファンファーレ', 'music', [['on', 'オン'], ['off', 'オフ']]),
     section(`学習履歴（${store.size}ルーン）`, [...store.daily.entries()].sort((a, b) => b[0] - a[0]).map(([day, row]) =>
       el('div', {}, `${dayToString(day)}　${row.correct} / ${row.answered}問正解`))),
     section(`モンスター図鑑（${monsters.size} / ${data.monsters.size}）`, [...data.monsters.values()].map((m) => el('div', {}, monsters.has(m.id) ? `${m.icon} ${m.name}` : '？？？'))),
