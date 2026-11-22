@@ -49,14 +49,16 @@ function showCreate() {
     );
   };
   render(view,
-    el('h2', {}, 'パーティを作る（仮）'),
+    el('h2', {}, 'パーティを作る'),
     el('p', { class: 'muted small' }, '4人の名前・ジョブ・見た目を選びます。中級ジョブはあとで神殿で解放します。'),
     specs.map(card),
     el('button', {
       class: 'primary',
       onclick: () => {
         if (session.hasSave && !confirm('いまのセーブを上書きして、はじめから始めます。よろしいですか？（学習記録は消えません）')) return;
+        const firstParty = !session.game?.party;
         session.startNew(createNewGame(data, specs));
+        if (firstParty) return window.location.replace('index.html');
         showParty();
       },
     }, 'この4人で冒険をはじめる'),

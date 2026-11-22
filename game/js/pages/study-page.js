@@ -21,10 +21,11 @@ const view = document.getElementById('view');
 const session = new GameSession();
 session.installAutoSave(window);
 let data; let lex; let scheduler; let store; let srs;
-let tab = 'library';
 const today = () => scheduler.dayOf(now());
 const rng = () => seededRng({ rng: (Date.now() ^ (Math.random() * 2 ** 32)) >>> 0 });
 const TABS = [['library', '資料室'], ['hall', '石碑の間'], ['training', '訓練場'], ['exam', '昇格試験']];
+const requestedTab = new URLSearchParams(window.location.search).get('tab');
+let tab = TABS.find(([id]) => id === requestedTab)?.[0] ?? 'library';
 
 function tabs() {
   return el('div', { class: 'tabs four' }, TABS.map(([id, label]) => el('button', { class: tab === id ? 'on' : '', onclick: () => { tab = id; draw(); } }, label)));

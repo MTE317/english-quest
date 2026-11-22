@@ -1,4 +1,4 @@
-// 町の画面：ギルド（クエスト・ランク）・宿屋・道具屋・武器防具屋・神殿（復活）・倉庫
+// 町をホームにして、施設カードから各施設を開く。
 import { loadGameData } from '../gamedata.js?v=features-2';
 import { GameSession } from '../save.js?v=features-2';
 import { normalizeGame } from '../game-state.js?v=features-2';
@@ -6,7 +6,7 @@ import { currentRank, seededRng } from '../dungeon.js?v=features-2';
 import {
   calendarOf, guildFee, fillBoard, boardSize, acceptQuest, canReport, reportQuest, questText, nextRankStatus, stayInn, revive, reviveCost, checkRankUp,
   itemShopStock, buyItem, gearShopStock, buyGear, sellGear, sellPrice, canExpandBackpack, expandBackpack, feeTier,
-  nextBackpackTier, daysPerMonth,
+  nextBackpackTier,
 } from '../town.js?v=features-2';
 import { backpackSlots } from '../loot.js?v=features-2';
 import { maxHp, maxMp, gearDef, aptitudeGrade } from '../character.js?v=features-2';
@@ -28,11 +28,37 @@ let lex;
 let scheduler;
 const learning = new LearningStore();
 const workshopSelection = {};
-let tab = 'guild';
 let flash = null;
 
-const TABS = [['guild', 'ギルド'], ['inn', '宿屋'], ['items', '道具屋'], ['gear', '武器・防具屋'], ['temple', '神殿'], ['storage', '倉庫'], ['workshop', '工房・調合'], ['manage', '銀行・投資']];
+const requestedFacility = new URLSearchParams(window.location.search).get('facility');
 const rng = () => seededRng({ rng: (Date.now() ^ (Math.random() * 2 ** 32)) >>> 0 });
+
+const facilityGroups = [
+  { title: '冒険の準備', cards: [
+    { id: 'guild', name: '冒険者ギルド', icon: '📜', detail: '依頼の受注・報告、昇格', show: guild },
+    { id: 'inn', name: '宿屋', icon: '🛏️', detail: 'HP・MPを回復', show: inn },
+    { id: 'temple', name: '神殿', icon: '🏛️', detail: '復活・治療、転職・刻印', show: temple },
+    { href: 'party.html', name: 'パーティ', icon: '🛡️', detail: '仲間の装備・スキル' },
+  ] },
+  { title: '買い物と強化', cards: [
+    { id: 'items', name: '道具屋', icon: '🧪', detail: '道具を買う、荷物枠を広げる', show: items },
+    { id: 'gear', name: '武器・防具屋', icon: '⚔️', detail: '装備の購入・売却', show: gearShop },
+    { id: 'workshop', name: '工房・調合', icon: '⚒️', detail: '装備の作成・強化、道具の調合',
+      show: () => workshopView(data, session.game, act, rng, workshopSelection) },
+    { id: 'storage', name: '倉庫', icon: '📦', detail: '装備・道具・素材を確認', show: storage },
+  ] },
+  { title: '挑戦と町の運営', cards: [
+    { href: 'challenge.html', name: '闘技場', icon: '🏆', detail: '対戦と最終試験' },
+    { id: 'manage', name: '銀行・投資', icon: '🪙', detail: '融資・返済、施設の強化',
+      show: () => managementView(data, session.game, act) },
+  ] },
+];
+const facility = facilityGroups.flatMap(({ cards }) => cards)
+  .find((card) => card.id === requestedFacility);
+
+function facilityLink(id) {
+  return `index.html?facility=${id}`;
+}
 
 /** 進み具合を変えて保存し、結果を出す。失敗したら理由を出す */
 function act(fn) {
@@ -44,30 +70,83 @@ function act(fn) {
   draw();
 }
 
-function head() {
-  const g = session.game;
+function heading(title, isFacility = false) {
+  document.title = `${title} - English Quest`;
+  return el('header', { class: 'town-header' },
+    isFacility ? el('a', { class: 'back', href: 'index.html' }, '← 町へ') : null,
+    el('h1', {}, title));
+}
+
+function statusBar(g) {
   const cal = calendarOf(data, g.day);
-  const rank = currentRank(data, g);
-  return [
-    el('div', { class: 'panel small' },
-      el('div', {}, `${cal.month}か月目（${cal.season?.name ?? ''}）${cal.dayOfMonth}日目・月末まで${cal.daysLeft}日`),
-      el('div', {}, `お金 ${g.gold}${g.overdue ? `　滞納 ${g.overdue}` : ''}・ランク ${rank.title}`),
-      el('div', { class: 'muted' }, `月末の会費 ${guildFee(data, g)}`)),
-    g.notices?.length ? el('details', { class: 'panel small' }, el('summary', {}, `お知らせ（${g.notices.length}）`),
-      g.notices.slice().reverse().map((n) => el('div', {}, n)),
-      el('button', { class: 'ghost', onclick: () => act((gg) => { gg.notices = []; return '消した'; }) }, 'お知らせを消す')) : null,
-    el('div', { class: 'tabs' }, TABS.map(([id, label]) => el('button', { class: tab === id ? 'on' : '', onclick: () => { tab = id; flash = null; draw(); } }, label))),
-    flash ? el('div', { class: `panel small ${flash.ok ? '' : 'error'}` }, flash.text) : null,
-  ];
+  return el('dl', { class: 'town-status' },
+    el('div', {}, el('dt', {}, '所持金'), el('dd', {}, `${g.gold.toLocaleString('ja-JP')} G`)),
+    el('div', {}, el('dt', {}, '冒険者ランク'), el('dd', {}, currentRank(data, g).title)),
+    el('div', {}, el('dt', {}, '日付'), el('dd', {}, `${cal.season?.name ?? ''} ${cal.dayOfMonth}日`)));
+}
+
+function townCard({ href, id, name, icon, detail }) {
+  return el('a', { class: 'town-card', href: href ?? facilityLink(id) },
+    el('span', { class: 'town-card-icon', 'aria-hidden': 'true' }, icon),
+    el('span', {},
+      el('strong', {}, name),
+      el('span', { class: 'town-card-detail' }, detail)));
+}
+
+function townActions(g) {
+  const reportable = g.quests.filter((q) => canReport(data, g, q)).length;
+  const down = g.party.filter((m) => m.hp <= 0).length;
+  const cure = g.party.some((m) => m.persist?.length);
+  const rest = g.party.some((m) => m.hp > 0 && (m.hp < maxHp(data, m) || m.mp < maxMp(data, m)));
+  const actions = [
+    reportable ? el('a', { href: facilityLink('guild') }, `報告できる依頼 ${reportable}件`) : null,
+    down || cure ? el('a', { href: facilityLink('temple') }, down ? `戦闘不能 ${down}人・神殿へ` : '状態異常の治療へ') : null,
+    rest ? el('a', { href: facilityLink('inn') }, 'HP・MPの回復へ') : null,
+    g.overdue ? el('a', { href: facilityLink('manage') }, '会費の滞納を確認') : null,
+  ].filter(Boolean);
+  return actions.length ? el('nav', { class: 'town-actions', 'aria-label': '町でできること' }, actions) : null;
+}
+
+function townNotices(g) {
+  if (!g.notices?.length) return null;
+  return el('details', { class: 'panel small' },
+    el('summary', {}, `お知らせ（${g.notices.length}件）`),
+    el('ul', {}, g.notices.slice().reverse().map((notice) => el('li', {}, notice))),
+    el('button', { class: 'ghost', onclick: () => act((gg) => { gg.notices = []; }) }, 'お知らせを消す'));
+}
+
+function adventureCard(title, detail, href, label) {
+  return el('section', { class: 'town-adventure' },
+    el('h2', {}, title),
+    detail ? el('p', {}, detail) : null,
+    el('a', { class: 'btn primary', href }, label));
+}
+
+function showHome(g) {
+  if (session.inDungeon) {
+    const run = session.run;
+    const destination = run.label ?? data.dungeons.get(run.dungeonId)?.name;
+    const detail = run.challenge ? destination : [destination, run.floor && `${run.floor}階`].filter(Boolean).join('・');
+    render(view, heading('冒険者の町'),
+      adventureCard(run.challenge ? '挑戦の途中' : '遠征の途中', detail,
+        run.challenge ? 'challenge.html' : 'dungeon.html', '冒険を続ける'));
+    return;
+  }
+
+  render(view, heading('冒険者の町'), statusBar(g),
+    adventureCard('ダンジョン', '行き先とルーンストーンを選ぶ', 'dungeon.html', 'ダンジョンへ'),
+    el('nav', { class: 'town-grid town-learning', 'aria-label': '英語の学習' },
+      townCard({ href: 'study.html?tab=training', icon: '📖', name: '単語を復習', detail: '訓練場でまとめて解く' }),
+      townCard({ href: 'chant.html', icon: '✦', name: '瞬間英作文', detail: '詠唱の間でフレーズ練習' })),
+    townActions(g), townNotices(g),
+    facilityGroups.map(({ title, cards }) => el('section', { class: 'town-district' },
+      el('h2', {}, title), el('div', { class: 'town-grid' }, cards.map(townCard)))));
 }
 
 function guild() {
   const g = session.game;
-  // 空いている枠があれば埋める（はじめて・ランクが上がったとき）
-  if ((g.board?.length ?? 0) + g.quests.length < boardSize(data, g)) { fillBoard(data, g, rng()); session.save(); }
   const st = nextRankStatus(data, g);
   return [
-    el('a', { class: 'btn primary', href: 'study.html' }, 'ギルドの学び舎（資料室・石碑の間・訓練場・昇格試験）'),
     el('h2', {}, '受けているクエスト'),
     g.quests.length ? null : el('p', { class: 'muted small' }, 'なし'),
     g.quests.map((q) => el('div', { class: 'panel small' },
@@ -93,11 +172,12 @@ function guild() {
           step?.kind === 'gather' ? el('button', { onclick: () => act((game) => deliverChain(data, game, chain)) }, '納品する') : null,
           step?.kind === 'reward' ? el('button', { onclick: () => act((game) => [claimChain(data, game, chain, rng()), ...checkRankUp(data, game)]) }, '報告する') : null);
       })),
-    el('a', { class: 'btn', href: 'challenge.html' }, '闘技場・最終試験'),
     el('h2', {}, '冒険者ランク'),
     el('div', { class: 'panel small' },
       el('div', {}, `${currentRank(data, g).title}（ポイント ${g.rankPoints}）　特典：${currentRank(data, g).perk || 'なし'}`),
       st ? el('div', { class: 'muted' }, `次は「${st.next.title}」：${st.needs.length ? st.needs.join('・') : '上がれる'}`) : el('div', {}, '最高のランク')),
+    st ? el('a', { class: 'btn', href: 'study.html?tab=exam' }, '昇格条件・試験を確認') : null,
+    el('a', { class: 'btn', href: 'study.html' }, 'ギルドの学び舎'),
   ];
 }
 function rewardText(q) {
@@ -111,7 +191,7 @@ function inn() {
   const econ = data.economy.get(feeTier(data, g));
   const fx = data.innRooms.find((r) => r.innRank === g.facilities.inn);
   return [
-    el('p', { class: 'muted small' }, '倒れている人は起きません（神殿へ）。'),
+    el('p', { class: 'muted small' }, '戦闘不能の仲間は', el('a', { href: facilityLink('temple') }, '神殿'), 'で復活できます。'),
     g.party.map((m) => el('div', { class: 'small' }, `${m.name}　HP ${m.hp}/${maxHp(data, m)}　MP ${m.mp}/${maxMp(data, m)}${m.room ? '　（良い部屋の効果）' : ''}`)),
     el('button', { onclick: () => act((gg) => `ふつうの部屋に泊まった（-${stayInn(data, gg, false)}）`) }, `ふつうの部屋（${econ.inn_cheap}）：全回復`),
     el('button', { class: 'primary', onclick: () => act((gg) => `良い部屋に泊まった（-${stayInn(data, gg, true)}）`) },
@@ -152,6 +232,7 @@ function gearShop() {
     g.storage.gear.map((x) => el('div', { class: 'row small', style: 'align-items:center' },
       el('div', { style: 'flex:2' }, `${gearDef(data, x).name}（${x.rarity}）`),
       el('button', { onclick: () => act((gg) => `売った（+${sellGear(data, gg, x.uid)}）`) }, `売る ${sellPrice(data, x)}`))),
+    el('a', { class: 'btn', href: 'party.html' }, 'パーティの装備を変更'),
   ];
 }
 
@@ -190,19 +271,38 @@ function storage() {
 }
 
 function draw() {
-  if (!session.game?.party) {
-    render(view, el('p', {}, 'まだパーティがいません。'), el('a', { class: 'btn primary', href: 'party.html' }, 'パーティを作る'));
+  const g = session.game;
+  if (session.readOnly) {
+    render(view, heading('冒険者の町'), el('p', { class: 'panel' }, 'このセーブは、より新しいバージョンのゲームで作成されています。'));
     return;
   }
-  if (session.inDungeon) {
-    render(view, el('p', {}, 'ダンジョンの中にいます。'), el('a', { class: 'btn primary', href: 'dungeon.html' }, 'ダンジョンへ'));
+  if (!g?.party) {
+    render(view, heading('冒険者の町'),
+      adventureCard('冒険をはじめる', '仲間の名前・ジョブ・見た目を選んで、最初のパーティを作ろう。', 'party.html', 'パーティを作る'));
     return;
   }
-  const body = { guild, inn, items, gear: gearShop, temple, storage,
-    workshop: () => workshopView(data, session.game, act, rng, workshopSelection),
-    manage: () => managementView(data, session.game, act),
-  }[tab]();
-  render(view, head(), body, el('a', { class: 'btn primary', href: 'dungeon.html' }, 'ダンジョンへ出発する'));
+  // 最初に町を開いたときや、昇格で枠が増えたときに依頼を補充する。
+  if (!session.inDungeon && (g.board?.length ?? 0) + g.quests.length < boardSize(data, g)) {
+    fillBoard(data, g, rng());
+    session.save();
+  }
+  if (!facility || session.inDungeon) return showHome(g);
+
+  const cal = calendarOf(data, g.day);
+  render(view, heading(facility.name, true), statusBar(g),
+    flash?.text ? el('div', { class: `panel small ${flash.ok ? '' : 'error'}`, role: 'status' }, flash.text) : null,
+    facility.id === 'manage' ? el('p', { class: 'panel small' },
+      `${cal.month}か月目・月末まで${cal.daysLeft}日・月末の会費 ${guildFee(data, g)}`) : null,
+    facility.show());
+}
+
+function refresh() {
+  if (session.game && !session.readOnly) {
+    normalizeGame(data, session.game);
+    updateRuneModifiers(data, session.game, lex, learning, scheduler, scheduler.dayOf(now()));
+    session.save();
+  }
+  draw();
 }
 
 (async () => {
@@ -211,10 +311,14 @@ function draw() {
     data = gd;
     lex = buildLexicon(stones.rows, words.rows);
     scheduler = new Scheduler(srs.data);
-    if (session.game && !session.readOnly) { normalizeGame(data, session.game);
-      updateRuneModifiers(data, session.game, lex, learning, scheduler, scheduler.dayOf(now()));
-      session.save(); }
-    draw();
+    refresh();
+    window.addEventListener('pageshow', (event) => {
+      if (!event.persisted) return;
+      session.load();
+      learning.load();
+      flash = null;
+      refresh();
+    });
   } catch (e) {
     render(view, el('p', { class: 'error' }, `読み込みに失敗：${e.message}`));
     console.error(e);

@@ -34,7 +34,7 @@ function partyPanel() {
 }
 
 // ---------------- 行き先を選ぶ（町） ----------------
-function showTown(message = null) {
+function showDeparture(message = null) {
   const g = session.game;
   if (!g?.party) {
     render(view, el('p', {}, 'まだパーティがいません。'), el('a', { class: 'btn primary', href: 'party.html' }, 'パーティを作る'));
@@ -58,7 +58,7 @@ function showTown(message = null) {
     class: 'primary',
     onclick: () => {
       if (!st.stoneId) return;
-      if (session.game.party.every((m) => m.hp <= 0)) { showTown('全員倒れている。宿屋や神殿で回復してから出発しよう。'); return; }
+      if (session.game.party.every((m) => m.hp <= 0)) { showDeparture('全員倒れている。宿屋や神殿で回復してから出発しよう。'); return; }
       const picker = new QuestionPicker({ lex, store, scheduler, stoneId: st.stoneId, nowMs: now() });
       startRun(data, session, { dungeonId: st.dungeonId, stoneId: st.stoneId, quizState: picker.toState(), seed: (Date.now() ^ (Math.random() * 2 ** 32)) >>> 0 });
       showRun();
@@ -86,14 +86,14 @@ function debugTools() {
     el('button', {
       onclick: () => {
         session.update((game) => { for (const id of ['potion', 'ether', 'revive_salts', 'antidote', 'panacea', 'return_feather']) if (data.items.has(id)) addItem(game, id, 3); });
-        showTown('道具を足した');
+        showDeparture('道具を足した');
       },
     }, '道具を3つずつ足す'),
     el('button', {
-      onclick: () => { session.update((game) => { for (const m of game.party) { m.hp = maxHp(data, m); m.mp = maxMp(data, m); m.persist = []; } }); showTown('全員を全回復した'); },
+      onclick: () => { session.update((game) => { for (const m of game.party) { m.hp = maxHp(data, m); m.mp = maxMp(data, m); m.persist = []; } }); showDeparture('全員を全回復した'); },
     }, '全員を全回復（宿屋のかわり）'),
     el('button', {
-      onclick: () => { session.update((game) => { const i = data.ranks.findIndex((r) => r.id === game.rank); game.rank = data.ranks[Math.min(i + 1, data.ranks.length - 1)].id; }); showTown('ランクを1つ上げた'); },
+      onclick: () => { session.update((game) => { const i = data.ranks.findIndex((r) => r.id === game.rank); game.rank = data.ranks[Math.min(i + 1, data.ranks.length - 1)].id; }); showDeparture('ランクを1つ上げた'); },
     }, 'ランクを1つ上げる'),
   );
 }
@@ -101,7 +101,7 @@ function debugTools() {
 // ---------------- ダンジョンの中 ----------------
 function showRun(result = null) {
   const run = session.run;
-  if (!run) return showTown();
+  if (!run) return showDeparture();
   if (run.battle) return battleView().start();
   if (run.state === 'ready' && run.battlesDone === 0) return beginBattle();
   if (run.state === 'loot') {
@@ -165,7 +165,7 @@ function showReturned(pack) {
       el('div', {}, `持ち帰った装備：${pack.gear.join('、') || 'なし'}`),
       el('div', {}, `持ち帰った素材：${pack.materials.join('、') || 'なし'}`),
       el('div', { class: 'muted' }, '拾った物は町の倉庫に入った。')),
-    el('button', { class: 'primary', onclick: () => showTown() }, 'つづける'));
+    el('a', { class: 'btn primary', href: 'index.html' }, '町へ'));
 }
 
 function lootActions(result) {
@@ -223,7 +223,7 @@ function battleView() {
           el('p', {}, 'ダンジョンに入る前の状態に戻った（お金・素材・拾った装備・経験値・日数）。'),
           el('p', { class: 'muted small' }, '学習記録（ルーンの状態）は残っています。'),
           el('div', { class: 'panel small' }, `ヒント：${dg.rank > 1 ? '★を1つ下げたダンジョンで' : '浅い階や近場のダンジョンで'}鍛え直してから挑もう。`),
-          el('button', { class: 'primary', onclick: () => showTown() }, '町へ'));
+          el('a', { class: 'btn primary', href: 'index.html' }, '町へ'));
         return;
       }
       const battleCount = runFloorRow(data, { dungeonId, floor }).battles;
@@ -247,8 +247,8 @@ function battleView() {
       updateRuneModifiers(data, session.game, lex, store, scheduler, scheduler.dayOf(now()));
       session.save(); }
     if (session.inDungeon && session.run.backpack) showRun();
-    else if (session.inDungeon) { session.leaveDungeon(); showTown(); } // 古い形の遠征（セーブの確認画面で始めたもの）は終わらせる
-    else showTown();
+    else if (session.inDungeon) { session.leaveDungeon(); showDeparture(); } // 古い形の遠征（セーブの確認画面で始めたもの）は終わらせる
+    else showDeparture();
   } catch (e) {
     render(view, el('p', { class: 'error' }, `読み込みに失敗：${e.message}`));
     console.error(e);
