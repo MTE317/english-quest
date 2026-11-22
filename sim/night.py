@@ -39,7 +39,7 @@ elif exp=="sens":
             for d in DUNGEONS.values(): d["income"]=d["_inc"]
 elif exp=="toggles":
     base=dict(core.T)
-    for k,v in [("borrow",False),("mastery_gate",False),("items_in_battle",False)]:
+    for k,v in [("borrow",False),("items_in_battle",False)]:
         core.T.clear(); core.T.update(base); core.T[k]=v
         out[f"{k}={v}"]=keep(base_metrics(full_games(0.65,n=20)))
     core.T.clear(); core.T.update(base)
