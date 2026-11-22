@@ -1,0 +1,20 @@
+{
+  "tool": "built-in image_gen",
+  "transparent_background": true,
+  "file": "animal.png",
+  "layout": {
+    "columns": 4,
+    "rows": 2,
+    "order": [
+      "animal_01",
+      "animal_02",
+      "animal_03",
+      "animal_04",
+      "animal_05",
+      "animal_06",
+      "animal_07",
+      "animal_08"
+    ]
+  },
+  "prompt": "Use case: stylized-concept\nAsset type: one production-ready PNG sprite atlas for a classic Japanese RPG party portrait interface.\nPrimary request: an exact uniform 4 columns by 2 rows atlas, landscape aspect ratio exactly 2:1. Prefer canvas 1024 x 512 px. Eight equal square cells completely tile the canvas, each cell 256 x 256 px. Each cell is a true 32 x 32 logical pixel-art portrait enlarged by exactly 8 with nearest-neighbor blocks. Draw entirely in chunky square pixels, flat palette colors and a one-logical-pixel dark navy outline. Approximately 16 restrained colors per portrait. This must look like a 1990s 16-bit JRPG sprite, not a detailed modern illustration.\nScene/backdrop: genuinely transparent alpha background throughout all unused pixels.\nSubjects in EXACT row-major order:\nTOP ROW (left to right): 1 orange tabby cat; 2 brown dog with floppy ears; 3 orange fox with white muzzle; 4 brown bear.\nBOTTOM ROW (left to right): 5 black and white panda; 6 friendly green frog; 7 white rabbit with upright ears; 8 golden brown lion with a mane.\nEvery portrait shows a friendly front-facing animal companion head and small shoulders. Same frontal camera, scale, baseline, shading language and palette family in all eight cells. Recognizable species, distinct small pixel eyes. Animals are fantasy RPG companions rather than realistic animals or emoji. Simple dark fantasy tunic shoulders when visible.\nComposition: in EVERY tile, center the complete silhouette within the inner 24 to 26 logical pixels, leaving equal transparent breathing room within the tile. Exactly eight silhouettes total. Pixel grid alignment must be consistent. The canvas has NO outside margins, NO gutters between cells, and NO visible grid lines or boxes; the eight square tile cells themselves completely cover the image canvas.\nConstraints: No captions, letters, words, watermark, icon outlines beyond the sprite outline, frames, backgrounds, backdrop panels, ground shadows, decorative sparkles, extra icons or extra characters. No anti-aliasing, smooth edges, fine detail, gradients, painterly textures or blur. Preserve hard large square pixels. Genuine transparent background, not a painted checkerboard."
+}

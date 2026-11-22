@@ -1,0 +1,40 @@
+{
+  "mode": "built-in image_gen",
+  "created_for": "English Quest JRPG pixel portraits",
+  "assets": [
+    {
+      "file": "human.png",
+      "columns": 5,
+      "rows": 2,
+      "ids": [
+        "human_01",
+        "human_02",
+        "human_03",
+        "human_04",
+        "human_05",
+        "human_06",
+        "human_07",
+        "human_08",
+        "human_09",
+        "human_10"
+      ],
+      "prompt": "Use case: stylized-concept\nAsset type: one production-ready pixel-art portrait sprite atlas for a Japanese fantasy RPG UI.\nCreate ONE sprite atlas containing exactly 10 different HUMAN adventurer bust portraits, in an exact edge-to-edge grid of 5 columns by 2 rows. Canvas 1280 by 512 pixels, aspect 5:2, every cell exactly square and identical in size. Each cell corresponds to a coarse logical 32 by 32 pixel sprite, enlarged by nearest-neighbor to fill its 256 by 256 cell. Position each portrait centered in its own cell, at consistent scale, with the head plus a little of the shoulders. Keep a two-logical-pixel clear inset inside EACH cell. No gutters or margins BETWEEN cells; do not draw grid lines.\nVisual style: authentic 1990s 16-bit JRPG pixel art, simple charming expressive faces, large readable eyes, hand-placed square pixels, visibly coarse pixel steps, one-logical-pixel dark navy outline, limited muted earthy palette. Use dark navy shadows, warm tan skin with only three flat values, clothing in muted teal, burgundy, cream and gold. Crisp hard square edges everywhere. No anti-aliasing, no gradients, no painterly texture, no tiny subpixel details, no smooth curves. All faces front-facing with consistently aligned eyes and shoulders.\nExact row-major order:\nTop row, left to right:\n1. Young adult male adventurer with short brown hair, teal tunic.\n2. Young adult female adventurer with brown medium-length hair, burgundy scarf.\n3. Adult bearded male adventurer, brown hair and brown beard, green tunic.\n4. Adult female adventurer with blonde long hair and a small braid, blue tunic.\n5. Adult male adventurer with dark curly hair, ochre tunic.\nBottom row, left to right:\n6. Adult female adventurer with vivid auburn red hair, teal clothes.\n7. Silver-haired adult adventurer, short silver hair, dark navy clothing.\n8. Young girl adventurer with brown hair tied into short twin tails, red tunic.\n9. Young boy adventurer with short brown hair, green tunic.\n10. Elderly woman adventurer with white hair in a bun, warm wise face, purple shawl.\nBackground: genuinely transparent alpha in every empty pixel, with no background painted behind any portrait.\nText: none.\nConstraints: exactly 10 portraits in 5 columns and 2 rows, no labels, no letters, no numerals, no card borders, no checkerboard drawn into the artwork, no extra objects, no emojis, no 3D, no watermark. The output is one aligned sprite atlas, not a mockup."
+    },
+    {
+      "file": "fantasy.png",
+      "columns": 4,
+      "rows": 2,
+      "ids": [
+        "fantasy_01",
+        "fantasy_02",
+        "fantasy_03",
+        "fantasy_04",
+        "fantasy_05",
+        "fantasy_06",
+        "fantasy_07",
+        "fantasy_08"
+      ],
+      "prompt": "Use case: stylized-concept\nAsset type: one production-ready pixel-art portrait sprite atlas for a Japanese fantasy RPG UI.\nCreate ONE sprite atlas containing exactly 8 different FANTASY adventurer bust portraits in an exact edge-to-edge grid of 4 columns by 2 rows. Canvas 1024 by 512 pixels, aspect 2:1, every cell square and identical in size. Each cell corresponds to a coarse logical 32 by 32 pixel sprite, enlarged by nearest-neighbor to fill its cell. Position each portrait centered in its own cell, at consistent scale, showing head and a little shoulders. Keep a two-logical-pixel clear inset inside EACH cell. No gutters or margins BETWEEN cells; do not draw grid lines.\nVisual style: authentic 1990s 16-bit JRPG pixel art, charming expressive faces, big clearly readable eyes, very coarse hand-placed square pixels, one-logical-pixel dark navy outline, limited muted earthy palette. Skin has only three flat values. Clothing muted teal, burgundy, cream, blue and gold. Crisp square stair-stepped edges everywhere. No anti-aliasing, no gradients, no painterly texture, no fine subpixel details, no smooth curves. All faces front-facing with consistently aligned eyes and shoulders.\nExact row-major order:\nTop row, left to right:\n1. Male elf adventurer with golden blonde short hair, pointed ears visible, green cloak.\n2. Female elf adventurer with jade green medium hair, pointed ears visible, burgundy scarf.\n3. Elderly male wizard with a blue pointed hat and white beard, blue robes.\n4. Adult female mage with a wide purple witch hat, auburn hair, purple robe.\nBottom row, left to right:\n5. Ninja with dark indigo hood and face mask, only tan eye area visible.\n6. Masked fantasy hero, burgundy eye mask, short brown hair, red cape and muted gold clasp.\n7. Small fairy girl with pale blue short hair, tiny silver headband, teal clothes, a little of translucent blue wings visible behind shoulders.\n8. Male vampire with pale ivory skin, black swept hair, high burgundy collar and dark formal clothes.\nBackground: genuinely transparent alpha wherever no portrait is drawn, including every corner. No background behind portraits.\nText: none.\nConstraints: exactly 8 portraits in 4 columns and 2 rows, no labels, no letters, no numerals, no card borders, no checkerboard drawn into artwork, no extra objects, no emojis, no 3D, no watermark. This is one aligned sprite atlas, not a mockup."
+    }
+  ]
+}

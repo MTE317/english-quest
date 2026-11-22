@@ -17,9 +17,10 @@ import { describeSkillEffect } from '../skill-effects.js?v=build36-1';
 
 import { setSceneMusic } from '../battle-music.js?v=rune-study-1';
 
-import { installGameShell } from '../ui/game-shell.js';
+import { installGameShell } from '../ui/game-shell.js?v=pixel-town-1';
 import { weaponIcon } from '../ui/weapon-icons.js';
 import { armorIcon, equipmentIcon } from '../ui/equipment-icons.js';
+import { portraitIcon, portraitLabel, PORTRAIT_GROUPS } from '../ui/portrait.js';
 
 const view = document.getElementById('view');
 setSceneMusic('facility');
@@ -29,7 +30,6 @@ session.installAutoSave(window);
 let data;
 
 const pct = (x) => `${Math.round(x * 1000) / 10}%`;
-const iconOf = (id) => data.icons.find((i) => i.id === id)?.icon ?? '❔';
 const jobName = (id) => data.jobsById.get(id)?.name ?? id;
 
 // ---------------- キャラメイク（仮） ----------------
@@ -53,7 +53,7 @@ function showCreate() {
   });
   function refresh(i) {
     const spec = specs[i];
-    members[i].face.textContent = iconOf(spec.icon);
+    render(members[i].face, portraitIcon(spec.icon, { small: true }));
     members[i].name.textContent = spec.name.trim() || `${i + 1}人目`;
     members[i].job.textContent = jobName(spec.job);
   }
@@ -63,6 +63,26 @@ function showCreate() {
     members.forEach(({ button }, n) => button.setAttribute('aria-pressed', String(n === i)));
     const jobNote = el('p', { class: 'job-note' });
     const describe = () => { const j = currentJob(); jobNote.textContent = [j.role, j.weakness].filter(Boolean).join(' ／ '); };
+    const selectedLabel = el('p', { class: 'portrait-selected-label', 'aria-live': 'polite' }, `見た目：${portraitLabel(spec.icon)}`);
+    const appearanceIds = new Set(data.icons.map(({ id }) => id));
+    const choices = [];
+    const picker = el('div', { class: 'portrait-picker', role: 'group', 'aria-label': '仲間の見た目' },
+      PORTRAIT_GROUPS.map((group) => el('fieldset', { class: 'portrait-group' },
+        el('legend', {}, group.label),
+        el('div', { class: 'portrait-grid' }, group.portraits.filter(({ id }) => appearanceIds.has(id)).map(({ id, label }) => {
+          const button = el('button', {
+            type: 'button', class: 'portrait-option', 'aria-label': `${group.label}：${label}`,
+            'aria-pressed': String(spec.icon === id),
+            onclick: () => {
+              spec.icon = id;
+              refresh(i);
+              choices.forEach((choice) => choice.button.setAttribute('aria-pressed', String(choice.id === id)));
+              selectedLabel.textContent = `見た目：${label}`;
+            },
+          }, portraitIcon(id, { small: true }), el('span', { class: 'portrait-option-label' }, label));
+          choices.push({ id, button });
+          return button;
+        })))));
     render(editor,
       el('h3', {}, `${i + 1}人目の冒険者`),
       el('div', { class: 'recruit-fields' },
@@ -70,11 +90,8 @@ function showCreate() {
           oninput: (e) => { spec.name = e.target.value; refresh(i); } })),
         el('label', {}, 'ジョブ', el('select', { class: 'select',
           onchange: (e) => { spec.job = e.target.value; refresh(i); describe(); } },
-          baseJobs.map((j) => el('option', { value: j.id, selected: j.id === spec.job }, j.name)))),
-        el('label', {}, '見た目', el('select', { class: 'select',
-          onchange: (e) => { spec.icon = e.target.value; refresh(i); } },
-          data.icons.map((ic) => el('option', { value: ic.id, selected: ic.id === spec.icon }, ic.icon))))),
-      jobNote);
+          baseJobs.map((j) => el('option', { value: j.id, selected: j.id === spec.job }, j.name))))),
+      jobNote, selectedLabel, picker);
     describe();
   }
   specs.forEach((_, i) => refresh(i));
@@ -145,7 +162,7 @@ const slotIcons = { weapon: '⚔', offhand: '†', accessory1: '✦', accessory2
 
 function memberBanner(member) {
   return el('div', { class: 'equipment-banner' },
-    el('span', { class: 'equipment-portrait', 'aria-hidden': 'true' }, iconOf(member.icon)),
+    el('span', { class: 'equipment-portrait', 'aria-hidden': 'true' }, portraitIcon(member.icon)),
     el('div', {}, el('strong', {}, member.name),
       el('span', { class: 'muted small' }, `${jobName(member.job)}　Lv ${member.lv}`)));
 }

@@ -19,7 +19,7 @@ import { el, render, stars } from '../dom.js';
 
 import { setSceneMusic } from '../battle-music.js?v=rune-study-1';
 
-import { installGameShell } from '../ui/game-shell.js';
+import { installGameShell } from '../ui/game-shell.js?v=pixel-town-1';
 
 const view = document.getElementById('view');
 setSceneMusic('facility');

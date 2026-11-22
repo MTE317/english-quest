@@ -1,6 +1,7 @@
 import { maxHp, maxMp } from '../character.js?v=build36-1';
 import { expeditionScene } from './scenery.js';
 import { el } from '../dom.js';
+import { portraitIcon } from './portrait.js';
 
 function resource(label, value, max) {
   const percent = max > 0 ? Math.min(100, Math.max(0, (value / max) * 100)) : 0;
@@ -11,14 +12,14 @@ function resource(label, value, max) {
       el('span', { style: `width:${percent}%` })));
 }
 
-function memberCard(data, member, growth, icon) {
+function memberCard(data, member, growth) {
   const levelUp = growth.levels > 0;
   const conditions = (member.persist ?? []).map((id) => data.statusEffects.get(id)?.name ?? id);
   if (member.hp <= 0) conditions.unshift('戦闘不能');
 
   return el('li', { class: levelUp ? 'victory-member leveled' : 'victory-member' },
     el('div', { class: 'victory-member-head' },
-      el('span', { class: 'victory-avatar', 'aria-hidden': 'true' }, icon),
+      el('span', { class: 'victory-avatar', 'aria-hidden': 'true' }, portraitIcon(member.icon, { small: true })),
       el('div', {},
         el('h4', {}, member.name),
         el('span', { class: 'victory-level' }, levelUp ? `Lv. ${member.lv - growth.levels} → ${member.lv}` : `Lv. ${member.lv}`)),
@@ -31,7 +32,7 @@ function memberCard(data, member, growth, icon) {
     conditions.length ? el('div', { class: 'victory-conditions' }, conditions.join('・')) : null);
 }
 
-export function createVictoryView({ data, dungeon, party, result, backpack, totalGold, iconOf, gearName, actions }) {
+export function createVictoryView({ data, dungeon, party, result, backpack, totalGold, gearName, actions }) {
   const { loot, growth, floor, battleNumber, battleCount } = result;
   const drops = [
     ...loot.materials.map(({ id, count }) => ({ name: data.materials.get(id).name, count })),
@@ -53,7 +54,7 @@ export function createVictoryView({ data, dungeon, party, result, backpack, tota
     el('section', { 'aria-labelledby': 'victory-party-title' },
       el('h3', { id: 'victory-party-title' }, 'パーティの成長'),
       el('ul', { class: 'victory-party' }, party.map((member, index) =>
-        memberCard(data, member, growth[index], iconOf(member.icon))))),
+        memberCard(data, member, growth[index])))),
     el('div', { class: 'victory-expedition' },
       el('span', {}, `バックパック ${backpack}`),
       el('span', {}, `遠征合計 ${totalGold} G`)),

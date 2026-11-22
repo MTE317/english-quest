@@ -13,14 +13,15 @@ import {
 } from '../dungeon.js?v=build36-1';
 import { backpackSlots, backpackUsed, addItem } from '../loot.js?v=build36-1';
 import { maxHp, maxMp } from '../character.js?v=build36-1';
-import { createBattleView } from '../ui/battle-view.js?v=build36-1';
-import { createVictoryView } from '../ui/victory-view.js?v=build36-1';
+import { createBattleView } from '../ui/battle-view.js?v=pixel-town-1';
+import { createVictoryView } from '../ui/victory-view.js?v=pixel-town-1';
 import { stoneAllowed } from '../study.js?v=build36-1';
 import { el, render, stars } from '../dom.js';
 import { setSceneMusic } from '../battle-music.js?v=rune-study-1';
 
 import { expeditionScene } from '../ui/scenery.js';
-import { installGameShell } from '../ui/game-shell.js';
+import { installGameShell } from '../ui/game-shell.js?v=pixel-town-1';
+import { portraitIcon } from '../ui/portrait.js';
 
 const view = document.getElementById('view');
 const session = new GameSession();
@@ -28,13 +29,13 @@ installGameShell('dungeon', session);
 session.installAutoSave(window);
 let data; let lex; let scheduler; let store; let srs;
 
-const iconOf = (id) => data.icons.find((i) => i.id === id)?.icon ?? '❔';
 const gearName = (g) => `${data.equipment.get(g.id).name}${g.rarity && g.rarity !== 'common' ? `（${data.rarityTable.find((r) => r.id === g.rarity)?.name ?? '固有'}）` : ''}`;
 
 function partyPanel() {
-  return el('div', { class: 'panel small' }, session.game.party.map((m) => el('div', { class: m.hp <= 0 ? 'error' : '' },
-    `${iconOf(m.icon)} ${m.name} Lv${m.lv}　HP ${m.hp}/${maxHp(data, m)}　MP ${m.mp}/${maxMp(data, m)}`,
-    m.persist?.length ? `　${m.persist.map((id) => data.statusEffects.get(id)?.name).join('・')}` : '')));
+  return el('div', { class: 'panel small' }, session.game.party.map((m) => el('div', { class: `expedition-member${m.hp <= 0 ? ' error' : ''}` },
+    portraitIcon(m.icon, { small: true }),
+    el('span', { class: 'expedition-member-copy' }, `${m.name} Lv${m.lv}　HP ${m.hp}/${maxHp(data, m)}　MP ${m.mp}/${maxMp(data, m)}`,
+      m.persist?.length ? `　${m.persist.map((id) => data.statusEffects.get(id)?.name).join('・')}` : ''))));
 }
 
 // ---------------- 行き先を選ぶ（町） ----------------
@@ -163,7 +164,7 @@ function showRun(result = null) {
   if (result?.result === 'win') {
     render(view, createVictoryView({
       data, dungeon: dg, party: g.party, result, backpack,
-      totalGold: run.earned.gold, iconOf, gearName, actions,
+      totalGold: run.earned.gold, gearName, actions,
     }));
     view.querySelector('h2').focus({ preventScroll: true });
   } else {

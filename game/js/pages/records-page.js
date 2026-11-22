@@ -7,7 +7,7 @@ import { el, render } from '../dom.js';
 import { monsterKnowledge } from '../monster-knowledge.js';
 import { setSceneMusic } from '../battle-music.js?v=rune-study-1';
 
-import { installGameShell } from '../ui/game-shell.js';
+import { installGameShell } from '../ui/game-shell.js?v=pixel-town-1';
 import { equipmentIcon } from '../ui/equipment-icons.js';
 
 const view = document.getElementById('view');
