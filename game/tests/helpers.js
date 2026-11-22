@@ -61,5 +61,6 @@ export function realGameData() {
     facilities: readCsv('facilities.csv').rows,
     commonTree: readCsv('common_tree.csv').rows,
     jobMastery: readCsv('job_mastery.csv').rows,
+    exams: readCsv('exams.csv').rows,
   });
 }

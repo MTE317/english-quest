@@ -37,6 +37,7 @@ const FILES = {
   facilities: 'facilities.csv',
   commonTree: 'common_tree.csv',
   jobMastery: 'job_mastery.csv',
+  exams: 'exams.csv',
 };
 
 const byId = (rows, key = 'id') => new Map(rows.map((r) => [r[key], r]));
@@ -209,6 +210,9 @@ function buildBattleData(raw) {
   const growth = raw.commonTree ? {
     commonTree: raw.commonTree.map((r) => ({ id: r.id, name: r.name, level: toNumber(r.level, 1), points: toNumber(r.points, 1), kind: r.kind, effect: r.effect })),
     jobMastery: raw.jobMastery.map((r) => ({ job: r.job, condition: r.condition, bonus: r.bonus_all_jobs })),
+    exams: (raw.exams ?? []).map((r) => ({
+      id: r.id, kind: r.kind, questions: toNumber(r.questions, 20), passRate: toNumber(r.pass_rate, 0.8), retryAfterDays: toNumber(r.retry_after_days, 1), unlock: r.unlock,
+    })),
   } : {};
   return {
     ...loot,

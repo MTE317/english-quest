@@ -8,12 +8,13 @@ import { QuestionPicker } from '../picker.js';
 import { GameSession } from '../save.js';
 import { normalizeGame } from '../game-state.js';
 import {
-  allowedDungeons, allowedStones, startRun, startNextBattle, afterBattle, returnToTown, continueRun, resolveLoot,
+  allowedDungeons, startRun, startNextBattle, afterBattle, returnToTown, continueRun, resolveLoot,
   isBossBattle, runFloorRow, returnItems, currentRank, useItemOutsideBattle, FIELD_ITEM_EFFECTS,
 } from '../dungeon.js';
 import { backpackSlots, backpackUsed, addItem } from '../loot.js';
 import { maxHp, maxMp } from '../character.js';
 import { createBattleView } from '../ui/battle-view.js';
+import { stoneAllowed } from '../study.js';
 import { el, render, stars } from '../dom.js';
 
 const view = document.getElementById('view');
@@ -44,7 +45,8 @@ function showTown(message = null) {
   const info = el('div', { class: 'muted small' });
   const fill = () => {
     const dg = data.dungeons.get(st.dungeonId);
-    const stones = allowedStones(srs, lex, dg);
+    // ★がダンジョン以上で、今のランクの★まで（1つ下の★の石をすべて読み解けば1つ上まで）
+    const stones = lex.stones.filter((s) => stoneAllowed(lex, store, scheduler, s, dg.rank, rank.maxDungeonRank, scheduler.dayOf(now())));
     st.stoneId = stones.find((s) => s.id === st.stoneId)?.id ?? stones[0]?.id ?? null;
     render(stoneSel, stones.map((s) => el('option', { value: s.id, selected: s.id === st.stoneId }, `${stars(s.star)} ${s.name}`)));
     info.textContent = `${dg.kind}・${dg.floors}階・${dg.days}日かかる・帰還ポイント ${dg.returnPointFloor ? `${dg.returnPointFloor}階のあと` : 'なし'}　${dg.character}`;
@@ -58,7 +60,7 @@ function showTown(message = null) {
       el('select', { class: 'select', onchange: (e) => { st.dungeonId = e.target.value; fill(); } },
         dungeons.map((d) => el('option', { value: d.id }, `${stars(d.rank)} ${d.name}${g.cleared?.[d.id] ? '（踏破済み）' : ''}`)))),
     info,
-    el('label', { class: 'small' }, '持っていくルーンストーン（★がダンジョン以上）', stoneSel),
+    el('label', { class: 'small' }, '持っていくルーンストーン（★がダンジョン以上。今の★の石をすべて読み解くと1つ上も）', stoneSel),
     el('button', {
       class: 'primary',
       onclick: () => {
