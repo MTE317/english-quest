@@ -5,11 +5,11 @@ import { normalizeGame } from '../game-state.js?v=features-2';
 import { currentRank, seededRng } from '../dungeon.js?v=jrpg-1';
 import {
   calendarOf, guildFee, fillBoard, boardSize, acceptQuest, canReport, reportQuest, questText, nextRankStatus, stayInn, revive, reviveCost, checkRankUp,
-  itemShopStock, buyItem, gearShopStock, buyGear, sellGear, sellPrice, canExpandBackpack, expandBackpack, feeTier,
+  canExpandBackpack, expandBackpack, feeTier,
   nextBackpackTier,
 } from '../town.js?v=features-2';
 import { backpackSlots } from '../loot.js?v=features-2';
-import { maxHp, maxMp, gearDef, aptitudeGrade } from '../character.js?v=jrpg-1';
+import { maxHp, maxMp, gearDef } from '../character.js?v=jrpg-1';
 import { availableJobs, changeJob } from '../growth.js?v=features-2';
 import { loadCsv, loadJson } from '../data.js?v=features-2';
 import { buildLexicon } from '../lexicon.js';
@@ -18,7 +18,8 @@ import { LearningStore, now } from '../storage.js?v=features-2';
 import { chainStep, stepLabel, acceptChain, talkChain, deliverChain, claimChain } from '../quest-chain.js?v=features-2';
 import { cureAtTemple, updateRuneModifiers } from '../temple.js?v=features-2';
 import { workshopView, managementView, templeExtras } from '../ui/facility-view.js?v=features-2';
-import { el, render, stars } from '../dom.js';
+import { itemShopView, gearShopView } from '../ui/town-shops.js?v=shop-1';
+import { el, render } from '../dom.js';
 import { setSceneMusic } from '../battle-music.js?v=jrpg-1';
 
 import { installGameShell, sceneHeader } from '../ui/game-shell.js';
@@ -32,6 +33,8 @@ let lex;
 let scheduler;
 const learning = new LearningStore();
 const workshopSelection = {};
+const itemShopSelection = {};
+const gearShopSelection = {};
 let flash = null;
 let guildTab = location.hash === '#guild-active' ? 'active' : 'board';
 
@@ -247,12 +250,7 @@ function items() {
   const exp = canExpandBackpack(data, g);
   const nt = nextBackpackTier(data, g);
   return [
-    el('h2', {}, '道具'),
-    itemShopStock(data, g).map(({ item, price }) => el('div', { class: 'panel small' },
-      el('div', {}, el('strong', {}, item.name), `　${price} G ／ 所持 ${g.items[item.id] ?? 0}個`), el('div', { class: 'muted' }, item.description),
-      el('div', { class: 'row' },
-        el('button', { onclick: () => act((gg) => `${item.name}を${buyItem(data, gg, item.id, 1)}個買った`) }, '1個買う'),
-        el('button', { onclick: () => act((gg) => `${item.name}を${buyItem(data, gg, item.id, 5)}個買った`) }, '5個買う')))),
+    itemShopView(data, g, itemShopSelection, act),
     el('h2', {}, 'バックパックを広げる'),
     el('div', { class: 'panel small' },
       el('div', {}, `今：${backpackSlots(data, g)}枠`),
@@ -263,18 +261,8 @@ function items() {
 }
 
 function gearShop() {
-  const g = session.game;
   return [
-    el('h2', {}, '買う'),
-    el('p', { class: 'muted small' }, '買った装備は倉庫に入ります（パーティの画面でつける）。'),
-    gearShopStock(data, g).map(({ def, star, price }) => el('div', { class: 'row small', style: 'align-items:center' },
-      el('div', { style: 'flex:2' }, `${stars(star)} ${def.name}`, el('div', { class: 'tiny muted' }, g.party.map((m) => `${m.name}:${aptitudeGrade(data, m.job, def) ?? '-'}`).join(' '))),
-      el('button', { onclick: () => act((gg) => { buyGear(data, gg, def.id); return `${def.name}を買った（-${price}）`; }) }, `購入　${price} G`))),
-    el('h2', {}, '倉庫の装備を売る'),
-    g.storage.gear.length ? null : el('p', { class: 'muted small' }, '倉庫に装備がない'),
-    g.storage.gear.map((x) => el('div', { class: 'row small', style: 'align-items:center' },
-      el('div', { style: 'flex:2' }, `${gearDef(data, x).name}（${x.rarity}）`),
-      el('button', { onclick: () => act((gg) => `売った（+${sellGear(data, gg, x.uid)}）`) }, `売る ${sellPrice(data, x)}`))),
+    gearShopView(data, session.game, gearShopSelection, act),
     el('a', { class: 'btn', href: 'party.html' }, 'パーティの装備を変更'),
   ];
 }
