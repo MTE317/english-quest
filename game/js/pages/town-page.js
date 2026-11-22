@@ -14,7 +14,7 @@ import { availableJobs, changeJob } from '../growth.js?v=rune-study-1';
 import { chainStep, stepLabel, acceptChain, talkChain, deliverChain, claimChain } from '../quest-chain.js?v=features-2';
 import { cureAtTemple } from '../temple.js?v=rune-study-1';
 import { workshopView, managementView, templeExtras } from '../ui/facility-view.js?v=rune-study-1';
-import { itemShopView, gearShopView } from '../ui/town-shops.js?v=rune-study-1';
+import { itemShopView, gearShopView } from '../ui/town-shops.js?v=shop-input-1';
 import { weaponIcon } from '../ui/weapon-icons.js';
 import { equipmentIcon } from '../ui/equipment-icons.js';
 import { el, render } from '../dom.js';
@@ -69,12 +69,17 @@ function facilityLink(id) {
 
 /** 進み具合を変えて保存し、結果を出す。失敗したら理由を出す */
 function act(fn) {
+  const shopScroll = view.querySelector('.shop-grid')?.scrollTop;
   try {
     let msg;
     session.update((g) => { msg = fn(g); });
     flash = { ok: true, text: Array.isArray(msg) ? msg.join('　') : msg };
   } catch (e) { flash = { ok: false, text: e.message }; }
   draw();
+  if (shopScroll) {
+    const grid = view.querySelector('.shop-grid');
+    if (grid) grid.scrollTop = shopScroll;
+  }
 }
 
 function statusBar(g) {

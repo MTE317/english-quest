@@ -75,7 +75,12 @@ export function shopView(state, catalogs) {
     render(grid, entries.map((entry) => el('button', {
       type: 'button', class: 'shop-slot', 'data-item': entry.id, 'data-rarity': entry.rarity,
       'aria-label': `${entry.name}、所持${entry.owned}個${entry.equipped ? '、装備中あり' : ''}${entry.notice ? `、${entry.notice}` : ''}`,
-      onclick: () => select(entry),
+      onclick: (event) => {
+        select(entry);
+        if (event.detail > 0 && window.matchMedia('(max-width: 650px)').matches) {
+          detail.scrollIntoView({ block: 'start', inline: 'nearest' });
+        }
+      },
     }, itemIcon(entry),
     el('span', { class: 'shop-slot-name' }, entry.name),
     el('span', { class: 'shop-slot-count', 'aria-hidden': 'true' },
