@@ -105,12 +105,23 @@ export function buildGameData(raw) {
       dropRate: toNumber(r.drop_rate, 0), fixedEffects: parseEffects(r.fixed_effects),
     })),
   ]);
+  // 専用レシピは通常装備を素体に、武器・防具・マント・装飾品を独立したIDで生成する。
+  // 旧レシピは base_equipment_id がない場合も既存の武器選択方式で読める。
   for (const r of raw.recipes ?? []) {
-    if (equipment.has(r.id)) continue;
+    if (equipment.has(r.id)) throw new Error(`制作レシピIDが既存装備と重複：${r.id}`);
     const cap = Number((raw.facilityRanks ?? []).find((x) => x.rank === r.workshop_rank)?.craft_item_lv);
-    const base = [...equipment.values()].filter((def) => def.slot === 'weapon' && def.kind === r.weapon_type && def.itemLv <= cap && !def.unique)
-      .sort((a, b) => b.itemLv - a.itemLv)[0];
-    if (base) equipment.set(r.id, { ...base, id: r.id, name: r.name, addedElement: r.added_element || null, source: '制作' });
+    const base = r.base_equipment_id
+      ? equipment.get(r.base_equipment_id)
+      : [...equipment.values()].filter((def) => def.slot === 'weapon' && def.kind === r.weapon_type && def.itemLv <= cap && !def.unique)
+        .sort((a, b) => b.itemLv - a.itemLv)[0];
+    if (!base || (r.slot && base.slot !== r.slot) || base.unique || base.setId) {
+      throw new Error(`制作レシピの素体が不正：${r.id}（${r.base_equipment_id || r.weapon_type}）`);
+    }
+    equipment.set(r.id, {
+      ...base, id: r.id, name: r.name, source: '専用制作', unique: false,
+      addedElement: r.added_element || null, fixedEffects: parseEffects(r.fixed_effects),
+      recipeDescription: r.description || '', recipeId: r.id,
+    });
   }
   const aptTable = (rows) => new Map(rows.map((r) => [r.job_id, r]));
 
