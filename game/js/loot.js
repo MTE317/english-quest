@@ -115,9 +115,16 @@ export function rollBattleLoot(data, game, dungeonId, floor, enemies, rng, { dro
   let gold = 0;
   const mats = {};
   const gear = [];
+  // 短剣の素材ドロップ補正はパーティ内で重複しない。他のドロップ補正とは加算。
+  const daggerMul = Math.max(1, ...(game.party ?? []).filter((member) => member.hp > 0).flatMap((member) =>
+    ['weapon', 'offhand'].map((slot) => {
+      const def = data.equipment.get(member.equip?.[slot]?.id);
+      return data.weaponTypes.get(def?.kind)?.traits.material_drop_mul ?? 1;
+    })));
+  const materialBonus = dropBonus + daggerMul - 1;
   for (const e of enemies) {
     gold += goldForEnemy(data, dungeonId, e, rng);
-    for (const m of materialsForEnemy(data, dungeonId, e, rng, dropBonus)) mats[m.id] = (mats[m.id] ?? 0) + m.count;
+    for (const m of materialsForEnemy(data, dungeonId, e, rng, materialBonus)) mats[m.id] = (mats[m.id] ?? 0) + m.count;
   }
   const boss = enemies.find((e) => e.boss);
   if (rng() < (boss ? dt.bossGearDrop : dt.gearRate)) gear.push(rollGearDrop(data, game, dungeonId, floor, rng));
