@@ -45,7 +45,7 @@ function damage(weapon, job, weak = [], seed = 5, statuses = {}) {
 
 test('16武器種・通常装備384本・★1〜★12の各24段階・適性14職が揃う', () => {
   assert.equal(data.weaponTypes.size, 16);
-  const basic = [...data.equipment.values()].filter((e) => e.slot === 'weapon' && /^.+_t\\d+$/.test(e.id));
+  const basic = [...data.equipment.values()].filter((e) => e.slot === 'weapon' && /^.+_t\d+$/.test(e.id));
   assert.equal(basic.length, 384);
   for (const type of data.weaponTypes.keys()) {
     const entries = basic.filter((e) => e.kind === type);
