@@ -11,7 +11,16 @@
     <header class="bar"><h1>English Quest（作りかけ）</h1></header>
     <p class="muted">いまは動作確認用の画面だけがあります。</p>
     <a class="btn primary" href="quiz.html">ルーンの問題（10問）</a>
+    <a class="btn" href="save.html">セーブの確認</a>
     <a class="btn" href="data.html">データ確認</a>
+    <p id="save-status" class="muted small"></p>
   </main>
+  <script type="module">
+    import { GameSession } from './js/save.js';
+    const s = new GameSession();
+    const line = document.getElementById('save-status');
+    if (!s.hasSave) line.textContent = 'セーブ：なし';
+    else line.textContent = `セーブ：あり（${s.inDungeon ? 'ダンジョンの途中' : '町'}・最後に保存 ${new Date(s.state.savedAt).toLocaleString('ja-JP')}）`;
+  </script>
 </body>
 </html>
