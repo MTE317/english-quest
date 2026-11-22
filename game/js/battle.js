@@ -10,6 +10,7 @@
 // シミュレーター（sim/battle.py・sim/core.py）と同じ式を BATTLE_FORMULAS に置いて使う（docs/requests.md で依頼済み）。
 import { evaluate } from './expr.js';
 import { computeStats, gearDef, weaponPower, maxHp, maxMp } from './character.js';
+import { actionSkills, memberMods, addMasteryKill } from './growth.js';
 
 /** balance.json にまだ式がないもの（sim と同じ） */
 export const BATTLE_FORMULAS = Object.freeze({
@@ -176,7 +177,10 @@ function startRound(data, game, b) {
   // 宿屋の良い部屋：遠征の最初の戦闘の1ターン目だけ SPD が上がる
   const first = b.firstBattle && b.round === 1;
   game.party.forEach((m, i) => {
-    if (canAct(game, b, i)) units.push({ side: 'ally', i, spd: battleStats(data, game, b, i).spd * (1 + (first ? m.room?.spd1 ?? 0 : 0)) });
+    if (!canAct(game, b, i)) return;
+    let spd = battleStats(data, game, b, i).spd * (1 + (first ? m.room?.spd1 ?? 0 : 0));
+    if (b.round === 1 && memberMods(data, m).first) spd += 1e6; // 早撃ち：1ターン目は必ず先に動く
+    units.push({ side: 'ally', i, spd });
   });
   b.enemies.forEach((e, i) => {
     if (e.hp > 0) units.push({ side: 'enemy', i, spd: e.spd * (Object.keys(e.statuses).includes('statdown') ? 0.8 : 1) });
@@ -252,7 +256,8 @@ function allyTurnStart(data, game, b, i) {
     if (st.kind === 'dot_rising') { damageAlly(data, game, b, i, mx * st.value * s.n, `${m.name}は${st.name}で`); s.n += 1; }
     if (st.kind === 'doom' && s.turns <= 1) { m.hp = 0; log(b, `${m.name}に死の宣告が下った…`); }
   }
-  if (a.buffs.regen || b.partyBuffs.regen) healAlly(data, game, b, i, mx * (bval(a.buffs, 'regen') + bval(b.partyBuffs, 'regen')));
+  const regen = bval(a.buffs, 'regen') + bval(b.partyBuffs, 'regen') + (memberMods(data, m).regen ?? 0);
+  if (regen) healAlly(data, game, b, i, mx * regen);
   if (m.hp <= 0) { koAlly(game, b, i); return false; }
   let skip = null;
   for (const id of Object.keys(a.statuses)) {
@@ -277,6 +282,9 @@ function damageAlly(data, game, b, i, amount, prefix) {
   const dmg = Math.max(1, Math.round(amount));
   m.hp = Math.max(0, m.hp - dmg);
   log(b, `${prefix} ${dmg}のダメージ`);
+  if (m.hp <= 0 && memberMods(data, m).endure && !b.allies[i].endured) {
+    m.hp = 1; b.allies[i].endured = true; log(b, `${m.name}は踏みとどまった！`); return;
+  }
   if (m.hp <= 0) koAlly(game, b, i);
 }
 function koAlly(game, b, i) {
@@ -297,12 +305,13 @@ function healAlly(data, game, b, i, amount) {
 }
 
 // ---------------- 選べる行動 ----------------
-/** そのキャラが使えるスキル（今はジョブの1段目。スキルツリーと AP はチェックリスト9番で作る） */
+/** そのキャラが使えるスキル（スキルの枠につけている通常スキル。growth.js） */
 export function knownSkills(data, member) {
-  const learned = new Set(member.learned ?? []);
-  return [...data.skills.values()].filter((s) => s.kind !== 'passive'
-    && ((s.job === member.job && s.apToLearn === 0) || learned.has(s.id)));
+  return actionSkills(data, member);
 }
+
+/** 名前（「剣」「炎」「獣」）が id に当たるか */
+const nameIs = (map, id, name) => map.get(id)?.name === name || id === name;
 
 function isMagicSkill(s) {
   return s.effect.base === 'mag' || MAGIC_SKILL_KINDS.includes(s.kind) || ['debuff', 'delayed'].includes(s.kind);
@@ -473,10 +482,19 @@ function attackDamage(data, game, b, i, e, skill, cm, { offhand = false } = {}) 
   const wpow = weaponPower(data, m, weapon);
   const song = game.party.some((x, j) => x.job === 'bard' && canAct(game, b, j)) ? data.balance.battle.bard_song : 0;
   const dm = 1 + Math.min(data.balance.battle.buff_cap, song + bval(b.partyBuffs, 'dmg') + (kind === 'phys' ? bval(a.buffs, 'str') : 0));
-  const atk = (statVal + (base === 'weapon' || kind === 'mag' ? wpow : wpow * 0.8)) * mult * cm * dm * imb;
+  // パッシブ：武器・属性・種別へのダメージ、ピンチのときのダメージ
+  const mods = memberMods(data, m);
+  let pm = 1;
+  for (const [names, v] of mods.wdmg ?? []) if (base === 'weapon' && wt && names.some((n) => nameIs(data.weaponTypes, wt.id, n))) pm += v;
+  for (const [name, v] of mods.edmg ?? []) if (els.some((el) => nameIs(data.elements, el, name))) pm += v;
+  for (const [names, v] of mods.tdmg ?? []) if (enemy.types.some((t) => names.some((n) => nameIs(data.monsterTypes, t, n)))) pm += v;
+  for (const [k, v] of Object.entries(weapon?.affixes ?? {})) if (k.startsWith('特効:') && enemy.types.includes(k.slice(3))) pm += v / 100;
+  if (mods.lowhp_dmg && m.hp < maxHp(data, m) * 0.5) pm += mods.lowhp_dmg;
+  const atk = (statVal + (base === 'weapon' || kind === 'mag' ? wpow : wpow * 0.8)) * mult * cm * dm * imb * pm;
   const pierce = kind === 'phys' ? (wt?.defPierce ?? 0) + (skill?.effect.defign ?? 0) : 0;
   const df = kind === 'phys' ? enemy.def * (1 - pierce) * (1 - bval(enemy.debuffs, 'def')) : enemy.res * (1 - bval(enemy.debuffs, 'res'));
-  const em = els.length ? els.reduce((x, el) => x + elementMul(data, enemy, el), 0) / els.length : 1;
+  let em = els.length ? els.reduce((x, el) => x + elementMul(data, enemy, el), 0) / els.length : 1;
+  if (em > 1 && mods.weak_all) em *= 1 + mods.weak_all;
   const pc = st.crit + (skill?.effect.crt ?? 0);
   const blind = statusOfKind(a, 'blind', data);
   let total = 0;
@@ -488,7 +506,7 @@ function attackDamage(data, game, b, i, e, skill, cm, { offhand = false } = {}) 
     if (crit) crits += 1;
     if (!hit) { misses += 1; continue; }
     total += h * evaluate(f(data, 'ally_damage'), {
-      atk, em, df, crit: crit ? data.balance.battle.crit_mult : 1, r: between(b, f(data, 'ally_rand')),
+      atk, em, df, crit: crit ? data.balance.battle.crit_mult + (mods.crit_dmg ?? 0) : 1, r: between(b, f(data, 'ally_rand')),
     });
   }
   return { damage: Math.round(total), crits, misses, em };
@@ -497,7 +515,14 @@ function attackDamage(data, game, b, i, e, skill, cm, { offhand = false } = {}) 
 function hitEnemy(data, game, b, i, e, damage, prefix = '') {
   const enemy = b.enemies[e];
   if (damage <= 0) return;
+  const wasAlive = enemy.hp > 0;
   enemy.hp = Math.max(0, enemy.hp - damage);
+  if (wasAlive && enemy.hp <= 0 && game.party[i]) {
+    const m = game.party[i];
+    addMasteryKill(data, m); // 武器の熟練度
+    const km = memberMods(data, m).kill_mp;
+    if (km) m.mp = Math.min(maxMp(data, m), m.mp + km);
+  }
   // 睡眠・凍結は攻撃を受けると覚める
   for (const id of Object.keys(enemy.statuses)) if (data.statusEffects.get(id)?.kind === 'skip_until_hit') delete enemy.statuses[id];
   log(b, `${prefix}${enemy.name}に ${damage}のダメージ`);
@@ -533,7 +558,9 @@ function doAttack(data, game, b, i, skill, target, cm) {
       const r2 = attackDamage(data, game, b, i, e, null, cm, { offhand: true });
       hitEnemy(data, game, b, i, e, Math.round(r2.damage * data.balance.battle.dual_wield_second_hit), `二刀目！${describeHit(r2)}`);
     }
-    if (skill?.effect.st && b.enemies[e].hp > 0) inflictEnemy(data, b, e, skill.effect.st, cm);
+    if (skill?.effect.st && b.enemies[e].hp > 0) inflictEnemy(data, b, e, skill.effect.st, cm, memberMods(data, m).stat_rate);
+    const ap = memberMods(data, m).auto_poison;
+    if (!skill && ap && b.enemies[e].hp > 0) inflictEnemy(data, b, e, [data.statusEffects.get('poison').name, ap], cm);
     if (skill?.effect.drain) m.mp = Math.min(maxMp(data, m), m.mp + Math.min(10, Math.round(r.damage * skill.effect.drain / 10)));
   }
   if (skill?.effect.selfcost) {
@@ -543,11 +570,11 @@ function doAttack(data, game, b, i, skill, target, cm) {
 }
 
 /** 敵に状態異常をかける。st は ['毒', 0.3]（名前と確率） */
-function inflictEnemy(data, b, e, [name, rate], cm) {
+function inflictEnemy(data, b, e, [name, rate], cm, statRate = 0) {
   const enemy = b.enemies[e];
   const alias = STATUS_ALIASES[name];
   const st = data.statusByName.get(name);
-  let p = rate * cm;
+  let p = rate * cm * (1 + statRate);
   const key = st?.id ?? name;
   if (enemy.boss) {
     if (st && f(data, 'boss_status_immune').includes(st.id)) p = 0;
@@ -578,7 +605,7 @@ function doSkill(data, game, b, i, s, target, cm) {
   const healAmt = () => {
     const st = battleStats(data, game, b, i);
     const wt = m.equip.weapon ? data.weaponTypes.get(gearDef(data, m.equip.weapon).kind) : null;
-    return evaluate(f(data, 'heal'), { MAG: st.mag, wpow: st.attack, m: e.m ?? 1, heal_mul: WEAPON_TRAITS.heal_mul[wt?.id] ?? 1 }) * cm;
+    return evaluate(f(data, 'heal'), { MAG: st.mag, wpow: st.attack, m: e.m ?? 1, heal_mul: WEAPON_TRAITS.heal_mul[wt?.id] ?? 1 }) * cm * (1 + (memberMods(data, m).healp ?? 0));
   };
   switch (s.kind) {
     case 'attack':
@@ -651,7 +678,7 @@ function doSkill(data, game, b, i, s, target, cm) {
     }
     case 'status': {
       const ts = e.tgt === 'all' ? livingEnemies(b) : attackTargets(b, 'enemy', target);
-      for (const t of ts) inflictEnemy(data, b, t, e.st, cm);
+      for (const t of ts) inflictEnemy(data, b, t, e.st, cm, memberMods(data, m).stat_rate);
       break;
     }
     case 'fixed_damage': {
@@ -699,6 +726,7 @@ function doItem(data, game, b, i, it, target, cm) {
   game.items[it.id] -= 1;
   if (game.items[it.id] <= 0) delete game.items[it.id];
   log(b, `${m.name}は${it.name}を使った`);
+  cm *= 1 + (memberMods(data, m).itemp ?? 0); // 薬の知識
   const one = game.party[target] ? target : i;
   const alive = game.party.map((x, j) => j).filter((j) => game.party[j].hp > 0);
   const [elOrGroup, num] = String(it.valueText ?? '').split(':');
@@ -775,8 +803,9 @@ function enemyTurn(data, game, b, e) {
   // ナイトがかばう
   let cover = 1;
   const bt = data.balance.battle;
-  const knight = alive.find((j) => j !== t && game.party[j].job === 'knight' && canAct(game, b, j));
-  if (knight != null && chance(b, bt.knight_cover_rate)) {
+  const coverRate = (j) => Math.max(game.party[j].job === 'knight' ? bt.knight_cover_rate : 0, memberMods(data, game.party[j]).cover ?? 0);
+  const knight = alive.find((j) => j !== t && coverRate(j) > 0 && canAct(game, b, j));
+  if (knight != null && chance(b, coverRate(knight))) {
     t = knight; cover = 1 - bt.knight_cover_cut;
     log(b, `${game.party[t].name}がかばった！`);
   }
@@ -804,8 +833,10 @@ function enemyTurn(data, game, b, e) {
   if (enemy.status && !b.partyBuffs.immune) {
     const st = data.statusEffects.get(enemy.status);
     if (st) {
-      const resist = ts.statusResist + bval(b.partyBuffs, 'sres:すべて') + bval(b.partyBuffs, `sres:${st.group}`);
-      if (chance(b, enemy.statusRate * Math.max(0, 1 - resist))) {
+      const partySres = Math.max(0, ...game.party.filter((x) => x.hp > 0).map((x) => memberMods(data, x).party_sres ?? 0));
+      const resist = ts.statusResist + bval(b.partyBuffs, 'sres:すべて') + bval(b.partyBuffs, `sres:${st.group}`) + partySres;
+      const immune = memberMods(data, target).nopoison && st.kind.startsWith('dot') && st.cure.includes('毒消し');
+      if (!immune && chance(b, enemy.statusRate * Math.max(0, 1 - resist))) {
         const cur = ta.statuses[st.id];
         if (cur && st.kind === 'dot') { cur.n = Math.min(3, cur.n + 1); cur.turns = st.turns; } else ta.statuses[st.id] = { turns: st.turns, n: 1 };
         if (st.persists && !target.persist.includes(st.id)) {
@@ -844,7 +875,7 @@ export function battleRewards(data, game, b) {
       x *= evaluate(f(data, 'overlevel'), { Lv: m.lv, enemyLv: e.lv });
       sum += x;
     }
-    return Math.round(sum);
+    return Math.round(sum * (1 + (memberMods(data, m).xp ?? 0) + (m.equip ? Object.values(m.equip).reduce((a, g) => a + (g?.affixes?.['経験値'] ?? g?.affixes?.EXP ?? 0), 0) / 100 : 0)));
   });
   return { xp, ap: game.party.map((m, i) => (canAct(game, b, i) ? ap : 0)) };
 }

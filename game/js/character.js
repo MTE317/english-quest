@@ -2,6 +2,7 @@
 // 式は data/balance.json から読む。balance.json に式として書かれていないもの（説明の文だけのもの）は、
 // シミュレーター（sim/core.py）と同じ式を下の SIM_FORMULAS に置いて使う。docs/requests.md で balance.json への追加を依頼済み。
 import { evaluate, isFormula } from './expr.js';
+import { memberMods, masteryMul, masteryLevel, masteryNeeded, ensureLoadout } from './growth.js';
 
 export const STATS = ['hp', 'str', 'mag', 'def', 'res', 'spd', 'luk'];
 export const STAT_LABEL = { hp: 'HP', str: 'STR', mag: 'MAG', def: 'DEF', res: 'RES', spd: 'SPD', luk: 'LUK' };
@@ -73,6 +74,8 @@ export function canEquip(data, member, slot, gear) {
   if (SLOT_KIND[slot] !== def.slot) return { ok: false, reason: `${SLOT_LABEL[slot]}の枠にはつけられない` };
   if (aptitudeMul(data, member.job, def) == null) return { ok: false, reason: 'このジョブでは装備できない（適正×）' };
   if (def.slot === 'weapon') {
+    const need = masteryNeeded(def);
+    if (data.skills && masteryLevel(data, member, def.kind) < need) return { ok: false, reason: `${data.weaponTypes.get(def.kind).name}の熟練度が${need}必要（今 ${masteryLevel(data, member, def.kind)}）` };
     const wt = data.weaponTypes.get(def.kind);
     if (slot === 'offhand') {
       if (!wt.dualWield) return { ok: false, reason: `${wt.name}は二刀流できない` };
@@ -118,10 +121,12 @@ function persistHpFactor(data, member) {
 }
 
 export function maxHp(data, member) {
-  return Math.max(1, Math.round((baseStat(data, member, 'hp') + affixSum(member, 'HP')) * persistHpFactor(data, member) * (1 + (member.room?.hp ?? 0))));
+  const mods = memberMods(data, member);
+  return Math.max(1, Math.round((baseStat(data, member, 'hp') + affixSum(member, 'HP')) * persistHpFactor(data, member) * (1 + (member.room?.hp ?? 0) + (mods.hp ?? 0))));
 }
 export function maxMp(data, member) {
-  return Math.round(evaluate(data.balance.player.mp, { gMAG: grade(data, member, 'mag'), Lv: member.lv }) * (1 + (member.room?.mp ?? 0)));
+  const mods = memberMods(data, member);
+  return Math.round(evaluate(data.balance.player.mp, { gMAG: grade(data, member, 'mag'), Lv: member.lv }) * (1 + (member.room?.mp ?? 0) + (mods.mp ?? 0)));
 }
 
 /** 防具（頭・体・腕）1つぶんの防御の値 */
@@ -142,7 +147,7 @@ export function weaponPower(data, member, gear) {
   return evaluate(formula(data, 'weapon_power'), {
     itemLv: def.itemLv, quality: gear.quality, enh: gear.enh, power_mul: wt.powerMul,
     apt: aptitudeMul(data, member.job, def) ?? 0,
-  });
+  }) * masteryMul(data, member, def.kind); // 武器の熟練度
 }
 
 /** 装備・ジョブ・レベルを合わせた能力値と、派生の値 */
@@ -169,15 +174,18 @@ export function computeStats(data, member) {
   const wt = mainDef ? data.weaponTypes.get(mainDef.kind) : null;
   out.spd += armorSpd / ARMOR_SLOTS.length + (wt?.spdMod ?? 0);
 
+  // パッシブ・共通ツリー・ジョブを極めたボーナス（%）
+  const mods = memberMods(data, member);
+  for (const s of ['str', 'mag', 'def', 'res', 'spd', 'luk']) out[s] *= 1 + (mods[s] ?? 0);
   for (const s of STATS) if (s !== 'hp') out[s] = Math.round(out[s]);
   out.mp = maxMp(data, member);
   out.attack = Math.round(weaponPower(data, member, member.equip.weapon));
   out.offhandAttack = Math.round(weaponPower(data, member, member.equip.offhand));
   const env = { LUK: out.luk, SPD: out.spd, Lv: member.lv, crit_bonus: wt?.critBonus ?? 0, armor_evasion: armorEva / ARMOR_SLOTS.length };
   // 装備の効果（CRT・EVA・STATUS_RES は % の値）
-  out.crit = evaluate(formula(data, 'crit'), env) + affixSum(member, 'CRT') / 100;
-  out.evasion = evaluate(formula(data, 'evasion'), env) + affixSum(member, 'EVA') / 100;
-  out.statusResist = evaluate(formula(data, 'status_resist'), env) + affixSum(member, 'STATUS_RES') / 100 + (member.room?.sres ?? 0);
+  out.crit = evaluate(formula(data, 'crit'), env) + affixSum(member, 'CRT') / 100 + (mods.crt ?? 0);
+  out.evasion = evaluate(formula(data, 'evasion'), env) + affixSum(member, 'EVA') / 100 + (mods.eva ?? 0);
+  out.statusResist = evaluate(formula(data, 'status_resist'), env) + affixSum(member, 'STATUS_RES') / 100 + (member.room?.sres ?? 0) + (mods.sres ?? 0);
   return out;
 }
 
@@ -265,12 +273,13 @@ export function createMember(data, game, spec, index) {
   if (!data.jobsById.has(spec.job)) throw new Error(`ジョブ ${spec.job} がない`);
   const member = {
     id: `m${index + 1}`, name: spec.name, icon: spec.icon, job: spec.job,
-    lv: 1, xp: 0, hp: 0, mp: 0, ap: { [spec.job]: 0 }, persist: [],
+    lv: 1, xp: 0, hp: 0, mp: 0, ap: { [spec.job]: 0 }, persist: [], learned: [], common: [], mastery: {}, loadout: null,
     equip: Object.fromEntries(SLOTS.map((s) => [s, null])),
   };
   for (const [slot, id] of Object.entries(starterGearIds(data, spec.job))) {
     if (id) member.equip[slot] = makeGear(game, id);
   }
+  if (data.skills) ensureLoadout(data, member);
   member.hp = maxHp(data, member);
   member.mp = maxMp(data, member);
   return member;

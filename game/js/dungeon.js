@@ -12,6 +12,7 @@ import { rollBattleLoot, addToBackpack, swapIntoBackpack, unloadBackpack } from 
 import { gainXp, maxHp, maxMp } from './character.js';
 import { curedBy } from './battle.js';
 import { advanceDays, countKills } from './town.js';
+import { memberMods } from './growth.js';
 
 /** 乱数の種から 0〜1 の乱数を返す関数（状態は obj[key] に入れて保存できる） */
 export function seededRng(obj, key = 'rng') {
@@ -102,7 +103,13 @@ export function afterBattle(data, session) {
         run.earned.xp += r.xp[i];
         lines.push(`${m.name}：経験値 +${r.xp[i]}・AP +${r.ap[i]}${ups ? `　レベルが${m.lv}に上がった！` : ''}`);
       });
-      loot = rollBattleLoot(data, g, run.dungeonId, run.floor, b.enemies, seededRng(run));
+      // 共通ツリー「魔力の余韻」：戦闘が終わったら MP が回復
+      for (const m of g.party) {
+        const regen = memberMods(data, m).mp_regen ?? 0;
+        if (regen && m.hp > 0) m.mp = Math.min(maxMp(data, m), Math.round(m.mp + maxMp(data, m) * regen));
+      }
+      const dropBonus = Math.max(0, ...g.party.filter((m) => m.hp > 0).map((m) => memberMods(data, m).drop ?? 0));
+      loot = rollBattleLoot(data, g, run.dungeonId, run.floor, b.enemies, seededRng(run), { dropBonus });
       g.gold += loot.gold;
       run.earned.gold += loot.gold;
       lines.push(`お金 +${loot.gold}`);

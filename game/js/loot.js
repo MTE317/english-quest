@@ -41,7 +41,7 @@ export function goldForEnemy(data, dungeonId, enemy, rng) {
 }
 
 /** 倒した敵1体ぶんの素材 → [{ id, count }] */
-export function materialsForEnemy(data, dungeonId, enemy, rng) {
+export function materialsForEnemy(data, dungeonId, enemy, rng, dropBonus = 0) {
   const dt = data.dropTables.get(dungeonId);
   const m = data.monsters.get(enemy.monsterId);
   const out = [];
@@ -50,7 +50,7 @@ export function materialsForEnemy(data, dungeonId, enemy, rng) {
     if (m.materialCommon) out.push({ id: m.materialCommon, count: lo + Math.floor(rng() * (hi - lo + 1)) });
     if (m.materialRare && rng() < LOOT_FORMULAS.boss_rare_rate) out.push({ id: m.materialRare, count: 1 });
   } else {
-    if (m.materialCommon && rng() < dt.materialRate) out.push({ id: m.materialCommon, count: 1 });
+    if (m.materialCommon && rng() < dt.materialRate * (1 + dropBonus)) out.push({ id: m.materialCommon, count: 1 });
     if (m.materialRare && rng() < dt.rareRate) out.push({ id: m.materialRare, count: 1 });
   }
   return out.filter((x) => data.materials.has(x.id));
@@ -110,14 +110,14 @@ export function rollUniqueDrop(data, game, monsterId, rng) {
  * 1回の戦闘に勝ったときの報酬
  * @returns { gold, materials: [{id,count}], gear: [gear] }
  */
-export function rollBattleLoot(data, game, dungeonId, floor, enemies, rng) {
+export function rollBattleLoot(data, game, dungeonId, floor, enemies, rng, { dropBonus = 0 } = {}) {
   const dt = data.dropTables.get(dungeonId);
   let gold = 0;
   const mats = {};
   const gear = [];
   for (const e of enemies) {
     gold += goldForEnemy(data, dungeonId, e, rng);
-    for (const m of materialsForEnemy(data, dungeonId, e, rng)) mats[m.id] = (mats[m.id] ?? 0) + m.count;
+    for (const m of materialsForEnemy(data, dungeonId, e, rng, dropBonus)) mats[m.id] = (mats[m.id] ?? 0) + m.count;
   }
   const boss = enemies.find((e) => e.boss);
   if (rng() < (boss ? dt.bossGearDrop : dt.gearRate)) gear.push(rollGearDrop(data, game, dungeonId, floor, rng));

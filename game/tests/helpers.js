@@ -59,5 +59,7 @@ export function realGameData() {
     innRooms: readCsv('inn_rooms.csv').rows,
     seasons: readCsv('seasons.csv').rows,
     facilities: readCsv('facilities.csv').rows,
+    commonTree: readCsv('common_tree.csv').rows,
+    jobMastery: readCsv('job_mastery.csv').rows,
   });
 }
