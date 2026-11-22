@@ -15,7 +15,7 @@ def trial(a):
 if __name__ == "__main__":
     g = world12.Game12(["戦士", "ナイト", "黒魔道士", "白魔道士"], minutes=60, seed=4, max_years=6).play()
     snaps = dict(world12.SNAP); print("snaps", sorted(snaps), flush=True)
-    grid = [0.6, 0.8, 1.0, 1.2, 1.45, 1.75]
+    grid = [0.8, 1.0, 1.2, 1.45, 1.75, 2.1, 2.5]
     with Pool(2) as p: res = p.map(trial, [(k, snaps[k][0], em, 20) for k in sorted(snaps) for em in grid])
     best = {}
     for k in sorted(snaps):
