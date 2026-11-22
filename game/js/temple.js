@@ -1,5 +1,5 @@
 import { parseAmounts } from './csv.js';
-import { maxHp } from './character.js?v=features-1';
+import { maxHp } from './character.js?v=features-2';
 
 export function consumeMaterials(game, requirements) {
   const stock = game.storage.materials;

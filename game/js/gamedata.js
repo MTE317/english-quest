@@ -1,5 +1,5 @@
 // ゲームで使う data/ のファイルをまとめて読み、ID で引ける形にする。
-import { loadCsv, loadJson, loadOptional } from './data.js?v=features-1';
+import { loadCsv, loadJson, loadOptional } from './data.js?v=features-2';
 import { toNumber, splitList } from './csv.js';
 
 const FILES = {

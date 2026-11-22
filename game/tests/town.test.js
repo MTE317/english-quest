@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createNewGame, normalizeGame } from '../js/game-state.js';
 import {
-  advanceDays, calendarOf, guildFee, makeBoard, acceptQuest, countKills, canReport, reportQuest, boardSize, nextRankStatus,
+  advanceDays, calendarOf, guildFee, makeBoard, fillBoard, refreshBoard, acceptQuest, countKills, canReport, reportQuest, boardSize, nextRankStatus,
   stayInn, revive, reviveCost, itemShopStock, buyItem, gearShopStock, buyGear, sellGear, sellPrice, canExpandBackpack, expandBackpack,
   parseMaterialNeed, payOverdue, TOWN_FORMULAS,
 } from '../js/town.js';
@@ -146,4 +146,37 @@ test('古いセーブに足りない項目を足す', () => {
   assert.equal(g.facilities.inn, 1);
   assert.deepEqual(g.quests, []);
   assert.deepEqual(g.party[0].persist, []);
+});
+
+test('掲示板：受けたクエストも枠を使う。報告するとその場で補充。月末では入れかわらない', () => {
+  const g = fresh();
+  const n = boardSize(data, g);
+  fillBoard(data, g, rng());
+  assert.equal(g.board.length, n);
+  const first = g.board[0];
+  acceptQuest(g, first.uid);
+  assert.equal(g.board.length + g.quests.length, n);
+  fillBoard(data, g, rng());
+  assert.equal(g.board.length, n - 1); // 受けた分は補充しない（受けられるのも N件まで）
+  const offers = g.board.map((q) => q.uid);
+  advanceDays(data, g, TOWN_FORMULAS.days_per_month);
+  assert.deepEqual(g.board.map((q) => q.uid), offers);
+  // 報告すると、空いた枠に新しい依頼
+  first.type = 'hunt'; first.progress = first.count;
+  reportQuest(data, g, first.uid, rng());
+  assert.equal(g.quests.length, 0);
+  assert.equal(g.board.length, n);
+  assert.ok(g.board.some((q) => !offers.includes(q.uid)));
+});
+
+test('掲示板：入れかえは受けていない枠だけ', () => {
+  const g = fresh();
+  fillBoard(data, g, rng());
+  const kept = g.board[0];
+  acceptQuest(g, kept.uid);
+  const old = g.board.map((q) => q.uid);
+  refreshBoard(data, g, seededRng({ rng: 77 }));
+  assert.deepEqual(g.quests.map((q) => q.uid), [kept.uid]);
+  assert.equal(g.board.length + g.quests.length, boardSize(data, g));
+  assert.ok(g.board.every((q) => !old.includes(q.uid)));
 });

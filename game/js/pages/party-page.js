@@ -1,16 +1,16 @@
 // パーティの画面：キャラメイク（仮）・4人の一覧・能力値・装備8枠
-import { loadGameData } from '../gamedata.js?v=features-1';
-import { GameSession } from '../save.js?v=features-1';
-import { createNewGame, PARTY_SIZE, normalizeGame } from '../game-state.js?v=features-1';
+import { loadGameData } from '../gamedata.js?v=features-2';
+import { GameSession } from '../save.js?v=features-2';
+import { createNewGame, PARTY_SIZE, normalizeGame } from '../game-state.js?v=features-2';
 import {
   computeStats, SLOTS, SLOT_LABEL, STAT_LABEL, canEquip, equipFromStorage, unequip, gearDef,
   aptitudeGrade, xpToNext, levelCap, gainXp, makeGear,
-} from '../character.js?v=features-1';
+} from '../character.js?v=features-2';
 import {
   jobPaths, isLearned, learnBlock, learnSkill, equipBlock, equipSkill, unequipSkill, capacity, usedCapacity,
   commonPoints, commonBlock, learnCommon, masteryLevel, isJobMastered,
-} from '../growth.js?v=features-1';
-import { skillMp } from '../battle.js?v=features-1';
+} from '../growth.js?v=features-2';
+import { skillMp } from '../battle.js?v=features-2';
 import { el, render, stars } from '../dom.js';
 
 const view = document.getElementById('view');
