@@ -3,6 +3,31 @@
 ゲームを作っていて見つけた、足りない項目や決めてほしいことです。
 決まるまでは、ゲーム側で仮の値を使っています（仮の値はすべて `game/js/srs.js` の `FALLBACK` の1か所にまとめてあり、`data/srs.json` に項目が入ればそちらが優先されます。データ確認画面でも「srs.json にない項目」として表示しています）。
 
+## 2026-11-22：成長（スキルツリー・共通ツリー・熟練度・ジョブチェンジ）を作ったとき
+
+### data に入れてほしいもの
+
+| 項目 | 今使っている値 | 備考 |
+|---|---|---|
+| スキルの枠の大きさ | 通常10・パッシブ10（skills.csv の cost の合計） | sim の cap_a / cap_p。データにない |
+| 共通ツリーのポイントの入り方 | Lv2 から1レベルごとに1ポイント | common_tree.csv に points（必要なポイント）はあるが、入手の決まりがない |
+| 武器の熟練度 | 30体倒すごとに1つ（最大は mastery_max ÷ mastery_per_level ＝10） | sim と同じ |
+| 熟練度による装備の条件 | 必要な熟練度 = (装備Lv - 15) ÷ 6 | sim と同じ |
+| 共通ツリーの effect・job_mastery.csv の bonus_all_jobs | 文を読んで効果にしている（「最大HP+5%」→ HP+5%） | 計算できる列（例：`stat`・`value`）があると確実 |
+
+### 決めたこと（違っていたら教えてください）
+
+- `ap_to_learn` はそのスキルを覚えるのに使う AP（使うと減る）。同じ道の1つ前の段を覚えていることが条件です。AP はジョブごとにたまり、戦闘に勝つと今のジョブに入ります。
+- ほかのジョブで覚えたスキルも、枠の範囲でつけられます。奥義（is_final）は今のジョブのものだけです（sim と同じ）。
+- ジョブを極める＝そのジョブのスキルを5段目まですべて覚える。ボーナスはどのジョブでも効きます。
+- ジョブチェンジは神殿で、費用はなし（データにないので）。装備できなくなった物は倉庫へ。
+
+### まだ効果が入っていないパッシブ
+
+`skills.csv` の mod のうち、次はまだ戦闘に入れていません（ほかは入れました：wdmg・edmg・tdmg・hp・def・res・mag・crt・eva・sres・lowhp_dmg・kill_mp・cover・healp・party_sres・drop・regen・endure・weak_all・auto_poison・xp・first・stat_rate・itemp・nopoison）。
+
+`start_res`・`fist`・`song_turns`・`weak_wew`・`party_ecut`・`bullet`・`whip`・`mag2phys`・`open_curse`・`vs_debuffed`・`save`・`song`・`party_eres`・`imbue`・`mag_to_atk`
+
 ## 2026-11-22：町の基本を作ったとき
 
 ### data に入れてほしいもの

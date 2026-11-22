@@ -10,6 +10,7 @@ import {
 } from '../town.js';
 import { backpackSlots } from '../loot.js';
 import { maxHp, maxMp, gearDef, aptitudeGrade } from '../character.js';
+import { availableJobs, changeJob } from '../growth.js';
 import { el, render, stars } from '../dom.js';
 
 const view = document.getElementById('view');
@@ -130,11 +131,18 @@ function gearShop() {
 function temple() {
   const g = session.game;
   return [
-    el('p', { class: 'muted small' }, 'いまは復活だけ（ジョブチェンジ・治療・刻印はチェックリスト12番で作る）。'),
+    el('p', { class: 'muted small' }, '復活とジョブチェンジ（治療・ジョブの解放・刻印はチェックリスト12番で作る）。'),
     g.party.map((m, i) => el('div', { class: 'row small', style: 'align-items:center' },
       el('div', { style: 'flex:2' }, `${m.name}　${m.hp > 0 ? '元気' : '倒れている'}`),
       m.hp <= 0 ? el('button', { onclick: () => act((gg) => `${m.name}が復活した（-${revive(data, gg, i)}）`) }, `復活 ${reviveCost(data, m)}`) : null)),
     g.overdue ? el('button', { onclick: () => act((gg) => `滞納を ${payOverdue(gg, gg.gold)} 払った`) }, `滞納を払う（${g.overdue}）`) : null,
+    el('h2', {}, 'ジョブチェンジ'),
+    el('p', { class: 'muted small' }, '装備できなくなる物は倉庫に入ります。覚えたスキルと AP はジョブごとに残ります。'),
+    g.party.map((m, i) => el('label', { class: 'small' }, `${m.name}（今：${data.jobsById.get(m.job).name}）`,
+      el('select', {
+        class: 'select',
+        onchange: (e) => { if (e.target.value && confirm(`${m.name}を${data.jobsById.get(e.target.value).name}にしますか？`)) act((gg) => { changeJob(data, gg, i, e.target.value); return `${m.name}は${data.jobsById.get(e.target.value).name}になった`; }); else draw(); },
+      }, el('option', { value: '' }, '変えない'), availableJobs(data, g).filter((j) => j.id !== m.job).map((j) => el('option', { value: j.id }, `${j.name}（${j.role}）`))))),
   ];
 }
 
