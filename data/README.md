@@ -42,7 +42,7 @@
 | items.csv / shop_inventory.csv | 消耗品（回復は固定量と割合の2種類。能力を上げる薬は調合のみ）/ 店の品ぞろえ |
 | alchemy_recipes.csv | 調合のレシピ（素材は種別と★で指定） |
 | inn_rooms.csv / facilities.csv / facility_ranks.csv / facility_effects.csv | 宿屋・町の施設 |
-| enhance_rates.csv / rarities.csv / recipes.csv | 強化（費用は1.8^強化値で増える）・レアリティ・制作。鎌・扇を含む専用レシピ15件＋汎用制作 |
+| enhance_rates.csv / rarities.csv / recipes.csv | 強化（費用は1.8^強化値で増える）・レアリティ・制作。153件の専用レシピ（武器99件・防具27件・マント9件・装飾品18件）＋汎用制作 |
 | enchant_grades.csv | エンチャントのグレード（工房のランク）ごとの費用 |
 | economy_by_rank.csv | ★ごとのお金の目安（月末に払うのはギルドの会費だけ。倉庫は無料） |
 | backpack.csv | バックパックの広さの段階と、広げる費用 |
@@ -73,3 +73,12 @@ lexicon.csv は今は英語面接の準備用の90語です（★1〜★3に30�
 - `traits_json` の設定例：`normal_status`（通常命中時の状態異常）、`vs_status`（指定した状態異常の敵への武器攻撃のダメージ補正）、`splash_chance` と `splash_mul`（槍の別敵への貫通）、`weak_damage_mul`、`blind_miss_mul`、`normal_all_mul`、`material_drop_mul`、`heal_mul`、`mag_mul`、`str_mul`、`song_bonus`、`party_buff_mul`。
 - 鎌は通常攻撃で出血15%、出血中の敵への武器攻撃+10%。扇はMAG依存の風通常攻撃、味方全体強化スキルの数値×1.10。ボス状態異常耐性など既存ルールを維持する。
 - 武器熟練度は装備条件にせず、種別ごとの威力ボーナス（30体ごとに+2%、最大+20%）に使う。
+
+## 専用レシピ153件（2026-11-23追加）
+
+- 専用武器99件（16武器種それぞれ6件以上。既存の剣の9件はセーブ互換のため残す）、防具27件（頭・体・腕×重中軽×3段階）、マント9件、アクセサリー18件。
+- `recipes.csv` の追加列：`slot`（装備部位）、`armor_weight`（防具の重さ）、`base_equipment_id`（通常装備から流用する素体ID）、`fixed_effects`（制作固有効果）、`description`（表示用）。
+- 固定効果は `STATUS_ON_HIT:poison:20|SPD:3` など、`key:value` を `|` で連結する形式。特殊効果は吸血（LIFESTEAL）・追撃（EXTRA_HIT）・DEF貫通（DEF_PIERCE）・弱点特効（WEAK_DMG）・MP節約（MP_SAVE）・被ダメージ軽減（PHYS_CUT / MAGIC_CUT）・全体強化（PARTY_BUFF_POWER）・反撃（COUNTER）など。
+- 素材はすべて `materials.csv` に存在するIDで指定。派生元があるレシピは、そのレシピで作った装備を倉庫から1個消費する。
+- 固定効果は装備実体の `affixes` に保持し、制作装備へのエンチャントと共存。専用制作装備は通常ドロップ・通常店舗には混ぜない。
+- 工房には専用制作／通常制作・部位・★での絞り込み、素材の所持数、必要な派生元、効果の日本語表示を追加。
