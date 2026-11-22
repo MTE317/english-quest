@@ -91,7 +91,9 @@ export function rollGearDrop(data, game, dungeonId, floor, rng) {
   const slots = kind === 'armor' ? ['head', 'body', 'arm'] : [kind];
   const cands = [...data.equipment.values()].filter((e) => !e.unique && !e.setId && slots.includes(e.slot)
     && e.source.includes('ドロップ') && e.itemLv >= dg.itemLvMin && e.itemLv <= Math.max(top, dg.itemLvMin));
-  const pool = cands.length ? cands : [...data.equipment.values()].filter((e) => !e.unique && !e.setId && slots.includes(e.slot) && e.itemLv <= dg.itemLvMax);
+  // 専用制作装備をランダムドロップに混ぜない。候補不足時もドロップ対象だけを探す。
+  const pool = cands.length ? cands : [...data.equipment.values()].filter((e) =>
+    !e.unique && !e.setId && e.source.includes('ドロップ') && slots.includes(e.slot) && e.itemLv <= dg.itemLvMax);
   // いちばん高い装備Lvのものを多めに
   const maxLv = Math.max(...pool.map((e) => e.itemLv));
   const def = weighted(rng, pool, (e) => (e.itemLv === maxLv ? 2 : 1));
