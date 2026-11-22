@@ -43,8 +43,8 @@ function attackWith(id, job = 'thief', seed = 1, ready = () => {}) {
   return { game, m, b, e };
 }
 
-test('専用制作レシピ153件、各武器6件以上、防具27件、マント9件、装飾品18件', () => {
-  assert.equal(data.recipes.length, 153);
+test('専用制作レシピ171件、各武器6件以上、防具27件、マント10件、装飾品20件', () => {
+  assert.equal(data.recipes.length, 171);
   const counts = {};
   for (const row of data.recipes) {
     const def = data.equipment.get(row.id);
@@ -60,7 +60,7 @@ test('専用制作レシピ153件、各武器6件以上、防具27件、マン�
     }
     counts[def.slot] = (counts[def.slot] ?? 0) + 1;
   }
-  assert.deepEqual(counts, { weapon: 99, head: 9, body: 9, arm: 9, cloak: 9, accessory: 18 });
+  assert.deepEqual(counts, { weapon: 114, head: 9, body: 9, arm: 9, cloak: 10, accessory: 20 });
   for (const type of data.weaponTypes.keys()) {
     const n = data.recipes.filter((r) => r.weapon_type === type).length;
     assert.ok(n >= 6, `${type}: ${n}`);

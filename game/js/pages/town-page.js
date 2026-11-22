@@ -1,20 +1,20 @@
 // 町をホームにして、施設カードから各施設を開く。
 import { loadGameData } from '../gamedata.js?v=rune-study-1';
 import { GameSession } from '../save.js?v=rune-study-1';
-import { normalizeGame } from '../game-state.js?v=rune-study-1';
-import { currentRank, seededRng } from '../dungeon.js?v=rune-study-1';
+import { normalizeGame } from '../game-state.js?v=build36-1';
+import { currentRank, seededRng } from '../dungeon.js?v=build36-1';
 import {
   calendarOf, guildFee, fillBoard, boardSize, questAcceptLimit, acceptQuest, canAcceptQuest, abandonQuest, canReport, reportQuest, questText, questProgress, questDestination, questRewardGold, questDepositTotal, questAbandonRefund, nextRankStatus, stayInn, revive, reviveCost, checkRankUp,
   canExpandBackpack, expandBackpack, feeTier,
   nextBackpackTier,
-} from '../town.js?v=rune-study-1';
-import { backpackSlots } from '../loot.js?v=rune-study-1';
-import { maxHp, maxMp, gearDef } from '../character.js?v=rune-study-1';
-import { availableJobs, changeJob } from '../growth.js?v=rune-study-1';
+} from '../town.js?v=build36-1';
+import { backpackSlots } from '../loot.js?v=build36-1';
+import { maxHp, maxMp, gearDef } from '../character.js?v=build36-1';
+import { availableJobs, changeJob } from '../growth.js?v=build36-1';
 import { chainStep, stepLabel, acceptChain, talkChain, deliverChain, claimChain } from '../quest-chain.js?v=features-2';
 import { cureAtTemple } from '../temple.js?v=rune-study-1';
-import { workshopView, managementView, templeExtras } from '../ui/facility-view.js?v=rune-study-1';
-import { itemShopView, gearShopView } from '../ui/town-shops.js?v=rune-study-1';
+import { workshopView, managementView, templeExtras } from '../ui/facility-view.js?v=build36-1';
+import { itemShopView, gearShopView } from '../ui/town-shops.js?v=build36-1';
 import { weaponIcon } from '../ui/weapon-icons.js';
 import { equipmentIcon } from '../ui/equipment-icons.js';
 import { el, render } from '../dom.js';

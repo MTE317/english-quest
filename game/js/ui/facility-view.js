@@ -1,8 +1,8 @@
 import { el, render } from '../dom.js';
-import { craft, brew, enhance, dismantle, reroll, enchant, enchantFamilies, facilityUpgrade } from '../workshop.js?v=rune-study-1';
-import { borrow, repayLoan, loanLimit, payOverdue } from '../town.js?v=rune-study-1';
+import { craft, brew, enhance, dismantle, reroll, enchant, enchantFamilies, facilityUpgrade } from '../workshop.js?v=build36-1';
+import { borrow, repayLoan, loanLimit, payOverdue } from '../town.js?v=build36-1';
 import { unlockJob, jobDiscoveryProgress } from '../temple.js?v=rune-study-1';
-import { describeFixedEffects, effectLabel, describeEffect } from '../equipment-effects.js?v=balance-builds-1';
+import { describeFixedEffects, effectLabel, describeEffect } from '../equipment-effects.js?v=build36-1';
 import { equipmentIcon } from './equipment-icons.js';
 
 const heading = (text) => el('h2', {}, text);

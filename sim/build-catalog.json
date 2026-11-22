@@ -1,0 +1,2019 @@
+{
+  "schemaVersion": 1,
+  "purpose": "開発・再現可能なシミュレーション用。ゲーム画面からは読み込まない。",
+  "partySize": 4,
+  "minStarMeaning": "minStar は公開ジョブ・装備素材と比較用の技能進度をそろえるための fixture の目安。実ゲームの技能習得を星で制限する設定ではない。標準の比較段階は min(5, 1 + floor(星 / 3))。",
+  "coreContract": "prepared では主役と allies の actions/passives の全技能と affixes の全付与を先に実現し、欠落をエラーにする。crossSkills は核心技能のうち別ジョブのもの。upgrades は進度に応じた追加候補。standard は同じ素体の通常制作との対照群であり、核心の完成を要求しない。",
+  "familyTokens": {
+    "TYPE_BONUS:$bossType": "対戦するボスの先頭の種族。",
+    "ELEMENT:$weakElement": "ボスの魔法属性弱点を優先し、なければ炎。属性付与に対応する同星以下の素材を使う。"
+  },
+  "builds": [
+    {
+      "id": "poison_assassin",
+      "name": "毒刃アサシン",
+      "category": "status",
+      "job": "thief",
+      "weapon": "dagger",
+      "minStar": 6,
+      "actions": [
+        "thief_p3_s3",
+        "thief_p1_s1"
+      ],
+      "passives": [
+        "apothecary_p2_s2"
+      ],
+      "crossSkills": [
+        "apothecary_p2_s2"
+      ],
+      "affixes": {
+        "weapon": [
+          "VS_STATUS:poison",
+          "DOT_POWER"
+        ],
+        "accessory1": [
+          "STATUS_RATE"
+        ]
+      },
+      "coreEffects": [
+        "VS_STATUS:poison",
+        "DOT_POWER",
+        "STATUS_RATE"
+      ],
+      "mechanics": [
+        "poison",
+        "dot",
+        "status_finisher"
+      ],
+      "upgrades": [
+        "thief_p2_s4"
+      ],
+      "allies": [
+        {
+          "job": "knight",
+          "weapon": "hammer"
+        },
+        {
+          "job": "bard",
+          "weapon": "instrument"
+        },
+        {
+          "job": "white_mage",
+          "weapon": "staff"
+        }
+      ],
+      "playstyle": "毒刃を当ててから毒特効の攻撃へ移る。毒が残る間は通常攻撃でMPを保つ。",
+      "weakness": "短い戦闘では毒の継続時間を使い切れない。付与失敗とボスの継続ダメージ補正・一巡の上限が直接火力との差になる。"
+    },
+    {
+      "id": "toxic_alchemist",
+      "name": "猛毒の錬金術師",
+      "category": "status",
+      "job": "apothecary",
+      "weapon": "dagger",
+      "minStar": 3,
+      "actions": [
+        "apothecary_p3_s1",
+        "apothecary_p1_s1"
+      ],
+      "passives": [
+        "apothecary_p2_s2"
+      ],
+      "crossSkills": [],
+      "affixes": {
+        "weapon": [
+          "VS_STATUS:toxic",
+          "DOT_POWER"
+        ],
+        "accessory1": [
+          "STATUS_RATE"
+        ],
+        "accessory2": [
+          "HEAL_POWER"
+        ]
+      },
+      "coreEffects": [
+        "VS_STATUS:toxic",
+        "DOT_POWER",
+        "STATUS_RATE",
+        "HEAL_POWER"
+      ],
+      "mechanics": [
+        "toxic",
+        "dot",
+        "support"
+      ],
+      "upgrades": [
+        "apothecary_p1_s2"
+      ],
+      "allies": [
+        {
+          "job": "knight",
+          "weapon": "hammer"
+        },
+        {
+          "job": "bard",
+          "weapon": "instrument"
+        },
+        {
+          "job": "white_mage",
+          "weapon": "staff"
+        }
+      ],
+      "playstyle": "猛毒薬を維持し、毒が効いている間は応急手当と道具で味方を支える。",
+      "weakness": "猛毒が伸びる前に終わる戦闘では準備の利益が小さい。ボスへの継続ダメージ補正と一巡の上限がある。"
+    },
+    {
+      "id": "burning_spellblade",
+      "name": "業火の魔剣士",
+      "category": "status",
+      "job": "spellblade",
+      "weapon": "sword",
+      "minStar": 3,
+      "actions": [
+        "spellblade_p3_s2",
+        "spellblade_p2_s1"
+      ],
+      "passives": [
+        "spellblade_p2_s2"
+      ],
+      "crossSkills": [],
+      "affixes": {
+        "weapon": [
+          "VS_STATUS:burn",
+          "DOT_POWER"
+        ],
+        "accessory1": [
+          "STATUS_RATE"
+        ]
+      },
+      "coreEffects": [
+        "VS_STATUS:burn",
+        "DOT_POWER",
+        "STATUS_RATE"
+      ],
+      "mechanics": [
+        "burn",
+        "physical_suppression",
+        "status_finisher"
+      ],
+      "upgrades": [],
+      "allies": [
+        {
+          "job": "knight",
+          "weapon": "hammer"
+        },
+        {
+          "job": "bard",
+          "weapon": "instrument"
+        },
+        {
+          "job": "white_mage",
+          "weapon": "staff"
+        }
+      ],
+      "playstyle": "灼刃で火傷を付け、敵の物理攻撃を弱めつつ火傷特効で削る。",
+      "weakness": "魔法中心の敵には火傷による物理弱体が役立ちにくい。炎耐性と付与失敗にも左右される。"
+    },
+    {
+      "id": "bleeding_reaper",
+      "name": "出血の死神",
+      "category": "status",
+      "job": "warrior",
+      "weapon": "scythe",
+      "minStar": 6,
+      "actions": [
+        "warrior_p3_s3",
+        "warrior_p1_s1"
+      ],
+      "passives": [
+        "warrior_p1_s2",
+        "apothecary_p2_s2"
+      ],
+      "crossSkills": [
+        "apothecary_p2_s2"
+      ],
+      "affixes": {
+        "weapon": [
+          "VS_STATUS:bleed",
+          "DOT_POWER"
+        ],
+        "accessory1": [
+          "STATUS_RATE"
+        ]
+      },
+      "coreEffects": [
+        "VS_STATUS:bleed",
+        "DOT_POWER",
+        "STATUS_RATE"
+      ],
+      "mechanics": [
+        "bleed",
+        "weapon_trait",
+        "self_cost"
+      ],
+      "upgrades": [
+        "warrior_p3_s4"
+      ],
+      "allies": [
+        {
+          "job": "knight",
+          "weapon": "hammer"
+        },
+        {
+          "job": "bard",
+          "weapon": "instrument"
+        },
+        {
+          "job": "white_mage",
+          "weapon": "staff"
+        }
+      ],
+      "playstyle": "鎌の通常攻撃と血風で出血を付け、出血中の敵を武器攻撃で追い込む。",
+      "weakness": "血風の自傷で回復負担が増える。出血の付与失敗とボスへの継続ダメージ補正が弱点になる。"
+    },
+    {
+      "id": "dream_executioner",
+      "name": "夢狩りの暗殺者",
+      "category": "status",
+      "job": "warrior",
+      "weapon": "greatsword",
+      "minStar": 6,
+      "actions": [
+        "thief_p4_s2",
+        "monk_p2_s1",
+        "warrior_p1_s1"
+      ],
+      "passives": [
+        "warrior_p1_s2"
+      ],
+      "crossSkills": [
+        "thief_p4_s2",
+        "monk_p2_s1"
+      ],
+      "affixes": {
+        "weapon": [
+          "VS_STATUS:sleep",
+          "CRIT_DMG"
+        ],
+        "accessory1": [
+          "STATUS_RATE"
+        ]
+      },
+      "coreEffects": [
+        "VS_STATUS:sleep",
+        "CRIT_DMG",
+        "STATUS_RATE"
+      ],
+      "mechanics": [
+        "sleep",
+        "single_burst",
+        "turn_order"
+      ],
+      "upgrades": [
+        "warrior_p1_s4"
+      ],
+      "allies": [
+        {
+          "job": "knight",
+          "weapon": "hammer"
+        },
+        {
+          "job": "bard",
+          "weapon": "instrument",
+          "actions": [
+            "bard_p2_s3",
+            "bard_p1_s1"
+          ],
+          "passives": [
+            "bard_p1_s2"
+          ],
+          "crossSkills": []
+        },
+        {
+          "job": "white_mage",
+          "weapon": "staff"
+        }
+      ],
+      "playstyle": "主役は練気と眠り薬を持ち、吟遊詩人も子守歌で睡眠を供給する。睡眠付与後、主役より先の味方は回復・支援へ回り、大剣の一撃まで解除しない。",
+      "weakness": "ボスは行動封じが入りにくく、再付与も難しくなる。味方が先に攻撃して起こすと大剣への特効を失う。"
+    },
+    {
+      "id": "thunder_brawler",
+      "name": "雷縛の拳士",
+      "category": "status",
+      "job": "monk",
+      "weapon": "fist",
+      "minStar": 3,
+      "actions": [
+        "monk_p4_s1",
+        "monk_p1_s1"
+      ],
+      "passives": [
+        "monk_p1_s2"
+      ],
+      "crossSkills": [],
+      "affixes": {
+        "weapon": [
+          "VS_STATUS:paralysis",
+          "STATUS_RATE"
+        ],
+        "accessory1": [
+          "CRT"
+        ]
+      },
+      "coreEffects": [
+        "VS_STATUS:paralysis",
+        "STATUS_RATE",
+        "CRT"
+      ],
+      "mechanics": [
+        "paralysis",
+        "multi_hit"
+      ],
+      "upgrades": [
+        "monk_p1_s3"
+      ],
+      "allies": [
+        {
+          "job": "knight",
+          "weapon": "hammer"
+        },
+        {
+          "job": "bard",
+          "weapon": "instrument"
+        },
+        {
+          "job": "white_mage",
+          "weapon": "staff"
+        }
+      ],
+      "playstyle": "雷掌で麻痺を狙い、拳の手数で攻める。麻痺は確率で行動を止める補助として扱う。",
+      "weakness": "麻痺が行動を止めない巡もある。ボスへの行動封じの減衰と、雷・打撃耐性に左右される。"
+    },
+    {
+      "id": "frost_executioner",
+      "name": "氷結の処刑人",
+      "category": "status",
+      "job": "spellblade",
+      "weapon": "sword",
+      "minStar": 3,
+      "actions": [
+        "spellblade_p3_s1",
+        "spellblade_p2_s1"
+      ],
+      "passives": [
+        "spellblade_p2_s2"
+      ],
+      "crossSkills": [],
+      "affixes": {
+        "weapon": [
+          "VS_STATUS:freeze",
+          "STATUS_RATE"
+        ],
+        "accessory1": [
+          "WEAK_DMG"
+        ]
+      },
+      "coreEffects": [
+        "VS_STATUS:freeze",
+        "STATUS_RATE",
+        "WEAK_DMG"
+      ],
+      "mechanics": [
+        "freeze",
+        "single_burst"
+      ],
+      "upgrades": [],
+      "allies": [
+        {
+          "job": "knight",
+          "weapon": "hammer"
+        },
+        {
+          "job": "bard",
+          "weapon": "instrument",
+          "actions": [
+            "spellblade_p3_s1",
+            "bard_p1_s1"
+          ],
+          "passives": [
+            "bard_p1_s2"
+          ],
+          "crossSkills": [
+            "spellblade_p3_s1"
+          ]
+        },
+        {
+          "job": "white_mage",
+          "weapon": "staff"
+        }
+      ],
+      "playstyle": "主役と吟遊詩人が霜刃を使える。先に動く味方が凍結を付与し、主役の単体攻撃へつなぐ。凍結後、主役より先の味方は回復・支援へ回り、解除を避ける。",
+      "weakness": "付与率が控えめで、ボスへの行動封じはさらに入りにくい。別の味方が先に攻撃して凍結を解くと特効を失う。"
+    },
+    {
+      "id": "stun_breaker",
+      "name": "気絶の破壊者",
+      "category": "status",
+      "job": "knight",
+      "weapon": "hammer",
+      "minStar": 3,
+      "actions": [
+        "knight_p3_s1",
+        "knight_p2_s1"
+      ],
+      "passives": [
+        "knight_p3_s2"
+      ],
+      "crossSkills": [],
+      "affixes": {
+        "weapon": [
+          "VS_STATUS:stun",
+          "STATUS_RATE"
+        ],
+        "accessory1": [
+          "STR"
+        ]
+      },
+      "coreEffects": [
+        "VS_STATUS:stun",
+        "STATUS_RATE",
+        "STR"
+      ],
+      "mechanics": [
+        "stun",
+        "weapon_trait",
+        "turn_order"
+      ],
+      "upgrades": [],
+      "allies": [
+        {
+          "job": "knight",
+          "weapon": "hammer"
+        },
+        {
+          "job": "bard",
+          "weapon": "instrument"
+        },
+        {
+          "job": "white_mage",
+          "weapon": "staff"
+        }
+      ],
+      "playstyle": "盾打ちと鎚の通常攻撃でスタンを狙う。次の味方が行動する前に当てると一巡の被害を減らせる。",
+      "weakness": "ボスには行動封じの減衰と再付与制限がある。敵の攻撃を確実に止める前提では動けない。"
+    },
+    {
+      "id": "binding_hunter",
+      "name": "束縛の狩人",
+      "category": "status",
+      "job": "hunter",
+      "weapon": "bow",
+      "minStar": 3,
+      "actions": [
+        "hunter_p3_s1",
+        "hunter_p1_s1"
+      ],
+      "passives": [
+        "hunter_p1_s2"
+      ],
+      "crossSkills": [],
+      "affixes": {
+        "weapon": [
+          "VS_STATUS:bind",
+          "STATUS_RATE"
+        ],
+        "accessory1": [
+          "WEAK_DMG"
+        ]
+      },
+      "coreEffects": [
+        "VS_STATUS:bind",
+        "STATUS_RATE",
+        "WEAK_DMG"
+      ],
+      "mechanics": [
+        "bind",
+        "accuracy_support",
+        "status_finisher"
+      ],
+      "upgrades": [],
+      "allies": [
+        {
+          "job": "knight",
+          "weapon": "hammer"
+        },
+        {
+          "job": "bard",
+          "weapon": "instrument"
+        },
+        {
+          "job": "white_mage",
+          "weapon": "staff"
+        }
+      ],
+      "playstyle": "足止めの矢で束縛を付け、回避を封じた標的を狙い撃ちする。束縛特効を継続火力へ変える。",
+      "weakness": "束縛は敵の攻撃自体を止めない。元から回避しにくい敵では制御効果が小さく、付与にも失敗がある。"
+    },
+    {
+      "id": "silent_hexer",
+      "name": "沈黙の封魔師",
+      "category": "status",
+      "job": "hexer",
+      "weapon": "tome",
+      "minStar": 3,
+      "actions": [
+        "hexer_p3_s1",
+        "hexer_p1_s1",
+        "hexer_p2_s1"
+      ],
+      "passives": [],
+      "crossSkills": [],
+      "affixes": {
+        "weapon": [
+          "VS_STATUS:silence",
+          "STATUS_RATE"
+        ],
+        "body": [
+          "PHYS_CUT"
+        ],
+        "accessory1": [
+          "MP_SAVE"
+        ]
+      },
+      "coreEffects": [
+        "VS_STATUS:silence",
+        "STATUS_RATE",
+        "PHYS_CUT",
+        "MP_SAVE"
+      ],
+      "mechanics": [
+        "silence",
+        "physical_suppression"
+      ],
+      "upgrades": [],
+      "allies": [
+        {
+          "job": "knight",
+          "weapon": "hammer"
+        },
+        {
+          "job": "bard",
+          "weapon": "instrument"
+        },
+        {
+          "job": "white_mage",
+          "weapon": "staff"
+        }
+      ],
+      "playstyle": "封魔の呪で魔法を止め、衰えの呪で物理への切り替えにも備える。闇弾で攻撃を続ける。",
+      "weakness": "物理攻撃が多い敵には沈黙の利益が小さい。沈黙しても敵は物理攻撃へ切り替えてくる。"
+    },
+    {
+      "id": "illusion_duelist",
+      "name": "暗闇の幻影剣士",
+      "category": "status",
+      "job": "thief",
+      "weapon": "katana",
+      "minStar": 3,
+      "actions": [
+        "thief_p4_s1",
+        "thief_p3_s1",
+        "thief_p1_s1"
+      ],
+      "passives": [
+        "thief_p3_s2"
+      ],
+      "crossSkills": [],
+      "affixes": {
+        "weapon": [
+          "VS_STATUS:blind",
+          "STATUS_RATE"
+        ],
+        "cloak": [
+          "EVA_COUNTER",
+          "EVA"
+        ],
+        "accessory1": [
+          "EVA_COUNTER"
+        ]
+      },
+      "coreEffects": [
+        "VS_STATUS:blind",
+        "STATUS_RATE",
+        "EVA_COUNTER",
+        "EVA"
+      ],
+      "mechanics": [
+        "blind",
+        "evasion_counter"
+      ],
+      "upgrades": [
+        "thief_p3_s4"
+      ],
+      "allies": [
+        {
+          "job": "knight",
+          "weapon": "hammer"
+        },
+        {
+          "job": "bard",
+          "weapon": "instrument"
+        },
+        {
+          "job": "white_mage",
+          "weapon": "staff"
+        }
+      ],
+      "playstyle": "幻惑刃と煙玉で敵の命中を落とし、回避した攻撃へ反撃する。",
+      "weakness": "暗闇で下げられるのは物理攻撃の命中。魔法中心の敵には効果が薄く、回避反撃の発生も安定しない。"
+    },
+    {
+      "id": "weakening_tactician",
+      "name": "弱体の軍師",
+      "category": "status",
+      "job": "hexer",
+      "weapon": "tome",
+      "minStar": 3,
+      "actions": [
+        "hexer_p3_s2",
+        "hexer_p1_s2",
+        "hexer_p2_s1"
+      ],
+      "passives": [],
+      "crossSkills": [],
+      "affixes": {
+        "weapon": [
+          "VS_DEBUFFED",
+          "STATUS_RATE"
+        ],
+        "accessory1": [
+          "VS_STATUS:statdown"
+        ],
+        "accessory2": [
+          "MP_SAVE"
+        ]
+      },
+      "coreEffects": [
+        "VS_DEBUFFED",
+        "STATUS_RATE",
+        "VS_STATUS:statdown",
+        "MP_SAVE"
+      ],
+      "mechanics": [
+        "statdown",
+        "defense_debuff",
+        "focus_fire"
+      ],
+      "upgrades": [
+        "hexer_p2_s4"
+      ],
+      "allies": [
+        {
+          "job": "knight",
+          "weapon": "hammer"
+        },
+        {
+          "job": "bard",
+          "weapon": "instrument"
+        },
+        {
+          "job": "white_mage",
+          "weapon": "staff"
+        }
+      ],
+      "playstyle": "萎縮の呪と守り崩しを使い分け、弱体化した敵へ味方の攻撃を集中させる。",
+      "weakness": "弱体化を準備する一手とMPが必要。短期戦や標的が頻繁に替わる戦闘では準備を回収しにくい。"
+    },
+    {
+      "id": "charged_giant",
+      "name": "一撃の巨人",
+      "category": "weapon",
+      "job": "warrior",
+      "weapon": "greatsword",
+      "minStar": 3,
+      "actions": [
+        "monk_p2_s1",
+        "warrior_p1_s1"
+      ],
+      "passives": [
+        "warrior_p1_s2"
+      ],
+      "crossSkills": [
+        "monk_p2_s1"
+      ],
+      "affixes": {
+        "weapon": [
+          "STR",
+          "CRIT_DMG"
+        ],
+        "accessory1": [
+          "MP_SAVE"
+        ]
+      },
+      "coreEffects": [
+        "STR",
+        "CRIT_DMG",
+        "MP_SAVE"
+      ],
+      "mechanics": [
+        "self_buff",
+        "heavy_weapon_skill"
+      ],
+      "upgrades": [
+        "warrior_p1_s4"
+      ],
+      "allies": [
+        {
+          "job": "knight",
+          "weapon": "hammer"
+        },
+        {
+          "job": "bard",
+          "weapon": "instrument"
+        },
+        {
+          "job": "white_mage",
+          "weapon": "staff"
+        }
+      ],
+      "playstyle": "練気のSTR強化を先に使い、大剣の武器技能補正を乗せた剛断ちを続ける。",
+      "weakness": "強化前に倒せる雑魚や、防御と斬撃耐性の高い敵では準備が報われにくい。"
+    },
+    {
+      "id": "first_strike_samurai",
+      "name": "居合の達人",
+      "category": "weapon",
+      "job": "thief",
+      "weapon": "katana",
+      "minStar": 1,
+      "actions": [
+        "thief_p1_s1"
+      ],
+      "passives": [],
+      "crossSkills": [],
+      "affixes": {
+        "weapon": [
+          "FIRST_HIT",
+          "CRIT_DMG"
+        ],
+        "accessory1": [
+          "CRT"
+        ]
+      },
+      "coreEffects": [
+        "FIRST_HIT",
+        "CRIT_DMG",
+        "CRT"
+      ],
+      "mechanics": [
+        "first_hit",
+        "critical"
+      ],
+      "upgrades": [
+        "thief_p1_s2",
+        "thief_p1_s3"
+      ],
+      "allies": [
+        {
+          "job": "knight",
+          "weapon": "hammer"
+        },
+        {
+          "job": "bard",
+          "weapon": "instrument"
+        },
+        {
+          "job": "white_mage",
+          "weapon": "staff"
+        }
+      ],
+      "playstyle": "戦闘最初の攻撃行動に会心付きの影縫いを合わせる。先制したい標的を開幕に選ぶ。",
+      "weakness": "初撃の後は通常の会心型に戻るため、長期戦では継続火力に劣る。"
+    },
+    {
+      "id": "shadow_chaser",
+      "name": "影の追撃者",
+      "category": "weapon",
+      "job": "thief",
+      "weapon": "dagger",
+      "minStar": 3,
+      "actions": [
+        "thief_p1_s1"
+      ],
+      "passives": [
+        "thief_p1_s2"
+      ],
+      "crossSkills": [],
+      "affixes": {
+        "weapon": [
+          "EXTRA_HIT",
+          "CRT"
+        ],
+        "offhand": [
+          "EXTRA_HIT"
+        ],
+        "accessory1": [
+          "CRIT_DMG"
+        ]
+      },
+      "coreEffects": [
+        "EXTRA_HIT",
+        "CRT",
+        "CRIT_DMG"
+      ],
+      "mechanics": [
+        "dual_wield",
+        "extra_hit",
+        "mp_conservation"
+      ],
+      "upgrades": [],
+      "allies": [
+        {
+          "job": "knight",
+          "weapon": "hammer"
+        },
+        {
+          "job": "bard",
+          "weapon": "instrument"
+        },
+        {
+          "job": "white_mage",
+          "weapon": "staff"
+        }
+      ],
+      "playstyle": "短剣二刀と追加攻撃で通常攻撃の手数を増やし、MPを温存して戦う。",
+      "weakness": "高い防御と単発の大火力が必要な場面に弱い。追加攻撃を前提に確殺を判断しない。",
+      "offhand": "dagger"
+    },
+    {
+      "id": "armor_breaker",
+      "name": "破甲の狂戦士",
+      "category": "weapon",
+      "job": "warrior",
+      "weapon": "axe",
+      "minStar": 3,
+      "actions": [
+        "warrior_p1_s1",
+        "warrior_p3_s1"
+      ],
+      "passives": [
+        "warrior_p1_s2"
+      ],
+      "crossSkills": [],
+      "affixes": {
+        "weapon": [
+          "DEF_PIERCE",
+          "STR"
+        ],
+        "accessory1": [
+          "CRIT_DMG"
+        ]
+      },
+      "coreEffects": [
+        "DEF_PIERCE",
+        "STR",
+        "CRIT_DMG"
+      ],
+      "mechanics": [
+        "defense_pierce",
+        "self_cost"
+      ],
+      "upgrades": [],
+      "allies": [
+        {
+          "job": "knight",
+          "weapon": "hammer"
+        },
+        {
+          "job": "bard",
+          "weapon": "instrument"
+        },
+        {
+          "job": "white_mage",
+          "weapon": "staff"
+        }
+      ],
+      "playstyle": "斧の防御無視と付与を重ね、硬い敵を単体攻撃で崩す。捨て身斬りは残HPを見て使う。",
+      "weakness": "低防御の敵には防御無視が過剰になり、自傷を伴う攻撃には回復が必要。"
+    },
+    {
+      "id": "piercing_knight",
+      "name": "穿孔の槍騎士",
+      "category": "weapon",
+      "job": "knight",
+      "weapon": "spear",
+      "minStar": 3,
+      "actions": [
+        "knight_p2_s1",
+        "knight_p3_s1"
+      ],
+      "passives": [
+        "knight_p3_s2"
+      ],
+      "crossSkills": [],
+      "affixes": {
+        "weapon": [
+          "DEF_PIERCE",
+          "EXTRA_HIT"
+        ],
+        "accessory1": [
+          "STR"
+        ]
+      },
+      "coreEffects": [
+        "DEF_PIERCE",
+        "EXTRA_HIT",
+        "STR"
+      ],
+      "mechanics": [
+        "weapon_splash",
+        "defense_pierce"
+      ],
+      "upgrades": [],
+      "allies": [
+        {
+          "job": "hunter",
+          "weapon": "bow"
+        },
+        {
+          "job": "black_mage",
+          "weapon": "tome"
+        },
+        {
+          "job": "white_mage",
+          "weapon": "staff"
+        }
+      ],
+      "playstyle": "槍の通常攻撃で別の敵への貫通を狙い、MPを使わず複数の敵を削る。単体には聖剣と盾打ちを使い分ける。",
+      "weakness": "敵が一体になると貫通先がなくなり、範囲攻撃も確率に左右される。"
+    },
+    {
+      "id": "vital_sniper",
+      "name": "急所の狙撃手",
+      "category": "weapon",
+      "job": "hunter",
+      "weapon": "bow",
+      "minStar": 6,
+      "actions": [
+        "hunter_p1_s1",
+        "hunter_p2_s3",
+        "spellblade_p1_s1",
+        "spellblade_p1_s2",
+        "spellblade_p1_s3"
+      ],
+      "passives": [
+        "hunter_p1_s2"
+      ],
+      "crossSkills": [
+        "spellblade_p1_s1",
+        "spellblade_p1_s2",
+        "spellblade_p1_s3"
+      ],
+      "affixes": {
+        "weapon": [
+          "WEAK_DMG",
+          "ELEMENT:$weakElement"
+        ],
+        "accessory1": [
+          "CRT"
+        ],
+        "accessory2": [
+          "CRIT_DMG"
+        ]
+      },
+      "coreEffects": [
+        "WEAK_DMG",
+        "ELEMENT:$weakElement",
+        "CRT",
+        "CRIT_DMG"
+      ],
+      "mechanics": [
+        "elemental_weakness",
+        "critical",
+        "imbue"
+      ],
+      "upgrades": [
+        "hunter_p2_s4"
+      ],
+      "allies": [
+        {
+          "job": "knight",
+          "weapon": "hammer"
+        },
+        {
+          "job": "bard",
+          "weapon": "instrument"
+        },
+        {
+          "job": "white_mage",
+          "weapon": "staff"
+        }
+      ],
+      "playstyle": "敵の弱点に合う剣気または属性付与を選び、弓の弱点補正と急所狙いの会心を合わせる。",
+      "weakness": "属性を誤ると火力が大きく下がる。弱点がない相手では会心に頼る。"
+    },
+    {
+      "id": "species_gunner",
+      "name": "種族狩りの銃士",
+      "category": "weapon",
+      "job": "gunner",
+      "weapon": "gun",
+      "minStar": 3,
+      "actions": [
+        "gunner_p1_s1",
+        "gunner_p2_s1"
+      ],
+      "passives": [
+        "gunner_p1_s2",
+        "hunter_p1_s2"
+      ],
+      "crossSkills": [
+        "hunter_p1_s2"
+      ],
+      "affixes": {
+        "weapon": [
+          "TYPE_BONUS:$bossType",
+          "DEF_PIERCE"
+        ],
+        "accessory1": [
+          "CRIT_DMG"
+        ]
+      },
+      "coreEffects": [
+        "TYPE_BONUS:$bossType",
+        "DEF_PIERCE",
+        "CRIT_DMG"
+      ],
+      "mechanics": [
+        "species_bonus",
+        "gun_scaling"
+      ],
+      "upgrades": [
+        "gunner_p1_s3"
+      ],
+      "allies": [
+        {
+          "job": "knight",
+          "weapon": "hammer"
+        },
+        {
+          "job": "bard",
+          "weapon": "instrument"
+        },
+        {
+          "job": "white_mage",
+          "weapon": "staff"
+        }
+      ],
+      "playstyle": "ボスの種族に合う付与を用意し、銃の武器攻撃力と速射を生かす。",
+      "weakness": "狙った種族以外には特効が働かず、同じ装備で全ての遠征に対応しにくい。"
+    },
+    {
+      "id": "whirling_whip",
+      "name": "旋舞の鞭使い",
+      "category": "weapon",
+      "job": "dancer",
+      "weapon": "whip",
+      "minStar": 6,
+      "actions": [
+        "dancer_p2_s1",
+        "dancer_p2_s3"
+      ],
+      "passives": [
+        "dancer_p2_s2",
+        "hunter_p3_s2"
+      ],
+      "crossSkills": [
+        "hunter_p3_s2"
+      ],
+      "affixes": {
+        "weapon": [
+          "STATUS_RATE",
+          "VS_DEBUFFED"
+        ],
+        "accessory1": [
+          "DOT_POWER"
+        ]
+      },
+      "coreEffects": [
+        "STATUS_RATE",
+        "VS_DEBUFFED",
+        "DOT_POWER"
+      ],
+      "mechanics": [
+        "normal_all",
+        "auto_poison",
+        "defense_debuff"
+      ],
+      "upgrades": [],
+      "allies": [
+        {
+          "job": "knight",
+          "weapon": "hammer"
+        },
+        {
+          "job": "bard",
+          "weapon": "instrument"
+        },
+        {
+          "job": "white_mage",
+          "weapon": "staff"
+        }
+      ],
+      "playstyle": "鞭の全体通常攻撃で毒矢の心得を生かし、打ち据えで守りを崩す。絡め取りは一体を足止めしたい時に使う。",
+      "weakness": "敵が一体だと全体通常攻撃の利益が薄れる。状態異常の付与失敗と、各攻撃の小さな威力が弱点。"
+    },
+    {
+      "id": "grand_scholar",
+      "name": "大魔法の学者",
+      "category": "weapon",
+      "job": "black_mage",
+      "weapon": "tome",
+      "minStar": 6,
+      "actions": [
+        "black_mage_p1_s3",
+        "black_mage_p2_s3",
+        "black_mage_p3_s3"
+      ],
+      "passives": [
+        "black_mage_p1_s2",
+        "black_mage_p2_s2",
+        "black_mage_p3_s2"
+      ],
+      "crossSkills": [],
+      "affixes": {
+        "weapon": [
+          "MAG",
+          "MP_SAVE"
+        ],
+        "accessory1": [
+          "WEAK_DMG"
+        ],
+        "accessory2": [
+          "MP_SAVE"
+        ]
+      },
+      "coreEffects": [
+        "MAG",
+        "MP_SAVE",
+        "WEAK_DMG"
+      ],
+      "mechanics": [
+        "area_magic",
+        "elemental_coverage"
+      ],
+      "upgrades": [
+        "black_mage_p3_s4"
+      ],
+      "allies": [
+        {
+          "job": "knight",
+          "weapon": "hammer"
+        },
+        {
+          "job": "bard",
+          "weapon": "instrument"
+        },
+        {
+          "job": "white_mage",
+          "weapon": "staff"
+        }
+      ],
+      "playstyle": "炎・氷・雷の全体魔法を敵の耐性で選び、魔導書のMAG補正を範囲火力へ回す。",
+      "weakness": "一体だけの敵や長い連戦ではMP効率が落ちる。属性が通らない相手には別の攻撃役が必要。"
+    },
+    {
+      "id": "skill_cyclist",
+      "name": "剣技循環士",
+      "category": "weapon",
+      "job": "spellblade",
+      "weapon": "sword",
+      "minStar": 3,
+      "actions": [
+        "spellblade_p2_s1",
+        "spellblade_p1_s1"
+      ],
+      "passives": [
+        "spellblade_p2_s2"
+      ],
+      "crossSkills": [],
+      "affixes": {
+        "weapon": [
+          "NORMAL_SKILL",
+          "MP_ON_HIT"
+        ],
+        "accessory1": [
+          "MP_SAVE"
+        ]
+      },
+      "coreEffects": [
+        "NORMAL_SKILL",
+        "MP_ON_HIT",
+        "MP_SAVE"
+      ],
+      "mechanics": [
+        "normal_to_skill",
+        "mp_conservation"
+      ],
+      "upgrades": [],
+      "allies": [
+        {
+          "job": "knight",
+          "weapon": "hammer"
+        },
+        {
+          "job": "bard",
+          "weapon": "instrument"
+        },
+        {
+          "job": "white_mage",
+          "weapon": "staff"
+        }
+      ],
+      "playstyle": "通常攻撃の正解で次の攻撃技能を強め、魔力斬りへつなぐ。通常攻撃と技能を交互に使う。",
+      "weakness": "通常攻撃を挟むため瞬間火力は控えめ。攻撃技能を連打すると循環の強みが出ない。"
+    },
+    {
+      "id": "guarding_knight",
+      "name": "挑発の守護騎士",
+      "category": "defense",
+      "job": "knight",
+      "weapon": "sword",
+      "minStar": 3,
+      "actions": [
+        "warrior_p2_s1",
+        "knight_p1_s1"
+      ],
+      "passives": [
+        "knight_p1_s2"
+      ],
+      "crossSkills": [
+        "warrior_p2_s1"
+      ],
+      "affixes": {
+        "body": [
+          "PHYS_CUT",
+          "HP"
+        ],
+        "arm": [
+          "DEF"
+        ],
+        "accessory1": [
+          "HP"
+        ]
+      },
+      "coreEffects": [
+        "PHYS_CUT",
+        "HP",
+        "DEF"
+      ],
+      "mechanics": [
+        "taunt",
+        "cover",
+        "party_defense"
+      ],
+      "upgrades": [
+        "knight_p1_s3"
+      ],
+      "allies": [
+        {
+          "job": "hunter",
+          "weapon": "bow"
+        },
+        {
+          "job": "black_mage",
+          "weapon": "tome"
+        },
+        {
+          "job": "white_mage",
+          "weapon": "staff"
+        }
+      ],
+      "playstyle": "挑みの構えで攻撃を引きつけ、かばいの誓いと守りの号令で仲間を守る。",
+      "weakness": "全体攻撃や魔法に対しては狙いを集めるだけでは足りない。本人のHP管理が必要。"
+    },
+    {
+      "id": "avenging_knight",
+      "name": "報復の重騎士",
+      "category": "defense",
+      "job": "knight",
+      "weapon": "hammer",
+      "minStar": 6,
+      "actions": [
+        "knight_p3_s3",
+        "warrior_p2_s1",
+        "knight_p3_s1"
+      ],
+      "passives": [
+        "knight_p3_s2"
+      ],
+      "crossSkills": [
+        "warrior_p2_s1"
+      ],
+      "affixes": {
+        "body": [
+          "PHYS_CUT"
+        ],
+        "arm": [
+          "COUNTER"
+        ],
+        "accessory1": [
+          "COUNTER"
+        ]
+      },
+      "coreEffects": [
+        "PHYS_CUT",
+        "COUNTER"
+      ],
+      "mechanics": [
+        "taunt",
+        "counter",
+        "damage_mitigation"
+      ],
+      "upgrades": [],
+      "allies": [
+        {
+          "job": "hunter",
+          "weapon": "bow"
+        },
+        {
+          "job": "black_mage",
+          "weapon": "tome"
+        },
+        {
+          "job": "white_mage",
+          "weapon": "staff"
+        }
+      ],
+      "playstyle": "挑発で攻撃を集め、反撃の構えを維持して受けた攻撃を火力に変える。",
+      "weakness": "敵が攻撃してこない巡や、少ない回数の大攻撃には反撃機会が少ない。"
+    },
+    {
+      "id": "elemental_cleric",
+      "name": "魔法耐久の聖職者",
+      "category": "defense",
+      "job": "elementalist",
+      "weapon": "staff",
+      "minStar": 3,
+      "actions": [
+        "elementalist_p1_s1",
+        "white_mage_p1_s1",
+        "bard_p1_s1"
+      ],
+      "passives": [
+        "knight_p2_s2"
+      ],
+      "crossSkills": [
+        "white_mage_p1_s1",
+        "bard_p1_s1",
+        "knight_p2_s2"
+      ],
+      "affixes": {
+        "body": [
+          "MAGIC_CUT",
+          "RES"
+        ],
+        "cloak": [
+          "MAGIC_CUT"
+        ],
+        "accessory1": [
+          "RES"
+        ]
+      },
+      "coreEffects": [
+        "MAGIC_CUT",
+        "RES"
+      ],
+      "mechanics": [
+        "magic_mitigation",
+        "resistance",
+        "healing"
+      ],
+      "upgrades": [
+        "elementalist_p2_s4",
+        "elementalist_p2_s3"
+      ],
+      "allies": [
+        {
+          "job": "knight",
+          "weapon": "hammer"
+        },
+        {
+          "job": "hunter",
+          "weapon": "bow"
+        },
+        {
+          "job": "white_mage",
+          "weapon": "staff"
+        }
+      ],
+      "playstyle": "精霊術士のRESに魔法軽減と守りの歌を重ね、杖で回復も行う。風刃を攻撃手段として残す。",
+      "weakness": "物理の大攻撃には魔法軽減が働かず、専任の火力役ほど敵を早く倒せない。"
+    },
+    {
+      "id": "resistance_specialist",
+      "name": "耐性の専門家",
+      "category": "defense",
+      "job": "apothecary",
+      "weapon": "dagger",
+      "minStar": 9,
+      "actions": [
+        "apothecary_p1_s1"
+      ],
+      "passives": [
+        "apothecary_p2_s4",
+        "white_mage_p2_s2"
+      ],
+      "crossSkills": [
+        "white_mage_p2_s2"
+      ],
+      "affixes": {
+        "head": [
+          "STATUS_RES"
+        ],
+        "body": [
+          "STATUS_RES"
+        ],
+        "cloak": [
+          "STATUS_RES"
+        ],
+        "accessory1": [
+          "STATUS_RES"
+        ]
+      },
+      "coreEffects": [
+        "STATUS_RES"
+      ],
+      "mechanics": [
+        "status_resistance",
+        "poison_immunity"
+      ],
+      "upgrades": [],
+      "allies": [
+        {
+          "job": "knight",
+          "weapon": "hammer"
+        },
+        {
+          "job": "hunter",
+          "weapon": "bow"
+        },
+        {
+          "job": "white_mage",
+          "weapon": "staff"
+        }
+      ],
+      "playstyle": "異常耐性と解毒の体質で自分が行動不能になる場面を減らし、応急手当と道具を使える機会を増やす。",
+      "weakness": "状態異常を使わない敵には耐性枠が火力に寄与しない。耐性だけではHPダメージを防げない。"
+    },
+    {
+      "id": "undying_warrior",
+      "name": "不死身の戦士",
+      "category": "defense",
+      "job": "warrior",
+      "weapon": "axe",
+      "minStar": 9,
+      "actions": [
+        "warrior_p3_s1",
+        "warrior_p2_s3"
+      ],
+      "passives": [
+        "warrior_p3_s2",
+        "monk_p3_s4"
+      ],
+      "crossSkills": [
+        "monk_p3_s4"
+      ],
+      "affixes": {
+        "body": [
+          "PHYS_CUT"
+        ],
+        "accessory1": [
+          "HP"
+        ],
+        "accessory2": [
+          "STR"
+        ]
+      },
+      "coreEffects": [
+        "PHYS_CUT",
+        "HP",
+        "STR"
+      ],
+      "mechanics": [
+        "low_hp",
+        "endure_once",
+        "self_cost"
+      ],
+      "upgrades": [
+        "warrior_p3_s5"
+      ],
+      "allies": [
+        {
+          "job": "knight",
+          "weapon": "hammer"
+        },
+        {
+          "job": "bard",
+          "weapon": "instrument"
+        },
+        {
+          "job": "white_mage",
+          "weapon": "staff"
+        }
+      ],
+      "playstyle": "逆境で低HP時の火力を上げ、不倒で一戦に一度だけ致命傷を耐える。鉄壁や道具で次の一撃へ備える。",
+      "weakness": "不倒は一度きり。連続攻撃、継続ダメージ、回復を遅らせる判断には大きな危険がある。"
+    },
+    {
+      "id": "vampiric_spellblade",
+      "name": "吸血の魔剣士",
+      "category": "defense",
+      "job": "spellblade",
+      "weapon": "scythe",
+      "minStar": 3,
+      "actions": [
+        "warrior_p3_s1",
+        "spellblade_p2_s1"
+      ],
+      "passives": [
+        "spellblade_p2_s2",
+        "warrior_p1_s2"
+      ],
+      "crossSkills": [
+        "warrior_p3_s1",
+        "warrior_p1_s2"
+      ],
+      "affixes": {
+        "weapon": [
+          "LIFESTEAL",
+          "STR"
+        ],
+        "accessory1": [
+          "HP"
+        ]
+      },
+      "coreEffects": [
+        "LIFESTEAL",
+        "STR",
+        "HP"
+      ],
+      "mechanics": [
+        "lifesteal",
+        "self_cost"
+      ],
+      "upgrades": [],
+      "allies": [
+        {
+          "job": "knight",
+          "weapon": "hammer"
+        },
+        {
+          "job": "bard",
+          "weapon": "instrument"
+        },
+        {
+          "job": "white_mage",
+          "weapon": "staff"
+        }
+      ],
+      "playstyle": "捨て身斬りの自傷を吸血で補い、鎌の攻撃を続ける。残HPが危険なら魔力斬りへ切り替える。",
+      "weakness": "与えるダメージが低い相手では吸血量も減り、回復役の代わりにはならない。"
+    },
+    {
+      "id": "critical_siphon",
+      "name": "会心の吸魔師",
+      "category": "support",
+      "job": "black_mage",
+      "weapon": "tome",
+      "minStar": 1,
+      "actions": [
+        "black_mage_p1_s1",
+        "black_mage_p2_s1",
+        "black_mage_p3_s1"
+      ],
+      "passives": [],
+      "crossSkills": [],
+      "affixes": {
+        "weapon": [
+          "CRIT_MP",
+          "CRT"
+        ],
+        "accessory1": [
+          "CRT"
+        ],
+        "accessory2": [
+          "CRIT_DMG"
+        ]
+      },
+      "coreEffects": [
+        "CRIT_MP",
+        "CRT",
+        "CRIT_DMG"
+      ],
+      "mechanics": [
+        "critical_mp",
+        "low_cost_magic"
+      ],
+      "upgrades": [
+        "black_mage_p3_s4"
+      ],
+      "allies": [
+        {
+          "job": "knight",
+          "weapon": "hammer"
+        },
+        {
+          "job": "black_mage",
+          "weapon": "tome"
+        },
+        {
+          "job": "white_mage",
+          "weapon": "staff"
+        }
+      ],
+      "playstyle": "会心が出た攻撃からMPを取り戻し、低コストの属性魔法を長く使う。",
+      "weakness": "会心の発生は確率に左右される。高コスト魔法のMPを無制限に賄えるわけではない。"
+    },
+    {
+      "id": "mana_minister",
+      "name": "魔力供給の司祭",
+      "category": "support",
+      "job": "bard",
+      "weapon": "instrument",
+      "minStar": 3,
+      "actions": [
+        "bard_p3_s1",
+        "bard_p1_s1",
+        "bard_p2_s1"
+      ],
+      "passives": [
+        "bard_p1_s2"
+      ],
+      "crossSkills": [],
+      "affixes": {
+        "weapon": [
+          "MP_ON_HIT",
+          "MP_SAVE"
+        ],
+        "accessory1": [
+          "MP_SAVE"
+        ]
+      },
+      "coreEffects": [
+        "MP_ON_HIT",
+        "MP_SAVE"
+      ],
+      "mechanics": [
+        "mp_transfer",
+        "normal_mp",
+        "song"
+      ],
+      "upgrades": [],
+      "allies": [
+        {
+          "job": "knight",
+          "weapon": "hammer"
+        },
+        {
+          "job": "black_mage",
+          "weapon": "tome"
+        },
+        {
+          "job": "white_mage",
+          "weapon": "staff"
+        }
+      ],
+      "playstyle": "通常攻撃で自身のMPを補い、励ましで回復役や魔法役へMPを移す。守りの歌も維持する。",
+      "weakness": "供給には自身のMPと一手を使う。全員がMP不足になると循環が止まる。"
+    },
+    {
+      "id": "battle_cleric",
+      "name": "戦闘聖職者",
+      "category": "support",
+      "job": "white_mage",
+      "weapon": "staff",
+      "minStar": 3,
+      "actions": [
+        "white_mage_p3_s1",
+        "white_mage_p1_s1"
+      ],
+      "passives": [
+        "white_mage_p3_s2",
+        "white_mage_p1_s2"
+      ],
+      "crossSkills": [],
+      "affixes": {
+        "weapon": [
+          "ATTACK_HEAL",
+          "MAG"
+        ],
+        "accessory1": [
+          "HEAL_POWER"
+        ]
+      },
+      "coreEffects": [
+        "ATTACK_HEAL",
+        "MAG",
+        "HEAL_POWER"
+      ],
+      "mechanics": [
+        "attack_heal",
+        "holy_magic",
+        "healing"
+      ],
+      "upgrades": [],
+      "allies": [
+        {
+          "job": "knight",
+          "weapon": "hammer"
+        },
+        {
+          "job": "warrior",
+          "weapon": "greatsword"
+        },
+        {
+          "job": "black_mage",
+          "weapon": "tome"
+        }
+      ],
+      "playstyle": "聖弾や杖の攻撃で削りながら味方を少し回復し、大きな被害には癒しの光を使う。",
+      "weakness": "攻撃に伴う回復だけでは集中攻撃を受けた仲間を支えきれない。"
+    },
+    {
+      "id": "life_barrier",
+      "name": "生命障壁の術師",
+      "category": "support",
+      "job": "white_mage",
+      "weapon": "staff",
+      "minStar": 6,
+      "actions": [
+        "white_mage_p1_s1",
+        "white_mage_p1_s3"
+      ],
+      "passives": [
+        "white_mage_p1_s2"
+      ],
+      "crossSkills": [],
+      "affixes": {
+        "weapon": [
+          "OVERHEAL_SHIELD",
+          "HEAL_POWER"
+        ],
+        "accessory1": [
+          "MP_SAVE"
+        ]
+      },
+      "coreEffects": [
+        "OVERHEAL_SHIELD",
+        "HEAL_POWER",
+        "MP_SAVE"
+      ],
+      "mechanics": [
+        "overheal_shield",
+        "prevention",
+        "area_heal"
+      ],
+      "upgrades": [],
+      "allies": [
+        {
+          "job": "knight",
+          "weapon": "hammer"
+        },
+        {
+          "job": "warrior",
+          "weapon": "greatsword"
+        },
+        {
+          "job": "black_mage",
+          "weapon": "tome"
+        }
+      ],
+      "playstyle": "余剰回復を障壁へ変え、敵の大きな攻撃が来る前に回復を使う。傷ついた味方の回復も同じ技能で行う。",
+      "weakness": "障壁の上限を超える回復は無駄になり、MPと一手を使って準備する必要がある。"
+    },
+    {
+      "id": "cleansing_apothecary",
+      "name": "浄化の薬師",
+      "category": "support",
+      "job": "apothecary",
+      "weapon": "dagger",
+      "minStar": 6,
+      "actions": [
+        "white_mage_p2_s1",
+        "dancer_p1_s3",
+        "apothecary_p1_s1"
+      ],
+      "passives": [
+        "apothecary_p1_s2",
+        "white_mage_p2_s2"
+      ],
+      "crossSkills": [
+        "white_mage_p2_s1",
+        "dancer_p1_s3",
+        "white_mage_p2_s2"
+      ],
+      "affixes": {
+        "weapon": [
+          "HEAL_POWER",
+          "MP_SAVE"
+        ],
+        "accessory1": [
+          "STATUS_RES"
+        ]
+      },
+      "coreEffects": [
+        "HEAL_POWER",
+        "MP_SAVE",
+        "STATUS_RES"
+      ],
+      "mechanics": [
+        "single_cure",
+        "area_cure",
+        "item_power"
+      ],
+      "upgrades": [],
+      "allies": [
+        {
+          "job": "knight",
+          "weapon": "hammer"
+        },
+        {
+          "job": "warrior",
+          "weapon": "greatsword"
+        },
+        {
+          "job": "black_mage",
+          "weapon": "tome"
+        }
+      ],
+      "playstyle": "清めの光と清めの舞を被害人数で使い分ける。技能で治せない異常には対応する道具を使う。",
+      "weakness": "沈黙や行動不能で治療技能を使えなくなる。道具も技能も全ての異常を一律に治すわけではない。"
+    },
+    {
+      "id": "item_alchemist",
+      "name": "道具の錬金術師",
+      "category": "support",
+      "job": "apothecary",
+      "weapon": "dagger",
+      "minStar": 3,
+      "actions": [
+        "apothecary_p1_s1"
+      ],
+      "passives": [
+        "apothecary_p1_s2"
+      ],
+      "crossSkills": [],
+      "affixes": {
+        "weapon": [
+          "SPD"
+        ],
+        "accessory1": [
+          "SPD"
+        ],
+        "accessory2": [
+          "HP"
+        ]
+      },
+      "coreEffects": [
+        "SPD",
+        "HP"
+      ],
+      "mechanics": [
+        "item_power",
+        "speed",
+        "finite_inventory"
+      ],
+      "upgrades": [
+        "apothecary_p1_s3",
+        "apothecary_p1_s5"
+      ],
+      "allies": [
+        {
+          "job": "knight",
+          "weapon": "hammer"
+        },
+        {
+          "job": "warrior",
+          "weapon": "greatsword"
+        },
+        {
+          "job": "black_mage",
+          "weapon": "tome"
+        }
+      ],
+      "playstyle": "薬の知識で道具の回復量を上げ、素早くポーションやエーテルを使う。応急手当で消耗品を温存する。",
+      "weakness": "道具は有限で、毎回補充費がかかる。継戦力は持ち込んだ個数に制約される。"
+    },
+    {
+      "id": "battlefield_bard",
+      "name": "戦場の吟遊詩人",
+      "category": "support",
+      "job": "bard",
+      "weapon": "instrument",
+      "minStar": 6,
+      "actions": [
+        "bard_p1_s1",
+        "bard_p1_s3",
+        "bard_p2_s1"
+      ],
+      "passives": [
+        "bard_p1_s2"
+      ],
+      "crossSkills": [],
+      "affixes": {
+        "weapon": [
+          "PARTY_BUFF_POWER",
+          "MP_SAVE"
+        ],
+        "accessory1": [
+          "PARTY_BUFF_POWER"
+        ]
+      },
+      "coreEffects": [
+        "PARTY_BUFF_POWER",
+        "MP_SAVE"
+      ],
+      "mechanics": [
+        "party_buff",
+        "song_duration",
+        "instrument_aura"
+      ],
+      "upgrades": [
+        "bard_p1_s5"
+      ],
+      "allies": [
+        {
+          "job": "knight",
+          "weapon": "hammer"
+        },
+        {
+          "job": "hunter",
+          "weapon": "bow"
+        },
+        {
+          "job": "white_mage",
+          "weapon": "staff"
+        }
+      ],
+      "playstyle": "守りの歌と疾風の歌を長く保ち、楽器による常時歌唱と合わせて四人の行動を支える。",
+      "weakness": "強化の準備中は自分の攻撃が減る。効果が残るうちに歌い直しても利得は小さい。"
+    },
+    {
+      "id": "blessing_dancer",
+      "name": "祝福の舞姫",
+      "category": "support",
+      "job": "dancer",
+      "weapon": "fan",
+      "minStar": 9,
+      "actions": [
+        "dancer_p1_s4",
+        "dancer_p1_s1"
+      ],
+      "passives": [
+        "dancer_p1_s2"
+      ],
+      "crossSkills": [],
+      "affixes": {
+        "weapon": [
+          "PARTY_BUFF_POWER",
+          "HEAL_POWER"
+        ],
+        "accessory1": [
+          "MP_SAVE"
+        ]
+      },
+      "coreEffects": [
+        "PARTY_BUFF_POWER",
+        "HEAL_POWER",
+        "MP_SAVE"
+      ],
+      "mechanics": [
+        "party_buff",
+        "dance_duration",
+        "regeneration"
+      ],
+      "upgrades": [
+        "dancer_p1_s5"
+      ],
+      "allies": [
+        {
+          "job": "knight",
+          "weapon": "hammer"
+        },
+        {
+          "job": "hunter",
+          "weapon": "bow"
+        },
+        {
+          "job": "white_mage",
+          "weapon": "staff"
+        }
+      ],
+      "playstyle": "自分のジョブの奥義である天女の舞を扇と舞の余韻で強め、再生と攻撃支援を長く保つ。必要なら癒しの舞を使う。",
+      "weakness": "天女の舞のMPと技能枠の負担が大きい。短い戦闘や強化を必要としない相手には過剰。"
+    }
+  ]
+}

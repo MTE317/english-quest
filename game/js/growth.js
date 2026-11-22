@@ -1,6 +1,6 @@
 // 成長：スキルツリーと AP・スキルの枠・共通ツリー・ジョブを極めたボーナス・武器の熟練度・ジョブチェンジ。
 // data に数として書かれていないものは GROWTH_FORMULAS に置く（docs/requests.md で依頼済み）。
-import { gearDef, aptitudeMul, unequip, maxHp, maxMp } from './character.js?v=rune-study-1';
+import { gearDef, aptitudeMul, unequip, maxHp, maxMp } from './character.js?v=build36-1';
 
 export const GROWTH_FORMULAS = Object.freeze({
   action_capacity: 10, // 通常スキルの枠（スキルの cost の合計。sim の cap_a）
@@ -53,10 +53,14 @@ export function jobPaths(data, jobId) {
 export function isLearned(member, skill) {
   return skill.apToLearn === 0 || (member.learned ?? []).includes(skill.id);
 }
+/** 同じ枝の一つ前の段階。習得判定と詳細表示で共有する。 */
+export function skillPrerequisite(data, skill) {
+  return jobSkills(data, skill.job).find((candidate) => candidate.path === skill.path && candidate.stage === skill.stage - 1);
+}
 /** 覚えられるか → 理由（覚えられるなら ''） */
 export function learnBlock(data, member, skill) {
   if (isLearned(member, skill)) return '覚えている';
-  const prev = jobSkills(data, skill.job).find((s) => s.path === skill.path && s.stage === skill.stage - 1);
+  const prev = skillPrerequisite(data, skill);
   if (prev && !isLearned(member, prev)) return `先に「${prev.name}」を覚える`;
   const ap = member.ap?.[skill.job] ?? 0;
   if (ap < skill.apToLearn) return `${data.jobsById.get(skill.job).name}の AP が ${ap} / ${skill.apToLearn}`;
@@ -69,6 +73,10 @@ export function learnSkill(data, member, skillId) {
   if (block) throw new Error(block);
   member.ap[s.job] -= s.apToLearn;
   member.learned = [...(member.learned ?? []), s.id];
+  if (isJobMastered(data, member, s.job)) {
+    member.masteredJobs ??= [];
+    if (!member.masteredJobs.includes(s.job)) member.masteredJobs.push(s.job);
+  }
   if (!equipBlock(data, member, s)) equipSkill(data, member, s.id);
 }
 
@@ -150,6 +158,7 @@ function commonMods(data, member) {
 
 // ---------------- ジョブを極める ----------------
 export function isJobMastered(data, member, jobId) {
+  if ((member.masteredJobs ?? []).includes(jobId)) return true;
   const skills = jobSkills(data, jobId);
   return skills.length > 0 && skills.every((s) => isLearned(member, s));
 }

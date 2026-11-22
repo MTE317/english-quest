@@ -6,13 +6,13 @@ import { Scheduler, STAGE_LABEL } from '../srs.js?v=features-2';
 import { LearningStore, now } from '../storage.js?v=rune-study-1';
 import { QuestionPicker } from '../picker.js';
 import { GameSession } from '../save.js?v=rune-study-1';
-import { normalizeGame } from '../game-state.js?v=rune-study-1';
-import { seededRng, currentRank } from '../dungeon.js?v=rune-study-1';
-import { checkRankUp } from '../town.js?v=rune-study-1';
+import { normalizeGame } from '../game-state.js?v=build36-1';
+import { seededRng, currentRank } from '../dungeon.js?v=build36-1';
+import { checkRankUp } from '../town.js?v=build36-1';
 import {
   stoneProgress, nextUnread, trialBlock, trialPlan, finishExam, promotionBlock, promotionPlan, starLearnedRatio,
   trainingReward, applyTraining,
-} from '../study.js?v=rune-study-1';
+} from '../study.js?v=build36-1';
 import { runQuiz } from '../ui/quiz-runner.js?v=rune-study-1';
 import { speak, canSpeak } from '../speech.js?v=rune-study-1';
 import { el, render, stars } from '../dom.js';

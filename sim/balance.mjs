@@ -9,7 +9,7 @@ import { buildGameData, GAME_FILES } from '../game/js/gamedata.js';
 import { parseCsv } from '../game/js/csv.js';
 import { maxHp, maxMp, gainXp, gearDef, gearEffects, affixSum } from '../game/js/character.js';
 import { memberMods } from '../game/js/growth.js';
-import { createBattle, nextTurn, actionOptions, setPending, resolvePending, finishBattle, battleRewards, skillMp, battleStats, curedBy } from '../game/js/battle.js';
+import { createBattle, nextTurn, actionOptions, setPending, resolvePending, finishBattle, battleRewards, skillMp, battleStats, curedBy, enemyIntent } from '../game/js/battle.js';
 import { makeEncounter, planBounty } from '../game/js/encounter.js';
 import { rollBattleLoot } from '../game/js/loot.js';
 import { recoverAfterBattle, useItemOutsideBattle } from '../game/js/dungeon.js';
@@ -37,7 +37,8 @@ export function applyBalancePatch(target, patch) {
 export function sourceFingerprint() {
   const files = [...Object.values(GAME_FILES).map(name => `data/${name}`),
     'game/js/battle.js', 'game/js/character.js', 'game/js/growth.js', 'game/js/dungeon.js',
-    'game/js/encounter.js', 'game/js/loot.js', 'game/js/workshop.js', 'sim/party-fixtures.mjs', 'sim/balance.mjs'];
+    'game/js/encounter.js', 'game/js/loot.js', 'game/js/workshop.js', 'game/js/game-state.js',
+    'game/js/gamedata.js', 'sim/build-catalog.json', 'sim/party-fixtures.mjs', 'sim/balance.mjs'];
   const hash = createHash('sha256');
   for (const file of [...new Set(files)].sort()) hash.update(file + '\0').update(readFileSync(new URL(`../${file}`, import.meta.url)));
   return hash.digest('hex');
@@ -62,7 +63,33 @@ function attackEstimate(data, game, b, i, skill, target) {
   let em = affinity(data, e, elements);
   if (fx.element === 'best') em = Math.max(...(skill.elements?.length ? skill.elements : ['wind', 'earth', 'water']).map(id => affinity(data, e, [id])));
   if (fx.noresist) em = Math.max(1, em);
-  const damage = ((mag ? st.mag : st.str) + st.attack) * (fx.m ?? 1) * em * 100 / (100 + (mag ? e.res : e.def) * (1 - (fx.defign ?? 0)));
+  let damage = ((mag ? st.mag : st.str) + st.attack) * (fx.m ?? 1) * em * 100 / (100 + (mag ? e.res : e.def) * (1 - (fx.defign ?? 0)));
+  // 旧12編成の方策は保持し、新36案では新効果と通常攻撃の武器特性も見積もる。
+  // 実戦処理や将来の乱数は呼ばず、現在見えている状態だけを使う近似値。
+  if (game.simulationFixture?.catalogBuildId) {
+    const rules = data.balance.battle_formulas;
+    const mods = memberMods(data, m);
+    let bonus = Object.keys(e.statuses).length || Object.keys(e.debuffs).length
+      ? (mods.vs_debuffed ?? 0) + affixSum(m, 'VS_DEBUFFED') / 100 : 0;
+    bonus += Math.min(rules.status_damage_cap, Object.keys(e.statuses)
+      .reduce((sum, id) => sum + affixSum(m, `VS_STATUS:${id}`) / 100, 0));
+    if (!b.allies[i].firstAttackUsed) bonus += Math.min(rules.first_hit_cap, affixSum(m, 'FIRST_HIT') / 100);
+    if (skill?.kind === 'attack' && b.allies[i].normalSkillReady) bonus += Math.min(rules.normal_skill_cap, affixSum(m, 'NORMAL_SKILL') / 100);
+    if (mods.lowhp_dmg && m.hp < maxHp(data, m) * .5) bonus += mods.lowhp_dmg;
+    for (const type of e.types) bonus += affixSum(m, `TYPE_BONUS:${type}`) / 100 + affixSum(m, `特効:${type}`) / 100;
+    damage *= 1 + bonus;
+    if (em > 1) damage *= (fx.wb ?? 1) * (base === 'weapon' ? wt?.traits.weak_damage_mul ?? 1 : 1)
+      * (1 + (mods.weak_all ?? 0)) * (1 + Math.min(.6, affixSum(m, 'WEAK_DMG') / 100));
+    const crit = Math.min(rules.crit_cap, st.crit + (fx.crt ?? 0));
+    damage *= 1 + crit * (Math.min(rules.crit_multiplier_cap,
+      data.balance.battle.crit_mult + (mods.crit_dmg ?? 0) + affixSum(m, 'CRIT_DMG') / 100) - 1);
+    if (skill && base === 'weapon') damage *= wt?.traits.weapon_skill_mul ?? 1;
+    if (!skill) {
+      if (m.equip.offhand) damage *= 1 + data.balance.battle.dual_wield_second_hit
+        * (st.str + st.offhandAttack) / Math.max(1, st.str + st.attack);
+      damage *= 1 + Math.min(rules.extra_hit_cap, affixSum(m, 'EXTRA_HIT') / 100) * .5;
+    }
+  }
   const hits = fx.hits ?? (base === 'weapon' ? wt?.hits ?? [1] : [1]);
   let score = Math.min(e.hp, damage * hits.reduce((s, x) => s + x, 0));
   if (fx.st) {
@@ -80,6 +107,7 @@ export function chooseAction(data, game, b) {
   const alive = game.party.map((m, j) => ({ j, m, missing: maxHp(data, m) - m.hp, ratio: m.hp / maxHp(data, m) })).filter(x => x.m.hp > 0).sort((a, z) => a.ratio - z.ratio);
   const dead = game.party.findIndex(m => m.hp <= 0);
   const items = options.items.filter(x => !x.reason).map(x => x.item);
+  const catalog = Boolean(game.simulationFixture?.catalogBuildId);
   if (dead >= 0) {
     const revive = skills.find(s => s.kind === 'revive');
     if (revive) return { type: 'skill', skillId: revive.id, target: dead };
@@ -87,6 +115,11 @@ export function chooseAction(data, game, b) {
     if (item) return { type: 'item', itemId: item.id, target: dead };
   }
   const hurt = alive.filter(x => x.ratio < .68);
+  // 道具特化は有限の持込品も主行動として評価する。他の型では従来の緊急使用を維持。
+  if (catalog && i === 0 && game.simulationFixture.catalogBuildId === 'item_alchemist' && alive[0]?.ratio < .75) {
+    const item = items.filter(it => it.effect === 'heal_hp').sort((a, z) => z.value - a.value)[0];
+    if (item) return { type: 'item', itemId: item.id, target: alive[0].j };
+  }
   if (hurt.length >= 2) {
     const heal = skills.find(s => s.kind === 'heal_all');
     if (heal) return { type: 'skill', skillId: heal.id, target: hurt[0].j };
@@ -113,6 +146,44 @@ export function chooseAction(data, game, b) {
   const living = b.enemies.map((e, j) => ({ e, j })).filter(x => x.e.hp > 0);
   const boss = living.some(x => x.e.boss);
   const durable = living.filter(x => x.e.hp > attackEstimate(data, game, b, i, null, x.j) * 3);
+  const protectedTargets = new Set();
+  if (catalog) {
+    // 睡眠・凍結は主役の一撃まで保つ。味方の行動順だけを参照し、乱数の先読みはしない。
+    if (i !== 0 && game.party[0].hp > 0) {
+      const finishers = ['sleep', 'freeze'].filter(id => affixSum(game.party[0], `VS_STATUS:${id}`) > 0);
+      for (const { e, j } of living) if (finishers.some(id => e.statuses[id])) protectedTargets.add(j);
+      const primaryTurn = b.queue.findIndex(turn => turn.side === 'ally' && turn.i === 0);
+      const setup = skills.find(s => finishers.includes(data.statusByName.get(s.effect.st?.[0])?.id));
+      if (setup && primaryTurn >= 0) {
+        const target = living.find(({ e, j }) => {
+          const enemyTurn = b.queue.findIndex(turn => turn.side === 'enemy' && turn.i === j);
+          return !finishers.some(id => e.statuses[id]) && (!e.boss || (e.controlGuardUntil ?? 0) < b.round)
+            && (enemyTurn < 0 || primaryTurn < enemyTurn) && e.hp > attackEstimate(data, game, b, 0, null, j) * 1.3;
+        });
+        if (target) return { type: 'skill', skillId: setup.id, target: target.j };
+      }
+      if (protectedTargets.size === living.length && member.mp > maxMp(data, member) * .2) {
+        const support = skills.find(s => ['party_buff', 'ally_buff', 'heal', 'heal_all'].includes(s.kind));
+        if (support) return { type: 'skill', skillId: support.id, target: alive[0]?.j ?? i };
+      }
+    }
+    const donor = skills.find(s => s.kind === 'mp_give');
+    const recipient = alive.filter(x => x.j !== i && x.m.mp / maxMp(data, x.m) < .3)
+      .sort((a, z) => a.m.mp / maxMp(data, a.m) - z.m.mp / maxMp(data, z.m))[0];
+    if (donor && recipient && member.mp > maxMp(data, member) * .45 + skillMp(data, member, donor)) {
+      return { type: 'skill', skillId: donor.id, target: recipient.j };
+    }
+    // 予告された全体攻撃に備える。毎巡の満タン回復連打は行わない。
+    if (affixSum(member, 'OVERHEAL_SHIELD') > 0 && living.some(({ e }) => enemyIntent(data, e, b.round).warning)) {
+      const unprotected = alive.filter(x => x.ratio > .7 && !(b.allies[x.j].buffs.barrier?.[0] > 0));
+      const heal = unprotected.length > 1 ? skills.find(s => s.kind === 'heal_all') : skills.find(s => s.kind === 'heal');
+      if (heal && unprotected.length) return { type: 'skill', skillId: heal.id, target: unprotected[0].j };
+    }
+    const taunt = skills.find(s => s.kind === 'self_buff' && s.effect.buff?.taunt && !b.allies[i].buffs.taunt);
+    if (taunt && member.hp > maxHp(data, member) * .45 && (boss || living.length > 1)) {
+      return { type: 'skill', skillId: taunt.id, target: i };
+    }
+  }
   const imbue = skills.find(s => s.kind === 'imbue' && s.elements[0] !== b.allies[i].imbue
     && durable.some(x => x.e.weak.includes(s.elements[0])));
   if (imbue && (boss || living.length >= 3)) return { type: 'skill', skillId: imbue.id, target: i };
@@ -132,13 +203,24 @@ export function chooseAction(data, game, b) {
   }
   const choices = [];
   for (const { e, j } of living) {
-    choices.push({ action: { type: 'attack', target: j }, score: attackEstimate(data, game, b, i, null, j) + (member.mp < maxMp(data, member) * .7 ? 12 + member.lv / 2 : 0) });
+    let normalScore = attackEstimate(data, game, b, i, null, j);
+    if (catalog) {
+      const type = data.weaponTypes.get(member.equip.weapon && gearDef(data, member.equip.weapon).kind);
+      if (type?.traits.normal_all_mul) normalScore = living.reduce((sum, x) => sum + attackEstimate(data, game, b, i, null, x.j), 0)
+        * (memberMods(data, member).whip ?? type.traits.normal_all_mul);
+      if (type?.traits.splash_chance && living.length > 1) normalScore *= 1 + type.traits.splash_chance * type.traits.splash_mul;
+      if (!b.allies[i].normalSkillReady && affixSum(member, 'NORMAL_SKILL') > 0) normalScore *= 1.3;
+      if (affixSum(member, 'ATTACK_HEAL') > 0 && alive[0]?.ratio < .9) normalScore *= 1.15;
+    }
+    choices.push({ action: { type: 'attack', target: j }, score: protectedTargets.has(j) ? normalScore * .05
+      : normalScore + (member.mp < maxMp(data, member) * .7 ? 12 + member.lv / 2 : 0) });
     for (const s of skills.filter(s => ['attack', 'fixed_damage', 'delayed'].includes(s.kind))) {
       let score = attackEstimate(data, game, b, i, s, j);
       if (s.effect.tgt === 'all' || ['fixed_damage', 'delayed'].includes(s.kind)) score = living.reduce((sum, target) => sum + attackEstimate(data, game, b, i, s, target.j), 0);
       if (s.effect.tgt === 'random') score *= Math.min(s.effect.n ?? 1, living.length + .6);
       if (s.effect.selfcost && member.hp < maxHp(data, member) * .5) score *= .5;
       score -= skillMp(data, member, s) * (member.mp < maxMp(data, member) * .4 ? 2.5 : .7);
+      if (protectedTargets.has(j) || protectedTargets.size && (s.effect.tgt === 'all' || s.effect.tgt === 'random')) score *= .05;
       choices.push({ action: { type: 'skill', skillId: s.id, target: j }, score });
     }
     for (const s of skills.filter(s => s.kind === 'status' && s.effect.st)) {
@@ -152,6 +234,13 @@ export function chooseAction(data, game, b) {
         if (status.kind.startsWith('dot')) score += target.e.maxHp * status.value * 2.4 * s.effect.st[1] * bossMul
           * (target.e.boss ? .65 : 1) * (1 + affixSum(member, 'DOT_POWER') / 100);
         else if (target.e.hp > attackEstimate(data, game, b, i, null, target.j) * 2) score += (target.e.str + target.e.mag) * .15 * s.effect.st[1] * bossMul;
+        if (catalog) {
+          const beneficiary = game.party.map((m, index) => ({ m, index, rate: affixSum(m, `VS_STATUS:${status.id}`) / 100 }))
+            .filter(x => x.m.hp > 0 && x.rate > 0).sort((a, z) => z.rate - a.rate)[0];
+          if (beneficiary) score += attackEstimate(data, game, b, beneficiary.index, null, target.j)
+            * Math.min(data.balance.battle_formulas.status_damage_cap, beneficiary.rate) * s.effect.st[1] * bossMul;
+          if (status.id === 'silence') score += target.e.mag * target.e.magicRate * .3 * s.effect.st[1] * bossMul;
+        }
       }
       score -= skillMp(data, member, s) * (member.mp < maxMp(data, member) * .4 ? 2.5 : .7);
       choices.push({ action: { type: 'skill', skillId: s.id, target: j }, score });

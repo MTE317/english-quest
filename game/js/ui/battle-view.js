@@ -3,8 +3,8 @@ import { now } from '../storage.js?v=rune-study-1';
 import { QuestionPicker, REASON_LABEL } from '../picker.js';
 import { makePracticeQuestion, questionDirection, questionSpeech, DIRECTION } from '../quiz.js?v=question-speech-1';
 import { speak, canSpeak, stopSpeech } from '../speech.js?v=rune-study-1';
-import { nextTurn, actionOptions, setPending, resolvePending, targetKind, canAct, skillMp, collectBattleHits, enemyIntent } from '../battle.js?v=rune-study-1';
-import { maxHp, maxMp } from '../character.js?v=rune-study-1';
+import { nextTurn, actionOptions, setPending, resolvePending, targetKind, canAct, skillMp, collectBattleHits, enemyIntent } from '../battle.js?v=build36-1';
+import { maxHp, maxMp } from '../character.js?v=build36-1';
 import { el, render } from '../dom.js';
 import { expeditionScene } from './scenery.js';
 import { monsterKnowledge } from '../monster-knowledge.js';
@@ -16,6 +16,16 @@ const TARGET_PROMPT = {
   ally: '対象の味方を選ぶ',
   ko_ally: '倒れた味方を選ぶ',
 };
+
+/** 状態異常に加え、残っている障壁と次の行動に有効な準備を表示する。 */
+export function battleConditionLabels(data, unit) {
+  const names = Object.keys(unit.statuses ?? {}).map((id) => data.statusEffects.get(id)?.name ?? id);
+  if (unit.hp != null && unit.hp <= 0) return names;
+  const [barrier, turns] = unit.buffs?.barrier ?? [];
+  if (Number.isFinite(barrier) && barrier > 0 && turns > 0) names.push(`障壁 ${barrier} HP`);
+  if (unit.normalSkillReady) names.push('次の攻撃技能を強化');
+  return names;
+}
 
 export function createBattleView({ view, data, lex, scheduler, store, session, onEnd: finishBattle, settings = {} }) {
   const run = session.run;
@@ -131,8 +141,7 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
         el('span', { style: `width:${percent}%` })));
   }
 
-  function conditions(statuses) {
-    const names = Object.keys(statuses).map((id) => data.statusEffects.get(id)?.name ?? id);
+  function conditions(names) {
     return names.length ? el('span', { class: 'battle-conditions' }, names.join('・')) : null;
   }
 
@@ -184,7 +193,7 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
         el('span', { class: 'battle-unit-name' }, enemy.name, enemy.boss ? ' 👑' : '', enemy.eliteId ? ' ⚠' : ''),
         resource('HP', enemy.hp, enemy.maxHp, 'hp'),
         intentLabel ? el('span', { class: `battle-intent${imminent ? ' imminent' : ''}` }, intentLabel) : null,
-        conditions(enemy.statuses),
+        conditions(battleConditionLabels(data, enemy)),
         known.weak.length ? el('span', { class: 'battle-known-weak' }, '弱点 ' + known.weak.join('・')) : null);
     }));
     render(party, g.party.map((member, index) => {
@@ -194,13 +203,15 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
       const chosen = (selectedKind === 'ally' || selectedKind === 'ko_ally') && action.target === index;
       const classes = `battle-ally${index === actor ? ' active' : ''}${member.hp <= 0 ? ' down' : ''}`;
       const status = member.hp <= 0 ? '戦闘不能' : `HP ${member.hp}/${hp}、MP ${member.mp}/${mp}`;
-      return unitCard(classes, chosen, `${member.name}、${status}`, targetable ? () => select(index) : null,
+      const conditionNames = battleConditionLabels(data, { ...b.allies[index], hp: member.hp });
+      const label = [member.name, status, ...conditionNames].join('、');
+      return unitCard(classes, chosen, label, targetable ? () => select(index) : null,
         el('span', { class: 'battle-ally-icon', 'aria-hidden': 'true' }, iconOf(member.icon)),
         el('span', { class: 'battle-ally-info' },
           el('span', { class: 'battle-unit-name' }, member.name),
           resource('HP', member.hp, hp, 'hp'),
           resource('MP', member.mp, mp, 'mp'),
-          conditions(b.allies[index].statuses)));
+          conditions(conditionNames)));
     }));
     latest.textContent = b.log.at(-1) ?? '';
     render(history, b.log.slice(-6).map((line) => el('li', {}, line)));

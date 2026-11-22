@@ -57,3 +57,17 @@ accessory,HEAL_POWER,5,12,0,4
 accessory,MP_SAVE,3,8,0,4
 accessory,PARTY_BUFF_POWER,4,10,0,4
 accessory,COUNTER,3,8,0,4
+weapon,VS_STATUS,10,20,0,3
+accessory,VS_STATUS,8,16,0,3
+weapon,FIRST_HIT,15,25,0,3
+accessory,FIRST_HIT,8,15,0,2
+weapon,NORMAL_SKILL,10,18,0,3
+accessory,NORMAL_SKILL,8,15,0,2
+cloak,EVA_COUNTER,8,15,0,3
+accessory,EVA_COUNTER,6,12,0,2
+weapon,CRIT_MP,1,2,0,3
+accessory,CRIT_MP,1,1.5,0,2
+weapon,ATTACK_HEAL,5,10,0,3
+accessory,ATTACK_HEAL,3,6,0,2
+weapon,OVERHEAL_SHIELD,20,30,0,3
+accessory,OVERHEAL_SHIELD,10,20,0,2

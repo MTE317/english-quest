@@ -794,6 +794,50 @@
     "on_hit_mp_cap": 0.05,
     "extra_hit_cap": 0.4,
     "counter_affix_cap": 0.35,
-    "counter_power": 0.75
+    "counter_power": 0.75,
+    "status_damage_cap": 0.6,
+    "first_hit_cap": 0.5,
+    "normal_skill_cap": 0.4,
+    "evade_counter_cap": 0.35,
+    "evade_counter_power": 0.65,
+    "critical_mp_cap": 0.05,
+    "bonus_mp_action_cap": 0.05,
+    "attack_heal_rate_cap": 0.2,
+    "attack_heal_action_cap": 0.08,
+    "overheal_shield_rate_cap": 0.6,
+    "overheal_shield_hp_cap": 0.2,
+    "overheal_shield_turns": 2
+  },
+  "content_updates": {
+    "build36_skills": [
+      "apothecary_p3_s1",
+      "monk_p4_s1",
+      "spellblade_p3_s1",
+      "spellblade_p3_s2",
+      "hexer_p3_s1",
+      "hexer_p3_s2",
+      "thief_p4_s1",
+      "thief_p4_s2"
+    ],
+    "build36_recipes": [
+      "craft_dreambreaker",
+      "craft_frost_judgment",
+      "craft_thunder_claw",
+      "craft_silent_tome",
+      "craft_illusion_katana",
+      "craft_dawn_katana",
+      "craft_cycling_blade",
+      "craft_siphon_tome",
+      "craft_battle_mend_staff",
+      "craft_life_barrier_staff",
+      "craft_toxic_needle",
+      "craft_binding_whip",
+      "craft_blood_reaper",
+      "craft_riposte_hammer",
+      "craft_warding_fan",
+      "craft_battle_mend_charm",
+      "craft_cycle_ring",
+      "craft_illusion_cloak"
+    ]
   }
 }

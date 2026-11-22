@@ -1,10 +1,10 @@
 import { parseAmounts, splitList } from './csv.js';
-import { makeGear } from './character.js?v=rune-study-1';
-import { rollAffixes } from './loot.js?v=rune-study-1';
-import { matchesNeed, parseMaterialNeed } from './town.js?v=rune-study-1';
-import { currentRank } from './dungeon.js?v=rune-study-1';
+import { makeGear } from './character.js?v=build36-1';
+import { rollAffixes, affixVariants } from './loot.js?v=build36-1';
+import { matchesNeed, parseMaterialNeed } from './town.js?v=build36-1';
+import { currentRank } from './dungeon.js?v=build36-1';
 import { consumeMaterials } from './temple.js?v=rune-study-1';
-import { describeEffect } from './equipment-effects.js?v=balance-builds-1';
+import { describeEffect } from './equipment-effects.js?v=build36-1';
 
 const facilityFor = (def) => def.slot === 'weapon' ? 'weapon_workshop'
   : ['cloak', 'accessory'].includes(def.slot) ? 'accessory_workshop' : 'armor_workshop';
@@ -131,13 +131,11 @@ export function enchantFamilies(data, def, material) {
   const monster = data.monsters.get(material.sourceMonster);
   const key = ['head', 'body', 'arm'].includes(def.slot) ? 'armor' : def.slot;
   const matches = { element: [material.element], monster_type: monster?.types ?? [],
+    monster_status: monster?.status ? [monster.status] : [],
     material_kind: [material.season ? 'season' : material.kind, ...(monster?.role === 'boss' ? ['boss'] : [])] };
   const allowed = data.enchantSources.filter((r) => matches[r.source_kind]?.includes(r.source_value)).flatMap((r) => splitList(r.families));
   const affixes = data.affixes.filter((a) => a.slot === key);
-  const expand = allowed.includes('ANY')
-    ? affixes.flatMap((a) => a.stat === 'TYPE_BONUS' ? [...data.monsterTypes.keys()].map((id) => `TYPE_BONUS:${id}`)
-      : ['ELEMENT', 'ELEM_RES'].includes(a.stat) ? [...data.elements.values()].filter((e) => e.kind === '魔法' && e.id !== 'none').map((e) => `${a.stat}:${e.id}`) : [a.stat])
-    : allowed;
+  const expand = allowed.includes('ANY') ? affixes.flatMap((a) => affixVariants(data, a.stat)) : allowed;
   return [...new Set(expand)].filter((stat) => affixes.some((a) => a.stat === stat.split(':')[0]));
 }
 
