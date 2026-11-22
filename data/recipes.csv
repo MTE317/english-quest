@@ -8,3 +8,9 @@ flame_sword,炎の剣,sword,2,steel_sword,fire_lizard_mat:2,53,fire,15
 storm_sword,嵐の剣,sword,3,windcutter_sword,wind_spirit_mat:3,95,wind,15
 earth_sword,大地の剣,sword,3,windcutter_sword,mandragora_mat:3,95,earth,15
 mirror_sword,水鏡の剣,sword,4,tidal_sword,sea_serpent_mat:3,168,water,15
+iron_scythe,鉄の鎌,scythe,1,,goblin_mat:2|cave_rat_mat:2,40,,15
+steel_scythe,鋼の大鎌,scythe,2,iron_scythe,fort_bandit_mat:3|skeleton_mat:1,53,,15
+shadow_scythe,影縫いの鎌,scythe,3,steel_scythe,canyon_wolf_mat:3|rock_troll_mat:2,95,dark,15
+iron_fan,鉄扇,fan,1,,goblin_mat:2|cave_rat_mat:2,40,,15
+silver_fan,銀扇,fan,2,iron_fan,fort_bandit_mat:3|skeleton_mat:1,53,,15
+wind_fan,風渡りの扇,fan,3,silver_fan,wind_spirit_mat:3,95,wind,15
