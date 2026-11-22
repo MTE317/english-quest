@@ -66,7 +66,7 @@ def DUNGEONS_rank(did): return world.DUNGEONS[did]["rank"]
 def one(a):
     seed, minutes, bp, jp, Tov = a[:5]; jobs = a[5] if len(a) > 5 else ["戦士", "ナイト", "黒魔道士", "白魔道士"]
     for k, v in Tov.items():
-        T[k] = {int(x): y for x, y in v.items()} if isinstance(v, dict) else v
+        T[k] = ({int(x): y for x, y in v.items()} if all(str(x).isdigit() for x in v) else dict(v)) if isinstance(v, dict) else v
     g = G(jobs, minutes=minutes, learner=os.environ.get("LEARNER", "標準"), seed=seed, max_years=9, bp=bp, jp=jp)
     g.minutes_ = minutes
     return g.play()
@@ -93,6 +93,13 @@ if __name__ == "__main__":
         for j, v in g.S.get("dmg_by_job", {}).items():
             a = out["dmg_job"].setdefault(j, [0, 0]); a[0] += v; a[1] += g.S.get("acts_by_job", {}).get(j, 0)
     out["dmg_job"] = {j: [round(a[0] / max(1, a[1])), a[1]] for j, a in out["dmg_job"].items()}
+    db_ = {}
+    for g in gs:
+        for k, v in g.S.get("dmg_band", {}).items():
+            a = db_.setdefault(k, [0, 0]); a[0] += v
+        for k, v in g.S.get("acts_band", {}).items():
+            a = db_.setdefault(k, [0, 0]); a[1] += v
+    out["dmg_band"] = {k: [round(a[0] / max(1, a[1])), a[1]] for k, a in db_.items()}
     out["season"] = {f"{r}{se}": [a[0], round(a[1] / a[0], 3), round(a[2] / a[0], 2)] for (r, se), a in sorted(sea.items())}
     json.dump(out, open(f"bpjp_{tag}.json", "w"), ensure_ascii=False)
     keys = ["S_years", "star_years", "rounds_by_star", "front_wipe", "wipe_rate", "rounds", "fixed_share", "gold_end", "earn_total", "bp_lost_share", "bp_full_runs", "bp_spend", "switches", "jp_block", "jp_wait_max_days", "jp_end"]
