@@ -13,7 +13,7 @@ import {
 } from '../dungeon.js';
 import { backpackSlots, backpackUsed, addItem } from '../loot.js';
 import { maxHp, maxMp } from '../character.js';
-import { createBattleView } from '../ui/battle-view.js';
+import { createBattleView } from '../ui/battle-view.js?v=inline-quiz-1';
 import { stoneAllowed } from '../study.js';
 import { el, render, stars } from '../dom.js';
 

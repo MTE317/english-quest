@@ -27,6 +27,8 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
   const party = el('div', { class: 'battle-party', 'data-count': g.party.length, 'aria-label': '味方', role: 'group' });
   const latest = el('span', { class: 'battle-log-latest' });
   const history = el('ul', { class: 'battle-history' });
+  const log = el('details', { class: 'battle-log' },
+    el('summary', { 'aria-label': '戦闘ログ' }, latest), history);
   const panel = el('section', { class: 'battle-controls', 'aria-labelledby': 'battle-controls-title' });
   const screen = el('div', { class: 'battle-screen' },
     el('div', { class: 'battle-location' },
@@ -34,8 +36,7 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
       el('span', { class: 'battle-floor' }, `${run.floor}階`), turn),
     enemies,
     party,
-    el('details', { class: 'battle-log' },
-      el('summary', { 'aria-label': '戦闘ログ' }, latest), history),
+    log,
     panel);
 
   function loop() {
@@ -99,7 +100,8 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
     render(history, b.log.slice(-6).map((line) => el('li', {}, line)));
   }
 
-  function showPanel(title, content, { back, detail, focus = true } = {}) {
+  function showPanel(title, content, { back, detail, question = false, focus = true } = {}) {
+    log.hidden = question;
     const heading = el('h3', { id: 'battle-controls-title', tabindex: '-1' }, title);
     render(panel,
       el('div', { class: 'battle-controls-head' }, heading, detail,
@@ -171,9 +173,15 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
     if (indices.length === 1) return select(indices[0]);
 
     drawField(b.turn.i, { kind, indices, select });
-    showPanel(actionLabel(action), el('p', { class: 'battle-target-prompt' }, TARGET_PROMPT[kind]),
-      { back: () => showCommand(sub), focus: false });
-    screen.querySelector('button.targetable').focus();
+    const enemyTargets = kind === 'enemy' ? el('div', { class: 'battle-targets' }, indices.map((index) => {
+      const enemy = b.enemies[index];
+      return el('button', { onclick: () => select(index) }, `${enemy.icon} ${enemy.name}`);
+    })) : null;
+    showPanel(actionLabel(action), [
+      el('p', { class: 'battle-target-prompt' }, TARGET_PROMPT[kind]),
+      enemyTargets,
+    ], { back: () => showCommand(sub), focus: !!enemyTargets });
+    if (!enemyTargets) screen.querySelector('button.targetable').focus({ preventScroll: true });
   }
 
   function ask(action) {
@@ -231,7 +239,7 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
         isEn ? pronounce(word) : null),
       el('div', { class: 'battle-answers' }, q.choices.map((choice, index) =>
         el('button', { onclick: () => answer(index), lang: isEn ? 'ja' : 'en' }, choice.text))),
-    ], { detail: el('span', { class: `tag ${q.reason}` }, REASON_LABEL[q.reason]) });
+    ], { detail: el('span', { class: `tag ${q.reason}` }, REASON_LABEL[q.reason]), question: true });
   }
 
   function pronounce(word) {

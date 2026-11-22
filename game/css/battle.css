@@ -68,13 +68,13 @@ body:has(.battle-screen) { background: #10171e; }
 
 .battle-enemies {
   display: flex;
-  flex: 1 0 auto;
+  flex: 0 0 auto;
   flex-wrap: wrap;
   align-content: center;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  min-height: clamp(132px, 25svh, 230px);
+  min-height: clamp(132px, 22svh, 228px);
   padding: 12px 9px;
   border: 1px solid #415b60;
   border-radius: 14px;
@@ -255,12 +255,15 @@ body:has(.battle-screen) { background: #10171e; }
   background: transparent;
   font-size: .8rem;
 }
-.battle-commands, .battle-answers {
+.battle-commands, .battle-answers, .battle-targets {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 7px;
 }
-.battle-commands { flex: 1; }
+.battle-commands {
+  flex: 1;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.battle-answers, .battle-targets { grid-template-columns: minmax(0, 1fr); }
 .battle-screen .battle-command {
   display: flex;
   align-items: center;
@@ -314,6 +317,7 @@ body:has(.battle-screen) { background: #10171e; }
   font-size: .9rem;
 }
 .battle-target-prompt { color: var(--battle-gold); }
+.battle-target-prompt:has(+ .battle-targets) { padding: 2px 0; }
 .battle-notice { color: var(--battle-dim); }
 .battle-controls .tag {
   padding: 1px 6px;
@@ -322,15 +326,19 @@ body:has(.battle-screen) { background: #10171e; }
   font-size: .72rem;
 }
 .battle-question, .battle-result-actions {
-  display: flex;
   align-items: center;
   gap: 7px;
 }
+.battle-question {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) 44px;
+}
+.battle-result-actions { display: flex; }
 .battle-prompt {
-  flex: 1;
-  min-width: 0;
+  grid-column: 2;
   font-size: clamp(1.15rem, 5vw, 1.6rem);
   font-weight: 700;
+  text-align: center;
   overflow-wrap: anywhere;
 }
 .battle-screen .battle-speak {
@@ -340,9 +348,8 @@ body:has(.battle-screen) { background: #10171e; }
 }
 .battle-answers button {
   min-height: 48px;
-  padding: 5px 7px;
-  text-align: left;
-  font-size: .86rem;
+  padding: 6px 10px;
+  font-size: .95rem;
 }
 .battle-result {
   display: grid;
