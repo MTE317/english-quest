@@ -81,7 +81,7 @@ export function startNextBattle(data, session) {
 
 /**
  * 戦闘が終わったあと（勝った・逃げた）。全滅なら入る前に戻す。
- * @returns { result, lines: 画面に出す文, loot }
+ * @returns 戦闘結果と、勝利時のメンバーごとの成長・ドロップ
  */
 export function afterBattle(data, session) {
   const b = session.run.battle;
@@ -89,19 +89,21 @@ export function afterBattle(data, session) {
   finishBattle(data, game, b);
   if (b.result === 'lose') {
     session.wipe();
-    return { result: 'lose', lines: [] };
+    return { result: 'lose', growth: [], loot: null };
   }
-  const lines = [];
+  const growth = [];
   let loot = null;
   session.endBattle((g, run) => {
     if (b.result === 'win') {
       countKills(g, b.enemies);
       const r = battleRewards(data, g, b);
       g.party.forEach((m, i) => {
-        const ups = gainXp(data, m, r.xp[i]);
-        m.ap[m.job] = (m.ap[m.job] ?? 0) + r.ap[i];
-        run.earned.xp += r.xp[i];
-        lines.push(`${m.name}：経験値 +${r.xp[i]}・AP +${r.ap[i]}${ups ? `　レベルが${m.lv}に上がった！` : ''}`);
+        const xp = r.xp[i];
+        const ap = r.ap[i];
+        const levels = gainXp(data, m, xp);
+        m.ap[m.job] = (m.ap[m.job] ?? 0) + ap;
+        run.earned.xp += xp;
+        growth.push({ xp, ap, levels });
       });
       // 共通ツリー「魔力の余韻」：戦闘が終わったら MP が回復
       for (const m of g.party) {
@@ -112,19 +114,15 @@ export function afterBattle(data, session) {
       loot = rollBattleLoot(data, g, run.dungeonId, run.floor, b.enemies, seededRng(run), { dropBonus });
       g.gold += loot.gold;
       run.earned.gold += loot.gold;
-      lines.push(`お金 +${loot.gold}`);
-      for (const m of loot.materials) lines.push(`${data.materials.get(m.id).name} ×${m.count}`);
-      for (const x of loot.gear) lines.push(`${data.equipment.get(x.id).name}を拾った`);
       const left = addToBackpack(data, g, run.backpack, [
         ...loot.gear.map((gear) => ({ type: 'gear', gear })),
         ...loot.materials.map((m) => ({ type: 'material', id: m.id, count: m.count })),
       ]);
       run.pendingLoot = left;
-      if (left.length) lines.push('バックパックがいっぱい！');
     }
     advance(data, run);
   });
-  return { result: b.result, lines, loot };
+  return { result: b.result, growth, loot };
 }
 
 /** 次の戦闘へ進める（階の終わり・帰還ポイント・いちばん奥） */

@@ -10,10 +10,11 @@ import { normalizeGame } from '../game-state.js';
 import {
   allowedDungeons, startRun, startNextBattle, afterBattle, returnToTown, continueRun, resolveLoot,
   isBossBattle, runFloorRow, returnItems, currentRank, useItemOutsideBattle, FIELD_ITEM_EFFECTS,
-} from '../dungeon.js';
+} from '../dungeon.js?v=victory-1';
 import { backpackSlots, backpackUsed, addItem } from '../loot.js';
 import { maxHp, maxMp } from '../character.js';
 import { createBattleView } from '../ui/battle-view.js?v=inline-quiz-1';
+import { createVictoryView } from '../ui/victory-view.js?v=victory-1';
 import { stoneAllowed } from '../study.js';
 import { el, render, stars } from '../dom.js';
 
@@ -95,25 +96,29 @@ function debugTools() {
 }
 
 // ---------------- ダンジョンの中 ----------------
-function showRun(lines = null) {
+function showRun(result = null) {
   const run = session.run;
   if (!run) return showTown();
   if (run.battle) return battleView().start();
+  if (run.state === 'loot') {
+    render(view, lootActions(result));
+    return;
+  }
   const dg = data.dungeons.get(run.dungeonId);
   const g = session.game;
+  const backpack = `${backpackUsed(run.backpack)} / ${backpackSlots(data, g)}`;
   const head = [
     el('div', { class: 'choice-title' }, `${stars(dg.rank)} ${dg.name}`),
     el('div', { class: 'muted small' },
       `${run.floor} / ${dg.floors}階${run.state === 'ready' ? `・${run.battleIndex + 1} / ${runFloorRow(data, run).battles}戦目` : ''}`,
-      `・バックパック ${backpackUsed(run.backpack)} / ${backpackSlots(data, g)}・稼いだお金 ${run.earned.gold}`),
+      `・バックパック ${backpack}・稼いだお金 ${run.earned.gold}`),
   ];
-  const result = lines?.length ? el('div', { class: 'panel small' }, lines.map((l) => el('div', {}, l))) : null;
   let actions = [];
   if (run.state === 'ready') {
     const boss = isBossBattle(data, run);
     actions = [
       el('button', { class: 'primary', onclick: () => { startNextBattle(data, session); battleView().start(); } }, boss ? '👑 ボスに挑む' : '次の戦闘へ'),
-      el('button', { onclick: () => showFieldItems() }, '道具を使う'),
+      el('button', { onclick: () => showFieldItems(result) }, '道具を使う'),
       ...returnItems(data, g).map((id) => el('button', {
         onclick: () => { if (confirm(`${data.items.get(id).name}で町に帰りますか？`)) { const pack = summary(run); returnToTown(data, session, id); showReturned(pack); } },
       }, `${data.items.get(id).name}で帰る（×${g.items[id]}）`)),
@@ -123,17 +128,24 @@ function showRun(lines = null) {
       el('div', { class: 'panel small' }, '帰還ポイントに着いた。ここから町に帰れる。'),
       el('button', { class: 'primary', onclick: () => { continueRun(session); showRun(); } }, '先へ進む'),
       el('button', { onclick: () => { const pack = summary(run); returnToTown(data, session); showReturned(pack); } }, '町に帰る（拾った物は持ち帰る）'),
-      el('button', { onclick: () => showFieldItems() }, '道具を使う'),
+      el('button', { onclick: () => showFieldItems(result) }, '道具を使う'),
     ];
   } else if (run.state === 'cleared') {
     actions = [
       el('div', { class: 'panel small' }, 'いちばん奥のボスを倒した！'),
       el('button', { class: 'primary', onclick: () => { const pack = summary(run); returnToTown(data, session); showReturned(pack); } }, '町に帰る'),
     ];
-  } else if (run.state === 'loot') {
-    return showLoot(lines);
   }
-  render(view, head, result, partyPanel(), actions);
+  if (result?.result === 'win') {
+    render(view, createVictoryView({
+      data, dungeon: dg, party: g.party, result, backpack,
+      totalGold: run.earned.gold, iconOf, gearName, actions,
+    }));
+    view.querySelector('h2').focus({ preventScroll: true });
+  } else {
+    const escaped = result?.result === 'fled' ? el('div', { class: 'panel small' }, '逃げ切った') : null;
+    render(view, head, escaped, partyPanel(), actions);
+  }
   window.scrollTo(0, 0);
 }
 
@@ -152,22 +164,22 @@ function showReturned(pack) {
     el('button', { class: 'primary', onclick: () => showTown() }, 'つづける'));
 }
 
-function showLoot(lines) {
+function lootActions(result) {
   const run = session.run;
   const entry = run.pendingLoot[0];
   const label = entry.type === 'gear' ? gearName(entry.gear) : `${data.materials.get(entry.id)?.name}×${entry.count}`;
-  render(view,
-    lines?.length ? el('div', { class: 'panel small' }, lines.map((l) => el('div', {}, l))) : null,
+  return [
     el('h2', {}, 'バックパックがいっぱい'),
     el('div', { class: 'panel' }, '拾った物：', el('b', {}, label)),
     el('p', { class: 'muted small' }, '中の何かと入れ替えるか、あきらめるかを選んでください。'),
     el('ul', { class: 'choice-list' },
-      run.backpack.gear.map((x) => el('li', {}, el('button', { onclick: () => { resolveLoot(data, session, { type: 'gear', uid: x.uid }); showRun(); } }, `捨てる：${gearName(x)}`))),
-      Object.entries(run.backpack.materials).map(([id, n]) => el('li', {}, el('button', { onclick: () => { resolveLoot(data, session, { type: 'material', id }); showRun(); } }, `捨てる：${data.materials.get(id)?.name}×${n}`)))),
-    el('button', { class: 'ghost', onclick: () => { resolveLoot(data, session, null); showRun(); } }, 'あきらめる'));
+      run.backpack.gear.map((x) => el('li', {}, el('button', { onclick: () => { resolveLoot(data, session, { type: 'gear', uid: x.uid }); showRun(result); } }, `捨てる：${gearName(x)}`))),
+      Object.entries(run.backpack.materials).map(([id, n]) => el('li', {}, el('button', { onclick: () => { resolveLoot(data, session, { type: 'material', id }); showRun(result); } }, `捨てる：${data.materials.get(id)?.name}×${n}`)))),
+    el('button', { class: 'ghost', onclick: () => { resolveLoot(data, session, null); showRun(result); } }, 'あきらめる'),
+  ];
 }
 
-function showFieldItems() {
+function showFieldItems(result) {
   const g = session.game;
   const owned = Object.keys(g.items).filter((id) => FIELD_ITEM_EFFECTS.includes(data.items.get(id)?.effect));
   render(view,
@@ -180,11 +192,11 @@ function showFieldItems() {
         el('div', { class: 'choice-title' }, `${it.name} ×${g.items[id]}`), el('div', { class: 'muted' }, it.description),
         el('div', { class: 'row' }, g.party.map((m, i) => el('button', {
           onclick: () => {
-            try { session.update((game) => useItemOutsideBattle(data, game, id, i)); showFieldItems(); } catch (e) { alert(e.message); }
+            try { session.update((game) => useItemOutsideBattle(data, game, id, i)); showFieldItems(result); } catch (e) { alert(e.message); }
           },
         }, m.name))));
     }),
-    el('button', { onclick: () => showRun() }, 'もどる'));
+    el('button', { onclick: () => showRun(result) }, 'もどる'));
 }
 
 // ---------------- 戦闘 ----------------
@@ -192,7 +204,8 @@ function battleView() {
   return createBattleView({
     view, data, lex, scheduler, store, session,
     onEnd: () => {
-      const dg = data.dungeons.get(session.run.dungeonId);
+      const { dungeonId, floor, battleIndex } = session.run;
+      const dg = data.dungeons.get(dungeonId);
       const r = afterBattle(data, session);
       if (r.result === 'lose') {
         render(view,
@@ -203,7 +216,8 @@ function battleView() {
           el('button', { class: 'primary', onclick: () => showTown() }, '町へ'));
         return;
       }
-      showRun([r.result === 'fled' ? '逃げ切った' : '勝利！', ...r.lines]);
+      const battleCount = runFloorRow(data, { dungeonId, floor }).battles;
+      showRun({ ...r, floor, battleNumber: battleIndex + 1, battleCount });
     },
   });
 }
