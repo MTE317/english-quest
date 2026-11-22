@@ -5,15 +5,18 @@ import { createNewGame, PARTY_SIZE, normalizeGame } from '../game-state.js?v=fea
 import {
   computeStats, SLOTS, SLOT_LABEL, STAT_LABEL, canEquip, equipFromStorage, unequip, gearDef,
   aptitudeGrade, xpToNext, levelCap, gainXp, makeGear,
-} from '../character.js?v=features-2';
+} from '../character.js?v=jrpg-1';
 import {
   jobPaths, isLearned, learnBlock, learnSkill, equipBlock, equipSkill, unequipSkill, capacity, usedCapacity,
   commonPoints, commonBlock, learnCommon, masteryLevel, isJobMastered,
 } from '../growth.js?v=features-2';
-import { skillMp } from '../battle.js?v=features-2';
+import { skillMp } from '../battle.js?v=jrpg-1';
 import { el, render, stars } from '../dom.js';
 
+import { setSceneMusic } from '../battle-music.js?v=jrpg-1';
+
 const view = document.getElementById('view');
+setSceneMusic('facility');
 const session = new GameSession();
 session.installAutoSave(window);
 let data;
@@ -101,6 +104,15 @@ function gearLabel(gear, jobId) {
   return `${def.name}${enh}（Lv${def.itemLv}${apt ? `・適正${apt}` : ''}）`;
 }
 
+const slotIcons = { weapon: '⚔', offhand: '†', head: '♜', body: '🛡', arm: '◇', cloak: '▱', accessory1: '✦', accessory2: '✧' };
+
+function memberBanner(member) {
+  return el('div', { class: 'equipment-banner' },
+    el('span', { class: 'equipment-portrait', 'aria-hidden': 'true' }, iconOf(member.icon)),
+    el('div', {}, el('strong', {}, member.name),
+      el('span', { class: 'muted small' }, `${jobName(member.job)}　Lv ${member.lv}`)));
+}
+
 function showMember(index) {
   const g = session.game;
   const m = g.party[index];
@@ -114,61 +126,99 @@ function showMember(index) {
   ];
   render(view,
     el('button', { class: 'ghost', onclick: showParty }, '← パーティの一覧へ'),
-    el('div', { class: 'panel' },
-      el('div', { class: 'choice-title', style: 'font-size:1.2rem' }, `${iconOf(m.icon)} ${m.name}`),
-      el('div', { class: 'muted small' }, `${jobName(m.job)}（${data.jobsById.get(m.job).role}）`),
-      el('div', {}, `Lv ${m.lv}`, m.lv < cap ? el('span', { class: 'muted small' }, `　次のレベルまで ${xpToNext(data, m.lv) - m.xp}`) : el('span', { class: 'muted small' }, '　最大レベル')),
-    ),
-    el('h2', {}, '能力値'),
-    el('table', { class: 'stat-table' }, el('tbody', {}, statRows.map(([k, v]) => el('tr', {}, el('th', {}, k), el('td', {}, String(v)))))),
+    memberBanner(m),
     el('div', { class: 'row' },
-      el('button', { onclick: () => showSkills(index) }, 'スキル'),
+      el('button', { onclick: () => showSkills(index) }, 'スキルツリー'),
       el('button', { onclick: () => showCommon(index) }, '共通ツリー')),
-    el('h2', {}, '装備（8枠）'),
-    el('ul', { class: 'choice-list' },
+    el('h2', {}, '装備'),
+    el('ul', { class: 'equipment-slots' },
       SLOTS.map((slot) => {
         const gear = m.equip[slot];
         return el('li', {},
           el('button', { disabled: session.inDungeon, onclick: () => showSlot(index, slot) },
-            el('div', { class: 'muted small' }, SLOT_LABEL[slot]),
-            el('div', {}, gear ? gearLabel(gear, m.job) : '―　なし')));
+            el('span', { class: 'equipment-slot-label' },
+              el('span', { 'aria-hidden': 'true' }, slotIcons[slot]), SLOT_LABEL[slot]),
+            el('span', { class: 'equipment-slot-name' }, gear ? gearLabel(gear, m.job) : '未装備')));
       })),
+    el('details', { class: 'panel' }, el('summary', {}, '能力値'),
+      el('p', { class: 'muted small' }, m.lv < cap ? `次のレベルまで ${xpToNext(data, m.lv) - m.xp}` : '最大レベル'),
+      el('table', { class: 'stat-table' }, el('tbody', {}, statRows.map(([k, v]) => el('tr', {}, el('th', {}, k), el('td', {}, String(v))))))),
   );
   window.scrollTo(0, 0);
 }
 
 // ---------------- スキルツリー ----------------
-function showSkills(index, msg = null) {
-  const g = session.game;
-  const m = g.party[index];
-  const cap = capacity(data, m);
-  const used = usedCapacity(data, m);
-  const doIt = (fn) => { try { session.update((game) => fn(game.party[index])); showSkills(index); } catch (e) { showSkills(index, e.message); } };
-  const jobsWithAp = Object.keys(m.ap).filter((j) => data.jobsById.has(j));
-  const skillRow = (s) => {
-    const learned = isLearned(m, s);
-    const on = m.loadout.actions.includes(s.id) || m.loadout.passives.includes(s.id);
-    const lb = learnBlock(data, m, s);
-    const eb = equipBlock(data, m, s);
-    return el('div', { class: `skill ${learned ? 'learned' : ''}` },
-      el('div', {}, `${s.stage}. ${s.name}`, el('span', { class: 'tiny muted' }, `　${s.kind === 'passive' ? 'パッシブ' : `MP${skillMp(data, m, s)}`}・枠${s.cost}${s.isFinal ? '・奥義' : ''}`)),
-      !learned ? el('button', { disabled: !!lb, onclick: () => doIt((mm) => learnSkill(data, mm, s.id)) }, lb || `覚える（AP ${s.apToLearn}）`)
-        : on ? el('button', { class: 'ghost', onclick: () => doIt((mm) => unequipSkill(mm, s.id)) }, 'つけている（外す）')
-          : el('button', { disabled: !!eb, onclick: () => doIt((mm) => equipSkill(data, mm, s.id)) }, eb || 'つける'));
-  };
+function showSkills(index, jobId, skillId, message = '') {
+  const member = session.game.party[index];
+  const cap = capacity(data, member);
+  const used = usedCapacity(data, member);
+  const jobs = [member.job, ...Object.keys(member.ap).filter((id) => id !== member.job && data.jobsById.has(id))];
+  const job = jobs.includes(jobId) ? jobId : member.job;
+  const paths = [...jobPaths(data, job).entries()];
+  const skills = paths.flatMap(([, branch]) => branch);
+  let selected = skills.find((skill) => skill.id === skillId) ?? skills[0];
+  const detail = el('section', { class: 'skill-detail', 'aria-label': '選んだスキル' });
+  const nodes = new Map();
+
+  function updateSkill(fn) {
+    try {
+      session.update((game) => fn(game.party[index]));
+      showSkills(index, job, selected.id);
+    } catch (error) {
+      showSkills(index, job, selected.id, error.message);
+    }
+  }
+
+  function selectSkill(skill) {
+    selected = skill;
+    for (const [id, node] of nodes) node.setAttribute('aria-pressed', String(id === skill.id));
+    const learned = isLearned(member, skill);
+    const equipped = member.loadout.actions.includes(skill.id) || member.loadout.passives.includes(skill.id);
+    const learnReason = learnBlock(data, member, skill);
+    const equipReason = equipBlock(data, member, skill);
+    render(detail, el('h2', {}, skill.name),
+      el('p', { class: 'muted small' }, [skill.path, skill.kind === 'passive' ? 'パッシブ' : `MP ${skillMp(data, member, skill)}`,
+        `必要枠 ${skill.cost}`, skill.isFinal && '奥義'].filter(Boolean).join('・')),
+      !learned
+        ? el('button', { class: 'primary', disabled: !!learnReason,
+          onclick: () => updateSkill((m) => learnSkill(data, m, skill.id)) }, learnReason || `覚える（AP ${skill.apToLearn}）`)
+        : equipped
+          ? el('button', { onclick: () => updateSkill((m) => unequipSkill(m, skill.id)) }, 'スキル枠から外す')
+          : el('button', { class: 'primary', disabled: !!equipReason,
+            onclick: () => updateSkill((m) => equipSkill(data, m, skill.id)) }, equipReason || 'スキル枠につける'));
+  }
+
   render(view,
-    el('button', { class: 'ghost', onclick: () => showMember(index) }, `← ${m.name}へ`),
-    msg ? el('div', { class: 'panel small error' }, msg) : null,
-    el('div', { class: 'panel small' },
-      el('div', {}, `AP：${jobsWithAp.map((j) => `${jobName(j)} ${m.ap[j]}`).join('・')}`),
-      el('div', {}, `枠：通常 ${used.actions} / ${cap.actions}・パッシブ ${used.passives} / ${cap.passives}`),
-      el('div', { class: 'muted' }, '戦闘で AP がたまる。ほかのジョブで覚えたスキルも、枠の範囲でつけられる（奥義は今のジョブだけ）。')),
-    jobsWithAp.map((jobId) => [
-      el('h2', {}, `${jobName(jobId)}${isJobMastered(data, m, jobId) ? '（極めた！）' : ''}`),
-      [...jobPaths(data, jobId).entries()].map(([path, skills]) => el('div', { class: 'panel small' }, el('div', { class: 'choice-title' }, path), skills.map(skillRow))),
-    ]),
+    el('button', { class: 'ghost', onclick: () => showMember(index) }, `← ${member.name}へ`),
+    memberBanner(member),
+    el('h2', {}, 'スキルツリー'),
+    el('p', { class: 'panel small' }, `残りAP ${member.ap[job] ?? 0}・通常枠 ${used.actions}/${cap.actions}・パッシブ枠 ${used.passives}/${cap.passives}`),
+    message ? el('p', { class: 'error', role: 'status' }, message) : null,
+    jobs.length > 1 ? el('label', { class: 'small' }, 'ジョブ',
+      el('select', { class: 'select', onchange: (event) => showSkills(index, event.target.value) },
+        jobs.map((id) => el('option', { value: id, selected: id === job }, jobName(id))))) : null,
+    paths.length ? el('div', { class: 'skill-tree' },
+      el('div', { class: 'skill-tree-root' }, jobName(job), isJobMastered(data, member, job) ? '・極めた！' : ''),
+      el('div', { class: 'skill-branches', style: `--branches:${paths.length}` },
+        paths.map(([path, branch]) => el('section', { class: 'skill-branch' },
+          el('h3', {}, path),
+          el('ol', {}, branch.map((skill, i) => {
+            const learned = isLearned(member, skill);
+            const equipped = member.loadout.actions.includes(skill.id) || member.loadout.passives.includes(skill.id);
+            const available = !learned && !learnBlock(data, member, skill);
+            const node = el('button', { class: 'skill-node', 'aria-pressed': 'false',
+              onclick: () => selectSkill(skill) },
+              el('strong', {}, skill.name),
+              el('span', { class: `skill-node-state${equipped ? ' equipped' : ''}` },
+                equipped ? '装着中' : learned ? '習得済' : available ? '習得可' : '未習得'));
+            nodes.set(skill.id, node);
+            const linked = i > 0 && branch[i - 1].stage === skill.stage - 1;
+            return el('li', { class: linked ? 'linked' : '' }, node);
+          }))))),
+      detail) : el('p', { class: 'muted' }, 'このジョブのスキルはありません。'),
   );
-  window.scrollTo(0, 0);
+  if (selected) selectSkill(selected);
+  if (!jobId) window.scrollTo(0, 0);
 }
 
 function showCommon(index, msg = null) {
@@ -199,20 +249,20 @@ function showCommon(index, msg = null) {
 }
 
 // ---------------- 枠を選んで付けかえる ----------------
-function diffText(before, after) {
-  const keys = [['attack', '攻撃'], ['offhandAttack', 'サブ攻撃'], ['def', 'DEF'], ['res', 'RES'], ['spd', 'SPD'], ['hp', 'HP']];
-  const parts = keys.filter(([k]) => after[k] !== before[k]).map(([k, label]) => {
-    const d = after[k] - before[k];
-    return `${label}${d > 0 ? '+' : ''}${d}`;
+function equipmentChanges(before, after) {
+  const stats = [['attack', '攻撃力'], ['offhandAttack', 'サブ攻撃'], ['hp', '最大HP'], ['mp', '最大MP'],
+    ...['str', 'mag', 'def', 'res', 'spd', 'luk'].map((key) => [key, STAT_LABEL[key]])];
+  const changes = stats.filter(([key]) => before[key] !== after[key]).map(([key, label]) => {
+    const delta = Number((after[key] - before[key]).toFixed(2));
+    return el('span', { class: delta > 0 ? 'gain' : 'loss' }, `${label} ${delta > 0 ? '+' : ''}${delta}`);
   });
-  return parts.join('　') || '変化なし';
+  return changes.length ? changes : el('span', { class: 'muted' }, '能力値の変化なし');
 }
 
-function previewWith(m, slot, gear) {
-  const clone = structuredClone(m);
-  clone.equip[slot] = gear;
-  if (slot === 'weapon' && clone.equip.offhand && !data.weaponTypes.get(gearDef(data, gear).kind).dualWield) clone.equip.offhand = null;
-  return computeStats(data, clone);
+function previewWith(member, slot, gear) {
+  const preview = structuredClone(member);
+  equipFromStorage(data, { storage: { gear: [gear] } }, preview, slot, gear.uid);
+  return { stats: computeStats(data, preview), offhandRemoved: member.equip.offhand && !preview.equip.offhand };
 }
 
 function showSlot(index, slot) {
@@ -221,27 +271,45 @@ function showSlot(index, slot) {
   const before = computeStats(data, m);
   const kind = { offhand: 'weapon', accessory1: 'accessory', accessory2: 'accessory' }[slot] ?? slot;
   const cands = g.storage.gear.filter((x) => gearDef(data, x).slot === kind)
-    .sort((a, b) => gearDef(data, b).itemLv - gearDef(data, a).itemLv);
+    .map((gear) => ({ gear, check: canEquip(data, m, slot, gear) }))
+    .sort((a, b) => Number(b.check.ok) - Number(a.check.ok) || gearDef(data, b.gear).itemLv - gearDef(data, a.gear).itemLv);
+  const confirmation = el('section', { class: 'equipment-confirm', hidden: true, 'aria-label': '装備の比較' });
+  const selectedButtons = [];
+  function select(gear, source) {
+    for (const button of selectedButtons) button.setAttribute('aria-pressed', String(button === source));
+    const { stats, offhandRemoved } = previewWith(m, slot, gear);
+    confirmation.hidden = false;
+    render(confirmation,
+      el('div', { role: 'status' },
+        el('strong', {}, gearLabel(gear, m.job)),
+        el('div', { class: 'equipment-changes' }, equipmentChanges(before, stats)),
+        offhandRemoved && slot === 'weapon' ? el('p', { class: 'small' }, 'サブ武器も倉庫へ戻ります。') : null),
+      el('button', { class: 'primary', onclick: () => {
+        session.update((game) => equipFromStorage(data, game, game.party[index], slot, gear.uid));
+        showMember(index);
+      } }, 'この装備に替える'));
+  }
   render(view,
     el('button', { class: 'ghost', onclick: () => showMember(index) }, `← ${m.name}へ`),
-    el('h2', {}, `${m.name}の${SLOT_LABEL[slot]}`),
-    el('div', { class: 'panel small' }, '今：', m.equip[slot] ? gearLabel(m.equip[slot], m.job) : 'なし'),
+    memberBanner(m),
+    el('h2', {}, SLOT_LABEL[slot]),
+    el('div', { class: 'panel small' }, el('span', { class: 'equipment-slot-label' }, '装備中'),
+      m.equip[slot] ? gearLabel(m.equip[slot], m.job) : '未装備'),
     m.equip[slot] ? el('button', {
       onclick: () => { session.update((game) => unequip(data, game, game.party[index], slot)); showMember(index); },
     }, '外して倉庫へ') : null,
     el('h2', {}, '倉庫から選ぶ'),
     cands.length === 0 ? el('p', { class: 'muted' }, 'この枠につけられる装備は倉庫にありません。') : null,
-    el('ul', { class: 'choice-list' },
-      cands.map((gear) => {
-        const check = canEquip(data, m, slot, gear);
-        return el('li', {},
-          el('button', {
-            disabled: !check.ok,
-            onclick: () => { session.update((game) => equipFromStorage(data, game, game.party[index], slot, gear.uid)); showMember(index); },
-          },
-          el('div', {}, gearLabel(gear, m.job)),
-          el('div', { class: 'stats' }, check.ok ? diffText(before, previewWith(m, slot, gear)) : el('span', { class: 'error' }, check.reason))));
+    el('ul', { class: 'choice-list equipment-items' },
+      cands.map(({ gear, check }) => {
+        const button = el('button', { disabled: !check.ok, 'aria-pressed': 'false',
+          onclick: () => select(gear, button) },
+          el('strong', {}, gearLabel(gear, m.job)),
+          el('span', { class: 'stats' }, check.ok ? '比較する' : check.reason));
+        selectedButtons.push(button);
+        return el('li', {}, button);
       })),
+    confirmation,
   );
   window.scrollTo(0, 0);
 }

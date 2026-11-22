@@ -7,17 +7,20 @@ import { LearningStore, now } from '../storage.js?v=features-2';
 import { QuestionPicker } from '../picker.js';
 import { GameSession } from '../save.js?v=features-2';
 import { normalizeGame } from '../game-state.js?v=features-2';
-import { seededRng, currentRank } from '../dungeon.js?v=features-2';
+import { seededRng, currentRank } from '../dungeon.js?v=jrpg-1';
 import { checkRankUp } from '../town.js?v=features-2';
 import {
   stoneProgress, nextUnread, trialBlock, trialPlan, finishExam, promotionBlock, promotionPlan, starLearnedRatio,
   trainingReward, applyTraining,
 } from '../study.js?v=features-2';
-import { runQuiz } from '../ui/quiz-runner.js?v=question-speech-1';
-import { speak, canSpeak } from '../speech.js?v=question-speech-1';
+import { runQuiz } from '../ui/quiz-runner.js?v=jrpg-1';
+import { speak, canSpeak } from '../speech.js?v=jrpg-1';
 import { el, render, stars } from '../dom.js';
 
+import { setSceneMusic } from '../battle-music.js?v=jrpg-1';
+
 const view = document.getElementById('view');
+setSceneMusic('facility');
 const session = new GameSession();
 session.installAutoSave(window);
 let data; let lex; let scheduler; let store; let srs;

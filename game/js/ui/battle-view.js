@@ -2,12 +2,13 @@
 import { now } from '../storage.js?v=features-2';
 import { QuestionPicker, REASON_LABEL } from '../picker.js';
 import { makePracticeQuestion, questionDirection, questionSpeech, DIRECTION } from '../quiz.js?v=question-speech-1';
-import { speak, canSpeak, stopSpeech } from '../speech.js?v=question-speech-1';
-import { nextTurn, actionOptions, setPending, resolvePending, targetKind, canAct, skillMp, collectBattleHits } from '../battle.js?v=hit-effects-1';
-import { maxHp, maxMp } from '../character.js?v=features-2';
+import { speak, canSpeak, stopSpeech } from '../speech.js?v=jrpg-1';
+import { nextTurn, actionOptions, setPending, resolvePending, targetKind, canAct, skillMp, collectBattleHits } from '../battle.js?v=jrpg-1';
+import { maxHp, maxMp } from '../character.js?v=jrpg-1';
 import { el, render } from '../dom.js';
-import { startBattleMusic, finishBattleMusic, setBattleSpeechPlaying } from '../battle-music.js?v=question-speech-1';
-import { unlockBattleSound, playBattleHitSound } from '../battle-sound.js?v=hit-sound-1';
+import { monsterKnowledge } from '../monster-knowledge.js';
+import { startBattleMusic, finishBattleMusic } from '../battle-music.js?v=jrpg-1';
+import { unlockBattleSound, playBattleHitSound } from '../battle-sound.js?v=jrpg-1';
 
 const TARGET_PROMPT = {
   enemy: '攻撃する敵を選ぶ',
@@ -32,6 +33,8 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
   const log = el('details', { class: 'battle-log' },
     el('summary', { 'aria-label': '戦闘ログ' }, latest), history);
   const panel = el('section', { class: 'battle-controls', 'aria-labelledby': 'battle-controls-title' });
+  const encyclopedia = el('dialog', { class: 'battle-encyclopedia', 'aria-labelledby': 'battle-monster-name' });
+  encyclopedia.addEventListener('click', (event) => { if (event.target === encyclopedia) encyclopedia.close(); });
   const screen = el('div', { class: 'battle-screen' },
     el('div', { class: 'battle-location' },
       el('h2', {}, run.label ?? data.dungeons.get(run.dungeonId).name),
@@ -39,7 +42,7 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
     enemies,
     party,
     log,
-    panel);
+    panel, encyclopedia);
   screen.addEventListener('click', unlockBattleSound, { capture: true });
 
   function onEnd(result) {
@@ -72,35 +75,41 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
   function playHits(hits) {
     const cardFor = ({ side, i }) => (side === 'ally' ? party : enemies).children[i];
     const impacts = new Map();
-    for (const { target, source, damage } of hits) {
+    for (const { target, source, damage, effectiveness } of hits) {
       const card = cardFor(target);
       // 二刀流や連続した敵の攻撃は、受けたカードごとに合計して表示する。
-      const impact = impacts.get(card) ?? { damage: 0, fromAttack: false };
+      const impact = impacts.get(card) ?? { damage: 0, effects: new Set() };
       impact.damage += damage;
       if (source) {
         cardFor(source).classList.add('battle-striking');
-        impact.fromAttack = true;
+        impact.effects.add(effectiveness);
       }
       impacts.set(card, impact);
     }
-    let soundPlayed = false;
-    return Array.from(impacts, ([card, { damage, fromAttack }]) => {
+    const played = new Set();
+    return Array.from(impacts, ([card, { damage, effects }]) => {
+      const fromAttack = effects.size > 0;
+      const effect = effects.has('weak') ? 'weak' : effects.has('resist') ? 'resist' : 'normal';
+      const label = effect === 'weak' ? '弱点' : effect === 'resist' ? '耐性' : null;
       card.classList.add('battle-hit');
       if (fromAttack) card.classList.add('battle-attack-hit');
+      if (fromAttack) card.dataset.impact = effect;
       const popup = el('span', {
         class: 'battle-hit-number',
         'aria-hidden': 'true',
         onanimationstart: fromAttack ? () => {
-          // 画面上で同時に出る命中演出は、同じ音を一度だけ鳴らす。
-          if (soundPlayed) return;
-          soundPlayed = true;
-          playBattleHitSound();
+          for (const category of effects) {
+            if (played.has(category)) continue;
+            playBattleHitSound(category, played.size * 0.06);
+            played.add(category);
+          }
         } : null,
         onanimationend: () => {
           popup.remove();
           card.classList.remove('battle-hit', 'battle-attack-hit');
+          delete card.dataset.impact;
         },
-      }, `−${damage}`);
+      }, fromAttack && label ? el('small', {}, label) : null, `−${damage}`);
       card.append(popup);
       return popup;
     });
@@ -127,19 +136,43 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
       : el('div', { class: cls }, children);
   }
 
+  function inspectEnemy(enemy) {
+    const { weak, resist, normal, scanned } = monsterKnowledge(data, g, enemy);
+    render(encyclopedia, el('div', { class: 'battle-encyclopedia-body' },
+      el('span', { class: 'battle-enemy-icon', 'aria-hidden': 'true' }, enemy.icon),
+      el('h3', { id: 'battle-monster-name' }, enemy.name),
+      resource('HP', enemy.hp, enemy.maxHp, 'hp'),
+      el('p', {}, enemy.types.map((id) => data.monsterTypes.get(id)?.name ?? id).join('・')),
+      el('dl', {},
+        el('dt', {}, '判明した弱点'), el('dd', {}, weak.join('・') || (scanned ? 'なし' : '未判明')),
+        el('dt', {}, '判明した耐性'), el('dd', {}, resist.join('・') || '未判明'),
+        el('dt', {}, '通常の相性'), el('dd', {}, normal.join('・') || '未判明')),
+      el('p', { class: 'battle-notice' }, '攻撃が命中すると、使った属性の相性が分かります。'),
+      el('button', { onclick: () => encyclopedia.close(), autofocus: true }, '閉じる')));
+    encyclopedia.showModal();
+  }
+
   function drawField(actor, { kind, indices = [], select } = {}, action = null) {
+    if (encyclopedia.open) encyclopedia.close();
     turn.textContent = `${b.round}ターン目`;
     const selectedKind = action ? targetKind(data, action) : null;
     render(enemies, b.enemies.map((enemy, index) => {
       const targetable = kind === 'enemy' && indices.includes(index);
       const chosen = selectedKind === 'enemy' && action.target === index;
-      return unitCard(`battle-enemy${enemy.hp <= 0 ? ' down' : ''}`, chosen,
-        `${enemy.name}、HP ${enemy.hp}/${enemy.maxHp}`, targetable ? () => select(index) : null,
+      const label = `${enemy.name}、HP ${enemy.hp}/${enemy.maxHp}`;
+      const known = monsterKnowledge(data, g, enemy);
+      return el('button', {
+        class: `battle-enemy${enemy.hp <= 0 ? ' down' : ''}${targetable ? ' targetable' : ''}${chosen ? ' chosen' : ''}`,
+        'aria-label': `${label}、${targetable ? '対象に選ぶ' : '図鑑を開く'}`,
+        'aria-haspopup': targetable ? null : 'dialog',
+        onclick: targetable ? () => select(index) : () => inspectEnemy(enemy),
+      },
         el('span', { class: 'battle-enemy-icon', 'aria-hidden': 'true' }, enemy.icon),
+        targetable ? null : el('span', { class: 'battle-inspect', 'aria-hidden': 'true' }, '図鑑'),
         el('span', { class: 'battle-unit-name' }, enemy.name, enemy.boss ? ' 👑' : '', enemy.eliteId ? ' ⚠' : ''),
         resource('HP', enemy.hp, enemy.maxHp, 'hp'),
         conditions(enemy.statuses),
-        enemy.revealed ? el('span', { class: 'battle-conditions' }, '弱点 ' + enemy.weak.map((id) => data.elements.get(id)?.name ?? id).join('・')) : null);
+        known.weak.length ? el('span', { class: 'battle-known-weak' }, '弱点 ' + known.weak.join('・')) : null);
     }));
     render(party, g.party.map((member, index) => {
       const hp = maxHp(data, member);
@@ -305,7 +338,7 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
       ], { focus: false });
       panel.querySelector('.battle-next').focus();
       playHits(hits);
-      if (!isEn) speak(voice.answer, setBattleSpeechPlaying);
+      if (!isEn) speak(voice.answer);
     }
 
     showPanel(title, [
@@ -316,12 +349,12 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
         el('button', { onclick: () => answer(index), lang: isEn ? 'ja' : 'en' }, choice.text))),
     ], { detail: el('span', { class: `tag ${q.reason}` }, run.timeLimit ? `${run.timeLimit}秒` : REASON_LABEL[q.reason]), question: true });
     if (q.deadline) timeout = setTimeout(() => answer(-1), Math.max(0, q.deadline - Date.now()));
-    if (!q.deadline || Date.now() < q.deadline) speak(voice.prompt, setBattleSpeechPlaying);
+    if (!q.deadline || Date.now() < q.deadline) speak(voice.prompt);
   }
 
   function pronounce(text) {
     return text && canSpeak()
-      ? el('button', { class: 'battle-speak', 'aria-label': '英語の発音を聞く', onclick: () => speak(text, setBattleSpeechPlaying) }, '🔊')
+      ? el('button', { class: 'battle-speak', 'aria-label': '英語の発音を聞く', onclick: () => speak(text) }, '🔊')
       : null;
   }
 
@@ -329,7 +362,7 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
     start() {
       if (window.navigator?.userActivation?.isActive) unlockBattleSound();
       render(view, screen);
-      if (!b.result) startBattleMusic(screen);
+      if (!b.result) startBattleMusic();
       window.scrollTo(0, 0);
       loop();
     },

@@ -1,4 +1,6 @@
 // 英語の読み上げ（Web Speech API）。使えないブラウザでは何もしない。
+import { setSpeechPlaying } from './battle-music.js?v=jrpg-1';
+
 let activeSpeech;
 
 export function canSpeak() {
@@ -17,7 +19,7 @@ export function stopSpeech() {
   window.speechSynthesis.cancel();
 }
 
-export function speak(text, onSpeaking) {
+export function speak(text) {
   if (!canSpeak() || !text) return;
   stopSpeech();
   const synthesis = window.speechSynthesis;
@@ -29,11 +31,11 @@ export function speak(text, onSpeaking) {
   function finish() {
     if (activeSpeech?.utterance !== u) return;
     activeSpeech = null;
-    onSpeaking?.(false);
+    setSpeechPlaying(false);
   }
   activeSpeech = { utterance: u, finish };
   u.addEventListener('start', () => {
-    if (activeSpeech?.utterance === u) onSpeaking?.(true);
+    if (activeSpeech?.utterance === u) setSpeechPlaying(true);
   }, { once: true });
   u.addEventListener('end', finish, { once: true });
   u.addEventListener('error', finish, { once: true });

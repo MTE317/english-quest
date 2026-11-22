@@ -2,8 +2,9 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
   makeEnemy, createBattle, nextTurn, actionOptions, setPending, resolvePending, finishBattle, battleRewards,
-  fleeRate, knownSkills, targetKind, curedBy,
+  fleeRate, knownSkills, targetKind, curedBy, collectBattleHits,
 } from '../js/battle.js';
+import { monsterKnowledge } from '../js/monster-knowledge.js';
 import { createNewGame } from '../js/game-state.js';
 import { evaluate } from '../js/expr.js';
 import { maxHp } from '../js/character.js';
@@ -29,6 +30,28 @@ function fight(game, b, answer = () => true, choose = () => ({ type: 'attack', t
 }
 
 const mossyEnemies = (lv = 1) => ['slime', 'goblin'].map((id) => makeEnemy(data, id, { lv, dungeonId: 'mossy_cave' }));
+
+test('命中した属性だけを図鑑に記録し、弱点・耐性・通常の演出を判定する', () => {
+  for (const [effectiveness, weak, resist] of [
+    ['weak', ['slash', 'fire'], ['ice']],
+    ['resist', ['fire'], ['slash', 'ice']],
+    ['normal', ['fire'], ['ice']],
+  ]) {
+    const game = createNewGame(data, party);
+    const enemy = { ...makeEnemy(data, 'goblin', { lv: 1 }), weak, resist, hp: 9999, spd: 0 };
+    const b = createBattle(data, game, { enemies: [enemy], seed: 5 });
+    assert.deepEqual(game.catalog.monsters, ['goblin']);
+    assert.deepEqual(monsterKnowledge(data, game, enemy), { weak: [], resist: [], normal: [], scanned: false });
+    b.turn = { side: 'ally', i: 0 };
+    setPending(b, { type: 'attack', target: 0 }, Q);
+    const hits = collectBattleHits(b, () => resolvePending(data, game, b, true));
+    assert.equal(hits.length, 1);
+    assert.equal(hits[0].effectiveness, effectiveness);
+    const reloaded = JSON.parse(JSON.stringify(game));
+    assert.deepEqual(monsterKnowledge(data, reloaded, enemy)[effectiveness], [data.elements.get('slash').name]);
+    assert.deepEqual(reloaded.catalog.affinities.goblin.elements, ['slash']);
+  }
+});
 
 test('敵の能力値は balance.json の式（★の補正・ボスの倍率を含む）', () => {
   const E = readJson('balance.json').enemy;

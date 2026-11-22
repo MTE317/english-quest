@@ -3,11 +3,14 @@ import { splitList } from '../csv.js';
 import { GameSession } from '../save.js?v=features-2';
 import { Scheduler } from '../srs.js?v=features-2';
 import { now } from '../storage.js?v=features-2';
-import { speak, canSpeak } from '../speech.js?v=question-speech-1';
+import { speak, canSpeak, stopSpeech } from '../speech.js?v=jrpg-1';
 import { chantDay, nextChant, recordChant } from '../chant.js?v=features-2';
 import { el, render } from '../dom.js';
 
+import { setSceneMusic } from '../battle-music.js?v=jrpg-1';
+
 const view = document.getElementById('view');
+setSceneMusic('facility');
 const session = new GameSession();
 
 async function start() {
@@ -31,6 +34,7 @@ async function start() {
   }
 
   function showMenu(message) {
+    stopSpeech();
     const { daily, limit, choice } = chantDay(session.game, config, scheduler.dayOf(now()));
     const chapters = [...new Set(all.filter((c) => c.book === bookId).map((c) => c.chapter))];
     const bookName = (b) => b.name_ja || b.name || b.title || b.id;
@@ -49,6 +53,7 @@ async function start() {
   }
 
   function practice(seen, totalJp) {
+    stopSpeech();
     const selected = all.filter((c) => c.book === bookId && (!chapter || c.chapter === chapter));
     const c = nextChant(session.game, config, scheduler, scheduler.dayOf(now()), all, selected, seen);
     if (!c) return showMenu(`今回の詠唱は終了。獲得JP ${totalJp}`);
