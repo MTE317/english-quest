@@ -117,7 +117,7 @@ class Game:
                 if k: it[k] -= 1; used[k] += 1; c.hp = min(c.maxhp(), c.hp + B.item_amount(k, c.maxhp()) * know)
             if c.maxmp() > 40 and c.mp < c.maxmp() * 0.15:
                 for k in B.MP_ITEMS:
-                    if it[k] > 0: it[k] -= 1; used[k] += 1; c.mp = min(c.maxmp(), c.mp + B.item_amount(k, c.maxmp())); break
+                    if it[k] > 0: it[k] -= 1; used[k] += 1; B.MPSTAT.setdefault(min(5, (c.lv - 1) // 20), [0, 0, 0.0, 0, 0.0])[3] += 1; c.mp = min(c.maxmp(), c.mp + B.item_amount(k, c.maxmp())); break
         for c in s.party:
             if c.persist & {"石化", "呪い"} and it["万能薬"] > 0: it["万能薬"] -= 1; used["万能薬"] += 1; c.persist.clear()
         return used

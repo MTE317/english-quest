@@ -1,7 +1,7 @@
 {
  "_note": "シミュレーションで決めた仮の式。Lvは敵のレベル（2026-11-22 ★12版）",
  "enemy": {
-  "hp": "(150 + 6.5*Lv) * hp_mul * 1.68 * dungeon.enemy_mul * hp_rank_mul[★]",
+  "hp": "(150 + 6.5*Lv) * hp_mul * 1.478 * dungeon.enemy_mul * hp_rank_mul[★]",
   "boss_hp_mul": 4.5,
   "str_mag": "(15 + 4.5*Lv + 0.22*Lv^2) * atk_mul * dungeon.enemy_mul * atk_rank_mul[★]",
   "boss_atk_mul": 1.25,
@@ -148,5 +148,14 @@
   "items": "道具はバックパックとは別。種類ごとに10個まで",
   "town_storage": "町の倉庫は容量無限・無料。町に帰るとバックパックの中身は自動で倉庫へ移る",
   "fixed_cost": "月末に払うのはギルドの会費だけ（倉庫代はなくし、その分会費を1.5倍にした）"
+ },
+ "_note_2026_11_22b": "通常攻撃のMP回復とスキルMPの増加を入れたので、敵のHPを0.88倍（1.68→1.478）にした。30分/日でSランクまで約2.7年・1戦約2.8ラウンドで、前とほぼ同じ",
+ "mp_rules": {
+  "normal_attack_regen": "通常攻撃で正解したとき、最大MPの5%を回復（不正解は回復なし）",
+  "normal_attack_regen_rate": 0.05,
+  "skill_mp_cost": "ceil(skills.csv の mp × (1 + 0.015 × (Lv - 1)))。Lv99で約2.5倍。mp=0 のスキルは0のまま",
+  "skill_mp_per_lv": 0.015,
+  "_why": "スキルのMPが固定だと、Lvが上がって最大MPが増えるほどMPが余り、通常攻撃の回復も意味がなくなるため",
+  "sim": "30分/日：行動のうちスキルは約50%（Lvが上がっても変わらない）、平均のMP残りは40〜55%、MP回復薬も少し使う（sim/mp12.py）"
  }
 }

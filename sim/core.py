@@ -4,10 +4,10 @@ import db
 from db import JOBS, WEAPONS, ARMOR_W, BY_JOB, STAGE_AP, TIER
 
 T = dict(
-    mercy=0.0, wipe_xp_keep=0.0, farm_after_wipe=2, e_hp=1.68, hp0=150, hp1=6.5, s0=15, s1=4.5, s2=0.22, e_atk=1.62, boss_hp=4.5, boss_atk=1.25,
+    mercy=0.0, wipe_xp_keep=0.0, farm_after_wipe=2, e_hp=1.478, hp0=150, hp1=6.5, s0=15, s1=4.5, s2=0.22, e_atk=1.62, boss_hp=4.5, boss_atk=1.25,
     hp_rank_mul={1: 1.6, 2: 2.3, 3: 2.0, 4: 2.0, 5: 2.0, 6: 2.6, 7: 3.3, 8: 3.3, 9: 3.3, 10: 3.3, 11: 2.6, 12: 3.3},   # ★ごとの敵HP補正（★12版で前線から調整）
     atk_rank_mul={1: 1.491, 2: 2.029, 3: 1.803, 4: 1.803, 5: 1.803, 6: 2.25, 7: 2.756, 8: 2.756, 9: 2.756, 10: 2.756, 11: 2.25, 12: 2.756},
-    enh_base=1.8, elite_rate=0.08, xp_k=1.0, xp_pen=0.25, xp_pen_min=0.0, xp_free=1, rank_cap=0, lv_margin=0, mp_regen=0.10,
+    enh_base=1.8, elite_rate=0.08, xp_k=1.0, xp_pen=0.25, xp_pen_min=0.0, xp_free=1, rank_cap=0, lv_margin=0, mp_regen=0.10, mp_atk=0.05, mp_lv=0.015,
     acc_drop=db.BAL.get("accuracy_drop_per_rank", 0.03),
     borrow=1,            # ほかのジョブのスキルを持ち出す
     mastery_gate=1,      # 熟練度による装備条件

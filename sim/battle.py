@@ -1,5 +1,9 @@
 """戦闘：スキル・状態異常21種・戦闘中のアイテム・逃げる・特効"""
-import db
+import db, math
+MPSTAT = {}
+def mpc(u, s):
+    b = s["mp"]
+    return math.ceil(b * (1 + (u.lv - 1) * T.get("mp_lv", 0))) if b else 0
 from core import T, rnd, Char, Enemy
 from db import WEAPONS, STATUS_BY_NAME as SB
 
@@ -160,8 +164,8 @@ def use_item(u, party, ctx, cm, S, items):
     """戦闘中のアイテム。使ったらTrue"""
     if not T["items_in_battle"] or items is None: return False
     alive = [c for c in party if can_act(c, ctx)]; ko = [c for c in party if c.hp <= 0]
-    healers = [c for c in alive if c is not u and any(s["k"] in ("heal", "healall") and c.mp >= s["mp"] and allowed(c, s, ctx) for s in c.A)]
-    reviver = [c for c in alive if any(s["k"] == "revive" and c.mp >= s["mp"] for s in c.A)]
+    healers = [c for c in alive if c is not u and any(s["k"] in ("heal", "healall") and c.mp >= mpc(c, s) and allowed(c, s, ctx) for s in c.A)]
+    reviver = [c for c in alive if any(s["k"] == "revive" and c.mp >= mpc(c, s) for s in c.A)]
     factor = 1.0 if cm == 1 else cm
     know = 1 + party_has(party, "itemp")
     def take(k):
@@ -189,9 +193,9 @@ def choose_and_act(u, party, enemies, ctx, cm, rng, S, items):
     ko = [c for c in party if c.hp <= 0]
     boss = any(e.boss for e in alive_e)
     generous = boss or u.mp > u.maxmp() * 0.35
-    acts = [s for s in u.A if u.mp >= s["mp"] and allowed(u, s, ctx) and not (s.get("once") and (id(u), s["name"]) in ctx.once)]
+    acts = [s for s in u.A if u.mp >= mpc(u, s) and allowed(u, s, ctx) and not (s.get("once") and (id(u), s["name"]) in ctx.once)]
     def spend(s):
-        u.mp -= s["mp"]
+        u.mp -= mpc(u, s)
         if s.get("once"): ctx.once.add((id(u), s["name"]))
         S["skill_use"][s["name"]] = S["skill_use"].get(s["name"], 0) + 1
     hurt = [c for c in alive_p if c.hp / c.maxhp() < 0.6 and "呪い" not in ctx.pst[id(c)]]
@@ -294,9 +298,12 @@ def choose_and_act(u, party, enemies, ctx, cm, rng, S, items):
             v = sum(min(e.hp, est_one(sk, e) * sk["n"] / len(alive_e)) for e in alive_e); tgt = None
         else:
             tgt = max(alive_e, key=lambda e: (est_one(sk, e), -e.hp)); v = est_one(sk, tgt)
-        if sk and sk["mp"] > 0 and not boss: v *= 1 - min(0.5, sk["mp"] / max(1, u.mp) * 0.5)
+        if sk and sk["mp"] > 0 and not boss: v *= 1 - min(0.5, mpc(u, sk) / max(1, u.mp) * 0.5)
         if v > best[2]: best = (sk, tgt, v)
     sk, tgt, _ = best
+    _b = min(5, (u.lv - 1) // 20); MPSTAT.setdefault(_b, [0, 0, 0.0, 0, 0.0])
+    _m = MPSTAT[_b]; _m[0] += 1; _m[1] += 1 if sk else 0; _m[2] += u.mp / max(1, u.maxmp())
+    if sk is None and cm == 1 and T.get("mp_atk", 0): _g = min(u.maxmp() - u.mp, u.maxmp() * T["mp_atk"]); u.mp += _g; _m[4] += _g / max(1, u.maxmp())
     if sk: spend(sk)
     conf = "混乱" in ctx.pst[id(u)]
     if sk and sk["k"] == "fixed":
@@ -390,11 +397,11 @@ def battle(party, enemies, acc, rng, S, first=False, items=None, flee_policy=Fal
         for e in enemies: ctx.est[id(e)]["def"] = [oc, 99]; ctx.est[id(e)]["res"] = [oc, 99]
     for c in party:
         if not can_act(c, ctx): continue
-        ims = [s for s in c.A if s["k"] == "imbue" and c.mp >= s["mp"]]
+        ims = [s for s in c.A if s["k"] == "imbue" and c.mp >= mpc(c, s)]
         if ims:
             best = max(ims, key=lambda s: sum(e.em(s["el"]) for e in enemies if e.name in S["bestiary"]))
             if all(e.em(best["el"]) >= 1 for e in enemies if e.name in S["bestiary"]):
-                c.mp -= best["mp"]; ctx.imbue[id(c)] = [best["el"], 99]
+                c.mp -= mpc(c, best); ctx.imbue[id(c)] = [best["el"], 99]
     def end(res):
         S["rounds"].append(rounds); S["bq"].append(q)
         for c in party:
