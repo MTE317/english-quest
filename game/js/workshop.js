@@ -70,7 +70,12 @@ export function craft(data, game, def) {
     : typeMaterials(data, game, [{ count: 4, minRank: def.star, kind: 'common', text: `★${def.star}以上の通常素材` }]);
   pay(game, Number(recipe?.gold ?? data.economy.get(def.star).craft_gold), materials);
   if (prerequisite) game.storage.gear.splice(game.storage.gear.indexOf(prerequisite), 1);
-  const gear = makeGear(game, def.id, { quality: 1 + Number(recipe?.base_stat_bonus_pct ?? 15) / 100 });
+  // 専用レシピの固定効果は装備の永続効果として保存する。
+  // 鍛冶・付与と併用できるが、固定効果は振り直し対象にしない（craftedで制御）。
+  const gear = makeGear(game, def.id, {
+    quality: 1 + Number(recipe?.base_stat_bonus_pct ?? 15) / 100,
+    affixes: { ...(def.fixedEffects ?? {}) },
+  });
   gear.crafted = true;
   game.storage.gear.push(gear);
   return `${def.name}を制作した。`;
