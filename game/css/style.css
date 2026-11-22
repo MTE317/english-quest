@@ -32,6 +32,7 @@ h2 { font-size: 1.05rem; margin: 20px 0 8px; color: var(--accent); }
 .muted { color: var(--muted); font-size: .9rem; }
 .error { color: var(--bad); }
 .small { font-size: .85rem; }
+.tiny { font-size: .75rem; line-height: 1.3; min-height: 1em; }
 
 button, .btn {
   display: block; width: 100%; min-height: 48px; padding: 10px 14px; margin: 8px 0;
@@ -110,21 +111,6 @@ details summary { cursor: pointer; min-height: 44px; display: flex; align-items:
 .stat-table { width: 100%; font-size: .95rem; white-space: normal; }
 .stat-table th { position: static; background: none; color: var(--muted); font-weight: normal; width: 50%; }
 .stat-table td { position: static; background: none; text-align: right; }
-
-/* 戦闘 */
-.enemy-row { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin: 8px 0; }
-.enemy { flex: 1 1 30%; min-width: 96px; text-align: center; background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 6px; }
-.enemy-icon { font-size: 2rem; line-height: 1.2; }
-.enemy.down, .ally.down { opacity: .35; }
-.party-row { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin: 8px 0; }
-.ally { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 6px 8px; }
-.ally.active { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent) inset; }
-.tiny { font-size: .75rem; line-height: 1.3; min-height: 1em; }
-.battle-log { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 8px 10px; font-size: .85rem; margin: 8px 0; }
-.battle-log div + div { border-top: 1px dashed var(--line); }
-
-.compact-head { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 4px 12px; background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 6px 10px; }
-.compact-head + * { margin-top: 8px; }
 
 /* 町のタブ */
 .tabs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin: 8px 0; }
