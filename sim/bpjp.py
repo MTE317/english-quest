@@ -60,7 +60,7 @@ class G(world12.Game12):
             s.jp -= cost; s.G["jp_spent"] += cost
             old = c.job; c.change_job(j); s.G["switch_log"].append((s.day, old, j))
             if c.weapon["t"] not in JOBS[j]["w"]:
-                t = JOBS[j]["start_weapon"]; il = max(3, c.weapon["ilvl"] - 10) if not T["mastery_gate"] else 3
+                t = JOBS[j]["start_weapon"]; il = max(3, c.weapon["ilvl"] - 10)
                 c.weapon = dict(t=t, ilvl=il, q=1.0, enh=0, aff={}, el=None, src="ジョブチェンジ", rar=0)
 def DUNGEONS_rank(did): return world.DUNGEONS[did]["rank"]
 def one(a):
