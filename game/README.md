@@ -87,6 +87,8 @@ node --test tests/*.test.js  # recipes.test.js（171件・制作・戦闘の回�
 
 上級ジョブ・追加ダンジョン・固有装備を公開する環境には、必要な行だけを
 `data/extra_game_data.json` に入れる。値は既存 CSV と同じ列名をキーにした行の配列。
+通常版では空のオブジェクト `{}` を配置している。追加コンテンツのない公開環境でも
+存在しないURLを読まずに起動でき、追加コンテンツを使う環境はこのファイルの値を差し替える。
 対応するキーは `jobsAdvanced`、`jobUnlocks`、`jobWeaponApt`、`jobArmorApt`、
 `skills`、`jobMastery`、`monsters`、`materials`、`dungeons`、`dungeonFloors`、
 `dropTables`、`uniques`。出題教材は `rune_stones.csv` と `lexicon.csv` で追加する。
