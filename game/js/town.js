@@ -1,9 +1,9 @@
 // 町の基本：暦と月末の会費・ギルドのクエストと冒険者ランク・宿屋・道具屋・武器防具屋・神殿の復活。
 // data に数や式として書かれていないものは、シミュレーター（sim/world.py）と同じ値を TOWN_FORMULAS に置く（docs/requests.md で依頼済み）。
 import { evaluate } from './expr.js';
-import { makeGear, maxHp, maxMp, gearDef } from './character.js?v=features-1';
-import { addItem } from './loot.js?v=features-1';
-import { currentRank } from './dungeon.js?v=features-1';
+import { makeGear, maxHp, maxMp, gearDef } from './character.js?v=features-2';
+import { addItem } from './loot.js?v=features-2';
+import { currentRank } from './dungeon.js?v=features-2';
 
 export const TOWN_FORMULAS = Object.freeze({
   days_per_month: 30, // balance.json の calendar.days_per_month があればそちらを使う
@@ -69,8 +69,6 @@ function monthEnd(data, game) {
     game.overdue = (game.overdue ?? 0) + short;
     notes.push(`月末：会費 ${fee} が払えず、${short} を滞納した`);
   }
-  // 月が変わるとクエストの掲示板が入れかわる（受けているものは残る）
-  game.board = null;
   return notes;
 }
 
@@ -95,27 +93,59 @@ export function boardSize(data, game) {
   return TOWN_FORMULAS.board_size;
 }
 
-/** 掲示板を作る（今のランクの★のクエスト。賞金首はチェックリスト13番） */
-export function makeBoard(data, game, rng) {
+/**
+ * クエストを1つ作る（今のランクの★のクエスト）
+ */
+function makeQuest(data, game, rng) {
   const star = currentRank(data, game).maxDungeonRank;
   const types = data.questTypes;
   const quests = data.quests.filter((q) => q.rank === star && types.some((t) => t.id === q.type));
+  if (!quests.length) return null;
   const dungeons = [...data.dungeons.values()].filter((d) => d.rank === star);
-  const board = [];
-  for (let k = 0; k < boardSize(data, game) && quests.length; k++) {
-    const q = quests[Math.floor(rng() * quests.length)];
-    const count = q.countMin + Math.floor(rng() * (q.countMax - q.countMin + 1));
-    let target = null;
-    if (q.type === 'hunt') {
-      const pool = [...data.monsters.values()].filter((m) => m.role === 'normal' && m.dungeons.some((d) => dungeons.some((x) => x.id === d)));
-      target = pool[Math.floor(rng() * pool.length)]?.id ?? null;
-    } else if (q.type === 'bounty') {
-      target = q.target;
-    } else if (q.type === 'boss') {
-      target = dungeons[Math.floor(rng() * dungeons.length)]?.bossId ?? null;
-    }
-    board.push({ uid: (game.nextUid = (game.nextUid ?? 1) + 1), questId: q.id, type: q.type, rank: star, target, count, progress: 0 });
+  const q = quests[Math.floor(rng() * quests.length)];
+  const count = q.countMin + Math.floor(rng() * (q.countMax - q.countMin + 1));
+  let target = null;
+  if (q.type === 'hunt') {
+    const pool = [...data.monsters.values()].filter((m) => m.role === 'normal' && m.dungeons.some((d) => dungeons.some((x) => x.id === d)));
+    target = pool[Math.floor(rng() * pool.length)]?.id ?? null;
+  } else if (q.type === 'bounty') {
+    target = q.target;
+  } else if (q.type === 'boss') {
+    target = dungeons[Math.floor(rng() * dungeons.length)]?.bossId ?? null;
   }
+  return { uid: (game.nextUid = (game.nextUid ?? 1) + 1), questId: q.id, type: q.type, rank: star, target, count, progress: 0 };
+}
+
+// 掲示板（docs/checklist.md 8章・balance.json の quest_board）
+// - 枠の数は「クエスト掲示板 N件」。受けているクエストも枠を使う（受けられるのも N件まで）
+// - ダンジョンから町に戻るたびに、受けていない枠だけ入れかえる（refreshBoard）
+// - 報告して空いた枠は、その場で補充する（fillBoard）
+// - 全滅したら入る前の状態に戻るので、掲示板も入る前のまま（game の中にあるため）
+
+/** 空いている枠を埋める */
+export function fillBoard(data, game, rng) {
+  game.board = game.board ?? [];
+  const n = boardSize(data, game);
+  while (game.board.length + game.quests.length < n) {
+    const q = makeQuest(data, game, rng);
+    if (!q) break;
+    game.board.push(q);
+  }
+  return game.board;
+}
+
+/** 受けていない枠だけ入れかえる（町に戻ったとき・ランクが上がったとき） */
+export function refreshBoard(data, game, rng) {
+  game.board = [];
+  return fillBoard(data, game, rng);
+}
+
+/** 掲示板を新しく作る（受けているクエストがないときの全部の枠） */
+export function makeBoard(data, game, rng) {
+  const saved = game.quests;
+  game.quests = game.quests ?? [];
+  const board = refreshBoard(data, game, rng);
+  game.quests = saved;
   return board;
 }
 
@@ -132,7 +162,7 @@ export function questText(data, q) {
 export function acceptQuest(game, uid) {
   const i = (game.board ?? []).findIndex((q) => q.uid === uid);
   if (i < 0) throw new Error('そのクエストはない');
-  game.quests.push(game.board.splice(i, 1)[0]);
+  game.quests.push(game.board.splice(i, 1)[0]); // 枠はそのまま（受けたクエストが枠を使う）
 }
 
 /** 戦闘で倒した敵を、受けているクエストに数える（ダンジョンの戦闘に勝ったとき） */
@@ -189,6 +219,7 @@ export function reportQuest(data, game, uid, rng) {
   lines.push(`ランクのポイント +${pts}`);
   game.quests.splice(i, 1);
   lines.push(...checkRankUp(data, game));
+  fillBoard(data, game, rng); // 空いた枠はその場で補充（balance.json の quest_board.refill_on_report）
   return lines;
 }
 
@@ -212,7 +243,7 @@ export function checkRankUp(data, game) {
   const lines = [];
   for (let st = nextRankStatus(data, game); st && st.needs.length === 0; st = nextRankStatus(data, game)) {
     game.rank = st.next.id;
-    game.board = null;
+    game.board = []; // 受けていない枠は新しいランクのクエストに入れかえる（町の画面か報告のときに補充）
     lines.push(`冒険者ランクが「${st.next.title}」に上がった！`);
   }
   return lines;

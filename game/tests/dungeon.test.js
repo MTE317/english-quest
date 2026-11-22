@@ -137,3 +137,24 @@ test('道具は種類ごとに10個まで', () => {
   assert.equal(addItem(game, 'potion', 12), 2);
   assert.equal(game.items.potion, 10);
 });
+
+test('掲示板：町に戻ると受けていない枠が入れかわり、全滅したら入る前のまま', async () => {
+  const { fillBoard, acceptQuest, boardSize } = await import('../js/town.js');
+  const s = newSession();
+  s.update((g) => { fillBoard(data, g, seededRng({ rng: 5 })); acceptQuest(g, g.board[0].uid); g.items.return_feather = 1; });
+  const accepted = s.game.quests.map((q) => q.uid);
+  const offers = s.game.board.map((q) => q.uid);
+  // 帰還の羽で帰る → 受けていない枠だけ入れかわる
+  startRun(data, s, { dungeonId: 'mossy_cave', stoneId: 'rs_1_001', quizState: null, seed: 1 });
+  returnToTown(data, s, 'return_feather');
+  assert.deepEqual(s.game.quests.map((q) => q.uid), accepted);
+  assert.equal(s.game.board.length + s.game.quests.length, boardSize(data, s.game));
+  assert.ok(s.game.board.every((q) => !offers.includes(q.uid)));
+  // 全滅 → 掲示板は入る前のまま
+  const before = s.game.board.map((q) => q.uid);
+  startRun(data, s, { dungeonId: 'mossy_cave', stoneId: 'rs_1_001', quizState: null, seed: 2 });
+  for (const m of s.game.party) m.hp = 1;
+  startNextBattle(data, s); fightOut(s, 0);
+  assert.equal(afterBattle(data, s).result, 'lose');
+  assert.deepEqual(s.game.board.map((q) => q.uid), before);
+});
