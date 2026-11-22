@@ -3,69 +3,18 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>English Quest</title>
+  <title>冒険者の町 - English Quest</title>
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/town.css?v=town-home-1">
 </head>
 <body>
-  <main class="app">
-    <header class="bar"><h1>English Quest（作りかけ）</h1></header>
-    <p class="muted">いまは動作確認用の画面だけがあります。</p>
-    <a class="btn primary" href="town.html">町</a>
-    <a class="btn" href="dungeon.html">ダンジョン</a>
-    <a class="btn" href="party.html">パーティ</a>
-    <a class="btn" href="quiz.html">ルーンの問題（10問）</a>
-    <a class="btn" href="save.html">セーブの確認</a>
-    <a class="btn" href="data.html">データ確認</a>
-    <a class="btn" href="records.html">記録と設定</a>
-    <p id="save-status" class="muted small"></p>
-    <details class="panel">
-      <summary>デバッグ</summary>
-      <p class="small muted">パーティ・持ち物・ダンジョンの進行を消して、最初から始められます。</p>
-      <label class="small"><input id="reset-learning" type="checkbox"> 学習記録も消す</label>
-      <button id="reset-game" type="button" class="ghost error">初期化する</button>
-      <div id="reset-status" class="small" role="status"></div>
-    </details>
+  <main class="app town-app">
+    <div id="view"><h1>English Quest</h1><p class="muted">町を読み込み中…</p></div>
+    <footer class="town-footer">
+      <a href="records.html">記録と設定</a>
+      <a href="debug.html">開発用メニュー</a>
+    </footer>
   </main>
-  <script type="module">
-    import { GameSession } from './js/save.js?v=features-2';
-    import { LearningStore, safeStorage, setDebugDayOffset } from './js/storage.js?v=features-2';
-    const storage = safeStorage();
-    const s = new GameSession({ storage });
-    const line = document.getElementById('save-status');
-    const resetLearning = document.getElementById('reset-learning');
-    const resetStatus = document.getElementById('reset-status');
-
-    function showSaveStatus() {
-      line.textContent = s.hasSave
-        ? `セーブ：あり（${s.inDungeon ? 'ダンジョンの途中' : '町'}・最後に保存 ${new Date(s.state.savedAt).toLocaleString('ja-JP')}）`
-        : 'セーブ：なし';
-    }
-
-    document.getElementById('reset-game').addEventListener('click', () => {
-      const includeLearning = resetLearning.checked;
-      const target = includeLearning ? 'ゲームの進行と学習記録' : 'ゲームの進行';
-      if (!confirm(`${target}を初期化しますか？ 消去したデータは元に戻せません。ほかに開いているゲームのタブがあれば、閉じてから実行してください。`)) return;
-      try {
-        if (!storage) throw new Error('ブラウザーの保存領域を使用できません。');
-        s.deleteSave({ includeLearning });
-        if (includeLearning) {
-          new LearningStore(storage).clear();
-          setDebugDayOffset(0, storage);
-        }
-        resetLearning.checked = false;
-        resetStatus.textContent = `${target}を初期化しました。パーティを作って開始できます。`;
-      } catch (error) {
-        resetStatus.textContent = `初期化を完了できませんでした。${error.message}`;
-      }
-      showSaveStatus();
-    });
-
-    window.addEventListener('pageshow', (event) => {
-      if (!event.persisted) return;
-      s.load();
-      showSaveStatus();
-    });
-    showSaveStatus();
-  </script>
+  <script type="module" src="js/pages/town-page.js?v=town-home-1"></script>
 </body>
 </html>

@@ -1,0 +1,141 @@
+body:has(.town-app) {
+  background: radial-gradient(ellipse at top, #252f35, #11191f 44rem);
+}
+
+.town-app {
+  --bg: #11191f;
+  --panel: #1b272d;
+  --panel-2: #26353b;
+  --line: #405055;
+  --text: #f3eee3;
+  --muted: #b9c4c3;
+  --accent: #ebc686;
+  --rune: #b6d6ec;
+  max-width: 640px;
+  color: var(--text);
+}
+
+.town-app a:focus-visible,
+.town-app button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.town-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 16px;
+  margin: 2px 0 10px;
+}
+.town-header h1 {
+  margin: 0;
+  font-size: clamp(1.25rem, 5vw, 1.65rem);
+  line-height: 1.35;
+}
+.town-header .back {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--muted);
+}
+
+.town-status {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  margin: 0 0 12px;
+  padding: 7px 10px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--panel);
+}
+.town-status > div { flex: 1 1 auto; }
+.town-status dt { color: var(--muted); font-size: .73rem; }
+.town-status dd {
+  margin: 0;
+  font-size: .88rem;
+  font-weight: 650;
+  overflow-wrap: anywhere;
+}
+
+.town-adventure {
+  display: grid;
+  justify-items: start;
+  gap: 5px;
+  padding: 16px;
+  border: 1px solid #8b7655;
+  border-radius: 14px;
+  background: radial-gradient(ellipse at 85% 0%, #4c4b3d, transparent 75%),
+    linear-gradient(135deg, #2c393a, #1a292e);
+}
+.town-adventure h2 { margin: 0; font-size: 1.3rem; color: var(--text); }
+.town-adventure p { margin: 0; color: var(--muted); font-size: .88rem; }
+.town-adventure .btn { margin: 5px 0 0; }
+
+.town-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+.town-learning { margin: 10px 0 0; }
+.town-card {
+  display: grid;
+  grid-template-columns: 26px minmax(0, 1fr);
+  align-items: center;
+  gap: 7px;
+  min-height: 68px;
+  padding: 8px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: linear-gradient(150deg, var(--panel-2), var(--panel));
+  color: var(--text);
+  text-decoration: none;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+.town-card:hover { border-color: #927e5e; }
+.town-card:active { background: #3b443f; }
+.town-learning .town-card { border-color: #52696e; }
+.town-card-icon { color: var(--accent); font-size: 1.12rem; text-align: center; }
+.town-card strong { display: block; font-size: .95rem; }
+.town-card-detail { display: block; margin-top: 3px; color: var(--muted); font-size: .78rem; }
+.town-district h2 { margin: 15px 0 6px; font-size: .94rem; }
+
+.town-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 12px;
+  margin: 8px 0 0;
+  padding: 0 10px;
+  border: 1px solid #746349;
+  border-radius: 10px;
+  background: #302c25;
+}
+.town-actions a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: #ffe0a1;
+  font-size: .83rem;
+}
+
+.town-footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 15px;
+  margin: 16px 0 0;
+  border-top: 1px solid var(--line);
+}
+.town-footer a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--muted);
+  font-size: .84rem;
+}
+
+@media (max-width: 350px) {
+  .town-app { padding-inline: 10px; }
+  .town-card { grid-template-columns: 20px minmax(0, 1fr); gap: 5px; }
+}
