@@ -7,8 +7,6 @@ export const GROWTH_FORMULAS = Object.freeze({
   passive_capacity: 10, // パッシブの枠（sim の cap_p）
   common_points_per_level: 1, // 共通ツリーのポイント：Lv2 から1レベルごとに1（common_tree.csv に入手の決まりがないので仮）
   mastery_kills_per_level: 30, // 武器の熟練度：その種類の武器で30体倒すごとに1つ上がる（sim と同じ）
-  mastery_gate_base: 15, // 装備Lvがこれより上の武器は、熟練度が必要（sim と同じ）
-  mastery_gate_div: 6, //   必要な熟練度 = (装備Lv - 15) ÷ 6
 });
 
 // ---------------- 文で書かれた効果を読む（common_tree.csv の effect、job_mastery.csv の bonus_all_jobs） ----------------
@@ -226,10 +224,6 @@ export function masteryLevel(data, member, weaponType) {
 /** 熟練度による攻撃力の倍率 */
 export function masteryMul(data, member, weaponType) {
   return 1 + data.balance.battle.mastery_per_level * masteryLevel(data, member, weaponType);
-}
-/** その武器を装備するのに必要な熟練度 */
-export function masteryNeeded(def) {
-  return Math.max(0, Math.floor((def.itemLv - GROWTH_FORMULAS.mastery_gate_base) / GROWTH_FORMULAS.mastery_gate_div));
 }
 /** 倒したときに熟練度を数える（今の武器の種類） */
 export function addMasteryKill(data, member) {
