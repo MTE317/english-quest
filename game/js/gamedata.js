@@ -78,7 +78,9 @@ export function buildGameData(raw) {
     id: r.id, name: r.name, elements: splitList(r.elements), hands: toNumber(r.hands, 1),
     powerMul: toNumber(r.power_mul, 1), spdMod: toNumber(r.spd_mod, 0), critBonus: toNumber(r.crit_bonus, 0),
     defPierce: toNumber(r.def_pierce, 0), hits: splitList(r.hits).map(Number), feature: r.feature,
-    // 二刀流：dual_wield 列があればそれを使う。なければ片手武器は可、ただし説明に「二刀流はできない」とあれば不可
+    attackStat: r.attack_stat || 'phys',
+    traits: parseJsonCell(r.traits_json, `weapon_types.csv の ${r.id}`),
+    // 二刀流はCSVで指定。古い追加データには従来の判定を残す。
     dualWield: r.dual_wield != null && r.dual_wield !== ''
       ? r.dual_wield === '1' || r.dual_wield === 'true'
       : toNumber(r.hands, 1) === 1 && !String(r.feature).includes('二刀流はできない'),
