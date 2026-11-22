@@ -8,7 +8,7 @@ import { monsterKnowledge } from '../monster-knowledge.js';
 import { setSceneMusic } from '../battle-music.js?v=jrpg-1';
 
 import { installGameShell } from '../ui/game-shell.js';
-import { weaponIcon } from '../ui/weapon-icons.js';
+import { equipmentIcon } from '../ui/equipment-icons.js';
 
 const view = document.getElementById('view');
 const session = new GameSession();
@@ -56,9 +56,10 @@ async function show() {
             normal.length ? el('div', {}, '通常　', normal.join('・')) : null);
         }) : el('p', { class: 'muted' }, 'ダンジョンで出会った敵がここに記録されます。')),
       section(`装備図鑑（${gear.length} / ${data.equipment.size}）`, gear.length
-        ? gear.map((d) => d.slot === 'weapon'
-          ? el('div', { class: 'gear-with-icon' }, weaponIcon(d.kind), el('span', {}, d.name))
-          : el('div', {}, d.name)) : el('p', { class: 'muted' }, '手に入れた装備がここに記録されます。')),
+        ? gear.map((d) => {
+          const icon = equipmentIcon(d);
+          return icon ? el('div', { class: 'gear-with-icon' }, icon, el('span', {}, d.name)) : el('div', {}, d.name);
+        }) : el('p', { class: 'muted' }, '手に入れた装備がここに記録されます。')),
       section('称号', game?.titles?.length ? game.titles.map((title) => el('div', {}, title)) : el('p', {}, 'まだ称号を獲得していません。'))];
   }
   function log() {

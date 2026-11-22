@@ -34,8 +34,9 @@ h2 { font-size: 1.05rem; margin: 20px 0 8px; color: var(--accent); }
 .small { font-size: .85rem; }
 .tiny { font-size: .75rem; line-height: 1.3; min-height: 1em; }
 
-/* 武器種のドット絵は縮めず、32pxの整数サイズで表示する。 */
-.weapon-icon {
+/* 装備のドット絵は縮めず、32pxの整数サイズで表示する。 */
+.weapon-icon,
+.equipment-icon {
   display: inline-block;
   width: 32px;
   height: 32px;

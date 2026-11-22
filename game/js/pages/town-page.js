@@ -17,9 +17,10 @@ import { Scheduler } from '../srs.js?v=features-2';
 import { LearningStore, now } from '../storage.js?v=features-2';
 import { chainStep, stepLabel, acceptChain, talkChain, deliverChain, claimChain } from '../quest-chain.js?v=features-2';
 import { cureAtTemple, updateRuneModifiers } from '../temple.js?v=features-2';
-import { workshopView, managementView, templeExtras } from '../ui/facility-view.js?v=weapon-icons-1';
-import { itemShopView, gearShopView } from '../ui/town-shops.js?v=weapon-icons-1';
+import { workshopView, managementView, templeExtras } from '../ui/facility-view.js?v=armor-icons-1';
+import { itemShopView, gearShopView } from '../ui/town-shops.js?v=armor-icons-1';
 import { weaponIcon } from '../ui/weapon-icons.js';
+import { equipmentIcon } from '../ui/equipment-icons.js';
 import { el, render } from '../dom.js';
 import { setSceneMusic } from '../battle-music.js?v=jrpg-1';
 
@@ -303,7 +304,7 @@ function storage() {
     g.storage.gear.length ? el('div', { class: 'panel small' }, g.storage.gear.map((x) => {
       const def = gearDef(data, x);
       return el('div', { class: 'gear-with-icon' },
-        def.slot === 'weapon' ? weaponIcon(def.kind) : null, el('span', {}, def.name));
+        equipmentIcon(def), el('span', {}, def.name));
     })) : el('p', { class: 'muted small' }, 'なし'),
     el('h2', {}, '道具'),
     el('div', { class: 'panel small' }, Object.entries(g.items).map(([id, n]) => el('div', {}, `${data.items.get(id)?.name ?? id} ×${n}`))),

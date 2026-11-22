@@ -3,7 +3,7 @@ import { aptitudeGrade, canEquip, computeStats, equipFromStorage, gearDef, makeG
 import { LOOT_FORMULAS } from '../loot.js?v=features-2';
 import { buyGear, buyItem, gearShopStock, itemShopStock, sellGear, sellPrice } from '../town.js?v=features-2';
 import { goldText, shopView } from './shop-view.js?v=weapon-icons-1';
-import { weaponIcon } from './weapon-icons.js';
+import { equipmentIcon } from './equipment-icons.js';
 
 const itemCategories = [
   { id: 'hp', label: 'HP回復' }, { id: 'mp', label: 'MP回復' },
@@ -13,7 +13,7 @@ const itemIcons = { hp: '🧪', mp: '💧', cure: '🌿', other: '🌀' };
 const gearCategories = [
   { id: 'weapon', label: '武器' }, { id: 'armor', label: '防具' }, { id: 'accessory', label: '装飾品' },
 ];
-const gearIcons = { head: '⛑️', body: '🛡️', arm: '🧤', cloak: '🧥', accessory: '💍' };
+const gearIcons = { accessory: '💍' };
 const statLabels = {
   attack: '武器攻撃力', offhandAttack: 'サブ武器攻撃力', def: '防御力', res: '魔法防御力',
   hp: 'HP', mp: 'MP', str: 'STR', mag: 'MAG', spd: 'SPD', luk: 'LUK',
@@ -110,7 +110,7 @@ export function gearShopView(data, game, state, act) {
     const rarity = data.rarityTable.find((r) => r.id === gear.rarity)?.name ?? gear.rarity;
     return {
       id, price, rarity: gear.rarity, name: gearName(def, gear), owned: owned.get(def.id) ?? 0,
-      icon: def.slot === 'weapon' ? () => weaponIcon(def.kind) : gearIcons[def.slot],
+      icon: () => equipmentIcon(def) ?? gearIcons[def.slot],
       category: def.slot === 'weapon' || def.slot === 'accessory' ? def.slot : 'armor',
       description: [stars(star), kind, `装備Lv ${def.itemLv}`, rarity].filter(Boolean).join(' ／ '),
       details: () => equipmentDetails(data, game, def, gear),

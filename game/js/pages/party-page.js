@@ -18,6 +18,7 @@ import { setSceneMusic } from '../battle-music.js?v=jrpg-1';
 
 import { installGameShell } from '../ui/game-shell.js';
 import { weaponIcon } from '../ui/weapon-icons.js';
+import { armorIcon, equipmentIcon } from '../ui/equipment-icons.js';
 
 const view = document.getElementById('view');
 setSceneMusic('facility');
@@ -133,11 +134,11 @@ function gearLabel(gear, jobId) {
 function gearNameWithIcon(gear, jobId, tag = 'span') {
   const def = gearDef(data, gear);
   return el(tag, { class: 'equipment-gear-name' },
-    def.slot === 'weapon' ? weaponIcon(def.kind) : null,
+    equipmentIcon(def),
     el('span', {}, gearLabel(gear, jobId)));
 }
 
-const slotIcons = { weapon: '⚔', offhand: '†', head: '♜', body: '🛡', arm: '◇', cloak: '▱', accessory1: '✦', accessory2: '✧' };
+const slotIcons = { weapon: '⚔', offhand: '†', accessory1: '✦', accessory2: '✧' };
 
 function memberBanner(member) {
   return el('div', { class: 'equipment-banner' },
@@ -168,10 +169,11 @@ function showMember(index) {
       SLOTS.map((slot) => {
         const gear = m.equip[slot];
         const def = gear ? gearDef(data, gear) : null;
+        const icon = equipmentIcon(def) ?? armorIcon(slot);
         return el('li', {},
           el('button', { disabled: session.inDungeon, onclick: () => showSlot(index, slot) },
             el('span', { class: 'equipment-slot-label' },
-              def?.slot === 'weapon' ? weaponIcon(def.kind) : el('span', { 'aria-hidden': 'true' }, slotIcons[slot]),
+              icon ?? el('span', { 'aria-hidden': 'true' }, slotIcons[slot]),
               SLOT_LABEL[slot]),
             el('span', { class: 'equipment-slot-name' }, gear ? gearLabel(gear, m.job) : '未装備')));
       })),
