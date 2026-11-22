@@ -107,8 +107,18 @@ export function baseStat(data, member, stat) {
   return evaluate(stat === 'hp' ? p.hp : p.other_stats, { g, Lv: member.lv });
 }
 
+/** 戦闘のあとも残る状態異常（衰弱など maxhp_down）による最大HPの割合 */
+function persistHpFactor(data, member) {
+  let f = 1;
+  for (const id of member.persist ?? []) {
+    const st = data.statusEffects?.get(id);
+    if (st?.kind === 'maxhp_down') f -= st.value;
+  }
+  return Math.max(0.1, f);
+}
+
 export function maxHp(data, member) {
-  return Math.max(1, Math.round(baseStat(data, member, 'hp') + affixSum(member, 'HP')));
+  return Math.max(1, Math.round((baseStat(data, member, 'hp') + affixSum(member, 'HP')) * persistHpFactor(data, member)));
 }
 export function maxMp(data, member) {
   return Math.round(evaluate(data.balance.player.mp, { gMAG: grade(data, member, 'mag'), Lv: member.lv }));
@@ -254,7 +264,7 @@ export function createMember(data, game, spec, index) {
   if (!data.jobsById.has(spec.job)) throw new Error(`ジョブ ${spec.job} がない`);
   const member = {
     id: `m${index + 1}`, name: spec.name, icon: spec.icon, job: spec.job,
-    lv: 1, xp: 0, hp: 0, mp: 0, ap: { [spec.job]: 0 },
+    lv: 1, xp: 0, hp: 0, mp: 0, ap: { [spec.job]: 0 }, persist: [],
     equip: Object.fromEntries(SLOTS.map((s) => [s, null])),
   };
   for (const [slot, id] of Object.entries(starterGearIds(data, spec.job))) {

@@ -25,12 +25,20 @@ export class QuestionPicker {
    * @param scheduler Scheduler
    * @param stoneId 持ってきたルーンストーン
    * @param nowMs 開始の時刻
+   * @param state toState() で保存したもの（ダンジョンの途中から再開するとき）
    */
-  constructor({ lex, store, scheduler, stoneId, nowMs }) {
+  constructor({ lex, store, scheduler, stoneId, nowMs, state = null }) {
     this.lex = lex;
     this.store = store;
     this.scheduler = scheduler;
     this.stoneId = stoneId;
+    if (state) {
+      Object.assign(this, {
+        today: state.today, asked: state.asked, lastAskedAt: new Map(state.lastAskedAt), retry: state.retry,
+        newIntroduced: state.newIntroduced, dueQueue: state.dueQueue, dueAtStart: state.dueAtStart, newLimit: state.newLimit,
+      });
+      return;
+    }
     this.today = scheduler.dayOf(nowMs);
     this.asked = 0; // 出した問題の数
     this.lastAskedAt = new Map(); // id → 何問目に出したか
@@ -95,6 +103,14 @@ export class QuestionPicker {
     // やり直しが残っていれば、あけずに出す
     if (this.retry.length) return pick(this.retry.shift().id, REASON.RETRY);
     return null;
+  }
+
+  /** セーブに入れる形（1回の遠征の中の出題の状態） */
+  toState() {
+    return {
+      stoneId: this.stoneId, today: this.today, asked: this.asked, lastAskedAt: [...this.lastAskedAt], retry: this.retry,
+      newIntroduced: this.newIntroduced, dueQueue: this.dueQueue, dueAtStart: this.dueAtStart, newLimit: this.newLimit,
+    };
   }
 
   /** 答えた結果を知らせる（間違えたらこの回の中でもう一度出す） */

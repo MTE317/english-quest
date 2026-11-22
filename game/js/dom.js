@@ -8,13 +8,13 @@ export function el(tag, attrs = {}, ...children) {
     else if (k === 'class') node.className = v;
     else node.setAttribute(k, v === true ? '' : v);
   }
-  for (const c of children.flat()) {
+  for (const c of children.flat(Infinity)) {
     if (c == null || c === false) continue;
     node.append(c instanceof Node ? c : document.createTextNode(String(c)));
   }
   return node;
 }
 export function render(root, ...children) {
-  root.replaceChildren(...children.flat().filter((c) => c != null && c !== false));
+  root.replaceChildren(...children.flat(Infinity).filter((c) => c != null && c !== false));
 }
 export function stars(n) { return '★'.repeat(Math.max(0, n)); }

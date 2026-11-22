@@ -14,6 +14,15 @@ const FILES = {
   equipment: 'equipment.csv',
   icons: 'appearance_icons.csv',
   rarities: 'rarities.csv',
+  monsters: 'monsters.csv',
+  monsterTypes: 'monster_types.csv',
+  elements: 'elements.csv',
+  statusEffects: 'status_effects.csv',
+  skills: 'skills.csv',
+  items: 'items.csv',
+  elitePrefixes: 'elite_prefixes.csv',
+  dungeons: 'dungeons.csv',
+  dungeonFloors: 'dungeon_floors.csv',
 };
 
 const byId = (rows, key = 'id') => new Map(rows.map((r) => [r[key], r]));
@@ -66,6 +75,81 @@ export function buildGameData(raw) {
     equipment,
     icons: raw.icons.map((r) => ({ id: r.id, category: r.category, icon: r.icon })),
     rarities: raw.rarities.map((r) => ({ id: r.id, name: r.name })),
+    ...buildBattleData(raw),
+  };
+}
+
+/**
+ * 強い個体の冠の効果：`atk_mul:1.25|element:ice|status:freeze:0.2`
+ * → { muls: { atk_mul: 1.25 }, element: 'ice', status: { id: 'freeze', rate: 0.2 }, other: { eva: 0.15 } }
+ */
+export function parseEliteMods(cell) {
+  const out = { muls: {}, element: null, status: null, other: {} };
+  for (const part of splitList(cell)) {
+    const [key, a, b] = part.split(':').map((x) => x.trim());
+    if (key === 'element') out.element = a;
+    else if (key === 'status') out.status = { id: a, rate: Number(b) };
+    else if (key.endsWith('_mul')) out.muls[key] = Number(a);
+    else out.other[key] = Number(a);
+  }
+  return out;
+}
+
+function parseJsonCell(text, where) {
+  if (!text) return {};
+  try { return JSON.parse(text); } catch { throw new Error(`${where} の JSON が読めない`); }
+}
+
+/** 戦闘で使うデータ（モンスター・属性・状態異常・スキル・道具・ダンジョン） */
+function buildBattleData(raw) {
+  if (!raw.monsters) return {};
+  const statusEffects = raw.statusEffects.map((r) => ({
+    id: r.id, name: r.name, group: r.group, kind: r.kind, value: toNumber(r.value, 0), turns: toNumber(r.turns, 1),
+    persists: r.persists_after_battle === '1', cure: r.cure,
+  }));
+  const monsters = raw.monsters.map((r) => ({
+    id: r.id, name: r.name, icon: r.icon, rank: toNumber(r.dungeon_rank, 1), dungeons: splitList(r.dungeons),
+    types: splitList(r.types), weak: splitList(r.weak), resist: splitList(r.resist),
+    hpMul: toNumber(r.hp_mul, 1), atkMul: toNumber(r.atk_mul, 1), defMul: toNumber(r.def_mul, 1), resMul: toNumber(r.res_mul, 1), spdMul: toNumber(r.spd_mul, 1),
+    magicRate: toNumber(r.magic_rate, 0), status: r.status || null, statusRate: toNumber(r.status_rate, 0),
+    attackElement: r.attack_element && r.attack_element !== 'none' ? r.attack_element : null,
+    season: r.season, replaces: r.replaces || null, isBoss: r.is_boss === '1', role: r.role,
+    materialCommon: r.material_common, materialRare: r.material_rare,
+  }));
+  const skills = raw.skills.map((r) => ({
+    id: r.id, job: r.job, path: r.path, stage: toNumber(r.stage, 1), name: r.name, kind: r.kind,
+    cost: toNumber(r.cost, 0), mp: toNumber(r.mp, 0), apToLearn: toNumber(r.ap_to_learn, 0), isFinal: r.is_final === '1',
+    elements: splitList(r.element).filter((e) => e !== 'none'),
+    effect: parseJsonCell(r.effect_json, `skills.csv の ${r.id}`),
+  }));
+  const items = raw.items.map((r) => ({
+    id: r.id, name: r.name, price: toNumber(r.price, 0), shopRank: toNumber(r.shop_rank, 1), effect: r.effect,
+    value: toNumber(r.value, null), valueText: r.value, target: r.target, description: r.description, turns: toNumber(r.turns, null), source: r.source,
+  }));
+  const elitePrefixes = raw.elitePrefixes.map((r) => ({
+    id: r.id, prefix: r.prefix, mods: parseEliteMods(r.mods),
+    description: r.description, minStar: toNumber(r.min_star, 1), appearRate: toNumber(r.appear_rate, 0), rewardMul: toNumber(r.reward_mul, 1),
+  }));
+  const dungeons = raw.dungeons.map((r) => ({
+    id: r.id, rank: toNumber(r.rank, 1), name: r.name, kind: r.kind, days: toNumber(r.days, 1), floors: toNumber(r.floors, 1),
+    itemLvMin: toNumber(r.item_lv_min, 1), itemLvMax: toNumber(r.item_lv_max, 1), returnPointFloor: toNumber(r.return_point_floor, 0),
+    bossId: r.boss_id, enemyMul: toNumber(r.enemy_mul, 1), incomeMul: toNumber(r.income_mul, 1), character: r.character,
+  }));
+  const floors = raw.dungeonFloors.map((r) => ({
+    dungeonId: r.dungeon_id, floor: toNumber(r.floor, 1), enemyLevel: toNumber(r.enemy_level, 1), battles: toNumber(r.battles, 1),
+    enemiesPerBattle: toNumber(r.enemies_per_battle, 1), lastBattleIsBoss: r.last_battle_is_boss === '1', returnPointAfter: r.return_point_after === '1',
+  }));
+  return {
+    monsters: byId(monsters),
+    monsterTypes: byId(raw.monsterTypes.map((r) => ({ id: r.id, name: r.name }))),
+    elements: byId(raw.elements.map((r) => ({ id: r.id, name: r.name, kind: r.kind }))),
+    statusEffects: byId(statusEffects),
+    statusByName: new Map(statusEffects.map((s) => [s.name, s])),
+    skills: byId(skills),
+    items: byId(items),
+    elitePrefixes,
+    dungeons: byId(dungeons),
+    dungeonFloors: floors,
   };
 }
 
