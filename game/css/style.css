@@ -97,3 +97,16 @@ input[type=search] {
   background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius);
 }
 details summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; }
+
+/* パーティ */
+.meter { height: 6px; background: var(--panel); border-radius: 999px; overflow: hidden; margin-top: 4px; }
+.meter span { display: block; height: 100%; }
+.meter.hp span { background: var(--good); }
+.meter.mp span { background: var(--rune); }
+.select {
+  display: block; width: 100%; min-height: 44px; margin: 4px 0 8px; padding: 6px 10px; font: inherit;
+  color: var(--text); background: var(--panel-2); border: 1px solid var(--line); border-radius: 8px;
+}
+.stat-table { width: 100%; font-size: .95rem; white-space: normal; }
+.stat-table th { position: static; background: none; color: var(--muted); font-weight: normal; width: 50%; }
+.stat-table td { position: static; background: none; text-align: right; }
