@@ -69,6 +69,8 @@ function statChanges(before, after, slot) {
 function equipmentDetails(data, game, def, gear) {
   const slots = { weapon: ['weapon', 'offhand'], accessory: ['accessory1', 'accessory2'] }[def.slot] ?? [def.slot];
   return el('section', { class: 'shop-comparison' }, el('h3', {}, '装備条件・性能比較'),
+    def.slot === 'weapon' ? el('p', { class: 'muted small' },
+      `武器特性：${data.weaponTypes.get(def.kind)?.feature ?? 'なし'}`) : null,
     game.party.map((member) => {
       const checks = slots.map((slot) => ({ slot, ...canEquip(data, member, slot, gear) }));
       const allowed = checks.filter(({ ok }) => ok);
