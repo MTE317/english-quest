@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { buildLexicon } from '../js/lexicon.js';
 import { Scheduler } from '../js/srs.js';
 import { LearningStore } from '../js/storage.js';
 import { QuestionPicker, REASON } from '../js/picker.js';
@@ -36,12 +37,14 @@ test('慣れないうちは別の石から、慣れたら同じ石から', () =>
 });
 
 test('慣れたら、つづりの似た単語が選ばれやすい', () => {
-  const w = lex.words.find((x) => x.en === 'resign');
-  const q = makeQuestion(w, lex, { direction: DIRECTION.JA_EN, familiar: true, rng: seededRng(1) });
-  // 同じ石の word の中でつづりの近いもの（reschedule / request など）が入る
+  const fixture = buildLexicon([{ id: 'spelling', star: '1' }], ['resign', 'design', 'resigned', 'resigning', 'elephant', 'mountain', 'galaxy'].map((en, i) =>
+    ({ id: String(i), stone_id: 'spelling', kind: 'word', en, ja: String(i), star: '1' })));
+  const w = fixture.words[0];
+  const q = makeQuestion(w, fixture, { direction: DIRECTION.JA_EN, familiar: true, rng: seededRng(1) });
+  // 同じ石の word の中でつづりの近いもの（design / resigned など）が入る
   const avg = q.choices.filter((c) => c.id !== w.id)
     .reduce((a, c) => a + editDistance(w.en, c.text), 0) / 3;
-  const all = lex.wordsByStone.get(w.stoneId).filter((x) => x.id !== w.id);
+  const all = fixture.wordsByStone.get(w.stoneId).filter((x) => x.id !== w.id);
   const avgAll = all.reduce((a, x) => a + editDistance(w.en, x.en), 0) / all.length;
   assert.ok(avg < avgAll, `${avg} < ${avgAll}`);
 });

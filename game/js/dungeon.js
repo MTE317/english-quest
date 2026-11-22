@@ -6,13 +6,15 @@
 //   'loot'         … 拾ったものがバックパックに入りきらない（入れ替えるかあきらめるかを選ぶ）
 //   'return_point' … 帰還ポイント（帰るか先へ進むかを選ぶ）
 //   'cleared'      … いちばん奥のボスを倒した（町に帰るだけ）
-import { createBattle, finishBattle, battleRewards } from './battle.js';
-import { makeEncounter, floorRow } from './encounter.js';
-import { rollBattleLoot, addToBackpack, swapIntoBackpack, unloadBackpack } from './loot.js';
-import { gainXp, maxHp, maxMp } from './character.js';
-import { curedBy } from './battle.js';
-import { advanceDays, countKills } from './town.js';
-import { memberMods } from './growth.js';
+import { createBattle, finishBattle, battleRewards } from './battle.js?v=features-1';
+import { makeEncounter, floorRow, planBounty } from './encounter.js?v=features-1';
+import { rollBattleLoot, addToBackpack, swapIntoBackpack, unloadBackpack } from './loot.js?v=features-1';
+import { gainXp, maxHp, maxMp, affixSum } from './character.js?v=features-1';
+import { curedBy } from './battle.js?v=features-1';
+import { advanceDays, calendarOf, countKills } from './town.js?v=features-1';
+import { updateChains } from './quest-chain.js?v=features-1';
+import { discoverJobs } from './temple.js?v=features-1';
+import { memberMods } from './growth.js?v=features-1';
 
 /** 乱数の種から 0〜1 の乱数を返す関数（状態は obj[key] に入れて保存できる） */
 export function seededRng(obj, key = 'rng') {
@@ -58,6 +60,7 @@ export function startRun(data, session, { dungeonId, stoneId, quizState, seed })
     run.quiz = quizState;
     run.rng = seed >>> 0;
     run.notices = advanceDays(data, game, dg.days);
+    run.bounty = planBounty(data, game, dungeonId, seededRng(run));
   });
 }
 
@@ -75,7 +78,12 @@ export function startNextBattle(data, session) {
   const run = session.run;
   if (run.state !== 'ready') throw new Error('今は戦闘を始められない');
   const rng = seededRng(run);
-  const enemies = makeEncounter(data, run.dungeonId, run.floor, rng, { boss: isBossBattle(data, run) });
+  const bounty = run.bounty?.floor === run.floor && run.bounty?.battle === run.battleIndex ? run.bounty.monsterId : null;
+  const dungeon = data.dungeons.get(run.dungeonId);
+  const season = dungeon.kind === '季節の地' ? calendarOf(data, session.game.day).season?.id : null;
+  const enemies = makeEncounter(data, run.dungeonId, run.floor, rng, { boss: isBossBattle(data, run), season, bountyId: bounty, elites: true });
+  session.game.catalog ??= { gear: [], monsters: [] };
+  session.game.catalog.monsters = [...new Set([...session.game.catalog.monsters, ...enemies.map((enemy) => enemy.monsterId)])];
   session.setBattle(createBattle(data, session.game, { enemies, seed: Math.floor(rng() * 4294967296), firstBattle: run.battlesDone === 0 }));
 }
 
@@ -96,7 +104,13 @@ export function afterBattle(data, session) {
   session.endBattle((g, run) => {
     if (b.result === 'win') {
       countKills(g, b.enemies);
+      updateChains(data, g, run.dungeonId, run.floor, b.enemies);
       const r = battleRewards(data, g, b);
+      const practice = b.learningRewards;
+      if (practice?.answers) {
+        const scale = practice.total / practice.answers;
+        r.xp = r.xp.map((value) => Math.round(value * scale));
+      }
       g.party.forEach((m, i) => {
         const xp = r.xp[i];
         const ap = r.ap[i];
@@ -110,17 +124,33 @@ export function afterBattle(data, session) {
         const regen = memberMods(data, m).mp_regen ?? 0;
         if (regen && m.hp > 0) m.mp = Math.min(maxMp(data, m), Math.round(m.mp + maxMp(data, m) * regen));
       }
-      const dropBonus = Math.max(0, ...g.party.filter((m) => m.hp > 0).map((m) => memberMods(data, m).drop ?? 0));
+      const survivors = g.party.filter((m) => m.hp > 0);
+      for (const m of survivors) {
+        const regen = memberMods(data, m).hp_regen ?? 0;
+        if (regen) m.hp = Math.min(maxHp(data, m), Math.round(m.hp + maxHp(data, m) * regen));
+      }
+      const dropBonus = Math.max(0, ...survivors.map((m) => (memberMods(data, m).drop ?? 0) + affixSum(m, 'DROP') / 100));
+      const goldBonus = Math.max(0, ...survivors.map((m) => memberMods(data, m).gold ?? 0));
       loot = rollBattleLoot(data, g, run.dungeonId, run.floor, b.enemies, seededRng(run), { dropBonus });
+      for (const id of b.stolen ?? []) {
+        const existing = loot.materials.find((entry) => entry.id === id);
+        if (existing) existing.count += 1;
+        else loot.materials.push({ id, count: 1 });
+      }
+      loot.gold = Math.round(loot.gold * (1 + goldBonus));
+      if (b.enemies.some((e) => e.boss && !e.bounty)) discoverJobs(data, g, run.dungeonId, seededRng(run));
       g.gold += loot.gold;
       run.earned.gold += loot.gold;
       const left = addToBackpack(data, g, run.backpack, [
         ...loot.gear.map((gear) => ({ type: 'gear', gear })),
         ...loot.materials.map((m) => ({ type: 'material', id: m.id, count: m.count })),
       ]);
+      g.catalog ??= { gear: [], monsters: [] };
+      g.catalog.gear = [...new Set([...g.catalog.gear, ...loot.gear.map((item) => item.id)])];
       run.pendingLoot = left;
     }
     advance(data, run);
+    if (run.cleared) delete run.bounty;
   });
   return { result: b.result, growth, loot };
 }

@@ -1,15 +1,16 @@
 // パーティの画面：キャラメイク（仮）・4人の一覧・能力値・装備8枠
-import { loadGameData } from '../gamedata.js';
-import { GameSession } from '../save.js';
-import { createNewGame, PARTY_SIZE, normalizeGame } from '../game-state.js';
+import { loadGameData } from '../gamedata.js?v=features-1';
+import { GameSession } from '../save.js?v=features-1';
+import { createNewGame, PARTY_SIZE, normalizeGame } from '../game-state.js?v=features-1';
 import {
   computeStats, SLOTS, SLOT_LABEL, STAT_LABEL, canEquip, equipFromStorage, unequip, gearDef,
   aptitudeGrade, xpToNext, levelCap, gainXp, makeGear,
-} from '../character.js';
+} from '../character.js?v=features-1';
 import {
   jobPaths, isLearned, learnBlock, learnSkill, equipBlock, equipSkill, unequipSkill, capacity, usedCapacity,
   commonPoints, commonBlock, learnCommon, masteryLevel, isJobMastered,
-} from '../growth.js';
+} from '../growth.js?v=features-1';
+import { skillMp } from '../battle.js?v=features-1';
 import { el, render, stars } from '../dom.js';
 
 const view = document.getElementById('view');
@@ -148,7 +149,7 @@ function showSkills(index, msg = null) {
     const lb = learnBlock(data, m, s);
     const eb = equipBlock(data, m, s);
     return el('div', { class: `skill ${learned ? 'learned' : ''}` },
-      el('div', {}, `${s.stage}. ${s.name}`, el('span', { class: 'tiny muted' }, `　${s.kind === 'passive' ? 'パッシブ' : `MP${s.mp}`}・枠${s.cost}${s.isFinal ? '・奥義' : ''}`)),
+      el('div', {}, `${s.stage}. ${s.name}`, el('span', { class: 'tiny muted' }, `　${s.kind === 'passive' ? 'パッシブ' : `MP${skillMp(data, m, s)}`}・枠${s.cost}${s.isFinal ? '・奥義' : ''}`)),
       !learned ? el('button', { disabled: !!lb, onclick: () => doIt((mm) => learnSkill(data, mm, s.id)) }, lb || `覚える（AP ${s.apToLearn}）`)
         : on ? el('button', { class: 'ghost', onclick: () => doIt((mm) => unequipSkill(mm, s.id)) }, 'つけている（外す）')
           : el('button', { disabled: !!eb, onclick: () => doIt((mm) => equipSkill(data, mm, s.id)) }, eb || 'つける'));

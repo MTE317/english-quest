@@ -1,8 +1,8 @@
 // データ確認画面：data/ のファイルごとの行数と、中身の表
-import { loadFiles, loadJson } from '../data.js';
+import { loadFiles, loadJson } from '../data.js?v=features-1';
 import { splitList, parseAmounts } from '../csv.js';
 import { buildLexicon } from '../lexicon.js';
-import { Scheduler } from '../srs.js';
+import { Scheduler } from '../srs.js?v=features-1';
 import { el, render } from '../dom.js';
 
 const view = document.getElementById('view');

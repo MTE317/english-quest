@@ -49,3 +49,12 @@ export async function loadFiles(names) {
   });
   return { files, failures };
 }
+
+/** 別管理のコンテンツはファイルが存在する公開環境だけで読み込む。 */
+export async function loadOptional(name) {
+  try { return await loadFile(name); }
+  catch (error) {
+    if (error.message.endsWith('（HTTP 404）')) return null;
+    throw error;
+  }
+}

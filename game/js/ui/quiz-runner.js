@@ -1,6 +1,6 @@
 // 4択を続けて出す部品（覚醒の試練・昇格試験・鍛錬で使う）。答えは学習記録にも入る。
-import { now } from '../storage.js';
-import { makeQuestion, DIRECTION } from '../quiz.js';
+import { now } from '../storage.js?v=features-1';
+import { makePracticeQuestion, questionDirection, DIRECTION } from '../quiz.js?v=features-1';
 import { speak, canSpeak } from '../speech.js';
 import { REASON_LABEL } from '../picker.js';
 import { el, render } from '../dom.js';
@@ -11,7 +11,7 @@ import { el, render } from '../dom.js';
  * @param opts.title 見出し
  * @param opts.onDone (correct, total, results) 終わったとき
  */
-export function runQuiz({ view, lex, scheduler, store, next, total, title, onDone, onAnswer = null }) {
+export function runQuiz({ view, lex, scheduler, store, next, total, title, onDone, onAnswer = null, direction, format }) {
   let n = 0;
   let correct = 0;
   const results = [];
@@ -21,9 +21,9 @@ export function runQuiz({ view, lex, scheduler, store, next, total, title, onDon
     if (!nx) return onDone(correct, n, results);
     n += 1;
     const word = nx.word;
-    const dir = Math.random() < 0.5 ? DIRECTION.EN_JA : DIRECTION.JA_EN;
-    const q = makeQuestion(word, lex, { direction: dir, familiar: scheduler.isFamiliar(store.get(word.id)) });
-    const isEn = dir === DIRECTION.EN_JA;
+    const dir = questionDirection(direction);
+    const q = makePracticeQuestion(word, lex, { direction: dir, format, familiar: scheduler.isFamiliar(store.get(word.id)) });
+    const isEn = q.direction === DIRECTION.EN_JA;
     let done = false;
     const after = el('div');
     const buttons = q.choices.map((c, k) => el('button', {
@@ -47,7 +47,7 @@ export function runQuiz({ view, lex, scheduler, store, next, total, title, onDon
     render(view,
       el('div', { class: 'progress' }, el('span', {}, title), el('span', {}, `${n} / ${total}問・正解 ${correct}`)),
       nx.reason ? el('div', { class: 'center' }, el('span', { class: `tag ${nx.reason}` }, REASON_LABEL[nx.reason])) : null,
-      el('div', { class: `prompt ${isEn ? '' : 'ja'}`, lang: isEn ? 'en' : 'ja' }, q.prompt),
+      el('div', { class: `prompt ${isEn ? '' : 'ja'}`, style: 'white-space: pre-line', lang: isEn ? 'en' : 'ja' }, q.prompt),
       canSpeak() && isEn ? el('div', { class: 'center' }, el('button', { class: 'speak', onclick: () => speak(word.en) }, '🔊')) : null,
       el('div', { class: 'options' }, buttons),
       after);

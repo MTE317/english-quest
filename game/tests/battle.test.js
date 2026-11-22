@@ -5,6 +5,7 @@ import {
   fleeRate, knownSkills, targetKind, curedBy,
 } from '../js/battle.js';
 import { createNewGame } from '../js/game-state.js';
+import { evaluate } from '../js/expr.js';
 import { maxHp } from '../js/character.js';
 import { realGameData, readJson } from './helpers.js';
 
@@ -34,7 +35,7 @@ test('敵の能力値は balance.json の式（★の補正・ボスの倍率を
   const m = data.monsters.get('slime');
   const e = makeEnemy(data, 'slime', { lv: 3, dungeonId: 'mossy_cave' });
   const dg = data.dungeons.get('mossy_cave');
-  const raw = (150 + 6.5 * 3) * m.hpMul * 1.68 * dg.enemyMul * E.hp_rank_mul['1'];
+  const raw = evaluate(E.hp, { Lv: 3, hp_mul: m.hpMul, 'dungeon.enemy_mul': dg.enemyMul, 'hp_rank_mul[★]': E.hp_rank_mul[dg.rank] });
   assert.equal(e.maxHp, Math.round(raw));
   const boss = makeEnemy(data, 'slime', { lv: 3, dungeonId: 'mossy_cave', boss: true });
   assert.equal(boss.maxHp, Math.round(raw * E.boss_hp_mul));

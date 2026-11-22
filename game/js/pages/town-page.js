@@ -1,33 +1,44 @@
 // 町の画面：ギルド（クエスト・ランク）・宿屋・道具屋・武器防具屋・神殿（復活）・倉庫
-import { loadGameData } from '../gamedata.js';
-import { GameSession } from '../save.js';
-import { normalizeGame } from '../game-state.js';
-import { currentRank, seededRng } from '../dungeon.js';
+import { loadGameData } from '../gamedata.js?v=features-1';
+import { GameSession } from '../save.js?v=features-1';
+import { normalizeGame } from '../game-state.js?v=features-1';
+import { currentRank, seededRng } from '../dungeon.js?v=features-1';
 import {
-  calendarOf, guildFee, makeBoard, acceptQuest, canReport, reportQuest, questText, nextRankStatus, stayInn, revive, reviveCost,
-  itemShopStock, buyItem, gearShopStock, buyGear, sellGear, sellPrice, canExpandBackpack, expandBackpack, payOverdue, feeTier,
+  calendarOf, guildFee, makeBoard, acceptQuest, canReport, reportQuest, questText, nextRankStatus, stayInn, revive, reviveCost, checkRankUp,
+  itemShopStock, buyItem, gearShopStock, buyGear, sellGear, sellPrice, canExpandBackpack, expandBackpack, feeTier,
   nextBackpackTier, daysPerMonth,
-} from '../town.js';
-import { backpackSlots } from '../loot.js';
-import { maxHp, maxMp, gearDef, aptitudeGrade } from '../character.js';
-import { availableJobs, changeJob } from '../growth.js';
+} from '../town.js?v=features-1';
+import { backpackSlots } from '../loot.js?v=features-1';
+import { maxHp, maxMp, gearDef, aptitudeGrade } from '../character.js?v=features-1';
+import { availableJobs, changeJob } from '../growth.js?v=features-1';
+import { loadCsv, loadJson } from '../data.js?v=features-1';
+import { buildLexicon } from '../lexicon.js';
+import { Scheduler } from '../srs.js?v=features-1';
+import { LearningStore, now } from '../storage.js?v=features-1';
+import { chainStep, stepLabel, acceptChain, talkChain, deliverChain, claimChain } from '../quest-chain.js?v=features-1';
+import { cureAtTemple, updateRuneModifiers } from '../temple.js?v=features-1';
+import { workshopView, managementView, templeExtras } from '../ui/facility-view.js?v=features-1';
 import { el, render, stars } from '../dom.js';
 
 const view = document.getElementById('view');
 const session = new GameSession();
 session.installAutoSave(window);
 let data;
+let lex;
+let scheduler;
+const learning = new LearningStore();
+const workshopSelection = {};
 let tab = 'guild';
 let flash = null;
 
-const TABS = [['guild', 'ギルド'], ['inn', '宿屋'], ['items', '道具屋'], ['gear', '武器・防具屋'], ['temple', '神殿'], ['storage', '倉庫']];
+const TABS = [['guild', 'ギルド'], ['inn', '宿屋'], ['items', '道具屋'], ['gear', '武器・防具屋'], ['temple', '神殿'], ['storage', '倉庫'], ['workshop', '工房・調合'], ['manage', '銀行・投資']];
 const rng = () => seededRng({ rng: (Date.now() ^ (Math.random() * 2 ** 32)) >>> 0 });
 
 /** 進み具合を変えて保存し、結果を出す。失敗したら理由を出す */
 function act(fn) {
   try {
     let msg;
-    session.update((g) => { msg = fn(g); });
+    session.update((g) => { msg = fn(g); updateRuneModifiers(data, g, lex, learning, scheduler, scheduler.dayOf(now())); });
     flash = { ok: true, text: Array.isArray(msg) ? msg.join('　') : msg };
   } catch (e) { flash = { ok: false, text: e.message }; }
   draw();
@@ -68,6 +79,19 @@ function guild() {
       el('div', {}, `★${q.rank} ${questText(data, q)}`),
       el('div', { class: 'muted' }, `報酬：${rewardText(q)}`),
       el('button', { onclick: () => act((gg) => { acceptQuest(gg, q.uid); return 'クエストを受けた'; }) }, '受ける'))),
+    el('details', { class: 'panel small' }, el('summary', {}, '連続クエスト'),
+      data.questChains.filter((chain) => Number(chain.star) <= currentRank(data, g).maxDungeonRank).map((chain) => {
+        const state = g.chains?.[chain.id];
+        const step = chainStep(chain, g);
+        return el('div', { class: 'panel small' }, chain.title,
+          state?.claimed ? el('div', {}, '達成済み') : null,
+          !state ? el('button', { onclick: () => act((game) => { acceptChain(game, chain); return '連続クエストを受けた。'; }) }, '受ける') : null,
+          step ? el('p', {}, stepLabel(data, step)) : null,
+          step?.kind === 'talk' ? el('button', { onclick: () => act((game) => talkChain(game, chain)) }, '話す') : null,
+          step?.kind === 'gather' ? el('button', { onclick: () => act((game) => deliverChain(data, game, chain)) }, '納品する') : null,
+          step?.kind === 'reward' ? el('button', { onclick: () => act((game) => [claimChain(data, game, chain, rng()), ...checkRankUp(data, game)]) }, '報告する') : null);
+      })),
+    el('a', { class: 'btn', href: 'challenge.html' }, '闘技場・最終試験'),
     el('h2', {}, '冒険者ランク'),
     el('div', { class: 'panel small' },
       el('div', {}, `${currentRank(data, g).title}（ポイント ${g.rankPoints}）　特典：${currentRank(data, g).perk || 'なし'}`),
@@ -132,18 +156,21 @@ function gearShop() {
 function temple() {
   const g = session.game;
   return [
-    el('p', { class: 'muted small' }, '復活とジョブチェンジ（治療・ジョブの解放・刻印はチェックリスト12番で作る）。'),
+    el('p', { class: 'muted small' }, '復活とジョブチェンジ。'),
     g.party.map((m, i) => el('div', { class: 'row small', style: 'align-items:center' },
       el('div', { style: 'flex:2' }, `${m.name}　${m.hp > 0 ? '元気' : '倒れている'}`),
       m.hp <= 0 ? el('button', { onclick: () => act((gg) => `${m.name}が復活した（-${revive(data, gg, i)}）`) }, `復活 ${reviveCost(data, m)}`) : null)),
-    g.overdue ? el('button', { onclick: () => act((gg) => `滞納を ${payOverdue(gg, gg.gold)} 払った`) }, `滞納を払う（${g.overdue}）`) : null,
+    g.party.filter((m) => m.persist?.length).map((m) => el('button', { onclick: () => act((gg) => cureAtTemple(data, gg, m)) }, `${m.name}の状態異常を治療`)),
+    el('a', { class: 'btn primary', href: 'chant.html' }, '詠唱の間（瞬間英作文）'),
+    templeExtras(data, g, act, lex, learning),
     el('h2', {}, 'ジョブチェンジ'),
+    el('div', { class: 'panel small' }, `共有JP ${g.jp}`),
     el('p', { class: 'muted small' }, '装備できなくなる物は倉庫に入ります。覚えたスキルと AP はジョブごとに残ります。'),
     g.party.map((m, i) => el('label', { class: 'small' }, `${m.name}（今：${data.jobsById.get(m.job).name}）`,
       el('select', {
         class: 'select',
-        onchange: (e) => { if (e.target.value && confirm(`${m.name}を${data.jobsById.get(e.target.value).name}にしますか？`)) act((gg) => { changeJob(data, gg, i, e.target.value); return `${m.name}は${data.jobsById.get(e.target.value).name}になった`; }); else draw(); },
-      }, el('option', { value: '' }, '変えない'), availableJobs(data, g).filter((j) => j.id !== m.job).map((j) => el('option', { value: j.id }, `${j.name}（${j.role}）`))))),
+        onchange: (e) => { if (e.target.value && confirm(`${m.name}を${data.jobsById.get(e.target.value).name}に転職しますか？（${data.jobsById.get(e.target.value).changeJp} JP）`)) act((gg) => { changeJob(data, gg, i, e.target.value); return `${m.name}は${data.jobsById.get(e.target.value).name}になった`; }); else draw(); },
+      }, el('option', { value: '' }, '変えない'), availableJobs(data, g).filter((j) => j.id !== m.job).map((j) => el('option', { value: j.id, disabled: g.jp < j.changeJp }, `${j.name}（${j.changeJp} JP）`))))),
   ];
 }
 
@@ -169,14 +196,22 @@ function draw() {
     render(view, el('p', {}, 'ダンジョンの中にいます。'), el('a', { class: 'btn primary', href: 'dungeon.html' }, 'ダンジョンへ'));
     return;
   }
-  const body = { guild, inn, items, gear: gearShop, temple, storage }[tab]();
+  const body = { guild, inn, items, gear: gearShop, temple, storage,
+    workshop: () => workshopView(data, session.game, act, rng, workshopSelection),
+    manage: () => managementView(data, session.game, act),
+  }[tab]();
   render(view, head(), body, el('a', { class: 'btn primary', href: 'dungeon.html' }, 'ダンジョンへ出発する'));
 }
 
 (async () => {
   try {
-    data = await loadGameData();
-    if (session.game && !session.readOnly) { normalizeGame(data, session.game); session.save(); }
+    const [gd, stones, words, srs] = await Promise.all([loadGameData(), loadCsv('rune_stones.csv'), loadCsv('lexicon.csv'), loadJson('srs.json')]);
+    data = gd;
+    lex = buildLexicon(stones.rows, words.rows);
+    scheduler = new Scheduler(srs.data);
+    if (session.game && !session.readOnly) { normalizeGame(data, session.game);
+      updateRuneModifiers(data, session.game, lex, learning, scheduler, scheduler.dayOf(now()));
+      session.save(); }
     draw();
   } catch (e) {
     render(view, el('p', { class: 'error' }, `読み込みに失敗：${e.message}`));

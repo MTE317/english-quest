@@ -1,5 +1,5 @@
 // ゲームで使う data/ のファイルをまとめて読み、ID で引ける形にする。
-import { loadCsv, loadJson } from './data.js';
+import { loadCsv, loadJson, loadOptional } from './data.js?v=features-1';
 import { toNumber, splitList } from './csv.js';
 
 const FILES = {
@@ -38,6 +38,19 @@ const FILES = {
   commonTree: 'common_tree.csv',
   jobMastery: 'job_mastery.csv',
   exams: 'exams.csv',
+  jobUnlocks: 'job_unlocks.csv',
+  recipes: 'recipes.csv',
+  alchemyRecipes: 'alchemy_recipes.csv',
+  enhanceRates: 'enhance_rates.csv',
+  enchantGrades: 'enchant_grades.csv',
+  enchantSources: 'enchant_sources.csv',
+  facilityRanks: 'facility_ranks.csv',
+  facilityEffects: 'facility_effects.csv',
+  kokuinSlots: 'kokuin_slots.csv',
+  runeEffects: 'rune_effects.csv',
+  sets: 'sets.csv',
+  setItems: 'set_items.csv',
+  questChains: 'quest_chains.csv',
 };
 
 const byId = (rows, key = 'id') => new Map(rows.map((r) => [r[key], r]));
@@ -56,8 +69,9 @@ export function buildGameData(raw) {
     startWeapon: r.start_weapon || null,
     startArmorWeight: r.start_armor_weight || null,
     unlock: r.unlock ?? '',
+    changeJp: toNumber(r.change_jp, 0),
   });
-  const jobs = [...raw.jobs.map((r) => job(r, 'base')), ...raw.jobsMid.map((r) => job(r, 'mid'))];
+  const jobs = [...raw.jobs.map((r) => job(r, 'base')), ...raw.jobsMid.map((r) => job(r, 'mid')), ...(raw.jobsAdvanced ?? []).map((r) => job(r, 'advanced'))];
 
   const aptitude = new Map(raw.aptitude.map((r) => [r.grade, toNumber(r.multiplier, null)])); // × は null（装備不可）
   const weaponTypes = byId(raw.weaponTypes.map((r) => ({
@@ -77,6 +91,11 @@ export function buildGameData(raw) {
       id: r.id, name: r.name, slot: r.slot, kind: r.weapon_type_or_kind || null, armorWeight: r.armor_weight || null,
       itemLv: toNumber(r.item_lv, 1), star: toNumber(r.star, 1), source: r.source, unique: false,
     })),
+    ...(raw.setItems ?? []).map((r) => ({
+      id: r.id, name: r.name, slot: r.slot, kind: r.kind || null, armorWeight: r.armor_weight || null,
+      itemLv: toNumber(r.item_lv, 1), star: toNumber(r.star, 1), source: r.source, setId: r.set_id,
+      fixedEffects: parseEffects(r.fixed_effects),
+    })),
     // 固有装備（ボス・賞金首が落とす）も同じ表で引けるようにする
     ...(raw.uniques ?? []).map((r) => ({
       id: r.id, name: r.name, slot: r.slot, kind: r.kind || null, armorWeight: r.armor_weight || null,
@@ -84,6 +103,13 @@ export function buildGameData(raw) {
       dropRate: toNumber(r.drop_rate, 0), fixedEffects: parseEffects(r.fixed_effects),
     })),
   ]);
+  for (const r of raw.recipes ?? []) {
+    if (equipment.has(r.id)) continue;
+    const cap = Number((raw.facilityRanks ?? []).find((x) => x.rank === r.workshop_rank)?.craft_item_lv);
+    const base = [...equipment.values()].filter((def) => def.slot === 'weapon' && def.kind === r.weapon_type && def.itemLv <= cap && !def.unique)
+      .sort((a, b) => b.itemLv - a.itemLv)[0];
+    if (base) equipment.set(r.id, { ...base, id: r.id, name: r.name, addedElement: r.added_element || null, source: '制作' });
+  }
   const aptTable = (rows) => new Map(rows.map((r) => [r.job_id, r]));
 
   return {
@@ -98,6 +124,18 @@ export function buildGameData(raw) {
     equipment,
     icons: raw.icons.map((r) => ({ id: r.id, category: r.category, icon: r.icon })),
     rarities: raw.rarities.map((r) => ({ id: r.id, name: r.name })),
+    jobUnlocks: byId(raw.jobUnlocks ?? [], 'job_id'),
+    recipes: raw.recipes ?? [],
+    alchemyRecipes: raw.alchemyRecipes ?? [],
+    enhanceRates: raw.enhanceRates ?? [],
+    enchantGrades: raw.enchantGrades ?? [],
+    enchantSources: raw.enchantSources ?? [],
+    facilityRanks: raw.facilityRanks ?? [],
+    facilityEffects: raw.facilityEffects ?? [],
+    kokuinSlots: raw.kokuinSlots ?? [],
+    runeEffects: byId(raw.runeEffects ?? []),
+    sets: byId(raw.sets ?? []),
+    questChains: raw.questChains ?? [],
     ...buildBattleData(raw),
   };
 }
@@ -194,6 +232,13 @@ function buildBattleData(raw) {
       shopDiscount: toNumber(r.shop_discount, 0), perk: r.perk,
     })),
   } : {};
+  if (loot.materials && raw.enhanceRates?.length) {
+    loot.materials.set('enhancement_stone', { id: 'enhancement_stone', name: '強化石', rank: 1, kind: 'workshop' });
+    for (const rarity of [...raw.rarities, { id: 'unique', name: 'ユニーク' }, { id: 'set', name: 'セット' }]) {
+      const id = 'fragment_' + rarity.id;
+      loot.materials.set(id, { id, name: rarity.name + 'の欠片', rank: 1, kind: 'workshop' });
+    }
+  }
   const town = raw.quests ? {
     quests: raw.quests.map((r) => ({
       id: r.id, type: r.type, rank: toNumber(r.rank, 1), target: r.target, countMin: toNumber(r.count_min, 1), countMax: toNumber(r.count_max, 1),
@@ -240,7 +285,12 @@ export function loadGameData() {
         const f = name.endsWith('.json') ? (await loadJson(name)).data : (await loadCsv(name)).rows;
         return [key, f];
       }));
-      return buildGameData(Object.fromEntries(entries));
+      const raw = Object.fromEntries(entries);
+      const expansion = (await loadOptional('extra_game_data.json'))?.data;
+      for (const key of ['jobsAdvanced', 'jobUnlocks', 'jobWeaponApt', 'jobArmorApt', 'skills', 'uniques', 'monsters', 'dungeons', 'dungeonFloors', 'dropTables', 'materials', 'jobMastery']) {
+        if (Array.isArray(expansion?.[key])) raw[key] = [...(raw[key] ?? []), ...expansion[key]];
+      }
+      return buildGameData(raw);
     })();
   }
   return cached;

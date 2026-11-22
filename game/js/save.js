@@ -16,9 +16,10 @@
 // - 戦闘を始めたら setBattle() で保存する。1行動ごとにも setBattle() で保存する
 //   → 負けそうなときに閉じて開き直しても、同じ戦闘の同じところから続く
 // - 全員倒れたら、画面に出す前に wipe() を呼ぶ（その場で保存される）
-import { SAVE_KEY, safeStorage } from './storage.js';
+import { SAVE_KEY, safeStorage } from './storage.js?v=features-1';
 
 export const SAVE_VERSION = 1;
+const CHANT_BACKUP_KEY = 'englishQuest.chantBackup.v1';
 const BROKEN_KEY = `${SAVE_KEY}.broken`;
 
 // 古い版のセーブを新しい版に直す関数（版を上げたらここに足す）。MIGRATIONS[1] は 1 → 2
@@ -71,6 +72,16 @@ export class SaveStore {
     this.storage?.removeItem(SAVE_KEY);
   }
 
+  readChantBackup() {
+    try { return JSON.parse(this.storage?.getItem(CHANT_BACKUP_KEY) ?? 'null'); }
+    catch { return null; }
+  }
+
+  updateChantBackup(chants) {
+    if (chants) this.storage?.setItem(CHANT_BACKUP_KEY, JSON.stringify(chants));
+    else this.storage?.removeItem(CHANT_BACKUP_KEY);
+  }
+
   /** 保存している文字数（容量の目安） */
   byteSize() {
     return this.storage?.getItem(SAVE_KEY)?.length ?? 0;
@@ -121,8 +132,10 @@ export class GameSession {
   /** はじめから（いまのセーブは上書きされる。学習記録は消えない） */
   startNew(game) {
     this.readOnly = false;
+    const previousChants = this.game?.chants ?? this.store.readChantBackup();
     this.state = { version: SAVE_VERSION, savedAt: this.now(), game: clone(game), run: null, lastWipe: null };
-    this.save();
+    if (previousChants) this.state.game.chants = clone(previousChants);
+    if (this.save()) this.store.updateChantBackup(null);
   }
 
   /** 町にいるときに進み具合を変える：update((game) => { game.gold += 10 }) */
@@ -191,14 +204,19 @@ export class GameSession {
   wipe() {
     this.#needRun();
     const run = this.state.run;
+    const { chants, jp } = this.state.game;
     this.state.game = clone(run.snapshot);
+    if (chants != null) this.state.game.chants = chants;
+    if (jp != null) this.state.game.jp = jp;
     this.state.run = null;
     this.state.lastWipe = { at: this.now(), dungeonId: run.dungeonId, floor: run.floor, battlesDone: run.battlesDone };
     this.save();
   }
 
   /** セーブを消す（学習記録は消さない） */
-  deleteSave() {
+  deleteSave({ includeLearning = false } = {}) {
+    if (includeLearning) this.store.updateChantBackup(null);
+    else if (this.game?.chants) this.store.updateChantBackup(this.game.chants);
     this.store.clear();
     this.state = null;
     this.readOnly = false;

@@ -2,10 +2,10 @@
 // 学習の記録（読み解いた・覚醒・試験の結果）は LearningStore に入れる（ゲームの進み具合とは別。全滅しても残る）。
 // 予習カードを見ただけでは報酬は出ない（CLAUDE.md）。強くなるのは問題に正解したときだけ。
 import { evaluate } from './expr.js';
-import { gainXp } from './character.js';
-import { memberMods } from './growth.js';
-import { BATTLE_FORMULAS } from './battle.js';
-import { currentRank } from './dungeon.js';
+import { gainXp } from './character.js?v=features-1';
+import { memberMods } from './growth.js?v=features-1';
+import { BATTLE_FORMULAS } from './battle.js?v=features-1';
+import { currentRank } from './dungeon.js?v=features-1';
 
 export const STUDY_FORMULAS = Object.freeze({
   promotion_learned_ratio: 0.8, // exams.csv の unlock「その★のルーンの8割を習得」
@@ -39,7 +39,7 @@ export function nextUnread(lex, store, stoneId, n) {
  * 持っていける石：★がダンジョン以上で、今のランクの★までか、1つ下の★の石をすべて読み解いていれば1つ上まで（srs.json の stones_ahead）
  */
 export function stoneAllowed(lex, store, scheduler, stone, dungeonRank, rankStar, today) {
-  if (stone.star < dungeonRank) return false;
+  if (stone.star < dungeonRank || !lex.wordsByStone.get(stone.id)?.length) return false;
   if (stone.star <= rankStar) return true;
   if (stone.star > rankStar + 1) return false;
   const below = lex.stones.filter((s) => s.star === stone.star - 1);
@@ -97,6 +97,7 @@ export function promotionBlock(data, lex, store, scheduler, game, today) {
   const idx = data.ranks.findIndex((r) => r.id === game.rank);
   const next = data.ranks[idx + 1];
   if (!next?.needsExam) return '次のランクに試験はない';
+  if (next.id === 'S') return '最終試験に挑戦する';
   if ((game.examsPassed ?? []).includes(next.id)) return 'もう合格している';
   const star = currentRank(data, game).maxDungeonRank;
   const r = starLearnedRatio(lex, store, scheduler, star);

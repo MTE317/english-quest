@@ -1,7 +1,7 @@
 // 戦闘の報酬（お金・素材・装備）とバックパック。
 // 式が data にないものは sim/world.py と同じ値を LOOT_FORMULAS に置く（docs/requests.md で依頼済み）。
 import { evaluate } from './expr.js';
-import { makeGear } from './character.js';
+import { makeGear } from './character.js?v=features-1';
 
 export const LOOT_FORMULAS = Object.freeze({
   gold_per_enemy: 'run_income * income_mul * gold_share / 27', // balance.json の「(boss x boss_gold_mul)」は文なので、ボスの倍率は下でかける
@@ -89,9 +89,9 @@ export function rollGearDrop(data, game, dungeonId, floor, rng) {
   const share = LOOT_FORMULAS.slot_share;
   const kind = weighted(rng, Object.keys(share), (k) => share[k]);
   const slots = kind === 'armor' ? ['head', 'body', 'arm'] : [kind];
-  const cands = [...data.equipment.values()].filter((e) => !e.unique && slots.includes(e.slot)
+  const cands = [...data.equipment.values()].filter((e) => !e.unique && !e.setId && slots.includes(e.slot)
     && e.source.includes('ドロップ') && e.itemLv >= dg.itemLvMin && e.itemLv <= Math.max(top, dg.itemLvMin));
-  const pool = cands.length ? cands : [...data.equipment.values()].filter((e) => !e.unique && slots.includes(e.slot) && e.itemLv <= dg.itemLvMax);
+  const pool = cands.length ? cands : [...data.equipment.values()].filter((e) => !e.unique && !e.setId && slots.includes(e.slot) && e.itemLv <= dg.itemLvMax);
   // いちばん高い装備Lvのものを多めに
   const maxLv = Math.max(...pool.map((e) => e.itemLv));
   const def = weighted(rng, pool, (e) => (e.itemLv === maxLv ? 2 : 1));
@@ -121,9 +121,15 @@ export function rollBattleLoot(data, game, dungeonId, floor, enemies, rng, { dro
   }
   const boss = enemies.find((e) => e.boss);
   if (rng() < (boss ? dt.bossGearDrop : dt.gearRate)) gear.push(rollGearDrop(data, game, dungeonId, floor, rng));
-  if (boss) {
-    const u = rollUniqueDrop(data, game, boss.monsterId, rng);
-    if (u) gear.push(u);
+  for (const enemy of enemies.filter((e) => e.boss || e.bounty)) {
+    const unique = rollUniqueDrop(data, game, enemy.monsterId, rng);
+    if (unique) gear.push(unique);
+  }
+  const setOdds = data.balance.dungeon?.set_drop_rate ?? 0.05;
+  const parts = [...data.equipment.values()].filter((def) => def.setId && def.star === data.dungeons.get(dungeonId).rank);
+  if (boss && parts.length && rng() < setOdds) {
+    const def = parts[Math.floor(rng() * parts.length)];
+    gear.push(makeGear(game, def.id, { rarity: 'set', affixes: { ...def.fixedEffects } }));
   }
   return { gold, materials: Object.entries(mats).map(([id, count]) => ({ id, count })), gear };
 }

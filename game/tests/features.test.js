@@ -1,0 +1,145 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { buildGameData, GAME_FILES } from '../js/gamedata.js';
+import { createNewGame } from '../js/game-state.js';
+import { GameSession } from '../js/save.js';
+import { makeEnemy, createBattle, setPending, resolvePending, skillMp } from '../js/battle.js';
+import { maxHp, makeGear } from '../js/character.js';
+import { Scheduler } from '../js/srs.js';
+import { recordChant, nextChant } from '../js/chant.js';
+import { changeJob } from '../js/growth.js';
+import { craft, enhance, brew, dismantle, facilityUpgrade } from '../js/workshop.js';
+import { borrow, repayLoan } from '../js/town.js';
+import { chooseRuneEffect, equipRune, openRuneSlot, unlockJob, updateRuneModifiers } from '../js/temple.js';
+import { makeEncounter, monsterPool } from '../js/encounter.js';
+import { acceptChain, chainStep, claimChain, talkChain, updateChains } from '../js/quest-chain.js';
+import { makePracticeQuestion, DIRECTION } from '../js/quiz.js';
+import { MemoryStorage, T0, readCsv, readJson, realLexicon } from './helpers.js';
+
+const data = buildGameData(Object.fromEntries(Object.entries(GAME_FILES).map(([key, name]) =>
+  [key, name.endsWith('.json') ? readJson(name) : readCsv(name).rows])));
+const specs = ['warrior', 'knight', 'black_mage', 'white_mage'].map((job) => ({ name: job, job, icon: 'x' }));
+const game = () => createNewGame(data, specs);
+
+test('通常攻撃のMP回復は正解のみ。スキルの消費はレベルで変わる', () => {
+  const g = game();
+  const m = g.party[0];
+  const b = createBattle(data, g, { enemies: [makeEnemy(data, 'slime', { lv: 3 })], seed: 12 });
+  m.mp = 0;
+  for (const correct of [false, true]) {
+    b.turn = { side: 'ally', i: 0 };
+    setPending(b, { type: 'attack', target: 0 }, {});
+    resolvePending(data, g, b, correct);
+    assert.equal(m.mp > 0, correct);
+  }
+  const skill = [...data.skills.values()].find((s) => s.job === m.job && s.mp > 0);
+  assert.equal(skillMp(data, m, skill), skill.mp);
+  assert.ok(skillMp(data, { ...m, lv: 99 }, skill) > skill.mp);
+});
+
+test('詠唱は三段階評価と日ごとのJP上限を使い、全滅後も残る', () => {
+  const config = readJson('chant.json');
+  config.daily_options = [{ questions: 1, new: 2 }];
+  config.daily_default = 0;
+  const sch = new Scheduler(config);
+  const mem = new MemoryStorage();
+  const session = new GameSession({ storage: mem });
+  session.startNew(game());
+  const sentences = [{ id: 'a' }, { id: 'b' }];
+  assert.equal(nextChant(session.game, config, sch, sch.dayOf(T0), sentences, sentences, new Set()).id, 'a');
+  assert.equal(recordChant(session.game, config, sch, T0, 'a', 't'), config.grades.t.jp);
+  assert.equal(recordChant(session.game, config, sch, T0, 'b', 'x'), 0);
+  assert.notEqual(session.game.chants.records.a.s, session.game.chants.records.b.s);
+  session.enterDungeon();
+  session.wipe();
+  const loaded = new GameSession({ storage: mem }).game;
+  assert.equal(loaded.jp, config.grades.t.jp);
+  assert.ok(loaded.chants.records.a);
+  session.deleteSave();
+  const newSession = new GameSession({ storage: mem });
+  newSession.startNew(game());
+  assert.equal(newSession.game.jp, 0);
+  assert.ok(newSession.game.chants.records.a);
+  newSession.deleteSave({ includeLearning: true });
+  newSession.startNew(game());
+  assert.equal(newSession.game.chants, undefined);
+  assert.throws(() => changeJob(data, loaded, 0, 'black_mage'), /JPが足りない/);
+});
+
+test('制作、分解、強化、調合と施設投資が在庫や資金に反映される', () => {
+  const g = game();
+  g.gold = 10000;
+  g.rank = 'R02';
+  g.storage.materials = { goblin_mat: 3, cave_rat_mat: 8 };
+  facilityUpgrade(data, g, 'weapon_workshop');
+  assert.equal(g.facilities.weapon_workshop, 2);
+  craft(data, g, data.equipment.get('iron_sword'));
+  const gear = g.storage.gear[0];
+  assert.equal(gear.crafted, true);
+  const dummy = makeGear(g, 'sword_t1');
+  g.storage.gear.push(dummy);
+  dismantle(data, g, dummy);
+  assert.equal(g.storage.materials.enhancement_stone, 1);
+  enhance(data, g, gear, () => 0);
+  assert.equal(gear.enh, 1);
+  assert.equal(g.storage.materials.enhancement_stone, undefined);
+  const recipe = data.alchemyRecipes.find((r) => r.result === 'buff_str_1');
+  brew(data, g, recipe);
+  assert.equal(g.items[recipe.result], Number(recipe.qty));
+  const money = g.gold;
+  borrow(data, g, 30);
+  repayLoan(g, 20);
+  assert.equal(g.loan, 10);
+  assert.equal(g.gold, money + 10);
+});
+
+test('素材で解放したジョブは選べ、刻印は覚醒と枠を満たすと能力を上げる', () => {
+  const g = game();
+  g.storage.materials = { poison_spider_mat: 4, skeleton_mat: 3 };
+  unlockJob(data, g, 'apothecary');
+  assert.ok(g.unlockedJobs.includes('apothecary'));
+  const lex = realLexicon();
+  const stone = lex.stones[0];
+  const store = { awakened: { [stone.id]: { day: 1 } }, get: () => null };
+  const m = g.party[0];
+  const before = maxHp(data, m);
+  chooseRuneEffect(data, g, stone, 'hp', store.awakened);
+  openRuneSlot(data, g, m, store.awakened);
+  equipRune(g, m, stone.id);
+  updateRuneModifiers(data, g, lex, store, new Scheduler(), 1);
+  assert.ok(maxHp(data, m) > before);
+  assert.throws(() => equipRune(g, { runeSlots: 1 }, stone.id), /ほかの仲間/);
+});
+
+test('季節の敵、賞金首、連続クエストの進行と報告', () => {
+  assert.ok(monsterPool(data, 'blooming_hill', 'spring').some((m) => m.season === 'spring'));
+  const enemies = makeEncounter(data, 'mossy_cave', 1, () => 0, { bountyId: 'bounty_01_1', elites: true });
+  assert.equal(enemies[0].bounty, true);
+  assert.ok(enemies.some((e) => e.eliteId));
+  const g = game();
+  const chain = data.questChains[0];
+  acceptChain(g, chain);
+  talkChain(g, chain);
+  let step = chainStep(chain, g);
+  updateChains(data, g, step.target, step.goal, []);
+  step = chainStep(chain, g);
+  updateChains(data, g, step.target, 1, Array.from({ length: step.goal }, () => ({ hp: 0 })));
+  assert.equal(chainStep(chain, g).kind, 'reward');
+  const before = g.gold;
+  claimChain(data, g, chain, () => 0);
+  assert.ok(g.gold > before);
+  assert.throws(() => claimChain(data, g, chain, () => 0), /まだ報告/);
+});
+
+test('場面の4択と空欄の4択は正解を一つだけ含む', () => {
+  const lex = realLexicon();
+  for (const format of ['cloze', 'situation']) {
+    const q = lex.words.map((w) => makePracticeQuestion(w, lex, { direction: DIRECTION.JA_EN, format, rng: () => 0 }))
+      .find((x) => x.format === format);
+    assert.ok(q, format);
+    assert.equal(q.choices.length, 4);
+    assert.equal(new Set(q.choices.map((choice) => choice.text)).size, 4);
+    assert.equal(q.choices[q.answerIndex].id, q.word.id);
+    if (format === 'cloze') assert.match(q.prompt, /＿＿＿/);
+  }
+});

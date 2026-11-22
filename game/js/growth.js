@@ -1,6 +1,6 @@
 // 成長：スキルツリーと AP・スキルの枠・共通ツリー・ジョブを極めたボーナス・武器の熟練度・ジョブチェンジ。
 // data に数として書かれていないものは GROWTH_FORMULAS に置く（docs/requests.md で依頼済み）。
-import { gearDef, aptitudeMul, unequip, maxHp, maxMp } from './character.js';
+import { gearDef, aptitudeMul, unequip, maxHp, maxMp } from './character.js?v=features-1';
 
 export const GROWTH_FORMULAS = Object.freeze({
   action_capacity: 10, // 通常スキルの枠（スキルの cost の合計。sim の cap_a）
@@ -167,6 +167,40 @@ function add(out, mods) {
 /**
  * キャラの補正の合計。数の補正は足し、wdmg / edmg / tdmg は [[対象, 値], ...] にまとめる
  */
+
+const SET_EFFECTS = {
+  '通常攻撃のダメージ': 'normal_damage', '魔法のダメージ': 'magic_damage',
+  '受けるダメージ': 'damage_cut', '戦闘のあとHP': 'hp_regen',
+  '素材が出やすい': 'drop', '状態異常にかかる確率': 'sres', '会心のダメージ': 'crit_damage',
+};
+
+function equipmentSetMods(data, member) {
+  const counts = new Map();
+  for (const id of new Set(Object.values(member.equip ?? {}).filter(Boolean).map((g) => g.id))) {
+    const set = data.equipment.get(id)?.setId;
+    if (set) counts.set(set, (counts.get(set) ?? 0) + 1);
+  }
+  const mods = {};
+  for (const [id, count] of counts) {
+    if (count < 2) continue;
+    const set = data.sets.get(id);
+    if (!set) continue;
+    const [stat, text] = set.bonus_2.split(':');
+    const key = stat.toLowerCase();
+    mods[key] = (mods[key] ?? 0) + parseFloat(text) / 100;
+    if (count < 4) continue;
+    const effect = set.bonus_4;
+    if (effect === '最初のターンに先に動く') { mods.first = 1; continue; }
+    const kind = Object.keys(SET_EFFECTS).find((label) => effect.startsWith(label));
+    if (kind) {
+      const stat = SET_EFFECTS[kind];
+      const bonus = Math.abs(parseFloat(effect.match(/[+-]?\d+(?=%)/)[0])) / 100;
+      mods[stat] = (mods[stat] ?? 0) + bonus;
+    }
+  }
+  return mods;
+}
+
 export function memberMods(data, member) {
   const out = {};
   if (!data.skills) return out;
@@ -178,6 +212,8 @@ export function memberMods(data, member) {
     }
   }
   add(out, commonMods(data, member));
+  add(out, member.runeMods ?? {});
+  add(out, equipmentSetMods(data, member));
   for (const j of data.jobMastery ?? []) if (isJobMastered(data, member, j.job)) add(out, parseBonusText(j.bonus));
   return out;
 }
@@ -218,6 +254,9 @@ export function changeJob(data, game, index, jobId) {
   const m = game.party[index];
   if (!availableJobs(data, game).some((j) => j.id === jobId)) throw new Error('そのジョブはまだ選べない');
   if (m.job === jobId) throw new Error('今のジョブと同じ');
+  const cost = data.jobsById.get(jobId).changeJp;
+  if ((game.jp ?? 0) < cost) throw new Error(`JPが足りない（必要 ${cost}）`);
+  game.jp = (game.jp ?? 0) - cost;
   m.job = jobId;
   m.ap[jobId] = m.ap[jobId] ?? 0;
   for (const slot of ['offhand', 'weapon', 'head', 'body', 'arm']) {

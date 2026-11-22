@@ -1,9 +1,9 @@
 // 町の基本：暦と月末の会費・ギルドのクエストと冒険者ランク・宿屋・道具屋・武器防具屋・神殿の復活。
 // data に数や式として書かれていないものは、シミュレーター（sim/world.py）と同じ値を TOWN_FORMULAS に置く（docs/requests.md で依頼済み）。
 import { evaluate } from './expr.js';
-import { makeGear, maxHp, maxMp, gearDef } from './character.js';
-import { addItem } from './loot.js';
-import { currentRank } from './dungeon.js';
+import { makeGear, maxHp, maxMp, gearDef } from './character.js?v=features-1';
+import { addItem } from './loot.js?v=features-1';
+import { currentRank } from './dungeon.js?v=features-1';
 
 export const TOWN_FORMULAS = Object.freeze({
   days_per_month: 30, // balance.json の calendar.days_per_month があればそちらを使う
@@ -56,6 +56,7 @@ export function advanceDays(data, game, n) {
 function monthEnd(data, game) {
   const notes = [];
   const bank = data.balance.bank ?? {};
+  if (game.loan > 0) game.loan += Math.ceil(game.loan * (bank.loan_interest_monthly ?? 0));
   if (game.overdue > 0) {
     const interest = Math.ceil(game.overdue * (bank.overdue_interest_monthly ?? 0));
     game.overdue += interest;
@@ -97,7 +98,7 @@ export function boardSize(data, game) {
 /** 掲示板を作る（今のランクの★のクエスト。賞金首はチェックリスト13番） */
 export function makeBoard(data, game, rng) {
   const star = currentRank(data, game).maxDungeonRank;
-  const types = data.questTypes.filter((t) => t.id !== 'bounty');
+  const types = data.questTypes;
   const quests = data.quests.filter((q) => q.rank === star && types.some((t) => t.id === q.type));
   const dungeons = [...data.dungeons.values()].filter((d) => d.rank === star);
   const board = [];
@@ -108,6 +109,8 @@ export function makeBoard(data, game, rng) {
     if (q.type === 'hunt') {
       const pool = [...data.monsters.values()].filter((m) => m.role === 'normal' && m.dungeons.some((d) => dungeons.some((x) => x.id === d)));
       target = pool[Math.floor(rng() * pool.length)]?.id ?? null;
+    } else if (q.type === 'bounty') {
+      target = q.target;
     } else if (q.type === 'boss') {
       target = dungeons[Math.floor(rng() * dungeons.length)]?.bossId ?? null;
     }
@@ -119,6 +122,7 @@ export function makeBoard(data, game, rng) {
 export function questText(data, q) {
   const name = (id) => data.monsters.get(id)?.name ?? id;
   if (q.type === 'hunt') return `${name(q.target)}を${q.count}体たおす`;
+  if (q.type === 'bounty') return `賞金首「${name(q.target)}」を倒す`;
   if (q.type === 'boss') return `${name(q.target)}をたおす`;
   if (q.type === 'gather') return `★${q.rank}の通常素材を${q.count}個納品する`;
   return q.questId;
@@ -134,7 +138,7 @@ export function acceptQuest(game, uid) {
 /** 戦闘で倒した敵を、受けているクエストに数える（ダンジョンの戦闘に勝ったとき） */
 export function countKills(game, enemies) {
   for (const q of game.quests ?? []) {
-    if (q.type !== 'hunt' && q.type !== 'boss') continue;
+    if (q.type !== 'hunt' && q.type !== 'boss' && q.type !== 'bounty') continue;
     q.progress = Math.min(q.count, q.progress + enemies.filter((e) => e.monsterId === q.target).length);
   }
 }
@@ -200,7 +204,7 @@ export function nextRankStatus(data, game) {
     needs.push(`★${cur.maxDungeonRank}のダンジョンを踏破する`);
   }
   if (next.needsExam && !(game.examsPassed ?? []).includes(next.id)) needs.push('昇格試験に合格する（ギルドの資料室のとなり）');
-  return { next, needs, examOnly: needs.length === 1 && next.needsExam };
+  return { next, needs, examOnly: needs.length === 1 && next.needsExam && !(game.examsPassed ?? []).includes(next.id) };
 }
 
 /** ポイントがたまっていて試験のいらないランクなら上げる */
@@ -322,7 +326,7 @@ export function parseMaterialNeed(data, text) {
     return { text: part.split(':')[0], minRank: Number(m[1]), kind: kinds[m[2]], types, count: Number(m[4]) };
   });
 }
-function matchesNeed(data, matId, need) {
+export function matchesNeed(data, matId, need) {
   const mat = data.materials.get(matId);
   if (!mat || mat.kind !== need.kind || mat.rank < need.minRank) return false;
   if (!need.types) return true;
@@ -360,4 +364,27 @@ export function expandBackpack(data, game) {
   }
   game.backpackTier = c.tier.tier;
   return c.tier.slots;
+}
+
+export function loanLimit(data, game) {
+  const rank = currentRank(data, game).maxDungeonRank;
+  const index = Math.max(0, data.ranks.findIndex((r) => r.id === game.rank));
+  return Math.floor(3 * data.economy.get(rank).guild_fee * (1 + 0.25 * index / 2));
+}
+
+export function borrow(data, game, amount) {
+  if (!Number.isSafeInteger(amount) || amount <= 0) throw new Error('借りる金額を1 G以上で入力してください。');
+  if ((game.loan ?? 0) + amount > loanLimit(data, game)) throw new Error('融資の上限を超えています。');
+  game.loan = (game.loan ?? 0) + amount;
+  game.gold += amount;
+  return `${amount} G 借りた。`;
+}
+
+export function repayLoan(game, amount) {
+  if (!Number.isSafeInteger(amount) || amount <= 0) throw new Error('返す金額を1 G以上で入力してください。');
+  const paid = Math.min(amount, game.gold, game.loan ?? 0);
+  if (paid <= 0) throw new Error('返済できる金額がありません。');
+  game.gold -= paid;
+  game.loan -= paid;
+  return `${paid} G 返済した。`;
 }

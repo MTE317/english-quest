@@ -102,3 +102,37 @@ export function makeQuestion(word, lex, { direction, familiar, rng = Math.random
     distractorSource: source,
   };
 }
+
+/** 用例を使えるルーンでは、意味・穴埋め・場面の4択を混ぜる。 */
+export function makePracticeQuestion(word, lex, options) {
+  const { format = 'mixed', rng = Math.random } = options;
+  const fallback = () => makeQuestion(word, lex, options);
+  if (format === 'meaning' || word.kind === 'word' || !word.exampleEn || !word.exampleJa) return fallback();
+  const mode = format === 'mixed' ? ['meaning', 'cloze', 'situation'][Math.floor(rng() * 3)] : format;
+  if (mode === 'meaning') return fallback();
+
+  const text = mode === 'cloze' ? (w) => w.en : (w) => w.exampleEn;
+  let prompt = word.exampleJa;
+  if (mode === 'cloze') {
+    const fragment = word.en.trim().replace(/[.!?]+$/, '');
+    const index = word.exampleEn.toLowerCase().indexOf(fragment.toLowerCase());
+    if (index < 0 || !fragment) return fallback();
+    prompt += '\n' + word.exampleEn.slice(0, index) + '＿＿＿' + word.exampleEn.slice(index + fragment.length);
+  }
+  const used = new Set([text(word)]);
+  const alternatives = shuffle(lex.words.filter((w) => w.kind !== 'word' && w.id !== word.id && w.exampleJa !== word.exampleJa), rng)
+    .filter((w) => {
+      const value = text(w);
+      if (!value || used.has(value)) return false;
+      used.add(value);
+      return true;
+    }).slice(0, 3);
+  if (alternatives.length < 3) return fallback();
+  const choices = shuffle([word, ...alternatives], rng).map((w) => ({ id: w.id, text: text(w) }));
+  return { word, format: mode, prompt, direction: DIRECTION.JA_EN, choices, answerIndex: choices.findIndex((c) => c.id === word.id) };
+}
+
+export function questionDirection(setting, rng = Math.random) {
+  if (Object.values(DIRECTION).includes(setting)) return setting;
+  return rng() < 0.5 ? DIRECTION.EN_JA : DIRECTION.JA_EN;
+}
