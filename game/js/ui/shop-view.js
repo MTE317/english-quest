@@ -2,6 +2,12 @@ import { el, render } from '../dom.js';
 
 export const goldText = (price) => `${price.toLocaleString('ja-JP')} G`;
 
+function itemIcon(entry) {
+  // 一覧と詳細で別々の要素を作り、選択時に画像が一覧から移動しないようにする。
+  return el('span', { class: 'shop-item-icon', 'aria-hidden': 'true' },
+    typeof entry.icon === 'function' ? entry.icon() : entry.icon);
+}
+
 function switcher(label, options, selected, choose) {
   return el('div', { class: 'district-switch shop-tabs', role: 'group', 'aria-label': label },
     options.map(({ id, label: title }) => el('button', {
@@ -52,7 +58,7 @@ export function shopView(state, catalogs) {
       state.item = entry.id;
       for (const button of grid.children) button.setAttribute('aria-pressed', String(button.dataset.item === entry.id));
       render(detail,
-        el('header', {}, el('span', { class: 'shop-item-icon', 'aria-hidden': 'true' }, entry.icon),
+        el('header', {}, itemIcon(entry),
           el('h2', {}, entry.name)),
         el('p', { class: 'shop-description' }, entry.description),
         el('dl', { class: 'shop-facts' },
@@ -70,7 +76,7 @@ export function shopView(state, catalogs) {
       type: 'button', class: 'shop-slot', 'data-item': entry.id, 'data-rarity': entry.rarity,
       'aria-label': `${entry.name}、所持${entry.owned}個${entry.equipped ? '、装備中あり' : ''}${entry.notice ? `、${entry.notice}` : ''}`,
       onclick: () => select(entry),
-    }, el('span', { class: 'shop-item-icon', 'aria-hidden': 'true' }, entry.icon),
+    }, itemIcon(entry),
     el('span', { class: 'shop-slot-name' }, entry.name),
     el('span', { class: 'shop-slot-count', 'aria-hidden': 'true' },
       `×${entry.owned}${entry.equipped ? ' ・ 装備中' : ''}${entry.notice ? ' ・ !' : ''}`))));

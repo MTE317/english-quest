@@ -17,6 +17,7 @@ import { describeFixedEffects } from '../equipment-effects.js';
 import { setSceneMusic } from '../battle-music.js?v=jrpg-1';
 
 import { installGameShell } from '../ui/game-shell.js';
+import { weaponIcon } from '../ui/weapon-icons.js';
 
 const view = document.getElementById('view');
 setSceneMusic('facility');
@@ -129,6 +130,13 @@ function gearLabel(gear, jobId) {
   return `${def.name}${enh}（Lv${def.itemLv}${apt ? `・適正${apt}` : ''}）`;
 }
 
+function gearNameWithIcon(gear, jobId, tag = 'span') {
+  const def = gearDef(data, gear);
+  return el(tag, { class: 'equipment-gear-name' },
+    def.slot === 'weapon' ? weaponIcon(def.kind) : null,
+    el('span', {}, gearLabel(gear, jobId)));
+}
+
 const slotIcons = { weapon: '⚔', offhand: '†', head: '♜', body: '🛡', arm: '◇', cloak: '▱', accessory1: '✦', accessory2: '✧' };
 
 function memberBanner(member) {
@@ -159,10 +167,12 @@ function showMember(index) {
     el('ul', { class: 'equipment-slots' },
       SLOTS.map((slot) => {
         const gear = m.equip[slot];
+        const def = gear ? gearDef(data, gear) : null;
         return el('li', {},
           el('button', { disabled: session.inDungeon, onclick: () => showSlot(index, slot) },
             el('span', { class: 'equipment-slot-label' },
-              el('span', { 'aria-hidden': 'true' }, slotIcons[slot]), SLOT_LABEL[slot]),
+              def?.slot === 'weapon' ? weaponIcon(def.kind) : el('span', { 'aria-hidden': 'true' }, slotIcons[slot]),
+              SLOT_LABEL[slot]),
             el('span', { class: 'equipment-slot-name' }, gear ? gearLabel(gear, m.job) : '未装備')));
       })),
     el('details', { class: 'panel' }, el('summary', {}, '能力値'),
@@ -267,7 +277,8 @@ function showCommon(index, msg = null) {
         }, block || '覚える'));
     }),
     el('h2', {}, '武器の熟練度'),
-    weaponTypes.length ? el('div', { class: 'panel small' }, weaponTypes.map((t) => el('div', {}, `${data.weaponTypes.get(t)?.name ?? t}：熟練度 ${masteryLevel(data, m, t)}（倒した数 ${m.mastery[t]}）`)))
+    weaponTypes.length ? el('div', { class: 'panel small' }, weaponTypes.map((t) => el('div', { class: 'weapon-mastery-entry' },
+      weaponIcon(t), el('span', {}, `${data.weaponTypes.get(t)?.name ?? t}：熟練度 ${masteryLevel(data, m, t)}（倒した数 ${m.mastery[t]}）`))))
       : el('p', { class: 'muted small' }, 'まだない（敵を倒すとその武器の熟練度が上がる）'),
   );
   window.scrollTo(0, 0);
@@ -306,7 +317,7 @@ function showSlot(index, slot) {
     confirmation.hidden = false;
     render(confirmation,
       el('div', { role: 'status' },
-        el('strong', {}, gearLabel(gear, m.job)),
+        gearNameWithIcon(gear, m.job, 'strong'),
         gearDef(data, gear).slot === 'weapon' ? el('p', { class: 'muted small' },
           `武器特性：${data.weaponTypes.get(gearDef(data, gear).kind)?.feature ?? 'なし'}`) : null,
         describeFixedEffects(data, gearDef(data, gear)) ? el('p', { class: 'small' },
@@ -323,7 +334,7 @@ function showSlot(index, slot) {
     memberBanner(m),
     el('h2', {}, SLOT_LABEL[slot]),
     el('div', { class: 'panel small' }, el('span', { class: 'equipment-slot-label' }, '装備中'),
-      m.equip[slot] ? gearLabel(m.equip[slot], m.job) : '未装備'),
+      m.equip[slot] ? gearNameWithIcon(m.equip[slot], m.job) : '未装備'),
     m.equip[slot] ? el('button', {
       onclick: () => { session.update((game) => unequip(data, game, game.party[index], slot)); showMember(index); },
     }, '外して倉庫へ') : null,
@@ -333,7 +344,7 @@ function showSlot(index, slot) {
       cands.map(({ gear, check }) => {
         const button = el('button', { disabled: !check.ok, 'aria-pressed': 'false',
           onclick: () => select(gear, button) },
-          el('strong', {}, gearLabel(gear, m.job)),
+          gearNameWithIcon(gear, m.job, 'strong'),
           el('span', { class: 'stats' }, check.ok ? '比較する' : check.reason));
         selectedButtons.push(button);
         return el('li', {}, button);

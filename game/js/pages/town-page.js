@@ -17,8 +17,9 @@ import { Scheduler } from '../srs.js?v=features-2';
 import { LearningStore, now } from '../storage.js?v=features-2';
 import { chainStep, stepLabel, acceptChain, talkChain, deliverChain, claimChain } from '../quest-chain.js?v=features-2';
 import { cureAtTemple, updateRuneModifiers } from '../temple.js?v=features-2';
-import { workshopView, managementView, templeExtras } from '../ui/facility-view.js?v=features-2';
-import { itemShopView, gearShopView } from '../ui/town-shops.js?v=shop-1';
+import { workshopView, managementView, templeExtras } from '../ui/facility-view.js?v=weapon-icons-1';
+import { itemShopView, gearShopView } from '../ui/town-shops.js?v=weapon-icons-1';
+import { weaponIcon } from '../ui/weapon-icons.js';
 import { el, render } from '../dom.js';
 import { setSceneMusic } from '../battle-music.js?v=jrpg-1';
 
@@ -50,7 +51,7 @@ const facilityGroups = [
   ] },
   { title: '買い物・強化', cards: [
     { id: 'items', name: '道具屋', icon: '🧪', detail: '道具を買う、荷物枠を広げる', show: items },
-    { id: 'gear', name: '武器・防具屋', icon: '⚔️', detail: '装備の購入・売却', show: gearShop },
+    { id: 'gear', name: '武器・防具屋', icon: () => weaponIcon('sword'), detail: '装備の購入・売却', show: gearShop },
     { id: 'workshop', name: '工房・調合', icon: '⚒️', detail: '装備の作成・強化、道具の調合',
       show: () => workshopView(data, session.game, act, rng, workshopSelection) },
     { id: 'storage', name: '倉庫', icon: '📦', detail: '装備・道具・素材を確認', show: storage },
@@ -92,7 +93,7 @@ function statusBar(g) {
 
 function townCard({ href, id, name, icon, detail }) {
   return el('a', { class: 'town-card', href: href ?? facilityLink(id) },
-    el('span', { class: 'town-card-icon', 'aria-hidden': 'true' }, icon),
+    el('span', { class: 'town-card-icon', 'aria-hidden': 'true' }, typeof icon === 'function' ? icon() : icon),
     el('span', {},
       el('strong', {}, name),
       el('span', { class: 'town-card-detail' }, detail)));
@@ -299,7 +300,11 @@ function storage() {
     el('h2', {}, `素材（${mats.length}種類）`),
     mats.length ? el('div', { class: 'panel small' }, mats.map(([id, n]) => el('div', {}, `★${data.materials.get(id)?.rank} ${data.materials.get(id)?.name ?? id} ×${n}`))) : el('p', { class: 'muted small' }, 'なし'),
     el('h2', {}, `装備（${g.storage.gear.length}個）`),
-    g.storage.gear.length ? el('div', { class: 'panel small' }, g.storage.gear.map((x) => el('div', {}, gearDef(data, x).name))) : el('p', { class: 'muted small' }, 'なし'),
+    g.storage.gear.length ? el('div', { class: 'panel small' }, g.storage.gear.map((x) => {
+      const def = gearDef(data, x);
+      return el('div', { class: 'gear-with-icon' },
+        def.slot === 'weapon' ? weaponIcon(def.kind) : null, el('span', {}, def.name));
+    })) : el('p', { class: 'muted small' }, 'なし'),
     el('h2', {}, '道具'),
     el('div', { class: 'panel small' }, Object.entries(g.items).map(([id, n]) => el('div', {}, `${data.items.get(id)?.name ?? id} ×${n}`))),
   ];

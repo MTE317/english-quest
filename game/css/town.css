@@ -12,7 +12,7 @@
 }
 .town-card {
   display: grid;
-  grid-template-columns: 26px minmax(0, 1fr);
+  grid-template-columns: 32px minmax(0, 1fr);
   align-items: center;
   gap: 7px;
   min-height: 68px;
@@ -66,7 +66,7 @@
 
 @media (max-width: 350px) {
   .town-app { padding-inline: 10px; }
-  .town-card { grid-template-columns: 20px minmax(0, 1fr); gap: 5px; }
+  .town-card { gap: 5px; }
 }
 
 /* 暖炉の色と木枠でギルド酒場の掲示板を作る。 */

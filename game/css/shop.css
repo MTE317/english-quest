@@ -37,7 +37,16 @@
   line-height: 1.2;
   background: var(--bg);
 }
-.shop-item-icon { font-size: 1.55rem; line-height: 1.2; }
+.shop-item-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  min-width: 32px;
+  min-height: 32px;
+  font-size: 1.55rem;
+  line-height: 1.2;
+}
 .shop-slot-name { overflow-wrap: anywhere; }
 .shop-slot-count { font-size: .67rem; color: var(--muted); }
 .quest-ui .shop-slot[data-rarity]:not([data-rarity="common"]) { border-color: #a293db; }

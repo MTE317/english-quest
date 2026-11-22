@@ -3,6 +3,7 @@ import { craft, brew, enhance, dismantle, reroll, enchant, enchantFamilies, faci
 import { borrow, repayLoan, loanLimit, payOverdue } from '../town.js?v=features-2';
 import { chooseRuneEffect, runeChangeCost, equipRune, openRuneSlot, unlockJob } from '../temple.js?v=features-2';
 import { describeFixedEffects } from '../equipment-effects.js';
+import { weaponIcon } from './weapon-icons.js';
 
 const heading = (text) => el('h2', {}, text);
 const btn = (text, onclick, disabled = false) => el('button', { onclick, disabled }, text);
@@ -57,6 +58,8 @@ export function workshopView(data, g, act, rng, selection) {
       selectedDef ? [
         select('装備', filtered.map((def) => [def.id, `★${def.star} ${def.name}（Lv${def.itemLv}）`]),
           (id) => { selection.recipe = id; redraw(); }, selectedDef.id),
+        selectedDef.slot === 'weapon' ? el('p', { class: 'gear-with-icon' },
+          weaponIcon(selectedDef.kind), el('span', {}, selectedDef.name)) : null,
         selectedDef.recipeDescription ? el('p', { class: 'small' }, selectedDef.recipeDescription) : null,
         selectedDef.slot === 'weapon' ? el('p', { class: 'small muted' },
           `武器特性：${data.weaponTypes.get(selectedDef.kind)?.feature ?? 'なし'}`) : null,
@@ -93,6 +96,8 @@ export function workshopView(data, g, act, rng, selection) {
     const effectText = item.crafted ? describeFixedEffects(data, definition) : '';
     const enchantments = (item.enchants ?? []).map((effect, index) => el('div', { class: 'small' }, `枠${index + 1} ${effect.stat} +${effect.value}`));
     return [
+      definition.slot === 'weapon' ? el('p', { class: 'gear-with-icon' },
+        weaponIcon(definition.kind), el('span', {}, `${definition.name}${item.enh > 0 ? ` +${item.enh}` : ''}`)) : null,
       effectText ? el('p', { class: 'small' }, `固定効果：${effectText}`) : null,
       el('p', { class: 'small muted' }, `強化石 ${g.storage.materials.enhancement_stone ?? 0}個`),
       btn('強化する', () => act((game) => enhance(data, game, item, rng()))),
