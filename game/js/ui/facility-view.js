@@ -31,6 +31,8 @@ export function workshopView(data, g, act, rng, selection) {
       heading('制作'),
       selectedDef ? [
         select('装備', usableDefs.map((def) => [def.id, def.name]), (id) => { selection.recipe = id; redraw(); }, selectedDef.id),
+        selectedDef.slot === 'weapon' ? el('p', { class: 'small muted' },
+          `武器特性：${data.weaponTypes.get(selectedDef.kind)?.feature ?? 'なし'}`) : null,
         el('p', { class: 'small muted' }, recipe
           ? `${recipe.gold} G・${recipe.materials}${recipe.derive_from ? '・派生元 ' + data.equipment.get(recipe.derive_from)?.name : ''}`
           : `${data.economy.get(selectedDef.star).craft_gold} G・★${selectedDef.star}以上の通常素材4個`),
