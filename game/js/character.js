@@ -118,10 +118,10 @@ function persistHpFactor(data, member) {
 }
 
 export function maxHp(data, member) {
-  return Math.max(1, Math.round((baseStat(data, member, 'hp') + affixSum(member, 'HP')) * persistHpFactor(data, member)));
+  return Math.max(1, Math.round((baseStat(data, member, 'hp') + affixSum(member, 'HP')) * persistHpFactor(data, member) * (1 + (member.room?.hp ?? 0))));
 }
 export function maxMp(data, member) {
-  return Math.round(evaluate(data.balance.player.mp, { gMAG: grade(data, member, 'mag'), Lv: member.lv }));
+  return Math.round(evaluate(data.balance.player.mp, { gMAG: grade(data, member, 'mag'), Lv: member.lv }) * (1 + (member.room?.mp ?? 0)));
 }
 
 /** 防具（頭・体・腕）1つぶんの防御の値 */
@@ -177,7 +177,7 @@ export function computeStats(data, member) {
   // 装備の効果（CRT・EVA・STATUS_RES は % の値）
   out.crit = evaluate(formula(data, 'crit'), env) + affixSum(member, 'CRT') / 100;
   out.evasion = evaluate(formula(data, 'evasion'), env) + affixSum(member, 'EVA') / 100;
-  out.statusResist = evaluate(formula(data, 'status_resist'), env) + affixSum(member, 'STATUS_RES') / 100;
+  out.statusResist = evaluate(formula(data, 'status_resist'), env) + affixSum(member, 'STATUS_RES') / 100 + (member.room?.sres ?? 0);
   return out;
 }
 

@@ -54,5 +54,10 @@ export function realGameData() {
     uniques: readCsv('uniques.csv').rows,
     backpack: readCsv('backpack.csv').rows,
     ranks: readCsv('adventurer_ranks.csv').rows,
+    quests: readCsv('quests.csv').rows,
+    questTypes: readCsv('quest_types.csv').rows,
+    innRooms: readCsv('inn_rooms.csv').rows,
+    seasons: readCsv('seasons.csv').rows,
+    facilities: readCsv('facilities.csv').rows,
   });
 }

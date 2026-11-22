@@ -114,9 +114,9 @@ export function makeEnemy(data, monsterId, { lv, dungeonId = null, boss = false,
  * @param enemies makeEnemy で作った敵の配列
  * @param seed 乱数の種（整数）
  */
-export function createBattle(data, game, { enemies, seed = Date.now(), canFlee = true } = {}) {
+export function createBattle(data, game, { enemies, seed = Date.now(), canFlee = true, firstBattle = false } = {}) {
   const b = {
-    v: 1, rng: seed >>> 0, round: 0, queue: [], turn: null, result: null, canFlee,
+    v: 1, rng: seed >>> 0, round: 0, queue: [], turn: null, result: null, canFlee, firstBattle,
     allies: game.party.map((m) => ({
       statuses: Object.fromEntries((m.persist ?? []).map((id) => [id, { turns: 99, n: 1 }])),
       buffs: {}, imbue: null, once: [], endured: false,
@@ -173,7 +173,11 @@ function elementMul(data, enemy, el) {
 function startRound(data, game, b) {
   b.round += 1;
   const units = [];
-  game.party.forEach((m, i) => { if (canAct(game, b, i)) units.push({ side: 'ally', i, spd: battleStats(data, game, b, i).spd }); });
+  // 宿屋の良い部屋：遠征の最初の戦闘の1ターン目だけ SPD が上がる
+  const first = b.firstBattle && b.round === 1;
+  game.party.forEach((m, i) => {
+    if (canAct(game, b, i)) units.push({ side: 'ally', i, spd: battleStats(data, game, b, i).spd * (1 + (first ? m.room?.spd1 ?? 0 : 0)) });
+  });
   b.enemies.forEach((e, i) => {
     if (e.hp > 0) units.push({ side: 'enemy', i, spd: e.spd * (Object.keys(e.statuses).includes('statdown') ? 0.8 : 1) });
   });
