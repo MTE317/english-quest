@@ -16,4 +16,5 @@ export function speak(text) {
   if (v) u.voice = v;
   window.speechSynthesis.cancel();
   window.speechSynthesis.speak(u);
+  return u;
 }

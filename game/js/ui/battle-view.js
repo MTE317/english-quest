@@ -2,10 +2,11 @@
 import { now } from '../storage.js?v=features-2';
 import { QuestionPicker, REASON_LABEL } from '../picker.js';
 import { makePracticeQuestion, questionDirection, DIRECTION } from '../quiz.js?v=features-2';
-import { speak, canSpeak } from '../speech.js';
+import { speak, canSpeak } from '../speech.js?v=battle-music-1';
 import { nextTurn, actionOptions, setPending, resolvePending, targetKind, canAct, skillMp, collectBattleHits } from '../battle.js?v=hit-effects-1';
 import { maxHp, maxMp } from '../character.js?v=features-2';
 import { el, render } from '../dom.js';
+import { startBattleMusic, finishBattleMusic, muteMusicForSpeech } from '../battle-music.js';
 
 const TARGET_PROMPT = {
   enemy: '攻撃する敵を選ぶ',
@@ -13,7 +14,7 @@ const TARGET_PROMPT = {
   ko_ally: '倒れた味方を選ぶ',
 };
 
-export function createBattleView({ view, data, lex, scheduler, store, session, onEnd, settings = {} }) {
+export function createBattleView({ view, data, lex, scheduler, store, session, onEnd: finishBattle, settings = {} }) {
   const run = session.run;
   const b = run.battle;
   const g = session.game;
@@ -38,6 +39,11 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
     party,
     log,
     panel);
+
+  function onEnd(result) {
+    finishBattleMusic(result);
+    finishBattle(result);
+  }
 
   async function loop() {
     const hits = !b.pending && !b.turn && !b.result
@@ -302,13 +308,14 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
 
   function pronounce(word) {
     return canSpeak()
-      ? el('button', { class: 'battle-speak', 'aria-label': '英語の発音を聞く', onclick: () => speak(word.en) }, '🔊')
+      ? el('button', { class: 'battle-speak', 'aria-label': '英語の発音を聞く', onclick: () => muteMusicForSpeech(speak(word.en)) }, '🔊')
       : null;
   }
 
   return {
     start() {
       render(view, screen);
+      if (!b.result) startBattleMusic(screen);
       window.scrollTo(0, 0);
       loop();
     },
