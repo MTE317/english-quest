@@ -1,4 +1,4 @@
-# English Quest 仮データ（2026-11-22 ★12版）
+﻿# English Quest 仮データ（2026-11-22 ★12版）
 
 シミュレーションとゲームの両方が読む「正」のデータです。数値はすべて叩き台です。
 上級ジョブ・特殊ダンジョン・レジェンド級の装備はここに入っていません（ネタバレ防止のため別ファイル）。
@@ -19,7 +19,7 @@
 | balance.json | 敵の強さ・経験値・お金・全滅の扱いなどの式。レベルの上限は99 |
 | targets.csv | 合格ライン13項目（シミュレーションの判定に使う） |
 | elements.csv / seasons.csv | 属性12種 / 季節4つ |
-| jobs.csv / jobs_mid.csv | 基本ジョブ8種・中級ジョブ6種の能力値・初期装備 |
+| jobs.csv / jobs_mid.csv | 基本ジョブ8種・中級ジョブ6種の能力値・初期装備。change_jp＝そのジョブに転職するときに払うJP |
 | job_unlocks.csv | 中級ジョブの解放条件（素材 or 奥地で発見） |
 | job_weapon_aptitude.csv / job_armor_aptitude.csv / aptitude.csv | 装備の適正と倍率 |
 | skills.csv | 14ジョブのスキルツリー（5段目まで。効果は effect_json） |
@@ -55,6 +55,8 @@
 | kokuin_slots.csv | 刻印の枠を神殿で増やす費用 |
 | exams.csv | 覚醒の試練・昇格試験・最終試験の問題数と合格ライン |
 | srs.json | 出題と復習の設定（復習優先・1回の新出語数・目標の記憶率など） |
+| chant.json | 詠唱（瞬間英作文）の設定：判定○△×とJP・1日の量・転職のJPの使い方 |
+| grimoires.csv / chants.csv | 詠唱の教材。魔導書（まとまり）と、その中の文（日本語→英語、別解は alt_en に `\|` 区切り）。今は仮の3文 |
 | appearance_icons.csv | キャラメイクのアイコン |
 
 ## 単語について

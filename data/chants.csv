@@ -1,0 +1,4 @@
+﻿id,book,chapter,level,ja,en,alt_en,note
+c0001,b01,1,1,駅まで歩いて10分です。,It's a ten-minute walk to the station.,It takes ten minutes to walk to the station.,a ten-minute walk で「徒歩10分」
+c0002,b01,1,1,手伝ってくれてありがとう。,Thanks for helping me.,Thank you for your help.|Thanks for your help.,
+c0003,b01,1,1,もう少しゆっくり話してもらえますか？,Could you speak a little more slowly?,Can you speak a bit more slowly?,Could you ～? でていねいなお願い
