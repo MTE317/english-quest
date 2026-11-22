@@ -2,7 +2,7 @@
 // 式は data/balance.json から読む。balance.json に式として書かれていないもの（説明の文だけのもの）は、
 // シミュレーター（sim/core.py）と同じ式を下の SIM_FORMULAS に置いて使う。docs/requests.md で balance.json への追加を依頼済み。
 import { evaluate, isFormula } from './expr.js';
-import { memberMods, masteryMul, masteryLevel, masteryNeeded, ensureLoadout } from './growth.js?v=features-2';
+import { memberMods, masteryMul, ensureLoadout } from './growth.js?v=features-2';
 
 export const STATS = ['hp', 'str', 'mag', 'def', 'res', 'spd', 'luk'];
 export const STAT_LABEL = { hp: 'HP', str: 'STR', mag: 'MAG', def: 'DEF', res: 'RES', spd: 'SPD', luk: 'LUK' };
@@ -74,8 +74,6 @@ export function canEquip(data, member, slot, gear) {
   if (SLOT_KIND[slot] !== def.slot) return { ok: false, reason: `${SLOT_LABEL[slot]}の枠にはつけられない` };
   if (aptitudeMul(data, member.job, def) == null) return { ok: false, reason: 'このジョブでは装備できない（適正×）' };
   if (def.slot === 'weapon') {
-    const need = masteryNeeded(def);
-    if (data.skills && masteryLevel(data, member, def.kind) < need) return { ok: false, reason: `${data.weaponTypes.get(def.kind).name}の熟練度が${need}必要（今 ${masteryLevel(data, member, def.kind)}）` };
     const wt = data.weaponTypes.get(def.kind);
     if (slot === 'offhand') {
       if (!wt.dualWield) return { ok: false, reason: `${wt.name}は二刀流できない` };
