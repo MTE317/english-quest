@@ -1,0 +1,281 @@
+/* 冒険の画面枠。町と各施設で同じ配色・操作の形を使う。 */
+.quest-ui {
+  --bg: #0c1526; --panel: #152137; --panel-2: #21314b; --line: #3e5068;
+  --text: #f8f2e5; --muted: #bcc8d6; --accent: #f3cf86; --rune: #addce7;
+  --good: #83dbb8; --radius: 7px; --gold-line: #796745;
+  --serif: Georgia, "Hiragino Mincho ProN", "Yu Mincho", "Noto Serif CJK JP", serif;
+  color-scheme: dark; min-height: 100svh; color: var(--text);
+  background-color: var(--bg);
+  background-image: radial-gradient(ellipse at 70% 3%, #27344e70, transparent 41rem),
+    radial-gradient(ellipse at 4% 48%, #14313c52, transparent 33rem),
+    repeating-linear-gradient(135deg, transparent 0 28px, #93b4e005 28px 29px);
+}
+.quest-ui [hidden] { display: none !important; }
+.quest-ui .app { max-width: 770px; padding: 20px 20px 36px; }
+.quest-ui .town-app { max-width: 1100px; color: inherit; }
+.quest-ui .town-app:has(.facility-view) { max-width: 770px; }
+.quest-ui .guild-view { --panel: #31282b; --panel-2: #453337; --accent: #ffdc99; }
+.quest-ui .panel { box-shadow: inset 0 1px #ffffff08; }
+.quest-ui .small { font-size: .9rem; }
+.quest-ui .tiny { font-size: .78rem; }
+.quest-ui :is(button, a, summary, input, select):focus-visible {
+  outline: 3px solid #ffe0a0; outline-offset: 2px;
+}
+.quest-ui :is(button, .btn) { transition: background-color 120ms, border-color 120ms; }
+.quest-ui :is(button.primary,.btn.primary) {
+  background: linear-gradient(180deg,#ffe1a1,#e5b86d); color: #2c210f;
+  border: 1px solid #ffdfa0; box-shadow: inset 0 0 0 2px #ab813a59, 0 3px 9px #070c1766;
+}
+.quest-ui :is(input,select) { max-width: 100%; font-size: 1rem; }
+.quest-ui .select { min-height: 48px; border-radius: 6px; padding-inline: 12px; }
+.quest-ui label { display: block; }
+.quest-ui p { overflow-wrap: anywhere; }
+.quest-ui .row > * { min-width: 0; }
+.quest-ui .panel > summary { gap: 8px; font-weight: 650; }
+.quest-ui .panel > summary::after, .stone-help summary::after {
+  content: '+'; margin-left: auto; padding-inline: 6px; color: var(--accent); font-size: 1.2rem;
+}
+.quest-ui .panel[open] > summary::after, .stone-help[open] summary::after { content: '−'; }
+.quest-ui summary::-webkit-details-marker { display: none; }
+.game-mast { border-bottom: 1px solid #756241; background: #0c1526f5; }
+.mast-inner { max-width: 1100px; min-height: 64px; margin: auto; padding: 0 20px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.game-brand { display: inline-flex; align-items: center; gap: 13px; color: #f4dfb3; text-decoration: none; font: 600 1.65rem/1.1 var(--serif); letter-spacing: .015em; }
+.compass { position: relative; display: grid; place-items: center; width: 36px; height: 42px; color: #f6cd7a; font: 38px/1 Georgia,serif; }
+.compass::before,.compass::after { content: ''; position: absolute; inset: 8px 4px; border: 1px solid #b3945e; transform: rotate(45deg); }
+.compass::after { inset: 11px 7px; border-color: #b3945e8c; transform: none; }
+.journal-link,.travel-nav a { display: inline-flex; align-items: center; justify-content: center; gap: 7px; min-height: 46px; color: var(--muted); font-size: .9rem; font-weight: 600; text-decoration: none; }
+.journal-link span,.travel-nav span { color: var(--accent); font: 1.25rem/1 Georgia, serif; }
+.travel-nav { display: flex; gap: 5px; }
+.travel-nav a { padding-inline: 14px; border-bottom: 2px solid transparent; }
+.travel-nav a[aria-current] { color: var(--accent); border-color: var(--accent); }
+.scene-town { --scene: url('../art/town.webp'); }
+.scene-tavern { --scene: url('../art/tavern.webp'); }
+.scene-wilds { --scene: url('../art/wilds.webp'); }
+.scene-library { --scene: url('../art/library.webp'); }
+.scene-header,.quest-ui .page-heading {
+  position: relative; isolation: isolate; overflow: hidden; border: 1px solid #9a8156; border-radius: 9px;
+  background: #192941 var(--scene) center 47% / cover no-repeat;
+  box-shadow: 0 10px 35px #03081255;
+}
+.scene-header::before,.page-heading::before {
+  content: ''; position: absolute; inset: 0; z-index: -1;
+  background: linear-gradient(90deg,#091323ee 2%,#0b182cc7 28%,#07162635 62%,transparent 88%),
+    linear-gradient(0deg,#07101fb8,transparent 45%);
+}
+.scene-header::after,.page-heading::after {
+  content: ''; pointer-events: none; position: absolute; inset: 5px;
+  border: 1px solid #f6dca84a; border-radius: 4px;
+}
+.scene-header { min-height: clamp(270px,30vw,365px); display: flex; flex-direction: column; justify-content: flex-end; align-items: flex-start; padding: clamp(24px,4vw,52px); }
+.scene-copy { max-width: 34rem; }
+.scene-copy h1,.page-heading h1 { font-family: var(--serif); font-weight: 750; text-shadow: 0 2px 8px #07101f; }
+.scene-copy h1 { margin: 0; font-size: clamp(2.3rem,5.6vw,4.25rem); letter-spacing: .05em; line-height: 1.2; }
+.scene-copy p { max-width: 29em; margin: 12px 0 0; color: #fff3df; line-height: 1.65; text-shadow: 0 1px 4px #060c19; text-wrap: pretty; }
+.quest-ui .hero-action { display: inline-flex; align-items: center; justify-content: center; gap: 12px; width: auto; min-width: 190px; margin: 22px 0 0; padding-inline: 23px; }
+.hero-action span { font-size: 1.15rem; }
+.quest-ui .town-status {
+  align-self: stretch; display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 0;
+  margin: 22px 0 0; width: min(100%, 460px); padding: 9px 0; background: #0b172bdc; border: 1px solid #9b865b8c; border-radius: 5px;
+}
+.town-status > div { padding-inline: 14px; }
+.town-status > div + div { border-left: 1px solid #dcc9a83d; }
+.quest-ui .town-status dt { font-size: .77rem; color: #d9c799; }
+.quest-ui .town-status dd { font-size: .97rem; line-height: 1.35; }
+.chapter-title,.quest-ui .study-room > h2 { display: flex; align-items: center; gap: 12px; margin: 24px 0 13px; color: #f4dfb3; font: 700 1.3rem/1.4 var(--serif); letter-spacing: .045em; }
+.chapter-title::before { content: '✦' / ''; color: #ddba73; font-size: 1rem; }
+.chapter-title::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg,#927b50a8,transparent); }
+.stop-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 14px; align-items: start; }
+.stop-card { display: block; min-width: 0; text-decoration: none; color: var(--text); background: var(--panel); border: 1px solid #756449; border-radius: 7px; overflow: hidden; }
+.stop-card summary { display: block; }
+.stop-art { display: block; height: clamp(90px,11vw,132px); background: #273852 var(--scene) center 54% / cover; border-bottom: 1px solid #8e774c; }
+.stop-label { position: relative; display: grid; padding: 11px 34px 12px 15px; background: linear-gradient(115deg,#21324b,#172138); }
+.stop-label small { color: #ddc79a; font-size: .8rem; }
+.stop-label strong { font: 700 1.14rem/1.5 var(--serif); }
+.stop-label::after,.town-card::after { content: ''; position: absolute; right: 16px; top: 50%; width: 7px; height: 7px; border: solid #d6bb88; border-width: 1.5px 1.5px 0 0; transform: translateY(-50%) rotate(45deg); }
+details .stop-label::after { transform: translateY(-70%) rotate(135deg); }
+details[open] .stop-label::after { transform: rotate(-45deg); }
+.stop-card p { margin: 0; padding: 15px; font-size: .91rem; color: #d9e3ec; border-top: 1px solid var(--line); }
+.district-switch,.study-tabs { display: flex; gap: 5px; padding: 4px; margin: 12px 0; border: 1px solid var(--line); border-radius: 7px; background: #0d1626; }
+.district-switch button,.study-tabs button { flex: 1; min-width: 0; margin: 0; min-height: 44px; padding: 5px; border: 1px solid transparent; background: none; color: var(--muted); font-weight: 650; font-size: .9rem; }
+.district-switch button[aria-pressed=true],.study-tabs button.on { color: #ffe5a9; background: #2a3445; border-color: #88734e; }
+.facility-grid { grid-template-columns: repeat(4,minmax(0,1fr)); }
+.facility-grid .town-card { position: relative; min-height: 78px; padding: 10px 24px 10px 10px; background: #19263c; border-radius: 6px; }
+.facility-grid .town-card::after { right: 10px; }
+.town-footer { margin-top: 24px; justify-content: flex-end; }
+.town-actions { background: #302d2a; margin-top: 12px; }
+.scene-back,.quest-ui .page-heading .back {
+  align-self: flex-start; display: inline-flex; align-items: center; min-height: 44px; gap: 7px; text-decoration: none;
+  padding: 2px 12px; background: #0b1426d9; border: 1px solid #a38d6180; border-radius: 5px; color: #f4dfb3; font-size: .86rem;
+}
+.scene-back::before,.page-heading .back::before { content: '‹'; font-size: 1.3rem; line-height: 1; }
+.facility-view .scene-header,.quest-ui .page-heading { min-height: 150px; padding: 18px 24px; margin: 0 0 15px; align-items: flex-start; gap: 6px; }
+.facility-view .scene-header { min-height: 200px; }
+.facility-view .scene-copy h1,.quest-ui .page-heading h1 { font-size: clamp(1.65rem,4vw,2.3rem); }
+.facility-view .scene-copy p { margin: 3px 0; }
+.facility-view .town-status { margin-top: 5px; }
+.quest-ui .page-heading { display: flex; flex-direction: column; justify-content: space-between; }
+.quest-ui .page-heading h1 { flex: 0 1 auto; }
+.quest-ui .guild-board { border-radius: 6px; }
+.guild-board .guild-contract { position: relative; padding: 16px 13px 12px; margin-top: 2px; }
+.guild-contract::before { content: ''; width: 7px; height: 7px; position: absolute; top: 3px; left: 50%; border-radius: 50%; background: #936728; box-shadow: inset 0 1px 2px #f7d994,0 1px 2px #725026; }
+.action-feedback { position: sticky; top: 6px; z-index: 4; display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 10px 0; padding: 4px 10px 4px 14px; color: #d8ffeb; background: #153736; border: 1px solid #76aa99; border-radius: 6px; }
+.action-feedback.error { color: #ffd3bf; background: #482928; border-color: #ba8376; }
+.action-feedback button { flex: 0 0 44px; width: 44px; min-height: 44px; margin: 0; border: 0; background: none; }
+@media (hover:hover) {
+  .quest-ui :is(.stop-card,.town-card,.btn,button:not(:disabled)):hover { border-color: #e1bf7b; }
+  .travel-nav a:hover,.journal-link:hover { color: #ffe2aa; }
+}
+
+/* 仲間を選ぶ操作は編成と育成で同じ並びにする。 */
+.recruit-roster { display: grid; grid-template-columns: repeat(auto-fit,minmax(66px,1fr)); gap: 6px; }
+.recruit-roster button { min-width: 0; margin: 0; padding: 7px 3px; display: grid; justify-items: center; align-content: start; background: linear-gradient(#20334c,#142238); }
+.recruit-roster button[aria-pressed=true] { border-color: var(--accent); box-shadow: inset 0 -3px #e2b55e; background: linear-gradient(#334053,#252b38); }
+.recruit-icon { font-size: 2rem; line-height: 1.45; }
+.recruit-roster strong { font-size: .95rem; }
+.recruit-roster small { color: var(--muted); font-size: .78rem; }
+.recruit-editor { margin-top: 12px; }
+.recruit-editor h3 { margin: 0 0 12px; color: var(--accent); font-family: var(--serif); }
+.recruit-fields { display: grid; grid-template-columns: 1.3fr 1fr .8fr; gap: 10px; }
+.recruit-fields label { min-width: 0; color: var(--muted); font-size: .9rem; }
+.job-note { margin: 4px 0 0; padding-top: 8px; color: #d7c69f; border-top: 1px solid var(--line); font-size: .88rem; }
+.party-roster { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 9px; }
+.party-roster li,.party-roster button { margin: 0; }
+.roster-card { padding: 12px; height: 100%; background: linear-gradient(130deg,#22344a,#152238); }
+.roster-card .equipment-banner { border: 0; padding: 0; background: none; gap: 8px; }
+.roster-card .equipment-banner > div { min-width: 0; }
+.equipment-banner { background: linear-gradient(125deg,#2d3c50,#172438); }
+.equipment-portrait { border-radius: 6px; background: #142032; }
+.roster-resources { display: grid; gap: 5px; margin-top: 9px; font-size: .8rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+.roster-resources .meter { background: #0c1421; margin: 0; height: 5px; }
+.departure-plan { padding: clamp(13px,3vw,24px); }
+.route-facts { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); border: 1px solid #485971; background: #0d1a2c; border-radius: 5px; }
+.route-facts > div { padding: 8px 10px; min-width: 0; overflow-wrap: anywhere; }
+.route-facts > div + div { border-left: 1px solid var(--line); }
+.route-facts :is(small,strong) { display: block; }
+.route-facts small { color: var(--muted); font-size: .8rem; }
+.route-facts strong { color: #f3d9a8; font-size: 1rem; }
+.route-info { margin: 10px 0 15px; }
+.stone-help { color: var(--muted); font-size: .9rem; }
+.stone-help summary { justify-content: flex-start; }
+.stone-help p { margin: 0 0 8px; }
+.study-room { border: 1px solid var(--line); border-radius: 7px; background: var(--panel); padding: clamp(13px,3vw,22px); }
+.study-room > .chapter-title { margin-top: 0; }
+.study-room > button:has(.choice-title) { text-align: left; }
+.study-progress { display: block; width: 100%; height: 5px; accent-color: var(--rune); margin: 7px 0 2px; }
+.quiz-progress { align-items: center; padding: 9px 12px; background: var(--panel); border-bottom: 1px solid var(--gold-line); }
+.quest-ui .options { display: grid; gap: 8px; margin-block: 14px; }
+.quest-ui .options button,.battle-screen .battle-answers button { display: grid; grid-template-columns: 28px minmax(0,1fr); align-items: center; gap: 10px; margin: 0; text-align: left; overflow-wrap: anywhere; }
+.choice-letter { display: grid; place-items: center; width: 26px; height: 26px; border: 1px solid currentColor; border-radius: 4px; color: var(--accent); font: 600 .94rem Georgia,serif; }
+.options button:disabled { opacity: .76; }
+.options button:is(.correct,.wrong) { opacity: 1; }
+.options :is(.correct,.wrong) .choice-letter { color: inherit; }
+.chant-card { padding: clamp(16px,4vw,30px); border-color: #8b789c; background: linear-gradient(145deg,#292a47,#172239); }
+.chant-card h2 { margin-top: 0; font-family: var(--serif); }
+.chant-japanese { font-size: 1.2rem; }
+.chant-english { border-top: 1px solid #696684; padding-top: 16px; font-size: 1.35rem; font-weight: 650; line-height: 1.45; }
+.chant-grades { display: grid; grid-template-columns: repeat(auto-fit,minmax(120px,1fr)); gap: 6px; }
+.chant-grades button { margin: 0; }
+.chant-facts { margin-block: 12px; }
+.quest-ui:has(.battle-screen,.victory-screen,.quiz-progress,.chant-card) .game-mast,
+.quest-ui:has(.quiz-progress,.chant-card) .page-heading { display: none; }
+.quest-ui .app:has(.battle-screen,.victory-screen) { max-width: 740px; padding-top: 7px; }
+.quest-ui .app:has(.battle-screen,.victory-screen) > .page-heading {
+  background: none; border: 0; box-shadow: none; border-radius: 0;
+  min-height: 0; margin: 0 0 4px; padding: 0; flex-direction: row; align-items: center; justify-content: space-between;
+}
+.app:has(.battle-screen,.victory-screen) > .page-heading::before,.app:has(.battle-screen,.victory-screen) > .page-heading::after { display: none; }
+.quest-ui .app:has(.battle-screen,.victory-screen) .page-heading h1 { font-size: 1rem; }
+.quest-ui .battle-screen { --battle-bg: #111d30; --battle-card: #1a2b40; --battle-raised: #293c53; --battle-line: #50627b; --battle-dim: #becddc; }
+.battle-screen .battle-enemies { position: relative; background: linear-gradient(#091b2a38,#0a15277a), var(--scene, url('../art/wilds.webp')) center 50% / cover; border-color: #96815b; box-shadow: inset 0 0 0 3px #101f3099; }
+.battle-screen button.battle-enemy[aria-haspopup],.battle-screen .battle-enemy { background-color: #101e30df; }
+.battle-inspect { background: #132033; padding: 1px 3px; border-radius: 3px; }
+.battle-screen .battle-controls { border-color: #877451; background: linear-gradient(160deg,#202e44,#132035); }
+.battle-screen .battle-commands { align-content: start; }
+.battle-screen .battle-action-list { max-height: min(42svh,320px); }
+.battle-screen .battle-question { grid-template-columns: minmax(0,1fr) auto; }
+.battle-screen .battle-prompt { grid-column: 1; text-align: left; line-height: 1.35; }
+.battle-screen .battle-answers button { padding: 7px 10px; }
+.battle-screen .battle-resource { font-size: .75rem; }
+.battle-screen.answering .battle-enemies { min-height: 90px; padding-block: 4px; }
+.battle-screen.answering .battle-enemy-icon { min-height: 30px; font-size: 1.8rem; }
+.battle-screen .battle-panel-detail,.battle-screen .battle-command-copy small { font-size: .78rem; }
+.quest-ui .victory-header { background: linear-gradient(90deg,#102234e8,#122032b5),url('../art/wilds.webp') center / cover; }
+.quest-ui .victory-header h2 { color: #ffe2a0; }
+@media (min-width: 720px) {
+  .battle-screen .battle-party { grid-template-columns: repeat(4,minmax(0,1fr)); }
+  .battle-screen .battle-answers { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .quest-ui .options { grid-template-columns: repeat(2,minmax(0,1fr)); }
+}
+@media (max-width: 700px) {
+  .mast-inner { min-height: 54px; padding-inline: max(14px,env(safe-area-inset-left)); }
+  .game-brand { font-size: 1.35rem; gap: 9px; }
+  .compass { transform: scale(.84); width: 31px; }
+  .quest-ui .app { padding: 12px max(12px,env(safe-area-inset-right)) max(24px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left)); }
+  .has-travel .app { padding-bottom: calc(76px + env(safe-area-inset-bottom)); }
+  .travel-nav { position: fixed; bottom: 0; inset-inline: 0; z-index: 8; gap: 0; display: grid; grid-template-columns: repeat(4,1fr); padding: 0 env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); background: #101c30fa; border-top: 1px solid #87744e; box-shadow: 0 -3px 18px #080e1c77; }
+  .travel-nav a { min-height: 54px; padding: 4px 2px; flex-direction: column; gap: 3px; font-size: .78rem; border: 0; border-top: 2px solid transparent; }
+  .travel-nav a[aria-current] { background: #233149; }
+  .scene-header { min-height: 255px; padding: 22px 18px; }
+  .scene-header::before { background: linear-gradient(0deg,#091324f5 4%,#0c182aca 35%,#0c182a15 82%); }
+  .scene-copy { max-width: 29rem; }
+  .scene-copy h1 { font-size: clamp(2rem,8vw,3.1rem); }
+  .scene-copy p { margin-top: 6px; font-size: .93rem; }
+  .quest-ui .hero-action { margin-top: 14px; }
+  .quest-ui .town-status { margin-top: 12px; padding: 6px 0; }
+  .town-status > div { padding-inline: 8px; }
+  .stop-grid { grid-template-columns: 1fr; gap: 8px; }
+  a.stop-card,.stop-card summary { display: grid; grid-template-columns: 30% minmax(0,1fr); }
+  .stop-art { height: auto; min-height: 73px; border: 0; border-right: 1px solid #7b6a4a; }
+  .stop-label { align-content: center; padding-block: 8px; }
+  .facility-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .chapter-title { margin-top: 20px; }
+  .facility-view .scene-header,.quest-ui .page-heading { padding: 12px 16px; min-height: 128px; }
+  .facility-view .scene-header { min-height: 174px; }
+  .quest-ui .battle-screen { gap: 5px; }
+  .quest-ui:has(.quiz-progress,.chant-card) .app { padding-bottom: max(18px,env(safe-area-inset-bottom)); }
+}
+@media (max-width: 430px) {
+  .recruit-fields { grid-template-columns: minmax(0,1.3fr) minmax(0,.8fr); }
+  .recruit-fields label:first-child { grid-column: 1 / -1; }
+  .party-roster { grid-template-columns: 1fr; }
+  .roster-card { display: grid; grid-template-columns: minmax(0,1.2fr) minmax(0,1fr); align-items: center; gap: 10px; }
+  .roster-resources { margin: 0; }
+  .roster-card .equipment-portrait { flex-basis: 37px; height: 42px; font-size: 1.35rem; }
+  .quest-ui .study-tabs button,.district-switch button { font-size: .83rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .quest-ui *, .quest-ui *::before,.quest-ui *::after { scroll-behavior: auto !important; }
+  .quest-ui :is(button,.btn) { transition: none; }
+  .quest-ui :is(button,.btn):active { transform: none; }
+}
+
+.journal-panel > h2:first-child { margin-top: 0; }
+.journal-days { padding: 0; list-style: none; border-top: 1px solid var(--line); }
+.journal-days li { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 10px; border-bottom: 1px solid var(--line); color: var(--muted); }
+.journal-days strong { color: var(--text); }
+.quest-ui:has(.quiz-progress) .page-heading {
+  display: flex; flex-direction: row; align-items: center; min-height: 0; padding: 0; margin-bottom: 8px;
+  background: none; border: 0; box-shadow: none;
+}
+.quest-ui:has(.quiz-progress) .page-heading::before,.quest-ui:has(.quiz-progress) .page-heading::after { display: none; }
+.quest-ui:has(.quiz-progress) .page-heading h1 { font-size: 1rem; }
+
+.battle-screen .battle-party-toggle { display: none; }
+.battle-prompt-wrap { min-width: 0; }
+.battle-prompt-wrap small { display: block; margin-bottom: 2px; color: var(--battle-dim); font-size: .79rem; }
+.battle-enemies[data-count="2"] .battle-enemy { flex-basis: min(132px, calc((100% - 8px) / 2)); }
+@media (max-width: 700px) {
+  .battle-screen.answering .battle-party-toggle {
+    display: block; align-self: flex-end; width: auto; min-height: 44px;
+    padding: 5px 10px; color: var(--battle-dim); font-size: .85rem;
+  }
+  .battle-party-toggle::after { content: '+' / ''; margin-left: 8px; color: var(--battle-gold); }
+  .battle-party-toggle[aria-expanded=true]::after { content: '−' / ''; }
+  .battle-screen.answering .battle-party-toggle[aria-expanded=false] + .battle-party { display: none; }
+}
+
+.scene-cavern { --scene: url('../art/cavern.webp'); }
+.scene-forge { --scene: url('../art/forge.webp'); }
+.scene-temple { --scene: url('../art/temple.webp'); }
+.scene-arena { --scene: url('../art/arena.webp'); }
+.quest-ui .victory-header { background-image: linear-gradient(90deg,#102234e8,#122032ad),var(--scene,url('../art/wilds.webp')); }

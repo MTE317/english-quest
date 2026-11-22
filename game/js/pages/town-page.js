@@ -21,8 +21,11 @@ import { workshopView, managementView, templeExtras } from '../ui/facility-view.
 import { el, render, stars } from '../dom.js';
 import { setSceneMusic } from '../battle-music.js?v=jrpg-1';
 
+import { installGameShell, sceneHeader } from '../ui/game-shell.js';
+
 const view = document.getElementById('view');
 const session = new GameSession();
+installGameShell('town', session);
 session.installAutoSave(window);
 let data;
 let lex;
@@ -30,6 +33,7 @@ let scheduler;
 const learning = new LearningStore();
 const workshopSelection = {};
 let flash = null;
+let guildTab = location.hash === '#guild-active' ? 'active' : 'board';
 
 const requestedFacility = new URLSearchParams(window.location.search).get('facility');
 const rng = () => seededRng({ rng: (Date.now() ^ (Math.random() * 2 ** 32)) >>> 0 });
@@ -41,14 +45,14 @@ const facilityGroups = [
     { id: 'temple', name: '神殿', icon: '🏛️', detail: '復活・治療、転職・刻印', show: temple },
     { href: 'party.html', name: 'パーティ', icon: '🛡️', detail: '仲間の装備・スキル' },
   ] },
-  { title: '買い物と強化', cards: [
+  { title: '買い物・強化', cards: [
     { id: 'items', name: '道具屋', icon: '🧪', detail: '道具を買う、荷物枠を広げる', show: items },
     { id: 'gear', name: '武器・防具屋', icon: '⚔️', detail: '装備の購入・売却', show: gearShop },
     { id: 'workshop', name: '工房・調合', icon: '⚒️', detail: '装備の作成・強化、道具の調合',
       show: () => workshopView(data, session.game, act, rng, workshopSelection) },
     { id: 'storage', name: '倉庫', icon: '📦', detail: '装備・道具・素材を確認', show: storage },
   ] },
-  { title: '挑戦と町の運営', cards: [
+  { title: '挑戦・運営', cards: [
     { href: 'challenge.html', name: '闘技場', icon: '🏆', detail: '対戦と最終試験' },
     { id: 'manage', name: '銀行・投資', icon: '🪙', detail: '融資・返済、施設の強化',
       show: () => managementView(data, session.game, act) },
@@ -69,13 +73,6 @@ function act(fn) {
     flash = { ok: true, text: Array.isArray(msg) ? msg.join('　') : msg };
   } catch (e) { flash = { ok: false, text: e.message }; }
   draw();
-}
-
-function heading(title, isFacility = false) {
-  document.title = `${title} - English Quest`;
-  return el('header', { class: 'town-header' },
-    isFacility ? el('a', { class: 'back', href: 'index.html' }, '← 町へ') : null,
-    el('h1', {}, title));
 }
 
 function statusBar(g) {
@@ -100,7 +97,7 @@ function townActions(g) {
   const cure = g.party.some((m) => m.persist?.length);
   const rest = g.party.some((m) => m.hp > 0 && (m.hp < maxHp(data, m) || m.mp < maxMp(data, m)));
   const actions = [
-    reportable ? el('a', { href: facilityLink('guild') }, `報告できる依頼 ${reportable}件`) : null,
+    reportable ? el('a', { href: facilityLink('guild') + '#guild-active' }, `報告できる依頼 ${reportable}件`) : null,
     down || cure ? el('a', { href: facilityLink('temple') }, down ? `戦闘不能 ${down}人・神殿へ` : '状態異常の治療へ') : null,
     rest ? el('a', { href: facilityLink('inn') }, 'HP・MPの回復へ') : null,
     g.overdue ? el('a', { href: facilityLink('manage') }, '会費の滞納を確認') : null,
@@ -116,32 +113,58 @@ function townNotices(g) {
     el('button', { class: 'ghost', onclick: () => act((gg) => { gg.notices = []; }) }, 'お知らせを消す'));
 }
 
-function adventureCard(title, detail, href, label) {
-  return el('section', { class: 'town-adventure' },
-    el('h2', {}, title),
-    detail ? el('p', {}, detail) : null,
-    el('a', { class: 'btn primary', href }, label));
+const townStops = [
+  { scene: 'tavern', title: 'ギルド酒場', task: '依頼を受ける', href: facilityLink('guild'),
+    guide: '掲示板から依頼を受けよう。討伐や採集の条件を満たして酒場で報告すると、お金とランクポイントを獲得できる。' },
+  { scene: 'wilds', title: '訓練場', task: '単語を復習', href: 'study.html?tab=training',
+    guide: '鍛えたい仲間と問題数を選んで、英単語の4択に挑戦。復習が必要な単語から出題され、正解すると仲間が成長する。' },
+  { scene: 'library', title: '詠唱の間', task: '瞬間英作文', href: 'chant.html',
+    guide: '日本語を見て、英語で声に出そう。答えと発音を確かめて、自分がどこまで言えたかを選ぶ。' },
+];
+
+function stopCards(intro = false) {
+  return el('section', { class: 'town-stops' },
+    el('h2', { class: 'chapter-title' }, intro ? 'はじめての冒険ガイド' : '町の行き先'),
+    el('div', { class: 'stop-grid' }, townStops.map(({ scene, title, task, guide, href }) => {
+      const face = [
+        el('span', { class: `stop-art scene-${scene}`, 'aria-hidden': 'true' }),
+        el('span', { class: 'stop-label' }, el('small', {}, title), el('strong', {}, task)),
+      ];
+      return intro
+        ? el('details', { class: 'stop-card' }, el('summary', {}, face), el('p', {}, guide))
+        : el('a', { class: 'stop-card', href }, face);
+    })));
+}
+
+function heroAction(href, label) {
+  return el('a', { class: 'btn primary hero-action', href },
+    el('span', { 'aria-hidden': 'true' }, '✦'), label);
+}
+
+function facilityDirectory() {
+  const list = el('div', { class: 'town-grid facility-grid', id: 'facility-list' });
+  const nav = el('div', { class: 'district-switch', role: 'group', 'aria-label': '施設の種類' });
+  function choose(index) {
+    Array.from(nav.children).forEach((button, i) => button.setAttribute('aria-pressed', String(i === index)));
+    render(list, facilityGroups[index].cards.map(townCard));
+  }
+  facilityGroups.forEach(({ title }, i) => nav.append(el('button', { 'aria-controls': list.id, onclick: () => choose(i) }, title)));
+  choose(0);
+  return el('section', {}, el('h2', { class: 'chapter-title' }, '施設案内'), nav, list);
 }
 
 function showHome(g) {
   if (session.inDungeon) {
     const run = session.run;
-    const destination = run.label ?? data.dungeons.get(run.dungeonId)?.name;
-    const detail = run.challenge ? destination : [destination, run.floor && `${run.floor}階`].filter(Boolean).join('・');
-    render(view, heading('冒険者の町'),
-      adventureCard(run.challenge ? '挑戦の途中' : '遠征の途中', detail,
-        run.challenge ? 'challenge.html' : 'dungeon.html', '冒険を続ける'));
+    const detail = [run.label ?? data.dungeons.get(run.dungeonId)?.name, run.floor && `${run.floor}階`].filter(Boolean).join('・');
+    render(view, sceneHeader(run.challenge ? '挑戦の途中' : '遠征の途中', 'wilds',
+      { detail, action: heroAction(run.challenge ? 'challenge.html' : 'dungeon.html', '冒険を続ける') }));
     return;
   }
-
-  render(view, heading('冒険者の町'), statusBar(g),
-    adventureCard('ダンジョン', '行き先とルーンストーンを選ぶ', 'dungeon.html', 'ダンジョンへ'),
-    el('nav', { class: 'town-grid town-learning', 'aria-label': '英語の学習' },
-      townCard({ href: 'study.html?tab=training', icon: '📖', name: '単語を復習', detail: '訓練場でまとめて解く' }),
-      townCard({ href: 'chant.html', icon: '✦', name: '瞬間英作文', detail: '詠唱の間でフレーズ練習' })),
-    townActions(g), townNotices(g),
-    facilityGroups.map(({ title, cards }) => el('section', { class: 'town-district' },
-      el('h2', {}, title), el('div', { class: 'town-grid' }, cards.map(townCard)))));
+  render(view, sceneHeader('冒険者の町', 'town', {
+    detail: '行き先とルーンストーンを選んで遠征へ。',
+    action: heroAction('dungeon.html', 'ダンジョンへ'), status: statusBar(g),
+  }), townActions(g), townNotices(g), stopCards(), facilityDirectory());
 }
 
 function guild() {
@@ -163,21 +186,23 @@ function guild() {
         ? ready ? el('button', { onclick: () => act((gg) => reportQuest(data, gg, q.uid, rng())) }, '報告する') : null
         : el('button', { onclick: () => act((gg) => { acceptQuest(gg, q.uid); return 'クエストを受けた'; }) }, '依頼を受ける'));
   };
-  return [
-    el('section', { class: 'guild-board', 'aria-labelledby': 'guild-board-title' },
-      el('header', {},
-        el('h2', { id: 'guild-board-title' }, '依頼掲示板'),
-        el('span', {}, `受注 ${g.quests.length} / ${boardSize(data, g)}件`)),
-      pending ? el('a', { class: 'guild-board-jump', href: '#guild-active' }, `報告できる依頼 ${pending}件 ↓`) : null,
-      g.board.length
-        ? el('ul', { class: 'guild-contracts' }, g.board.map((q) => card(q, false)))
-        : el('p', { class: 'small' }, '現在、受けられる依頼はありません。')),
-    el('section', { class: 'guild-reports', 'aria-labelledby': 'guild-active' },
-      el('h2', { id: 'guild-active' }, '受けている依頼'),
-      g.quests.length
-        ? el('ul', { class: 'guild-contracts' }, [...g.quests].sort((a, b) => Number(canReport(data, g, b)) - Number(canReport(data, g, a)))
-          .map((q) => card(q, true)))
-        : el('p', { class: 'muted small' }, '受けている依頼はありません。')),
+  const tabs = [['board', '掲示板'], ['active', `受注中 ${g.quests.length}`], ['rank', '昇格・連続依頼']];
+  const switcher = el('div', { class: 'district-switch', role: 'group', 'aria-label': '酒場の窓口' },
+    tabs.map(([id, title]) => el('button', { 'aria-pressed': String(guildTab === id), onclick: () => {
+      guildTab = id; flash = null; draw();
+      view.querySelector('.district-switch [aria-pressed="true"]')?.focus({ preventScroll: true });
+    } }, title)));
+  if (guildTab === 'board') return [switcher, el('section', { class: 'guild-board', 'aria-labelledby': 'guild-board-title' },
+    el('header', {}, el('h2', { id: 'guild-board-title' }, '依頼掲示板'),
+      el('span', {}, `受注 ${g.quests.length} / ${boardSize(data, g)}件`)),
+    g.board.length ? el('ul', { class: 'guild-contracts' }, g.board.map((q) => card(q, false)))
+      : el('p', {}, '現在、受けられる依頼はありません。'))];
+  if (guildTab === 'active') return [switcher, el('section', { class: 'guild-board', id: 'guild-active' },
+    el('header', {}, el('h2', {}, '受けている依頼'), el('span', {}, `報告できる依頼 ${pending}件`)),
+    g.quests.length ? el('ul', { class: 'guild-contracts' },
+      [...g.quests].sort((a,b) => Number(canReport(data, g, b)) - Number(canReport(data, g, a))).map((q) => card(q, true)))
+      : el('p', {}, '掲示板で依頼を受けると、ここで進み具合を確認できます。'))];
+  return [switcher,
     el('details', { class: 'panel small' }, el('summary', {}, '連続クエスト'),
       data.questChains.filter((chain) => Number(chain.star) <= currentRank(data, g).maxDungeonRank).map((chain) => {
         const state = g.chains?.[chain.id];
@@ -224,7 +249,7 @@ function items() {
   return [
     el('h2', {}, '道具'),
     itemShopStock(data, g).map(({ item, price }) => el('div', { class: 'panel small' },
-      el('div', {}, `${item.name}　${price}　（持っている数 ${g.items[item.id] ?? 0}）`), el('div', { class: 'muted' }, item.description),
+      el('div', {}, el('strong', {}, item.name), `　${price} G ／ 所持 ${g.items[item.id] ?? 0}個`), el('div', { class: 'muted' }, item.description),
       el('div', { class: 'row' },
         el('button', { onclick: () => act((gg) => `${item.name}を${buyItem(data, gg, item.id, 1)}個買った`) }, '1個買う'),
         el('button', { onclick: () => act((gg) => `${item.name}を${buyItem(data, gg, item.id, 5)}個買った`) }, '5個買う')))),
@@ -244,7 +269,7 @@ function gearShop() {
     el('p', { class: 'muted small' }, '買った装備は倉庫に入ります（パーティの画面でつける）。'),
     gearShopStock(data, g).map(({ def, star, price }) => el('div', { class: 'row small', style: 'align-items:center' },
       el('div', { style: 'flex:2' }, `${stars(star)} ${def.name}`, el('div', { class: 'tiny muted' }, g.party.map((m) => `${m.name}:${aptitudeGrade(data, m.job, def) ?? '-'}`).join(' '))),
-      el('button', { onclick: () => act((gg) => { buyGear(data, gg, def.id); return `${def.name}を買った（-${price}）`; }) }, `${price}`))),
+      el('button', { onclick: () => act((gg) => { buyGear(data, gg, def.id); return `${def.name}を買った（-${price}）`; }) }, `購入　${price} G`))),
     el('h2', {}, '倉庫の装備を売る'),
     g.storage.gear.length ? null : el('p', { class: 'muted small' }, '倉庫に装備がない'),
     g.storage.gear.map((x) => el('div', { class: 'row small', style: 'align-items:center' },
@@ -291,15 +316,18 @@ function storage() {
 function draw() {
   const g = session.game;
   const inFacility = g?.party && facility && !session.inDungeon && !session.readOnly;
-  view.classList.toggle('guild-view', inFacility && facility.id === 'guild');
+  view.classList.toggle('facility-view', !!inFacility);
+  view.classList.toggle('guild-view', !!inFacility && facility.id === 'guild');
   setSceneMusic(inFacility ? (facility.id === 'guild' ? 'tavern' : 'facility') : 'town');
   if (session.readOnly) {
-    render(view, heading('冒険者の町'), el('p', { class: 'panel' }, 'このセーブは、より新しいバージョンのゲームで作成されています。'));
+    render(view, sceneHeader('冒険者の町', 'town'), el('p', { class: 'panel' }, 'このセーブは、より新しいバージョンのゲームで作成されています。'));
     return;
   }
   if (!g?.party) {
-    render(view, heading('冒険者の町'),
-      adventureCard('冒険をはじめる', '仲間の名前・ジョブ・見た目を選んで、最初のパーティを作ろう。', 'party.html', 'パーティを作る'));
+    render(view, sceneHeader('冒険者の町', 'town', {
+      detail: '仲間を編成してダンジョンへ。英語の4択に正解すると、仲間が攻撃やスキルを繰り出します。',
+      action: heroAction('party.html', 'パーティを作る'),
+    }), stopCards(true));
     return;
   }
   // 最初に町を開いたときや、昇格で枠が増えたときに依頼を補充する。
@@ -310,8 +338,10 @@ function draw() {
   if (!facility || session.inDungeon) return showHome(g);
 
   const cal = calendarOf(data, g.day);
-  render(view, heading(facility.name, true), statusBar(g),
-    flash?.text ? el('div', { class: `panel small ${flash.ok ? '' : 'error'}`, role: 'status' }, flash.text) : null,
+  document.title = `${facility.name} - English Quest`;
+  const scene = { guild: 'tavern', inn: 'tavern', temple: 'temple', workshop: 'forge', gear: 'forge' }[facility.id] ?? 'town';
+  render(view, sceneHeader(facility.name, scene, { detail: facility.detail, returnToTown: true, status: statusBar(g) }),
+    flash?.text ? el('div', { class: `action-feedback ${flash.ok ? '' : 'error'}`, role: 'status' }, flash.text, el('button', { 'aria-label': '通知を閉じる', onclick: (e) => { flash = null; e.currentTarget.parentNode.remove(); } }, '×')) : null,
     facility.id === 'manage' ? el('p', { class: 'panel small' },
       `${cal.month}か月目・月末まで${cal.daysLeft}日・月末の会費 ${guildFee(data, g)}`) : null,
     facility.show());

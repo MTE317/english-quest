@@ -6,6 +6,7 @@ import { speak, canSpeak, stopSpeech } from '../speech.js?v=jrpg-1';
 import { nextTurn, actionOptions, setPending, resolvePending, targetKind, canAct, skillMp, collectBattleHits } from '../battle.js?v=jrpg-1';
 import { maxHp, maxMp } from '../character.js?v=jrpg-1';
 import { el, render } from '../dom.js';
+import { expeditionScene } from './scenery.js';
 import { monsterKnowledge } from '../monster-knowledge.js';
 import { startBattleMusic, finishBattleMusic } from '../battle-music.js?v=jrpg-1';
 import { unlockBattleSound, playBattleHitSound } from '../battle-sound.js?v=jrpg-1';
@@ -27,7 +28,13 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
   const iconOf = (id) => data.icons.find((i) => i.id === id)?.icon ?? '❔';
   const turn = el('span', { class: 'battle-turn' });
   const enemies = el('div', { class: 'battle-enemies', 'data-count': b.enemies.length, 'aria-label': '敵', role: 'group' });
-  const party = el('div', { class: 'battle-party', 'data-count': g.party.length, 'aria-label': '味方', role: 'group' });
+  const party = el('div', { id: 'battle-party', class: 'battle-party', 'data-count': g.party.length, 'aria-label': '味方', role: 'group' });
+  const partyToggle = el('button', { class: 'battle-party-toggle', 'aria-controls': party.id, 'aria-expanded': 'false',
+    onclick: () => {
+      const open = partyToggle.getAttribute('aria-expanded') !== 'true';
+      partyToggle.setAttribute('aria-expanded', String(open));
+      partyToggle.textContent = open ? '仲間の状態を閉じる' : '仲間の状態を見る';
+    } }, '仲間の状態を見る');
   const latest = el('span', { class: 'battle-log-latest' });
   const history = el('ul', { class: 'battle-history' });
   const log = el('details', { class: 'battle-log' },
@@ -35,12 +42,12 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
   const panel = el('section', { class: 'battle-controls', 'aria-labelledby': 'battle-controls-title' });
   const encyclopedia = el('dialog', { class: 'battle-encyclopedia', 'aria-labelledby': 'battle-monster-name' });
   encyclopedia.addEventListener('click', (event) => { if (event.target === encyclopedia) encyclopedia.close(); });
-  const screen = el('div', { class: 'battle-screen' },
+  const screen = el('div', { class: `battle-screen scene-${expeditionScene(run.dungeonId, run.challenge)}` },
     el('div', { class: 'battle-location' },
       el('h2', {}, run.label ?? data.dungeons.get(run.dungeonId).name),
       el('span', { class: 'battle-floor' }, `${run.floor}階`), turn),
     enemies,
-    party,
+    partyToggle, party,
     log,
     panel, encyclopedia);
   screen.addEventListener('click', unlockBattleSound, { capture: true });
@@ -195,12 +202,18 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
 
   function showPanel(title, content, { back, detail, question = false, focus = true } = {}) {
     log.hidden = question;
+    screen.classList.toggle('answering', question);
+    partyToggle.setAttribute('aria-expanded', 'false');
+    partyToggle.textContent = '仲間の状態を見る';
     const heading = el('h3', { id: 'battle-controls-title', tabindex: '-1' }, title);
     render(panel,
       el('div', { class: 'battle-controls-head' }, heading, detail,
         back ? el('button', { class: 'battle-back', onclick: back }, '← 戻る') : null),
       content);
     if (focus) heading.focus({ preventScroll: true });
+    if (question && panel.getBoundingClientRect().bottom > window.innerHeight) {
+      panel.scrollIntoView({ block: 'nearest' });
+    }
   }
 
   function command(icon, label, onclick, detail = null, disabled = false) {
@@ -305,6 +318,8 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
     const word = lex.wordsById.get(q.wordId);
     const isEn = q.direction === DIRECTION.EN_JA;
     const voice = questionSpeech(q);
+    const instruction = q.format === 'cloze' ? '空欄に入る英語を選ぶ' : q.format === 'situation' ? '場面に合う英語を選ぶ'
+      : isEn ? '日本語の意味を選ぶ' : '英語を選ぶ';
     const title = `${g.party[actor].name}の${actionLabel(action)}`;
     drawField(actor, {}, action);
 
@@ -334,7 +349,7 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
           el('span', {}, `${word.en} ＝ ${word.ja}`),
           timedOut ? el('span', {}, '時間切れ') : correct ? null : el('span', { class: 'battle-result-choice' }, `選んだ答え　${q.choices[index].text}`)),
         el('div', { class: 'battle-result-actions' },
-          pronounce(voice.answer), el('button', { class: 'battle-next', onclick: loop }, '次へ →')),
+          pronounce(voice.answer), el('button', { class: 'battle-next', onclick: loop }, '次へ')),
       ], { focus: false });
       panel.querySelector('.battle-next').focus();
       playHits(hits);
@@ -343,10 +358,11 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
 
     showPanel(title, [
       el('div', { class: 'battle-question' },
-        el('div', { class: 'battle-prompt', style: 'white-space: pre-line', lang: isEn ? 'en' : 'ja' }, q.prompt),
+        el('div', { class: 'battle-prompt-wrap' }, el('small', {}, instruction),
+          el('div', { class: 'battle-prompt', style: 'white-space: pre-line', lang: isEn ? 'en' : 'ja' }, q.prompt)),
         pronounce(voice.prompt)),
       el('div', { class: 'battle-answers' }, q.choices.map((choice, index) =>
-        el('button', { onclick: () => answer(index), lang: isEn ? 'ja' : 'en' }, choice.text))),
+        el('button', { onclick: () => answer(index), lang: isEn ? 'ja' : 'en' }, el('span', { class: 'choice-letter', 'aria-hidden': 'true' }, String.fromCharCode(65 + index)), el('span', {}, choice.text)))),
     ], { detail: el('span', { class: `tag ${q.reason}` }, run.timeLimit ? `${run.timeLimit}秒` : REASON_LABEL[q.reason]), question: true });
     if (q.deadline) timeout = setTimeout(() => answer(-1), Math.max(0, q.deadline - Date.now()));
     if (!q.deadline || Date.now() < q.deadline) speak(voice.prompt);

@@ -9,9 +9,12 @@ import { el, render } from '../dom.js';
 
 import { setSceneMusic } from '../battle-music.js?v=jrpg-1';
 
+import { installGameShell } from '../ui/game-shell.js';
+
 const view = document.getElementById('view');
 setSceneMusic('facility');
 const session = new GameSession();
+installGameShell('chant', session);
 
 async function start() {
   if (!session.game?.party || session.inDungeon) {
@@ -39,7 +42,10 @@ async function start() {
     const chapters = [...new Set(all.filter((c) => c.book === bookId).map((c) => c.chapter))];
     const bookName = (b) => b.name_ja || b.name || b.title || b.id;
     render(view, message ? el('p', { role: 'status' }, message) : null,
-      el('div', { class: 'panel' }, `共有JP ${session.game.jp ?? 0} ・ 今日 ${daily.count} / ${limit.questions}問 ・ 新しい文 ${daily.introduced} / ${limit.new}`),
+      el('h2', { class: 'chapter-title' }, '瞬間英作文'),
+      el('div', { class: 'route-facts chant-facts' },
+        [['今日の詠唱', `${daily.count} / ${limit.questions}問`], ['新しい文', `${daily.introduced} / ${limit.new}`], ['共有JP', session.game.jp ?? 0]]
+          .map(([label, value]) => el('div', {}, el('small', {}, label), el('strong', {}, value)))),
       el('label', {}, '魔導書', el('select', { class: 'select', onchange: (e) => { bookId = e.target.value; chapter = ''; showMenu(); } },
         books.map((b) => el('option', { value: b.id, selected: b.id === bookId }, bookName(b))))),
       el('label', {}, '章', el('select', { class: 'select', onchange: (e) => { chapter = e.target.value; } },
@@ -61,7 +67,7 @@ async function start() {
     const reveal = el('button', { class: 'primary', onclick: () => {
       reveal.remove();
       if (canSpeak()) speak(c.en);
-      const grades = el('div', { class: 'row' });
+      const grades = el('div', { class: 'chant-grades' });
       for (const [key, grade] of Object.entries(config.grades)) {
         grades.append(el('button', { onclick: () => {
           try {
@@ -70,16 +76,17 @@ async function start() {
             seen.add(c.id);
             practice(seen, totalJp + earned);
           } catch (error) { showMenu(error.message); }
-        } }, grade.label));
+        } }, ({ o: '○　言えた', x: '×　言えなかった' })[key] ?? grade.label));
       }
-      render(answer, el('p', { lang: 'en' }, c.en),
+      render(answer, el('p', { lang: 'en', class: 'chant-english' }, c.en),
         splitList(c.alt_en).map((alt) => el('div', { class: 'small', lang: 'en' }, alt)),
         c.note ? el('p', { class: 'muted small' }, c.note) : null,
         canSpeak() ? el('button', { class: 'ghost', onclick: () => speak(c.en) }, 'もう一度聞く') : null,
-        grades);
+        el('p', { class: 'small muted' }, 'どのくらい言えましたか？'), grades);
+      grades.querySelector('button')?.focus();
     } }, '答えを見る');
     render(view, el('p', { class: 'muted small' }, `今回の獲得JP ${totalJp}`),
-      el('div', { class: 'panel' }, el('p', {}, c.ja), reveal, answer),
+      el('div', { class: 'panel chant-card' }, el('h2', {}, '英語で唱える'), el('p', { class: 'chant-japanese' }, c.ja), reveal, answer),
       el('button', { class: 'ghost', onclick: () => showMenu(`獲得JP ${totalJp}`) }, '終了する'));
   }
 

@@ -1,4 +1,5 @@
 import { maxHp, maxMp } from '../character.js?v=features-2';
+import { expeditionScene } from './scenery.js';
 import { el } from '../dom.js';
 
 function resource(label, value, max) {
@@ -37,7 +38,7 @@ export function createVictoryView({ data, dungeon, party, result, backpack, tota
     ...loot.gear.map((gear) => ({ name: gearName(gear), count: 1 })),
   ];
 
-  return el('div', { class: 'victory-screen' },
+  return el('div', { class: `victory-screen scene-${expeditionScene(dungeon.id)}` },
     el('header', { class: 'victory-header' },
       el('p', {}, `${dungeon.name} ・ ${floor} / ${dungeon.floors}階 ・ ${battleNumber} / ${battleCount}戦目`),
       el('h2', { tabindex: '-1' }, '勝利！')),

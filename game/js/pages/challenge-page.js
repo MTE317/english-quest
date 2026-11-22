@@ -12,13 +12,16 @@ import { nextRankStatus, checkRankUp } from '../town.js?v=features-2';
 import { updateRuneModifiers } from '../temple.js?v=features-2';
 import { makeGear } from '../character.js?v=jrpg-1';
 import { examWords, starLearnedRatio } from '../study.js?v=features-2';
-import { createBattleView } from '../ui/battle-view.js?v=jrpg-1';
-import { runQuiz } from '../ui/quiz-runner.js?v=jrpg-1';
+import { createBattleView } from '../ui/battle-view.js?v=atlas-1';
+import { runQuiz } from '../ui/quiz-runner.js?v=atlas-1';
 import { el, render } from '../dom.js';
 import { setSceneMusic } from '../battle-music.js?v=jrpg-1';
 
+import { installGameShell } from '../ui/game-shell.js';
+
 const view = document.getElementById('view');
 const session = new GameSession();
+installGameShell('challenge', session);
 const store = new LearningStore();
 let data; let lex; let scheduler; let config; let tiers; let matches; let shop;
 let message;

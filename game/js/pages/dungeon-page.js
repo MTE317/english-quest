@@ -13,15 +13,19 @@ import {
 } from '../dungeon.js?v=jrpg-1';
 import { backpackSlots, backpackUsed, addItem } from '../loot.js?v=features-2';
 import { maxHp, maxMp } from '../character.js?v=jrpg-1';
-import { createBattleView } from '../ui/battle-view.js?v=jrpg-1';
-import { createVictoryView } from '../ui/victory-view.js?v=features-2';
+import { createBattleView } from '../ui/battle-view.js?v=atlas-1';
+import { createVictoryView } from '../ui/victory-view.js?v=atlas-1';
 import { updateRuneModifiers } from '../temple.js?v=features-2';
 import { stoneAllowed } from '../study.js?v=features-2';
 import { el, render, stars } from '../dom.js';
 import { setSceneMusic } from '../battle-music.js?v=jrpg-1';
 
+import { expeditionScene } from '../ui/scenery.js';
+import { installGameShell } from '../ui/game-shell.js';
+
 const view = document.getElementById('view');
 const session = new GameSession();
+installGameShell('dungeon', session);
 session.installAutoSave(window);
 let data; let lex; let scheduler; let store; let srs;
 
@@ -46,15 +50,20 @@ function showDeparture(message = null) {
   const dungeons = allowedDungeons(data, g);
   const st = { dungeonId: dungeons[0].id, stoneId: null };
   const stoneSel = el('select', { class: 'select', onchange: (e) => { st.stoneId = e.target.value; } });
-  const info = el('div', { class: 'muted small' });
+  const info = el('div', { class: 'route-info', 'aria-live': 'polite' });
   const fill = () => {
     const dg = data.dungeons.get(st.dungeonId);
+    document.querySelector('.page-heading').className = `bar page-heading scene-${expeditionScene(dg.id)}`;
     // ★がダンジョン以上で、今のランクの★まで（1つ下の★の石をすべて読み解けば1つ上まで）
     const stones = lex.stones.filter((s) => stoneAllowed(lex, store, scheduler, s, dg.rank, rank.maxDungeonRank, scheduler.dayOf(now())));
     st.stoneId = stones.find((s) => s.id === st.stoneId)?.id ?? stones[0]?.id ?? null;
     render(stoneSel, stones.map((s) => el('option', { value: s.id, selected: s.id === st.stoneId }, `${stars(s.star)} ${s.name}`)));
     departure.disabled = !st.stoneId;
-    info.textContent = `${dg.kind}・${dg.floors}階・${dg.days}日かかる・帰還ポイント ${dg.returnPointFloor ? `${dg.returnPointFloor}階のあと` : 'なし'}　${dg.character}${stones.length ? '' : '　持ち込める教材がありません。'}`;
+    render(info, el('div', { class: 'route-facts' },
+      [['階層', `${dg.floors}階`], ['所要日数', `${dg.days}日`], ['帰還地点', dg.returnPointFloor ? `${dg.returnPointFloor}階の後` : 'なし']]
+        .map(([key, value]) => el('div', {}, el('small', {}, key), el('strong', {}, value)))),
+      el('p', { class: 'muted small' }, [dg.kind, dg.character].filter(Boolean).join(' ／ ')),
+      !stones.length ? el('p', { class: 'error' }, '持ち込めるルーンストーンがありません。') : null);
   };
   const departure = el('button', {
     class: 'primary',
@@ -68,16 +77,20 @@ function showDeparture(message = null) {
   }, '出発する');
   fill();
   render(view,
-    message ? el('div', { class: 'panel small' }, message) : null,
-    el('div', { class: 'muted small' }, `${g.day}日目・お金 ${g.gold}・ランク ${rank.title}（★${rank.maxDungeonRank}まで）`),
-    partyPanel(),
-    el('label', { class: 'small' }, '行き先',
-      el('select', { class: 'select', onchange: (e) => { st.dungeonId = e.target.value; fill(); } },
-        dungeons.map((d) => el('option', { value: d.id }, `${stars(d.rank)} ${d.name}${g.cleared?.[d.id] ? '（踏破済み）' : ''}`)))),
-    info,
-    el('label', { class: 'small' }, '持っていくルーンストーン（★がダンジョン以上。今の★の石をすべて読み解くと1つ上も）', stoneSel),
-    departure,
-    debugTools(),
+    el('section', { class: 'departure' },
+      el('h2', { class: 'chapter-title' }, '遠征の準備'),
+      message ? el('p', { class: 'panel error', role: 'alert' }, message, '　', el('a', { href: 'index.html?facility=temple' }, '神殿へ')) : null,
+      el('div', { class: 'panel departure-plan' },
+        el('label', {}, '行き先',
+          el('select', { class: 'select', onchange: (e) => { st.dungeonId = e.target.value; fill(); } },
+            dungeons.map((d) => el('option', { value: d.id }, `${stars(d.rank)} ${d.name}${g.cleared?.[d.id] ? '（踏破済み）' : ''}`)))),
+        info,
+        el('label', {}, '持っていくルーンストーン', stoneSel),
+        el('details', { class: 'stone-help' }, el('summary', {}, '教材を選ぶ条件'),
+          el('p', {}, `今のランクは「${rank.title}」。行き先以上の★の石を選べます。今の★の石をすべて読み解くと、1つ上の★の石も持ち込めます。`)),
+        departure),
+      el('details', { class: 'panel' }, el('summary', {}, `仲間の状態（${g.party.length}人）`), partyPanel()),
+      new URLSearchParams(location.search).has('debug') ? debugTools() : null)
   );
 }
 

@@ -13,15 +13,18 @@ import {
   stoneProgress, nextUnread, trialBlock, trialPlan, finishExam, promotionBlock, promotionPlan, starLearnedRatio,
   trainingReward, applyTraining,
 } from '../study.js?v=features-2';
-import { runQuiz } from '../ui/quiz-runner.js?v=jrpg-1';
+import { runQuiz } from '../ui/quiz-runner.js?v=atlas-1';
 import { speak, canSpeak } from '../speech.js?v=jrpg-1';
 import { el, render, stars } from '../dom.js';
 
 import { setSceneMusic } from '../battle-music.js?v=jrpg-1';
 
+import { installGameShell } from '../ui/game-shell.js';
+
 const view = document.getElementById('view');
 setSceneMusic('facility');
 const session = new GameSession();
+installGameShell('study', session);
 session.installAutoSave(window);
 let data; let lex; let scheduler; let store; let srs;
 const today = () => scheduler.dayOf(now());
@@ -31,7 +34,10 @@ const requestedTab = new URLSearchParams(window.location.search).get('tab');
 let tab = TABS.find(([id]) => id === requestedTab)?.[0] ?? 'library';
 
 function tabs() {
-  return el('div', { class: 'tabs four' }, TABS.map(([id, label]) => el('button', { class: tab === id ? 'on' : '', onclick: () => { tab = id; draw(); } }, label)));
+  return el('div', { class: 'tabs study-tabs', role: 'group', 'aria-label': '学習施設' }, TABS.map(([id, label]) => el('button', { class: tab === id ? 'on' : '', 'aria-pressed': String(tab === id), onclick: () => {
+    tab = id; const url = new URL(location.href); url.searchParams.set('tab', id); history.replaceState(null, '', url);
+    draw(); view.querySelector('.study-tabs .on')?.focus({ preventScroll: true });
+  } }, label)));
 }
 
 // ---------------- 資料室：予習カード ----------------
@@ -42,7 +48,8 @@ function library() {
       const p = stoneProgress(lex, store, scheduler, s.id, today());
       return el('button', { disabled: p.allRead, onclick: () => showCards(s.id) },
         el('div', { class: 'choice-title' }, `${stars(s.star)} ${s.name}`),
-        el('div', { class: 'stats' }, `読み解いた ${p.read} / ${p.total}`, p.allRead ? '　すべて読み解いた' : ''));
+        el('div', { class: 'stats' }, `読み解いた ${p.read} / ${p.total}`, p.allRead ? '　すべて読み解いた' : ''),
+        el('progress', { class: 'study-progress', value: p.read, max: p.total || 1, 'aria-label': '読了したルーン' }));
     }),
   ];
 }
@@ -57,7 +64,7 @@ function showCards(stoneId) {
       el('div', { class: 'progress' }, el('span', {}, '予習カード'), el('span', {}, `${k + 1} / ${cards.length}`)),
       el('div', { class: 'panel card' },
         el('div', { class: 'prompt', lang: 'en' }, w.en),
-        canSpeak() ? el('div', { class: 'center' }, el('button', { class: 'speak', onclick: () => speak(w.en) }, '🔊')) : null,
+        canSpeak() ? el('div', { class: 'center' }, el('button', { class: 'speak', 'aria-label': '英語の発音を聞く', onclick: () => speak(w.en) }, '🔊')) : null,
         el('div', { class: 'center', style: 'font-size:1.3rem' }, w.ja),
         w.pos ? el('div', { class: 'center muted small' }, w.pos) : null,
         w.exampleEn ? el('div', { class: 'small', lang: 'en' }, w.exampleEn) : null,
@@ -116,6 +123,8 @@ function training() {
   const counts = data.balance.training?.questions ?? [5, 10, 15];
   const st = { member: 0, kind: 'xp', count: counts[counts.length - 1], stoneId: lex.stones[0].id };
   const read = lex.stones.filter((s) => stoneProgress(lex, store, scheduler, s.id, today()).read > 0);
+  const stones = read.length ? read : lex.stones;
+  st.stoneId = stones[0].id;
   return [
     el('p', { class: 'muted small' }, '戦闘なしでまとめて解く。かすれたルーン（復習）を先に出す。日数は進まず、お金や素材は入らない。'),
     el('label', { class: 'small' }, 'だれを鍛える', el('select', { class: 'select', onchange: (e) => { st.member = Number(e.target.value); } },
@@ -125,7 +134,7 @@ function training() {
     el('label', { class: 'small' }, '問題数', el('select', { class: 'select', onchange: (e) => { st.count = Number(e.target.value); } },
       counts.map((c) => el('option', { value: c, selected: c === st.count }, `${c}問`)))),
     el('label', { class: 'small' }, '新しいルーンを出す石', el('select', { class: 'select', onchange: (e) => { st.stoneId = e.target.value; } },
-      (read.length ? read : lex.stones).map((s) => el('option', { value: s.id }, `${stars(s.star)} ${s.name}`)))),
+      stones.map((s) => el('option', { value: s.id }, `${stars(s.star)} ${s.name}`)))),
     el('button', { class: 'primary', onclick: () => startTraining(st) }, '鍛錬をはじめる'),
   ];
 }
@@ -203,7 +212,7 @@ function draw() {
     render(view, el('p', {}, 'ダンジョンの中にいます。'), el('a', { class: 'btn primary', href: 'dungeon.html' }, 'ダンジョンへ'));
     return;
   }
-  render(view, tabs(), { library, hall, training, exam }[tab]());
+  render(view, tabs(), el('section', { class: 'study-room' }, el('h2', { class: 'chapter-title' }, TABS.find(([id]) => id === tab)[1]), { library, hall, training, exam }[tab]()));
   window.scrollTo(0, 0);
 }
 

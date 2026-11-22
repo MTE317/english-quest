@@ -15,9 +15,12 @@ import { el, render, stars } from '../dom.js';
 
 import { setSceneMusic } from '../battle-music.js?v=jrpg-1';
 
+import { installGameShell } from '../ui/game-shell.js';
+
 const view = document.getElementById('view');
 setSceneMusic('facility');
 const session = new GameSession();
+installGameShell('party', session);
 session.installAutoSave(window);
 let data;
 
@@ -28,45 +31,64 @@ const jobName = (id) => data.jobsById.get(id)?.name ?? id;
 // ---------------- キャラメイク（仮） ----------------
 function showCreate() {
   const baseJobs = data.jobs.filter((j) => j.tier === 'base');
+  const names = ['アレン', 'リゼ', 'ノア', 'ミラ'];
   const specs = Array.from({ length: PARTY_SIZE }, (_, i) => ({
-    name: `${i + 1}人目`,
-    job: baseJobs[i % baseJobs.length].id,
+    name: names[i] ?? `${i + 1}人目`, job: baseJobs[i % baseJobs.length].id,
     icon: data.icons[i % data.icons.length].id,
   }));
-  const card = (spec, i) => {
-    const iconSpan = el('span', { style: 'font-size:2rem' }, iconOf(spec.icon));
-    return el('div', { class: 'panel' },
-      el('div', { class: 'row', style: 'align-items:center' },
-        iconSpan,
-        el('input', {
-          type: 'text', value: spec.name, maxlength: '8', 'aria-label': `${i + 1}人目の名前`,
-          style: 'flex:4;min-height:44px;font:inherit;color:var(--text);background:var(--panel-2);border:1px solid var(--line);border-radius:8px;padding:6px 10px',
-          oninput: (e) => { spec.name = e.target.value.trim() || `${i + 1}人目`; },
-        })),
-      el('label', { class: 'small' }, 'ジョブ',
-        el('select', { class: 'select', onchange: (e) => { spec.job = e.target.value; } },
-          baseJobs.map((j) => el('option', { value: j.id, selected: j.id === spec.job }, `${j.name}（${j.role}）`)))),
-      el('label', { class: 'small' }, '見た目',
-        el('select', { class: 'select', onchange: (e) => { spec.icon = e.target.value; iconSpan.textContent = iconOf(spec.icon); } },
-          data.icons.map((ic) => el('option', { value: ic.id, selected: ic.id === spec.icon }, ic.icon)))),
-    );
-  };
+  const roster = el('div', { class: 'recruit-roster', role: 'group', 'aria-label': '編集する仲間' });
+  const editor = el('div', { class: 'recruit-editor panel', id: 'recruit-editor' });
+  const members = specs.map((spec, i) => {
+    const face = el('span', { class: 'recruit-icon', 'aria-hidden': 'true' });
+    const name = el('strong');
+    const job = el('small');
+    const button = el('button', { 'aria-controls': editor.id, onclick: () => edit(i) }, face, name, job);
+    roster.append(button);
+    return { button, face, name, job };
+  });
+  function refresh(i) {
+    const spec = specs[i];
+    members[i].face.textContent = iconOf(spec.icon);
+    members[i].name.textContent = spec.name.trim() || `${i + 1}人目`;
+    members[i].job.textContent = jobName(spec.job);
+  }
+  function edit(i) {
+    const spec = specs[i];
+    const currentJob = () => baseJobs.find((j) => j.id === spec.job);
+    members.forEach(({ button }, n) => button.setAttribute('aria-pressed', String(n === i)));
+    const jobNote = el('p', { class: 'job-note' });
+    const describe = () => { const j = currentJob(); jobNote.textContent = [j.role, j.weakness].filter(Boolean).join(' ／ '); };
+    render(editor,
+      el('h3', {}, `${i + 1}人目の冒険者`),
+      el('div', { class: 'recruit-fields' },
+        el('label', {}, '名前', el('input', { class: 'select', type: 'text', maxlength: '8', value: spec.name,
+          oninput: (e) => { spec.name = e.target.value; refresh(i); } })),
+        el('label', {}, 'ジョブ', el('select', { class: 'select',
+          onchange: (e) => { spec.job = e.target.value; refresh(i); describe(); } },
+          baseJobs.map((j) => el('option', { value: j.id, selected: j.id === spec.job }, j.name)))),
+        el('label', {}, '見た目', el('select', { class: 'select',
+          onchange: (e) => { spec.icon = e.target.value; refresh(i); } },
+          data.icons.map((ic) => el('option', { value: ic.id, selected: ic.id === spec.icon }, ic.icon))))),
+      jobNote);
+    describe();
+  }
+  specs.forEach((_, i) => refresh(i));
+  edit(0);
   render(view,
-    el('h2', {}, 'パーティを作る'),
-    el('p', { class: 'muted small' }, '4人の名前・ジョブ・見た目を選びます。中級ジョブはあとで神殿で解放します。'),
-    specs.map(card),
-    el('button', {
-      class: 'primary',
-      onclick: () => {
+    el('section', { class: 'recruit-screen' },
+      el('h2', { class: 'chapter-title' }, 'パーティを作る'),
+      el('p', { class: 'muted' }, '仲間を選ぶと、名前・ジョブ・見た目を変更できます。この編成のまま出発もできます。'),
+      roster, editor,
+      el('button', { class: 'primary', onclick: () => {
         if (session.hasSave && !confirm('いまのセーブを上書きして、はじめから始めます。よろしいですか？（学習記録は消えません）')) return;
         const firstParty = !session.game?.party;
-        session.startNew(createNewGame(data, specs));
+        const party = specs.map((m, i) => ({ ...m, name: m.name.trim() || `${i + 1}人目` }));
+        session.startNew(createNewGame(data, party));
         if (firstParty) return window.location.replace('index.html');
         showParty();
-      },
-    }, 'この4人で冒険をはじめる'),
-    session.hasSave && session.game?.party ? el('button', { onclick: showParty }, 'やめる') : null,
-  );
+      } }, `この${specs.length}人で冒険をはじめる`),
+      session.game?.party ? el('button', { class: 'ghost', onclick: showParty }, 'やめる') : null));
+  window.scrollTo(0, 0);
 }
 
 // ---------------- 4人の一覧 ----------------
@@ -79,19 +101,21 @@ function showParty() {
   render(view,
     session.inDungeon ? el('div', { class: 'panel small error' }, 'ダンジョンの中では装備を変えられません。') : null,
     el('div', { class: 'muted small' }, `${g.day}日目・お金 ${g.gold}・倉庫の装備 ${g.storage.gear.length}個`),
-    el('ul', { class: 'choice-list' },
+    el('h2', { class: 'chapter-title' }, '冒険中の仲間'),
+    el('ul', { class: 'choice-list party-roster' },
       g.party.map((m, i) => {
         const st = computeStats(data, m);
         return el('li', {},
-          el('button', { onclick: () => showMember(i) },
-            el('div', { class: 'choice-title' }, `${iconOf(m.icon)} ${m.name}`, el('span', { class: 'muted small' }, `　${jobName(m.job)}　Lv${m.lv}`)),
-            el('div', { class: 'stats' }, el('span', {}, `HP ${m.hp}/${st.hp}`), el('span', {}, `MP ${m.mp}/${st.mp}`)),
-            bar(m.hp, st.hp, 'hp'),
-            bar(m.mp, st.mp, 'mp'),
-          ));
+          el('button', { class: 'roster-card', onclick: () => showMember(i) },
+            memberBanner(m),
+            el('div', { class: 'roster-resources' },
+              el('div', {}, el('span', {}, `HP　${m.hp} / ${st.hp}`), bar(m.hp, st.hp, 'hp')),
+              el('div', {}, el('span', {}, `MP　${m.mp} / ${st.mp}`), bar(m.mp, st.mp, 'mp')))));
       })),
-    debugTools(),
-    el('button', { class: 'ghost', onclick: showCreate }, 'はじめから（パーティを作り直す）'),
+    new URLSearchParams(location.search).has('debug') ? debugTools() : null,
+    !session.inDungeon ? el('details', { class: 'panel small' }, el('summary', {}, 'パーティを作り直す'),
+      el('p', { class: 'muted' }, '新しい編成で確定すると冒険を最初から始めます。学習記録は引き継ぎます。'),
+      el('button', { class: 'ghost', onclick: showCreate }, '新しい編成を決める')) : null,
   );
   window.scrollTo(0, 0);
 }

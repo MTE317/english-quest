@@ -40,15 +40,16 @@ export function runQuiz({ view, lex, scheduler, store, next, total, title, onDon
         results.push({ word, correct: ok });
         onAnswer?.(word, ok);
         render(after,
-          el('div', { class: `feedback ${ok ? 'good' : 'bad'}` }, ok ? '正解！' : `正解は「${q.choices[q.answerIndex].text}」`),
+          el('div', { class: `feedback ${ok ? 'good' : 'bad'}`, role: 'status' }, ok ? '正解！' : `正解は「${q.choices[q.answerIndex].text}」`),
           el('div', { class: 'small center' }, `${word.en} ＝ ${word.ja}`),
           voice.answer && canSpeak() ? el('button', { class: 'ghost', onclick: () => speak(voice.answer) }, '🔊 正解の英語を聞く') : null,
           el('button', { class: 'primary', onclick: ask }, n >= total ? '結果を見る' : '次へ'));
+        after.querySelector('.primary').focus();
         if (!isEn) speak(voice.answer);
       },
-    }, c.text));
+    }, el('span', { class: 'choice-letter', 'aria-hidden': 'true' }, String.fromCharCode(65 + k)), el('span', { lang: isEn ? 'ja' : 'en' }, c.text)));
     render(view,
-      el('div', { class: 'progress' }, el('span', {}, title), el('span', {}, `${n} / ${total}問・正解 ${correct}`)),
+      el('div', { class: 'progress quiz-progress' }, el('span', {}, title), el('span', {}, `${n} / ${total}問・正解 ${correct}`)),
       nx.reason ? el('div', { class: 'center' }, el('span', { class: `tag ${nx.reason}` }, REASON_LABEL[nx.reason])) : null,
       el('div', { class: `prompt ${isEn ? '' : 'ja'}`, style: 'white-space: pre-line', lang: isEn ? 'en' : 'ja' }, q.prompt),
       voice.prompt && canSpeak() ? el('div', { class: 'center' },
