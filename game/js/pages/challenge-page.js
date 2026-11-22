@@ -4,15 +4,15 @@ import { splitList } from '../csv.js';
 import { buildLexicon } from '../lexicon.js';
 import { Scheduler } from '../srs.js?v=features-2';
 import { LearningStore, now } from '../storage.js?v=features-2';
-import { GameSession } from '../save.js?v=features-2';
-import { normalizeGame } from '../game-state.js?v=features-2';
-import { createBattle, makeEnemy, finishBattle } from '../battle.js?v=jrpg-1';
-import { currentRank, useItemOutsideBattle, FIELD_ITEM_EFFECTS } from '../dungeon.js?v=jrpg-1';
-import { nextRankStatus, checkRankUp } from '../town.js?v=features-2';
-import { updateRuneModifiers } from '../temple.js?v=features-2';
-import { makeGear } from '../character.js?v=jrpg-1';
-import { examWords, starLearnedRatio } from '../study.js?v=features-2';
-import { createBattleView } from '../ui/battle-view.js?v=atlas-1';
+import { GameSession } from '../save.js?v=balance-builds-1';
+import { normalizeGame } from '../game-state.js?v=balance-builds-1';
+import { createBattle, makeEnemy, finishBattle } from '../battle.js?v=balance-builds-1';
+import { currentRank, useItemOutsideBattle, FIELD_ITEM_EFFECTS } from '../dungeon.js?v=balance-builds-1';
+import { nextRankStatus, checkRankUp } from '../town.js?v=balance-builds-1';
+import { updateRuneModifiers } from '../temple.js?v=balance-builds-1';
+import { makeGear } from '../character.js?v=balance-builds-1';
+import { examWords, starLearnedRatio } from '../study.js?v=balance-builds-1';
+import { createBattleView } from '../ui/battle-view.js?v=balance-builds-1';
 import { runQuiz } from '../ui/quiz-runner.js?v=atlas-1';
 import { el, render } from '../dom.js';
 import { setSceneMusic } from '../battle-music.js?v=jrpg-1';
@@ -190,10 +190,13 @@ function draw() {
     button(retry ? '次の日に再挑戦' : '最終試験に挑む', finalExam, retry || !rankCanAttemptFinal()),
     !rankCanAttemptFinal() && game.rank !== 'S' ? el('p', { class: 'muted small' }, '★12のルーンを80%習得し、Sランクに必要なギルドポイントと踏破条件を満たすと挑めます。') : null,
     el('h2', {}, '闘技場'),
+    el('p', { class: 'muted small' }, '同じ階級の5連戦です。HP・MPは持ち越し、戦闘の合間に道具を使えます。回復薬とエーテルを用意し、最後のチャンピオンに合わせて装備を整えましょう。'),
     tiers.length ? [mode, tiers.map((tier) => {
       const required = Number(tier.rank);
       const locked = required > config.tiers - 1 ? game.rank !== 'S' : currentRank(data, game).maxDungeonRank < required;
-      return button(tier.name, () => arena(tier, mode.value === 'ja2en' ? 'ja2en' : null, mode.value === 'timed'), locked);
+      const suggested = Number(tier.recommended_level) || 0;
+      const label = `${tier.name}${suggested ? `（推奨Lv${suggested}〜）` : ''}`;
+      return button(label, () => arena(tier, mode.value === 'ja2en' ? 'ja2en' : null, mode.value === 'timed'), locked);
     })] : el('p', { class: 'muted' }, '対戦データが登録された階級から遊べます。'),
     el('h2', {}, `メダル交換（所持 ${game.medals ?? 0}枚）`),
     shop.filter((row) => data.equipment.has(row.gear_id)).map((row) => button(`${data.equipment.get(row.gear_id).name}（${row.medals}枚）`, () => {
@@ -217,7 +220,7 @@ function draw() {
   data = gd; lex = buildLexicon(stones.rows, words.rows); scheduler = new Scheduler(srs.data); config = arenaFile.data;
   tiers = t?.rows ?? []; matches = m?.rows ?? []; shop = s?.rows ?? [];
   if (session.game && !session.readOnly) {
-    normalizeGame(data, session.game);
+    normalizeGame(data, session.game, session.run);
     updateRuneModifiers(data, session.game, lex, store, scheduler, scheduler.dayOf(now()));
   }
   draw();

@@ -5,18 +5,18 @@ import { buildLexicon } from '../lexicon.js';
 import { Scheduler } from '../srs.js?v=features-2';
 import { LearningStore, now, loadSettings } from '../storage.js?v=features-2';
 import { QuestionPicker } from '../picker.js';
-import { GameSession } from '../save.js?v=features-2';
-import { normalizeGame } from '../game-state.js?v=features-2';
+import { GameSession } from '../save.js?v=balance-builds-1';
+import { normalizeGame } from '../game-state.js?v=balance-builds-1';
 import {
   allowedDungeons, startRun, startNextBattle, afterBattle, returnToTown, continueRun, resolveLoot,
-  isBossBattle, runFloorRow, returnItems, currentRank, useItemOutsideBattle, FIELD_ITEM_EFFECTS,
-} from '../dungeon.js?v=jrpg-1';
-import { backpackSlots, backpackUsed, addItem } from '../loot.js?v=features-2';
-import { maxHp, maxMp } from '../character.js?v=jrpg-1';
-import { createBattleView } from '../ui/battle-view.js?v=atlas-1';
-import { createVictoryView } from '../ui/victory-view.js?v=atlas-1';
-import { updateRuneModifiers } from '../temple.js?v=features-2';
-import { stoneAllowed } from '../study.js?v=features-2';
+  isBossBattle, runFloorRow, runFloorCount, returnItems, currentRank, useItemOutsideBattle, FIELD_ITEM_EFFECTS,
+} from '../dungeon.js?v=balance-builds-1';
+import { backpackSlots, backpackUsed, addItem } from '../loot.js?v=balance-builds-1';
+import { maxHp, maxMp } from '../character.js?v=balance-builds-1';
+import { createBattleView } from '../ui/battle-view.js?v=balance-builds-1';
+import { createVictoryView } from '../ui/victory-view.js?v=balance-builds-1';
+import { updateRuneModifiers } from '../temple.js?v=balance-builds-1';
+import { stoneAllowed } from '../study.js?v=balance-builds-1';
 import { el, render, stars } from '../dom.js';
 import { setSceneMusic } from '../battle-music.js?v=jrpg-1';
 
@@ -48,7 +48,11 @@ function showDeparture(message = null) {
   }
   const rank = currentRank(data, g);
   const dungeons = allowedDungeons(data, g);
-  const st = { dungeonId: dungeons[0].id, stoneId: null };
+  const nearby = dungeons.find(d => d.rank === 1 && d.kind === '近場');
+  const averageLevel = g.party.reduce((sum, member) => sum + member.lv, 0) / g.party.length;
+  const beginner = rank.maxDungeonRank === 1 && nearby && (g.cleared?.[nearby.id] ?? 0) < 3 && averageLevel < 5;
+  const suggested = beginner ? nearby : dungeons.find(d => d.rank === rank.maxDungeonRank && d.kind === '標準') ?? dungeons[0];
+  const st = { dungeonId: suggested.id, stoneId: null };
   const stoneSel = el('select', { class: 'select', onchange: (e) => { st.stoneId = e.target.value; } });
   const info = el('div', { class: 'route-info', 'aria-live': 'polite' });
   const fill = () => {
@@ -79,11 +83,12 @@ function showDeparture(message = null) {
   render(view,
     el('section', { class: 'departure' },
       el('h2', { class: 'chapter-title' }, '遠征の準備'),
+      beginner ? el('p', { class: 'panel small' }, `はじめは近場の「${nearby.name}」がおすすめ。短い冒険を2〜3回重ねて仲間を育て、回復やスキルを準備してから標準ダンジョンへ挑もう。行き先は自由に選べます。`) : null,
       message ? el('p', { class: 'panel error', role: 'alert' }, message, '　', el('a', { href: 'index.html?facility=temple' }, '神殿へ')) : null,
       el('div', { class: 'panel departure-plan' },
         el('label', {}, '行き先',
           el('select', { class: 'select', onchange: (e) => { st.dungeonId = e.target.value; fill(); } },
-            dungeons.map((d) => el('option', { value: d.id }, `${stars(d.rank)} ${d.name}${g.cleared?.[d.id] ? '（踏破済み）' : ''}`)))),
+            dungeons.map((d) => el('option', { value: d.id, selected: d.id === st.dungeonId }, `${stars(d.rank)} ${d.name}${g.cleared?.[d.id] ? '（踏破済み）' : ''}`)))),
         info,
         el('label', {}, '持っていくルーンストーン', stoneSel),
         el('details', { class: 'stone-help' }, el('summary', {}, '教材を選ぶ条件'),
@@ -130,7 +135,7 @@ function showRun(result = null) {
   const head = [
     el('div', { class: 'choice-title' }, `${stars(dg.rank)} ${dg.name}`),
     el('div', { class: 'muted small' },
-      `${run.floor} / ${dg.floors}階${run.state === 'ready' ? `・${run.battleIndex + 1} / ${runFloorRow(data, run).battles}戦目` : ''}`,
+      `${run.floor} / ${runFloorCount(data, run)}階${run.state === 'ready' ? `・${run.battleIndex + 1} / ${runFloorRow(data, run).battles}戦目` : ''}`,
       `・バックパック ${backpack}・稼いだお金 ${run.earned.gold}`),
   ];
   let actions = [];
@@ -238,12 +243,13 @@ function battleView() {
         render(view,
           el('h2', {}, '全滅…'),
           el('p', {}, 'ダンジョンに入る前の状態に戻った（お金・素材・拾った装備・経験値・日数）。'),
-          el('p', { class: 'muted small' }, '学習記録（ルーンの状態）は残っています。'),
-          el('div', { class: 'panel small' }, `ヒント：${dg.rank > 1 ? '★を1つ下げたダンジョンで' : '浅い階や近場のダンジョンで'}鍛え直してから挑もう。`),
+          el('p', { class: 'muted small' }, '学習記録と、出会った魔物・判明した弱点や耐性は図鑑に残っています。受注中の依頼と保証金も維持されます。'),
+          el('div', { class: 'panel small' }, `ヒント：図鑑を見て属性耐性や状態異常対策を準備しよう。育成が必要なら、${dg.rank > 1 ? '★を1つ下げたダンジョン' : '近場のダンジョン'}がおすすめ。`),
+          el('a', { class: 'btn', href: 'party.html' }, '編成とビルド手引き'),
           el('a', { class: 'btn primary', href: 'index.html' }, '町へ'));
         return;
       }
-      const battleCount = runFloorRow(data, { dungeonId, floor }).battles;
+      const battleCount = runFloorRow(data, { ...session.run, dungeonId, floor }).battles;
       showRun({ ...r, floor, battleNumber: battleIndex + 1, battleCount });
     },
   });
@@ -260,7 +266,7 @@ function battleView() {
     scheduler = new Scheduler(srs);
     lex = buildLexicon(stones.rows, lexicon.rows);
     store = new LearningStore();
-    if (session.game && !session.readOnly) { normalizeGame(data, session.game);
+    if (session.game && !session.readOnly) { normalizeGame(data, session.game, session.run);
       updateRuneModifiers(data, session.game, lex, store, scheduler, scheduler.dayOf(now()));
       session.save(); }
     if (session.inDungeon && session.run.backpack) showRun();

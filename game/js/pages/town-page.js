@@ -1,24 +1,24 @@
 // 町をホームにして、施設カードから各施設を開く。
 import { loadGameData } from '../gamedata.js?v=features-2';
-import { GameSession } from '../save.js?v=features-2';
-import { normalizeGame } from '../game-state.js?v=features-2';
-import { currentRank, seededRng } from '../dungeon.js?v=jrpg-1';
+import { GameSession } from '../save.js?v=balance-builds-1';
+import { normalizeGame } from '../game-state.js?v=balance-builds-1';
+import { currentRank, seededRng } from '../dungeon.js?v=balance-builds-1';
 import {
-  calendarOf, guildFee, fillBoard, boardSize, acceptQuest, canReport, reportQuest, questText, nextRankStatus, stayInn, revive, reviveCost, checkRankUp,
+  calendarOf, guildFee, fillBoard, boardSize, questAcceptLimit, acceptQuest, canAcceptQuest, abandonQuest, canReport, reportQuest, questText, questProgress, questDestination, questRewardGold, questDepositTotal, questAbandonRefund, nextRankStatus, stayInn, revive, reviveCost, checkRankUp,
   canExpandBackpack, expandBackpack, feeTier,
   nextBackpackTier,
-} from '../town.js?v=features-2';
-import { backpackSlots } from '../loot.js?v=features-2';
-import { maxHp, maxMp, gearDef } from '../character.js?v=jrpg-1';
-import { availableJobs, changeJob } from '../growth.js?v=features-2';
+} from '../town.js?v=balance-builds-1';
+import { backpackSlots } from '../loot.js?v=balance-builds-1';
+import { maxHp, maxMp, gearDef } from '../character.js?v=balance-builds-1';
+import { availableJobs, changeJob } from '../growth.js?v=balance-builds-1';
 import { loadCsv, loadJson } from '../data.js?v=features-2';
 import { buildLexicon } from '../lexicon.js';
 import { Scheduler } from '../srs.js?v=features-2';
 import { LearningStore, now } from '../storage.js?v=features-2';
 import { chainStep, stepLabel, acceptChain, talkChain, deliverChain, claimChain } from '../quest-chain.js?v=features-2';
-import { cureAtTemple, updateRuneModifiers } from '../temple.js?v=features-2';
-import { workshopView, managementView, templeExtras } from '../ui/facility-view.js?v=armor-icons-1';
-import { itemShopView, gearShopView } from '../ui/town-shops.js?v=armor-icons-1';
+import { cureAtTemple, updateRuneModifiers } from '../temple.js?v=balance-builds-1';
+import { workshopView, managementView, templeExtras } from '../ui/facility-view.js?v=balance-builds-1';
+import { itemShopView, gearShopView } from '../ui/town-shops.js?v=balance-builds-1';
 import { weaponIcon } from '../ui/weapon-icons.js';
 import { equipmentIcon } from '../ui/equipment-icons.js';
 import { el, render } from '../dom.js';
@@ -182,18 +182,31 @@ function guild() {
   const pending = g.quests.filter((q) => canReport(data, g, q)).length;
   const card = (q, accepted) => {
     const ready = accepted && canReport(data, g, q);
+    const accept = accepted ? null : canAcceptQuest(data, g, q);
+    const destination = questDestination(data, q);
+    const deposit = accepted ? q.depositPaid ?? 0 : q.depositGold ?? 0;
+    const refund = questAbandonRefund(data, q);
+    const type = data.questTypes.find((type) => type.id === q.type)?.name ?? '依頼';
     return el('li', { class: `guild-contract${ready ? ' reportable' : ''}` },
       el('div', { class: 'guild-contract-meta' },
-        el('span', {}, `★${q.rank}`),
+        el('span', {}, `★${q.rank} ${type}`),
         el('span', {}, accepted ? (ready ? '報告可' : '進行中') : '募集中')),
       el('h3', {}, questText(data, q)),
+      destination ? el('p', { class: 'small' }, `行き先　${destination}`) : null,
       el('p', {}, `報酬　${rewardText(q)}`),
-      accepted && q.type !== 'gather'
-        ? el('progress', { max: q.count, value: q.progress, 'aria-label': '討伐の進み具合' }) : null,
-      accepted && !ready && q.type !== 'gather' ? el('span', {}, `${q.progress} / ${q.count}`) : null,
+      el('p', { class: 'small' }, deposit ? `${accepted ? '預かり中' : '受注保証金'} ${deposit} G（達成時に全額返還）` : '受注無料'),
+      accepted ? el('progress', { max: q.count, value: questProgress(data, g, q), 'aria-label': '依頼の進み具合' }) : null,
+      accepted ? el('span', {}, `${questProgress(data, g, q)} / ${q.count}`) : null,
       accepted
         ? ready ? el('button', { onclick: () => act((gg) => reportQuest(data, gg, q.uid, rng())) }, '報告する') : null
-        : el('button', { onclick: () => act((gg) => { acceptQuest(gg, q.uid); return 'クエストを受けた'; }) }, '依頼を受ける'));
+        : el('button', { disabled: !accept.ok, title: accept.reason, onclick: () => act((gg) => {
+          const taken = acceptQuest(data, gg, q.uid, rng());
+          return taken.depositPaid ? `依頼を受けた。保証金 ${taken.depositPaid} G を預けた。` : '依頼を受けた。';
+        }) }, accept.ok ? (deposit ? `${deposit} G を預けて受注` : '依頼を受ける') : accept.reason),
+      accepted ? el('details', { class: 'small' }, el('summary', {}, '依頼を取り下げる'),
+        el('p', {}, deposit ? `保証金 ${refund} G を返還します。手数料は ${deposit - refund} G です。` : '取り下げても費用はかかりません。'),
+        el('p', { class: 'muted small' }, '同じ内容の依頼は、次の遠征から戻るまで再掲されません。'),
+        el('button', { onclick: () => act((gg) => abandonQuest(data, gg, q.uid, rng())) }, 'この依頼を取り下げる')) : null);
   };
   const tabs = [['board', '掲示板'], ['active', `受注中 ${g.quests.length}`], ['rank', '昇格・連続依頼']];
   const switcher = el('div', { class: 'district-switch', role: 'group', 'aria-label': '酒場の窓口' },
@@ -203,11 +216,13 @@ function guild() {
     } }, title)));
   if (guildTab === 'board') return [switcher, el('section', { class: 'guild-board', 'aria-labelledby': 'guild-board-title' },
     el('header', {}, el('h2', { id: 'guild-board-title' }, '依頼掲示板'),
-      el('span', {}, `受注 ${g.quests.length} / ${boardSize(data, g)}件`)),
+      el('span', {}, `掲示 ${g.board.length}件・受注 ${g.quests.length} / ${questAcceptLimit(data, g)}件`)),
+    el('p', { class: 'small muted' }, `所持金 ${g.gold} G・預けている保証金 ${questDepositTotal(g)} G。期限はなく、帰還・全滅でも受注は継続します。`),
     g.board.length ? el('ul', { class: 'guild-contracts' }, g.board.map((q) => card(q, false)))
-      : el('p', {}, '現在、受けられる依頼はありません。'))];
+      : el('p', {}, 'この掲示分の依頼は出そろいました。遠征から戻ると新しい依頼が届きます。'))];
   if (guildTab === 'active') return [switcher, el('section', { class: 'guild-board', id: 'guild-active' },
-    el('header', {}, el('h2', {}, '受けている依頼'), el('span', {}, `報告できる依頼 ${pending}件`)),
+    el('header', {}, el('h2', {}, '受けている依頼'), el('span', {}, `報告可 ${pending}件・受注 ${g.quests.length} / ${questAcceptLimit(data, g)}件`)),
+    el('p', { class: 'small muted' }, `預かり保証金 ${questDepositTotal(g)} G。達成報告で全額返還されます。`),
     g.quests.length ? el('ul', { class: 'guild-contracts' },
       [...g.quests].sort((a,b) => Number(canReport(data, g, b)) - Number(canReport(data, g, a))).map((q) => card(q, true)))
       : el('p', {}, '掲示板で依頼を受けると、ここで進み具合を確認できます。'))];
@@ -234,8 +249,12 @@ function guild() {
 }
 function rewardText(q) {
   const def = data.quests.find((x) => x.id === q.questId);
-  const gold = Math.round(data.economy.get(q.rank).run_income * def.rewardGoldPct / 100 * (1 + currentRank(data, session.game).questBonus));
-  return [gold ? `お金 ${gold}` : null, def.rewardItem || null, `ポイント ${def.rankPoints}`].filter(Boolean).join('・');
+  const gold = questRewardGold(data, session.game, q);
+  const item = def?.rewardItem?.includes('確定ではない') ? '固有装備は討伐時に抽選' : def?.rewardItem;
+  const gap = currentRank(data, session.game).maxDungeonRank - q.rank;
+  const rules = data.balance.guild_points ?? {};
+  const points = (def?.rankPoints ?? 0) * (gap === 0 ? rules.same_rank ?? 1 : gap === 1 ? rules.one_rank_lower ?? 0.5 : 0);
+  return [gold ? `${gold} G` : null, item || null, `ポイント ${points}`].filter(Boolean).join('・');
 }
 
 function inn() {
@@ -329,7 +348,7 @@ function draw() {
     return;
   }
   // 最初に町を開いたときや、昇格で枠が増えたときに依頼を補充する。
-  if (!session.inDungeon && (g.board?.length ?? 0) + g.quests.length < boardSize(data, g)) {
+  if (!session.inDungeon && (g.questBoardVersion !== 2 || (g.board?.length ?? 0) < boardSize(data, g))) {
     fillBoard(data, g, rng());
     session.save();
   }
@@ -347,7 +366,7 @@ function draw() {
 
 function refresh() {
   if (session.game && !session.readOnly) {
-    normalizeGame(data, session.game);
+    normalizeGame(data, session.game, session.run);
     updateRuneModifiers(data, session.game, lex, learning, scheduler, scheduler.dayOf(now()));
     session.save();
   }

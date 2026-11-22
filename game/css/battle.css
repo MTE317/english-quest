@@ -65,6 +65,18 @@ body:has(.battle-screen) { background: #10171e; }
   font-size: .78rem;
   font-variant-numeric: tabular-nums;
 }
+.battle-intent {
+  display: block;
+  margin-top: 4px;
+  padding: 3px 5px;
+  border: 1px solid #d8b96e;
+  border-radius: 5px;
+  color: #ffe4a3;
+  background: #3c3325;
+  font-size: .7rem;
+  line-height: 1.4;
+}
+.battle-intent.imminent { border-color: #ed8c75; color: #ffd3bd; background: #492c29; }
 
 .battle-enemies {
   display: flex;

@@ -6,15 +6,15 @@
 //   'loot'         … 拾ったものがバックパックに入りきらない（入れ替えるかあきらめるかを選ぶ）
 //   'return_point' … 帰還ポイント（帰るか先へ進むかを選ぶ）
 //   'cleared'      … いちばん奥のボスを倒した（町に帰るだけ）
-import { createBattle, finishBattle, battleRewards } from './battle.js?v=jrpg-1';
-import { makeEncounter, floorRow, planBounty } from './encounter.js?v=features-2';
-import { rollBattleLoot, addToBackpack, swapIntoBackpack, unloadBackpack } from './loot.js?v=features-2';
-import { gainXp, maxHp, maxMp, affixSum } from './character.js?v=jrpg-1';
-import { curedBy } from './battle.js?v=jrpg-1';
-import { advanceDays, calendarOf, countKills, refreshBoard } from './town.js?v=features-2';
+import { createBattle, finishBattle, battleRewards } from './battle.js?v=balance-builds-1';
+import { makeEncounter, floorRow, planBounty } from './encounter.js?v=balance-builds-1';
+import { rollBattleLoot, addToBackpack, swapIntoBackpack, unloadBackpack } from './loot.js?v=balance-builds-1';
+import { gainXp, maxHp, maxMp, affixSum } from './character.js?v=balance-builds-1';
+import { curedBy } from './battle.js?v=balance-builds-1';
+import { advanceDays, calendarOf, countKills, refreshBoard } from './town.js?v=balance-builds-1';
 import { updateChains } from './quest-chain.js?v=features-2';
-import { discoverJobs } from './temple.js?v=features-2';
-import { memberMods } from './growth.js?v=features-2';
+import { discoverJobs } from './temple.js?v=balance-builds-1';
+import { memberMods } from './growth.js?v=balance-builds-1';
 
 /** 乱数の種から 0〜1 の乱数を返す関数（状態は obj[key] に入れて保存できる） */
 export function seededRng(obj, key = 'rng') {
@@ -52,7 +52,11 @@ export function startRun(data, session, { dungeonId, stoneId, quizState, seed })
   if (!allowedDungeons(data, session.game).includes(dg)) throw new Error('今のランクでは入れない');
   session.enterDungeon({ dungeonId, stoneId });
   session.updateRun((run, game) => {
+    run.layoutVersion = data.balance.dungeon?.layout_version ?? 2;
+    run.route = data.dungeonFloors.filter((row) => row.dungeonId === dungeonId)
+      .sort((a, b) => a.floor - b.floor).map((row) => ({ ...row }));
     run.battleIndex = 0;
+    run.elitesSeen = 0;
     run.state = 'ready';
     run.backpack = { gear: [], materials: {} };
     run.earned = { gold: 0, xp: 0 };
@@ -64,8 +68,30 @@ export function startRun(data, session, { dungeonId, stoneId, quizState, seed })
   });
 }
 
+/** 遠征の開始時に経路を固定する。更新前のセーブは当時の経路で最後まで進める。 */
+export function runRoute(data, run) {
+  if (Array.isArray(run.route) && run.route.length) return run.route;
+  const legacy = run.layoutVersion == null && (run.snapshot || run.battleIndex != null)
+    ? data.balance.dungeon?.legacy_layout?.[run.dungeonId] : null;
+  if (legacy) {
+    run.route = Array.from({ length: legacy.floors }, (_, i) => ({
+      dungeonId: run.dungeonId, floor: i + 1, enemyLevel: legacy.first_level + i,
+      battles: legacy.battles_per_floor, enemiesPerBattle: i === 0 ? legacy.first_floor_enemies : legacy.other_floor_enemies,
+      lastBattleIsBoss: i + 1 === legacy.floors, returnPointAfter: i + 1 === legacy.return_point_floor,
+    }));
+    run.layoutVersion = 1;
+  } else {
+    run.route = data.dungeonFloors.filter((row) => row.dungeonId === run.dungeonId)
+      .sort((a, b) => a.floor - b.floor).map((row) => ({ ...row }));
+    run.layoutVersion ??= data.balance.dungeon?.layout_version ?? 2;
+  }
+  return run.route;
+}
+
+export function runFloorCount(data, run) { return runRoute(data, run).length; }
+
 export function runFloorRow(data, run) {
-  return floorRow(data, run.dungeonId, run.floor);
+  return runRoute(data, run).find((row) => row.floor === run.floor) ?? floorRow(data, run.dungeonId, run.floor);
 }
 
 export function isBossBattle(data, run) {
@@ -79,9 +105,13 @@ export function startNextBattle(data, session) {
   if (run.state !== 'ready') throw new Error('今は戦闘を始められない');
   const rng = seededRng(run);
   const bounty = run.bounty?.floor === run.floor && run.bounty?.battle === run.battleIndex ? run.bounty.monsterId : null;
-  const dungeon = data.dungeons.get(run.dungeonId);
-  const season = dungeon.kind === '季節の地' ? calendarOf(data, session.game.day).season?.id : null;
-  const enemies = makeEncounter(data, run.dungeonId, run.floor, rng, { boss: isBossBattle(data, run), season, bountyId: bounty, elites: true });
+  const season = calendarOf(data, session.game.day).season?.id;
+  const maxElites = Math.max(0, (data.balance.dungeon?.elite_max_per_run ?? Infinity) - (run.elitesSeen ?? 0));
+  const enemies = makeEncounter(data, run.dungeonId, run.floor, rng, {
+    boss: isBossBattle(data, run), season, bountyId: bounty, elites: true, maxElites,
+    quests: session.game.quests ?? [], rowOverride: runFloorRow(data, run),
+  });
+  run.elitesSeen = (run.elitesSeen ?? 0) + enemies.filter((enemy) => enemy.eliteId).length;
   session.setBattle(createBattle(data, session.game, { enemies, seed: Math.floor(rng() * 4294967296), firstBattle: run.battlesDone === 0 }));
 }
 
@@ -89,6 +119,15 @@ export function startNextBattle(data, session) {
  * 戦闘が終わったあと（勝った・逃げた）。全滅なら入る前に戻す。
  * @returns 戦闘結果と、勝利時のメンバーごとの成長・ドロップ
  */
+/** 勝利後の回復。検証ツールも実ゲームと同じ処理を使う。 */
+export function recoverAfterBattle(data, game) {
+  for (const m of game.party.filter(member => member.hp > 0)) {
+    const mods = memberMods(data, m);
+    if (mods.mp_regen) m.mp = Math.min(maxMp(data, m), Math.round(m.mp + maxMp(data, m) * mods.mp_regen));
+    if (mods.hp_regen) m.hp = Math.min(maxHp(data, m), Math.round(m.hp + maxHp(data, m) * mods.hp_regen));
+  }
+}
+
 export function afterBattle(data, session) {
   const b = session.run.battle;
   const game = session.game;
@@ -101,7 +140,7 @@ export function afterBattle(data, session) {
   let loot = null;
   session.endBattle((g, run) => {
     if (b.result === 'win') {
-      countKills(g, b.enemies);
+      countKills(g, b.enemies, run.dungeonId);
       updateChains(data, g, run.dungeonId, run.floor, b.enemies);
       const r = battleRewards(data, g, b);
       const practice = b.learningRewards;
@@ -117,19 +156,11 @@ export function afterBattle(data, session) {
         run.earned.xp += xp;
         growth.push({ xp, ap, levels });
       });
-      // 共通ツリー「魔力の余韻」：戦闘が終わったら MP が回復
-      for (const m of g.party) {
-        const regen = memberMods(data, m).mp_regen ?? 0;
-        if (regen && m.hp > 0) m.mp = Math.min(maxMp(data, m), Math.round(m.mp + maxMp(data, m) * regen));
-      }
+      recoverAfterBattle(data, g);
       const survivors = g.party.filter((m) => m.hp > 0);
-      for (const m of survivors) {
-        const regen = memberMods(data, m).hp_regen ?? 0;
-        if (regen) m.hp = Math.min(maxHp(data, m), Math.round(m.hp + maxHp(data, m) * regen));
-      }
       const dropBonus = Math.max(0, ...survivors.map((m) => (memberMods(data, m).drop ?? 0) + affixSum(m, 'DROP') / 100));
       const goldBonus = Math.max(0, ...survivors.map((m) => memberMods(data, m).gold ?? 0));
-      loot = rollBattleLoot(data, g, run.dungeonId, run.floor, b.enemies, seededRng(run), { dropBonus });
+      loot = rollBattleLoot(data, g, run.dungeonId, run.floor, b.enemies, seededRng(run), { dropBonus, route: runRoute(data, run) });
       for (const id of b.stolen ?? []) {
         const existing = loot.materials.find((entry) => entry.id === id);
         if (existing) existing.count += 1;
@@ -147,7 +178,11 @@ export function afterBattle(data, session) {
       g.catalog.gear = [...new Set([...g.catalog.gear, ...loot.gear.map((item) => item.id)])];
       run.pendingLoot = left;
     }
-    advance(data, run);
+    if (b.result === 'fled' && b.enemies.some((enemy) => enemy.boss && !enemy.bounty)) {
+      // ボスを倒さず逃げた場合は、帰還するか同じボスへ再挑戦する。踏破扱いにはしない。
+      run.state = 'return_point';
+      run.cleared = false;
+    } else advance(data, run);
     if (run.cleared) delete run.bounty;
   });
   return { result: b.result, growth, loot };
@@ -158,8 +193,7 @@ function advance(data, run) {
   const row = runFloorRow(data, run);
   run.battleIndex += 1;
   if (run.battleIndex >= row.battles) {
-    const dg = data.dungeons.get(run.dungeonId);
-    if (run.floor >= dg.floors) { run.state = 'cleared'; run.cleared = true; } else {
+    if (run.floor >= runFloorCount(data, run)) { run.state = 'cleared'; run.cleared = true; } else {
       run.floor += 1;
       run.battleIndex = 0;
       run.state = row.returnPointAfter ? 'return_point' : 'ready';

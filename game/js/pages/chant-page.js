@@ -1,6 +1,6 @@
 import { loadCsv, loadJson } from '../data.js?v=features-2';
 import { splitList } from '../csv.js';
-import { GameSession } from '../save.js?v=features-2';
+import { GameSession } from '../save.js?v=balance-builds-1';
 import { Scheduler } from '../srs.js?v=features-2';
 import { now } from '../storage.js?v=features-2';
 import { speak, canSpeak, stopSpeech } from '../speech.js?v=jrpg-1';

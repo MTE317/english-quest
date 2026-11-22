@@ -1,10 +1,10 @@
 // 戦闘の報酬（お金・素材・装備）とバックパック。
 // 式が data にないものは sim/world.py と同じ値を LOOT_FORMULAS に置く（docs/requests.md で依頼済み）。
 import { evaluate } from './expr.js';
-import { makeGear } from './character.js?v=features-2';
+import { makeGear } from './character.js?v=balance-builds-1';
 
 export const LOOT_FORMULAS = Object.freeze({
-  gold_per_enemy: 'run_income * income_mul * gold_share / 27', // balance.json の「(boss x boss_gold_mul)」は文なので、ボスの倍率は下でかける
+  gold_per_enemy: 'run_income * income_mul * gold_share / reward_budget', // 実際の遠征経路へ一周の基準収入を分配
   gold_rand: [0.8, 1.2],
   boss_common_materials: [1, 2], // ボスはふだんの素材を1〜2個
   boss_rare_rate: 0.3,
@@ -29,12 +29,25 @@ function weighted(rng, arr, w) {
 }
 
 // ---------------- お金と素材 ----------------
+/** 遠征の長さを変えても一周の基準収入を保つ。旧セーブは開始時の経路で計算する。 */
+export function goldRewardBudget(data, dungeonId, route = null) {
+  const rows = route ?? data.dungeonFloors.filter((row) => row.dungeonId === dungeonId);
+  const bossWeight = data.dropTables.get(dungeonId)?.bossGoldMul ?? 1;
+  const escorts = Number(/boss\s*\+\s*(\d+)/.exec(String(data.balance.dungeon?.boss_battle ?? ''))?.[1] ?? 0);
+  return Math.max(1, rows.reduce((sum, row) => {
+    const bosses = Number(row.lastBattleIsBoss);
+    return sum + Math.max(0, row.battles - bosses) * row.enemiesPerBattle + bosses * (bossWeight + escorts);
+  }, 0));
+}
+
 /** 倒した敵1体ぶんのお金 */
-export function goldForEnemy(data, dungeonId, enemy, rng) {
+export function goldForEnemy(data, dungeonId, enemy, rng, route = null) {
   const dg = data.dungeons.get(dungeonId);
   const dt = data.dropTables.get(dungeonId);
   const econ = data.economy.get(dg.rank);
-  let g = evaluate(LOOT_FORMULAS.gold_per_enemy, { run_income: econ.run_income, income_mul: dg.incomeMul, gold_share: dt.goldShare });
+  const formula = data.balance.loot?.gold_per_enemy ?? LOOT_FORMULAS.gold_per_enemy;
+  let g = evaluate(formula, { run_income: econ.run_income, income_mul: dg.incomeMul, gold_share: dt.goldShare,
+    reward_budget: goldRewardBudget(data, dungeonId, route) });
   if (enemy.boss) g *= dt.bossGoldMul;
   if (enemy.eliteId) g *= data.elitePrefixes.find((p) => p.id === enemy.eliteId)?.rewardMul ?? 1;
   return Math.max(1, Math.round(g * between(rng, LOOT_FORMULAS.gold_rand)));
@@ -112,7 +125,7 @@ export function rollUniqueDrop(data, game, monsterId, rng) {
  * 1回の戦闘に勝ったときの報酬
  * @returns { gold, materials: [{id,count}], gear: [gear] }
  */
-export function rollBattleLoot(data, game, dungeonId, floor, enemies, rng, { dropBonus = 0 } = {}) {
+export function rollBattleLoot(data, game, dungeonId, floor, enemies, rng, { dropBonus = 0, route = null } = {}) {
   const dt = data.dropTables.get(dungeonId);
   let gold = 0;
   const mats = {};
@@ -125,7 +138,7 @@ export function rollBattleLoot(data, game, dungeonId, floor, enemies, rng, { dro
     })));
   const materialBonus = dropBonus + daggerMul - 1;
   for (const e of enemies) {
-    gold += goldForEnemy(data, dungeonId, e, rng);
+    gold += goldForEnemy(data, dungeonId, e, rng, route);
     for (const m of materialsForEnemy(data, dungeonId, e, rng, materialBonus)) mats[m.id] = (mats[m.id] ?? 0) + m.count;
   }
   const boss = enemies.find((e) => e.boss);

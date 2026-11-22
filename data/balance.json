@@ -1,176 +1,799 @@
 {
- "_note": "シミュレーションで決めた仮の式。Lvは敵のレベル（2026-11-22 ★12版）",
- "enemy": {
-  "hp": "(150 + 6.5*Lv) * hp_mul * 1.478 * dungeon.enemy_mul * hp_rank_mul[★]",
-  "boss_hp_mul": 4.5,
-  "str_mag": "(15 + 4.5*Lv + 0.22*Lv^2) * atk_mul * dungeon.enemy_mul * atk_rank_mul[★]",
-  "boss_atk_mul": 1.25,
-  "def_res": "(6 + 3.2*Lv) * def_mul / res_mul",
-  "spd": "(10 + 3.6*Lv) * spd_mul",
-  "damage_to_party": "STR(or MAG) * 1.62 * 100/(100 + DEF or RES) * rand(0.9,1.1)",
-  "hp_rank_mul": {
-   "1": 1.6,
-   "2": 2.34,
-   "3": 2.14,
-   "4": 2.16,
-   "5": 2.18,
-   "6": 2.87,
-   "7": 2.86,
-   "8": 3.05,
-   "9": 3.01,
-   "10": 2.78,
-   "11": 2.84,
-   "12": 3.07
+  "_note": "実ゲームのJSによる検証用。目標と測定結果はdocs/balance-report.md・sim/results参照。2026-11-23調整。",
+  "enemy": {
+    "hp": "(150 + 6.5*Lv) * hp_mul * 1.478 * dungeon.enemy_mul * hp_rank_mul[★]",
+    "boss_hp_mul": 1.35,
+    "str_mag": "(15 + 4.5*Lv + 0.22*Lv^2) * atk_mul * dungeon.enemy_mul * atk_rank_mul[★]",
+    "boss_atk_mul": 1.25,
+    "def_res": "DEF=(6+3.2*Lv)*def_mul、RES=(6+3.2*Lv)*res_mul",
+    "spd": "(10 + 3.6*Lv) * spd_mul",
+    "damage_to_party": "STR(or MAG) * 1.62 * 100/(100 + DEF or RES) * rand(0.9,1.1)",
+    "hp_rank_mul": {
+      "1": 2.885,
+      "2": 3.392,
+      "3": 3.543,
+      "4": 3.453,
+      "5": 3.311,
+      "6": 4.145,
+      "7": 4.832,
+      "8": 4.692,
+      "9": 4.102,
+      "10": 4.388,
+      "11": 4.04,
+      "12": 4.251
+    },
+    "atk_rank_mul": {
+      "1": 1.5,
+      "2": 1.8,
+      "3": 1.5,
+      "4": 1.5,
+      "5": 1.5,
+      "6": 1.6,
+      "7": 1.6,
+      "8": 1.7,
+      "9": 1.7,
+      "10": 1.7,
+      "11": 1.7,
+      "12": 1.8
+    },
+    "atk_boss_rank_mul": {
+      "1": 1.9,
+      "2": 1.2,
+      "3": 1.739,
+      "4": 2.025,
+      "5": 1.571,
+      "6": 1.653,
+      "7": 2.744,
+      "8": 2.609,
+      "9": 2.744,
+      "10": 2.609,
+      "11": 3.361,
+      "12": 3.037
+    },
+    "hp_boss_rank_mul": {
+      "1": 0.901,
+      "2": 0.943,
+      "3": 0.819,
+      "4": 1.075,
+      "5": 1.041,
+      "6": 0.796,
+      "7": 0.66,
+      "8": 0.828,
+      "9": 0.837,
+      "10": 0.801,
+      "11": 0.644,
+      "12": 0.717
+    }
   },
-  "atk_rank_mul": {
-   "1": 1.491,
-   "2": 2.06,
-   "3": 1.909,
-   "4": 1.924,
-   "5": 1.939,
-   "6": 2.45,
-   "7": 2.443,
-   "8": 2.58,
-   "9": 2.551,
-   "10": 2.385,
-   "11": 2.428,
-   "12": 2.595
+  "player": {
+    "_note": "レベルの上限は99（2026-11-22 決定）。ランクごとの上限はなし。育ちすぎは経験値の減り方で防ぐ",
+    "grade_points": {
+      "A": 4,
+      "B": 3,
+      "C": 2,
+      "D": 1
+    },
+    "level_cap": 99,
+    "hp": "70 + g*30 + (Lv-1)*g*9",
+    "other_stats": "8 + g*6 + (Lv-1)*g*1.6",
+    "mp": "12 + gMAG*6 + (Lv-1)*2",
+    "xp_to_next": "25 * Lv^1.5"
+  },
+  "rewards": {
+    "xp_per_enemy": "6 + 3.2*enemyLv (boss x5)",
+    "overlevel_penalty_per_level": "経験値 × max(0, 1 - 0.25 × max(0, (自分のLv - 敵のLv) - 1))。敵より2レベル高いと減り始め、5レベル高いと0",
+    "overlevel_min": 0,
+    "gold_per_enemy": "run_income * income_mul * gold_share / reward_budget (boss x boss_gold_mul)。経路の全遭遇の重みから一周予算を分配",
+    "ap_per_battle": 2,
+    "ap_per_boss_battle": 4,
+    "training_xp": "鍛錬の経験値も、今のランクの★のいちばん強い敵のレベルと比べて同じように減る"
+  },
+  "battle": {
+    "wrong_answer_mult": [
+      0.1,
+      0.5
+    ],
+    "crit_mult": 1.5,
+    "buff_cap": 0.6,
+    "weak": 1.5,
+    "resist": 0.5,
+    "immune": 0.0,
+    "knight_cover_rate": 0.5,
+    "knight_cover_cut": 0.5,
+    "bard_song": 0.2,
+    "dual_wield_second_hit": 0.5,
+    "mastery_per_level": 0.02,
+    "mastery_max": 0.2
+  },
+  "weapon_power": "(8 + 1.6*itemLv) * quality(作った装備1.15) * (1 + 0.05*強化値) * power_mul * 適正",
+  "armor_value": "(6 + 1.3*itemLv) * def_res_mul * quality * (1 + 0.05*強化値) * 1.6",
+  "dungeon": {
+    "floor1_enemies": 2,
+    "other_floor_enemies": 3,
+    "boss_battle": "boss + 1",
+    "layout_version": 2,
+    "elite_rate": 0.06,
+    "elite_min_star": 2,
+    "elite_max_per_battle": 1,
+    "elite_max_per_run": 1,
+    "bounty_quest_chance": 0.4,
+    "legacy_layout": {
+      "mossy_cave": {
+        "floors": 5,
+        "first_level": 1,
+        "return_point_floor": 3,
+        "battles_per_floor": 2,
+        "first_floor_enemies": 2,
+        "other_floor_enemies": 3
+      },
+      "sunlit_forest": {
+        "floors": 4,
+        "first_level": 2,
+        "return_point_floor": 2,
+        "battles_per_floor": 2,
+        "first_floor_enemies": 2,
+        "other_floor_enemies": 3
+      },
+      "ruined_fort": {
+        "floors": 5,
+        "first_level": 6,
+        "return_point_floor": 3,
+        "battles_per_floor": 2,
+        "first_floor_enemies": 2,
+        "other_floor_enemies": 3
+      },
+      "misty_marsh": {
+        "floors": 5,
+        "first_level": 7,
+        "return_point_floor": 3,
+        "battles_per_floor": 2,
+        "first_floor_enemies": 2,
+        "other_floor_enemies": 3
+      },
+      "howling_canyon": {
+        "floors": 5,
+        "first_level": 15,
+        "return_point_floor": 0,
+        "battles_per_floor": 2,
+        "first_floor_enemies": 2,
+        "other_floor_enemies": 3
+      },
+      "ancient_library": {
+        "floors": 6,
+        "first_level": 15,
+        "return_point_floor": 3,
+        "battles_per_floor": 2,
+        "first_floor_enemies": 2,
+        "other_floor_enemies": 3
+      },
+      "sunken_temple": {
+        "floors": 5,
+        "first_level": 22,
+        "return_point_floor": 3,
+        "battles_per_floor": 2,
+        "first_floor_enemies": 2,
+        "other_floor_enemies": 3
+      },
+      "clockwork_mine": {
+        "floors": 4,
+        "first_level": 23,
+        "return_point_floor": 2,
+        "battles_per_floor": 2,
+        "first_floor_enemies": 2,
+        "other_floor_enemies": 3
+      },
+      "obsidian_volcano": {
+        "floors": 5,
+        "first_level": 29,
+        "return_point_floor": 0,
+        "battles_per_floor": 2,
+        "first_floor_enemies": 2,
+        "other_floor_enemies": 3
+      },
+      "frozen_peak": {
+        "floors": 6,
+        "first_level": 29,
+        "return_point_floor": 3,
+        "battles_per_floor": 2,
+        "first_floor_enemies": 2,
+        "other_floor_enemies": 3
+      },
+      "twisted_tunnel": {
+        "floors": 7,
+        "first_level": 1,
+        "return_point_floor": 4,
+        "battles_per_floor": 2,
+        "first_floor_enemies": 2,
+        "other_floor_enemies": 3
+      },
+      "goblin_quarry": {
+        "floors": 5,
+        "first_level": 1,
+        "return_point_floor": 3,
+        "battles_per_floor": 2,
+        "first_floor_enemies": 2,
+        "other_floor_enemies": 3
+      },
+      "blooming_hill": {
+        "floors": 5,
+        "first_level": 1,
+        "return_point_floor": 3,
+        "battles_per_floor": 2,
+        "first_floor_enemies": 2,
+        "other_floor_enemies": 3
+      },
+      "roadside_well": {
+        "floors": 3,
+        "first_level": 7,
+        "return_point_floor": 0,
+        "battles_per_floor": 2,
+        "first_floor_enemies": 2,
+        "other_floor_enemies": 3
+      },
+      "old_catacomb": {
+        "floors": 7,
+        "first_level": 6,
+        "return_point_floor": 4,
+        "battles_per_floor": 2,
+        "first_floor_enemies": 2,
+        "other_floor_enemies": 3
+      },
+      "migrant_cape": {
+        "floors": 5,
+        "first_level": 6,
+        "return_point_floor": 3,
+        "battles_per_floor": 2,
+        "first_floor_enemies": 2,
+        "other_floor_enemies": 3
+      },
+      "windmill_village": {
+        "floors": 3,
+        "first_level": 16,
+        "return_point_floor": 0,
+        "battles_per_floor": 2,
+        "first_floor_enemies": 2,
+        "other_floor_enemies": 3
+      },
+      "amber_dig": {
+        "floors": 5,
+        "first_level": 15,
+        "return_point_floor": 3,
+        "battles_per_floor": 2,
+        "first_floor_enemies": 2,
+        "other_floor_enemies": 3
+      },
+      "moonlit_lake": {
+        "floors": 5,
+        "first_level": 15,
+        "return_point_floor": 3,
+        "battles_per_floor": 2,
+        "first_floor_enemies": 2,
+        "other_floor_enemies": 3
+      },
+      "silent_corridor": {
+        "floors": 7,
+        "first_level": 22,
+        "return_point_floor": 4,
+        "battles_per_floor": 2,
+        "first_floor_enemies": 2,
+        "other_floor_enemies": 3
+      },
+      "miasma_jungle": {
+        "floors": 5,
+        "first_level": 22,
+        "return_point_floor": 3,
+        "battles_per_floor": 2,
+        "first_floor_enemies": 2,
+        "other_floor_enemies": 3
+      },
+      "drifting_clouds": {
+        "floors": 5,
+        "first_level": 22,
+        "return_point_floor": 3,
+        "battles_per_floor": 2,
+        "first_floor_enemies": 2,
+        "other_floor_enemies": 3
+      },
+      "ash_road": {
+        "floors": 3,
+        "first_level": 30,
+        "return_point_floor": 0,
+        "battles_per_floor": 2,
+        "first_floor_enemies": 2,
+        "other_floor_enemies": 3
+      },
+      "dragonbone_vale": {
+        "floors": 5,
+        "first_level": 29,
+        "return_point_floor": 3,
+        "battles_per_floor": 2,
+        "first_floor_enemies": 2,
+        "other_floor_enemies": 3
+      },
+      "aurora_field": {
+        "floors": 5,
+        "first_level": 29,
+        "return_point_floor": 3,
+        "battles_per_floor": 2,
+        "first_floor_enemies": 2,
+        "other_floor_enemies": 3
+      },
+      "sand_tomb": {
+        "floors": 5,
+        "first_level": 36,
+        "return_point_floor": 3,
+        "battles_per_floor": 2,
+        "first_floor_enemies": 2,
+        "other_floor_enemies": 3
+      },
+      "millennium_root": {
+        "floors": 7,
+        "first_level": 36,
+        "return_point_floor": 4,
+        "battles_per_floor": 2,
+        "first_floor_enemies": 2,
+        "other_floor_enemies": 3
+      },
+      "storm_lighthouse": {
+        "floors": 3,
+        "first_level": 37,
+        "return_point_floor": 0,
+        "battles_per_floor": 2,
+        "first_floor_enemies": 2,
+        "other_floor_enemies": 3
+      },
+      "crystal_hollow": {
+        "floors": 5,
+        "first_level": 36,
+        "return_point_floor": 3,
+        "battles_per_floor": 2,
+        "first_floor_enemies": 2,
+        "other_floor_enemies": 3
+      },
+      "four_season_garden": {
+        "floors": 5,
+        "first_level": 36,
+        "return_point_floor": 3,
+        "battles_per_floor": 2,
+        "first_floor_enemies": 2,
+        "other_floor_enemies": 3
+      },
+      "sky_isles": {
+        "floors": 5,
+        "first_level": 43,
+        "return_point_floor": 3,
+        "battles_per_floor": 2,
+        "first_floor_enemies": 2,
+        "other_floor_enemies": 3
+      },
+      "drowned_city": {
+        "floors": 7,
+        "first_level": 43,
+        "return_point_floor": 4,
+        "battles_per_floor": 2,
+        "first_floor_enemies": 2,
+        "other_floor_enemies": 3
+      },
+      "rusted_armory": {
+        "floors": 3,
+        "first_level": 44,
+        "return_point_floor": 0,
+        "battles_per_floor": 2,
+        "first_floor_enemies": 2,
+        "other_floor_enemies": 3
+      },
+      "beast_den": {
+        "floors": 5,
+        "first_level": 43,
+        "return_point_floor": 3,
+        "battles_per_floor": 2,
+        "first_floor_enemies": 2,
+        "other_floor_enemies": 3
+      },
+      "mirage_sands": {
+        "floors": 5,
+        "first_level": 43,
+        "return_point_floor": 3,
+        "battles_per_floor": 2,
+        "first_floor_enemies": 2,
+        "other_floor_enemies": 3
+      },
+      "black_forest": {
+        "floors": 5,
+        "first_level": 50,
+        "return_point_floor": 3,
+        "battles_per_floor": 2,
+        "first_floor_enemies": 2,
+        "other_floor_enemies": 3
+      },
+      "giants_stair": {
+        "floors": 7,
+        "first_level": 50,
+        "return_point_floor": 4,
+        "battles_per_floor": 2,
+        "first_floor_enemies": 2,
+        "other_floor_enemies": 3
+      },
+      "mirror_maze": {
+        "floors": 3,
+        "first_level": 51,
+        "return_point_floor": 0,
+        "battles_per_floor": 2,
+        "first_floor_enemies": 2,
+        "other_floor_enemies": 3
+      },
+      "bog_kingdom": {
+        "floors": 5,
+        "first_level": 50,
+        "return_point_floor": 3,
+        "battles_per_floor": 2,
+        "first_floor_enemies": 2,
+        "other_floor_enemies": 3
+      },
+      "thunder_plateau": {
+        "floors": 5,
+        "first_level": 50,
+        "return_point_floor": 3,
+        "battles_per_floor": 2,
+        "first_floor_enemies": 2,
+        "other_floor_enemies": 3
+      },
+      "demon_gate": {
+        "floors": 5,
+        "first_level": 57,
+        "return_point_floor": 3,
+        "battles_per_floor": 2,
+        "first_floor_enemies": 2,
+        "other_floor_enemies": 3
+      },
+      "starfall_tower": {
+        "floors": 7,
+        "first_level": 57,
+        "return_point_floor": 4,
+        "battles_per_floor": 2,
+        "first_floor_enemies": 2,
+        "other_floor_enemies": 3
+      },
+      "bone_bridge": {
+        "floors": 3,
+        "first_level": 58,
+        "return_point_floor": 0,
+        "battles_per_floor": 2,
+        "first_floor_enemies": 2,
+        "other_floor_enemies": 3
+      },
+      "ruby_vein": {
+        "floors": 5,
+        "first_level": 57,
+        "return_point_floor": 3,
+        "battles_per_floor": 2,
+        "first_floor_enemies": 2,
+        "other_floor_enemies": 3
+      },
+      "frozen_time_village": {
+        "floors": 5,
+        "first_level": 57,
+        "return_point_floor": 3,
+        "battles_per_floor": 2,
+        "first_floor_enemies": 2,
+        "other_floor_enemies": 3
+      },
+      "dragon_spine": {
+        "floors": 5,
+        "first_level": 64,
+        "return_point_floor": 3,
+        "battles_per_floor": 2,
+        "first_floor_enemies": 2,
+        "other_floor_enemies": 3
+      },
+      "abyss_pit": {
+        "floors": 7,
+        "first_level": 64,
+        "return_point_floor": 4,
+        "battles_per_floor": 2,
+        "first_floor_enemies": 2,
+        "other_floor_enemies": 3
+      },
+      "flame_gate": {
+        "floors": 3,
+        "first_level": 65,
+        "return_point_floor": 0,
+        "battles_per_floor": 2,
+        "first_floor_enemies": 2,
+        "other_floor_enemies": 3
+      },
+      "sacred_beast_wood": {
+        "floors": 5,
+        "first_level": 64,
+        "return_point_floor": 3,
+        "battles_per_floor": 2,
+        "first_floor_enemies": 2,
+        "other_floor_enemies": 3
+      },
+      "frozen_sea": {
+        "floors": 5,
+        "first_level": 64,
+        "return_point_floor": 3,
+        "battles_per_floor": 2,
+        "first_floor_enemies": 2,
+        "other_floor_enemies": 3
+      },
+      "heaven_temple": {
+        "floors": 5,
+        "first_level": 71,
+        "return_point_floor": 3,
+        "battles_per_floor": 2,
+        "first_floor_enemies": 2,
+        "other_floor_enemies": 3
+      },
+      "void_corridor": {
+        "floors": 7,
+        "first_level": 71,
+        "return_point_floor": 4,
+        "battles_per_floor": 2,
+        "first_floor_enemies": 2,
+        "other_floor_enemies": 3
+      },
+      "ancient_engine": {
+        "floors": 3,
+        "first_level": 72,
+        "return_point_floor": 0,
+        "battles_per_floor": 2,
+        "first_floor_enemies": 2,
+        "other_floor_enemies": 3
+      },
+      "dragon_king_vault": {
+        "floors": 5,
+        "first_level": 71,
+        "return_point_floor": 3,
+        "battles_per_floor": 2,
+        "first_floor_enemies": 2,
+        "other_floor_enemies": 3
+      },
+      "dream_garden": {
+        "floors": 5,
+        "first_level": 71,
+        "return_point_floor": 3,
+        "battles_per_floor": 2,
+        "first_floor_enemies": 2,
+        "other_floor_enemies": 3
+      },
+      "world_tree_top": {
+        "floors": 5,
+        "first_level": 78,
+        "return_point_floor": 3,
+        "battles_per_floor": 2,
+        "first_floor_enemies": 2,
+        "other_floor_enemies": 3
+      },
+      "labyrinth_end": {
+        "floors": 7,
+        "first_level": 78,
+        "return_point_floor": 4,
+        "battles_per_floor": 2,
+        "first_floor_enemies": 2,
+        "other_floor_enemies": 3
+      },
+      "star_shore": {
+        "floors": 3,
+        "first_level": 79,
+        "return_point_floor": 0,
+        "battles_per_floor": 2,
+        "first_floor_enemies": 2,
+        "other_floor_enemies": 3
+      },
+      "gods_forge": {
+        "floors": 5,
+        "first_level": 78,
+        "return_point_floor": 3,
+        "battles_per_floor": 2,
+        "first_floor_enemies": 2,
+        "other_floor_enemies": 3
+      },
+      "twilight_border": {
+        "floors": 5,
+        "first_level": 78,
+        "return_point_floor": 3,
+        "battles_per_floor": 2,
+        "first_floor_enemies": 2,
+        "other_floor_enemies": 3
+      }
+    }
+  },
+  "shop_gear_price": {
+    "weapon": "(8 + 1.6*itemLv) * 4.5",
+    "armor": "(6 + 1.3*itemLv) * 4.5",
+    "shop_item_lv": "その★の装備Lv下限 + 3"
+  },
+  "bank": {
+    "loan_interest_monthly": 0.03,
+    "overdue_interest_monthly": 0.1
+  },
+  "training": {
+    "questions": [
+      5,
+      10,
+      15
+    ],
+    "efficiency_vs_dungeon": 0.8,
+    "days": 0
+  },
+  "accuracy_drop_per_rank": 0.03,
+  "_accuracy_note": "accuracy_drop_per_rankは旧Python学習モデル専用。実ゲームに正答率の自動低下はなく、新JS検証は65/80/95%を別条件として測る。",
+  "items_in_battle": "1行動・1問として使える。不正解だと効果×0.1〜0.5（ほかの行動と同じ）",
+  "wipe": {
+    "rollback": "ダンジョンに入る前の状態に戻る（お金・素材・ドロップ・経験値・日数すべて）",
+    "xp_keep": 0.0,
+    "mercy_per_step": 0.0,
+    "_note": "遠征中のゲーム報酬を巻戻す。消費道具/保証金契約も入場時に復元。学習記録・詠唱JP・モンスターと判明相性の知識は保持。",
+    "_retry_note": "耐性・状態対策・スキル/装備の組合せを見直す。必要なら低い★で育成する。"
+  },
+  "guild_points": {
+    "same_rank": 1.0,
+    "one_rank_lower": 0.5,
+    "_note": "今の上限の★のクエストは満点、1つ下の★は半分のポイント"
+  },
+  "stars": 12,
+  "elite": "★2以降の通常遭遇、1枠ごと6%の候補判定。1戦・1遠征とも最大1体。冠はappear_rateの重み。ボス/賞金首と同時出現しない。",
+  "bounty": "無受注時はdrop_tablesの確率、対象の賞金首を受注中は40%。道中に1体。保証金は帰還/全滅で没収されない。",
+  "learning": {
+    "_note": "シミュレーターの学習モデル（sim/learn.py）。ゲームの実装は data/srs.json に従う",
+    "items": "★ごとに新しい単語（600〜1,500）＋フレーズ250、合計15,000",
+    "new_per_run": 12,
+    "new_when_backlog": 5,
+    "backlog_cap": 50,
+    "prior_known": "★1で65%、★が上がるごとに-7%（標準の人）",
+    "first_seen_correct": 0.45,
+    "stability_growth": 2.3,
+    "stones_ahead": "今の★の石を全部読んだら、1つ上の★の石も持ち込める"
+  },
+  "temple": {
+    "revive": "神殿での復活代 = 30 × レベル（1人）。町に倒れたまま帰ったときだけかかる"
+  },
+  "items": "回復量は固定の値。レベルが上がりHPが増えると、回復量の多い高い道具が必要になる（items.csv）",
+  "enhance": "強化の費用 = (20 + 装備Lv×4) × 1.8^今の強化値。+10に近いほどどんどん高くなる（武器。防具は半額）",
+  "enchant": "エンチャントの費用はグレード（工房のランク）で決まる（enchant_grades.csv）",
+  "alchemy": {
+    "place": "道具屋の奥の調合台。道具屋のランクで作れる段階が増える（alchemy_recipes.csv の workshop_rank）",
+    "made": "能力を一時的に上げる薬（調合でしか作れない）。段階が上がるほど上がり幅とターン数が増える（15%・2ターン → 50%・5ターン）",
+    "use": "戦闘中に使う（1行動・1問）。重ねがけは同じ能力なら上書き",
+    "apothecary": "薬師がいても調合で得はしない。薬師のパッシブ（薬の知識・秘薬の知識）が、薬の効果（回復量・上がり幅）を上げる"
+  },
+  "storage": {
+    "backpack": "ダンジョンで拾った装備と素材が自動で入る。装備1個で1枠、素材は1種類で1枠（99個まで）。いっぱいになったら、入れ替えるかあきらめるかを選ぶ。広さは backpack.csv（道具屋で広げる）",
+    "items": "道具はバックパックとは別。種類ごとに10個まで",
+    "town_storage": "町の倉庫は容量無限・無料。町に帰るとバックパックの中身は自動で倉庫へ移る",
+    "fixed_cost": "月末に払うのはギルドの会費だけ（倉庫代はなくし、その分会費を1.5倍にした）"
+  },
+  "mp_rules": {
+    "normal_attack_regen": "通常攻撃で正解したとき、最大MPの5%を回復（不正解は回復なし）",
+    "normal_attack_regen_rate": 0.05,
+    "skill_mp_cost": "ceil(skills.csv の mp × (1 + 0.015 × (Lv - 1)))。Lv99で約2.5倍。mp=0 のスキルは0のまま",
+    "skill_mp_per_lv": 0.015,
+    "_why": "スキルのMPが固定だと、Lvが上がって最大MPが増えるほどMPが余り、通常攻撃の回復も意味がなくなるため",
+    "sim": "実ゲームのMP回復・使用量はsim/balance.mjsで測定し、結果はsim/results参照。"
+  },
+  "quest_board": {
+    "refresh": "遠征から帰還・踏破したとき、未受注の6件だけ更新。受注中は維持",
+    "keep_accepted": true,
+    "_keep_note": "受けているクエストは残し、受けていない枠だけ入れかえる",
+    "refill_on_report": true,
+    "_refill_note": "未受注の掲示を6件に補充。受注中/報告済み/放棄済みの同内容は次の帰還まで再掲しない。",
+    "max_accepted": 3,
+    "_why": "未受注候補6件と受注枠を分ける。通常依頼は無料、賞金首は返還式保証金で準備を選ぶ。",
+    "size": 6,
+    "accepted_rank_steps": [
+      {
+        "star": 4,
+        "limit": 4
+      },
+      {
+        "star": 8,
+        "limit": 5
+      }
+    ],
+    "deposit_rate": 0.1,
+    "abandon_refund_rate": 0.8,
+    "type_slots": [
+      "hunt",
+      "hunt",
+      "gather",
+      "gather",
+      "boss",
+      "bounty"
+    ],
+    "max_accepted_note": "★1〜3は3件、★4〜7は4件、★8以降は5件",
+    "refill_on_accept": true,
+    "_contract_note": "保証金は賞金首のみ報酬の10%。達成で全額返還、自主放棄は80%返還。全滅/帰還で契約は継続。引き受けた同内容の依頼は次の帰還まで再掲しない。"
+  },
+  "job_dmg_mul": {
+    "rule": "jobs.csv/jobs_mid.csvのdmg_mulは互換用の1.0に統一。実ゲームの役割差は能力・武器適性・スキル・装備効果で表す。",
+    "_note": "旧Pythonモデルの職別倍率は実JSへ接続されていなかった。旧到達年数は今回の実測値ではない。"
+  },
+  "new_game": {
+    "gold": 1000,
+    "day": 1,
+    "party_jobs": [
+      "warrior",
+      "knight",
+      "black_mage",
+      "white_mage"
+    ]
+  },
+  "balance_targets": {
+    "version": "2026-11-23-builds",
+    "standard_accuracy": 0.8,
+    "accuracy_checks": [
+      0.65,
+      0.8,
+      0.95
+    ],
+    "normal_questions": [
+      15,
+      20
+    ],
+    "boss_questions": [
+      20,
+      25
+    ],
+    "standard_run_questions": [
+      50,
+      65
+    ],
+    "seconds_per_question": 6,
+    "overhead_seconds": 30,
+    "standard_clear_rate": [
+      0.65,
+      0.8
+    ],
+    "prepared_clear_rate": [
+      0.85,
+      0.95
+    ],
+    "meaningful_growth_successful_runs": [
+      2,
+      3
+    ],
+    "note": "目標。実測結果はdocs/balance-report.mdとsim/resultsを参照。各条件で70%になる確率補正は行わない。"
+  },
+  "boss_patterns": {
+    "enabled": true,
+    "sweep_every": 3,
+    "sweep_power": 0.65,
+    "warning_rounds": 1
+  },
+  "encounters": {
+    "common_count": 6,
+    "common_share": 0.8,
+    "seasonal_common_count": 1,
+    "seasonal_dungeon_common_count": 2,
+    "quest_target_weight": 3,
+    "repeat_weight": 0.35
+  },
+  "battle_formulas": {
+    "boss_status_mul": 0.75,
+    "boss_control_mul": 0.45,
+    "boss_dot_mul": 0.65,
+    "boss_status_immune": [
+      "petrify",
+      "doom"
+    ],
+    "dot_tick_cap": 0.12,
+    "dot_power_cap": 1,
+    "status_rate_cap": 0.95,
+    "crit_cap": 0.85,
+    "crit_multiplier_cap": 3,
+    "evasion_cap": 0.6,
+    "status_resist_cap": 0.9,
+    "damage_cut_cap": 0.7,
+    "element_resist_cap": 0.8,
+    "minimum_damage_share": 0.08,
+    "debuff_cap": 0.5,
+    "lifesteal_rate_cap": 0.25,
+    "lifesteal_action_cap": 0.15,
+    "on_hit_mp_cap": 0.05,
+    "extra_hit_cap": 0.4,
+    "counter_affix_cap": 0.35,
+    "counter_power": 0.75
   }
- },
- "player": {
-  "_note": "レベルの上限は99（2026-11-22 決定）。ランクごとの上限はなし。育ちすぎは経験値の減り方で防ぐ",
-  "grade_points": {
-   "A": 4,
-   "B": 3,
-   "C": 2,
-   "D": 1
-  },
-  "level_cap": 99,
-  "hp": "70 + g*30 + (Lv-1)*g*9",
-  "other_stats": "8 + g*6 + (Lv-1)*g*1.6",
-  "mp": "12 + gMAG*6 + (Lv-1)*2",
-  "xp_to_next": "25 * Lv^1.5"
- },
- "rewards": {
-  "xp_per_enemy": "6 + 3.2*enemyLv (boss x5)",
-  "overlevel_penalty_per_level": "経験値 × max(0, 1 - 0.25 × max(0, (自分のLv - 敵のLv) - 1))。敵より2レベル高いと減り始め、5レベル高いと0",
-  "overlevel_min": 0,
-  "gold_per_enemy": "run_income * dungeon.income_mul * gold_share / 27 (boss x boss_gold_mul)",
-  "ap_per_battle": 1,
-  "ap_per_boss_battle": 3,
-  "training_xp": "鍛錬の経験値も、今のランクの★のいちばん強い敵のレベルと比べて同じように減る"
- },
- "battle": {
-  "wrong_answer_mult": [
-   0.1,
-   0.5
-  ],
-  "crit_mult": 1.5,
-  "buff_cap": 0.6,
-  "weak": 1.5,
-  "resist": 0.5,
-  "immune": 0.0,
-  "knight_cover_rate": 0.5,
-  "knight_cover_cut": 0.5,
-  "bard_song": 0.2,
-  "dual_wield_second_hit": 0.5,
-  "mastery_per_level": 0.02,
-  "mastery_max": 0.2
- },
- "weapon_power": "(8 + 1.6*itemLv) * quality(作った装備1.15) * (1 + 0.05*強化値) * power_mul * 適正",
- "armor_value": "(6 + 1.3*itemLv) * def_res_mul * quality * (1 + 0.05*強化値) * 1.6",
- "dungeon": {
-  "floor1_enemies": 2,
-  "other_floor_enemies": 3,
-  "boss_battle": "boss + 1"
- },
- "shop_gear_price": {
-  "weapon": "(8 + 1.6*itemLv) * 4.5",
-  "armor": "(6 + 1.3*itemLv) * 4.5",
-  "shop_item_lv": "その★の装備Lv下限 + 3"
- },
- "bank": {
-  "loan_interest_monthly": 0.03,
-  "overdue_interest_monthly": 0.1
- },
- "training": {
-  "questions": [
-   5,
-   10,
-   15
-  ],
-  "efficiency_vs_dungeon": 0.8,
-  "days": 1
- },
- "accuracy_drop_per_rank": 0.03,
- "_accuracy_note": "単語は仮置き。★が1つ上がるごとに正答率が3%下がる仮の設定",
- "items_in_battle": "1行動・1問として使える。不正解だと効果×0.1〜0.5（ほかの行動と同じ）",
- "wipe": {
-  "rollback": "ダンジョンに入る前の状態に戻る（お金・素材・ドロップ・経験値・日数すべて）",
-  "xp_keep": 0.0,
-  "mercy_per_step": 0.0,
-  "_note": "ストイック方針（2026-11-22決定）：全滅したら全部ロスト、連続全滅の救済なし。そのぶん英語に触れる回数が増える",
-  "_retry_note": "全滅したら★を1つ下げて鍛え直すのが基本（ゲーム内でもそうヒントを出す）。シミュレーターは下の★で2回遠征してから戻る"
- },
- "guild_points": {
-  "same_rank": 1.0,
-  "one_rank_lower": 0.5,
-  "_note": "今の上限の★のクエストは満点、1つ下の★は半分のポイント"
- },
- "stars": 12,
- "elite": "強い個体（elite_prefixes.csv）：通常の敵の8%に冠がつく。冠は appear_rate の重みで選ぶ。お金と経験値は reward_mul 倍。目印が出るので逃げてもよい",
- "bounty": "賞金首は drop_tables.bounty_chance_per_run の確率でダンジョンのどこかに出る。依頼を受けていると確率が上がる（仮）",
- "learning": {
-  "_note": "シミュレーターの学習モデル（sim/learn.py）。ゲームの実装は data/srs.json に従う",
-  "items": "★ごとに新しい単語（600〜1,500）＋フレーズ250、合計15,000",
-  "new_per_run": 12,
-  "new_when_backlog": 5,
-  "backlog_cap": 50,
-  "prior_known": "★1で65%、★が上がるごとに-7%（標準の人）",
-  "first_seen_correct": 0.45,
-  "stability_growth": 2.3,
-  "stones_ahead": "今の★の石を全部読んだら、1つ上の★の石も持ち込める"
- },
- "temple": {
-  "revive": "神殿での復活代 = 30 × レベル（1人）。町に倒れたまま帰ったときだけかかる"
- },
- "items": "回復量は固定の値。レベルが上がりHPが増えると、回復量の多い高い道具が必要になる（items.csv）",
- "enhance": "強化の費用 = (20 + 装備Lv×4) × 1.8^今の強化値。+10に近いほどどんどん高くなる（武器。防具は半額）",
- "enchant": "エンチャントの費用はグレード（工房のランク）で決まる（enchant_grades.csv）",
- "alchemy": {
-  "place": "道具屋の奥の調合台。道具屋のランクで作れる段階が増える（alchemy_recipes.csv の workshop_rank）",
-  "made": "能力を一時的に上げる薬（調合でしか作れない）。段階が上がるほど上がり幅とターン数が増える（15%・2ターン → 50%・5ターン）",
-  "use": "戦闘中に使う（1行動・1問）。重ねがけは同じ能力なら上書き",
-  "apothecary": "薬師がいても調合で得はしない。薬師のパッシブ（薬の知識・秘薬の知識）が、薬の効果（回復量・上がり幅）を上げる"
- },
- "storage": {
-  "backpack": "ダンジョンで拾った装備と素材が自動で入る。装備1個で1枠、素材は1種類で1枠（99個まで）。いっぱいになったら、入れ替えるかあきらめるかを選ぶ。広さは backpack.csv（道具屋で広げる）",
-  "items": "道具はバックパックとは別。種類ごとに10個まで",
-  "town_storage": "町の倉庫は容量無限・無料。町に帰るとバックパックの中身は自動で倉庫へ移る",
-  "fixed_cost": "月末に払うのはギルドの会費だけ（倉庫代はなくし、その分会費を1.5倍にした）"
- },
- "_note_2026_11_22b": "通常攻撃のMP回復とスキルMPの増加を入れたので、敵のHPを0.88倍（1.68→1.478）にした。30分/日でSランクまで約2.7年・1戦約2.8ラウンドで、前とほぼ同じ",
- "mp_rules": {
-  "normal_attack_regen": "通常攻撃で正解したとき、最大MPの5%を回復（不正解は回復なし）",
-  "normal_attack_regen_rate": 0.05,
-  "skill_mp_cost": "ceil(skills.csv の mp × (1 + 0.015 × (Lv - 1)))。Lv99で約2.5倍。mp=0 のスキルは0のまま",
-  "skill_mp_per_lv": 0.015,
-  "_why": "スキルのMPが固定だと、Lvが上がって最大MPが増えるほどMPが余り、通常攻撃の回復も意味がなくなるため",
-  "sim": "30分/日：行動のうちスキルは約50%（Lvが上がっても変わらない）、平均のMP残りは40〜55%、MP回復薬も少し使う（sim/mp12.py）"
- },
- "quest_board": {
-  "refresh": "ダンジョンから町に戻るたびに入れかえる（クリア・帰還のどちらでも）。全滅したときは入る前の状態に戻るので、掲示板も戻る",
-  "keep_accepted": true,
-  "_keep_note": "受けているクエストは残し、受けていない枠だけ入れかえる",
-  "refill_on_report": true,
-  "_refill_note": "報告して空いた枠は、その場で補充する",
-  "max_accepted": "掲示板の件数まで（ランクの perk「クエスト掲示板 N件」）",
-  "_why": "どんどんクエストをこなせるようにするため。シミュレーションも遠征ごとにクエストを受ける前提で計算している（2026-11-22 決定。月1回の入れかえから変更）"
- },
- "_note_2026_11_23": "★ごとの敵の補正をなだらかにした（★10の壁をなくし、1戦のラウンド数が★1の1.6から★12の3.9へ少しずつ増えるように）。atk_rank_mul は hp_rank_mul の0.85乗",
- "job_dmg_mul": {
-  "rule": "味方が与えるダメージの最後に、そのジョブの dmg_mul（jobs.csv・jobs_mid.csv）を掛ける",
-  "_why": "2026-11-23：★6以降でパーティの組み方による差が大きかったため。ダメージの低いジョブ（狩人・盗賊・銃士・踊り子ほか）を上げた",
-  "sim": "30分/日でSランクまで：戦士・ナイト・黒・白 2.66年、盗賊・ナイト・白・吟遊詩人 3.40→2.81年、武闘家・狩人・白・黒 2.75→2.73年。全滅率はどれも★ごとに3%未満"
- }
 }

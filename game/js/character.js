@@ -2,7 +2,7 @@
 // 式は data/balance.json から読む。balance.json に式として書かれていないもの（説明の文だけのもの）は、
 // シミュレーター（sim/core.py）と同じ式を下の SIM_FORMULAS に置いて使う。docs/requests.md で balance.json への追加を依頼済み。
 import { evaluate, isFormula } from './expr.js';
-import { memberMods, masteryMul, ensureLoadout } from './growth.js?v=features-2';
+import { memberMods, masteryMul, ensureLoadout } from './growth.js?v=balance-builds-1';
 
 export const STATS = ['hp', 'str', 'mag', 'def', 'res', 'spd', 'luk'];
 export const STAT_LABEL = { hp: 'HP', str: 'STR', mag: 'MAG', def: 'DEF', res: 'RES', spd: 'SPD', luk: 'LUK' };
@@ -192,6 +192,10 @@ export function computeStats(data, member) {
   out.crit = evaluate(formula(data, 'crit'), env) + affixSum(member, 'CRT') / 100 + (mods.crt ?? 0);
   out.evasion = evaluate(formula(data, 'evasion'), env) + affixSum(member, 'EVA') / 100 + (mods.eva ?? 0);
   out.statusResist = evaluate(formula(data, 'status_resist'), env) + affixSum(member, 'STATUS_RES') / 100 + (member.room?.sres ?? 0) + (mods.sres ?? 0);
+  const caps = data.balance.battle_formulas ?? {};
+  out.crit = Math.max(0, Math.min(caps.crit_cap ?? 0.85, out.crit));
+  out.evasion = Math.max(0, Math.min(caps.evasion_cap ?? 0.6, out.evasion));
+  out.statusResist = Math.max(0, Math.min(caps.status_resist_cap ?? 0.9, out.statusResist));
   return out;
 }
 

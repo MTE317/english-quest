@@ -1,7 +1,7 @@
-﻿job_id,method,materials,discover_dungeon,discover_chance_after_boss
-apothecary,素材,poison_spider_mat:4|skeleton_mat:3,,0
-spellblade,発見,,ruined_fort,0.1
-hexer,素材,skeleton_rare:2|wandering_armor_mat:5|harpy_mat:3,,0
-gunner,素材,fort_bandit_mat:5|stone_statue_rare:1|thunderbird_mat:2,,0
-dancer,素材,pollen_bug_mat:3|harpy_mat:4|harpy_rare:1,,0
-elementalist,発見,,howling_canyon,0.1
+﻿job_id,method,materials,discover_dungeon,discover_chance_after_boss,discover_guarantee_clears
+apothecary,素材,poison_spider_mat:4|skeleton_mat:3,,0,
+spellblade,発見,,ruined_fort,0.1,3
+hexer,素材,skeleton_rare:2|wandering_armor_mat:5|harpy_mat:3,,0,
+gunner,素材,fort_bandit_mat:5|stone_statue_rare:1|thunderbird_mat:2,,0,
+dancer,素材,pollen_bug_mat:3|harpy_mat:4|harpy_rare:1,,0,
+elementalist,発見,,howling_canyon,0.1,3

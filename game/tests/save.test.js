@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { GameSession, SaveStore, SAVE_VERSION } from '../js/save.js';
 import { LearningStore, SAVE_KEY, LEARNING_KEY } from '../js/storage.js';
 import { Scheduler } from '../js/srs.js';
+import { encounterMonsters, learnMonsterElements, monsterKnowledge } from '../js/monster-knowledge.js';
 import { MemoryStorage, readJson, T0 } from './helpers.js';
 
 const newGame = () => ({ day: 1, gold: 100, materials: { goblin_mat: 2 }, gear: [] });
@@ -91,6 +92,90 @@ test('全滅しても学習記録は残る', () => {
   assert.equal(after.get('lx_r1_001').correct, 1);
   assert.equal(after.dailyTotal(sch.dayOf(T0)).answered, 1);
   assert.ok(mem.getItem(LEARNING_KEY));
+});
+
+test('全滅後も遭遇・調べた相性だけを引き継ぎ、経験値・持ち物・装備図鑑・依頼進捗は戻す', () => {
+  const mem = new MemoryStorage();
+  const s = reopen(mem);
+  const before = {
+    ...newGame(),
+    party: [{ lv: 2, xp: 4, ap: { warrior: 2 }, learned: ['slash_1'] }],
+    items: { potion: 3 },
+    quests: [{ uid: 1, progress: 0, depositPaid: 30 }],
+    catalog: {
+      gear: ['wood_sword'], monsters: ['goblin'],
+      affinities: { goblin: { elements: ['slash'], scanned: false } },
+    },
+  };
+  s.startNew(before);
+  s.enterDungeon({ dungeonId: 'mossy_cave' });
+  const goblin = { monsterId: 'goblin', weak: ['fire', 'wind'], resist: ['dark'] };
+  const boss = { monsterId: 'owl_boss', weak: ['ice', 'wind'], resist: ['fire', 'light'] };
+  s.updateRun((run, game) => {
+    encounterMonsters(game, [goblin, boss, { monsterId: 'unexamined_slime' }]);
+    learnMonsterElements(game, goblin, ['fire', 'dark', 'none']);
+    learnMonsterElements(game, boss, boss.weak, true);
+    game.gold += 400;
+    game.materials.goblin_mat += 5;
+    game.gear.push({ id: 'iron_sword' });
+    game.catalog.gear.push('iron_sword');
+    game.party[0] = { lv: 3, xp: 20, ap: { warrior: 6 }, learned: ['slash_1', 'slash_2'] };
+    game.items.potion -= 2;
+    game.quests[0].progress = 1;
+  });
+  const resumed = reopen(mem);
+  const lostCatalog = resumed.game.catalog;
+  const snapshotCatalog = resumed.run.snapshot.catalog;
+  resumed.wipe();
+  const expected = {
+    ...before,
+    catalog: {
+      gear: ['wood_sword'], monsters: ['goblin', 'owl_boss', 'unexamined_slime'],
+      affinities: {
+        goblin: { elements: ['slash', 'fire', 'dark'], scanned: false },
+        owl_boss: { elements: ['ice', 'wind'], scanned: true },
+      },
+    },
+  };
+  assert.deepEqual(resumed.game, expected);
+  assert.deepEqual(reopen(mem).game, expected);
+  assert.deepEqual(snapshotCatalog, before.catalog);
+  assert.notStrictEqual(resumed.game.catalog.affinities.owl_boss, lostCatalog.affinities.owl_boss);
+
+  const data = { elements: new Map([
+    ['none', { name: '無' }], ['slash', { name: '斬' }], ['fire', { name: '火' }],
+    ['ice', { name: '氷' }], ['wind', { name: '風' }], ['dark', { name: '闇' }], ['light', { name: '光' }],
+  ]) };
+  assert.deepEqual(monsterKnowledge(data, resumed.game, goblin), {
+    weak: ['火'], resist: ['闇'], normal: ['斬'], scanned: false,
+  });
+  assert.deepEqual(monsterKnowledge(data, resumed.game, boss), {
+    weak: ['氷', '風'], resist: [], normal: [], scanned: true,
+  });
+  assert.equal(resumed.game.catalog.affinities.unexamined_slime, undefined);
+});
+
+test('古いセーブの初遭遇と相性調査も残り、再挑戦で得た知識は重複せず蓄積する', () => {
+  const mem = new MemoryStorage();
+  const s = reopen(mem);
+  s.startNew(newGame()); // 旧セーブには catalog 自体がない
+  const enemy = { monsterId: 'slime' };
+  s.enterDungeon({ dungeonId: 'mossy_cave' });
+  s.updateRun((run, game) => {
+    encounterMonsters(game, [enemy]);
+    learnMonsterElements(game, enemy, ['fire']);
+  });
+  s.wipe();
+  s.enterDungeon({ dungeonId: 'mossy_cave' });
+  s.updateRun((run, game) => {
+    encounterMonsters(game, [enemy]);
+    learnMonsterElements(game, enemy, ['fire', 'ice'], true);
+  });
+  s.wipe();
+  assert.deepEqual(reopen(mem).game, {
+    ...newGame(),
+    catalog: { gear: [], monsters: ['slime'], affinities: { slime: { elements: ['fire', 'ice'], scanned: true } } },
+  });
 });
 
 test('町に帰ると run がなくなり、ダンジョンで得たものは残る', () => {

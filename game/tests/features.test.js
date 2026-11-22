@@ -115,7 +115,10 @@ test('季節の敵、賞金首、連続クエストの進行と報告', () => {
   assert.ok(monsterPool(data, 'blooming_hill', 'spring').some((m) => m.season === 'spring'));
   const enemies = makeEncounter(data, 'mossy_cave', 1, () => 0, { bountyId: 'bounty_01_1', elites: true });
   assert.equal(enemies[0].bounty, true);
-  assert.ok(enemies.some((e) => e.eliteId));
+  assert.ok(enemies.every((e) => !e.eliteId), '賞金首に冠付きの敵を重ねない');
+  const eligible = [...data.dungeons.values()].find(d => d.rank === data.balance.dungeon.elite_min_star);
+  const eliteEnemies = makeEncounter(data, eligible.id, 1, () => 0, { elites: true });
+  assert.equal(eliteEnemies.filter(e => e.eliteId).length, 1);
   const g = game();
   const chain = data.questChains[0];
   acceptChain(g, chain);

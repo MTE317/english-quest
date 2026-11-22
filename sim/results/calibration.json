@@ -1,0 +1,5278 @@
+{
+  "schema": 1,
+  "startedAt": "2026-11-22T18:28:38.394Z",
+  "updatedAt": "2026-11-22T18:33:55.247Z",
+  "options": {
+    "runs": 24,
+    "preparedRuns": 12,
+    "seed": 190001,
+    "accuracy": 0.8,
+    "bossAttackPasses": 5
+  },
+  "fingerprints": {
+    "sim/balance.mjs": "31e702876634630140464c1ec1a36922af77f7e04a64d04a3f288e553d961755",
+    "sim/party-fixtures.mjs": "cbf2437158c2589c6f0b031a9d5d8c4479174a57b6f0a243d0ac42bba6448052",
+    "game/js/battle.js": "92d7ec7f1e59618d2c2450a6686273a246cb3a34fe88563bec6fa3cec128941b",
+    "data/balance.json": "bf2e28171531e54d47866ee2b41558f3369b07fee13b03f0f6de5d1b4b8270d8",
+    "data/monsters.csv": "d2a7f017a5adf8f1bcd173ef7b4b2055ad598634764b300aa19673c693d30381",
+    "data/skills.csv": "48a9ec47d24366710fc12c7b746a43d5b72f8cdae63df815f29d54094184db2d",
+    "data/weapon_types.csv": "0d5147904c82060813cc43942ee08812b30a7e5d5b6bae8e5387a8a51f8d3bd6"
+  },
+  "assumptions": {
+    "engine": "実battle.js、合法party-fixtures、balanced編成、春・冠付きあり・賞金首なし。数値確率による勝率の強制なし。",
+    "sampling": "各★の探索は同じ固定seed群。prepared確認は別seed。最終評価はこの校正に使わないseed群で行う。",
+    "timing": "通常は勝利時と全試行の両方、ボスは敗戦時も含む問題数を記録。早期全滅で短くなったボス戦からHP増加を推測しない。",
+    "uncertainty": "少数試行の探索候補。95% Wilson区間は踏破した試行の比率。数値の採用は別seed・十分な試行の検証後。"
+  },
+  "complete": true,
+  "results": [
+    {
+      "star": 1,
+      "dungeonId": "mossy_cave",
+      "target": {
+        "normalQuestions": 17,
+        "bossQuestions": 23,
+        "normalWinRate": 0.97,
+        "clear": 0.85
+      },
+      "initial": {
+        "hp_rank_mul": 2.6,
+        "atk_rank_mul": 1.5,
+        "hp_boss_rank_mul": 1,
+        "atk_boss_rank_mul": 1.35
+      },
+      "selected": {
+        "hp_rank_mul": 2.885,
+        "atk_rank_mul": 1.5,
+        "hp_boss_rank_mul": 0.901,
+        "atk_boss_rank_mul": 2.025
+      },
+      "fixture": {
+        "rank": 1,
+        "level": 3,
+        "stage": 1,
+        "itemCap": 4,
+        "enhancement": 0,
+        "assembly": {
+          "gold": 2120,
+          "byPurpose": {
+            "craft": 1120,
+            "enchant": 800,
+            "items": 200
+          },
+          "materials": {
+            "cave_bat_mat": 112,
+            "blooming_hill_boss_mat": 8
+          },
+          "ap": {
+            "m1": {},
+            "m2": {},
+            "m3": {},
+            "m4": {}
+          },
+          "jp": 0
+        }
+      },
+      "baseline": {
+        "runs": 24,
+        "seed": 294730,
+        "preparation": "standard",
+        "accuracy": 0.8,
+        "wins": 24,
+        "clearRate": 1,
+        "clearRateWilson95": [
+          0.8620194241710247,
+          1
+        ],
+        "normalBattles": 48,
+        "normalWins": 48,
+        "normalWinRate": 1,
+        "normalQuestions": 15.041666666666666,
+        "normalQuestionsAll": 15.041666666666666,
+        "normalLossQuestions": null,
+        "bossBattles": 24,
+        "bossWins": 24,
+        "bossWinRate": 1,
+        "bossQuestions": 20.125,
+        "bossQuestionsAll": 20.125,
+        "bossLossQuestions": null,
+        "clearQuestions": 50.208333333333336,
+        "hpRemaining": 0.6368320447892534,
+        "mpRemaining": 0.3357974910394266,
+        "consumablesPerClear": 2.5833333333333335,
+        "failedBeforeBoss": 0
+      },
+      "standard": {
+        "runs": 24,
+        "seed": 294730,
+        "preparation": "standard",
+        "accuracy": 0.8,
+        "wins": 21,
+        "clearRate": 0.875,
+        "clearRateWilson95": [
+          0.6899571185214243,
+          0.9565574496068442
+        ],
+        "normalBattles": 48,
+        "normalWins": 48,
+        "normalWinRate": 1,
+        "normalQuestions": 16.916666666666668,
+        "normalQuestionsAll": 16.916666666666668,
+        "normalLossQuestions": null,
+        "bossBattles": 24,
+        "bossWins": 21,
+        "bossWinRate": 0.875,
+        "bossQuestions": 22.19047619047619,
+        "bossQuestionsAll": 22.041666666666668,
+        "bossLossQuestions": 21,
+        "clearQuestions": 55.80952380952381,
+        "hpRemaining": 0.6135598396073443,
+        "mpRemaining": 0.3515816656294106,
+        "consumablesPerClear": 3.857142857142857,
+        "failedBeforeBoss": 0
+      },
+      "prepared": {
+        "runs": 12,
+        "seed": 1791334407,
+        "preparation": "prepared",
+        "accuracy": 0.8,
+        "wins": 10,
+        "clearRate": 0.8333333333333334,
+        "clearRateWilson95": [
+          0.5519636426153274,
+          0.9530358523851776
+        ],
+        "normalBattles": 24,
+        "normalWins": 24,
+        "normalWinRate": 1,
+        "normalQuestions": 17.541666666666668,
+        "normalQuestionsAll": 17.541666666666668,
+        "normalLossQuestions": null,
+        "bossBattles": 12,
+        "bossWins": 10,
+        "bossWinRate": 0.8333333333333334,
+        "bossQuestions": 22.4,
+        "bossQuestionsAll": 22.416666666666668,
+        "bossLossQuestions": 22.5,
+        "clearQuestions": 58.2,
+        "hpRemaining": 0.5638566752868919,
+        "mpRemaining": 0.4087301587301587,
+        "consumablesPerClear": 3.7,
+        "failedBeforeBoss": 0
+      },
+      "warnings": [
+        "準備編成は別12seedで10勝=83.3%。★1は対策選択肢が少なく、85%以上は今回の標本で確認できない。"
+      ],
+      "history": [
+        {
+          "phase": "baseline",
+          "coefficients": {
+            "hp_rank_mul": 2.6,
+            "atk_rank_mul": 1.5,
+            "hp_boss_rank_mul": 1,
+            "atk_boss_rank_mul": 1.35
+          },
+          "result": {
+            "runs": 24,
+            "seed": 294730,
+            "preparation": "standard",
+            "accuracy": 0.8,
+            "wins": 24,
+            "clearRate": 1,
+            "clearRateWilson95": [
+              0.8620194241710247,
+              1
+            ],
+            "normalBattles": 48,
+            "normalWins": 48,
+            "normalWinRate": 1,
+            "normalQuestions": 15.041666666666666,
+            "normalQuestionsAll": 15.041666666666666,
+            "normalLossQuestions": null,
+            "bossBattles": 24,
+            "bossWins": 24,
+            "bossWinRate": 1,
+            "bossQuestions": 20.125,
+            "bossQuestionsAll": 20.125,
+            "bossLossQuestions": null,
+            "clearQuestions": 50.208333333333336,
+            "hpRemaining": 0.6368320447892534,
+            "mpRemaining": 0.3357974910394266,
+            "consumablesPerClear": 2.5833333333333335,
+            "failedBeforeBoss": 0
+          }
+        },
+        {
+          "phase": "normal_hp_1",
+          "coefficients": {
+            "hp_rank_mul": 2.885,
+            "atk_rank_mul": 1.5,
+            "hp_boss_rank_mul": 0.901,
+            "atk_boss_rank_mul": 1.35
+          },
+          "result": {
+            "runs": 24,
+            "seed": 294730,
+            "preparation": "standard",
+            "accuracy": 0.8,
+            "wins": 24,
+            "clearRate": 1,
+            "clearRateWilson95": [
+              0.8620194241710247,
+              1
+            ],
+            "normalBattles": 48,
+            "normalWins": 48,
+            "normalWinRate": 1,
+            "normalQuestions": 16.916666666666668,
+            "normalQuestionsAll": 16.916666666666668,
+            "normalLossQuestions": null,
+            "bossBattles": 24,
+            "bossWins": 24,
+            "bossWinRate": 1,
+            "bossQuestions": 22.833333333333332,
+            "bossQuestionsAll": 22.833333333333332,
+            "bossLossQuestions": null,
+            "clearQuestions": 56.666666666666664,
+            "hpRemaining": 0.6633087901181423,
+            "mpRemaining": 0.3487599206349206,
+            "consumablesPerClear": 3.1666666666666665,
+            "failedBeforeBoss": 0
+          }
+        },
+        {
+          "phase": "boss_attack_1",
+          "coefficients": {
+            "hp_rank_mul": 2.885,
+            "atk_rank_mul": 1.5,
+            "hp_boss_rank_mul": 0.901,
+            "atk_boss_rank_mul": 2.025
+          },
+          "result": {
+            "runs": 24,
+            "seed": 294730,
+            "preparation": "standard",
+            "accuracy": 0.8,
+            "wins": 21,
+            "clearRate": 0.875,
+            "clearRateWilson95": [
+              0.6899571185214243,
+              0.9565574496068442
+            ],
+            "normalBattles": 48,
+            "normalWins": 48,
+            "normalWinRate": 1,
+            "normalQuestions": 16.916666666666668,
+            "normalQuestionsAll": 16.916666666666668,
+            "normalLossQuestions": null,
+            "bossBattles": 24,
+            "bossWins": 21,
+            "bossWinRate": 0.875,
+            "bossQuestions": 22.19047619047619,
+            "bossQuestionsAll": 22.041666666666668,
+            "bossLossQuestions": 21,
+            "clearQuestions": 55.80952380952381,
+            "hpRemaining": 0.6135598396073443,
+            "mpRemaining": 0.3515816656294106,
+            "consumablesPerClear": 3.857142857142857,
+            "failedBeforeBoss": 0
+          }
+        },
+        {
+          "phase": "boss_attack_2",
+          "coefficients": {
+            "hp_rank_mul": 2.885,
+            "atk_rank_mul": 1.5,
+            "hp_boss_rank_mul": 0.901,
+            "atk_boss_rank_mul": 3.037
+          },
+          "result": {
+            "runs": 24,
+            "seed": 294730,
+            "preparation": "standard",
+            "accuracy": 0.8,
+            "wins": 10,
+            "clearRate": 0.4166666666666667,
+            "clearRateWilson95": [
+              0.24467347246538232,
+              0.6116566235061137
+            ],
+            "normalBattles": 48,
+            "normalWins": 48,
+            "normalWinRate": 1,
+            "normalQuestions": 16.916666666666668,
+            "normalQuestionsAll": 16.916666666666668,
+            "normalLossQuestions": null,
+            "bossBattles": 24,
+            "bossWins": 10,
+            "bossWinRate": 0.4166666666666667,
+            "bossQuestions": 20.5,
+            "bossQuestionsAll": 18.916666666666668,
+            "bossLossQuestions": 17.785714285714285,
+            "clearQuestions": 54,
+            "hpRemaining": 0.49980275369456983,
+            "mpRemaining": 0.33478878648233484,
+            "consumablesPerClear": 4.3,
+            "failedBeforeBoss": 0
+          }
+        },
+        {
+          "phase": "boss_attack_3",
+          "coefficients": {
+            "hp_rank_mul": 2.885,
+            "atk_rank_mul": 1.5,
+            "hp_boss_rank_mul": 0.901,
+            "atk_boss_rank_mul": 2.48
+          },
+          "result": {
+            "runs": 24,
+            "seed": 294730,
+            "preparation": "standard",
+            "accuracy": 0.8,
+            "wins": 14,
+            "clearRate": 0.5833333333333334,
+            "clearRateWilson95": [
+              0.3883433764938864,
+              0.7553265275346177
+            ],
+            "normalBattles": 48,
+            "normalWins": 48,
+            "normalWinRate": 1,
+            "normalQuestions": 16.916666666666668,
+            "normalQuestionsAll": 16.916666666666668,
+            "normalLossQuestions": null,
+            "bossBattles": 24,
+            "bossWins": 14,
+            "bossWinRate": 0.5833333333333334,
+            "bossQuestions": 20.928571428571427,
+            "bossQuestionsAll": 20.625,
+            "bossLossQuestions": 20.2,
+            "clearQuestions": 53.57142857142857,
+            "hpRemaining": 0.5758959593004919,
+            "mpRemaining": 0.33661596403059724,
+            "consumablesPerClear": 4.285714285714286,
+            "failedBeforeBoss": 0
+          }
+        },
+        {
+          "phase": "boss_attack_4",
+          "coefficients": {
+            "hp_rank_mul": 2.885,
+            "atk_rank_mul": 1.5,
+            "hp_boss_rank_mul": 0.901,
+            "atk_boss_rank_mul": 2.241
+          },
+          "result": {
+            "runs": 24,
+            "seed": 294730,
+            "preparation": "standard",
+            "accuracy": 0.8,
+            "wins": 18,
+            "clearRate": 0.75,
+            "clearRateWilson95": [
+              0.5510017468789357,
+              0.8800079652065766
+            ],
+            "normalBattles": 48,
+            "normalWins": 48,
+            "normalWinRate": 1,
+            "normalQuestions": 16.916666666666668,
+            "normalQuestionsAll": 16.916666666666668,
+            "normalLossQuestions": null,
+            "bossBattles": 24,
+            "bossWins": 18,
+            "bossWinRate": 0.75,
+            "bossQuestions": 21.555555555555557,
+            "bossQuestionsAll": 22.375,
+            "bossLossQuestions": 24.833333333333332,
+            "clearQuestions": 55.166666666666664,
+            "hpRemaining": 0.5533510487827985,
+            "mpRemaining": 0.35276469715919734,
+            "consumablesPerClear": 4.166666666666667,
+            "failedBeforeBoss": 0
+          }
+        }
+      ],
+      "previousSelection": {
+        "target": 0.75,
+        "coefficients": {
+          "hp_rank_mul": 2.885,
+          "atk_rank_mul": 1.5,
+          "hp_boss_rank_mul": 0.901,
+          "atk_boss_rank_mul": 2.241
+        },
+        "standard": {
+          "runs": 24,
+          "seed": 294730,
+          "preparation": "standard",
+          "accuracy": 0.8,
+          "wins": 18,
+          "clearRate": 0.75,
+          "clearRateWilson95": [
+            0.5510017468789357,
+            0.8800079652065766
+          ],
+          "normalBattles": 48,
+          "normalWins": 48,
+          "normalWinRate": 1,
+          "normalQuestions": 16.916666666666668,
+          "normalQuestionsAll": 16.916666666666668,
+          "normalLossQuestions": null,
+          "bossBattles": 24,
+          "bossWins": 18,
+          "bossWinRate": 0.75,
+          "bossQuestions": 21.555555555555557,
+          "bossQuestionsAll": 22.375,
+          "bossLossQuestions": 24.833333333333332,
+          "clearQuestions": 55.166666666666664,
+          "hpRemaining": 0.5533510487827985,
+          "mpRemaining": 0.35276469715919734,
+          "consumablesPerClear": 4.166666666666667,
+          "failedBeforeBoss": 0
+        },
+        "prepared": {
+          "runs": 12,
+          "seed": 1791334407,
+          "preparation": "prepared",
+          "accuracy": 0.8,
+          "wins": 9,
+          "clearRate": 0.75,
+          "clearRateWilson95": [
+            0.46768966087934005,
+            0.9110599603710386
+          ],
+          "normalBattles": 24,
+          "normalWins": 24,
+          "normalWinRate": 1,
+          "normalQuestions": 17.541666666666668,
+          "normalQuestionsAll": 17.541666666666668,
+          "normalLossQuestions": null,
+          "bossBattles": 12,
+          "bossWins": 9,
+          "bossWinRate": 0.75,
+          "bossQuestions": 21.11111111111111,
+          "bossQuestionsAll": 22.333333333333332,
+          "bossLossQuestions": 26,
+          "clearQuestions": 57.44444444444444,
+          "hpRemaining": 0.5531759309743638,
+          "mpRemaining": 0.3932815051711579,
+          "consumablesPerClear": 3.5555555555555554,
+          "failedBeforeBoss": 0
+        }
+      },
+      "selectionNote": "初級は装備・耐性の選択肢が小さいため標準80〜90%を許容する。 親と合意した例外。24試行では標準21勝、準備別12試行は10勝。準備側の85%達成は未確定として大標本検証へ送る。"
+    },
+    {
+      "star": 2,
+      "dungeonId": "ruined_fort",
+      "target": {
+        "normalQuestions": 17,
+        "bossQuestions": 23,
+        "normalWinRate": 0.97,
+        "clear": 0.75
+      },
+      "initial": {
+        "hp_rank_mul": 3.2,
+        "atk_rank_mul": 1.8,
+        "hp_boss_rank_mul": 1,
+        "atk_boss_rank_mul": 1.35
+      },
+      "selected": {
+        "hp_rank_mul": 3.392,
+        "atk_rank_mul": 1.8,
+        "hp_boss_rank_mul": 0.943,
+        "atk_boss_rank_mul": 1.35
+      },
+      "fixture": {
+        "rank": 2,
+        "level": 8,
+        "stage": 1,
+        "itemCap": 14,
+        "enhancement": 0,
+        "assembly": {
+          "gold": 3630,
+          "byPurpose": {
+            "craft": 2100,
+            "enchant": 1280,
+            "items": 250
+          },
+          "materials": {
+            "bog_zombie_mat": 112,
+            "blooming_hill_boss_mat": 8
+          },
+          "ap": {
+            "m1": {},
+            "m2": {},
+            "m3": {},
+            "m4": {}
+          },
+          "jp": 0
+        }
+      },
+      "baseline": {
+        "runs": 24,
+        "seed": 399459,
+        "preparation": "standard",
+        "accuracy": 0.8,
+        "wins": 20,
+        "clearRate": 0.8333333333333334,
+        "clearRateWilson95": [
+          0.6414652961213058,
+          0.9332143199927109
+        ],
+        "normalBattles": 48,
+        "normalWins": 48,
+        "normalWinRate": 1,
+        "normalQuestions": 15.875,
+        "normalQuestionsAll": 15.875,
+        "normalLossQuestions": null,
+        "bossBattles": 24,
+        "bossWins": 20,
+        "bossWinRate": 0.8333333333333334,
+        "bossQuestions": 20.65,
+        "bossQuestionsAll": 20.541666666666668,
+        "bossLossQuestions": 20,
+        "clearQuestions": 51.55,
+        "hpRemaining": 0.45950639853747716,
+        "mpRemaining": 0.2810126582278481,
+        "consumablesPerClear": 3.95,
+        "failedBeforeBoss": 0
+      },
+      "standard": {
+        "runs": 24,
+        "seed": 399459,
+        "preparation": "standard",
+        "accuracy": 0.8,
+        "wins": 19,
+        "clearRate": 0.7916666666666666,
+        "clearRateWilson95": [
+          0.5952915551476452,
+          0.9075531089521192
+        ],
+        "normalBattles": 48,
+        "normalWins": 48,
+        "normalWinRate": 1,
+        "normalQuestions": 16.958333333333332,
+        "normalQuestionsAll": 16.958333333333332,
+        "normalLossQuestions": null,
+        "bossBattles": 24,
+        "bossWins": 19,
+        "bossWinRate": 0.7916666666666666,
+        "bossQuestions": 21.210526315789473,
+        "bossQuestionsAll": 21.583333333333332,
+        "bossLossQuestions": 23,
+        "clearQuestions": 54.36842105263158,
+        "hpRemaining": 0.39956380897398897,
+        "mpRemaining": 0.2931379080612925,
+        "consumablesPerClear": 4.315789473684211,
+        "failedBeforeBoss": 0
+      },
+      "prepared": {
+        "runs": 12,
+        "seed": 1791491886,
+        "preparation": "prepared",
+        "accuracy": 0.8,
+        "wins": 12,
+        "clearRate": 1,
+        "clearRateWilson95": [
+          0.7574992425007574,
+          1
+        ],
+        "normalBattles": 24,
+        "normalWins": 24,
+        "normalWinRate": 1,
+        "normalQuestions": 17.958333333333332,
+        "normalQuestionsAll": 17.958333333333332,
+        "normalLossQuestions": null,
+        "bossBattles": 12,
+        "bossWins": 12,
+        "bossWinRate": 1,
+        "bossQuestions": 19.166666666666668,
+        "bossQuestionsAll": 19.166666666666668,
+        "bossLossQuestions": null,
+        "clearQuestions": 55.083333333333336,
+        "hpRemaining": 0.45764777574649607,
+        "mpRemaining": 0.27848101265822783,
+        "consumablesPerClear": 3.5,
+        "failedBeforeBoss": 0
+      },
+      "warnings": [],
+      "history": [
+        {
+          "phase": "baseline",
+          "coefficients": {
+            "hp_rank_mul": 3.2,
+            "atk_rank_mul": 1.8,
+            "hp_boss_rank_mul": 1,
+            "atk_boss_rank_mul": 1.35
+          },
+          "result": {
+            "runs": 24,
+            "seed": 399459,
+            "preparation": "standard",
+            "accuracy": 0.8,
+            "wins": 20,
+            "clearRate": 0.8333333333333334,
+            "clearRateWilson95": [
+              0.6414652961213058,
+              0.9332143199927109
+            ],
+            "normalBattles": 48,
+            "normalWins": 48,
+            "normalWinRate": 1,
+            "normalQuestions": 15.875,
+            "normalQuestionsAll": 15.875,
+            "normalLossQuestions": null,
+            "bossBattles": 24,
+            "bossWins": 20,
+            "bossWinRate": 0.8333333333333334,
+            "bossQuestions": 20.65,
+            "bossQuestionsAll": 20.541666666666668,
+            "bossLossQuestions": 20,
+            "clearQuestions": 51.55,
+            "hpRemaining": 0.45950639853747716,
+            "mpRemaining": 0.2810126582278481,
+            "consumablesPerClear": 3.95,
+            "failedBeforeBoss": 0
+          }
+        },
+        {
+          "phase": "normal_hp_1",
+          "coefficients": {
+            "hp_rank_mul": 3.392,
+            "atk_rank_mul": 1.8,
+            "hp_boss_rank_mul": 0.943,
+            "atk_boss_rank_mul": 1.35
+          },
+          "result": {
+            "runs": 24,
+            "seed": 399459,
+            "preparation": "standard",
+            "accuracy": 0.8,
+            "wins": 19,
+            "clearRate": 0.7916666666666666,
+            "clearRateWilson95": [
+              0.5952915551476452,
+              0.9075531089521192
+            ],
+            "normalBattles": 48,
+            "normalWins": 48,
+            "normalWinRate": 1,
+            "normalQuestions": 16.958333333333332,
+            "normalQuestionsAll": 16.958333333333332,
+            "normalLossQuestions": null,
+            "bossBattles": 24,
+            "bossWins": 19,
+            "bossWinRate": 0.7916666666666666,
+            "bossQuestions": 21.210526315789473,
+            "bossQuestionsAll": 21.583333333333332,
+            "bossLossQuestions": 23,
+            "clearQuestions": 54.36842105263158,
+            "hpRemaining": 0.39956380897398897,
+            "mpRemaining": 0.2931379080612925,
+            "consumablesPerClear": 4.315789473684211,
+            "failedBeforeBoss": 0
+          }
+        },
+        {
+          "phase": "boss_attack_1",
+          "coefficients": {
+            "hp_rank_mul": 3.392,
+            "atk_rank_mul": 1.8,
+            "hp_boss_rank_mul": 0.943,
+            "atk_boss_rank_mul": 2.025
+          },
+          "result": {
+            "runs": 24,
+            "seed": 399459,
+            "preparation": "standard",
+            "accuracy": 0.8,
+            "wins": 9,
+            "clearRate": 0.375,
+            "clearRateWilson95": [
+              0.21159133433631458,
+              0.5729038096209293
+            ],
+            "normalBattles": 48,
+            "normalWins": 48,
+            "normalWinRate": 1,
+            "normalQuestions": 16.958333333333332,
+            "normalQuestionsAll": 16.958333333333332,
+            "normalLossQuestions": null,
+            "bossBattles": 24,
+            "bossWins": 9,
+            "bossWinRate": 0.375,
+            "bossQuestions": 20,
+            "bossQuestionsAll": 19,
+            "bossLossQuestions": 18.4,
+            "clearQuestions": 52.666666666666664,
+            "hpRemaining": 0.15911706953754487,
+            "mpRemaining": 0.2721518987341772,
+            "consumablesPerClear": 4.777777777777778,
+            "failedBeforeBoss": 0
+          }
+        },
+        {
+          "phase": "boss_attack_2",
+          "coefficients": {
+            "hp_rank_mul": 3.392,
+            "atk_rank_mul": 1.8,
+            "hp_boss_rank_mul": 0.943,
+            "atk_boss_rank_mul": 1.653
+          },
+          "result": {
+            "runs": 24,
+            "seed": 399459,
+            "preparation": "standard",
+            "accuracy": 0.8,
+            "wins": 15,
+            "clearRate": 0.625,
+            "clearRateWilson95": [
+              0.42709619037907065,
+              0.7884086656636855
+            ],
+            "normalBattles": 48,
+            "normalWins": 48,
+            "normalWinRate": 1,
+            "normalQuestions": 16.958333333333332,
+            "normalQuestionsAll": 16.958333333333332,
+            "normalLossQuestions": null,
+            "bossBattles": 24,
+            "bossWins": 15,
+            "bossWinRate": 0.625,
+            "bossQuestions": 21.533333333333335,
+            "bossQuestionsAll": 21.708333333333332,
+            "bossLossQuestions": 22,
+            "clearQuestions": 54.53333333333333,
+            "hpRemaining": 0.3147267926061345,
+            "mpRemaining": 0.31603375527426164,
+            "consumablesPerClear": 4.866666666666666,
+            "failedBeforeBoss": 0
+          }
+        },
+        {
+          "phase": "boss_attack_3",
+          "coefficients": {
+            "hp_rank_mul": 3.392,
+            "atk_rank_mul": 1.8,
+            "hp_boss_rank_mul": 0.943,
+            "atk_boss_rank_mul": 1.494
+          },
+          "result": {
+            "runs": 24,
+            "seed": 399459,
+            "preparation": "standard",
+            "accuracy": 0.8,
+            "wins": 17,
+            "clearRate": 0.7083333333333334,
+            "clearRateWilson95": [
+              0.508319363412903,
+              0.8508553966583573
+            ],
+            "normalBattles": 48,
+            "normalWins": 48,
+            "normalWinRate": 1,
+            "normalQuestions": 16.958333333333332,
+            "normalQuestionsAll": 16.958333333333332,
+            "normalLossQuestions": null,
+            "bossBattles": 24,
+            "bossWins": 17,
+            "bossWinRate": 0.7083333333333334,
+            "bossQuestions": 22.647058823529413,
+            "bossQuestionsAll": 22.083333333333332,
+            "bossLossQuestions": 20.714285714285715,
+            "clearQuestions": 55.94117647058823,
+            "hpRemaining": 0.3575294834570026,
+            "mpRemaining": 0.2874162323157111,
+            "consumablesPerClear": 4.529411764705882,
+            "failedBeforeBoss": 0
+          }
+        },
+        {
+          "phase": "boss_attack_4",
+          "coefficients": {
+            "hp_rank_mul": 3.392,
+            "atk_rank_mul": 1.8,
+            "hp_boss_rank_mul": 0.943,
+            "atk_boss_rank_mul": 1.42
+          },
+          "result": {
+            "runs": 24,
+            "seed": 399459,
+            "preparation": "standard",
+            "accuracy": 0.8,
+            "wins": 16,
+            "clearRate": 0.6666666666666666,
+            "clearRateWilson95": [
+              0.4670595949408046,
+              0.8202802131162036
+            ],
+            "normalBattles": 48,
+            "normalWins": 48,
+            "normalWinRate": 1,
+            "normalQuestions": 16.958333333333332,
+            "normalQuestionsAll": 16.958333333333332,
+            "normalLossQuestions": null,
+            "bossBattles": 24,
+            "bossWins": 16,
+            "bossWinRate": 0.6666666666666666,
+            "bossQuestions": 21.75,
+            "bossQuestionsAll": 21.916666666666668,
+            "bossLossQuestions": 22.25,
+            "clearQuestions": 55.125,
+            "hpRemaining": 0.4034887263863498,
+            "mpRemaining": 0.2962816455696203,
+            "consumablesPerClear": 4.375,
+            "failedBeforeBoss": 0
+          }
+        },
+        {
+          "phase": "boss_attack_5",
+          "coefficients": {
+            "hp_rank_mul": 3.392,
+            "atk_rank_mul": 1.8,
+            "hp_boss_rank_mul": 0.943,
+            "atk_boss_rank_mul": 1.385
+          },
+          "result": {
+            "runs": 24,
+            "seed": 399459,
+            "preparation": "standard",
+            "accuracy": 0.8,
+            "wins": 19,
+            "clearRate": 0.7916666666666666,
+            "clearRateWilson95": [
+              0.5952915551476452,
+              0.9075531089521192
+            ],
+            "normalBattles": 48,
+            "normalWins": 48,
+            "normalWinRate": 1,
+            "normalQuestions": 16.958333333333332,
+            "normalQuestionsAll": 16.958333333333332,
+            "normalLossQuestions": null,
+            "bossBattles": 24,
+            "bossWins": 19,
+            "bossWinRate": 0.7916666666666666,
+            "bossQuestions": 21.42105263157895,
+            "bossQuestionsAll": 21.75,
+            "bossLossQuestions": 23,
+            "clearQuestions": 54.578947368421055,
+            "hpRemaining": 0.4006863594085763,
+            "mpRemaining": 0.29247168554297137,
+            "consumablesPerClear": 4.2631578947368425,
+            "failedBeforeBoss": 0
+          }
+        }
+      ]
+    },
+    {
+      "star": 3,
+      "dungeonId": "howling_canyon",
+      "target": {
+        "normalQuestions": 17,
+        "bossQuestions": 23,
+        "normalWinRate": 0.97,
+        "clear": 0.75
+      },
+      "initial": {
+        "hp_rank_mul": 2.9,
+        "atk_rank_mul": 1.5,
+        "hp_boss_rank_mul": 1,
+        "atk_boss_rank_mul": 1.35
+      },
+      "selected": {
+        "hp_rank_mul": 3.543,
+        "atk_rank_mul": 1.5,
+        "hp_boss_rank_mul": 0.819,
+        "atk_boss_rank_mul": 1.739
+      },
+      "fixture": {
+        "rank": 3,
+        "level": 17,
+        "stage": 2,
+        "itemCap": 24,
+        "enhancement": 0,
+        "assembly": {
+          "gold": 6160,
+          "byPurpose": {
+            "craft": 3780,
+            "enchant": 1920,
+            "items": 460
+          },
+          "materials": {
+            "canyon_wolf_mat": 112,
+            "blooming_hill_boss_mat": 8
+          },
+          "ap": {
+            "m1": {
+              "warrior": 30
+            },
+            "m2": {
+              "knight": 30
+            },
+            "m3": {
+              "black_mage": 30
+            },
+            "m4": {
+              "white_mage": 30
+            }
+          },
+          "jp": 0
+        }
+      },
+      "baseline": {
+        "runs": 24,
+        "seed": 504188,
+        "preparation": "standard",
+        "accuracy": 0.8,
+        "wins": 24,
+        "clearRate": 1,
+        "clearRateWilson95": [
+          0.8620194241710247,
+          1
+        ],
+        "normalBattles": 48,
+        "normalWins": 48,
+        "normalWinRate": 1,
+        "normalQuestions": 14.291666666666666,
+        "normalQuestionsAll": 14.291666666666666,
+        "normalLossQuestions": null,
+        "bossBattles": 24,
+        "bossWins": 24,
+        "bossWinRate": 1,
+        "bossQuestions": 18.291666666666668,
+        "bossQuestionsAll": 18.291666666666668,
+        "bossLossQuestions": null,
+        "clearQuestions": 46.875,
+        "hpRemaining": 0.6386166497690661,
+        "mpRemaining": 0.4969202898550725,
+        "consumablesPerClear": 2.6666666666666665,
+        "failedBeforeBoss": 0
+      },
+      "standard": {
+        "runs": 24,
+        "seed": 504188,
+        "preparation": "standard",
+        "accuracy": 0.8,
+        "wins": 18,
+        "clearRate": 0.75,
+        "clearRateWilson95": [
+          0.5510017468789357,
+          0.8800079652065766
+        ],
+        "normalBattles": 48,
+        "normalWins": 48,
+        "normalWinRate": 1,
+        "normalQuestions": 16.895833333333332,
+        "normalQuestionsAll": 16.895833333333332,
+        "normalLossQuestions": null,
+        "bossBattles": 24,
+        "bossWins": 18,
+        "bossWinRate": 0.75,
+        "bossQuestions": 20.833333333333332,
+        "bossQuestionsAll": 20.416666666666668,
+        "bossLossQuestions": 19.166666666666668,
+        "clearQuestions": 54.05555555555556,
+        "hpRemaining": 0.40578648942961204,
+        "mpRemaining": 0.3789855072463768,
+        "consumablesPerClear": 3.5,
+        "failedBeforeBoss": 0
+      },
+      "prepared": {
+        "runs": 12,
+        "seed": 1791383089,
+        "preparation": "prepared",
+        "accuracy": 0.8,
+        "wins": 12,
+        "clearRate": 1,
+        "clearRateWilson95": [
+          0.7574992425007574,
+          1
+        ],
+        "normalBattles": 24,
+        "normalWins": 24,
+        "normalWinRate": 1,
+        "normalQuestions": 16.458333333333332,
+        "normalQuestionsAll": 16.458333333333332,
+        "normalLossQuestions": null,
+        "bossBattles": 12,
+        "bossWins": 12,
+        "bossWinRate": 1,
+        "bossQuestions": 18.916666666666668,
+        "bossQuestionsAll": 18.916666666666668,
+        "bossLossQuestions": null,
+        "clearQuestions": 51.833333333333336,
+        "hpRemaining": 0.5989072884983666,
+        "mpRemaining": 0.4927536231884058,
+        "consumablesPerClear": 3,
+        "failedBeforeBoss": 0
+      },
+      "warnings": [],
+      "history": [
+        {
+          "phase": "baseline",
+          "coefficients": {
+            "hp_rank_mul": 2.9,
+            "atk_rank_mul": 1.5,
+            "hp_boss_rank_mul": 1,
+            "atk_boss_rank_mul": 1.35
+          },
+          "result": {
+            "runs": 24,
+            "seed": 504188,
+            "preparation": "standard",
+            "accuracy": 0.8,
+            "wins": 24,
+            "clearRate": 1,
+            "clearRateWilson95": [
+              0.8620194241710247,
+              1
+            ],
+            "normalBattles": 48,
+            "normalWins": 48,
+            "normalWinRate": 1,
+            "normalQuestions": 14.291666666666666,
+            "normalQuestionsAll": 14.291666666666666,
+            "normalLossQuestions": null,
+            "bossBattles": 24,
+            "bossWins": 24,
+            "bossWinRate": 1,
+            "bossQuestions": 18.291666666666668,
+            "bossQuestionsAll": 18.291666666666668,
+            "bossLossQuestions": null,
+            "clearQuestions": 46.875,
+            "hpRemaining": 0.6386166497690661,
+            "mpRemaining": 0.4969202898550725,
+            "consumablesPerClear": 2.6666666666666665,
+            "failedBeforeBoss": 0
+          }
+        },
+        {
+          "phase": "normal_hp_1",
+          "coefficients": {
+            "hp_rank_mul": 3.361,
+            "atk_rank_mul": 1.5,
+            "hp_boss_rank_mul": 0.863,
+            "atk_boss_rank_mul": 1.35
+          },
+          "result": {
+            "runs": 24,
+            "seed": 504188,
+            "preparation": "standard",
+            "accuracy": 0.8,
+            "wins": 24,
+            "clearRate": 1,
+            "clearRateWilson95": [
+              0.8620194241710247,
+              1
+            ],
+            "normalBattles": 48,
+            "normalWins": 48,
+            "normalWinRate": 1,
+            "normalQuestions": 15.979166666666666,
+            "normalQuestionsAll": 15.979166666666666,
+            "normalLossQuestions": null,
+            "bossBattles": 24,
+            "bossWins": 24,
+            "bossWinRate": 1,
+            "bossQuestions": 21,
+            "bossQuestionsAll": 21,
+            "bossLossQuestions": null,
+            "clearQuestions": 52.958333333333336,
+            "hpRemaining": 0.5945420750253464,
+            "mpRemaining": 0.38351449275362315,
+            "consumablesPerClear": 3.125,
+            "failedBeforeBoss": 0
+          }
+        },
+        {
+          "phase": "normal_hp_2",
+          "coefficients": {
+            "hp_rank_mul": 3.543,
+            "atk_rank_mul": 1.5,
+            "hp_boss_rank_mul": 0.819,
+            "atk_boss_rank_mul": 1.35
+          },
+          "result": {
+            "runs": 24,
+            "seed": 504188,
+            "preparation": "standard",
+            "accuracy": 0.8,
+            "wins": 24,
+            "clearRate": 1,
+            "clearRateWilson95": [
+              0.8620194241710247,
+              1
+            ],
+            "normalBattles": 48,
+            "normalWins": 48,
+            "normalWinRate": 1,
+            "normalQuestions": 16.895833333333332,
+            "normalQuestionsAll": 16.895833333333332,
+            "normalLossQuestions": null,
+            "bossBattles": 24,
+            "bossWins": 24,
+            "bossWinRate": 1,
+            "bossQuestions": 22.583333333333332,
+            "bossQuestionsAll": 22.583333333333332,
+            "bossLossQuestions": null,
+            "clearQuestions": 56.375,
+            "hpRemaining": 0.5277543088881379,
+            "mpRemaining": 0.3552536231884058,
+            "consumablesPerClear": 3.2916666666666665,
+            "failedBeforeBoss": 0
+          }
+        },
+        {
+          "phase": "boss_attack_1",
+          "coefficients": {
+            "hp_rank_mul": 3.543,
+            "atk_rank_mul": 1.5,
+            "hp_boss_rank_mul": 0.819,
+            "atk_boss_rank_mul": 2.025
+          },
+          "result": {
+            "runs": 24,
+            "seed": 504188,
+            "preparation": "standard",
+            "accuracy": 0.8,
+            "wins": 13,
+            "clearRate": 0.5416666666666666,
+            "clearRateWilson95": [
+              0.35074553553106635,
+              0.7210894164831857
+            ],
+            "normalBattles": 48,
+            "normalWins": 48,
+            "normalWinRate": 1,
+            "normalQuestions": 16.895833333333332,
+            "normalQuestionsAll": 16.895833333333332,
+            "normalLossQuestions": null,
+            "bossBattles": 24,
+            "bossWins": 13,
+            "bossWinRate": 0.5416666666666666,
+            "bossQuestions": 19.46153846153846,
+            "bossQuestionsAll": 18.416666666666668,
+            "bossLossQuestions": 17.181818181818183,
+            "clearQuestions": 52.30769230769231,
+            "hpRemaining": 0.36717186159565335,
+            "mpRemaining": 0.3876254180602006,
+            "consumablesPerClear": 3.5384615384615383,
+            "failedBeforeBoss": 0
+          }
+        },
+        {
+          "phase": "boss_attack_2",
+          "coefficients": {
+            "hp_rank_mul": 3.543,
+            "atk_rank_mul": 1.5,
+            "hp_boss_rank_mul": 0.819,
+            "atk_boss_rank_mul": 1.653
+          },
+          "result": {
+            "runs": 24,
+            "seed": 504188,
+            "preparation": "standard",
+            "accuracy": 0.8,
+            "wins": 19,
+            "clearRate": 0.7916666666666666,
+            "clearRateWilson95": [
+              0.5952915551476452,
+              0.9075531089521192
+            ],
+            "normalBattles": 48,
+            "normalWins": 48,
+            "normalWinRate": 1,
+            "normalQuestions": 16.895833333333332,
+            "normalQuestionsAll": 16.895833333333332,
+            "normalLossQuestions": null,
+            "bossBattles": 24,
+            "bossWins": 19,
+            "bossWinRate": 0.7916666666666666,
+            "bossQuestions": 20.789473684210527,
+            "bossQuestionsAll": 20.875,
+            "bossLossQuestions": 21.2,
+            "clearQuestions": 54,
+            "hpRemaining": 0.3991746856156951,
+            "mpRemaining": 0.37757437070938216,
+            "consumablesPerClear": 3.473684210526316,
+            "failedBeforeBoss": 0
+          }
+        },
+        {
+          "phase": "boss_attack_3",
+          "coefficients": {
+            "hp_rank_mul": 3.543,
+            "atk_rank_mul": 1.5,
+            "hp_boss_rank_mul": 0.819,
+            "atk_boss_rank_mul": 1.83
+          },
+          "result": {
+            "runs": 24,
+            "seed": 504188,
+            "preparation": "standard",
+            "accuracy": 0.8,
+            "wins": 15,
+            "clearRate": 0.625,
+            "clearRateWilson95": [
+              0.42709619037907065,
+              0.7884086656636855
+            ],
+            "normalBattles": 48,
+            "normalWins": 48,
+            "normalWinRate": 1,
+            "normalQuestions": 16.895833333333332,
+            "normalQuestionsAll": 16.895833333333332,
+            "normalLossQuestions": null,
+            "bossBattles": 24,
+            "bossWins": 15,
+            "bossWinRate": 0.625,
+            "bossQuestions": 20,
+            "bossQuestionsAll": 19.5,
+            "bossLossQuestions": 18.666666666666668,
+            "clearQuestions": 52.6,
+            "hpRemaining": 0.40617325673087756,
+            "mpRemaining": 0.39275362318840584,
+            "consumablesPerClear": 3.4,
+            "failedBeforeBoss": 0
+          }
+        },
+        {
+          "phase": "boss_attack_4",
+          "coefficients": {
+            "hp_rank_mul": 3.543,
+            "atk_rank_mul": 1.5,
+            "hp_boss_rank_mul": 0.819,
+            "atk_boss_rank_mul": 1.739
+          },
+          "result": {
+            "runs": 24,
+            "seed": 504188,
+            "preparation": "standard",
+            "accuracy": 0.8,
+            "wins": 18,
+            "clearRate": 0.75,
+            "clearRateWilson95": [
+              0.5510017468789357,
+              0.8800079652065766
+            ],
+            "normalBattles": 48,
+            "normalWins": 48,
+            "normalWinRate": 1,
+            "normalQuestions": 16.895833333333332,
+            "normalQuestionsAll": 16.895833333333332,
+            "normalLossQuestions": null,
+            "bossBattles": 24,
+            "bossWins": 18,
+            "bossWinRate": 0.75,
+            "bossQuestions": 20.833333333333332,
+            "bossQuestionsAll": 20.416666666666668,
+            "bossLossQuestions": 19.166666666666668,
+            "clearQuestions": 54.05555555555556,
+            "hpRemaining": 0.40578648942961204,
+            "mpRemaining": 0.3789855072463768,
+            "consumablesPerClear": 3.5,
+            "failedBeforeBoss": 0
+          }
+        }
+      ]
+    },
+    {
+      "star": 4,
+      "dungeonId": "sunken_temple",
+      "target": {
+        "normalQuestions": 17,
+        "bossQuestions": 23,
+        "normalWinRate": 0.97,
+        "clear": 0.75
+      },
+      "initial": {
+        "hp_rank_mul": 2.7,
+        "atk_rank_mul": 1.5,
+        "hp_boss_rank_mul": 1,
+        "atk_boss_rank_mul": 1.35
+      },
+      "selected": {
+        "hp_rank_mul": 3.453,
+        "atk_rank_mul": 1.5,
+        "hp_boss_rank_mul": 1.075,
+        "atk_boss_rank_mul": 2.025
+      },
+      "fixture": {
+        "rank": 4,
+        "level": 24,
+        "stage": 2,
+        "itemCap": 34,
+        "enhancement": 1,
+        "assembly": {
+          "gold": 12632,
+          "byPurpose": {
+            "craft": 6720,
+            "enhance": 2432,
+            "enchant": 2720,
+            "items": 760
+          },
+          "materials": {
+            "abyss_jelly_mat": 112,
+            "enhancement_stone": 28,
+            "blooming_hill_boss_mat": 8
+          },
+          "ap": {
+            "m1": {
+              "warrior": 30
+            },
+            "m2": {
+              "knight": 30
+            },
+            "m3": {
+              "black_mage": 30
+            },
+            "m4": {
+              "white_mage": 30
+            }
+          },
+          "jp": 0
+        }
+      },
+      "baseline": {
+        "runs": 24,
+        "seed": 608917,
+        "preparation": "standard",
+        "accuracy": 0.8,
+        "wins": 24,
+        "clearRate": 1,
+        "clearRateWilson95": [
+          0.8620194241710247,
+          1
+        ],
+        "normalBattles": 48,
+        "normalWins": 48,
+        "normalWinRate": 1,
+        "normalQuestions": 12.729166666666666,
+        "normalQuestionsAll": 12.729166666666666,
+        "normalLossQuestions": null,
+        "bossBattles": 24,
+        "bossWins": 24,
+        "bossWinRate": 1,
+        "bossQuestions": 16.125,
+        "bossQuestionsAll": 16.125,
+        "bossLossQuestions": null,
+        "clearQuestions": 41.583333333333336,
+        "hpRemaining": 0.6315762808041505,
+        "mpRemaining": 0.6551573426573426,
+        "consumablesPerClear": 2.4166666666666665,
+        "failedBeforeBoss": 0
+      },
+      "standard": {
+        "runs": 24,
+        "seed": 608917,
+        "preparation": "standard",
+        "accuracy": 0.8,
+        "wins": 18,
+        "clearRate": 0.75,
+        "clearRateWilson95": [
+          0.5510017468789357,
+          0.8800079652065766
+        ],
+        "normalBattles": 48,
+        "normalWins": 48,
+        "normalWinRate": 1,
+        "normalQuestions": 16.291666666666668,
+        "normalQuestionsAll": 16.291666666666668,
+        "normalLossQuestions": null,
+        "bossBattles": 24,
+        "bossWins": 18,
+        "bossWinRate": 0.75,
+        "bossQuestions": 21.944444444444443,
+        "bossQuestionsAll": 21.166666666666668,
+        "bossLossQuestions": 18.833333333333332,
+        "clearQuestions": 55.22222222222222,
+        "hpRemaining": 0.3364407695633377,
+        "mpRemaining": 0.42463092463092467,
+        "consumablesPerClear": 4.444444444444445,
+        "failedBeforeBoss": 0
+      },
+      "prepared": {
+        "runs": 12,
+        "seed": 1791536600,
+        "preparation": "prepared",
+        "accuracy": 0.8,
+        "wins": 12,
+        "clearRate": 1,
+        "clearRateWilson95": [
+          0.7574992425007574,
+          1
+        ],
+        "normalBattles": 24,
+        "normalWins": 24,
+        "normalWinRate": 1,
+        "normalQuestions": 15.541666666666666,
+        "normalQuestionsAll": 15.541666666666666,
+        "normalLossQuestions": null,
+        "bossBattles": 12,
+        "bossWins": 12,
+        "bossWinRate": 1,
+        "bossQuestions": 20.25,
+        "bossQuestionsAll": 20.25,
+        "bossLossQuestions": null,
+        "clearQuestions": 51.333333333333336,
+        "hpRemaining": 0.6767185473411154,
+        "mpRemaining": 0.5005827505827506,
+        "consumablesPerClear": 2.3333333333333335,
+        "failedBeforeBoss": 0
+      },
+      "warnings": [],
+      "history": [
+        {
+          "phase": "baseline",
+          "coefficients": {
+            "hp_rank_mul": 2.7,
+            "atk_rank_mul": 1.5,
+            "hp_boss_rank_mul": 1,
+            "atk_boss_rank_mul": 1.35
+          },
+          "result": {
+            "runs": 24,
+            "seed": 608917,
+            "preparation": "standard",
+            "accuracy": 0.8,
+            "wins": 24,
+            "clearRate": 1,
+            "clearRateWilson95": [
+              0.8620194241710247,
+              1
+            ],
+            "normalBattles": 48,
+            "normalWins": 48,
+            "normalWinRate": 1,
+            "normalQuestions": 12.729166666666666,
+            "normalQuestionsAll": 12.729166666666666,
+            "normalLossQuestions": null,
+            "bossBattles": 24,
+            "bossWins": 24,
+            "bossWinRate": 1,
+            "bossQuestions": 16.125,
+            "bossQuestionsAll": 16.125,
+            "bossLossQuestions": null,
+            "clearQuestions": 41.583333333333336,
+            "hpRemaining": 0.6315762808041505,
+            "mpRemaining": 0.6551573426573426,
+            "consumablesPerClear": 2.4166666666666665,
+            "failedBeforeBoss": 0
+          }
+        },
+        {
+          "phase": "normal_hp_1",
+          "coefficients": {
+            "hp_rank_mul": 3.453,
+            "atk_rank_mul": 1.5,
+            "hp_boss_rank_mul": 0.782,
+            "atk_boss_rank_mul": 1.35
+          },
+          "result": {
+            "runs": 24,
+            "seed": 608917,
+            "preparation": "standard",
+            "accuracy": 0.8,
+            "wins": 24,
+            "clearRate": 1,
+            "clearRateWilson95": [
+              0.8620194241710247,
+              1
+            ],
+            "normalBattles": 48,
+            "normalWins": 48,
+            "normalWinRate": 1,
+            "normalQuestions": 16.291666666666668,
+            "normalQuestionsAll": 16.291666666666668,
+            "normalLossQuestions": null,
+            "bossBattles": 24,
+            "bossWins": 24,
+            "bossWinRate": 1,
+            "bossQuestions": 17.791666666666668,
+            "bossQuestionsAll": 17.791666666666668,
+            "bossLossQuestions": null,
+            "clearQuestions": 50.375,
+            "hpRemaining": 0.6185149156939042,
+            "mpRemaining": 0.49927156177156173,
+            "consumablesPerClear": 2.9166666666666665,
+            "failedBeforeBoss": 0
+          }
+        },
+        {
+          "phase": "boss_hp_1",
+          "coefficients": {
+            "hp_rank_mul": 3.453,
+            "atk_rank_mul": 1.5,
+            "hp_boss_rank_mul": 0.973,
+            "atk_boss_rank_mul": 1.35
+          },
+          "result": {
+            "runs": 24,
+            "seed": 608917,
+            "preparation": "standard",
+            "accuracy": 0.8,
+            "wins": 24,
+            "clearRate": 1,
+            "clearRateWilson95": [
+              0.8620194241710247,
+              1
+            ],
+            "normalBattles": 48,
+            "normalWins": 48,
+            "normalWinRate": 1,
+            "normalQuestions": 16.291666666666668,
+            "normalQuestionsAll": 16.291666666666668,
+            "normalLossQuestions": null,
+            "bossBattles": 24,
+            "bossWins": 24,
+            "bossWinRate": 1,
+            "bossQuestions": 20.458333333333332,
+            "bossQuestionsAll": 20.458333333333332,
+            "bossLossQuestions": null,
+            "clearQuestions": 53.041666666666664,
+            "hpRemaining": 0.589473897535668,
+            "mpRemaining": 0.4516317016317017,
+            "consumablesPerClear": 3,
+            "failedBeforeBoss": 0
+          }
+        },
+        {
+          "phase": "boss_hp_2",
+          "coefficients": {
+            "hp_rank_mul": 3.453,
+            "atk_rank_mul": 1.5,
+            "hp_boss_rank_mul": 1.075,
+            "atk_boss_rank_mul": 1.35
+          },
+          "result": {
+            "runs": 24,
+            "seed": 608917,
+            "preparation": "standard",
+            "accuracy": 0.8,
+            "wins": 24,
+            "clearRate": 1,
+            "clearRateWilson95": [
+              0.8620194241710247,
+              1
+            ],
+            "normalBattles": 48,
+            "normalWins": 48,
+            "normalWinRate": 1,
+            "normalQuestions": 16.291666666666668,
+            "normalQuestionsAll": 16.291666666666668,
+            "normalLossQuestions": null,
+            "bossBattles": 24,
+            "bossWins": 24,
+            "bossWinRate": 1,
+            "bossQuestions": 21.375,
+            "bossQuestionsAll": 21.375,
+            "bossLossQuestions": null,
+            "clearQuestions": 53.958333333333336,
+            "hpRemaining": 0.5997487029831389,
+            "mpRemaining": 0.4166666666666667,
+            "consumablesPerClear": 3.125,
+            "failedBeforeBoss": 0
+          }
+        },
+        {
+          "phase": "boss_attack_1",
+          "coefficients": {
+            "hp_rank_mul": 3.453,
+            "atk_rank_mul": 1.5,
+            "hp_boss_rank_mul": 1.075,
+            "atk_boss_rank_mul": 2.025
+          },
+          "result": {
+            "runs": 24,
+            "seed": 608917,
+            "preparation": "standard",
+            "accuracy": 0.8,
+            "wins": 18,
+            "clearRate": 0.75,
+            "clearRateWilson95": [
+              0.5510017468789357,
+              0.8800079652065766
+            ],
+            "normalBattles": 48,
+            "normalWins": 48,
+            "normalWinRate": 1,
+            "normalQuestions": 16.291666666666668,
+            "normalQuestionsAll": 16.291666666666668,
+            "normalLossQuestions": null,
+            "bossBattles": 24,
+            "bossWins": 18,
+            "bossWinRate": 0.75,
+            "bossQuestions": 21.944444444444443,
+            "bossQuestionsAll": 21.166666666666668,
+            "bossLossQuestions": 18.833333333333332,
+            "clearQuestions": 55.22222222222222,
+            "hpRemaining": 0.3364407695633377,
+            "mpRemaining": 0.42463092463092467,
+            "consumablesPerClear": 4.444444444444445,
+            "failedBeforeBoss": 0
+          }
+        }
+      ]
+    },
+    {
+      "star": 5,
+      "dungeonId": "obsidian_volcano",
+      "target": {
+        "normalQuestions": 17,
+        "bossQuestions": 23,
+        "normalWinRate": 0.97,
+        "clear": 0.75
+      },
+      "initial": {
+        "hp_rank_mul": 2.65,
+        "atk_rank_mul": 1.5,
+        "hp_boss_rank_mul": 1,
+        "atk_boss_rank_mul": 1.35
+      },
+      "selected": {
+        "hp_rank_mul": 3.311,
+        "atk_rank_mul": 1.5,
+        "hp_boss_rank_mul": 1.041,
+        "atk_boss_rank_mul": 1.571
+      },
+      "fixture": {
+        "rank": 5,
+        "level": 31,
+        "stage": 2,
+        "itemCap": 44,
+        "enhancement": 1,
+        "assembly": {
+          "gold": 19552,
+          "byPurpose": {
+            "craft": 12040,
+            "enhance": 3072,
+            "enchant": 3680,
+            "items": 760
+          },
+          "materials": {
+            "crystal_golem_mat": 112,
+            "enhancement_stone": 28,
+            "blooming_hill_boss_mat": 8
+          },
+          "ap": {
+            "m1": {
+              "warrior": 30
+            },
+            "m2": {
+              "knight": 30
+            },
+            "m3": {
+              "black_mage": 30
+            },
+            "m4": {
+              "white_mage": 30
+            }
+          },
+          "jp": 0
+        }
+      },
+      "baseline": {
+        "runs": 24,
+        "seed": 713646,
+        "preparation": "standard",
+        "accuracy": 0.8,
+        "wins": 24,
+        "clearRate": 1,
+        "clearRateWilson95": [
+          0.8620194241710247,
+          1
+        ],
+        "normalBattles": 48,
+        "normalWins": 48,
+        "normalWinRate": 1,
+        "normalQuestions": 13.083333333333334,
+        "normalQuestionsAll": 13.083333333333334,
+        "normalLossQuestions": null,
+        "bossBattles": 24,
+        "bossWins": 24,
+        "bossWinRate": 1,
+        "bossQuestions": 16.958333333333332,
+        "bossQuestionsAll": 16.958333333333332,
+        "bossLossQuestions": null,
+        "clearQuestions": 43.125,
+        "hpRemaining": 0.5739644012944983,
+        "mpRemaining": 0.9538255360623781,
+        "consumablesPerClear": 2.6666666666666665,
+        "failedBeforeBoss": 0
+      },
+      "standard": {
+        "runs": 24,
+        "seed": 713646,
+        "preparation": "standard",
+        "accuracy": 0.8,
+        "wins": 18,
+        "clearRate": 0.75,
+        "clearRateWilson95": [
+          0.5510017468789357,
+          0.8800079652065766
+        ],
+        "normalBattles": 48,
+        "normalWins": 48,
+        "normalWinRate": 1,
+        "normalQuestions": 16.416666666666668,
+        "normalQuestionsAll": 16.416666666666668,
+        "normalLossQuestions": null,
+        "bossBattles": 24,
+        "bossWins": 18,
+        "bossWinRate": 0.75,
+        "bossQuestions": 21.444444444444443,
+        "bossQuestionsAll": 21.416666666666668,
+        "bossLossQuestions": 21.333333333333332,
+        "clearQuestions": 53.77777777777778,
+        "hpRemaining": 0.469848975188781,
+        "mpRemaining": 0.8367446393762183,
+        "consumablesPerClear": 3.4444444444444446,
+        "failedBeforeBoss": 0
+      },
+      "prepared": {
+        "runs": 12,
+        "seed": 1791689955,
+        "preparation": "prepared",
+        "accuracy": 0.8,
+        "wins": 12,
+        "clearRate": 1,
+        "clearRateWilson95": [
+          0.7574992425007574,
+          1
+        ],
+        "normalBattles": 24,
+        "normalWins": 24,
+        "normalWinRate": 1,
+        "normalQuestions": 15.416666666666666,
+        "normalQuestionsAll": 15.416666666666666,
+        "normalLossQuestions": null,
+        "bossBattles": 12,
+        "bossWins": 12,
+        "bossWinRate": 1,
+        "bossQuestions": 20.25,
+        "bossQuestionsAll": 20.25,
+        "bossLossQuestions": null,
+        "clearQuestions": 51.083333333333336,
+        "hpRemaining": 0.6468608414239482,
+        "mpRemaining": 0.9147173489278754,
+        "consumablesPerClear": 2.3333333333333335,
+        "failedBeforeBoss": 0
+      },
+      "warnings": [],
+      "history": [
+        {
+          "phase": "baseline",
+          "coefficients": {
+            "hp_rank_mul": 2.65,
+            "atk_rank_mul": 1.5,
+            "hp_boss_rank_mul": 1,
+            "atk_boss_rank_mul": 1.35
+          },
+          "result": {
+            "runs": 24,
+            "seed": 713646,
+            "preparation": "standard",
+            "accuracy": 0.8,
+            "wins": 24,
+            "clearRate": 1,
+            "clearRateWilson95": [
+              0.8620194241710247,
+              1
+            ],
+            "normalBattles": 48,
+            "normalWins": 48,
+            "normalWinRate": 1,
+            "normalQuestions": 13.083333333333334,
+            "normalQuestionsAll": 13.083333333333334,
+            "normalLossQuestions": null,
+            "bossBattles": 24,
+            "bossWins": 24,
+            "bossWinRate": 1,
+            "bossQuestions": 16.958333333333332,
+            "bossQuestionsAll": 16.958333333333332,
+            "bossLossQuestions": null,
+            "clearQuestions": 43.125,
+            "hpRemaining": 0.5739644012944983,
+            "mpRemaining": 0.9538255360623781,
+            "consumablesPerClear": 2.6666666666666665,
+            "failedBeforeBoss": 0
+          }
+        },
+        {
+          "phase": "normal_hp_1",
+          "coefficients": {
+            "hp_rank_mul": 3.311,
+            "atk_rank_mul": 1.5,
+            "hp_boss_rank_mul": 0.8,
+            "atk_boss_rank_mul": 1.35
+          },
+          "result": {
+            "runs": 24,
+            "seed": 713646,
+            "preparation": "standard",
+            "accuracy": 0.8,
+            "wins": 23,
+            "clearRate": 0.9583333333333334,
+            "clearRateWilson95": [
+              0.7975777375115778,
+              0.992606734645195
+            ],
+            "normalBattles": 48,
+            "normalWins": 48,
+            "normalWinRate": 1,
+            "normalQuestions": 16.416666666666668,
+            "normalQuestionsAll": 16.416666666666668,
+            "normalLossQuestions": null,
+            "bossBattles": 24,
+            "bossWins": 23,
+            "bossWinRate": 0.9583333333333334,
+            "bossQuestions": 18.782608695652176,
+            "bossQuestionsAll": 18.625,
+            "bossLossQuestions": 15,
+            "clearQuestions": 51.130434782608695,
+            "hpRemaining": 0.5686196707471508,
+            "mpRemaining": 0.8977879481311976,
+            "consumablesPerClear": 3.0869565217391304,
+            "failedBeforeBoss": 0
+          }
+        },
+        {
+          "phase": "boss_hp_1",
+          "coefficients": {
+            "hp_rank_mul": 3.311,
+            "atk_rank_mul": 1.5,
+            "hp_boss_rank_mul": 0.957,
+            "atk_boss_rank_mul": 1.35
+          },
+          "result": {
+            "runs": 24,
+            "seed": 713646,
+            "preparation": "standard",
+            "accuracy": 0.8,
+            "wins": 21,
+            "clearRate": 0.875,
+            "clearRateWilson95": [
+              0.6899571185214243,
+              0.9565574496068442
+            ],
+            "normalBattles": 48,
+            "normalWins": 48,
+            "normalWinRate": 1,
+            "normalQuestions": 16.416666666666668,
+            "normalQuestionsAll": 16.416666666666668,
+            "normalLossQuestions": null,
+            "bossBattles": 24,
+            "bossWins": 21,
+            "bossWinRate": 0.875,
+            "bossQuestions": 21,
+            "bossQuestionsAll": 20.833333333333332,
+            "bossLossQuestions": 19.666666666666668,
+            "clearQuestions": 53.095238095238095,
+            "hpRemaining": 0.5688858067498843,
+            "mpRemaining": 0.8660540239487607,
+            "consumablesPerClear": 3.0476190476190474,
+            "failedBeforeBoss": 0
+          }
+        },
+        {
+          "phase": "boss_hp_2",
+          "coefficients": {
+            "hp_rank_mul": 3.311,
+            "atk_rank_mul": 1.5,
+            "hp_boss_rank_mul": 1.041,
+            "atk_boss_rank_mul": 1.35
+          },
+          "result": {
+            "runs": 24,
+            "seed": 713646,
+            "preparation": "standard",
+            "accuracy": 0.8,
+            "wins": 21,
+            "clearRate": 0.875,
+            "clearRateWilson95": [
+              0.6899571185214243,
+              0.9565574496068442
+            ],
+            "normalBattles": 48,
+            "normalWins": 48,
+            "normalWinRate": 1,
+            "normalQuestions": 16.416666666666668,
+            "normalQuestionsAll": 16.416666666666668,
+            "normalLossQuestions": null,
+            "bossBattles": 24,
+            "bossWins": 21,
+            "bossWinRate": 0.875,
+            "bossQuestions": 21.80952380952381,
+            "bossQuestionsAll": 21.541666666666668,
+            "bossLossQuestions": 19.666666666666668,
+            "clearQuestions": 53.904761904761905,
+            "hpRemaining": 0.5438095238095239,
+            "mpRemaining": 0.8483709273182958,
+            "consumablesPerClear": 3.1904761904761907,
+            "failedBeforeBoss": 0
+          }
+        },
+        {
+          "phase": "boss_attack_1",
+          "coefficients": {
+            "hp_rank_mul": 3.311,
+            "atk_rank_mul": 1.5,
+            "hp_boss_rank_mul": 1.041,
+            "atk_boss_rank_mul": 2.025
+          },
+          "result": {
+            "runs": 24,
+            "seed": 713646,
+            "preparation": "standard",
+            "accuracy": 0.8,
+            "wins": 8,
+            "clearRate": 0.3333333333333333,
+            "clearRateWilson95": [
+              0.17971978688379642,
+              0.5329404050591954
+            ],
+            "normalBattles": 48,
+            "normalWins": 48,
+            "normalWinRate": 1,
+            "normalQuestions": 16.416666666666668,
+            "normalQuestionsAll": 16.416666666666668,
+            "normalLossQuestions": null,
+            "bossBattles": 24,
+            "bossWins": 8,
+            "bossWinRate": 0.3333333333333333,
+            "bossQuestions": 19.875,
+            "bossQuestionsAll": 18,
+            "bossLossQuestions": 17.0625,
+            "clearQuestions": 51.25,
+            "hpRemaining": 0.4085194174757282,
+            "mpRemaining": 0.8567251461988304,
+            "consumablesPerClear": 3.75,
+            "failedBeforeBoss": 0
+          }
+        },
+        {
+          "phase": "boss_attack_2",
+          "coefficients": {
+            "hp_rank_mul": 3.311,
+            "atk_rank_mul": 1.5,
+            "hp_boss_rank_mul": 1.041,
+            "atk_boss_rank_mul": 1.653
+          },
+          "result": {
+            "runs": 24,
+            "seed": 713646,
+            "preparation": "standard",
+            "accuracy": 0.8,
+            "wins": 16,
+            "clearRate": 0.6666666666666666,
+            "clearRateWilson95": [
+              0.4670595949408046,
+              0.8202802131162036
+            ],
+            "normalBattles": 48,
+            "normalWins": 48,
+            "normalWinRate": 1,
+            "normalQuestions": 16.416666666666668,
+            "normalQuestionsAll": 16.416666666666668,
+            "normalLossQuestions": null,
+            "bossBattles": 24,
+            "bossWins": 16,
+            "bossWinRate": 0.6666666666666666,
+            "bossQuestions": 21.25,
+            "bossQuestionsAll": 20.791666666666668,
+            "bossLossQuestions": 19.875,
+            "clearQuestions": 54.4375,
+            "hpRemaining": 0.46942961165048547,
+            "mpRemaining": 0.8510599415204677,
+            "consumablesPerClear": 3.5625,
+            "failedBeforeBoss": 0
+          }
+        },
+        {
+          "phase": "boss_attack_3",
+          "coefficients": {
+            "hp_rank_mul": 3.311,
+            "atk_rank_mul": 1.5,
+            "hp_boss_rank_mul": 1.041,
+            "atk_boss_rank_mul": 1.494
+          },
+          "result": {
+            "runs": 24,
+            "seed": 713646,
+            "preparation": "standard",
+            "accuracy": 0.8,
+            "wins": 21,
+            "clearRate": 0.875,
+            "clearRateWilson95": [
+              0.6899571185214243,
+              0.9565574496068442
+            ],
+            "normalBattles": 48,
+            "normalWins": 48,
+            "normalWinRate": 1,
+            "normalQuestions": 16.416666666666668,
+            "normalQuestionsAll": 16.416666666666668,
+            "normalLossQuestions": null,
+            "bossBattles": 24,
+            "bossWins": 21,
+            "bossWinRate": 0.875,
+            "bossQuestions": 21.523809523809526,
+            "bossQuestionsAll": 21.25,
+            "bossLossQuestions": 19.333333333333332,
+            "clearQuestions": 54.04761904761905,
+            "hpRemaining": 0.4887840961627369,
+            "mpRemaining": 0.8373712057922585,
+            "consumablesPerClear": 3.380952380952381,
+            "failedBeforeBoss": 0
+          }
+        },
+        {
+          "phase": "boss_attack_4",
+          "coefficients": {
+            "hp_rank_mul": 3.311,
+            "atk_rank_mul": 1.5,
+            "hp_boss_rank_mul": 1.041,
+            "atk_boss_rank_mul": 1.571
+          },
+          "result": {
+            "runs": 24,
+            "seed": 713646,
+            "preparation": "standard",
+            "accuracy": 0.8,
+            "wins": 18,
+            "clearRate": 0.75,
+            "clearRateWilson95": [
+              0.5510017468789357,
+              0.8800079652065766
+            ],
+            "normalBattles": 48,
+            "normalWins": 48,
+            "normalWinRate": 1,
+            "normalQuestions": 16.416666666666668,
+            "normalQuestionsAll": 16.416666666666668,
+            "normalLossQuestions": null,
+            "bossBattles": 24,
+            "bossWins": 18,
+            "bossWinRate": 0.75,
+            "bossQuestions": 21.444444444444443,
+            "bossQuestionsAll": 21.416666666666668,
+            "bossLossQuestions": 21.333333333333332,
+            "clearQuestions": 53.77777777777778,
+            "hpRemaining": 0.469848975188781,
+            "mpRemaining": 0.8367446393762183,
+            "consumablesPerClear": 3.4444444444444446,
+            "failedBeforeBoss": 0
+          }
+        }
+      ]
+    },
+    {
+      "star": 6,
+      "dungeonId": "sand_tomb",
+      "target": {
+        "normalQuestions": 17,
+        "bossQuestions": 23,
+        "normalWinRate": 0.97,
+        "clear": 0.75
+      },
+      "initial": {
+        "hp_rank_mul": 3.3,
+        "atk_rank_mul": 1.6,
+        "hp_boss_rank_mul": 1,
+        "atk_boss_rank_mul": 1.35
+      },
+      "selected": {
+        "hp_rank_mul": 4.145,
+        "atk_rank_mul": 1.6,
+        "hp_boss_rank_mul": 0.796,
+        "atk_boss_rank_mul": 1.653
+      },
+      "fixture": {
+        "rank": 6,
+        "level": 38,
+        "stage": 3,
+        "itemCap": 54,
+        "enhancement": 1,
+        "assembly": {
+          "gold": 28812,
+          "byPurpose": {
+            "craft": 18760,
+            "enhance": 3712,
+            "enchant": 4800,
+            "items": 1540
+          },
+          "materials": {
+            "exp_r06_amorphous_mat": 112,
+            "enhancement_stone": 28,
+            "blooming_hill_boss_mat": 8
+          },
+          "ap": {
+            "m1": {
+              "warrior": 90
+            },
+            "m2": {
+              "knight": 90
+            },
+            "m3": {
+              "black_mage": 90
+            },
+            "m4": {
+              "white_mage": 90
+            }
+          },
+          "jp": 0
+        }
+      },
+      "baseline": {
+        "runs": 24,
+        "seed": 818375,
+        "preparation": "standard",
+        "accuracy": 0.8,
+        "wins": 24,
+        "clearRate": 1,
+        "clearRateWilson95": [
+          0.8620194241710247,
+          1
+        ],
+        "normalBattles": 48,
+        "normalWins": 48,
+        "normalWinRate": 1,
+        "normalQuestions": 13,
+        "normalQuestionsAll": 13,
+        "normalLossQuestions": null,
+        "bossBattles": 24,
+        "bossWins": 24,
+        "bossWinRate": 1,
+        "bossQuestions": 21.666666666666668,
+        "bossQuestionsAll": 21.666666666666668,
+        "bossLossQuestions": null,
+        "clearQuestions": 47.666666666666664,
+        "hpRemaining": 0.7578489776203513,
+        "mpRemaining": 0.5393634840871022,
+        "consumablesPerClear": 2.4583333333333335,
+        "failedBeforeBoss": 0
+      },
+      "standard": {
+        "runs": 24,
+        "seed": 818375,
+        "preparation": "standard",
+        "accuracy": 0.8,
+        "wins": 18,
+        "clearRate": 0.75,
+        "clearRateWilson95": [
+          0.5510017468789357,
+          0.8800079652065766
+        ],
+        "normalBattles": 48,
+        "normalWins": 48,
+        "normalWinRate": 1,
+        "normalQuestions": 16.229166666666668,
+        "normalQuestionsAll": 16.229166666666668,
+        "normalLossQuestions": null,
+        "bossBattles": 24,
+        "bossWins": 18,
+        "bossWinRate": 0.75,
+        "bossQuestions": 25.77777777777778,
+        "bossQuestionsAll": 24.5,
+        "bossLossQuestions": 20.666666666666668,
+        "clearQuestions": 57.22222222222222,
+        "hpRemaining": 0.6775970947601925,
+        "mpRemaining": 0.46328866554997206,
+        "consumablesPerClear": 2.888888888888889,
+        "failedBeforeBoss": 0
+      },
+      "prepared": {
+        "runs": 12,
+        "seed": 1791859594,
+        "preparation": "prepared",
+        "accuracy": 0.8,
+        "wins": 12,
+        "clearRate": 1,
+        "clearRateWilson95": [
+          0.7574992425007574,
+          1
+        ],
+        "normalBattles": 24,
+        "normalWins": 24,
+        "normalWinRate": 1,
+        "normalQuestions": 14.666666666666666,
+        "normalQuestionsAll": 14.666666666666666,
+        "normalLossQuestions": null,
+        "bossBattles": 12,
+        "bossWins": 12,
+        "bossWinRate": 1,
+        "bossQuestions": 22.916666666666668,
+        "bossQuestionsAll": 22.916666666666668,
+        "bossLossQuestions": null,
+        "clearQuestions": 52.25,
+        "hpRemaining": 0.8069554017066493,
+        "mpRemaining": 0.5942211055276381,
+        "consumablesPerClear": 1.5833333333333333,
+        "failedBeforeBoss": 0
+      },
+      "warnings": [],
+      "history": [
+        {
+          "phase": "baseline",
+          "coefficients": {
+            "hp_rank_mul": 3.3,
+            "atk_rank_mul": 1.6,
+            "hp_boss_rank_mul": 1,
+            "atk_boss_rank_mul": 1.35
+          },
+          "result": {
+            "runs": 24,
+            "seed": 818375,
+            "preparation": "standard",
+            "accuracy": 0.8,
+            "wins": 24,
+            "clearRate": 1,
+            "clearRateWilson95": [
+              0.8620194241710247,
+              1
+            ],
+            "normalBattles": 48,
+            "normalWins": 48,
+            "normalWinRate": 1,
+            "normalQuestions": 13,
+            "normalQuestionsAll": 13,
+            "normalLossQuestions": null,
+            "bossBattles": 24,
+            "bossWins": 24,
+            "bossWinRate": 1,
+            "bossQuestions": 21.666666666666668,
+            "bossQuestionsAll": 21.666666666666668,
+            "bossLossQuestions": null,
+            "clearQuestions": 47.666666666666664,
+            "hpRemaining": 0.7578489776203513,
+            "mpRemaining": 0.5393634840871022,
+            "consumablesPerClear": 2.4583333333333335,
+            "failedBeforeBoss": 0
+          }
+        },
+        {
+          "phase": "normal_hp_1",
+          "coefficients": {
+            "hp_rank_mul": 4.145,
+            "atk_rank_mul": 1.6,
+            "hp_boss_rank_mul": 0.796,
+            "atk_boss_rank_mul": 1.35
+          },
+          "result": {
+            "runs": 24,
+            "seed": 818375,
+            "preparation": "standard",
+            "accuracy": 0.8,
+            "wins": 21,
+            "clearRate": 0.875,
+            "clearRateWilson95": [
+              0.6899571185214243,
+              0.9565574496068442
+            ],
+            "normalBattles": 48,
+            "normalWins": 48,
+            "normalWinRate": 1,
+            "normalQuestions": 16.229166666666668,
+            "normalQuestionsAll": 16.229166666666668,
+            "normalLossQuestions": null,
+            "bossBattles": 24,
+            "bossWins": 21,
+            "bossWinRate": 0.875,
+            "bossQuestions": 24.952380952380953,
+            "bossQuestionsAll": 24.041666666666668,
+            "bossLossQuestions": 17.666666666666668,
+            "clearQuestions": 56.523809523809526,
+            "hpRemaining": 0.7330389247954857,
+            "mpRemaining": 0.45776501555396026,
+            "consumablesPerClear": 2.5714285714285716,
+            "failedBeforeBoss": 0
+          }
+        },
+        {
+          "phase": "boss_attack_1",
+          "coefficients": {
+            "hp_rank_mul": 4.145,
+            "atk_rank_mul": 1.6,
+            "hp_boss_rank_mul": 0.796,
+            "atk_boss_rank_mul": 2.025
+          },
+          "result": {
+            "runs": 24,
+            "seed": 818375,
+            "preparation": "standard",
+            "accuracy": 0.8,
+            "wins": 14,
+            "clearRate": 0.5833333333333334,
+            "clearRateWilson95": [
+              0.3883433764938864,
+              0.7553265275346177
+            ],
+            "normalBattles": 48,
+            "normalWins": 48,
+            "normalWinRate": 1,
+            "normalQuestions": 16.229166666666668,
+            "normalQuestionsAll": 16.229166666666668,
+            "normalLossQuestions": null,
+            "bossBattles": 24,
+            "bossWins": 14,
+            "bossWinRate": 0.5833333333333334,
+            "bossQuestions": 26.714285714285715,
+            "bossQuestionsAll": 24.166666666666668,
+            "bossLossQuestions": 20.6,
+            "clearQuestions": 58.285714285714285,
+            "hpRemaining": 0.5014260413551993,
+            "mpRemaining": 0.44113424264178036,
+            "consumablesPerClear": 3.642857142857143,
+            "failedBeforeBoss": 0
+          }
+        },
+        {
+          "phase": "boss_attack_2",
+          "coefficients": {
+            "hp_rank_mul": 4.145,
+            "atk_rank_mul": 1.6,
+            "hp_boss_rank_mul": 0.796,
+            "atk_boss_rank_mul": 1.653
+          },
+          "result": {
+            "runs": 24,
+            "seed": 818375,
+            "preparation": "standard",
+            "accuracy": 0.8,
+            "wins": 18,
+            "clearRate": 0.75,
+            "clearRateWilson95": [
+              0.5510017468789357,
+              0.8800079652065766
+            ],
+            "normalBattles": 48,
+            "normalWins": 48,
+            "normalWinRate": 1,
+            "normalQuestions": 16.229166666666668,
+            "normalQuestionsAll": 16.229166666666668,
+            "normalLossQuestions": null,
+            "bossBattles": 24,
+            "bossWins": 18,
+            "bossWinRate": 0.75,
+            "bossQuestions": 25.77777777777778,
+            "bossQuestionsAll": 24.5,
+            "bossLossQuestions": 20.666666666666668,
+            "clearQuestions": 57.22222222222222,
+            "hpRemaining": 0.6775970947601925,
+            "mpRemaining": 0.46328866554997206,
+            "consumablesPerClear": 2.888888888888889,
+            "failedBeforeBoss": 0
+          }
+        }
+      ]
+    },
+    {
+      "star": 7,
+      "dungeonId": "sky_isles",
+      "target": {
+        "normalQuestions": 17,
+        "bossQuestions": 23,
+        "normalWinRate": 0.97,
+        "clear": 0.75
+      },
+      "initial": {
+        "hp_rank_mul": 2.86,
+        "atk_rank_mul": 1.6,
+        "hp_boss_rank_mul": 1,
+        "atk_boss_rank_mul": 1.35
+      },
+      "selected": {
+        "hp_rank_mul": 4.832,
+        "atk_rank_mul": 1.6,
+        "hp_boss_rank_mul": 0.66,
+        "atk_boss_rank_mul": 2.744
+      },
+      "fixture": {
+        "rank": 7,
+        "level": 45,
+        "stage": 3,
+        "itemCap": 64,
+        "enhancement": 1,
+        "assembly": {
+          "gold": 40812,
+          "byPurpose": {
+            "craft": 28840,
+            "enhance": 4352,
+            "enchant": 6080,
+            "items": 1540
+          },
+          "materials": {
+            "exp_r07_amorphous_mat": 112,
+            "enhancement_stone": 28,
+            "blooming_hill_boss_mat": 8
+          },
+          "ap": {
+            "m1": {
+              "warrior": 90
+            },
+            "m2": {
+              "knight": 90
+            },
+            "m3": {
+              "black_mage": 90
+            },
+            "m4": {
+              "white_mage": 90
+            }
+          },
+          "jp": 0
+        }
+      },
+      "baseline": {
+        "runs": 24,
+        "seed": 923104,
+        "preparation": "standard",
+        "accuracy": 0.8,
+        "wins": 24,
+        "clearRate": 1,
+        "clearRateWilson95": [
+          0.8620194241710247,
+          1
+        ],
+        "normalBattles": 48,
+        "normalWins": 48,
+        "normalWinRate": 1,
+        "normalQuestions": 10.645833333333334,
+        "normalQuestionsAll": 10.645833333333334,
+        "normalLossQuestions": null,
+        "bossBattles": 24,
+        "bossWins": 24,
+        "bossWinRate": 1,
+        "bossQuestions": 15.625,
+        "bossQuestionsAll": 15.625,
+        "bossLossQuestions": null,
+        "clearQuestions": 36.916666666666664,
+        "hpRemaining": 0.8605986833081881,
+        "mpRemaining": 0.7367841409691631,
+        "consumablesPerClear": 1.25,
+        "failedBeforeBoss": 0
+      },
+      "standard": {
+        "runs": 24,
+        "seed": 923104,
+        "preparation": "standard",
+        "accuracy": 0.8,
+        "wins": 20,
+        "clearRate": 0.8333333333333334,
+        "clearRateWilson95": [
+          0.6414652961213058,
+          0.9332143199927109
+        ],
+        "normalBattles": 48,
+        "normalWins": 48,
+        "normalWinRate": 1,
+        "normalQuestions": 16.729166666666668,
+        "normalQuestionsAll": 16.729166666666668,
+        "normalLossQuestions": null,
+        "bossBattles": 24,
+        "bossWins": 20,
+        "bossWinRate": 0.8333333333333334,
+        "bossQuestions": 25.15,
+        "bossQuestionsAll": 24.166666666666668,
+        "bossLossQuestions": 19.25,
+        "clearQuestions": 58.55,
+        "hpRemaining": 0.6234192840488272,
+        "mpRemaining": 0.4620044052863436,
+        "consumablesPerClear": 3.15,
+        "failedBeforeBoss": 0
+      },
+      "prepared": {
+        "runs": 12,
+        "seed": 1792012973,
+        "preparation": "prepared",
+        "accuracy": 0.8,
+        "wins": 12,
+        "clearRate": 1,
+        "clearRateWilson95": [
+          0.7574992425007574,
+          1
+        ],
+        "normalBattles": 24,
+        "normalWins": 24,
+        "normalWinRate": 1,
+        "normalQuestions": 15.208333333333334,
+        "normalQuestionsAll": 15.208333333333334,
+        "normalLossQuestions": null,
+        "bossBattles": 12,
+        "bossWins": 12,
+        "bossWinRate": 1,
+        "bossQuestions": 19.083333333333332,
+        "bossQuestionsAll": 19.083333333333332,
+        "bossLossQuestions": null,
+        "clearQuestions": 49.5,
+        "hpRemaining": 0.8070223563297216,
+        "mpRemaining": 0.6215124816446402,
+        "consumablesPerClear": 1.75,
+        "failedBeforeBoss": 0
+      },
+      "warnings": [
+        "基準編成の踏破率が許容範囲外。別seed検証で確認。"
+      ],
+      "history": [
+        {
+          "phase": "baseline",
+          "coefficients": {
+            "hp_rank_mul": 2.86,
+            "atk_rank_mul": 1.6,
+            "hp_boss_rank_mul": 1,
+            "atk_boss_rank_mul": 1.35
+          },
+          "result": {
+            "runs": 24,
+            "seed": 923104,
+            "preparation": "standard",
+            "accuracy": 0.8,
+            "wins": 24,
+            "clearRate": 1,
+            "clearRateWilson95": [
+              0.8620194241710247,
+              1
+            ],
+            "normalBattles": 48,
+            "normalWins": 48,
+            "normalWinRate": 1,
+            "normalQuestions": 10.645833333333334,
+            "normalQuestionsAll": 10.645833333333334,
+            "normalLossQuestions": null,
+            "bossBattles": 24,
+            "bossWins": 24,
+            "bossWinRate": 1,
+            "bossQuestions": 15.625,
+            "bossQuestionsAll": 15.625,
+            "bossLossQuestions": null,
+            "clearQuestions": 36.916666666666664,
+            "hpRemaining": 0.8605986833081881,
+            "mpRemaining": 0.7367841409691631,
+            "consumablesPerClear": 1.25,
+            "failedBeforeBoss": 0
+          }
+        },
+        {
+          "phase": "normal_hp_1",
+          "coefficients": {
+            "hp_rank_mul": 4.257,
+            "atk_rank_mul": 1.6,
+            "hp_boss_rank_mul": 0.672,
+            "atk_boss_rank_mul": 1.35
+          },
+          "result": {
+            "runs": 24,
+            "seed": 923104,
+            "preparation": "standard",
+            "accuracy": 0.8,
+            "wins": 24,
+            "clearRate": 1,
+            "clearRateWilson95": [
+              0.8620194241710247,
+              1
+            ],
+            "normalBattles": 48,
+            "normalWins": 48,
+            "normalWinRate": 1,
+            "normalQuestions": 14.645833333333334,
+            "normalQuestionsAll": 14.645833333333334,
+            "normalLossQuestions": null,
+            "bossBattles": 24,
+            "bossWins": 24,
+            "bossWinRate": 1,
+            "bossQuestions": 19.125,
+            "bossQuestionsAll": 19.125,
+            "bossLossQuestions": null,
+            "clearQuestions": 48.416666666666664,
+            "hpRemaining": 0.8943674850272024,
+            "mpRemaining": 0.5704845814977973,
+            "consumablesPerClear": 1.2083333333333333,
+            "failedBeforeBoss": 0
+          }
+        },
+        {
+          "phase": "normal_hp_2",
+          "coefficients": {
+            "hp_rank_mul": 4.832,
+            "atk_rank_mul": 1.6,
+            "hp_boss_rank_mul": 0.592,
+            "atk_boss_rank_mul": 1.35
+          },
+          "result": {
+            "runs": 24,
+            "seed": 923104,
+            "preparation": "standard",
+            "accuracy": 0.8,
+            "wins": 24,
+            "clearRate": 1,
+            "clearRateWilson95": [
+              0.8620194241710247,
+              1
+            ],
+            "normalBattles": 48,
+            "normalWins": 48,
+            "normalWinRate": 1,
+            "normalQuestions": 16.729166666666668,
+            "normalQuestionsAll": 16.729166666666668,
+            "normalLossQuestions": null,
+            "bossBattles": 24,
+            "bossWins": 24,
+            "bossWinRate": 1,
+            "bossQuestions": 20.25,
+            "bossQuestionsAll": 20.25,
+            "bossLossQuestions": null,
+            "clearQuestions": 53.708333333333336,
+            "hpRemaining": 0.8148859324281076,
+            "mpRemaining": 0.5179882525697503,
+            "consumablesPerClear": 1.125,
+            "failedBeforeBoss": 0
+          }
+        },
+        {
+          "phase": "boss_hp_1",
+          "coefficients": {
+            "hp_rank_mul": 4.832,
+            "atk_rank_mul": 1.6,
+            "hp_boss_rank_mul": 0.66,
+            "atk_boss_rank_mul": 1.35
+          },
+          "result": {
+            "runs": 24,
+            "seed": 923104,
+            "preparation": "standard",
+            "accuracy": 0.8,
+            "wins": 24,
+            "clearRate": 1,
+            "clearRateWilson95": [
+              0.8620194241710247,
+              1
+            ],
+            "normalBattles": 48,
+            "normalWins": 48,
+            "normalWinRate": 1,
+            "normalQuestions": 16.729166666666668,
+            "normalQuestionsAll": 16.729166666666668,
+            "normalLossQuestions": null,
+            "bossBattles": 24,
+            "bossWins": 24,
+            "bossWinRate": 1,
+            "bossQuestions": 21.5,
+            "bossQuestionsAll": 21.5,
+            "bossLossQuestions": null,
+            "clearQuestions": 54.958333333333336,
+            "hpRemaining": 0.8264412746308234,
+            "mpRemaining": 0.5004588839941263,
+            "consumablesPerClear": 1.125,
+            "failedBeforeBoss": 0
+          }
+        },
+        {
+          "phase": "boss_attack_1",
+          "coefficients": {
+            "hp_rank_mul": 4.832,
+            "atk_rank_mul": 1.6,
+            "hp_boss_rank_mul": 0.66,
+            "atk_boss_rank_mul": 2.025
+          },
+          "result": {
+            "runs": 24,
+            "seed": 923104,
+            "preparation": "standard",
+            "accuracy": 0.8,
+            "wins": 22,
+            "clearRate": 0.9166666666666666,
+            "clearRateWilson95": [
+              0.741507847985494,
+              0.9768416721570266
+            ],
+            "normalBattles": 48,
+            "normalWins": 48,
+            "normalWinRate": 1,
+            "normalQuestions": 16.729166666666668,
+            "normalQuestionsAll": 16.729166666666668,
+            "normalLossQuestions": null,
+            "bossBattles": 24,
+            "bossWins": 22,
+            "bossWinRate": 0.9166666666666666,
+            "bossQuestions": 22.954545454545453,
+            "bossQuestionsAll": 22.791666666666668,
+            "bossLossQuestions": 21,
+            "clearQuestions": 56.59090909090909,
+            "hpRemaining": 0.7581576289572449,
+            "mpRemaining": 0.48277933520224253,
+            "consumablesPerClear": 1.7272727272727273,
+            "failedBeforeBoss": 0
+          }
+        },
+        {
+          "phase": "boss_attack_2",
+          "coefficients": {
+            "hp_rank_mul": 4.832,
+            "atk_rank_mul": 1.6,
+            "hp_boss_rank_mul": 0.66,
+            "atk_boss_rank_mul": 3.037
+          },
+          "result": {
+            "runs": 24,
+            "seed": 923104,
+            "preparation": "standard",
+            "accuracy": 0.8,
+            "wins": 15,
+            "clearRate": 0.625,
+            "clearRateWilson95": [
+              0.42709619037907065,
+              0.7884086656636855
+            ],
+            "normalBattles": 48,
+            "normalWins": 48,
+            "normalWinRate": 1,
+            "normalQuestions": 16.729166666666668,
+            "normalQuestionsAll": 16.729166666666668,
+            "normalLossQuestions": null,
+            "bossBattles": 24,
+            "bossWins": 15,
+            "bossWinRate": 0.625,
+            "bossQuestions": 23.733333333333334,
+            "bossQuestionsAll": 23.208333333333332,
+            "bossLossQuestions": 22.333333333333332,
+            "clearQuestions": 56.333333333333336,
+            "hpRemaining": 0.5574178210579253,
+            "mpRemaining": 0.45168869309838466,
+            "consumablesPerClear": 2.8,
+            "failedBeforeBoss": 0
+          }
+        },
+        {
+          "phase": "boss_attack_3",
+          "coefficients": {
+            "hp_rank_mul": 4.832,
+            "atk_rank_mul": 1.6,
+            "hp_boss_rank_mul": 0.66,
+            "atk_boss_rank_mul": 2.48
+          },
+          "result": {
+            "runs": 24,
+            "seed": 923104,
+            "preparation": "standard",
+            "accuracy": 0.8,
+            "wins": 22,
+            "clearRate": 0.9166666666666666,
+            "clearRateWilson95": [
+              0.741507847985494,
+              0.9768416721570266
+            ],
+            "normalBattles": 48,
+            "normalWins": 48,
+            "normalWinRate": 1,
+            "normalQuestions": 16.729166666666668,
+            "normalQuestionsAll": 16.729166666666668,
+            "normalLossQuestions": null,
+            "bossBattles": 24,
+            "bossWins": 22,
+            "bossWinRate": 0.9166666666666666,
+            "bossQuestions": 26.227272727272727,
+            "bossQuestionsAll": 25.416666666666668,
+            "bossLossQuestions": 16.5,
+            "clearQuestions": 59.86363636363637,
+            "hpRemaining": 0.6729841273799578,
+            "mpRemaining": 0.46215458550260313,
+            "consumablesPerClear": 3.0454545454545454,
+            "failedBeforeBoss": 0
+          }
+        },
+        {
+          "phase": "boss_attack_4",
+          "coefficients": {
+            "hp_rank_mul": 4.832,
+            "atk_rank_mul": 1.6,
+            "hp_boss_rank_mul": 0.66,
+            "atk_boss_rank_mul": 2.744
+          },
+          "result": {
+            "runs": 24,
+            "seed": 923104,
+            "preparation": "standard",
+            "accuracy": 0.8,
+            "wins": 20,
+            "clearRate": 0.8333333333333334,
+            "clearRateWilson95": [
+              0.6414652961213058,
+              0.9332143199927109
+            ],
+            "normalBattles": 48,
+            "normalWins": 48,
+            "normalWinRate": 1,
+            "normalQuestions": 16.729166666666668,
+            "normalQuestionsAll": 16.729166666666668,
+            "normalLossQuestions": null,
+            "bossBattles": 24,
+            "bossWins": 20,
+            "bossWinRate": 0.8333333333333334,
+            "bossQuestions": 25.15,
+            "bossQuestionsAll": 24.166666666666668,
+            "bossLossQuestions": 19.25,
+            "clearQuestions": 58.55,
+            "hpRemaining": 0.6234192840488272,
+            "mpRemaining": 0.4620044052863436,
+            "consumablesPerClear": 3.15,
+            "failedBeforeBoss": 0
+          }
+        },
+        {
+          "phase": "boss_attack_5",
+          "coefficients": {
+            "hp_rank_mul": 4.832,
+            "atk_rank_mul": 1.6,
+            "hp_boss_rank_mul": 0.66,
+            "atk_boss_rank_mul": 2.887
+          },
+          "result": {
+            "runs": 24,
+            "seed": 923104,
+            "preparation": "standard",
+            "accuracy": 0.8,
+            "wins": 16,
+            "clearRate": 0.6666666666666666,
+            "clearRateWilson95": [
+              0.4670595949408046,
+              0.8202802131162036
+            ],
+            "normalBattles": 48,
+            "normalWins": 48,
+            "normalWinRate": 1,
+            "normalQuestions": 16.729166666666668,
+            "normalQuestionsAll": 16.729166666666668,
+            "normalLossQuestions": null,
+            "bossBattles": 24,
+            "bossWins": 16,
+            "bossWinRate": 0.6666666666666666,
+            "bossQuestions": 23.5,
+            "bossQuestionsAll": 23.333333333333332,
+            "bossLossQuestions": 23,
+            "clearQuestions": 56.4375,
+            "hpRemaining": 0.5530277053902072,
+            "mpRemaining": 0.47095264317180624,
+            "consumablesPerClear": 3.125,
+            "failedBeforeBoss": 0
+          }
+        }
+      ]
+    },
+    {
+      "star": 8,
+      "dungeonId": "black_forest",
+      "target": {
+        "normalQuestions": 17,
+        "bossQuestions": 23,
+        "normalWinRate": 0.97,
+        "clear": 0.75
+      },
+      "initial": {
+        "hp_rank_mul": 3.05,
+        "atk_rank_mul": 1.7,
+        "hp_boss_rank_mul": 1,
+        "atk_boss_rank_mul": 1.35
+      },
+      "selected": {
+        "hp_rank_mul": 4.692,
+        "atk_rank_mul": 1.7,
+        "hp_boss_rank_mul": 0.828,
+        "atk_boss_rank_mul": 2.609
+      },
+      "fixture": {
+        "rank": 8,
+        "level": 52,
+        "stage": 3,
+        "itemCap": 74,
+        "enhancement": 2,
+        "assembly": {
+          "gold": 69484,
+          "byPurpose": {
+            "craft": 44800,
+            "enhance": 13984,
+            "enchant": 7520,
+            "items": 3180
+          },
+          "materials": {
+            "exp_r08_demon_mat": 112,
+            "enhancement_stone": 56,
+            "blooming_hill_boss_mat": 8
+          },
+          "ap": {
+            "m1": {
+              "warrior": 90
+            },
+            "m2": {
+              "knight": 90
+            },
+            "m3": {
+              "black_mage": 90
+            },
+            "m4": {
+              "white_mage": 90
+            }
+          },
+          "jp": 0
+        }
+      },
+      "baseline": {
+        "runs": 24,
+        "seed": 1027833,
+        "preparation": "standard",
+        "accuracy": 0.8,
+        "wins": 24,
+        "clearRate": 1,
+        "clearRateWilson95": [
+          0.8620194241710247,
+          1
+        ],
+        "normalBattles": 48,
+        "normalWins": 48,
+        "normalWinRate": 1,
+        "normalQuestions": 11.416666666666666,
+        "normalQuestionsAll": 11.416666666666666,
+        "normalLossQuestions": null,
+        "bossBattles": 24,
+        "bossWins": 24,
+        "bossWinRate": 1,
+        "bossQuestions": 16.041666666666668,
+        "bossQuestionsAll": 16.041666666666668,
+        "bossLossQuestions": null,
+        "clearQuestions": 38.875,
+        "hpRemaining": 0.8465947470894427,
+        "mpRemaining": 0.7626633986928105,
+        "consumablesPerClear": 1.25,
+        "failedBeforeBoss": 0
+      },
+      "standard": {
+        "runs": 24,
+        "seed": 1027833,
+        "preparation": "standard",
+        "accuracy": 0.8,
+        "wins": 19,
+        "clearRate": 0.7916666666666666,
+        "clearRateWilson95": [
+          0.5952915551476452,
+          0.9075531089521192
+        ],
+        "normalBattles": 48,
+        "normalWins": 48,
+        "normalWinRate": 1,
+        "normalQuestions": 16.583333333333332,
+        "normalQuestionsAll": 16.583333333333332,
+        "normalLossQuestions": null,
+        "bossBattles": 24,
+        "bossWins": 19,
+        "bossWinRate": 0.7916666666666666,
+        "bossQuestions": 26.789473684210527,
+        "bossQuestionsAll": 25.708333333333332,
+        "bossLossQuestions": 21.6,
+        "clearQuestions": 60.578947368421055,
+        "hpRemaining": 0.6644666260955763,
+        "mpRemaining": 0.4785345717234261,
+        "consumablesPerClear": 3.4210526315789473,
+        "failedBeforeBoss": 0
+      },
+      "prepared": {
+        "runs": 12,
+        "seed": 1791904180,
+        "preparation": "prepared",
+        "accuracy": 0.8,
+        "wins": 12,
+        "clearRate": 1,
+        "clearRateWilson95": [
+          0.7574992425007574,
+          1
+        ],
+        "normalBattles": 24,
+        "normalWins": 24,
+        "normalWinRate": 1,
+        "normalQuestions": 16.583333333333332,
+        "normalQuestionsAll": 16.583333333333332,
+        "normalLossQuestions": null,
+        "bossBattles": 12,
+        "bossWins": 12,
+        "bossWinRate": 1,
+        "bossQuestions": 19.166666666666668,
+        "bossQuestionsAll": 19.166666666666668,
+        "bossLossQuestions": null,
+        "clearQuestions": 52.333333333333336,
+        "hpRemaining": 0.8367902411888584,
+        "mpRemaining": 0.6183006535947713,
+        "consumablesPerClear": 0.5833333333333334,
+        "failedBeforeBoss": 0
+      },
+      "warnings": [
+        "敗戦を含むボス問題数が20〜25問の範囲外。"
+      ],
+      "history": [
+        {
+          "phase": "baseline",
+          "coefficients": {
+            "hp_rank_mul": 3.05,
+            "atk_rank_mul": 1.7,
+            "hp_boss_rank_mul": 1,
+            "atk_boss_rank_mul": 1.35
+          },
+          "result": {
+            "runs": 24,
+            "seed": 1027833,
+            "preparation": "standard",
+            "accuracy": 0.8,
+            "wins": 24,
+            "clearRate": 1,
+            "clearRateWilson95": [
+              0.8620194241710247,
+              1
+            ],
+            "normalBattles": 48,
+            "normalWins": 48,
+            "normalWinRate": 1,
+            "normalQuestions": 11.416666666666666,
+            "normalQuestionsAll": 11.416666666666666,
+            "normalLossQuestions": null,
+            "bossBattles": 24,
+            "bossWins": 24,
+            "bossWinRate": 1,
+            "bossQuestions": 16.041666666666668,
+            "bossQuestionsAll": 16.041666666666668,
+            "bossLossQuestions": null,
+            "clearQuestions": 38.875,
+            "hpRemaining": 0.8465947470894427,
+            "mpRemaining": 0.7626633986928105,
+            "consumablesPerClear": 1.25,
+            "failedBeforeBoss": 0
+          }
+        },
+        {
+          "phase": "normal_hp_1",
+          "coefficients": {
+            "hp_rank_mul": 4.278,
+            "atk_rank_mul": 1.7,
+            "hp_boss_rank_mul": 0.713,
+            "atk_boss_rank_mul": 1.35
+          },
+          "result": {
+            "runs": 24,
+            "seed": 1027833,
+            "preparation": "standard",
+            "accuracy": 0.8,
+            "wins": 24,
+            "clearRate": 1,
+            "clearRateWilson95": [
+              0.8620194241710247,
+              1
+            ],
+            "normalBattles": 48,
+            "normalWins": 48,
+            "normalWinRate": 1,
+            "normalQuestions": 15.25,
+            "normalQuestionsAll": 15.25,
+            "normalLossQuestions": null,
+            "bossBattles": 24,
+            "bossWins": 24,
+            "bossWinRate": 1,
+            "bossQuestions": 18.291666666666668,
+            "bossQuestionsAll": 18.291666666666668,
+            "bossLossQuestions": null,
+            "clearQuestions": 48.791666666666664,
+            "hpRemaining": 0.8684785631978383,
+            "mpRemaining": 0.6126633986928105,
+            "consumablesPerClear": 1.2083333333333333,
+            "failedBeforeBoss": 0
+          }
+        },
+        {
+          "phase": "normal_hp_2",
+          "coefficients": {
+            "hp_rank_mul": 4.692,
+            "atk_rank_mul": 1.7,
+            "hp_boss_rank_mul": 0.65,
+            "atk_boss_rank_mul": 1.35
+          },
+          "result": {
+            "runs": 24,
+            "seed": 1027833,
+            "preparation": "standard",
+            "accuracy": 0.8,
+            "wins": 24,
+            "clearRate": 1,
+            "clearRateWilson95": [
+              0.8620194241710247,
+              1
+            ],
+            "normalBattles": 48,
+            "normalWins": 48,
+            "normalWinRate": 1,
+            "normalQuestions": 16.583333333333332,
+            "normalQuestionsAll": 16.583333333333332,
+            "normalLossQuestions": null,
+            "bossBattles": 24,
+            "bossWins": 24,
+            "bossWinRate": 1,
+            "bossQuestions": 19.291666666666668,
+            "bossQuestionsAll": 19.291666666666668,
+            "bossLossQuestions": null,
+            "clearQuestions": 52.458333333333336,
+            "hpRemaining": 0.855341319982517,
+            "mpRemaining": 0.5626633986928103,
+            "consumablesPerClear": 1.75,
+            "failedBeforeBoss": 0
+          }
+        },
+        {
+          "phase": "boss_hp_1",
+          "coefficients": {
+            "hp_rank_mul": 4.692,
+            "atk_rank_mul": 1.7,
+            "hp_boss_rank_mul": 0.755,
+            "atk_boss_rank_mul": 1.35
+          },
+          "result": {
+            "runs": 24,
+            "seed": 1027833,
+            "preparation": "standard",
+            "accuracy": 0.8,
+            "wins": 24,
+            "clearRate": 1,
+            "clearRateWilson95": [
+              0.8620194241710247,
+              1
+            ],
+            "normalBattles": 48,
+            "normalWins": 48,
+            "normalWinRate": 1,
+            "normalQuestions": 16.583333333333332,
+            "normalQuestionsAll": 16.583333333333332,
+            "normalLossQuestions": null,
+            "bossBattles": 24,
+            "bossWins": 24,
+            "bossWinRate": 1,
+            "bossQuestions": 20.625,
+            "bossQuestionsAll": 20.625,
+            "bossLossQuestions": null,
+            "clearQuestions": 53.791666666666664,
+            "hpRemaining": 0.8374557952874796,
+            "mpRemaining": 0.5484477124183006,
+            "consumablesPerClear": 1.7916666666666667,
+            "failedBeforeBoss": 0
+          }
+        },
+        {
+          "phase": "boss_hp_2",
+          "coefficients": {
+            "hp_rank_mul": 4.692,
+            "atk_rank_mul": 1.7,
+            "hp_boss_rank_mul": 0.828,
+            "atk_boss_rank_mul": 1.35
+          },
+          "result": {
+            "runs": 24,
+            "seed": 1027833,
+            "preparation": "standard",
+            "accuracy": 0.8,
+            "wins": 24,
+            "clearRate": 1,
+            "clearRateWilson95": [
+              0.8620194241710247,
+              1
+            ],
+            "normalBattles": 48,
+            "normalWins": 48,
+            "normalWinRate": 1,
+            "normalQuestions": 16.583333333333332,
+            "normalQuestionsAll": 16.583333333333332,
+            "normalLossQuestions": null,
+            "bossBattles": 24,
+            "bossWins": 24,
+            "bossWinRate": 1,
+            "bossQuestions": 20.958333333333332,
+            "bossQuestionsAll": 20.958333333333332,
+            "bossLossQuestions": null,
+            "clearQuestions": 54.125,
+            "hpRemaining": 0.8356826399650336,
+            "mpRemaining": 0.5235294117647059,
+            "consumablesPerClear": 1.7916666666666667,
+            "failedBeforeBoss": 0
+          }
+        },
+        {
+          "phase": "boss_attack_1",
+          "coefficients": {
+            "hp_rank_mul": 4.692,
+            "atk_rank_mul": 1.7,
+            "hp_boss_rank_mul": 0.828,
+            "atk_boss_rank_mul": 2.025
+          },
+          "result": {
+            "runs": 24,
+            "seed": 1027833,
+            "preparation": "standard",
+            "accuracy": 0.8,
+            "wins": 22,
+            "clearRate": 0.9166666666666666,
+            "clearRateWilson95": [
+              0.741507847985494,
+              0.9768416721570266
+            ],
+            "normalBattles": 48,
+            "normalWins": 48,
+            "normalWinRate": 1,
+            "normalQuestions": 16.583333333333332,
+            "normalQuestionsAll": 16.583333333333332,
+            "normalLossQuestions": null,
+            "bossBattles": 24,
+            "bossWins": 22,
+            "bossWinRate": 0.9166666666666666,
+            "bossQuestions": 25.045454545454547,
+            "bossQuestionsAll": 24.958333333333332,
+            "bossLossQuestions": 24,
+            "clearQuestions": 58.40909090909091,
+            "hpRemaining": 0.8130831500124625,
+            "mpRemaining": 0.4765597147950089,
+            "consumablesPerClear": 2.8181818181818183,
+            "failedBeforeBoss": 0
+          }
+        },
+        {
+          "phase": "boss_attack_2",
+          "coefficients": {
+            "hp_rank_mul": 4.692,
+            "atk_rank_mul": 1.7,
+            "hp_boss_rank_mul": 0.828,
+            "atk_boss_rank_mul": 3.037
+          },
+          "result": {
+            "runs": 24,
+            "seed": 1027833,
+            "preparation": "standard",
+            "accuracy": 0.8,
+            "wins": 7,
+            "clearRate": 0.2916666666666667,
+            "clearRateWilson95": [
+              0.14914460334164278,
+              0.49168063658709704
+            ],
+            "normalBattles": 48,
+            "normalWins": 48,
+            "normalWinRate": 1,
+            "normalQuestions": 16.583333333333332,
+            "normalQuestionsAll": 16.583333333333332,
+            "normalLossQuestions": null,
+            "bossBattles": 24,
+            "bossWins": 7,
+            "bossWinRate": 0.2916666666666667,
+            "bossQuestions": 22.714285714285715,
+            "bossQuestionsAll": 19,
+            "bossLossQuestions": 17.470588235294116,
+            "clearQuestions": 56,
+            "hpRemaining": 0.663436813514296,
+            "mpRemaining": 0.5098039215686275,
+            "consumablesPerClear": 3.857142857142857,
+            "failedBeforeBoss": 0
+          }
+        },
+        {
+          "phase": "boss_attack_3",
+          "coefficients": {
+            "hp_rank_mul": 4.692,
+            "atk_rank_mul": 1.7,
+            "hp_boss_rank_mul": 0.828,
+            "atk_boss_rank_mul": 2.48
+          },
+          "result": {
+            "runs": 24,
+            "seed": 1027833,
+            "preparation": "standard",
+            "accuracy": 0.8,
+            "wins": 21,
+            "clearRate": 0.875,
+            "clearRateWilson95": [
+              0.6899571185214243,
+              0.9565574496068442
+            ],
+            "normalBattles": 48,
+            "normalWins": 48,
+            "normalWinRate": 1,
+            "normalQuestions": 16.583333333333332,
+            "normalQuestionsAll": 16.583333333333332,
+            "normalLossQuestions": null,
+            "bossBattles": 24,
+            "bossWins": 21,
+            "bossWinRate": 0.875,
+            "bossQuestions": 26.285714285714285,
+            "bossQuestionsAll": 26.166666666666668,
+            "bossLossQuestions": 25.333333333333332,
+            "clearQuestions": 59.904761904761905,
+            "hpRemaining": 0.6493026582429372,
+            "mpRemaining": 0.4515406162464986,
+            "consumablesPerClear": 3.3333333333333335,
+            "failedBeforeBoss": 0
+          }
+        },
+        {
+          "phase": "boss_attack_4",
+          "coefficients": {
+            "hp_rank_mul": 4.692,
+            "atk_rank_mul": 1.7,
+            "hp_boss_rank_mul": 0.828,
+            "atk_boss_rank_mul": 2.744
+          },
+          "result": {
+            "runs": 24,
+            "seed": 1027833,
+            "preparation": "standard",
+            "accuracy": 0.8,
+            "wins": 13,
+            "clearRate": 0.5416666666666666,
+            "clearRateWilson95": [
+              0.35074553553106635,
+              0.7210894164831857
+            ],
+            "normalBattles": 48,
+            "normalWins": 48,
+            "normalWinRate": 1,
+            "normalQuestions": 16.583333333333332,
+            "normalQuestionsAll": 16.583333333333332,
+            "normalLossQuestions": null,
+            "bossBattles": 24,
+            "bossWins": 13,
+            "bossWinRate": 0.5416666666666666,
+            "bossQuestions": 24.307692307692307,
+            "bossQuestionsAll": 23.5,
+            "bossLossQuestions": 22.545454545454547,
+            "clearQuestions": 58.92307692307692,
+            "hpRemaining": 0.6419120276552628,
+            "mpRemaining": 0.5184012066365007,
+            "consumablesPerClear": 3.6923076923076925,
+            "failedBeforeBoss": 0
+          }
+        },
+        {
+          "phase": "boss_attack_5",
+          "coefficients": {
+            "hp_rank_mul": 4.692,
+            "atk_rank_mul": 1.7,
+            "hp_boss_rank_mul": 0.828,
+            "atk_boss_rank_mul": 2.609
+          },
+          "result": {
+            "runs": 24,
+            "seed": 1027833,
+            "preparation": "standard",
+            "accuracy": 0.8,
+            "wins": 19,
+            "clearRate": 0.7916666666666666,
+            "clearRateWilson95": [
+              0.5952915551476452,
+              0.9075531089521192
+            ],
+            "normalBattles": 48,
+            "normalWins": 48,
+            "normalWinRate": 1,
+            "normalQuestions": 16.583333333333332,
+            "normalQuestionsAll": 16.583333333333332,
+            "normalLossQuestions": null,
+            "bossBattles": 24,
+            "bossWins": 19,
+            "bossWinRate": 0.7916666666666666,
+            "bossQuestions": 26.789473684210527,
+            "bossQuestionsAll": 25.708333333333332,
+            "bossLossQuestions": 21.6,
+            "clearQuestions": 60.578947368421055,
+            "hpRemaining": 0.6644666260955763,
+            "mpRemaining": 0.4785345717234261,
+            "consumablesPerClear": 3.4210526315789473,
+            "failedBeforeBoss": 0
+          }
+        }
+      ]
+    },
+    {
+      "star": 9,
+      "dungeonId": "demon_gate",
+      "target": {
+        "normalQuestions": 17,
+        "bossQuestions": 23,
+        "normalWinRate": 0.97,
+        "clear": 0.75
+      },
+      "initial": {
+        "hp_rank_mul": 3.01,
+        "atk_rank_mul": 1.7,
+        "hp_boss_rank_mul": 1,
+        "atk_boss_rank_mul": 1.35
+      },
+      "selected": {
+        "hp_rank_mul": 4.102,
+        "atk_rank_mul": 1.7,
+        "hp_boss_rank_mul": 0.837,
+        "atk_boss_rank_mul": 2.744
+      },
+      "fixture": {
+        "rank": 9,
+        "level": 59,
+        "stage": 4,
+        "itemCap": 84,
+        "enhancement": 2,
+        "assembly": {
+          "gold": 97516,
+          "byPurpose": {
+            "craft": 69440,
+            "enhance": 15776,
+            "enchant": 9120,
+            "items": 3180
+          },
+          "materials": {
+            "exp_r09_aberration_mat": 112,
+            "enhancement_stone": 56,
+            "blooming_hill_boss_mat": 8
+          },
+          "ap": {
+            "m1": {
+              "warrior": 180
+            },
+            "m2": {
+              "knight": 180
+            },
+            "m3": {
+              "black_mage": 180
+            },
+            "m4": {
+              "white_mage": 180
+            }
+          },
+          "jp": 0
+        }
+      },
+      "baseline": {
+        "runs": 24,
+        "seed": 1132562,
+        "preparation": "standard",
+        "accuracy": 0.8,
+        "wins": 24,
+        "clearRate": 1,
+        "clearRateWilson95": [
+          0.8620194241710247,
+          1
+        ],
+        "normalBattles": 48,
+        "normalWins": 48,
+        "normalWinRate": 1,
+        "normalQuestions": 11.8125,
+        "normalQuestionsAll": 11.8125,
+        "normalLossQuestions": null,
+        "bossBattles": 24,
+        "bossWins": 24,
+        "bossWinRate": 1,
+        "bossQuestions": 16.333333333333332,
+        "bossQuestionsAll": 16.333333333333332,
+        "bossLossQuestions": null,
+        "clearQuestions": 39.958333333333336,
+        "hpRemaining": 0.8641014356644497,
+        "mpRemaining": 0.5362926972909307,
+        "consumablesPerClear": 1.5416666666666667,
+        "failedBeforeBoss": 0
+      },
+      "standard": {
+        "runs": 24,
+        "seed": 1132562,
+        "preparation": "standard",
+        "accuracy": 0.8,
+        "wins": 17,
+        "clearRate": 0.7083333333333334,
+        "clearRateWilson95": [
+          0.508319363412903,
+          0.8508553966583573
+        ],
+        "normalBattles": 48,
+        "normalWins": 48,
+        "normalWinRate": 1,
+        "normalQuestions": 17.354166666666668,
+        "normalQuestionsAll": 17.354166666666668,
+        "normalLossQuestions": null,
+        "bossBattles": 24,
+        "bossWins": 17,
+        "bossWinRate": 0.7083333333333334,
+        "bossQuestions": 24.529411764705884,
+        "bossQuestionsAll": 21.75,
+        "bossLossQuestions": 15,
+        "clearQuestions": 57.94117647058823,
+        "hpRemaining": 0.741256184317722,
+        "mpRemaining": 0.44990646435252546,
+        "consumablesPerClear": 2.4705882352941178,
+        "failedBeforeBoss": 0
+      },
+      "prepared": {
+        "runs": 12,
+        "seed": 1792061279,
+        "preparation": "prepared",
+        "accuracy": 0.8,
+        "wins": 12,
+        "clearRate": 1,
+        "clearRateWilson95": [
+          0.7574992425007574,
+          1
+        ],
+        "normalBattles": 24,
+        "normalWins": 24,
+        "normalWinRate": 1,
+        "normalQuestions": 14.5,
+        "normalQuestionsAll": 14.5,
+        "normalLossQuestions": null,
+        "bossBattles": 12,
+        "bossWins": 12,
+        "bossWinRate": 1,
+        "bossQuestions": 17,
+        "bossQuestionsAll": 17,
+        "bossLossQuestions": null,
+        "clearQuestions": 46,
+        "hpRemaining": 0.8675089033182629,
+        "mpRemaining": 0.568904593639576,
+        "consumablesPerClear": 0.5833333333333334,
+        "failedBeforeBoss": 0
+      },
+      "warnings": [],
+      "history": [
+        {
+          "phase": "baseline",
+          "coefficients": {
+            "hp_rank_mul": 3.01,
+            "atk_rank_mul": 1.7,
+            "hp_boss_rank_mul": 1,
+            "atk_boss_rank_mul": 1.35
+          },
+          "result": {
+            "runs": 24,
+            "seed": 1132562,
+            "preparation": "standard",
+            "accuracy": 0.8,
+            "wins": 24,
+            "clearRate": 1,
+            "clearRateWilson95": [
+              0.8620194241710247,
+              1
+            ],
+            "normalBattles": 48,
+            "normalWins": 48,
+            "normalWinRate": 1,
+            "normalQuestions": 11.8125,
+            "normalQuestionsAll": 11.8125,
+            "normalLossQuestions": null,
+            "bossBattles": 24,
+            "bossWins": 24,
+            "bossWinRate": 1,
+            "bossQuestions": 16.333333333333332,
+            "bossQuestionsAll": 16.333333333333332,
+            "bossLossQuestions": null,
+            "clearQuestions": 39.958333333333336,
+            "hpRemaining": 0.8641014356644497,
+            "mpRemaining": 0.5362926972909307,
+            "consumablesPerClear": 1.5416666666666667,
+            "failedBeforeBoss": 0
+          }
+        },
+        {
+          "phase": "normal_hp_1",
+          "coefficients": {
+            "hp_rank_mul": 4.102,
+            "atk_rank_mul": 1.7,
+            "hp_boss_rank_mul": 0.734,
+            "atk_boss_rank_mul": 1.35
+          },
+          "result": {
+            "runs": 24,
+            "seed": 1132562,
+            "preparation": "standard",
+            "accuracy": 0.8,
+            "wins": 21,
+            "clearRate": 0.875,
+            "clearRateWilson95": [
+              0.6899571185214243,
+              0.9565574496068442
+            ],
+            "normalBattles": 48,
+            "normalWins": 48,
+            "normalWinRate": 1,
+            "normalQuestions": 17.354166666666668,
+            "normalQuestionsAll": 17.354166666666668,
+            "normalLossQuestions": null,
+            "bossBattles": 24,
+            "bossWins": 21,
+            "bossWinRate": 0.875,
+            "bossQuestions": 20.80952380952381,
+            "bossQuestionsAll": 19.708333333333332,
+            "bossLossQuestions": 12,
+            "clearQuestions": 53.714285714285715,
+            "hpRemaining": 0.8438285478694513,
+            "mpRemaining": 0.4794716473161702,
+            "consumablesPerClear": 1.380952380952381,
+            "failedBeforeBoss": 0
+          }
+        },
+        {
+          "phase": "boss_hp_1",
+          "coefficients": {
+            "hp_rank_mul": 4.102,
+            "atk_rank_mul": 1.7,
+            "hp_boss_rank_mul": 0.837,
+            "atk_boss_rank_mul": 1.35
+          },
+          "result": {
+            "runs": 24,
+            "seed": 1132562,
+            "preparation": "standard",
+            "accuracy": 0.8,
+            "wins": 21,
+            "clearRate": 0.875,
+            "clearRateWilson95": [
+              0.6899571185214243,
+              0.9565574496068442
+            ],
+            "normalBattles": 48,
+            "normalWins": 48,
+            "normalWinRate": 1,
+            "normalQuestions": 17.354166666666668,
+            "normalQuestionsAll": 17.354166666666668,
+            "normalLossQuestions": null,
+            "bossBattles": 24,
+            "bossWins": 21,
+            "bossWinRate": 0.875,
+            "bossQuestions": 22.904761904761905,
+            "bossQuestionsAll": 21.541666666666668,
+            "bossLossQuestions": 12,
+            "clearQuestions": 55.80952380952381,
+            "hpRemaining": 0.8427365040409799,
+            "mpRemaining": 0.4428739693757361,
+            "consumablesPerClear": 1.5714285714285714,
+            "failedBeforeBoss": 0
+          }
+        },
+        {
+          "phase": "boss_attack_1",
+          "coefficients": {
+            "hp_rank_mul": 4.102,
+            "atk_rank_mul": 1.7,
+            "hp_boss_rank_mul": 0.837,
+            "atk_boss_rank_mul": 2.025
+          },
+          "result": {
+            "runs": 24,
+            "seed": 1132562,
+            "preparation": "standard",
+            "accuracy": 0.8,
+            "wins": 20,
+            "clearRate": 0.8333333333333334,
+            "clearRateWilson95": [
+              0.6414652961213058,
+              0.9332143199927109
+            ],
+            "normalBattles": 48,
+            "normalWins": 48,
+            "normalWinRate": 1,
+            "normalQuestions": 17.354166666666668,
+            "normalQuestionsAll": 17.354166666666668,
+            "normalLossQuestions": null,
+            "bossBattles": 24,
+            "bossWins": 20,
+            "bossWinRate": 0.8333333333333334,
+            "bossQuestions": 23.75,
+            "bossQuestionsAll": 21.708333333333332,
+            "bossLossQuestions": 11.5,
+            "clearQuestions": 56.8,
+            "hpRemaining": 0.7784364236166161,
+            "mpRemaining": 0.44637809187279165,
+            "consumablesPerClear": 2,
+            "failedBeforeBoss": 0
+          }
+        },
+        {
+          "phase": "boss_attack_2",
+          "coefficients": {
+            "hp_rank_mul": 4.102,
+            "atk_rank_mul": 1.7,
+            "hp_boss_rank_mul": 0.837,
+            "atk_boss_rank_mul": 3.037
+          },
+          "result": {
+            "runs": 24,
+            "seed": 1132562,
+            "preparation": "standard",
+            "accuracy": 0.8,
+            "wins": 13,
+            "clearRate": 0.5416666666666666,
+            "clearRateWilson95": [
+              0.35074553553106635,
+              0.7210894164831857
+            ],
+            "normalBattles": 48,
+            "normalWins": 48,
+            "normalWinRate": 1,
+            "normalQuestions": 17.354166666666668,
+            "normalQuestionsAll": 17.354166666666668,
+            "normalLossQuestions": null,
+            "bossBattles": 24,
+            "bossWins": 13,
+            "bossWinRate": 0.5416666666666666,
+            "bossQuestions": 25.923076923076923,
+            "bossQuestionsAll": 20.75,
+            "bossLossQuestions": 14.636363636363637,
+            "clearQuestions": 58.30769230769231,
+            "hpRemaining": 0.6206549494783342,
+            "mpRemaining": 0.42647458548518624,
+            "consumablesPerClear": 3.3076923076923075,
+            "failedBeforeBoss": 0
+          }
+        },
+        {
+          "phase": "boss_attack_3",
+          "coefficients": {
+            "hp_rank_mul": 4.102,
+            "atk_rank_mul": 1.7,
+            "hp_boss_rank_mul": 0.837,
+            "atk_boss_rank_mul": 2.48
+          },
+          "result": {
+            "runs": 24,
+            "seed": 1132562,
+            "preparation": "standard",
+            "accuracy": 0.8,
+            "wins": 20,
+            "clearRate": 0.8333333333333334,
+            "clearRateWilson95": [
+              0.6414652961213058,
+              0.9332143199927109
+            ],
+            "normalBattles": 48,
+            "normalWins": 48,
+            "normalWinRate": 1,
+            "normalQuestions": 17.354166666666668,
+            "normalQuestionsAll": 17.354166666666668,
+            "normalLossQuestions": null,
+            "bossBattles": 24,
+            "bossWins": 20,
+            "bossWinRate": 0.8333333333333334,
+            "bossQuestions": 25.25,
+            "bossQuestionsAll": 23.125,
+            "bossLossQuestions": 12.5,
+            "clearQuestions": 59,
+            "hpRemaining": 0.7337079695175365,
+            "mpRemaining": 0.4443462897526502,
+            "consumablesPerClear": 2.5,
+            "failedBeforeBoss": 0
+          }
+        },
+        {
+          "phase": "boss_attack_4",
+          "coefficients": {
+            "hp_rank_mul": 4.102,
+            "atk_rank_mul": 1.7,
+            "hp_boss_rank_mul": 0.837,
+            "atk_boss_rank_mul": 2.744
+          },
+          "result": {
+            "runs": 24,
+            "seed": 1132562,
+            "preparation": "standard",
+            "accuracy": 0.8,
+            "wins": 17,
+            "clearRate": 0.7083333333333334,
+            "clearRateWilson95": [
+              0.508319363412903,
+              0.8508553966583573
+            ],
+            "normalBattles": 48,
+            "normalWins": 48,
+            "normalWinRate": 1,
+            "normalQuestions": 17.354166666666668,
+            "normalQuestionsAll": 17.354166666666668,
+            "normalLossQuestions": null,
+            "bossBattles": 24,
+            "bossWins": 17,
+            "bossWinRate": 0.7083333333333334,
+            "bossQuestions": 24.529411764705884,
+            "bossQuestionsAll": 21.75,
+            "bossLossQuestions": 15,
+            "clearQuestions": 57.94117647058823,
+            "hpRemaining": 0.741256184317722,
+            "mpRemaining": 0.44990646435252546,
+            "consumablesPerClear": 2.4705882352941178,
+            "failedBeforeBoss": 0
+          }
+        },
+        {
+          "phase": "boss_attack_5",
+          "coefficients": {
+            "hp_rank_mul": 4.102,
+            "atk_rank_mul": 1.7,
+            "hp_boss_rank_mul": 0.837,
+            "atk_boss_rank_mul": 2.609
+          },
+          "result": {
+            "runs": 24,
+            "seed": 1132562,
+            "preparation": "standard",
+            "accuracy": 0.8,
+            "wins": 20,
+            "clearRate": 0.8333333333333334,
+            "clearRateWilson95": [
+              0.6414652961213058,
+              0.9332143199927109
+            ],
+            "normalBattles": 48,
+            "normalWins": 48,
+            "normalWinRate": 1,
+            "normalQuestions": 17.354166666666668,
+            "normalQuestionsAll": 17.354166666666668,
+            "normalLossQuestions": null,
+            "bossBattles": 24,
+            "bossWins": 20,
+            "bossWinRate": 0.8333333333333334,
+            "bossQuestions": 24.95,
+            "bossQuestionsAll": 22.75,
+            "bossLossQuestions": 11.75,
+            "clearQuestions": 58.7,
+            "hpRemaining": 0.6913254083367562,
+            "mpRemaining": 0.4468197879858657,
+            "consumablesPerClear": 2.6,
+            "failedBeforeBoss": 0
+          }
+        }
+      ]
+    },
+    {
+      "star": 10,
+      "dungeonId": "dragon_spine",
+      "target": {
+        "normalQuestions": 17,
+        "bossQuestions": 23,
+        "normalWinRate": 0.97,
+        "clear": 0.75
+      },
+      "initial": {
+        "hp_rank_mul": 2.78,
+        "atk_rank_mul": 1.7,
+        "hp_boss_rank_mul": 1,
+        "atk_boss_rank_mul": 1.35
+      },
+      "selected": {
+        "hp_rank_mul": 4.388,
+        "atk_rank_mul": 1.7,
+        "hp_boss_rank_mul": 0.801,
+        "atk_boss_rank_mul": 2.609
+      },
+      "fixture": {
+        "rank": 10,
+        "level": 66,
+        "stage": 4,
+        "itemCap": 94,
+        "enhancement": 2,
+        "assembly": {
+          "gold": 139428,
+          "byPurpose": {
+            "craft": 107800,
+            "enhance": 17568,
+            "enchant": 10880,
+            "items": 3180
+          },
+          "materials": {
+            "exp_r10_amorphous_mat": 112,
+            "enhancement_stone": 56,
+            "blooming_hill_boss_mat": 8
+          },
+          "ap": {
+            "m1": {
+              "warrior": 180
+            },
+            "m2": {
+              "knight": 180
+            },
+            "m3": {
+              "black_mage": 180
+            },
+            "m4": {
+              "white_mage": 180
+            }
+          },
+          "jp": 0
+        }
+      },
+      "baseline": {
+        "runs": 24,
+        "seed": 1237291,
+        "preparation": "standard",
+        "accuracy": 0.8,
+        "wins": 24,
+        "clearRate": 1,
+        "clearRateWilson95": [
+          0.8620194241710247,
+          1
+        ],
+        "normalBattles": 48,
+        "normalWins": 48,
+        "normalWinRate": 1,
+        "normalQuestions": 9.9375,
+        "normalQuestionsAll": 9.9375,
+        "normalLossQuestions": null,
+        "bossBattles": 24,
+        "bossWins": 24,
+        "bossWinRate": 1,
+        "bossQuestions": 13.375,
+        "bossQuestionsAll": 13.375,
+        "bossLossQuestions": null,
+        "clearQuestions": 33.25,
+        "hpRemaining": 0.8379976527940779,
+        "mpRemaining": 0.6233922829581995,
+        "consumablesPerClear": 0.9166666666666666,
+        "failedBeforeBoss": 0
+      },
+      "standard": {
+        "runs": 24,
+        "seed": 1237291,
+        "preparation": "standard",
+        "accuracy": 0.8,
+        "wins": 18,
+        "clearRate": 0.75,
+        "clearRateWilson95": [
+          0.5510017468789357,
+          0.8800079652065766
+        ],
+        "normalBattles": 48,
+        "normalWins": 48,
+        "normalWinRate": 1,
+        "normalQuestions": 16.770833333333332,
+        "normalQuestionsAll": 16.770833333333332,
+        "normalLossQuestions": null,
+        "bossBattles": 24,
+        "bossWins": 18,
+        "bossWinRate": 0.75,
+        "bossQuestions": 24,
+        "bossQuestionsAll": 23.666666666666668,
+        "bossLossQuestions": 22.666666666666668,
+        "clearQuestions": 57.55555555555556,
+        "hpRemaining": 0.7475800708174095,
+        "mpRemaining": 0.43372633083244017,
+        "consumablesPerClear": 2.9444444444444446,
+        "failedBeforeBoss": 0
+      },
+      "prepared": {
+        "runs": 12,
+        "seed": 1792214630,
+        "preparation": "prepared",
+        "accuracy": 0.8,
+        "wins": 12,
+        "clearRate": 1,
+        "clearRateWilson95": [
+          0.7574992425007574,
+          1
+        ],
+        "normalBattles": 24,
+        "normalWins": 24,
+        "normalWinRate": 1,
+        "normalQuestions": 16.041666666666668,
+        "normalQuestionsAll": 16.041666666666668,
+        "normalLossQuestions": null,
+        "bossBattles": 12,
+        "bossWins": 12,
+        "bossWinRate": 1,
+        "bossQuestions": 17.666666666666668,
+        "bossQuestionsAll": 17.666666666666668,
+        "bossLossQuestions": null,
+        "clearQuestions": 49.75,
+        "hpRemaining": 0.808303993259306,
+        "mpRemaining": 0.5786441586280814,
+        "consumablesPerClear": 0.5,
+        "failedBeforeBoss": 0
+      },
+      "warnings": [],
+      "history": [
+        {
+          "phase": "baseline",
+          "coefficients": {
+            "hp_rank_mul": 2.78,
+            "atk_rank_mul": 1.7,
+            "hp_boss_rank_mul": 1,
+            "atk_boss_rank_mul": 1.35
+          },
+          "result": {
+            "runs": 24,
+            "seed": 1237291,
+            "preparation": "standard",
+            "accuracy": 0.8,
+            "wins": 24,
+            "clearRate": 1,
+            "clearRateWilson95": [
+              0.8620194241710247,
+              1
+            ],
+            "normalBattles": 48,
+            "normalWins": 48,
+            "normalWinRate": 1,
+            "normalQuestions": 9.9375,
+            "normalQuestionsAll": 9.9375,
+            "normalLossQuestions": null,
+            "bossBattles": 24,
+            "bossWins": 24,
+            "bossWinRate": 1,
+            "bossQuestions": 13.375,
+            "bossQuestionsAll": 13.375,
+            "bossLossQuestions": null,
+            "clearQuestions": 33.25,
+            "hpRemaining": 0.8379976527940779,
+            "mpRemaining": 0.6233922829581995,
+            "consumablesPerClear": 0.9166666666666666,
+            "failedBeforeBoss": 0
+          }
+        },
+        {
+          "phase": "normal_hp_1",
+          "coefficients": {
+            "hp_rank_mul": 4.388,
+            "atk_rank_mul": 1.7,
+            "hp_boss_rank_mul": 0.634,
+            "atk_boss_rank_mul": 1.35
+          },
+          "result": {
+            "runs": 24,
+            "seed": 1237291,
+            "preparation": "standard",
+            "accuracy": 0.8,
+            "wins": 24,
+            "clearRate": 1,
+            "clearRateWilson95": [
+              0.8620194241710247,
+              1
+            ],
+            "normalBattles": 48,
+            "normalWins": 48,
+            "normalWinRate": 1,
+            "normalQuestions": 16.770833333333332,
+            "normalQuestionsAll": 16.770833333333332,
+            "normalLossQuestions": null,
+            "bossBattles": 24,
+            "bossWins": 24,
+            "bossWinRate": 1,
+            "bossQuestions": 19.458333333333332,
+            "bossQuestionsAll": 19.458333333333332,
+            "bossLossQuestions": null,
+            "clearQuestions": 53,
+            "hpRemaining": 0.8443734765730793,
+            "mpRemaining": 0.5106511254019293,
+            "consumablesPerClear": 1.5,
+            "failedBeforeBoss": 0
+          }
+        },
+        {
+          "phase": "boss_hp_1",
+          "coefficients": {
+            "hp_rank_mul": 4.388,
+            "atk_rank_mul": 1.7,
+            "hp_boss_rank_mul": 0.731,
+            "atk_boss_rank_mul": 1.35
+          },
+          "result": {
+            "runs": 24,
+            "seed": 1237291,
+            "preparation": "standard",
+            "accuracy": 0.8,
+            "wins": 24,
+            "clearRate": 1,
+            "clearRateWilson95": [
+              0.8620194241710247,
+              1
+            ],
+            "normalBattles": 48,
+            "normalWins": 48,
+            "normalWinRate": 1,
+            "normalQuestions": 16.770833333333332,
+            "normalQuestionsAll": 16.770833333333332,
+            "normalLossQuestions": null,
+            "bossBattles": 24,
+            "bossWins": 24,
+            "bossWinRate": 1,
+            "bossQuestions": 20.666666666666668,
+            "bossQuestionsAll": 20.666666666666668,
+            "bossLossQuestions": null,
+            "clearQuestions": 54.208333333333336,
+            "hpRemaining": 0.8295943546688332,
+            "mpRemaining": 0.4764201500535907,
+            "consumablesPerClear": 1.5833333333333333,
+            "failedBeforeBoss": 0
+          }
+        },
+        {
+          "phase": "boss_hp_2",
+          "coefficients": {
+            "hp_rank_mul": 4.388,
+            "atk_rank_mul": 1.7,
+            "hp_boss_rank_mul": 0.801,
+            "atk_boss_rank_mul": 1.35
+          },
+          "result": {
+            "runs": 24,
+            "seed": 1237291,
+            "preparation": "standard",
+            "accuracy": 0.8,
+            "wins": 24,
+            "clearRate": 1,
+            "clearRateWilson95": [
+              0.8620194241710247,
+              1
+            ],
+            "normalBattles": 48,
+            "normalWins": 48,
+            "normalWinRate": 1,
+            "normalQuestions": 16.770833333333332,
+            "normalQuestionsAll": 16.770833333333332,
+            "normalLossQuestions": null,
+            "bossBattles": 24,
+            "bossWins": 24,
+            "bossWinRate": 1,
+            "bossQuestions": 22,
+            "bossQuestionsAll": 22,
+            "bossLossQuestions": null,
+            "clearQuestions": 55.541666666666664,
+            "hpRemaining": 0.8451822093828052,
+            "mpRemaining": 0.46610396570203644,
+            "consumablesPerClear": 1.6666666666666667,
+            "failedBeforeBoss": 0
+          }
+        },
+        {
+          "phase": "boss_attack_1",
+          "coefficients": {
+            "hp_rank_mul": 4.388,
+            "atk_rank_mul": 1.7,
+            "hp_boss_rank_mul": 0.801,
+            "atk_boss_rank_mul": 2.025
+          },
+          "result": {
+            "runs": 24,
+            "seed": 1237291,
+            "preparation": "standard",
+            "accuracy": 0.8,
+            "wins": 22,
+            "clearRate": 0.9166666666666666,
+            "clearRateWilson95": [
+              0.741507847985494,
+              0.9768416721570266
+            ],
+            "normalBattles": 48,
+            "normalWins": 48,
+            "normalWinRate": 1,
+            "normalQuestions": 16.770833333333332,
+            "normalQuestionsAll": 16.770833333333332,
+            "normalLossQuestions": null,
+            "bossBattles": 24,
+            "bossWins": 22,
+            "bossWinRate": 0.9166666666666666,
+            "bossQuestions": 23.5,
+            "bossQuestionsAll": 23.416666666666668,
+            "bossLossQuestions": 22.5,
+            "clearQuestions": 56.86363636363637,
+            "hpRemaining": 0.7381429169368143,
+            "mpRemaining": 0.4345220695703011,
+            "consumablesPerClear": 2.409090909090909,
+            "failedBeforeBoss": 0
+          }
+        },
+        {
+          "phase": "boss_attack_2",
+          "coefficients": {
+            "hp_rank_mul": 4.388,
+            "atk_rank_mul": 1.7,
+            "hp_boss_rank_mul": 0.801,
+            "atk_boss_rank_mul": 3.037
+          },
+          "result": {
+            "runs": 24,
+            "seed": 1237291,
+            "preparation": "standard",
+            "accuracy": 0.8,
+            "wins": 14,
+            "clearRate": 0.5833333333333334,
+            "clearRateWilson95": [
+              0.3883433764938864,
+              0.7553265275346177
+            ],
+            "normalBattles": 48,
+            "normalWins": 48,
+            "normalWinRate": 1,
+            "normalQuestions": 16.770833333333332,
+            "normalQuestionsAll": 16.770833333333332,
+            "normalLossQuestions": null,
+            "bossBattles": 24,
+            "bossWins": 14,
+            "bossWinRate": 0.5833333333333334,
+            "bossQuestions": 25.428571428571427,
+            "bossQuestionsAll": 23.208333333333332,
+            "bossLossQuestions": 20.1,
+            "clearQuestions": 60,
+            "hpRemaining": 0.6373695817588568,
+            "mpRemaining": 0.3966467615985301,
+            "consumablesPerClear": 3.5,
+            "failedBeforeBoss": 0
+          }
+        },
+        {
+          "phase": "boss_attack_3",
+          "coefficients": {
+            "hp_rank_mul": 4.388,
+            "atk_rank_mul": 1.7,
+            "hp_boss_rank_mul": 0.801,
+            "atk_boss_rank_mul": 2.48
+          },
+          "result": {
+            "runs": 24,
+            "seed": 1237291,
+            "preparation": "standard",
+            "accuracy": 0.8,
+            "wins": 21,
+            "clearRate": 0.875,
+            "clearRateWilson95": [
+              0.6899571185214243,
+              0.9565574496068442
+            ],
+            "normalBattles": 48,
+            "normalWins": 48,
+            "normalWinRate": 1,
+            "normalQuestions": 16.770833333333332,
+            "normalQuestionsAll": 16.770833333333332,
+            "normalLossQuestions": null,
+            "bossBattles": 24,
+            "bossWins": 21,
+            "bossWinRate": 0.875,
+            "bossQuestions": 23.761904761904763,
+            "bossQuestionsAll": 23.333333333333332,
+            "bossLossQuestions": 20.333333333333332,
+            "clearQuestions": 57.19047619047619,
+            "hpRemaining": 0.694858931204512,
+            "mpRemaining": 0.4297197978870005,
+            "consumablesPerClear": 2.7142857142857144,
+            "failedBeforeBoss": 0
+          }
+        },
+        {
+          "phase": "boss_attack_4",
+          "coefficients": {
+            "hp_rank_mul": 4.388,
+            "atk_rank_mul": 1.7,
+            "hp_boss_rank_mul": 0.801,
+            "atk_boss_rank_mul": 2.744
+          },
+          "result": {
+            "runs": 24,
+            "seed": 1237291,
+            "preparation": "standard",
+            "accuracy": 0.8,
+            "wins": 17,
+            "clearRate": 0.7083333333333334,
+            "clearRateWilson95": [
+              0.508319363412903,
+              0.8508553966583573
+            ],
+            "normalBattles": 48,
+            "normalWins": 48,
+            "normalWinRate": 1,
+            "normalQuestions": 16.770833333333332,
+            "normalQuestionsAll": 16.770833333333332,
+            "normalLossQuestions": null,
+            "bossBattles": 24,
+            "bossWins": 17,
+            "bossWinRate": 0.7083333333333334,
+            "bossQuestions": 24.705882352941178,
+            "bossQuestionsAll": 23.291666666666668,
+            "bossLossQuestions": 19.857142857142858,
+            "clearQuestions": 58.588235294117645,
+            "hpRemaining": 0.7165350567418445,
+            "mpRemaining": 0.41687157177983736,
+            "consumablesPerClear": 3.0588235294117645,
+            "failedBeforeBoss": 0
+          }
+        },
+        {
+          "phase": "boss_attack_5",
+          "coefficients": {
+            "hp_rank_mul": 4.388,
+            "atk_rank_mul": 1.7,
+            "hp_boss_rank_mul": 0.801,
+            "atk_boss_rank_mul": 2.609
+          },
+          "result": {
+            "runs": 24,
+            "seed": 1237291,
+            "preparation": "standard",
+            "accuracy": 0.8,
+            "wins": 18,
+            "clearRate": 0.75,
+            "clearRateWilson95": [
+              0.5510017468789357,
+              0.8800079652065766
+            ],
+            "normalBattles": 48,
+            "normalWins": 48,
+            "normalWinRate": 1,
+            "normalQuestions": 16.770833333333332,
+            "normalQuestionsAll": 16.770833333333332,
+            "normalLossQuestions": null,
+            "bossBattles": 24,
+            "bossWins": 18,
+            "bossWinRate": 0.75,
+            "bossQuestions": 24,
+            "bossQuestionsAll": 23.666666666666668,
+            "bossLossQuestions": 22.666666666666668,
+            "clearQuestions": 57.55555555555556,
+            "hpRemaining": 0.7475800708174095,
+            "mpRemaining": 0.43372633083244017,
+            "consumablesPerClear": 2.9444444444444446,
+            "failedBeforeBoss": 0
+          }
+        }
+      ]
+    },
+    {
+      "star": 11,
+      "dungeonId": "heaven_temple",
+      "target": {
+        "normalQuestions": 17,
+        "bossQuestions": 23,
+        "normalWinRate": 0.97,
+        "clear": 0.75
+      },
+      "initial": {
+        "hp_rank_mul": 2.84,
+        "atk_rank_mul": 1.7,
+        "hp_boss_rank_mul": 1,
+        "atk_boss_rank_mul": 1.35
+      },
+      "selected": {
+        "hp_rank_mul": 4.04,
+        "atk_rank_mul": 1.7,
+        "hp_boss_rank_mul": 0.644,
+        "atk_boss_rank_mul": 3.361
+      },
+      "fixture": {
+        "rank": 11,
+        "level": 73,
+        "stage": 4,
+        "itemCap": 104,
+        "enhancement": 2,
+        "assembly": {
+          "gold": 202220,
+          "byPurpose": {
+            "craft": 166880,
+            "enhance": 19360,
+            "enchant": 12800,
+            "items": 3180
+          },
+          "materials": {
+            "exp_r11_amorphous_mat": 112,
+            "enhancement_stone": 56,
+            "blooming_hill_boss_mat": 8
+          },
+          "ap": {
+            "m1": {
+              "warrior": 180
+            },
+            "m2": {
+              "knight": 180
+            },
+            "m3": {
+              "black_mage": 180
+            },
+            "m4": {
+              "white_mage": 180
+            }
+          },
+          "jp": 0
+        }
+      },
+      "baseline": {
+        "runs": 24,
+        "seed": 1342020,
+        "preparation": "standard",
+        "accuracy": 0.8,
+        "wins": 24,
+        "clearRate": 1,
+        "clearRateWilson95": [
+          0.8620194241710247,
+          1
+        ],
+        "normalBattles": 48,
+        "normalWins": 48,
+        "normalWinRate": 1,
+        "normalQuestions": 11.229166666666666,
+        "normalQuestionsAll": 11.229166666666666,
+        "normalLossQuestions": null,
+        "bossBattles": 24,
+        "bossWins": 24,
+        "bossWinRate": 1,
+        "bossQuestions": 18.583333333333332,
+        "bossQuestionsAll": 18.583333333333332,
+        "bossLossQuestions": null,
+        "clearQuestions": 41.041666666666664,
+        "hpRemaining": 0.9126190863936162,
+        "mpRemaining": 0.5859144542772861,
+        "consumablesPerClear": 0.6666666666666666,
+        "failedBeforeBoss": 0
+      },
+      "standard": {
+        "runs": 24,
+        "seed": 1342020,
+        "preparation": "standard",
+        "accuracy": 0.8,
+        "wins": 18,
+        "clearRate": 0.75,
+        "clearRateWilson95": [
+          0.5510017468789357,
+          0.8800079652065766
+        ],
+        "normalBattles": 48,
+        "normalWins": 48,
+        "normalWinRate": 1,
+        "normalQuestions": 17.729166666666668,
+        "normalQuestionsAll": 17.729166666666668,
+        "normalLossQuestions": null,
+        "bossBattles": 24,
+        "bossWins": 18,
+        "bossWinRate": 0.75,
+        "bossQuestions": 26.5,
+        "bossQuestionsAll": 24.375,
+        "bossLossQuestions": 18,
+        "clearQuestions": 61.833333333333336,
+        "hpRemaining": 0.7312108134516734,
+        "mpRemaining": 0.428220255653884,
+        "consumablesPerClear": 1.8888888888888888,
+        "failedBeforeBoss": 0
+      },
+      "prepared": {
+        "runs": 12,
+        "seed": 1792384265,
+        "preparation": "prepared",
+        "accuracy": 0.8,
+        "wins": 12,
+        "clearRate": 1,
+        "clearRateWilson95": [
+          0.7574992425007574,
+          1
+        ],
+        "normalBattles": 24,
+        "normalWins": 24,
+        "normalWinRate": 1,
+        "normalQuestions": 15.25,
+        "normalQuestionsAll": 15.25,
+        "normalLossQuestions": null,
+        "bossBattles": 12,
+        "bossWins": 12,
+        "bossWinRate": 1,
+        "bossQuestions": 16.666666666666668,
+        "bossQuestionsAll": 16.666666666666668,
+        "bossLossQuestions": null,
+        "clearQuestions": 47.166666666666664,
+        "hpRemaining": 0.8683060554243683,
+        "mpRemaining": 0.6082841691248771,
+        "consumablesPerClear": 0.5,
+        "failedBeforeBoss": 0
+      },
+      "warnings": [],
+      "history": [
+        {
+          "phase": "baseline",
+          "coefficients": {
+            "hp_rank_mul": 2.84,
+            "atk_rank_mul": 1.7,
+            "hp_boss_rank_mul": 1,
+            "atk_boss_rank_mul": 1.35
+          },
+          "result": {
+            "runs": 24,
+            "seed": 1342020,
+            "preparation": "standard",
+            "accuracy": 0.8,
+            "wins": 24,
+            "clearRate": 1,
+            "clearRateWilson95": [
+              0.8620194241710247,
+              1
+            ],
+            "normalBattles": 48,
+            "normalWins": 48,
+            "normalWinRate": 1,
+            "normalQuestions": 11.229166666666666,
+            "normalQuestionsAll": 11.229166666666666,
+            "normalLossQuestions": null,
+            "bossBattles": 24,
+            "bossWins": 24,
+            "bossWinRate": 1,
+            "bossQuestions": 18.583333333333332,
+            "bossQuestionsAll": 18.583333333333332,
+            "bossLossQuestions": null,
+            "clearQuestions": 41.041666666666664,
+            "hpRemaining": 0.9126190863936162,
+            "mpRemaining": 0.5859144542772861,
+            "consumablesPerClear": 0.6666666666666666,
+            "failedBeforeBoss": 0
+          }
+        },
+        {
+          "phase": "normal_hp_1",
+          "coefficients": {
+            "hp_rank_mul": 4.04,
+            "atk_rank_mul": 1.7,
+            "hp_boss_rank_mul": 0.703,
+            "atk_boss_rank_mul": 1.35
+          },
+          "result": {
+            "runs": 24,
+            "seed": 1342020,
+            "preparation": "standard",
+            "accuracy": 0.8,
+            "wins": 24,
+            "clearRate": 1,
+            "clearRateWilson95": [
+              0.8620194241710247,
+              1
+            ],
+            "normalBattles": 48,
+            "normalWins": 48,
+            "normalWinRate": 1,
+            "normalQuestions": 17.729166666666668,
+            "normalQuestionsAll": 17.729166666666668,
+            "normalLossQuestions": null,
+            "bossBattles": 24,
+            "bossWins": 24,
+            "bossWinRate": 1,
+            "bossQuestions": 25.5,
+            "bossQuestionsAll": 25.5,
+            "bossLossQuestions": null,
+            "clearQuestions": 60.958333333333336,
+            "hpRemaining": 0.8435320142225117,
+            "mpRemaining": 0.48764749262536883,
+            "consumablesPerClear": 0.9583333333333334,
+            "failedBeforeBoss": 0
+          }
+        },
+        {
+          "phase": "boss_hp_1",
+          "coefficients": {
+            "hp_rank_mul": 4.04,
+            "atk_rank_mul": 1.7,
+            "hp_boss_rank_mul": 0.644,
+            "atk_boss_rank_mul": 1.35
+          },
+          "result": {
+            "runs": 24,
+            "seed": 1342020,
+            "preparation": "standard",
+            "accuracy": 0.8,
+            "wins": 24,
+            "clearRate": 1,
+            "clearRateWilson95": [
+              0.8620194241710247,
+              1
+            ],
+            "normalBattles": 48,
+            "normalWins": 48,
+            "normalWinRate": 1,
+            "normalQuestions": 17.729166666666668,
+            "normalQuestionsAll": 17.729166666666668,
+            "normalLossQuestions": null,
+            "bossBattles": 24,
+            "bossWins": 24,
+            "bossWinRate": 1,
+            "bossQuestions": 24.208333333333332,
+            "bossQuestionsAll": 24.208333333333332,
+            "bossLossQuestions": null,
+            "clearQuestions": 59.666666666666664,
+            "hpRemaining": 0.8306292918600547,
+            "mpRemaining": 0.49022861356932146,
+            "consumablesPerClear": 0.875,
+            "failedBeforeBoss": 0
+          }
+        },
+        {
+          "phase": "boss_attack_1",
+          "coefficients": {
+            "hp_rank_mul": 4.04,
+            "atk_rank_mul": 1.7,
+            "hp_boss_rank_mul": 0.644,
+            "atk_boss_rank_mul": 2.025
+          },
+          "result": {
+            "runs": 24,
+            "seed": 1342020,
+            "preparation": "standard",
+            "accuracy": 0.8,
+            "wins": 23,
+            "clearRate": 0.9583333333333334,
+            "clearRateWilson95": [
+              0.7975777375115778,
+              0.992606734645195
+            ],
+            "normalBattles": 48,
+            "normalWins": 48,
+            "normalWinRate": 1,
+            "normalQuestions": 17.729166666666668,
+            "normalQuestionsAll": 17.729166666666668,
+            "normalLossQuestions": null,
+            "bossBattles": 24,
+            "bossWins": 23,
+            "bossWinRate": 0.9583333333333334,
+            "bossQuestions": 25.043478260869566,
+            "bossQuestionsAll": 25.041666666666668,
+            "bossLossQuestions": 25,
+            "clearQuestions": 60.30434782608695,
+            "hpRemaining": 0.8663364759278206,
+            "mpRemaining": 0.4663332050788765,
+            "consumablesPerClear": 1.391304347826087,
+            "failedBeforeBoss": 0
+          }
+        },
+        {
+          "phase": "boss_attack_2",
+          "coefficients": {
+            "hp_rank_mul": 4.04,
+            "atk_rank_mul": 1.7,
+            "hp_boss_rank_mul": 0.644,
+            "atk_boss_rank_mul": 3.037
+          },
+          "result": {
+            "runs": 24,
+            "seed": 1342020,
+            "preparation": "standard",
+            "accuracy": 0.8,
+            "wins": 19,
+            "clearRate": 0.7916666666666666,
+            "clearRateWilson95": [
+              0.5952915551476452,
+              0.9075531089521192
+            ],
+            "normalBattles": 48,
+            "normalWins": 48,
+            "normalWinRate": 1,
+            "normalQuestions": 17.729166666666668,
+            "normalQuestionsAll": 17.729166666666668,
+            "normalLossQuestions": null,
+            "bossBattles": 24,
+            "bossWins": 19,
+            "bossWinRate": 0.7916666666666666,
+            "bossQuestions": 25.36842105263158,
+            "bossQuestionsAll": 23.916666666666668,
+            "bossLossQuestions": 18.4,
+            "clearQuestions": 61.36842105263158,
+            "hpRemaining": 0.6533069911159302,
+            "mpRemaining": 0.4347927340475081,
+            "consumablesPerClear": 2.1052631578947367,
+            "failedBeforeBoss": 0
+          }
+        },
+        {
+          "phase": "boss_attack_3",
+          "coefficients": {
+            "hp_rank_mul": 4.04,
+            "atk_rank_mul": 1.7,
+            "hp_boss_rank_mul": 0.644,
+            "atk_boss_rank_mul": 4.556
+          },
+          "result": {
+            "runs": 24,
+            "seed": 1342020,
+            "preparation": "standard",
+            "accuracy": 0.8,
+            "wins": 10,
+            "clearRate": 0.4166666666666667,
+            "clearRateWilson95": [
+              0.24467347246538232,
+              0.6116566235061137
+            ],
+            "normalBattles": 48,
+            "normalWins": 48,
+            "normalWinRate": 1,
+            "normalQuestions": 17.729166666666668,
+            "normalQuestionsAll": 17.729166666666668,
+            "normalLossQuestions": null,
+            "bossBattles": 24,
+            "bossWins": 10,
+            "bossWinRate": 0.4166666666666667,
+            "bossQuestions": 26,
+            "bossQuestionsAll": 21.791666666666668,
+            "bossLossQuestions": 18.785714285714285,
+            "clearQuestions": 61.8,
+            "hpRemaining": 0.6082403713052684,
+            "mpRemaining": 0.3707964601769911,
+            "consumablesPerClear": 2,
+            "failedBeforeBoss": 0
+          }
+        },
+        {
+          "phase": "boss_attack_4",
+          "coefficients": {
+            "hp_rank_mul": 4.04,
+            "atk_rank_mul": 1.7,
+            "hp_boss_rank_mul": 0.644,
+            "atk_boss_rank_mul": 3.72
+          },
+          "result": {
+            "runs": 24,
+            "seed": 1342020,
+            "preparation": "standard",
+            "accuracy": 0.8,
+            "wins": 14,
+            "clearRate": 0.5833333333333334,
+            "clearRateWilson95": [
+              0.3883433764938864,
+              0.7553265275346177
+            ],
+            "normalBattles": 48,
+            "normalWins": 48,
+            "normalWinRate": 1,
+            "normalQuestions": 17.729166666666668,
+            "normalQuestionsAll": 17.729166666666668,
+            "normalLossQuestions": null,
+            "bossBattles": 24,
+            "bossWins": 14,
+            "bossWinRate": 0.5833333333333334,
+            "bossQuestions": 25.357142857142858,
+            "bossQuestionsAll": 22.958333333333332,
+            "bossLossQuestions": 19.6,
+            "clearQuestions": 61,
+            "hpRemaining": 0.6910965835727662,
+            "mpRemaining": 0.4274125579435314,
+            "consumablesPerClear": 2.2142857142857144,
+            "failedBeforeBoss": 0
+          }
+        },
+        {
+          "phase": "boss_attack_5",
+          "coefficients": {
+            "hp_rank_mul": 4.04,
+            "atk_rank_mul": 1.7,
+            "hp_boss_rank_mul": 0.644,
+            "atk_boss_rank_mul": 3.361
+          },
+          "result": {
+            "runs": 24,
+            "seed": 1342020,
+            "preparation": "standard",
+            "accuracy": 0.8,
+            "wins": 18,
+            "clearRate": 0.75,
+            "clearRateWilson95": [
+              0.5510017468789357,
+              0.8800079652065766
+            ],
+            "normalBattles": 48,
+            "normalWins": 48,
+            "normalWinRate": 1,
+            "normalQuestions": 17.729166666666668,
+            "normalQuestionsAll": 17.729166666666668,
+            "normalLossQuestions": null,
+            "bossBattles": 24,
+            "bossWins": 18,
+            "bossWinRate": 0.75,
+            "bossQuestions": 26.5,
+            "bossQuestionsAll": 24.375,
+            "bossLossQuestions": 18,
+            "clearQuestions": 61.833333333333336,
+            "hpRemaining": 0.7312108134516734,
+            "mpRemaining": 0.428220255653884,
+            "consumablesPerClear": 1.8888888888888888,
+            "failedBeforeBoss": 0
+          }
+        }
+      ]
+    },
+    {
+      "star": 12,
+      "dungeonId": "world_tree_top",
+      "target": {
+        "normalQuestions": 17,
+        "bossQuestions": 23,
+        "normalWinRate": 0.97,
+        "clear": 0.75
+      },
+      "initial": {
+        "hp_rank_mul": 3.25,
+        "atk_rank_mul": 1.8,
+        "hp_boss_rank_mul": 1,
+        "atk_boss_rank_mul": 1.35
+      },
+      "selected": {
+        "hp_rank_mul": 4.251,
+        "atk_rank_mul": 1.8,
+        "hp_boss_rank_mul": 0.717,
+        "atk_boss_rank_mul": 3.037
+      },
+      "fixture": {
+        "rank": 12,
+        "level": 80,
+        "stage": 5,
+        "itemCap": 114,
+        "enhancement": 3,
+        "assembly": {
+          "gold": 322412,
+          "byPurpose": {
+            "craft": 258720,
+            "enhance": 45632,
+            "enchant": 14880,
+            "items": 3180
+          },
+          "materials": {
+            "exp_r12_amorphous_mat": 112,
+            "enhancement_stone": 84,
+            "blooming_hill_boss_mat": 8
+          },
+          "ap": {
+            "m1": {
+              "warrior": 315
+            },
+            "m2": {
+              "knight": 315
+            },
+            "m3": {
+              "black_mage": 315
+            },
+            "m4": {
+              "white_mage": 315
+            }
+          },
+          "jp": 0
+        }
+      },
+      "baseline": {
+        "runs": 24,
+        "seed": 1446749,
+        "preparation": "standard",
+        "accuracy": 0.8,
+        "wins": 24,
+        "clearRate": 1,
+        "clearRateWilson95": [
+          0.8620194241710247,
+          1
+        ],
+        "normalBattles": 48,
+        "normalWins": 48,
+        "normalWinRate": 1,
+        "normalQuestions": 12.395833333333334,
+        "normalQuestionsAll": 12.395833333333334,
+        "normalLossQuestions": null,
+        "bossBattles": 24,
+        "bossWins": 24,
+        "bossWinRate": 1,
+        "bossQuestions": 19.5,
+        "bossQuestionsAll": 19.5,
+        "bossLossQuestions": null,
+        "clearQuestions": 44.291666666666664,
+        "hpRemaining": 0.8707049172152402,
+        "mpRemaining": 0.5602293369663943,
+        "consumablesPerClear": 0.5,
+        "failedBeforeBoss": 0
+      },
+      "standard": {
+        "runs": 24,
+        "seed": 1446749,
+        "preparation": "standard",
+        "accuracy": 0.8,
+        "wins": 18,
+        "clearRate": 0.75,
+        "clearRateWilson95": [
+          0.5510017468789357,
+          0.8800079652065766
+        ],
+        "normalBattles": 48,
+        "normalWins": 48,
+        "normalWinRate": 1,
+        "normalQuestions": 17.166666666666668,
+        "normalQuestionsAll": 17.166666666666668,
+        "normalLossQuestions": null,
+        "bossBattles": 24,
+        "bossWins": 18,
+        "bossWinRate": 0.75,
+        "bossQuestions": 24.833333333333332,
+        "bossQuestionsAll": 25.208333333333332,
+        "bossLossQuestions": 26.333333333333332,
+        "clearQuestions": 59.111111111111114,
+        "hpRemaining": 0.7880406084844368,
+        "mpRemaining": 0.4604904632152588,
+        "consumablesPerClear": 1.8333333333333333,
+        "failedBeforeBoss": 0
+      },
+      "prepared": {
+        "runs": 12,
+        "seed": 1792537616,
+        "preparation": "prepared",
+        "accuracy": 0.8,
+        "wins": 12,
+        "clearRate": 1,
+        "clearRateWilson95": [
+          0.7574992425007574,
+          1
+        ],
+        "normalBattles": 24,
+        "normalWins": 24,
+        "normalWinRate": 1,
+        "normalQuestions": 17.166666666666668,
+        "normalQuestionsAll": 17.166666666666668,
+        "normalLossQuestions": null,
+        "bossBattles": 12,
+        "bossWins": 12,
+        "bossWinRate": 1,
+        "bossQuestions": 18.833333333333332,
+        "bossQuestionsAll": 18.833333333333332,
+        "bossLossQuestions": null,
+        "clearQuestions": 53.166666666666664,
+        "hpRemaining": 0.8730799920207462,
+        "mpRemaining": 0.639872842870118,
+        "consumablesPerClear": 0,
+        "failedBeforeBoss": 0
+      },
+      "warnings": [
+        "敗戦を含むボス問題数が20〜25問の範囲外。"
+      ],
+      "history": [
+        {
+          "phase": "baseline",
+          "coefficients": {
+            "hp_rank_mul": 3.25,
+            "atk_rank_mul": 1.8,
+            "hp_boss_rank_mul": 1,
+            "atk_boss_rank_mul": 1.35
+          },
+          "result": {
+            "runs": 24,
+            "seed": 1446749,
+            "preparation": "standard",
+            "accuracy": 0.8,
+            "wins": 24,
+            "clearRate": 1,
+            "clearRateWilson95": [
+              0.8620194241710247,
+              1
+            ],
+            "normalBattles": 48,
+            "normalWins": 48,
+            "normalWinRate": 1,
+            "normalQuestions": 12.395833333333334,
+            "normalQuestionsAll": 12.395833333333334,
+            "normalLossQuestions": null,
+            "bossBattles": 24,
+            "bossWins": 24,
+            "bossWinRate": 1,
+            "bossQuestions": 19.5,
+            "bossQuestionsAll": 19.5,
+            "bossLossQuestions": null,
+            "clearQuestions": 44.291666666666664,
+            "hpRemaining": 0.8707049172152402,
+            "mpRemaining": 0.5602293369663943,
+            "consumablesPerClear": 0.5,
+            "failedBeforeBoss": 0
+          }
+        },
+        {
+          "phase": "normal_hp_1",
+          "coefficients": {
+            "hp_rank_mul": 4.251,
+            "atk_rank_mul": 1.8,
+            "hp_boss_rank_mul": 0.765,
+            "atk_boss_rank_mul": 1.35
+          },
+          "result": {
+            "runs": 24,
+            "seed": 1446749,
+            "preparation": "standard",
+            "accuracy": 0.8,
+            "wins": 24,
+            "clearRate": 1,
+            "clearRateWilson95": [
+              0.8620194241710247,
+              1
+            ],
+            "normalBattles": 48,
+            "normalWins": 48,
+            "normalWinRate": 1,
+            "normalQuestions": 17.166666666666668,
+            "normalQuestionsAll": 17.166666666666668,
+            "normalLossQuestions": null,
+            "bossBattles": 24,
+            "bossWins": 24,
+            "bossWinRate": 1,
+            "bossQuestions": 24.833333333333332,
+            "bossQuestionsAll": 24.833333333333332,
+            "bossLossQuestions": null,
+            "clearQuestions": 59.166666666666664,
+            "hpRemaining": 0.8555369479541519,
+            "mpRemaining": 0.4872842870118074,
+            "consumablesPerClear": 1.125,
+            "failedBeforeBoss": 0
+          }
+        },
+        {
+          "phase": "boss_hp_1",
+          "coefficients": {
+            "hp_rank_mul": 4.251,
+            "atk_rank_mul": 1.8,
+            "hp_boss_rank_mul": 0.717,
+            "atk_boss_rank_mul": 1.35
+          },
+          "result": {
+            "runs": 24,
+            "seed": 1446749,
+            "preparation": "standard",
+            "accuracy": 0.8,
+            "wins": 24,
+            "clearRate": 1,
+            "clearRateWilson95": [
+              0.8620194241710247,
+              1
+            ],
+            "normalBattles": 48,
+            "normalWins": 48,
+            "normalWinRate": 1,
+            "normalQuestions": 17.166666666666668,
+            "normalQuestionsAll": 17.166666666666668,
+            "normalLossQuestions": null,
+            "bossBattles": 24,
+            "bossWins": 24,
+            "bossWinRate": 1,
+            "bossQuestions": 23.541666666666668,
+            "bossQuestionsAll": 23.541666666666668,
+            "bossLossQuestions": null,
+            "clearQuestions": 57.875,
+            "hpRemaining": 0.8758778117083907,
+            "mpRemaining": 0.48751135331516804,
+            "consumablesPerClear": 1.0416666666666667,
+            "failedBeforeBoss": 0
+          }
+        },
+        {
+          "phase": "boss_attack_1",
+          "coefficients": {
+            "hp_rank_mul": 4.251,
+            "atk_rank_mul": 1.8,
+            "hp_boss_rank_mul": 0.717,
+            "atk_boss_rank_mul": 2.025
+          },
+          "result": {
+            "runs": 24,
+            "seed": 1446749,
+            "preparation": "standard",
+            "accuracy": 0.8,
+            "wins": 23,
+            "clearRate": 0.9583333333333334,
+            "clearRateWilson95": [
+              0.7975777375115778,
+              0.992606734645195
+            ],
+            "normalBattles": 48,
+            "normalWins": 48,
+            "normalWinRate": 1,
+            "normalQuestions": 17.166666666666668,
+            "normalQuestionsAll": 17.166666666666668,
+            "normalLossQuestions": null,
+            "bossBattles": 24,
+            "bossWins": 23,
+            "bossWinRate": 0.9583333333333334,
+            "bossQuestions": 25.26086956521739,
+            "bossQuestionsAll": 24.958333333333332,
+            "bossLossQuestions": 18,
+            "clearQuestions": 59.30434782608695,
+            "hpRemaining": 0.7799417167538312,
+            "mpRemaining": 0.4809856652055444,
+            "consumablesPerClear": 1.6521739130434783,
+            "failedBeforeBoss": 0
+          }
+        },
+        {
+          "phase": "boss_attack_2",
+          "coefficients": {
+            "hp_rank_mul": 4.251,
+            "atk_rank_mul": 1.8,
+            "hp_boss_rank_mul": 0.717,
+            "atk_boss_rank_mul": 3.037
+          },
+          "result": {
+            "runs": 24,
+            "seed": 1446749,
+            "preparation": "standard",
+            "accuracy": 0.8,
+            "wins": 18,
+            "clearRate": 0.75,
+            "clearRateWilson95": [
+              0.5510017468789357,
+              0.8800079652065766
+            ],
+            "normalBattles": 48,
+            "normalWins": 48,
+            "normalWinRate": 1,
+            "normalQuestions": 17.166666666666668,
+            "normalQuestionsAll": 17.166666666666668,
+            "normalLossQuestions": null,
+            "bossBattles": 24,
+            "bossWins": 18,
+            "bossWinRate": 0.75,
+            "bossQuestions": 24.833333333333332,
+            "bossQuestionsAll": 25.208333333333332,
+            "bossLossQuestions": 26.333333333333332,
+            "clearQuestions": 59.111111111111114,
+            "hpRemaining": 0.7880406084844368,
+            "mpRemaining": 0.4604904632152588,
+            "consumablesPerClear": 1.8333333333333333,
+            "failedBeforeBoss": 0
+          }
+        },
+        {
+          "phase": "boss_attack_3",
+          "coefficients": {
+            "hp_rank_mul": 4.251,
+            "atk_rank_mul": 1.8,
+            "hp_boss_rank_mul": 0.717,
+            "atk_boss_rank_mul": 4.556
+          },
+          "result": {
+            "runs": 24,
+            "seed": 1446749,
+            "preparation": "standard",
+            "accuracy": 0.8,
+            "wins": 7,
+            "clearRate": 0.2916666666666667,
+            "clearRateWilson95": [
+              0.14914460334164278,
+              0.49168063658709704
+            ],
+            "normalBattles": 48,
+            "normalWins": 48,
+            "normalWinRate": 1,
+            "normalQuestions": 17.166666666666668,
+            "normalQuestionsAll": 17.166666666666668,
+            "normalLossQuestions": null,
+            "bossBattles": 24,
+            "bossWins": 7,
+            "bossWinRate": 0.2916666666666667,
+            "bossQuestions": 26.285714285714285,
+            "bossQuestionsAll": 21.833333333333332,
+            "bossLossQuestions": 20,
+            "clearQuestions": 60.285714285714285,
+            "hpRemaining": 0.3624967940497564,
+            "mpRemaining": 0.3538341767224601,
+            "consumablesPerClear": 3.5714285714285716,
+            "failedBeforeBoss": 0
+          }
+        },
+        {
+          "phase": "boss_attack_4",
+          "coefficients": {
+            "hp_rank_mul": 4.251,
+            "atk_rank_mul": 1.8,
+            "hp_boss_rank_mul": 0.717,
+            "atk_boss_rank_mul": 3.72
+          },
+          "result": {
+            "runs": 24,
+            "seed": 1446749,
+            "preparation": "standard",
+            "accuracy": 0.8,
+            "wins": 15,
+            "clearRate": 0.625,
+            "clearRateWilson95": [
+              0.42709619037907065,
+              0.7884086656636855
+            ],
+            "normalBattles": 48,
+            "normalWins": 48,
+            "normalWinRate": 1,
+            "normalQuestions": 17.166666666666668,
+            "normalQuestionsAll": 17.166666666666668,
+            "normalLossQuestions": null,
+            "bossBattles": 24,
+            "bossWins": 15,
+            "bossWinRate": 0.625,
+            "bossQuestions": 26.333333333333332,
+            "bossQuestionsAll": 24.875,
+            "bossLossQuestions": 22.444444444444443,
+            "clearQuestions": 62.333333333333336,
+            "hpRemaining": 0.5442000797925394,
+            "mpRemaining": 0.4163487738419619,
+            "consumablesPerClear": 2.933333333333333,
+            "failedBeforeBoss": 0
+          }
+        },
+        {
+          "phase": "boss_attack_5",
+          "coefficients": {
+            "hp_rank_mul": 4.251,
+            "atk_rank_mul": 1.8,
+            "hp_boss_rank_mul": 0.717,
+            "atk_boss_rank_mul": 3.361
+          },
+          "result": {
+            "runs": 24,
+            "seed": 1446749,
+            "preparation": "standard",
+            "accuracy": 0.8,
+            "wins": 18,
+            "clearRate": 0.75,
+            "clearRateWilson95": [
+              0.5510017468789357,
+              0.8800079652065766
+            ],
+            "normalBattles": 48,
+            "normalWins": 48,
+            "normalWinRate": 1,
+            "normalQuestions": 17.166666666666668,
+            "normalQuestionsAll": 17.166666666666668,
+            "normalLossQuestions": null,
+            "bossBattles": 24,
+            "bossWins": 18,
+            "bossWinRate": 0.75,
+            "bossQuestions": 26.11111111111111,
+            "bossQuestionsAll": 25.666666666666668,
+            "bossLossQuestions": 24.333333333333332,
+            "clearQuestions": 60.333333333333336,
+            "hpRemaining": 0.6241771394374624,
+            "mpRemaining": 0.4502724795640327,
+            "consumablesPerClear": 2.8333333333333335,
+            "failedBeforeBoss": 0
+          }
+        }
+      ]
+    }
+  ],
+  "extraChecks": [
+    {
+      "star": 1,
+      "phase": "beginner_exception_prepared",
+      "result": {
+        "runs": 12,
+        "seed": 1791334407,
+        "preparation": "prepared",
+        "accuracy": 0.8,
+        "wins": 10,
+        "clearRate": 0.8333333333333334,
+        "clearRateWilson95": [
+          0.5519636426153274,
+          0.9530358523851776
+        ],
+        "normalBattles": 24,
+        "normalWins": 24,
+        "normalWinRate": 1,
+        "normalQuestions": 17.541666666666668,
+        "normalQuestionsAll": 17.541666666666668,
+        "normalLossQuestions": null,
+        "bossBattles": 12,
+        "bossWins": 10,
+        "bossWinRate": 0.8333333333333334,
+        "bossQuestions": 22.4,
+        "bossQuestionsAll": 22.416666666666668,
+        "bossLossQuestions": 22.5,
+        "clearQuestions": 58.2,
+        "hpRemaining": 0.5638566752868919,
+        "mpRemaining": 0.4087301587301587,
+        "consumablesPerClear": 3.7,
+        "failedBeforeBoss": 0
+      }
+    }
+  ],
+  "totalCalibrationAttempts": 2292
+}

@@ -1,0 +1,1424 @@
+{
+  "schema": 1,
+  "engine": "game/js/battle.js",
+  "sourceSha256": "6660ca1aaee7d83d8479728cc6691ae22973e2d0a02594bd1c85397e21f45a2e",
+  "override": {},
+  "assumptions": {
+    "policy": "fixed heuristics; no future RNG inspection; known weaknesses; finite items incl. intermission; natural bounty encounters; no retreat",
+    "gear": "legal craft/enchant/skill APIs; same base item level, quality 1.15, enhancement +0 to +3 between preparation variants; fixture assembly budget recorded separately",
+    "rewards": "battle loot only; XP learning multiplier 1.0; quests and monthly fees excluded; counts are drops before backpack selection; wipes rollback rewards and consumable costs",
+    "timing": "6 seconds per answer including operation/animation plus 30 seconds; not a browser timing measurement"
+  },
+  "scenarios": [
+    {
+      "dungeonId": "mossy_cave",
+      "star": 1,
+      "profile": "balanced",
+      "preparation": "standard",
+      "accuracy": 0.65,
+      "season": "spring",
+      "seed": 1217071,
+      "runs": 40,
+      "wins": 21,
+      "fixture": {
+        "level": 3,
+        "stage": 1,
+        "itemCap": 4,
+        "enhancement": 0,
+        "assembly": {
+          "gold": 2120,
+          "byPurpose": {
+            "craft": 1120,
+            "enchant": 800,
+            "items": 200
+          },
+          "materials": {
+            "cave_bat_mat": 112,
+            "blooming_hill_boss_mat": 8
+          },
+          "ap": {
+            "m1": {},
+            "m2": {},
+            "m3": {},
+            "m4": {}
+          },
+          "jp": 0
+        },
+        "initialItems": {
+          "potion": 3,
+          "ether": 2,
+          "revive_salts": 1,
+          "antidote": 2
+        }
+      },
+      "clearRate": 0.525,
+      "normalWinRate": 1,
+      "bossWinRate": 0.5526315789473685,
+      "normalBattles": 77,
+      "normalWins": 77,
+      "bossAttempts": 38,
+      "failedBeforeBoss": 2,
+      "failedInNormalBattle": 0,
+      "failedAtBoss": 17,
+      "failedAtBounty": 2,
+      "bountyEncounters": 3,
+      "bountyWinRate": 0.3333333333333333,
+      "normalQuestions": 21.766233766233768,
+      "bossQuestions": 25.80952380952381,
+      "normalQuestionsAll": 21.766233766233768,
+      "bossQuestionsAll": 23.394736842105264,
+      "bossLossQuestions": 20.41176470588235,
+      "clearQuestions": 68.28571428571429,
+      "clearQuestionsP90": 77,
+      "estimatedClearMinutes": 7.32857142857143,
+      "hpRemaining": 0.5586310766697646,
+      "mpRemaining": 0.3448221935228054,
+      "consumables": 4.9523809523809526,
+      "goldPerClear": 153.76190476190476,
+      "netGoldBeforeFees": 10.571428571428571,
+      "xpPerMemberPerClear": 182,
+      "apPerMemberPerClear": 7.666666666666667,
+      "materialsPerClear": 6.666666666666667,
+      "gearPerClear": 1.9047619047619047
+    },
+    {
+      "dungeonId": "mossy_cave",
+      "star": 1,
+      "profile": "balanced",
+      "preparation": "standard",
+      "accuracy": 0.8,
+      "season": "spring",
+      "seed": 1217071,
+      "runs": 40,
+      "wins": 29,
+      "fixture": {
+        "level": 3,
+        "stage": 1,
+        "itemCap": 4,
+        "enhancement": 0,
+        "assembly": {
+          "gold": 2120,
+          "byPurpose": {
+            "craft": 1120,
+            "enchant": 800,
+            "items": 200
+          },
+          "materials": {
+            "cave_bat_mat": 112,
+            "blooming_hill_boss_mat": 8
+          },
+          "ap": {
+            "m1": {},
+            "m2": {},
+            "m3": {},
+            "m4": {}
+          },
+          "jp": 0
+        },
+        "initialItems": {
+          "potion": 3,
+          "ether": 2,
+          "revive_salts": 1,
+          "antidote": 2
+        }
+      },
+      "clearRate": 0.725,
+      "normalWinRate": 1,
+      "bossWinRate": 0.725,
+      "normalBattles": 77,
+      "normalWins": 77,
+      "bossAttempts": 40,
+      "failedBeforeBoss": 0,
+      "failedInNormalBattle": 0,
+      "failedAtBoss": 11,
+      "failedAtBounty": 0,
+      "bountyEncounters": 3,
+      "bountyWinRate": 1,
+      "normalQuestions": 17.051948051948052,
+      "bossQuestions": 21.96551724137931,
+      "normalQuestionsAll": 17.051948051948052,
+      "bossQuestionsAll": 21.475,
+      "bossLossQuestions": 20.181818181818183,
+      "clearQuestions": 56.06896551724138,
+      "clearQuestionsP90": 66,
+      "estimatedClearMinutes": 6.106896551724137,
+      "hpRemaining": 0.675942753063824,
+      "mpRemaining": 0.3473643771652489,
+      "consumables": 3.3448275862068964,
+      "goldPerClear": 151.13793103448276,
+      "netGoldBeforeFees": 55,
+      "xpPerMemberPerClear": 187.31034482758622,
+      "apPerMemberPerClear": 7.827586206896552,
+      "materialsPerClear": 6.310344827586207,
+      "gearPerClear": 1.7586206896551724
+    },
+    {
+      "dungeonId": "mossy_cave",
+      "star": 1,
+      "profile": "balanced",
+      "preparation": "standard",
+      "accuracy": 0.95,
+      "season": "spring",
+      "seed": 1217071,
+      "runs": 40,
+      "wins": 35,
+      "fixture": {
+        "level": 3,
+        "stage": 1,
+        "itemCap": 4,
+        "enhancement": 0,
+        "assembly": {
+          "gold": 2120,
+          "byPurpose": {
+            "craft": 1120,
+            "enchant": 800,
+            "items": 200
+          },
+          "materials": {
+            "cave_bat_mat": 112,
+            "blooming_hill_boss_mat": 8
+          },
+          "ap": {
+            "m1": {},
+            "m2": {},
+            "m3": {},
+            "m4": {}
+          },
+          "jp": 0
+        },
+        "initialItems": {
+          "potion": 3,
+          "ether": 2,
+          "revive_salts": 1,
+          "antidote": 2
+        }
+      },
+      "clearRate": 0.875,
+      "normalWinRate": 1,
+      "bossWinRate": 0.875,
+      "normalBattles": 77,
+      "normalWins": 77,
+      "bossAttempts": 40,
+      "failedBeforeBoss": 0,
+      "failedInNormalBattle": 0,
+      "failedAtBoss": 5,
+      "failedAtBounty": 0,
+      "bountyEncounters": 3,
+      "bountyWinRate": 1,
+      "normalQuestions": 14.545454545454545,
+      "bossQuestions": 19.65714285714286,
+      "normalQuestionsAll": 14.545454545454545,
+      "bossQuestionsAll": 18.975,
+      "bossLossQuestions": 14.2,
+      "clearQuestions": 48.91428571428571,
+      "clearQuestionsP90": 57,
+      "estimatedClearMinutes": 5.3914285714285715,
+      "hpRemaining": 0.6653503659104203,
+      "mpRemaining": 0.3898219397048437,
+      "consumables": 2.942857142857143,
+      "goldPerClear": 151.97142857142856,
+      "netGoldBeforeFees": 64,
+      "xpPerMemberPerClear": 188.28571428571428,
+      "apPerMemberPerClear": 7.857142857142857,
+      "materialsPerClear": 6.4,
+      "gearPerClear": 1.7428571428571429
+    },
+    {
+      "dungeonId": "mossy_cave",
+      "star": 1,
+      "profile": "balanced",
+      "preparation": "prepared",
+      "accuracy": 0.65,
+      "season": "spring",
+      "seed": 1217071,
+      "runs": 40,
+      "wins": 28,
+      "fixture": {
+        "level": 3,
+        "stage": 1,
+        "itemCap": 4,
+        "enhancement": 0,
+        "assembly": {
+          "gold": 3720,
+          "byPurpose": {
+            "craft": 1120,
+            "enchant": 2400,
+            "items": 200
+          },
+          "materials": {
+            "cave_bat_mat": 112,
+            "blooming_hill_boss_mat": 24
+          },
+          "ap": {
+            "m1": {},
+            "m2": {},
+            "m3": {},
+            "m4": {}
+          },
+          "jp": 0
+        },
+        "initialItems": {
+          "potion": 3,
+          "ether": 2,
+          "revive_salts": 1,
+          "antidote": 2
+        }
+      },
+      "clearRate": 0.7,
+      "normalWinRate": 1,
+      "bossWinRate": 0.7567567567567568,
+      "normalBattles": 77,
+      "normalWins": 77,
+      "bossAttempts": 37,
+      "failedBeforeBoss": 3,
+      "failedInNormalBattle": 0,
+      "failedAtBoss": 9,
+      "failedAtBounty": 3,
+      "bountyEncounters": 3,
+      "bountyWinRate": 0,
+      "normalQuestions": 21.181818181818183,
+      "bossQuestions": 25.964285714285715,
+      "normalQuestionsAll": 21.181818181818183,
+      "bossQuestionsAll": 25,
+      "bossLossQuestions": 22,
+      "clearQuestions": 67.78571428571429,
+      "clearQuestionsP90": 81,
+      "estimatedClearMinutes": 7.278571428571429,
+      "hpRemaining": 0.5714900717771155,
+      "mpRemaining": 0.35188803839886035,
+      "consumables": 4.285714285714286,
+      "goldPerClear": 151.32142857142858,
+      "netGoldBeforeFees": 26.571428571428573,
+      "xpPerMemberPerClear": 184.75,
+      "apPerMemberPerClear": 7.75,
+      "materialsPerClear": 6.392857142857143,
+      "gearPerClear": 1.7142857142857142
+    },
+    {
+      "dungeonId": "mossy_cave",
+      "star": 1,
+      "profile": "balanced",
+      "preparation": "prepared",
+      "accuracy": 0.8,
+      "season": "spring",
+      "seed": 1217071,
+      "runs": 40,
+      "wins": 35,
+      "fixture": {
+        "level": 3,
+        "stage": 1,
+        "itemCap": 4,
+        "enhancement": 0,
+        "assembly": {
+          "gold": 3720,
+          "byPurpose": {
+            "craft": 1120,
+            "enchant": 2400,
+            "items": 200
+          },
+          "materials": {
+            "cave_bat_mat": 112,
+            "blooming_hill_boss_mat": 24
+          },
+          "ap": {
+            "m1": {},
+            "m2": {},
+            "m3": {},
+            "m4": {}
+          },
+          "jp": 0
+        },
+        "initialItems": {
+          "potion": 3,
+          "ether": 2,
+          "revive_salts": 1,
+          "antidote": 2
+        }
+      },
+      "clearRate": 0.875,
+      "normalWinRate": 1,
+      "bossWinRate": 0.9210526315789473,
+      "normalBattles": 77,
+      "normalWins": 77,
+      "bossAttempts": 38,
+      "failedBeforeBoss": 2,
+      "failedInNormalBattle": 0,
+      "failedAtBoss": 3,
+      "failedAtBounty": 2,
+      "bountyEncounters": 3,
+      "bountyWinRate": 0.3333333333333333,
+      "normalQuestions": 17.155844155844157,
+      "bossQuestions": 23.457142857142856,
+      "normalQuestionsAll": 17.155844155844157,
+      "bossQuestionsAll": 23.157894736842106,
+      "bossLossQuestions": 19.666666666666668,
+      "clearQuestions": 58.4,
+      "clearQuestionsP90": 69,
+      "estimatedClearMinutes": 6.34,
+      "hpRemaining": 0.58812876461202,
+      "mpRemaining": 0.3915853349977398,
+      "consumables": 3.5142857142857142,
+      "goldPerClear": 153.02857142857144,
+      "netGoldBeforeFees": 51.4,
+      "xpPerMemberPerClear": 189.11428571428573,
+      "apPerMemberPerClear": 7.885714285714286,
+      "materialsPerClear": 6.428571428571429,
+      "gearPerClear": 1.7428571428571429
+    },
+    {
+      "dungeonId": "mossy_cave",
+      "star": 1,
+      "profile": "balanced",
+      "preparation": "prepared",
+      "accuracy": 0.95,
+      "season": "spring",
+      "seed": 1217071,
+      "runs": 40,
+      "wins": 38,
+      "fixture": {
+        "level": 3,
+        "stage": 1,
+        "itemCap": 4,
+        "enhancement": 0,
+        "assembly": {
+          "gold": 3720,
+          "byPurpose": {
+            "craft": 1120,
+            "enchant": 2400,
+            "items": 200
+          },
+          "materials": {
+            "cave_bat_mat": 112,
+            "blooming_hill_boss_mat": 24
+          },
+          "ap": {
+            "m1": {},
+            "m2": {},
+            "m3": {},
+            "m4": {}
+          },
+          "jp": 0
+        },
+        "initialItems": {
+          "potion": 3,
+          "ether": 2,
+          "revive_salts": 1,
+          "antidote": 2
+        }
+      },
+      "clearRate": 0.95,
+      "normalWinRate": 1,
+      "bossWinRate": 0.95,
+      "normalBattles": 77,
+      "normalWins": 77,
+      "bossAttempts": 40,
+      "failedBeforeBoss": 0,
+      "failedInNormalBattle": 0,
+      "failedAtBoss": 2,
+      "failedAtBounty": 0,
+      "bountyEncounters": 3,
+      "bountyWinRate": 1,
+      "normalQuestions": 14.584415584415584,
+      "bossQuestions": 19.57894736842105,
+      "normalQuestionsAll": 14.584415584415584,
+      "bossQuestionsAll": 19.275,
+      "bossLossQuestions": 13.5,
+      "clearQuestions": 49.36842105263158,
+      "clearQuestionsP90": 58,
+      "estimatedClearMinutes": 5.436842105263158,
+      "hpRemaining": 0.6793693913961693,
+      "mpRemaining": 0.3929102679137471,
+      "consumables": 2.3947368421052633,
+      "goldPerClear": 153.18421052631578,
+      "netGoldBeforeFees": 83.60526315789474,
+      "xpPerMemberPerClear": 191.1578947368421,
+      "apPerMemberPerClear": 7.947368421052632,
+      "materialsPerClear": 6.421052631578948,
+      "gearPerClear": 1.763157894736842
+    },
+    {
+      "dungeonId": "sand_tomb",
+      "star": 6,
+      "profile": "balanced",
+      "preparation": "standard",
+      "accuracy": 0.65,
+      "season": "spring",
+      "seed": 1217071,
+      "runs": 40,
+      "wins": 28,
+      "fixture": {
+        "level": 38,
+        "stage": 3,
+        "itemCap": 54,
+        "enhancement": 1,
+        "assembly": {
+          "gold": 28812,
+          "byPurpose": {
+            "craft": 18760,
+            "enhance": 3712,
+            "enchant": 4800,
+            "items": 1540
+          },
+          "materials": {
+            "exp_r06_amorphous_mat": 112,
+            "enhancement_stone": 28,
+            "blooming_hill_boss_mat": 8
+          },
+          "ap": {
+            "m1": {
+              "warrior": 90
+            },
+            "m2": {
+              "knight": 90
+            },
+            "m3": {
+              "black_mage": 90
+            },
+            "m4": {
+              "white_mage": 90
+            }
+          },
+          "jp": 0
+        },
+        "initialItems": {
+          "x_potion": 3,
+          "hi_ether": 2,
+          "revive_salts": 1,
+          "antidote": 2,
+          "panacea": 1
+        }
+      },
+      "clearRate": 0.7,
+      "normalWinRate": 1,
+      "bossWinRate": 0.7,
+      "normalBattles": 77,
+      "normalWins": 77,
+      "bossAttempts": 40,
+      "failedBeforeBoss": 0,
+      "failedInNormalBattle": 0,
+      "failedAtBoss": 12,
+      "failedAtBounty": 0,
+      "bountyEncounters": 3,
+      "bountyWinRate": 1,
+      "normalQuestions": 19.337662337662337,
+      "bossQuestions": 35.464285714285715,
+      "normalQuestionsAll": 19.337662337662337,
+      "bossQuestionsAll": 32.025,
+      "bossLossQuestions": 24,
+      "clearQuestions": 73.21428571428571,
+      "clearQuestionsP90": 89,
+      "estimatedClearMinutes": 7.82142857142857,
+      "hpRemaining": 0.6361524484210043,
+      "mpRemaining": 0.36737257717157207,
+      "consumables": 4.464285714285714,
+      "goldPerClear": 2617.6071428571427,
+      "netGoldBeforeFees": 1601.8214285714287,
+      "xpPerMemberPerClear": 1374.8214285714287,
+      "apPerMemberPerClear": 7.857142857142857,
+      "materialsPerClear": 6.678571428571429,
+      "gearPerClear": 1.8214285714285714
+    },
+    {
+      "dungeonId": "sand_tomb",
+      "star": 6,
+      "profile": "balanced",
+      "preparation": "standard",
+      "accuracy": 0.8,
+      "season": "spring",
+      "seed": 1217071,
+      "runs": 40,
+      "wins": 35,
+      "fixture": {
+        "level": 38,
+        "stage": 3,
+        "itemCap": 54,
+        "enhancement": 1,
+        "assembly": {
+          "gold": 28812,
+          "byPurpose": {
+            "craft": 18760,
+            "enhance": 3712,
+            "enchant": 4800,
+            "items": 1540
+          },
+          "materials": {
+            "exp_r06_amorphous_mat": 112,
+            "enhancement_stone": 28,
+            "blooming_hill_boss_mat": 8
+          },
+          "ap": {
+            "m1": {
+              "warrior": 90
+            },
+            "m2": {
+              "knight": 90
+            },
+            "m3": {
+              "black_mage": 90
+            },
+            "m4": {
+              "white_mage": 90
+            }
+          },
+          "jp": 0
+        },
+        "initialItems": {
+          "x_potion": 3,
+          "hi_ether": 2,
+          "revive_salts": 1,
+          "antidote": 2,
+          "panacea": 1
+        }
+      },
+      "clearRate": 0.875,
+      "normalWinRate": 1,
+      "bossWinRate": 0.875,
+      "normalBattles": 77,
+      "normalWins": 77,
+      "bossAttempts": 40,
+      "failedBeforeBoss": 0,
+      "failedInNormalBattle": 0,
+      "failedAtBoss": 5,
+      "failedAtBounty": 0,
+      "bountyEncounters": 3,
+      "bountyWinRate": 1,
+      "normalQuestions": 15.467532467532468,
+      "bossQuestions": 28.857142857142858,
+      "normalQuestionsAll": 15.467532467532468,
+      "bossQuestionsAll": 27.125,
+      "bossLossQuestions": 15,
+      "clearQuestions": 59.77142857142857,
+      "clearQuestionsP90": 72,
+      "estimatedClearMinutes": 6.477142857142857,
+      "hpRemaining": 0.7036226050555465,
+      "mpRemaining": 0.4101220387652547,
+      "consumables": 3.0285714285714285,
+      "goldPerClear": 2565.057142857143,
+      "netGoldBeforeFees": 1847.2571428571428,
+      "xpPerMemberPerClear": 1408.6571428571428,
+      "apPerMemberPerClear": 8.085714285714285,
+      "materialsPerClear": 6.8,
+      "gearPerClear": 1.7428571428571429
+    },
+    {
+      "dungeonId": "sand_tomb",
+      "star": 6,
+      "profile": "balanced",
+      "preparation": "standard",
+      "accuracy": 0.95,
+      "season": "spring",
+      "seed": 1217071,
+      "runs": 40,
+      "wins": 35,
+      "fixture": {
+        "level": 38,
+        "stage": 3,
+        "itemCap": 54,
+        "enhancement": 1,
+        "assembly": {
+          "gold": 28812,
+          "byPurpose": {
+            "craft": 18760,
+            "enhance": 3712,
+            "enchant": 4800,
+            "items": 1540
+          },
+          "materials": {
+            "exp_r06_amorphous_mat": 112,
+            "enhancement_stone": 28,
+            "blooming_hill_boss_mat": 8
+          },
+          "ap": {
+            "m1": {
+              "warrior": 90
+            },
+            "m2": {
+              "knight": 90
+            },
+            "m3": {
+              "black_mage": 90
+            },
+            "m4": {
+              "white_mage": 90
+            }
+          },
+          "jp": 0
+        },
+        "initialItems": {
+          "x_potion": 3,
+          "hi_ether": 2,
+          "revive_salts": 1,
+          "antidote": 2,
+          "panacea": 1
+        }
+      },
+      "clearRate": 0.875,
+      "normalWinRate": 1,
+      "bossWinRate": 0.875,
+      "normalBattles": 77,
+      "normalWins": 77,
+      "bossAttempts": 40,
+      "failedBeforeBoss": 0,
+      "failedInNormalBattle": 0,
+      "failedAtBoss": 5,
+      "failedAtBounty": 0,
+      "bountyEncounters": 3,
+      "bountyWinRate": 1,
+      "normalQuestions": 13.428571428571429,
+      "bossQuestions": 22.542857142857144,
+      "normalQuestionsAll": 13.428571428571429,
+      "bossQuestionsAll": 22.1,
+      "bossLossQuestions": 19,
+      "clearQuestions": 49.94285714285714,
+      "clearQuestionsP90": 60,
+      "estimatedClearMinutes": 5.494285714285714,
+      "hpRemaining": 0.729038342111921,
+      "mpRemaining": 0.4954055994257,
+      "consumables": 2.4857142857142858,
+      "goldPerClear": 2609.942857142857,
+      "netGoldBeforeFees": 1999.2571428571428,
+      "xpPerMemberPerClear": 1403.1714285714286,
+      "apPerMemberPerClear": 8.028571428571428,
+      "materialsPerClear": 6.771428571428571,
+      "gearPerClear": 1.8285714285714285
+    },
+    {
+      "dungeonId": "sand_tomb",
+      "star": 6,
+      "profile": "balanced",
+      "preparation": "prepared",
+      "accuracy": 0.65,
+      "season": "spring",
+      "seed": 1217071,
+      "runs": 40,
+      "wins": 40,
+      "fixture": {
+        "level": 38,
+        "stage": 3,
+        "itemCap": 54,
+        "enhancement": 1,
+        "assembly": {
+          "gold": 38412,
+          "byPurpose": {
+            "craft": 18760,
+            "enhance": 3712,
+            "enchant": 14400,
+            "items": 1540
+          },
+          "materials": {
+            "exp_r06_amorphous_mat": 112,
+            "enhancement_stone": 28,
+            "blooming_hill_boss_mat": 24
+          },
+          "ap": {
+            "m1": {
+              "warrior": 90
+            },
+            "m2": {
+              "knight": 90
+            },
+            "m3": {
+              "black_mage": 90
+            },
+            "m4": {
+              "white_mage": 90
+            }
+          },
+          "jp": 0
+        },
+        "initialItems": {
+          "x_potion": 3,
+          "hi_ether": 2,
+          "revive_salts": 1,
+          "antidote": 2,
+          "panacea": 1
+        }
+      },
+      "clearRate": 1,
+      "normalWinRate": 1,
+      "bossWinRate": 1,
+      "normalBattles": 77,
+      "normalWins": 77,
+      "bossAttempts": 40,
+      "failedBeforeBoss": 0,
+      "failedInNormalBattle": 0,
+      "failedAtBoss": 0,
+      "failedAtBounty": 0,
+      "bountyEncounters": 3,
+      "bountyWinRate": 1,
+      "normalQuestions": 16.92207792207792,
+      "bossQuestions": 27.825,
+      "normalQuestionsAll": 16.92207792207792,
+      "bossQuestionsAll": 27.825,
+      "bossLossQuestions": null,
+      "clearQuestions": 62.325,
+      "clearQuestionsP90": 71,
+      "estimatedClearMinutes": 6.732500000000001,
+      "hpRemaining": 0.7879246498148446,
+      "mpRemaining": 0.48919597989949776,
+      "consumables": 1.275,
+      "goldPerClear": 2606.3,
+      "netGoldBeforeFees": 2286.1,
+      "xpPerMemberPerClear": 1417.15,
+      "apPerMemberPerClear": 8.075,
+      "materialsPerClear": 6.775,
+      "gearPerClear": 1.775
+    },
+    {
+      "dungeonId": "sand_tomb",
+      "star": 6,
+      "profile": "balanced",
+      "preparation": "prepared",
+      "accuracy": 0.8,
+      "season": "spring",
+      "seed": 1217071,
+      "runs": 40,
+      "wins": 40,
+      "fixture": {
+        "level": 38,
+        "stage": 3,
+        "itemCap": 54,
+        "enhancement": 1,
+        "assembly": {
+          "gold": 38412,
+          "byPurpose": {
+            "craft": 18760,
+            "enhance": 3712,
+            "enchant": 14400,
+            "items": 1540
+          },
+          "materials": {
+            "exp_r06_amorphous_mat": 112,
+            "enhancement_stone": 28,
+            "blooming_hill_boss_mat": 24
+          },
+          "ap": {
+            "m1": {
+              "warrior": 90
+            },
+            "m2": {
+              "knight": 90
+            },
+            "m3": {
+              "black_mage": 90
+            },
+            "m4": {
+              "white_mage": 90
+            }
+          },
+          "jp": 0
+        },
+        "initialItems": {
+          "x_potion": 3,
+          "hi_ether": 2,
+          "revive_salts": 1,
+          "antidote": 2,
+          "panacea": 1
+        }
+      },
+      "clearRate": 1,
+      "normalWinRate": 1,
+      "bossWinRate": 1,
+      "normalBattles": 77,
+      "normalWins": 77,
+      "bossAttempts": 40,
+      "failedBeforeBoss": 0,
+      "failedInNormalBattle": 0,
+      "failedAtBoss": 0,
+      "failedAtBounty": 0,
+      "bountyEncounters": 3,
+      "bountyWinRate": 1,
+      "normalQuestions": 14.246753246753247,
+      "bossQuestions": 21.8,
+      "normalQuestionsAll": 14.246753246753247,
+      "bossQuestionsAll": 21.8,
+      "bossLossQuestions": null,
+      "clearQuestions": 50.775,
+      "clearQuestionsP90": 61,
+      "estimatedClearMinutes": 5.5775,
+      "hpRemaining": 0.8296651102881981,
+      "mpRemaining": 0.5772613065326634,
+      "consumables": 0.875,
+      "goldPerClear": 2606.3,
+      "netGoldBeforeFees": 2372.775,
+      "xpPerMemberPerClear": 1423.66875,
+      "apPerMemberPerClear": 8.1,
+      "materialsPerClear": 6.775,
+      "gearPerClear": 1.775
+    },
+    {
+      "dungeonId": "sand_tomb",
+      "star": 6,
+      "profile": "balanced",
+      "preparation": "prepared",
+      "accuracy": 0.95,
+      "season": "spring",
+      "seed": 1217071,
+      "runs": 40,
+      "wins": 40,
+      "fixture": {
+        "level": 38,
+        "stage": 3,
+        "itemCap": 54,
+        "enhancement": 1,
+        "assembly": {
+          "gold": 38412,
+          "byPurpose": {
+            "craft": 18760,
+            "enhance": 3712,
+            "enchant": 14400,
+            "items": 1540
+          },
+          "materials": {
+            "exp_r06_amorphous_mat": 112,
+            "enhancement_stone": 28,
+            "blooming_hill_boss_mat": 24
+          },
+          "ap": {
+            "m1": {
+              "warrior": 90
+            },
+            "m2": {
+              "knight": 90
+            },
+            "m3": {
+              "black_mage": 90
+            },
+            "m4": {
+              "white_mage": 90
+            }
+          },
+          "jp": 0
+        },
+        "initialItems": {
+          "x_potion": 3,
+          "hi_ether": 2,
+          "revive_salts": 1,
+          "antidote": 2,
+          "panacea": 1
+        }
+      },
+      "clearRate": 1,
+      "normalWinRate": 1,
+      "bossWinRate": 1,
+      "normalBattles": 77,
+      "normalWins": 77,
+      "bossAttempts": 40,
+      "failedBeforeBoss": 0,
+      "failedInNormalBattle": 0,
+      "failedAtBoss": 0,
+      "failedAtBounty": 0,
+      "bountyEncounters": 3,
+      "bountyWinRate": 1,
+      "normalQuestions": 12.2987012987013,
+      "bossQuestions": 18.175,
+      "normalQuestionsAll": 12.2987012987013,
+      "bossQuestionsAll": 18.175,
+      "bossLossQuestions": null,
+      "clearQuestions": 43.075,
+      "clearQuestionsP90": 49,
+      "estimatedClearMinutes": 4.807500000000001,
+      "hpRemaining": 0.8389550796973113,
+      "mpRemaining": 0.6386306532663317,
+      "consumables": 1.275,
+      "goldPerClear": 2606.3,
+      "netGoldBeforeFees": 2243.2,
+      "xpPerMemberPerClear": 1423.66875,
+      "apPerMemberPerClear": 8.1,
+      "materialsPerClear": 6.775,
+      "gearPerClear": 1.775
+    },
+    {
+      "dungeonId": "world_tree_top",
+      "star": 12,
+      "profile": "balanced",
+      "preparation": "standard",
+      "accuracy": 0.65,
+      "season": "spring",
+      "seed": 1217071,
+      "runs": 40,
+      "wins": 17,
+      "fixture": {
+        "level": 80,
+        "stage": 5,
+        "itemCap": 114,
+        "enhancement": 3,
+        "assembly": {
+          "gold": 322412,
+          "byPurpose": {
+            "craft": 258720,
+            "enhance": 45632,
+            "enchant": 14880,
+            "items": 3180
+          },
+          "materials": {
+            "exp_r12_amorphous_mat": 112,
+            "enhancement_stone": 84,
+            "blooming_hill_boss_mat": 8
+          },
+          "ap": {
+            "m1": {
+              "warrior": 315
+            },
+            "m2": {
+              "knight": 315
+            },
+            "m3": {
+              "black_mage": 315
+            },
+            "m4": {
+              "white_mage": 315
+            }
+          },
+          "jp": 0
+        },
+        "initialItems": {
+          "x_potion": 3,
+          "x_ether": 2,
+          "revive_salts": 1,
+          "antidote": 2,
+          "panacea": 1
+        }
+      },
+      "clearRate": 0.425,
+      "normalWinRate": 1,
+      "bossWinRate": 0.4358974358974359,
+      "normalBattles": 77,
+      "normalWins": 77,
+      "bossAttempts": 39,
+      "failedBeforeBoss": 1,
+      "failedInNormalBattle": 0,
+      "failedAtBoss": 22,
+      "failedAtBounty": 1,
+      "bountyEncounters": 3,
+      "bountyWinRate": 0.6666666666666666,
+      "normalQuestions": 23.12987012987013,
+      "bossQuestions": 31.352941176470587,
+      "normalQuestionsAll": 23.12987012987013,
+      "bossQuestionsAll": 27.71794871794872,
+      "bossLossQuestions": 24.90909090909091,
+      "clearQuestions": 76.41176470588235,
+      "clearQuestionsP90": 92,
+      "estimatedClearMinutes": 8.141176470588235,
+      "hpRemaining": 0.5125937268982997,
+      "mpRemaining": 0.37746433723353096,
+      "consumables": 4.117647058823529,
+      "goldPerClear": 36276.05882352941,
+      "netGoldBeforeFees": 35024.64705882353,
+      "xpPerMemberPerClear": 2570.470588235294,
+      "apPerMemberPerClear": 7.294117647058823,
+      "materialsPerClear": 6.647058823529412,
+      "gearPerClear": 1.6470588235294117
+    },
+    {
+      "dungeonId": "world_tree_top",
+      "star": 12,
+      "profile": "balanced",
+      "preparation": "standard",
+      "accuracy": 0.8,
+      "season": "spring",
+      "seed": 1217071,
+      "runs": 40,
+      "wins": 28,
+      "fixture": {
+        "level": 80,
+        "stage": 5,
+        "itemCap": 114,
+        "enhancement": 3,
+        "assembly": {
+          "gold": 322412,
+          "byPurpose": {
+            "craft": 258720,
+            "enhance": 45632,
+            "enchant": 14880,
+            "items": 3180
+          },
+          "materials": {
+            "exp_r12_amorphous_mat": 112,
+            "enhancement_stone": 84,
+            "blooming_hill_boss_mat": 8
+          },
+          "ap": {
+            "m1": {
+              "warrior": 315
+            },
+            "m2": {
+              "knight": 315
+            },
+            "m3": {
+              "black_mage": 315
+            },
+            "m4": {
+              "white_mage": 315
+            }
+          },
+          "jp": 0
+        },
+        "initialItems": {
+          "x_potion": 3,
+          "x_ether": 2,
+          "revive_salts": 1,
+          "antidote": 2,
+          "panacea": 1
+        }
+      },
+      "clearRate": 0.7,
+      "normalWinRate": 1,
+      "bossWinRate": 0.7368421052631579,
+      "normalBattles": 77,
+      "normalWins": 77,
+      "bossAttempts": 38,
+      "failedBeforeBoss": 2,
+      "failedInNormalBattle": 0,
+      "failedAtBoss": 10,
+      "failedAtBounty": 2,
+      "bountyEncounters": 3,
+      "bountyWinRate": 0.3333333333333333,
+      "normalQuestions": 18.5974025974026,
+      "bossQuestions": 26.071428571428573,
+      "normalQuestionsAll": 18.5974025974026,
+      "bossQuestionsAll": 24.68421052631579,
+      "bossLossQuestions": 20.8,
+      "clearQuestions": 63.714285714285715,
+      "clearQuestionsP90": 76,
+      "estimatedClearMinutes": 6.871428571428571,
+      "hpRemaining": 0.6963110199196377,
+      "mpRemaining": 0.40575126508369014,
+      "consumables": 2.642857142857143,
+      "goldPerClear": 35374.07142857143,
+      "netGoldBeforeFees": 34770.07142857143,
+      "xpPerMemberPerClear": 2672.2678571428573,
+      "apPerMemberPerClear": 7.607142857142857,
+      "materialsPerClear": 6.642857142857143,
+      "gearPerClear": 1.6071428571428572
+    },
+    {
+      "dungeonId": "world_tree_top",
+      "star": 12,
+      "profile": "balanced",
+      "preparation": "standard",
+      "accuracy": 0.95,
+      "season": "spring",
+      "seed": 1217071,
+      "runs": 40,
+      "wins": 35,
+      "fixture": {
+        "level": 80,
+        "stage": 5,
+        "itemCap": 114,
+        "enhancement": 3,
+        "assembly": {
+          "gold": 322412,
+          "byPurpose": {
+            "craft": 258720,
+            "enhance": 45632,
+            "enchant": 14880,
+            "items": 3180
+          },
+          "materials": {
+            "exp_r12_amorphous_mat": 112,
+            "enhancement_stone": 84,
+            "blooming_hill_boss_mat": 8
+          },
+          "ap": {
+            "m1": {
+              "warrior": 315
+            },
+            "m2": {
+              "knight": 315
+            },
+            "m3": {
+              "black_mage": 315
+            },
+            "m4": {
+              "white_mage": 315
+            }
+          },
+          "jp": 0
+        },
+        "initialItems": {
+          "x_potion": 3,
+          "x_ether": 2,
+          "revive_salts": 1,
+          "antidote": 2,
+          "panacea": 1
+        }
+      },
+      "clearRate": 0.875,
+      "normalWinRate": 1,
+      "bossWinRate": 0.8974358974358975,
+      "normalBattles": 77,
+      "normalWins": 77,
+      "bossAttempts": 39,
+      "failedBeforeBoss": 1,
+      "failedInNormalBattle": 0,
+      "failedAtBoss": 4,
+      "failedAtBounty": 1,
+      "bountyEncounters": 3,
+      "bountyWinRate": 0.6666666666666666,
+      "normalQuestions": 15.155844155844155,
+      "bossQuestions": 21.714285714285715,
+      "normalQuestionsAll": 15.155844155844155,
+      "bossQuestionsAll": 21.846153846153847,
+      "bossLossQuestions": 23,
+      "clearQuestions": 52.48571428571429,
+      "clearQuestionsP90": 56,
+      "estimatedClearMinutes": 5.748571428571428,
+      "hpRemaining": 0.812268102932376,
+      "mpRemaining": 0.49081354612689754,
+      "consumables": 2.085714285714286,
+      "goldPerClear": 35871.28571428572,
+      "netGoldBeforeFees": 35437.514285714286,
+      "xpPerMemberPerClear": 2767.3571428571427,
+      "apPerMemberPerClear": 7.8,
+      "materialsPerClear": 6.685714285714286,
+      "gearPerClear": 1.6571428571428573
+    },
+    {
+      "dungeonId": "world_tree_top",
+      "star": 12,
+      "profile": "balanced",
+      "preparation": "prepared",
+      "accuracy": 0.65,
+      "season": "spring",
+      "seed": 1217071,
+      "runs": 40,
+      "wins": 40,
+      "fixture": {
+        "level": 80,
+        "stage": 5,
+        "itemCap": 114,
+        "enhancement": 3,
+        "assembly": {
+          "gold": 352172,
+          "byPurpose": {
+            "craft": 258720,
+            "enhance": 45632,
+            "enchant": 44640,
+            "items": 3180
+          },
+          "materials": {
+            "exp_r12_amorphous_mat": 112,
+            "enhancement_stone": 84,
+            "blooming_hill_boss_mat": 24
+          },
+          "ap": {
+            "m1": {
+              "warrior": 315
+            },
+            "m2": {
+              "knight": 315
+            },
+            "m3": {
+              "black_mage": 315
+            },
+            "m4": {
+              "white_mage": 315
+            }
+          },
+          "jp": 0
+        },
+        "initialItems": {
+          "x_potion": 3,
+          "x_ether": 2,
+          "revive_salts": 1,
+          "antidote": 2,
+          "panacea": 1
+        }
+      },
+      "clearRate": 1,
+      "normalWinRate": 1,
+      "bossWinRate": 1,
+      "normalBattles": 77,
+      "normalWins": 77,
+      "bossAttempts": 40,
+      "failedBeforeBoss": 0,
+      "failedInNormalBattle": 0,
+      "failedAtBoss": 0,
+      "failedAtBounty": 0,
+      "bountyEncounters": 3,
+      "bountyWinRate": 1,
+      "normalQuestions": 21.77922077922078,
+      "bossQuestions": 25.075,
+      "normalQuestionsAll": 21.77922077922078,
+      "bossQuestionsAll": 25.075,
+      "bossLossQuestions": null,
+      "clearQuestions": 69.15,
+      "clearQuestionsP90": 83,
+      "estimatedClearMinutes": 7.415000000000001,
+      "hpRemaining": 0.8582416965888692,
+      "mpRemaining": 0.5408038147138965,
+      "consumables": 0.675,
+      "goldPerClear": 36076.05,
+      "netGoldBeforeFees": 35894.45,
+      "xpPerMemberPerClear": 2909.55,
+      "apPerMemberPerClear": 8.15,
+      "materialsPerClear": 6.7,
+      "gearPerClear": 1.65
+    },
+    {
+      "dungeonId": "world_tree_top",
+      "star": 12,
+      "profile": "balanced",
+      "preparation": "prepared",
+      "accuracy": 0.8,
+      "season": "spring",
+      "seed": 1217071,
+      "runs": 40,
+      "wins": 40,
+      "fixture": {
+        "level": 80,
+        "stage": 5,
+        "itemCap": 114,
+        "enhancement": 3,
+        "assembly": {
+          "gold": 352172,
+          "byPurpose": {
+            "craft": 258720,
+            "enhance": 45632,
+            "enchant": 44640,
+            "items": 3180
+          },
+          "materials": {
+            "exp_r12_amorphous_mat": 112,
+            "enhancement_stone": 84,
+            "blooming_hill_boss_mat": 24
+          },
+          "ap": {
+            "m1": {
+              "warrior": 315
+            },
+            "m2": {
+              "knight": 315
+            },
+            "m3": {
+              "black_mage": 315
+            },
+            "m4": {
+              "white_mage": 315
+            }
+          },
+          "jp": 0
+        },
+        "initialItems": {
+          "x_potion": 3,
+          "x_ether": 2,
+          "revive_salts": 1,
+          "antidote": 2,
+          "panacea": 1
+        }
+      },
+      "clearRate": 1,
+      "normalWinRate": 1,
+      "bossWinRate": 1,
+      "normalBattles": 77,
+      "normalWins": 77,
+      "bossAttempts": 40,
+      "failedBeforeBoss": 0,
+      "failedInNormalBattle": 0,
+      "failedAtBoss": 0,
+      "failedAtBounty": 0,
+      "bountyEncounters": 3,
+      "bountyWinRate": 1,
+      "normalQuestions": 17.857142857142858,
+      "bossQuestions": 20.7,
+      "normalQuestionsAll": 17.857142857142858,
+      "bossQuestionsAll": 20.7,
+      "bossLossQuestions": null,
+      "clearQuestions": 56.825,
+      "clearQuestionsP90": 66,
+      "estimatedClearMinutes": 6.182500000000001,
+      "hpRemaining": 0.8557431926989827,
+      "mpRemaining": 0.5905313351498638,
+      "consumables": 0.45,
+      "goldPerClear": 36076.05,
+      "netGoldBeforeFees": 35951.65,
+      "xpPerMemberPerClear": 2909.55,
+      "apPerMemberPerClear": 8.15,
+      "materialsPerClear": 6.7,
+      "gearPerClear": 1.65
+    },
+    {
+      "dungeonId": "world_tree_top",
+      "star": 12,
+      "profile": "balanced",
+      "preparation": "prepared",
+      "accuracy": 0.95,
+      "season": "spring",
+      "seed": 1217071,
+      "runs": 40,
+      "wins": 40,
+      "fixture": {
+        "level": 80,
+        "stage": 5,
+        "itemCap": 114,
+        "enhancement": 3,
+        "assembly": {
+          "gold": 352172,
+          "byPurpose": {
+            "craft": 258720,
+            "enhance": 45632,
+            "enchant": 44640,
+            "items": 3180
+          },
+          "materials": {
+            "exp_r12_amorphous_mat": 112,
+            "enhancement_stone": 84,
+            "blooming_hill_boss_mat": 24
+          },
+          "ap": {
+            "m1": {
+              "warrior": 315
+            },
+            "m2": {
+              "knight": 315
+            },
+            "m3": {
+              "black_mage": 315
+            },
+            "m4": {
+              "white_mage": 315
+            }
+          },
+          "jp": 0
+        },
+        "initialItems": {
+          "x_potion": 3,
+          "x_ether": 2,
+          "revive_salts": 1,
+          "antidote": 2,
+          "panacea": 1
+        }
+      },
+      "clearRate": 1,
+      "normalWinRate": 1,
+      "bossWinRate": 1,
+      "normalBattles": 77,
+      "normalWins": 77,
+      "bossAttempts": 40,
+      "failedBeforeBoss": 0,
+      "failedInNormalBattle": 0,
+      "failedAtBoss": 0,
+      "failedAtBounty": 0,
+      "bountyEncounters": 3,
+      "bountyWinRate": 1,
+      "normalQuestions": 14.558441558441558,
+      "bossQuestions": 17.8,
+      "normalQuestionsAll": 14.558441558441558,
+      "bossQuestionsAll": 17.8,
+      "bossLossQuestions": null,
+      "clearQuestions": 47,
+      "clearQuestionsP90": 53,
+      "estimatedClearMinutes": 5.2,
+      "hpRemaining": 0.8877562088569722,
+      "mpRemaining": 0.6283719346049045,
+      "consumables": 0.55,
+      "goldPerClear": 36076.05,
+      "netGoldBeforeFees": 35947.05,
+      "xpPerMemberPerClear": 2909.55,
+      "apPerMemberPerClear": 8.15,
+      "materialsPerClear": 6.7,
+      "gearPerClear": 1.65
+    }
+  ]
+}

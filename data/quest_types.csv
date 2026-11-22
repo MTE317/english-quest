@@ -1,4 +1,5 @@
 ﻿id,name,target,count_min,count_max,reward,reward_gold_pct_of_run_income,rank_points
-hunt,討伐,その★のモンスター,3,6,お金,15,1
-gather,採集,通常素材の納品,3,5,まれな素材,0,1
+hunt,討伐,指定した地域の通常・季節モンスター,3,5,お金,15,1
+gather,採集,指定した地域の通常素材,2,3,まれな素材,0,1
 boss,ボス退治,その★のボス,1,1,お金,35,3
+bounty,賞金首,指定した賞金首,1,1,高額報酬・保証金あり,120,5

@@ -3,8 +3,8 @@ import { now } from '../storage.js?v=features-2';
 import { QuestionPicker, REASON_LABEL } from '../picker.js';
 import { makePracticeQuestion, questionDirection, questionSpeech, DIRECTION } from '../quiz.js?v=question-speech-1';
 import { speak, canSpeak, stopSpeech } from '../speech.js?v=jrpg-1';
-import { nextTurn, actionOptions, setPending, resolvePending, targetKind, canAct, skillMp, collectBattleHits } from '../battle.js?v=jrpg-1';
-import { maxHp, maxMp } from '../character.js?v=jrpg-1';
+import { nextTurn, actionOptions, setPending, resolvePending, targetKind, canAct, skillMp, collectBattleHits, enemyIntent } from '../battle.js?v=balance-builds-1';
+import { maxHp, maxMp } from '../character.js?v=balance-builds-1';
 import { el, render } from '../dom.js';
 import { expeditionScene } from './scenery.js';
 import { monsterKnowledge } from '../monster-knowledge.js';
@@ -168,9 +168,14 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
       const chosen = selectedKind === 'enemy' && action.target === index;
       const label = `${enemy.name}、HP ${enemy.hp}/${enemy.maxHp}`;
       const known = monsterKnowledge(data, g, enemy);
+      const intent = enemyIntent(data, enemy, b.round);
+      const pendingEnemyTurn = b.queue?.some(turn => turn.side === 'enemy' && turn.i === index)
+        || (b.turn?.side === 'enemy' && b.turn.i === index);
+      const imminent = intent.sweep && pendingEnemyTurn;
+      const intentLabel = enemy.hp > 0 && (intent.warning || imminent) ? intent.label : '';
       return el('button', {
         class: `battle-enemy${enemy.hp <= 0 ? ' down' : ''}${targetable ? ' targetable' : ''}${chosen ? ' chosen' : ''}`,
-        'aria-label': `${label}、${targetable ? '対象に選ぶ' : '図鑑を開く'}`,
+        'aria-label': `${label}${intentLabel ? `、${intentLabel}` : ''}、${targetable ? '対象に選ぶ' : '図鑑を開く'}`,
         'aria-haspopup': targetable ? null : 'dialog',
         onclick: targetable ? () => select(index) : () => inspectEnemy(enemy),
       },
@@ -178,6 +183,7 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
         targetable ? null : el('span', { class: 'battle-inspect', 'aria-hidden': 'true' }, '図鑑'),
         el('span', { class: 'battle-unit-name' }, enemy.name, enemy.boss ? ' 👑' : '', enemy.eliteId ? ' ⚠' : ''),
         resource('HP', enemy.hp, enemy.maxHp, 'hp'),
+        intentLabel ? el('span', { class: `battle-intent${imminent ? ' imminent' : ''}` }, intentLabel) : null,
         conditions(enemy.statuses),
         known.weak.length ? el('span', { class: 'battle-known-weak' }, '弱点 ' + known.weak.join('・')) : null);
     }));

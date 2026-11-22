@@ -5,14 +5,14 @@ import { buildLexicon } from '../lexicon.js';
 import { Scheduler, STAGE_LABEL } from '../srs.js?v=features-2';
 import { LearningStore, now } from '../storage.js?v=features-2';
 import { QuestionPicker } from '../picker.js';
-import { GameSession } from '../save.js?v=features-2';
-import { normalizeGame } from '../game-state.js?v=features-2';
-import { seededRng, currentRank } from '../dungeon.js?v=jrpg-1';
-import { checkRankUp } from '../town.js?v=features-2';
+import { GameSession } from '../save.js?v=balance-builds-1';
+import { normalizeGame } from '../game-state.js?v=balance-builds-1';
+import { seededRng, currentRank } from '../dungeon.js?v=balance-builds-1';
+import { checkRankUp } from '../town.js?v=balance-builds-1';
 import {
   stoneProgress, nextUnread, trialBlock, trialPlan, finishExam, promotionBlock, promotionPlan, starLearnedRatio,
   trainingReward, applyTraining,
-} from '../study.js?v=features-2';
+} from '../study.js?v=balance-builds-1';
 import { runQuiz } from '../ui/quiz-runner.js?v=atlas-1';
 import { speak, canSpeak } from '../speech.js?v=jrpg-1';
 import { el, render, stars } from '../dom.js';
@@ -223,7 +223,7 @@ function draw() {
     scheduler = new Scheduler(srs);
     lex = buildLexicon(stones.rows, lexicon.rows);
     store = new LearningStore();
-    if (session.game && !session.readOnly) { normalizeGame(data, session.game); session.save(); }
+    if (session.game && !session.readOnly) { normalizeGame(data, session.game, session.run); session.save(); }
     draw();
   } catch (e) {
     render(view, el('p', { class: 'error' }, `読み込みに失敗：${e.message}`));
