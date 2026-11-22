@@ -1,0 +1,173 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { buildGameData, GAME_FILES } from '../js/gamedata.js';
+import { createNewGame } from '../js/game-state.js';
+import { craft } from '../js/workshop.js';
+import { canEquip, computeStats, gearEffects, makeGear, maxHp } from '../js/character.js';
+import { createBattle, makeEnemy, setPending, resolvePending, skillMp } from '../js/battle.js';
+import { readCsv, readJson } from './helpers.js';
+
+const data = buildGameData(Object.fromEntries(Object.entries(GAME_FILES).map(([key, name]) =>
+  [key, name.endsWith('.json') ? readJson(name) : readCsv(name).rows])));
+const party = (job = 'warrior') => [job, 'knight', 'black_mage', 'white_mage']
+  .map((j) => ({ job: j, name: j, icon: 'x' }));
+const fresh = (job = 'warrior') => createNewGame(data, party(job));
+
+function supply(game, recipeId) {
+  const row = data.recipes.find((r) => r.id === recipeId);
+  assert.ok(row, recipeId);
+  game.gold = Math.max(game.gold, 1000000);
+  const facility = row.slot === 'weapon' ? 'weapon_workshop'
+    : ['accessory', 'cloak'].includes(row.slot) ? 'accessory_workshop' : 'armor_workshop';
+  game.facilities[facility] = Math.max(game.facilities[facility] ?? 1, Number(row.workshop_rank));
+  for (const entry of row.materials.split('|')) {
+    const [id, qty] = entry.split(':');
+    game.storage.materials[id] = (game.storage.materials[id] ?? 0) + Number(qty);
+  }
+  return data.equipment.get(recipeId);
+}
+
+function attackWith(id, job = 'thief', seed = 1, ready = () => {}) {
+  const game = fresh(job);
+  const m = game.party[0];
+  const def = data.equipment.get(id);
+  m.equip.weapon = makeGear(game, id, { affixes: { ...def.fixedEffects } });
+  m.equip.offhand = null;
+  const e = makeEnemy(data, 'slime', { lv: 3 });
+  e.maxHp = e.hp = 100000; e.spd = 0; e.def = e.res = 30;
+  const b = createBattle(data, game, { enemies: [e], seed });
+  ready(game, m, b, e);
+  b.turn = { side: 'ally', i: 0 };
+  setPending(b, { type: 'attack', target: 0 }, {});
+  resolvePending(data, game, b, true);
+  return { game, m, b, e };
+}
+
+test('専用制作レシピ153件、各武器6件以上、防具27件、マント9件、装飾品18件', () => {
+  assert.equal(data.recipes.length, 153);
+  const counts = {};
+  for (const row of data.recipes) {
+    const def = data.equipment.get(row.id);
+    assert.ok(def, row.id);
+    assert.equal(def.source, '専用制作');
+    assert.ok(data.equipment.has(row.base_equipment_id));
+    assert.ok(Number.isFinite(Number(row.gold)) && Number(row.gold) > 0);
+    assert.ok(Object.keys(def.fixedEffects ?? {}).length > 0, row.id);
+    for (const token of row.materials.split('|')) {
+      const [id, qty] = token.split(':');
+      assert.ok(data.materials.has(id), id);
+      assert.ok(Number(qty) >= 1, token);
+    }
+    counts[def.slot] = (counts[def.slot] ?? 0) + 1;
+  }
+  assert.deepEqual(counts, { weapon: 99, head: 9, body: 9, arm: 9, cloak: 9, accessory: 18 });
+  for (const type of data.weaponTypes.keys()) {
+    const n = data.recipes.filter((r) => r.weapon_type === type).length;
+    assert.ok(n >= 6, `${type}: ${n}`);
+  }
+});
+
+test('専用の毒短剣を制作すると固有効果が保存され、素材とお金を消費する', () => {
+  const g = fresh();
+  const def = supply(g, 'craft_dagger_s2');
+  const gold = g.gold;
+  const materials = { ...g.storage.materials };
+  craft(data, g, def);
+  const item = g.storage.gear[0];
+  assert.ok(item.crafted);
+  assert.equal(item.id, 'craft_dagger_s2');
+  assert.equal(item.affixes['STATUS_ON_HIT:poison'], 20);
+  assert.ok(g.gold < gold);
+  assert.ok(Object.keys(materials).some((id) => g.storage.materials[id] !== materials[id]));
+  assert.equal(data.equipment.get('dagger_t4').fixedEffects, undefined);
+});
+
+test('派生制作は制作済みの元装備を要求し、使用した元装備を倉庫から消費する', () => {
+  const g = fresh();
+  const next = supply(g, 'craft_dagger_s8');
+  assert.throws(() => craft(data, g, next), /派生元/);
+  const previous = supply(g, 'craft_dagger_s6');
+  craft(data, g, previous);
+  assert.ok(g.storage.gear.some((it) => it.id === previous.id));
+  craft(data, g, next);
+  assert.ok(g.storage.gear.some((it) => it.id === next.id));
+  assert.ok(!g.storage.gear.some((it) => it.id === previous.id));
+});
+
+test('重装防具・マント・アクセサリーが個別スロットへ制作でき、能力に反映される', () => {
+  const g = fresh();
+  for (const id of ['craft_heavy_body_s3', 'craft_cloak_1_s2', 'craft_ring_1_s2']) {
+    const def = supply(g, id);
+    craft(data, g, def);
+  }
+  const w = g.party[0];
+  const slots = ['body', 'cloak', 'accessory1'];
+  const before = computeStats(data, w);
+  for (let i = 0; i < slots.length; i++) {
+    const item = g.storage.gear[i];
+    assert.equal(canEquip(data, w, slots[i], item).ok, true);
+    w.equip[slots[i]] = item;
+  }
+  const after = computeStats(data, w);
+  assert.ok(after.hp > before.hp);
+  assert.ok(gearEffects(w.equip.body).PHYS_CUT > 0);
+  assert.ok(gearEffects(w.equip.cloak).FIRST_SPD > 0);
+  assert.ok(gearEffects(w.equip.accessory1).STATUS_RES > 0);
+});
+
+test('専用レシピの毒付与・吸血・追撃が通常攻撃で実際に発動する', () => {
+  let poison = false; let extra = false;
+  for (let seed = 1; seed <= 180 && (!poison || !extra); seed++) {
+    const hit = attackWith('craft_dagger_s2', 'thief', seed);
+    poison ||= Boolean(hit.e.statuses.poison);
+    const g = attackWith('craft_dagger_s8', 'thief', seed);
+    extra ||= g.b.log.some((row) => row.includes('追加攻撃！'));
+  }
+  assert.ok(poison, '専用短剣の毒が付与される');
+  assert.ok(extra, '専用短剣の追加攻撃が発生する');
+  const lifesteal = attackWith('craft_dagger_s6', 'thief', 7, (_g, m) => {
+    m.hp = Math.max(1, maxHp(data, m) - 50);
+  });
+  assert.ok(lifesteal.m.hp > maxHp(data, lifesteal.m) - 50);
+});
+
+test('MP節約・回復強化・全体支援の固定効果が実際の計算に入る', () => {
+  const g = fresh('white_mage');
+  const w = g.party[0];
+  const initial = skillMp(data, w, { mp: 40 });
+  const ring = data.equipment.get('craft_charm_6_s4');
+  w.equip.accessory1 = makeGear(g, ring.id, { affixes: { ...ring.fixedEffects } });
+  assert.ok(skillMp(data, w, { mp: 40 }) < initial);
+
+  const heal = (staffId) => {
+    const game = fresh('white_mage');
+    const m = game.party[0];
+    const def = data.equipment.get(staffId);
+    m.equip.weapon = makeGear(game, staffId, { affixes: { ...(def.fixedEffects ?? {}) } });
+    m.hp = Math.max(1, maxHp(data, m) - 100);
+    const b = createBattle(data, game, {
+      enemies: [makeEnemy(data, 'slime', { lv: 1 })], seed: 3,
+    });
+    b.turn = { side: 'ally', i: 0 };
+    setPending(b, { type: 'skill', skillId: 'white_mage_p1_s1', target: 0 }, {});
+    const before = m.hp;
+    resolvePending(data, game, b, true);
+    return m.hp - before;
+  };
+  assert.ok(heal('craft_staff_s2') > heal('staff_t4'));
+
+  const buff = (instrumentId) => {
+    const game = fresh('bard');
+    const m = game.party[0];
+    const def = data.equipment.get(instrumentId);
+    m.equip.weapon = makeGear(game, instrumentId, { affixes: { ...(def.fixedEffects ?? {}) } });
+    const b = createBattle(data, game, {
+      enemies: [makeEnemy(data, 'slime', { lv: 1 })], seed: 3,
+    });
+    b.turn = { side: 'ally', i: 0 };
+    setPending(b, { type: 'skill', skillId: 'bard_p1_s1', target: 0 }, {});
+    resolvePending(data, game, b, true);
+    return b.partyBuffs.def?.[0];
+  };
+  assert.ok(buff('craft_instrument_s2') > buff('instrument_t4'));
+});
