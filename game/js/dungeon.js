@@ -6,15 +6,15 @@
 //   'loot'         … 拾ったものがバックパックに入りきらない（入れ替えるかあきらめるかを選ぶ）
 //   'return_point' … 帰還ポイント（帰るか先へ進むかを選ぶ）
 //   'cleared'      … いちばん奥のボスを倒した（町に帰るだけ）
-import { createBattle, finishBattle, battleRewards } from './battle.js?v=balance-builds-1';
-import { makeEncounter, floorRow, planBounty } from './encounter.js?v=balance-builds-1';
-import { rollBattleLoot, addToBackpack, swapIntoBackpack, unloadBackpack } from './loot.js?v=balance-builds-1';
-import { gainXp, maxHp, maxMp, affixSum } from './character.js?v=balance-builds-1';
-import { curedBy } from './battle.js?v=balance-builds-1';
-import { advanceDays, calendarOf, countKills, refreshBoard } from './town.js?v=balance-builds-1';
+import { createBattle, finishBattle, battleRewards } from './battle.js?v=rune-study-1';
+import { makeEncounter, floorRow, planBounty } from './encounter.js?v=rune-study-1';
+import { rollBattleLoot, addToBackpack, swapIntoBackpack, unloadBackpack } from './loot.js?v=rune-study-1';
+import { gainXp, maxHp, maxMp, affixSum } from './character.js?v=rune-study-1';
+import { curedBy } from './battle.js?v=rune-study-1';
+import { advanceDays, calendarOf, countKills, refreshBoard } from './town.js?v=rune-study-1';
 import { updateChains } from './quest-chain.js?v=features-2';
-import { discoverJobs } from './temple.js?v=balance-builds-1';
-import { memberMods } from './growth.js?v=balance-builds-1';
+import { discoverJobs } from './temple.js?v=rune-study-1';
+import { memberMods } from './growth.js?v=rune-study-1';
 
 /** 乱数の種から 0〜1 の乱数を返す関数（状態は obj[key] に入れて保存できる） */
 export function seededRng(obj, key = 'rng') {

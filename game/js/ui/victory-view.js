@@ -1,4 +1,4 @@
-import { maxHp, maxMp } from '../character.js?v=balance-builds-1';
+import { maxHp, maxMp } from '../character.js?v=rune-study-1';
 import { expeditionScene } from './scenery.js';
 import { el } from '../dom.js';
 

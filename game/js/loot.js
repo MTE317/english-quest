@@ -1,7 +1,7 @@
 // 戦闘の報酬（お金・素材・装備）とバックパック。
 // 式が data にないものは sim/world.py と同じ値を LOOT_FORMULAS に置く（docs/requests.md で依頼済み）。
 import { evaluate } from './expr.js';
-import { makeGear } from './character.js?v=balance-builds-1';
+import { makeGear } from './character.js?v=rune-study-1';
 
 export const LOOT_FORMULAS = Object.freeze({
   gold_per_enemy: 'run_income * income_mul * gold_share / reward_budget', // 実際の遠征経路へ一周の基準収入を分配

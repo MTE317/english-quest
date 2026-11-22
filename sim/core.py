@@ -88,7 +88,7 @@ class Char:
         v = (70 + g * 30 + (s.lv - 1) * g * 9) if k == "HP" else (8 + g * 6 + (s.lv - 1) * g * 1.6)
         return v + s.aff(k)
     def maxhp(s):
-        return max(1, round(s.base("HP") * (1 + T.get("xs", 0)) * (1 + s.room.get("hp", 0) + s.mods.get("hp", 0) + (s.rune.get("HP", 0) if getattr(s, "rune", None) else 0) - (0.2 if "衰弱" in s.persist else 0))))
+        return max(1, round(s.base("HP") * (1 + T.get("xs", 0)) * (1 + s.room.get("hp", 0) + s.mods.get("hp", 0) - (0.2 if "衰弱" in s.persist else 0))))
     def maxmp(s): return round((12 + s.grade("MAG") * 6 + (s.lv - 1) * 2) * (1 + s.room.get("mp", 0)))
     def mastery_lv(s, t=None): return min(10, s.mastery.get(t or s.weapon["t"], 0) // 30)
     def wapt(s, t): return APT.get(JOBS[s.job]["w"].get(t, ""), 0)
@@ -111,7 +111,7 @@ class Char:
         if k == "RES": v *= 1 + s.mods.get("res", 0)
         if k == "MAG": v *= 1 + s.mods.get("mag", 0)
         v *= 1 + T.get("xs", 0)   # 固有・セット・振り直しなどの上乗せ（感度を見るため）
-        return v * (1 + s.rune.get(k, 0)) if getattr(s, "rune", None) else v
+        return v
     def scale(s): return 20 + 6 * s.lv
     def crt(s): return 0.03 + 0.15 * s.stat("LUK") / s.scale() + WEAPONS[s.weapon["t"]].get("crt", 0) + s.aff("CRT") / 100 + s.mods.get("crt", 0)
     def eva(s):
@@ -119,7 +119,7 @@ class Char:
         return min(0.45, 0.02 + 0.08 * s.stat("SPD") / s.scale() + pe + s.aff("EVA") / 100 + s.mods.get("eva", 0))
     def sres(s): return min(0.8, 0.25 * s.stat("LUK") / s.scale() + s.room.get("sres", 0) + s.mods.get("sres", 0) + s.aff("STATUS_RES") / 100)
     def gain_xp(s, x):
-        x *= 1 + s.mods.get("xp", 0) + s.aff("EXP") / 100 + (s.rune.get("EXP", 0) if getattr(s, "rune", None) else 0)
+        x *= 1 + s.mods.get("xp", 0) + s.aff("EXP") / 100
         if s.lv >= 99: return
         s.xp += x
         while s.xp >= xp_need(s.lv):

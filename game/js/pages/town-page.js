@@ -1,28 +1,24 @@
 // 町をホームにして、施設カードから各施設を開く。
-import { loadGameData } from '../gamedata.js?v=features-2';
-import { GameSession } from '../save.js?v=balance-builds-1';
-import { normalizeGame } from '../game-state.js?v=balance-builds-1';
-import { currentRank, seededRng } from '../dungeon.js?v=balance-builds-1';
+import { loadGameData } from '../gamedata.js?v=rune-study-1';
+import { GameSession } from '../save.js?v=rune-study-1';
+import { normalizeGame } from '../game-state.js?v=rune-study-1';
+import { currentRank, seededRng } from '../dungeon.js?v=rune-study-1';
 import {
   calendarOf, guildFee, fillBoard, boardSize, questAcceptLimit, acceptQuest, canAcceptQuest, abandonQuest, canReport, reportQuest, questText, questProgress, questDestination, questRewardGold, questDepositTotal, questAbandonRefund, nextRankStatus, stayInn, revive, reviveCost, checkRankUp,
   canExpandBackpack, expandBackpack, feeTier,
   nextBackpackTier,
-} from '../town.js?v=balance-builds-1';
-import { backpackSlots } from '../loot.js?v=balance-builds-1';
-import { maxHp, maxMp, gearDef } from '../character.js?v=balance-builds-1';
-import { availableJobs, changeJob } from '../growth.js?v=balance-builds-1';
-import { loadCsv, loadJson } from '../data.js?v=features-2';
-import { buildLexicon } from '../lexicon.js';
-import { Scheduler } from '../srs.js?v=features-2';
-import { LearningStore, now } from '../storage.js?v=features-2';
+} from '../town.js?v=rune-study-1';
+import { backpackSlots } from '../loot.js?v=rune-study-1';
+import { maxHp, maxMp, gearDef } from '../character.js?v=rune-study-1';
+import { availableJobs, changeJob } from '../growth.js?v=rune-study-1';
 import { chainStep, stepLabel, acceptChain, talkChain, deliverChain, claimChain } from '../quest-chain.js?v=features-2';
-import { cureAtTemple, updateRuneModifiers } from '../temple.js?v=balance-builds-1';
-import { workshopView, managementView, templeExtras } from '../ui/facility-view.js?v=balance-builds-1';
-import { itemShopView, gearShopView } from '../ui/town-shops.js?v=balance-builds-1';
+import { cureAtTemple } from '../temple.js?v=rune-study-1';
+import { workshopView, managementView, templeExtras } from '../ui/facility-view.js?v=rune-study-1';
+import { itemShopView, gearShopView } from '../ui/town-shops.js?v=rune-study-1';
 import { weaponIcon } from '../ui/weapon-icons.js';
 import { equipmentIcon } from '../ui/equipment-icons.js';
 import { el, render } from '../dom.js';
-import { setSceneMusic } from '../battle-music.js?v=jrpg-1';
+import { setSceneMusic } from '../battle-music.js?v=rune-study-1';
 
 import { installGameShell, sceneHeader } from '../ui/game-shell.js';
 
@@ -31,9 +27,6 @@ const session = new GameSession();
 installGameShell('town', session);
 session.installAutoSave(window);
 let data;
-let lex;
-let scheduler;
-const learning = new LearningStore();
 const workshopSelection = {};
 const itemShopSelection = {};
 const gearShopSelection = {};
@@ -47,7 +40,7 @@ const facilityGroups = [
   { title: '冒険の準備', cards: [
     { id: 'guild', name: 'ギルド酒場', icon: '🍺', detail: '依頼の受注・報告、昇格', show: guild },
     { id: 'inn', name: '宿屋', icon: '🛏️', detail: 'HP・MPを回復', show: inn },
-    { id: 'temple', name: '神殿', icon: '🏛️', detail: '復活・治療、転職・刻印', show: temple },
+    { id: 'temple', name: '神殿', icon: '🏛️', detail: '復活・治療、転職・ジョブ解放', show: temple },
     { href: 'party.html', name: 'パーティ', icon: '🛡️', detail: '仲間の装備・スキル' },
   ] },
   { title: '買い物・強化', cards: [
@@ -78,7 +71,7 @@ function facilityLink(id) {
 function act(fn) {
   try {
     let msg;
-    session.update((g) => { msg = fn(g); updateRuneModifiers(data, g, lex, learning, scheduler, scheduler.dayOf(now())); });
+    session.update((g) => { msg = fn(g); });
     flash = { ok: true, text: Array.isArray(msg) ? msg.join('　') : msg };
   } catch (e) { flash = { ok: false, text: e.message }; }
   draw();
@@ -301,7 +294,7 @@ function temple() {
       m.hp <= 0 ? el('button', { onclick: () => act((gg) => `${m.name}が復活した（-${revive(data, gg, i)}）`) }, `復活 ${reviveCost(data, m)}`) : null)),
     g.party.filter((m) => m.persist?.length).map((m) => el('button', { onclick: () => act((gg) => cureAtTemple(data, gg, m)) }, `${m.name}の状態異常を治療`)),
     el('a', { class: 'btn primary', href: 'chant.html' }, '詠唱の間（瞬間英作文）'),
-    templeExtras(data, g, act, lex, learning),
+    templeExtras(data, g, act),
     el('h2', {}, 'ジョブチェンジ'),
     el('div', { class: 'panel small' }, `共有JP ${g.jp}`),
     el('p', { class: 'muted small' }, '装備できなくなる物は倉庫に入ります。覚えたスキルと AP はジョブごとに残ります。'),
@@ -367,7 +360,6 @@ function draw() {
 function refresh() {
   if (session.game && !session.readOnly) {
     normalizeGame(data, session.game, session.run);
-    updateRuneModifiers(data, session.game, lex, learning, scheduler, scheduler.dayOf(now()));
     session.save();
   }
   draw();
@@ -375,15 +367,11 @@ function refresh() {
 
 (async () => {
   try {
-    const [gd, stones, words, srs] = await Promise.all([loadGameData(), loadCsv('rune_stones.csv'), loadCsv('lexicon.csv'), loadJson('srs.json')]);
-    data = gd;
-    lex = buildLexicon(stones.rows, words.rows);
-    scheduler = new Scheduler(srs.data);
+    data = await loadGameData();
     refresh();
     window.addEventListener('pageshow', (event) => {
       if (!event.persisted) return;
       session.load();
-      learning.load();
       flash = null;
       refresh();
     });

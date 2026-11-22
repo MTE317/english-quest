@@ -1,5 +1,5 @@
-import { loadSettings } from './storage.js?v=features-2';
-import './battle-sound.js?v=jrpg-1';
+import { loadSettings } from './storage.js?v=rune-study-1';
+import './battle-sound.js?v=rune-study-1';
 
 const tracks = {
   town: 'town-square', tavern: 'guild-tavern', facility: 'town-facility', dungeon: 'dungeon-depths',

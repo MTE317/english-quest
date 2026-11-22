@@ -383,7 +383,7 @@ for k in STARS:
                       needs_exam=0 if k == 1 else 1, quest_bonus=round(qb, 2), shop_discount=round(disc, 2),
                       perk=("クエスト掲示板 2件" if k == 1 else f"★{k}へ入れる（昇格試験）")))
     pts += 4 + 2 * k
-    perks_plus = ["クエスト掲示板 3件", "ギルド商店 5%引き", "クエスト報酬 +10%", "刻印の刻み直しが安くなる", "宿の良い部屋が安くなる", "クエスト報酬 +15%",
+    perks_plus = ["クエスト掲示板 3件", "ギルド商店 5%引き", "クエスト報酬 +10%", "クエスト報酬 +15%・商店 10%引き", "宿の良い部屋が安くなる", "クエスト報酬 +15%",
                   "工房の費用 5%引き", "賞金首の情報が早く届く", "クエスト報酬 +20%", "ギルド商店 15%引き", "神殿の費用 10%引き", "クエスト報酬 +25%"]
     ranks.append(dict(id=f"R{k:02d}+", title=jp, title_en=ep, points_required=pts, max_dungeon_rank=k, needs_boss_clear=0, needs_exam=0,
                       quest_bonus=round(qb + 0.05, 2), shop_discount=round(disc + 0.02, 2), perk=perks_plus[k - 1]))

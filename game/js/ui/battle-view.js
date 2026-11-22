@@ -1,15 +1,15 @@
 // 戦況を表示したまま、下段をコマンド・対象の案内・問題・結果に切り替える。
-import { now } from '../storage.js?v=features-2';
+import { now } from '../storage.js?v=rune-study-1';
 import { QuestionPicker, REASON_LABEL } from '../picker.js';
 import { makePracticeQuestion, questionDirection, questionSpeech, DIRECTION } from '../quiz.js?v=question-speech-1';
-import { speak, canSpeak, stopSpeech } from '../speech.js?v=jrpg-1';
-import { nextTurn, actionOptions, setPending, resolvePending, targetKind, canAct, skillMp, collectBattleHits, enemyIntent } from '../battle.js?v=balance-builds-1';
-import { maxHp, maxMp } from '../character.js?v=balance-builds-1';
+import { speak, canSpeak, stopSpeech } from '../speech.js?v=rune-study-1';
+import { nextTurn, actionOptions, setPending, resolvePending, targetKind, canAct, skillMp, collectBattleHits, enemyIntent } from '../battle.js?v=rune-study-1';
+import { maxHp, maxMp } from '../character.js?v=rune-study-1';
 import { el, render } from '../dom.js';
 import { expeditionScene } from './scenery.js';
 import { monsterKnowledge } from '../monster-knowledge.js';
-import { startBattleMusic, finishBattleMusic } from '../battle-music.js?v=jrpg-1';
-import { unlockBattleSound, playBattleHitSound } from '../battle-sound.js?v=jrpg-1';
+import { startBattleMusic, finishBattleMusic } from '../battle-music.js?v=rune-study-1';
+import { unlockBattleSound, playBattleHitSound } from '../battle-sound.js?v=rune-study-1';
 
 const TARGET_PROMPT = {
   enemy: '攻撃する敵を選ぶ',

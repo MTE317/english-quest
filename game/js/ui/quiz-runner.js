@@ -1,7 +1,7 @@
-// 4択を続けて出す部品（覚醒の試練・昇格試験・鍛錬で使う）。答えは学習記録にも入る。
-import { now } from '../storage.js?v=features-2';
+// 4択を続けて出す部品（確認テスト・昇格試験・鍛錬で使う）。答えは学習記録にも入る。
+import { now } from '../storage.js?v=rune-study-1';
 import { makePracticeQuestion, questionDirection, questionSpeech, DIRECTION } from '../quiz.js?v=question-speech-1';
-import { speak, canSpeak, stopSpeech } from '../speech.js?v=jrpg-1';
+import { speak, canSpeak, stopSpeech } from '../speech.js?v=rune-study-1';
 import { REASON_LABEL } from '../picker.js';
 import { el, render } from '../dom.js';
 

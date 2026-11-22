@@ -1,4 +1,4 @@
-# ★12版：学習モデル（ルーンストーン・復習・昇格試験・刻印）つきの通しプレイ
+# ★12版：学習モデル（教材セット・復習・昇格試験）つきの通しプレイ。確認テストは任意。
 import csv, os, random, statistics
 from collections import Counter
 import db, world
@@ -7,10 +7,7 @@ from learn import Learner, QSource
 
 D = db.D
 def R(n): return list(csv.DictReader(open(os.path.join(D, n), encoding="utf-8-sig")))
-KOKUIN = {int(r["slot"]): float(r["gold"]) for r in R("kokuin_slots.csv")}
-RUNE = {r["id"]: dict(stat=r["stat"], per=float(r["per_star"]), rc=int(r["resonance_count"]), rb=float(r["resonance_bonus"]),
-                      glow=float(r["glow_bonus"])) for r in R("rune_effects.csv")}
-MAIN_STAT = {"黒魔道士": "mag", "白魔道士": "mag", "精霊術士": "mag", "呪術師": "mag", "吟遊詩人": "mag", "薬師": "hp", "ナイト": "def"}
+CONFIRMATION = next(r for r in R("exams.csv") if r["id"] == "confirmation")
 
 LEARNERS = {   # 学び方のタイプ
     "標準": dict(),
@@ -74,8 +71,8 @@ class Game12(Game):
         lp = dict(LEARNERS[learner]); lp.update(P or {})
         s.L = Learner(random.Random(seed * 7 + 1), lp)
         s.qpd = minutes * 6; s.max_real = int(max_years * 365)
-        s.s_day = None; s.exam_tried = {}; s.slots = [0] * 4; s.trial_day = {}
-        s.G.update(exam_log=[], trials=0, trial_fail=0, train_sessions=0, rank_real=[], kokuin_spend=0, star_real={}, due_log=[])
+        s.s_day = None; s.exam_tried = {}
+        s.G.update(exam_log=[], confirmations=0, confirmation_fail=0, train_sessions=0, rank_real=[], star_real={}, due_log=[])
     def real_day(s): return (s.G["real_q"] + s.S["q"] - s.q_at_run) // s.qpd if s.in_run else s.G["real_q"] // s.qpd
     q_at_run = 0; in_run = False
     def acc_now(s, r): return Q(s, s.tier(), "dungeon")
@@ -110,33 +107,24 @@ class Game12(Game):
         # 親クラスは試験なしで上げてしまうので、上がった分を戻して試験つきでやり直す
         if s.adv != n0: s.adv = n0; s.G["adv_log"] = [x for x in s.G["adv_log"] if x[0] != s.day]
         s.promote()
-    # ---------------------------------------------------------------- 覚醒の試練と刻印
-    def runes(s):
-        day = s.real_day()
-        for kj in s.L.stones_ready():
-            if s.trial_day.get(kj) == day: continue
-            s.trial_day[kj] = day; s.G["trials"] += 1
-            if not s.L.trial(kj): s.G["trial_fail"] += 1
-        if not s.L.awake: return
-        for i in sorted(range(4), key=lambda i: s.slots[i]):
-            n = s.slots[i] + 1
-            if n in KOKUIN and n <= len(s.L.awake) and s.gold - KOKUIN[n] > s.reserve() * 1.5:
-                s.gold -= KOKUIN[n]; s.slots[i] = n; s.G["spend"]["刻印"] += KOKUIN[n]; s.G["kokuin_spend"] += KOKUIN[n]
-        stones = sorted((k for k, j in s.L.awake), reverse=True)
-        glow = s.L.due_count() <= s.L.due_cap
-        it = iter(stones)
-        for i, c in enumerate(s.party):
-            key = MAIN_STAT.get(c.job, "str"); e = RUNE[key]
-            got = [next(it, None) for _ in range(s.slots[i])]; got = [k for k in got if k]
-            v = (sum(e["per"] * k for k in got) * (1 + (e["glow"] if glow else 0)) + e["rb"] * (len(got) // e["rc"])) * T.get("rune_mul", 1.0)
-            c.rune = {e["stat"]: v}
+    # ---------------------------------------------------------------- 任意の確認テスト
+    def confirmation_test(s, stone):
+        # メインループから自動受験しない。教材の理解を確かめるときだけ呼ぶ。
+        # 能力やお金は変えず、解答と所要学習量を記録する。
+        s.L.set_day(s.real_day())
+        n = int(CONFIRMATION["questions"])
+        passed = s.L.confirmation(stone, n=n, need=float(CONFIRMATION["pass_rate"]))
+        s.G["confirmations"] += 1
+        s.G["confirmation_fail"] += not passed
+        s.G["real_q"] += n; s.S["q"] += n
+        return passed
     # ---------------------------------------------------------------- メインループ
     def play(s):
         cur = 0
         while s.real_day() < s.max_real and s.s_day is None:
             did = s.choose_dungeon(); r = DUNGEONS[did]["rank"]
             qs = s.quests(did); s.buy_stock(r)
-            snap = world.copy.deepcopy((s.party, s.gold, s.bank, s.overdue, s.day, s.fac, s.mats, s.items, s.pts, s.adv, s.cleared, s.cleared_d, s.unlocked, s.slots))
+            snap = world.copy.deepcopy((s.party, s.gold, s.bank, s.overdue, s.day, s.fac, s.mats, s.items, s.pts, s.adv, s.cleared, s.cleared_d, s.unlocked))
             q0 = s.S["q"]; s.q_at_run = q0; s.in_run = True; s.L.begin_run(); nr0 = len(s.S["rounds"])
             res, loot, floor = s.run(did)
             s.G.setdefault("rr", {}).setdefault(r, []).extend(s.S["rounds"][nr0:])
@@ -148,7 +136,7 @@ class Game12(Game):
             s.G["attempts"] += 1; s.G["attempts_by_rank"][r] += 1; s.G["real_q"] += s.S["q"] - q0; s.G["run_q"].append((r, s.S["q"] - q0, res))
             s.G["first_enter"].setdefault(r, (s.real_day(), s.G["attempts"], s.G["real_q"])); s.G["dungeon_use"][did] += 1
             if res == "wipe":
-                (s.party, s.gold, s.bank, s.overdue, s.day, s.fac, s.mats, s.items, s.pts, s.adv, s.cleared, s.cleared_d, s.unlocked, s.slots) = snap
+                (s.party, s.gold, s.bank, s.overdue, s.day, s.fac, s.mats, s.items, s.pts, s.adv, s.cleared, s.cleared_d, s.unlocked) = snap
                 s.G["wipes"] += 1; s.G["wipes_by_rank"][r] += 1; s.streak[did] += 1; cur += 1; s.G["max_streak"] = max(s.G["max_streak"], cur)
                 if r > 1: s.farm = T["farm_after_wipe"]
                 else:
@@ -156,7 +144,7 @@ class Game12(Game):
                 continue
             cur = 0; s.streak[did] = 0
             s.advance(DUNGEONS[did]["days"])
-            s.gold += loot["gold"] * (1 + s.party[0].rune.get("GOLD", 0) if getattr(s.party[0], "rune", None) else 1)
+            s.gold += loot["gold"]
             s.G["earn"]["敵のお金"] += loot["gold"]; s.mats += loot["mats"]
             for d in loot["drops"]:
                 if not s.try_equip(d): s.sell_or_salvage(d)
@@ -174,7 +162,7 @@ class Game12(Game):
             s.check_unlocks(loot); s.job_change(); s.temple()
             for k in ("overdue", "bank"):
                 pay = min(getattr(s, k), max(0, s.gold - s.fixed_cost())); setattr(s, k, getattr(s, k) - pay); s.gold -= pay
-            s.invest(); s.craft(); s.shop_gear(); s.inn(); s.enhance(); s.runes()
+            s.invest(); s.craft(); s.shop_gear(); s.inn(); s.enhance()
             cap = ADV[s.adv]["cap"] if T.get("rank_cap", 1) else 99   # ランクごとのレベル上限（999方式ではなし）
             for c in s.party:
                 if c.lv > cap: c.lv = cap; c.xp = 0
@@ -203,13 +191,12 @@ def summary(gs):
     out["max_due"] = max(max([d for _, d in g.G["due_log"]] or [0]) for g in gs)
     out["due_p90"] = sorted(d for g in gs for _, d in g.G["due_log"])[int(0.9 * sum(len(g.G["due_log"]) for g in gs))] if any(g.G["due_log"] for g in gs) else 0
     out["exam_fail"] = round(sum(1 for g in gs for e in g.G["exam_log"] if not e[2]) / max(1, sum(len(g.G["exam_log"]) for g in gs)), 2)
-    out["trials_fail"] = round(sum(g.G["trial_fail"] for g in gs) / max(1, sum(g.G["trials"] for g in gs)), 2)
+    out["confirmation_fail"] = round(sum(g.G["confirmation_fail"] for g in gs) / max(1, sum(g.G["confirmations"] for g in gs)), 2)
     out["train_share"] = round(st.mean(g.G["train_sessions"] * 15 / max(1, g.G["real_q"]) for g in gs), 3)
     out["new_share"] = round(st.mean(g.L.stats["new"] / max(1, g.L.stats["q"]) for g in gs), 3)
     out["review_share"] = round(st.mean(g.L.stats["review"] / max(1, g.L.stats["q"]) for g in gs), 3)
     out["overdue_months"] = round(sum(g.G["overdue_months"] for g in gs) / max(1, sum(g.G["months"] for g in gs)), 3)
     out["fixed_share"] = round(st.mean(g.G["spend"]["会費・倉庫"] / max(1, sum(g.G["earn"].values())) for g in gs), 3)
-    out["kokuin_slots"] = round(st.mean(sum(g.slots) for g in gs), 1)
     out["runq_p95"] = sorted(q for g in gs for _, q, _ in g.G["run_q"])[int(0.95 * sum(len(g.G["run_q"]) for g in gs))]
     out["gold_end"] = round(st.mean(g.gold for g in gs))
     out["rounds_by_star"] = {k: round(st.mean(x for g in gs for x in g.G.get("rr", {}).get(k, [0])), 2) for k in range(1, 13)}

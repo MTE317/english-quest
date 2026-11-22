@@ -1,4 +1,4 @@
-import { loadSettings } from './storage.js?v=features-2';
+import { loadSettings } from './storage.js?v=rune-study-1';
 
 let context;
 let resume;

@@ -29,6 +29,32 @@ export function safeStorage(storage) {
   try { return globalThis.localStorage ?? null; } catch { return null; }
 }
 
+/** 旧覚醒の達成日は確認テストの履歴として残す。点数や受験回数は推測しない。 */
+function migrateConfirmationHistory(exams, awakened) {
+  let changed = false;
+  const ids = new Set([
+    ...Object.keys(awakened),
+    ...Object.keys(exams).filter((key) => key.startsWith('awakening:')).map((key) => key.slice('awakening:'.length)),
+  ]);
+  for (const id of ids) {
+    const key = `confirmation:${id}`;
+    if (exams[key]) continue;
+    const legacy = exams[`awakening:${id}`] ?? {};
+    const passedDays = [legacy.passedDay, awakened[id]?.day].filter(Number.isFinite);
+    const passedDay = passedDays.length ? Math.min(...passedDays) : null;
+    const lastFailDay = Number.isFinite(legacy.lastFailDay) ? legacy.lastFailDay : null;
+    const days = [passedDay, lastFailDay].filter(Number.isFinite);
+    exams[key] = {
+      ...legacy, firstPassedDay: passedDay, passedDay,
+      lastDay: days.length ? Math.max(...days) : null,
+      lastPassed: passedDay != null && (lastFailDay == null || passedDay >= lastFailDay),
+      legacyImported: true,
+    };
+    changed = true;
+  }
+  return changed;
+}
+
 /** 学習記録。get / set で1語ずつ扱い、set のたびに保存する。 */
 export class LearningStore {
   constructor(storage) {
@@ -36,7 +62,7 @@ export class LearningStore {
     this.words = new Map();
     this.daily = new Map(); // 学習の日付 → { answered, correct }
     this.read = new Set(); // 資料室で読み解いたルーン
-    this.awakened = {}; // 覚醒した石 → { day }
+    this.awakened = {}; // 旧版の覚醒履歴。能力・出題条件には使わず、互換のため保存する。
     this.exams = {}; // 試験 → { lastFailDay, passedDay }
     this.load();
   }
@@ -56,6 +82,7 @@ export class LearningStore {
       this.read = new Set(obj.read ?? []);
       this.awakened = obj.awakened ?? {};
       this.exams = obj.exams ?? {};
+      if (migrateConfirmationHistory(this.exams, this.awakened)) this.save();
     } catch (e) {
       console.warn('学習記録を読めなかった', e);
     }
@@ -88,7 +115,30 @@ export class LearningStore {
   /** 資料室で読み解いた（予習カードを見た） */
   markRead(ids) { for (const id of ids) this.read.add(id); this.save(); }
   isRead(id) { return this.read.has(id) || this.words.has(id); }
-  setAwakened(stoneId, day) { this.awakened[stoneId] = { day }; this.save(); }
+  /** @deprecated 旧データを扱う場合だけ使用。新しい確認テストは recordConfirmation で記録する。 */
+  setAwakened(stoneId, day) {
+    this.awakened[stoneId] = { day };
+    migrateConfirmationHistory(this.exams, this.awakened);
+    this.save();
+  }
+  confirmationResult(stoneId) { return this.exams[`confirmation:${stoneId}`] ?? null; }
+  /** 任意テストは何度でも受けられる。結果だけを記録し、ゲームの進み具合は変えない。 */
+  recordConfirmation(stoneId, { correct, total, day, passed }) {
+    if (!Number.isInteger(total) || total <= 0 || !Number.isInteger(correct) || correct < 0 || correct > total) {
+      throw new Error('確認テストの回答数が正しくありません。');
+    }
+    const previous = this.confirmationResult(stoneId) ?? {};
+    const rate = correct / total;
+    const best = previous.bestRate == null || rate > previous.bestRate;
+    this.setExam(`confirmation:${stoneId}`, {
+      attempts: (previous.attempts ?? 0) + 1,
+      lastDay: day, lastCorrect: correct, lastTotal: total, lastPassed: passed,
+      firstPassedDay: previous.firstPassedDay ?? previous.passedDay ?? (passed ? day : null),
+      passedDay: passed ? day : previous.passedDay ?? null,
+      lastFailDay: passed ? previous.lastFailDay ?? null : day,
+      ...(best ? { bestRate: rate, bestCorrect: correct, bestTotal: total } : {}),
+    });
+  }
   setExam(key, value) { this.exams[key] = { ...(this.exams[key] ?? {}), ...value }; this.save(); }
   clear() {
     this.words.clear(); this.daily.clear(); this.read = new Set(); this.awakened = {}; this.exams = {};
