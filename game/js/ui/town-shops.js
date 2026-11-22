@@ -4,6 +4,7 @@ import { LOOT_FORMULAS } from '../loot.js?v=build36-1';
 import { buyGear, buyItem, gearShopStock, itemShopStock, sellGear, sellPrice } from '../town.js?v=build36-1';
 import { goldText, shopView } from './shop-view.js?v=weapon-icons-1';
 import { equipmentIcon } from './equipment-icons.js';
+import { portraitIcon } from './portrait.js';
 
 const itemCategories = [
   { id: 'hp', label: 'HP回復' }, { id: 'mp', label: 'MP回復' },
@@ -75,9 +76,8 @@ function equipmentDetails(data, game, def, gear) {
     game.party.map((member) => {
       const checks = slots.map((slot) => ({ slot, ...canEquip(data, member, slot, gear) }));
       const allowed = checks.filter(({ ok }) => ok);
-      const icon = data.icons.find(({ id }) => id === member.icon)?.icon ?? '👤';
       const grade = aptitudeGrade(data, member.job, def);
-      const heading = el('span', {}, el('span', { 'aria-hidden': 'true' }, icon),
+      const heading = el('span', { class: 'shop-member-heading' }, portraitIcon(member.icon, { small: true }),
         ` ${member.name}${grade ? `（適正 ${grade}）` : ''}`);
       if (!allowed.length) return el('p', { class: 'shop-member muted' }, heading, ` — ${checks[0].reason}`);
       return el('details', { class: 'shop-member' },

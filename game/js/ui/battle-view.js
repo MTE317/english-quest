@@ -10,6 +10,7 @@ import { expeditionScene } from './scenery.js';
 import { monsterKnowledge } from '../monster-knowledge.js';
 import { startBattleMusic, finishBattleMusic } from '../battle-music.js?v=rune-study-1';
 import { unlockBattleSound, playBattleHitSound } from '../battle-sound.js?v=rune-study-1';
+import { portraitIcon } from './portrait.js';
 
 const TARGET_PROMPT = {
   enemy: '攻撃する敵を選ぶ',
@@ -35,7 +36,6 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
     lex, store, scheduler, stoneId: run.quiz?.stoneId ?? run.stoneId ?? lex.stones[0].id,
     nowMs: now(), state: run.quiz ?? null,
   });
-  const iconOf = (id) => data.icons.find((i) => i.id === id)?.icon ?? '❔';
   const turn = el('span', { class: 'battle-turn' });
   const enemies = el('div', { class: 'battle-enemies', 'data-count': b.enemies.length, 'aria-label': '敵', role: 'group' });
   const party = el('div', { id: 'battle-party', class: 'battle-party', 'data-count': g.party.length, 'aria-label': '味方', role: 'group' });
@@ -206,7 +206,7 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
       const conditionNames = battleConditionLabels(data, { ...b.allies[index], hp: member.hp });
       const label = [member.name, status, ...conditionNames].join('、');
       return unitCard(classes, chosen, label, targetable ? () => select(index) : null,
-        el('span', { class: 'battle-ally-icon', 'aria-hidden': 'true' }, iconOf(member.icon)),
+        el('span', { class: 'battle-ally-icon', 'aria-hidden': 'true' }, portraitIcon(member.icon, { small: true })),
         el('span', { class: 'battle-ally-info' },
           el('span', { class: 'battle-unit-name' }, member.name),
           resource('HP', member.hp, hp, 'hp'),

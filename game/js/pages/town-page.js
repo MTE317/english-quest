@@ -14,13 +14,14 @@ import { availableJobs, changeJob } from '../growth.js?v=build36-1';
 import { chainStep, stepLabel, acceptChain, talkChain, deliverChain, claimChain } from '../quest-chain.js?v=features-2';
 import { cureAtTemple } from '../temple.js?v=rune-study-1';
 import { workshopView, managementView, templeExtras } from '../ui/facility-view.js?v=build36-1';
-import { itemShopView, gearShopView } from '../ui/town-shops.js?v=build36-1';
+import { itemShopView, gearShopView } from '../ui/town-shops.js?v=pixel-town-1';
 import { weaponIcon } from '../ui/weapon-icons.js';
 import { equipmentIcon } from '../ui/equipment-icons.js';
+import { uiIcon } from '../ui/pixel-icons.js';
 import { el, render } from '../dom.js';
 import { setSceneMusic } from '../battle-music.js?v=rune-study-1';
 
-import { installGameShell, sceneHeader } from '../ui/game-shell.js';
+import { installGameShell, sceneHeader } from '../ui/game-shell.js?v=pixel-town-1';
 
 const view = document.getElementById('view');
 const session = new GameSession();
@@ -38,25 +39,25 @@ const rng = () => seededRng({ rng: (Date.now() ^ (Math.random() * 2 ** 32)) >>> 
 
 const facilityGroups = [
   { title: '冒険の準備', cards: [
-    { id: 'guild', name: 'ギルド酒場', icon: '🍺', detail: '依頼の受注・報告、昇格', show: guild },
-    { id: 'inn', name: '宿屋', icon: '🛏️', detail: 'HP・MPを回復', show: inn },
-    { id: 'temple', name: '神殿', icon: '🏛️', detail: '復活・治療、転職・ジョブ解放', show: temple },
-    { href: 'party.html', name: 'パーティ', icon: '🛡️', detail: '仲間の装備・スキル' },
+    { id: 'guild', name: 'ギルド酒場', icon: 'guild', detail: '依頼の受注・報告、昇格', show: guild },
+    { id: 'inn', name: '宿屋', icon: 'inn', detail: 'HP・MPを回復', show: inn },
+    { id: 'temple', name: '神殿', icon: 'temple', detail: '復活・治療、転職・ジョブ解放', show: temple },
+    { href: 'party.html', name: 'パーティ', icon: 'party', detail: '仲間の装備・スキル' },
   ] },
   { title: '買い物・強化', cards: [
-    { id: 'items', name: '道具屋', icon: '🧪', detail: '道具を買う、荷物枠を広げる', show: items },
-    { id: 'gear', name: '武器・防具屋', icon: () => weaponIcon('sword'), detail: '装備の購入・売却', show: gearShop },
-    { id: 'workshop', name: '工房・調合', icon: '⚒️', detail: '装備の作成・強化、道具の調合',
+    { id: 'items', name: '道具屋', icon: 'items', detail: '道具を買う、荷物枠を広げる', show: items },
+    { id: 'gear', name: '武器・防具屋', icon: 'gear', detail: '装備の購入・売却', show: gearShop },
+    { id: 'workshop', name: '工房・調合', icon: 'workshop', detail: '装備の作成・強化、道具の調合',
       show: () => workshopView(data, session.game, act, rng, workshopSelection) },
-    { id: 'storage', name: '倉庫', icon: '📦', detail: '装備・道具・素材を確認', show: storage },
+    { id: 'storage', name: '倉庫', icon: 'storage', detail: '装備・道具・素材を確認', show: storage },
   ] },
   { title: '挑戦・運営', cards: [
-    { href: 'challenge.html', name: '闘技場', icon: '🏆', detail: '対戦と最終試験' },
-    { id: 'manage', name: '銀行・投資', icon: '🪙', detail: '融資・返済、施設の強化',
+    { href: 'challenge.html', name: '闘技場', icon: 'arena', detail: '対戦と最終試験' },
+    { id: 'manage', name: '銀行・投資', icon: 'bank', detail: '融資・返済、施設の強化',
       show: () => managementView(data, session.game, act) },
-    { id: 'catalog', name: '図鑑', icon: '📖', detail: '魔物・装備・収集記録',
+    { id: 'catalog', name: '図鑑', icon: 'catalog', detail: '魔物・装備・収集記録',
       show: () => el('section', { class: 'panel' }, el('p', { class: 'muted' }, '図鑑の内容は準備中です。')) },
-    { id: 'achievements', name: '実績・称号', icon: '🎖️', detail: '達成記録と称号',
+    { id: 'achievements', name: '実績・称号', icon: 'achievements', detail: '達成記録と称号',
       show: () => el('section', { class: 'panel' }, el('p', { class: 'muted' }, '実績・称号の内容は準備中です。')) },
   ] },
 ];
@@ -87,7 +88,7 @@ function statusBar(g) {
 
 function townCard({ href, id, name, icon, detail }) {
   return el('a', { class: 'town-card', href: href ?? facilityLink(id) },
-    el('span', { class: 'town-card-icon', 'aria-hidden': 'true' }, typeof icon === 'function' ? icon() : icon),
+    el('span', { class: 'town-card-icon', 'aria-hidden': 'true' }, uiIcon(icon)),
     el('span', {},
       el('strong', {}, name),
       el('span', { class: 'town-card-detail' }, detail)));

@@ -1,0 +1,23 @@
+{
+  "tool": "built-in image_gen",
+  "asset": "facilities.png",
+  "layout": {
+    "columns": 4,
+    "rows": 3,
+    "order": [
+      "guild",
+      "inn",
+      "temple",
+      "party",
+      "items",
+      "gear",
+      "workshop",
+      "storage",
+      "arena",
+      "bank",
+      "catalog",
+      "achievements"
+    ]
+  },
+  "prompt": "Use case: stylized-concept\nAsset type: one production-ready transparent JRPG town menu spritesheet for English Quest.\nCreate exactly ONE 4-column by 3-row atlas of 12 small object icons. Canvas 1024x768, precisely twelve equal square 256x256 cells, NO gutters. Each object centered at the EXACT center of its own cell; full object within inner 24x24 of a 32x32 logical cell. The source art must look drawn at 32x32 pixels then enlarged 8x nearest neighbor; chunky honest pixel clusters, 1 logical pixel deep navy outlines, no antialiasing, no subpixel details, no shading gradients.\nStyle: classic 16-bit console JRPG inventory icons. Muted limited palette, blue-gray silver and dusty purple metals, ochre gold, oxblood cloth, dark wood. Crisp simple recognizable silhouettes, all consistent weight.\nRead order left-to-right, top-to-bottom, EXACT:\nrow 1 cell 1: wooden tavern tankard filled with pale beer and white foam; cell2: small wooden inn bed with cream pillow and blue blanket; cell3: stone temple with three ivory columns and triangular roof; cell4: blue kite shield with small gold crest (party).\nrow 2 cell 1: rounded glass healing potion with teal liquid and red cork; cell2: iron sword crossed in front of a small brown shield (equipment shop); cell3: silver smith hammer over dark anvil (workshop); cell4: shut brown treasure chest with gold latch (storage).\nrow 3 cell 1: gold trophy with dark red ribbons (arena); cell2: three stacked gold coins and small brown money pouch (bank); cell3: open cream book with dark blue cover and golden clasp (catalog); cell4: gold star medal on dark red ribbon (achievements).\nBackground: real transparent alpha across entire sheet, including empty margins around each isolated icon. No cell backgrounds, no checkerboard drawn into image, no contact shadows, no grid lines, no dividing borders, no extra decorative pixels in empty areas. NO letters, NO text, NO labels, NO logos, NO watermark. Exact 4x3 cell arrangement is essential for CSS sprite cropping."
+}

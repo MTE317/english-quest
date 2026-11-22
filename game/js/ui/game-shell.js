@@ -1,19 +1,20 @@
 import { el } from '../dom.js';
+import { uiIcon } from './pixel-icons.js';
 
 const destinations = [
-  ['town', '町', '⌂', 'index.html'],
-  ['party', '仲間', '♜', 'party.html'],
-  ['study', '学び舎', '✧', 'study.html'],
-  ['records', '手帳', '▤', 'records.html'],
+  ['town', '町', 'temple', 'index.html'],
+  ['party', '仲間', 'party', 'party.html'],
+  ['study', '学び舎', 'catalog', 'study.html'],
+  ['records', '手帳', 'catalog', 'records.html'],
 ];
 
 export function installGameShell(page, session) {
   const nav = el('nav', { class: 'travel-nav', 'aria-label': '冒険メニュー' },
     destinations.map(([id, label, mark, href]) => el('a', {
       href, 'aria-current': id === page ? 'page' : null,
-    }, el('span', { 'aria-hidden': 'true' }, mark), label)));
+    }, uiIcon(mark), label)));
   const journal = el('a', { class: 'journal-link', href: 'records.html?tab=settings' },
-    el('span', { 'aria-hidden': 'true' }, '▤'), ' 記録と設定');
+    uiIcon('catalog'), ' 記録と設定');
   document.body.classList.add('quest-ui');
   document.body.dataset.page = page;
   const mast = el('header', { class: 'game-mast' }, el('div', { class: 'mast-inner' },
