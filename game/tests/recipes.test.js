@@ -144,7 +144,9 @@ test('MP節約・回復強化・全体支援の固定効果が実際の計算に
     const m = game.party[0];
     const def = data.equipment.get(staffId);
     m.equip.weapon = makeGear(game, staffId, { affixes: { ...(def.fixedEffects ?? {}) } });
-    m.hp = Math.max(1, maxHp(data, m) - 100);
+    // Lv1だと通常杖でも最大HPまで回復するため、比較が上限で潰れないようにする。
+    m.lv = 20;
+    m.hp = 1;
     const b = createBattle(data, game, {
       enemies: [makeEnemy(data, 'slime', { lv: 1 })], seed: 3,
     });
