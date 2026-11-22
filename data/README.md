@@ -44,7 +44,9 @@
 | inn_rooms.csv / facilities.csv / facility_ranks.csv / facility_effects.csv | 宿屋・町の施設 |
 | enhance_rates.csv / rarities.csv / recipes.csv | 強化（費用は1.8^強化値で増える）・レアリティ・制作 |
 | enchant_grades.csv | エンチャントのグレード（工房のランク）ごとの費用 |
-| economy_by_rank.csv | ★ごとのお金の目安 |
+| economy_by_rank.csv | ★ごとのお金の目安（月末に払うのはギルドの会費だけ。倉庫は無料） |
+| backpack.csv | バックパックの広さの段階と、広げる費用 |
+| manifest.json | data/ にあるファイル名の一覧（ゲームが読み込みに使う） |
 | adventurer_ranks.csv | 冒険者ランク25段階（★ごとに本ランクと＋、最後にS）。昇格試験・特典 |
 | quest_types.csv / quests.csv | クエスト |
 | rune_stones.csv | ルーンストーン（単語セット）。★・テーマ・種類・大きさ |
