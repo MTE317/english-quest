@@ -24,8 +24,8 @@
 | job_weapon_aptitude.csv / job_armor_aptitude.csv / aptitude.csv | 装備の適正と倍率 |
 | skills.csv | 14ジョブのスキルツリー（5段目まで。効果は effect_json） |
 | common_tree.csv | 全ジョブ共通のパッシブ |
-| weapon_types.csv / armor_weights.csv | 武器14種・防具の重さ |
-| equipment.csv | 装備672種（24段階＝★ごとに2段階。武器14種・防具9種・マント・アクセサリー4種） |
+| weapon_types.csv / armor_weights.csv | 武器16種（鎌・扇を含む）・防具の重さ。`dual_wield`・`attack_stat`・`traits_json` で戦闘特性を管理 |
+| equipment.csv | 通常装備720種（24段階＝★ごとに2段階。武器16種＝384本、防具9種・マント・アクセサリー4種） |
 | uniques.csv | 固有装備108（ボスと賞金首が落とす。効果は固定） |
 | sets.csv / set_items.csv | セット装備20セット（4部位） |
 | enchant_sources.csv | エンチャントで素材から付く効果の系統 |
@@ -42,7 +42,7 @@
 | items.csv / shop_inventory.csv | 消耗品（回復は固定量と割合の2種類。能力を上げる薬は調合のみ）/ 店の品ぞろえ |
 | alchemy_recipes.csv | 調合のレシピ（素材は種別と★で指定） |
 | inn_rooms.csv / facilities.csv / facility_ranks.csv / facility_effects.csv | 宿屋・町の施設 |
-| enhance_rates.csv / rarities.csv / recipes.csv | 強化（費用は1.8^強化値で増える）・レアリティ・制作 |
+| enhance_rates.csv / rarities.csv / recipes.csv | 強化（費用は1.8^強化値で増える）・レアリティ・制作。鎌・扇を含む専用レシピ15件＋汎用制作 |
 | enchant_grades.csv | エンチャントのグレード（工房のランク）ごとの費用 |
 | economy_by_rank.csv | ★ごとのお金の目安（月末に払うのはギルドの会費だけ。倉庫は無料） |
 | backpack.csv | バックパックの広さの段階と、広げる費用 |
@@ -65,3 +65,11 @@
 lexicon.csv は今は英語面接の準備用の90語です（★1〜★3に30語ずつ、優先度Aの語を先に並べた。2026-11-22 入れ替え）。最終的には単語約12,000語とフレーズ約3,000を、約500個のルーンストーンに分けます。シミュレーションでは今のところ「★が1つ上がるごとに正答率が3%下がる」として扱っています（balance.json の accuracy_drop_per_rank）。
 
 面接向けのフレーズを追加するときは、回答では `my`、質問では `your` など話し手に合った語を使います。`something` や `someone`、`X` などは、面接原稿に沿った具体的な対象・人物・数値に置き換え、詠唱のヒントも対応する表現にそろえます。
+
+## 武器16種の追加ルール（2026-11-23）
+
+- `weapon_types.csv` の `dual_wield` は明示的な 1/0、`attack_stat` は `phys`（STR・敵DEF）か `mag`（MAG・敵RES）。`traits_json` にはCSVとしてエスケープしたJSONを格納。
+- 既存14種＋新規 `scythe`（鎌、斬撃・両手）と `fan`（扇、風属性・片手だが二刀流不可）の16種。鎌・扇は各24段階（`scythe_t1`〜`t24`、`fan_t1`〜`t24`）。★ごとに店で買える前半とドロップできる後半がある。
+- `traits_json` の設定例：`normal_status`（通常命中時の状態異常）、`vs_status`（指定した状態異常の敵への武器攻撃のダメージ補正）、`splash_chance` と `splash_mul`（槍の別敵への貫通）、`weak_damage_mul`、`blind_miss_mul`、`normal_all_mul`、`material_drop_mul`、`heal_mul`、`mag_mul`、`str_mul`、`song_bonus`、`party_buff_mul`。
+- 鎌は通常攻撃で出血15%、出血中の敵への武器攻撃+10%。扇はMAG依存の風通常攻撃、味方全体強化スキルの数値×1.10。ボス状態異常耐性など既存ルールを維持する。
+- 武器熟練度は装備条件にせず、種別ごとの威力ボーナス（30体ごとに+2%、最大+20%）に使う。
