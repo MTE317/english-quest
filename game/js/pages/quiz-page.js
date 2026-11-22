@@ -4,8 +4,8 @@ import { buildLexicon } from '../lexicon.js';
 import { Scheduler, STAGE_LABEL, dayToString } from '../srs.js?v=features-2';
 import { LearningStore, now, getDebugDayOffset, setDebugDayOffset } from '../storage.js?v=features-2';
 import { QuestionPicker, REASON_LABEL } from '../picker.js';
-import { makeQuestion, DIRECTION, DIRECTION_LABEL } from '../quiz.js?v=features-2';
-import { speak, canSpeak } from '../speech.js';
+import { makeQuestion, questionSpeech, DIRECTION, DIRECTION_LABEL } from '../quiz.js?v=question-speech-1';
+import { speak, canSpeak, stopSpeech } from '../speech.js?v=question-speech-1';
 import { el, render, stars } from '../dom.js';
 
 // この画面は動作確認用なので、問題数はユーザーの指定（10問）で固定
@@ -113,6 +113,7 @@ function startTest() {
   const picker = new QuestionPicker({ lex, store, scheduler, stoneId: selectedStone, nowMs: now() });
   const results = [];
   const askNext = () => {
+    stopSpeech();
     if (results.length >= QUESTIONS_PER_TEST) return showResult(results);
     const next = picker.next();
     if (!next) return showResult(results);
@@ -134,6 +135,7 @@ function startTest() {
 
 function showQuestion(q, reason, number, onAnswer, onNext) {
   const isEnPrompt = q.direction === DIRECTION.EN_JA;
+  const voice = questionSpeech(q);
   const feedback = el('div', { class: 'feedback' });
   const after = el('div');
   let answered = false;
@@ -158,9 +160,10 @@ function showQuestion(q, reason, number, onAnswer, onNext) {
           el('div', { class: 'muted' },
             `${STAGE_LABEL[rec.stage]}・日を空けた連続正解 ${rec.streak}回・次の復習：${daysLabel(rec.due - today)}`),
         ),
-        canSpeak() && !isEnPrompt ? el('button', { class: 'ghost', onclick: () => speak(q.word.en) }, `🔊 ${q.word.en}`) : null,
+        canSpeak() && !isEnPrompt ? el('button', { class: 'ghost', onclick: () => speak(voice.answer) }, `🔊 ${voice.answer}`) : null,
         el('button', { class: 'primary', onclick: onNext }, number >= QUESTIONS_PER_TEST ? '結果を見る' : '次へ'),
       );
+      if (!isEnPrompt) speak(voice.answer);
     },
   }, c.text));
 
@@ -172,7 +175,7 @@ function showQuestion(q, reason, number, onAnswer, onNext) {
     el('div', { class: 'center' }, el('span', { class: `tag ${reason}` }, REASON_LABEL[reason])),
     el('div', { class: `prompt ${isEnPrompt ? '' : 'ja'}`, lang: isEnPrompt ? 'en' : 'ja' }, q.prompt),
     el('div', { class: 'center' },
-      canSpeak() && isEnPrompt ? el('button', { class: 'speak', onclick: () => speak(q.word.en), 'aria-label': '発音を聞く' }, '🔊') : null),
+      canSpeak() && voice.prompt ? el('button', { class: 'speak', onclick: () => speak(voice.prompt), 'aria-label': '発音を聞く' }, '🔊') : null),
     el('div', { class: 'muted small center' },
       isEnPrompt ? '意味を選んでください' : '英語を選んでください'),
     el('div', { class: 'options' }, buttons),
@@ -180,6 +183,7 @@ function showQuestion(q, reason, number, onAnswer, onNext) {
     after,
   );
   window.scrollTo(0, 0);
+  speak(voice.prompt);
 }
 
 // ---------------- 結果 ----------------

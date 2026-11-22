@@ -1,12 +1,12 @@
 // 戦況を表示したまま、下段をコマンド・対象の案内・問題・結果に切り替える。
 import { now } from '../storage.js?v=features-2';
 import { QuestionPicker, REASON_LABEL } from '../picker.js';
-import { makePracticeQuestion, questionDirection, DIRECTION } from '../quiz.js?v=features-2';
-import { speak, canSpeak } from '../speech.js?v=battle-music-1';
+import { makePracticeQuestion, questionDirection, questionSpeech, DIRECTION } from '../quiz.js?v=question-speech-1';
+import { speak, canSpeak, stopSpeech } from '../speech.js?v=question-speech-1';
 import { nextTurn, actionOptions, setPending, resolvePending, targetKind, canAct, skillMp, collectBattleHits } from '../battle.js?v=hit-effects-1';
 import { maxHp, maxMp } from '../character.js?v=features-2';
 import { el, render } from '../dom.js';
-import { startBattleMusic, finishBattleMusic, muteMusicForSpeech } from '../battle-music.js';
+import { startBattleMusic, finishBattleMusic, setBattleSpeechPlaying } from '../battle-music.js?v=question-speech-1';
 import { unlockBattleSound, playBattleHitSound } from '../battle-sound.js?v=hit-sound-1';
 
 const TARGET_PROMPT = {
@@ -48,6 +48,7 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
   }
 
   async function loop() {
+    stopSpeech();
     const hits = !b.pending && !b.turn && !b.result
       ? collectBattleHits(b, () => nextTurn(data, g, b))
       : [];
@@ -270,6 +271,7 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
     const { actor, action, question: q } = b.pending;
     const word = lex.wordsById.get(q.wordId);
     const isEn = q.direction === DIRECTION.EN_JA;
+    const voice = questionSpeech(q);
     const title = `${g.party[actor].name}の${actionLabel(action)}`;
     drawField(actor, {}, action);
 
@@ -299,25 +301,27 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
           el('span', {}, `${word.en} ＝ ${word.ja}`),
           timedOut ? el('span', {}, '時間切れ') : correct ? null : el('span', { class: 'battle-result-choice' }, `選んだ答え　${q.choices[index].text}`)),
         el('div', { class: 'battle-result-actions' },
-          pronounce(word), el('button', { class: 'battle-next', onclick: loop }, '次へ →')),
+          pronounce(voice.answer), el('button', { class: 'battle-next', onclick: loop }, '次へ →')),
       ], { focus: false });
       panel.querySelector('.battle-next').focus();
       playHits(hits);
+      if (!isEn) speak(voice.answer, setBattleSpeechPlaying);
     }
 
     showPanel(title, [
       el('div', { class: 'battle-question' },
         el('div', { class: 'battle-prompt', style: 'white-space: pre-line', lang: isEn ? 'en' : 'ja' }, q.prompt),
-        isEn ? pronounce(word) : null),
+        pronounce(voice.prompt)),
       el('div', { class: 'battle-answers' }, q.choices.map((choice, index) =>
         el('button', { onclick: () => answer(index), lang: isEn ? 'ja' : 'en' }, choice.text))),
     ], { detail: el('span', { class: `tag ${q.reason}` }, run.timeLimit ? `${run.timeLimit}秒` : REASON_LABEL[q.reason]), question: true });
     if (q.deadline) timeout = setTimeout(() => answer(-1), Math.max(0, q.deadline - Date.now()));
+    if (!q.deadline || Date.now() < q.deadline) speak(voice.prompt, setBattleSpeechPlaying);
   }
 
-  function pronounce(word) {
-    return canSpeak()
-      ? el('button', { class: 'battle-speak', 'aria-label': '英語の発音を聞く', onclick: () => muteMusicForSpeech(speak(word.en)) }, '🔊')
+  function pronounce(text) {
+    return text && canSpeak()
+      ? el('button', { class: 'battle-speak', 'aria-label': '英語の発音を聞く', onclick: () => speak(text, setBattleSpeechPlaying) }, '🔊')
       : null;
   }
 

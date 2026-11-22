@@ -103,6 +103,8 @@ export function makeQuestion(word, lex, { direction, familiar, rng = Math.random
   };
 }
 
+const CLOZE_BLANK = '＿＿＿';
+
 /** 用例を使えるルーンでは、意味・穴埋め・場面の4択を混ぜる。 */
 export function makePracticeQuestion(word, lex, options) {
   const { format = 'mixed', rng = Math.random } = options;
@@ -117,7 +119,7 @@ export function makePracticeQuestion(word, lex, options) {
     const fragment = word.en.trim().replace(/[.!?]+$/, '');
     const index = word.exampleEn.toLowerCase().indexOf(fragment.toLowerCase());
     if (index < 0 || !fragment) return fallback();
-    prompt += '\n' + word.exampleEn.slice(0, index) + '＿＿＿' + word.exampleEn.slice(index + fragment.length);
+    prompt += '\n' + word.exampleEn.slice(0, index) + CLOZE_BLANK + word.exampleEn.slice(index + fragment.length);
   }
   const used = new Set([text(word)]);
   const alternatives = shuffle(lex.words.filter((w) => w.kind !== 'word' && w.id !== word.id && w.exampleJa !== word.exampleJa), rng)
@@ -130,6 +132,20 @@ export function makePracticeQuestion(word, lex, options) {
   if (alternatives.length < 3) return fallback();
   const choices = shuffle([word, ...alternatives], rng).map((w) => ({ id: w.id, text: text(w) }));
   return { word, format: mode, prompt, direction: DIRECTION.JA_EN, choices, answerIndex: choices.findIndex((c) => c.id === word.id) };
+}
+
+/** 画面に出した英文を読み、和文の問題では回答後に英語の正解を読む。 */
+export function questionSpeech(q) {
+  if (q.direction === DIRECTION.EN_JA) return { prompt: q.prompt, answer: q.prompt };
+  const answer = q.choices[q.answerIndex]?.text;
+  if (q.format === 'cloze') {
+    const blank = q.prompt.indexOf(CLOZE_BLANK);
+    if (blank >= 0) {
+      const sentence = q.prompt.slice(q.prompt.lastIndexOf('\n', blank) + 1);
+      return { prompt: sentence.replace(CLOZE_BLANK, 'blank'), answer: sentence.replace(CLOZE_BLANK, () => answer ?? 'blank') };
+    }
+  }
+  return { prompt: null, answer };
 }
 
 export function questionDirection(setting, rng = Math.random) {

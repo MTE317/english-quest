@@ -13,8 +13,8 @@ import {
   stoneProgress, nextUnread, trialBlock, trialPlan, finishExam, promotionBlock, promotionPlan, starLearnedRatio,
   trainingReward, applyTraining,
 } from '../study.js?v=features-2';
-import { runQuiz } from '../ui/quiz-runner.js?v=features-2';
-import { speak, canSpeak } from '../speech.js';
+import { runQuiz } from '../ui/quiz-runner.js?v=question-speech-1';
+import { speak, canSpeak } from '../speech.js?v=question-speech-1';
 import { el, render, stars } from '../dom.js';
 
 const view = document.getElementById('view');

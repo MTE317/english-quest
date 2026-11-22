@@ -1,7 +1,7 @@
 // 4択を続けて出す部品（覚醒の試練・昇格試験・鍛錬で使う）。答えは学習記録にも入る。
 import { now } from '../storage.js?v=features-2';
-import { makePracticeQuestion, questionDirection, DIRECTION } from '../quiz.js?v=features-2';
-import { speak, canSpeak } from '../speech.js';
+import { makePracticeQuestion, questionDirection, questionSpeech, DIRECTION } from '../quiz.js?v=question-speech-1';
+import { speak, canSpeak, stopSpeech } from '../speech.js?v=question-speech-1';
 import { REASON_LABEL } from '../picker.js';
 import { el, render } from '../dom.js';
 
@@ -16,6 +16,7 @@ export function runQuiz({ view, lex, scheduler, store, next, total, title, onDon
   let correct = 0;
   const results = [];
   const ask = () => {
+    stopSpeech();
     if (n >= total) return onDone(correct, total, results);
     const nx = next();
     if (!nx) return onDone(correct, n, results);
@@ -24,6 +25,7 @@ export function runQuiz({ view, lex, scheduler, store, next, total, title, onDon
     const dir = questionDirection(direction);
     const q = makePracticeQuestion(word, lex, { direction: dir, format, familiar: scheduler.isFamiliar(store.get(word.id)) });
     const isEn = q.direction === DIRECTION.EN_JA;
+    const voice = questionSpeech(q);
     let done = false;
     const after = el('div');
     const buttons = q.choices.map((c, k) => el('button', {
@@ -40,18 +42,21 @@ export function runQuiz({ view, lex, scheduler, store, next, total, title, onDon
         render(after,
           el('div', { class: `feedback ${ok ? 'good' : 'bad'}` }, ok ? '正解！' : `正解は「${q.choices[q.answerIndex].text}」`),
           el('div', { class: 'small center' }, `${word.en} ＝ ${word.ja}`),
-          canSpeak() ? el('button', { class: 'ghost', onclick: () => speak(word.en) }, `🔊 ${word.en}`) : null,
+          voice.answer && canSpeak() ? el('button', { class: 'ghost', onclick: () => speak(voice.answer) }, '🔊 正解の英語を聞く') : null,
           el('button', { class: 'primary', onclick: ask }, n >= total ? '結果を見る' : '次へ'));
+        if (!isEn) speak(voice.answer);
       },
     }, c.text));
     render(view,
       el('div', { class: 'progress' }, el('span', {}, title), el('span', {}, `${n} / ${total}問・正解 ${correct}`)),
       nx.reason ? el('div', { class: 'center' }, el('span', { class: `tag ${nx.reason}` }, REASON_LABEL[nx.reason])) : null,
       el('div', { class: `prompt ${isEn ? '' : 'ja'}`, style: 'white-space: pre-line', lang: isEn ? 'en' : 'ja' }, q.prompt),
-      canSpeak() && isEn ? el('div', { class: 'center' }, el('button', { class: 'speak', onclick: () => speak(word.en) }, '🔊')) : null,
+      voice.prompt && canSpeak() ? el('div', { class: 'center' },
+        el('button', { class: 'speak', 'aria-label': '英語の発音を聞く', onclick: () => speak(voice.prompt) }, '🔊')) : null,
       el('div', { class: 'options' }, buttons),
       after);
     window.scrollTo(0, 0);
+    speak(voice.prompt);
   };
   ask();
 }
