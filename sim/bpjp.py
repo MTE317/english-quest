@@ -12,7 +12,10 @@ class G(world12.Game12):
         super().__init__(*a, **k); s.bp_on = bp; s.jp_on = jp; s.bp = 0; s.jp = 0.0; s.jp_last = 0
         s.G.update(bp_lost=0, bp_units=0, bp_runs_full=0, bp_spend=0, bp_tier_log=[], jp_spent=0, jp_block=0, jp_wait=[])
     def run(s, did):
+        n0 = len(s.S["rounds"])
         res, loot, fl = super().run(did)
+        rr = s.S["rounds"][n0:]
+        s.G.setdefault("season_log", []).append((world.DUNGEONS[did]["rank"], world.season_of(s.day), res, sum(rr) / len(rr) if rr else 0))
         if s.bp_on and res != "wipe":
             cap = BP[s.bp]["slots"]; drops = loot["drops"]; mats = loot["mats"]
             items = [("gear", i, 60 * DUNGEONS_rank(did)) for i in range(len(drops))]
@@ -61,13 +64,15 @@ class G(world12.Game12):
                 c.weapon = dict(t=t, ilvl=il, q=1.0, enh=0, aff={}, el=None, src="ジョブチェンジ", rar=0)
 def DUNGEONS_rank(did): return world.DUNGEONS[did]["rank"]
 def one(a):
-    seed, minutes, bp, jp = a
-    g = G(["戦士", "ナイト", "黒魔道士", "白魔道士"], minutes=minutes, seed=seed, max_years=9, bp=bp, jp=jp)
+    seed, minutes, bp, jp, Tov = a[:5]; jobs = a[5] if len(a) > 5 else ["戦士", "ナイト", "黒魔道士", "白魔道士"]
+    for k, v in Tov.items():
+        T[k] = {int(x): y for x, y in v.items()} if isinstance(v, dict) else v
+    g = G(jobs, minutes=minutes, learner=os.environ.get("LEARNER", "標準"), seed=seed, max_years=9, bp=bp, jp=jp)
     g.minutes_ = minutes
     return g.play()
 if __name__ == "__main__":
-    minutes = int(sys.argv[1]); n = int(sys.argv[2]); bp = int(sys.argv[3]); jp = int(sys.argv[4]); tag = sys.argv[5]
-    with Pool(2) as p: gs = p.map(one, [(s, minutes, bp, jp) for s in range(n)])
+    minutes = int(sys.argv[1]); n = int(sys.argv[2]); bp = int(sys.argv[3]); jp = int(sys.argv[4]); tag = sys.argv[5]; Tov = json.loads(sys.argv[6]) if len(sys.argv) > 6 else {}; JOBS_ = sys.argv[7].split(',') if len(sys.argv) > 7 else None
+    with Pool(2) as p: gs = p.map(one, [(s, minutes, bp, jp, Tov) + ((JOBS_,) if JOBS_ else ()) for s in range(n)])
     out = world12.summary(gs)
     out["bp_lost_share"] = round(sum(g.G["bp_lost"] for g in gs) / max(1, sum(g.G["bp_units"] for g in gs)), 3)
     out["bp_full_runs"] = round(sum(g.G["bp_runs_full"] for g in gs) / max(1, sum(g.G["attempts"] for g in gs)), 3)
@@ -78,6 +83,17 @@ if __name__ == "__main__":
     out["jp_block"] = round(st.mean(g.G["jp_block"] for g in gs), 1)
     w = [x for g in gs for x in g.G["jp_wait"]]; out["jp_wait_max_days"] = max(w) if w else 0
     out["jp_end"] = round(st.mean(g.jp for g in gs))
+    from collections import defaultdict
+    sea = defaultdict(lambda: [0, 0, 0.0])
+    for g in gs:
+        for r, se, res, rr in g.G.get("season_log", []):
+            a = sea[(r, se)]; a[0] += 1; a[1] += res == "wipe"; a[2] += rr
+    out["dmg_job"] = {}
+    for g in gs:
+        for j, v in g.S.get("dmg_by_job", {}).items():
+            a = out["dmg_job"].setdefault(j, [0, 0]); a[0] += v; a[1] += g.S.get("acts_by_job", {}).get(j, 0)
+    out["dmg_job"] = {j: [round(a[0] / max(1, a[1])), a[1]] for j, a in out["dmg_job"].items()}
+    out["season"] = {f"{r}{se}": [a[0], round(a[1] / a[0], 3), round(a[2] / a[0], 2)] for (r, se), a in sorted(sea.items())}
     json.dump(out, open(f"bpjp_{tag}.json", "w"), ensure_ascii=False)
-    keys = ["S_years", "wipe_rate", "rounds", "fixed_share", "gold_end", "earn_total", "bp_lost_share", "bp_full_runs", "bp_spend", "switches", "jp_block", "jp_wait_max_days", "jp_end"]
+    keys = ["S_years", "star_years", "rounds_by_star", "front_wipe", "wipe_rate", "rounds", "fixed_share", "gold_end", "earn_total", "bp_lost_share", "bp_full_runs", "bp_spend", "switches", "jp_block", "jp_wait_max_days", "jp_end"]
     print(tag, json.dumps({k: out.get(k) for k in keys}, ensure_ascii=False))

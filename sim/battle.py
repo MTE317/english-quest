@@ -45,7 +45,7 @@ def attack_value(u, ctx, t, sk, party, cm=1.0, expected=False, rng=None, S=None,
         if u.weapon["t"] == "拳" and "fist" in u.mods: hits = [u.mods["fist"]] * 2
         if u.job == "盗賊" and u.weapon["t"] in ("短剣", "剣", "刀"): hits = [1.0, 0.65]
     else:
-        kind = "phys" if base == "phys" else "mag"; els = sk["el"]; hits = [1.0]
+        kind = "phys" if base == "phys" else "mag"; els = sk.get("el") or list(wd["el"]); hits = [1.0]
     if sk and sk.get("hits"): hits = list(sk["hits"])
     mult = sk["m"] if sk else (0.8 if (u.job == "黒魔道士" and kind == "mag") else 1.0)
     sb = ctx.sb[id(u)]; pst = ctx.pst[id(u)]
@@ -189,6 +189,7 @@ def use_item(u, party, ctx, cm, S, items):
     return False
 
 def choose_and_act(u, party, enemies, ctx, cm, rng, S, items):
+    _a = S.setdefault("acts_by_job", {}); _a[u.job] = _a.get(u.job, 0) + 1
     alive_p = [c for c in party if can_act(c, ctx)]; alive_e = [e for e in enemies if e.hp > 0]
     ko = [c for c in party if c.hp <= 0]
     boss = any(e.boss for e in alive_e)
