@@ -17,13 +17,54 @@
     <a class="btn" href="save.html">セーブの確認</a>
     <a class="btn" href="data.html">データ確認</a>
     <p id="save-status" class="muted small"></p>
+    <details class="panel">
+      <summary>デバッグ</summary>
+      <p class="small muted">パーティ・持ち物・ダンジョンの進行を消して、最初から始められます。</p>
+      <label class="small"><input id="reset-learning" type="checkbox"> 学習記録も消す</label>
+      <button id="reset-game" type="button" class="ghost error">初期化する</button>
+      <div id="reset-status" class="small" role="status"></div>
+    </details>
   </main>
   <script type="module">
     import { GameSession } from './js/save.js';
-    const s = new GameSession();
+    import { LearningStore, safeStorage, setDebugDayOffset } from './js/storage.js';
+    const storage = safeStorage();
+    const s = new GameSession({ storage });
     const line = document.getElementById('save-status');
-    if (!s.hasSave) line.textContent = 'セーブ：なし';
-    else line.textContent = `セーブ：あり（${s.inDungeon ? 'ダンジョンの途中' : '町'}・最後に保存 ${new Date(s.state.savedAt).toLocaleString('ja-JP')}）`;
+    const resetLearning = document.getElementById('reset-learning');
+    const resetStatus = document.getElementById('reset-status');
+
+    function showSaveStatus() {
+      line.textContent = s.hasSave
+        ? `セーブ：あり（${s.inDungeon ? 'ダンジョンの途中' : '町'}・最後に保存 ${new Date(s.state.savedAt).toLocaleString('ja-JP')}）`
+        : 'セーブ：なし';
+    }
+
+    document.getElementById('reset-game').addEventListener('click', () => {
+      const includeLearning = resetLearning.checked;
+      const target = includeLearning ? 'ゲームの進行と学習記録' : 'ゲームの進行';
+      if (!confirm(`${target}を初期化しますか？ 消去したデータは元に戻せません。ほかに開いているゲームのタブがあれば、閉じてから実行してください。`)) return;
+      try {
+        if (!storage) throw new Error('ブラウザーの保存領域を使用できません。');
+        s.deleteSave();
+        if (includeLearning) {
+          new LearningStore(storage).clear();
+          setDebugDayOffset(0, storage);
+        }
+        resetLearning.checked = false;
+        resetStatus.textContent = `${target}を初期化しました。パーティを作って開始できます。`;
+      } catch (error) {
+        resetStatus.textContent = `初期化を完了できませんでした。${error.message}`;
+      }
+      showSaveStatus();
+    });
+
+    window.addEventListener('pageshow', (event) => {
+      if (!event.persisted) return;
+      s.load();
+      showSaveStatus();
+    });
+    showSaveStatus();
   </script>
 </body>
 </html>
