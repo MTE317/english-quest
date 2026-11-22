@@ -306,6 +306,8 @@ function showSlot(index, slot) {
     render(confirmation,
       el('div', { role: 'status' },
         el('strong', {}, gearLabel(gear, m.job)),
+        gearDef(data, gear).slot === 'weapon' ? el('p', { class: 'muted small' },
+          `武器特性：${data.weaponTypes.get(gearDef(data, gear).kind)?.feature ?? 'なし'}`) : null,
         el('div', { class: 'equipment-changes' }, equipmentChanges(before, stats)),
         offhandRemoved && slot === 'weapon' ? el('p', { class: 'small' }, 'サブ武器も倉庫へ戻ります。') : null),
       el('button', { class: 'primary', onclick: () => {
