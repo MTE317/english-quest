@@ -59,6 +59,10 @@ const facilityGroups = [
     { href: 'challenge.html', name: '闘技場', icon: '🏆', detail: '対戦と最終試験' },
     { id: 'manage', name: '銀行・投資', icon: '🪙', detail: '融資・返済、施設の強化',
       show: () => managementView(data, session.game, act) },
+    { id: 'catalog', name: '図鑑', icon: '📖', detail: '魔物・装備・収集記録',
+      show: () => el('section', { class: 'panel' }, el('p', { class: 'muted' }, '図鑑の内容は準備中です。')) },
+    { id: 'achievements', name: '実績・称号', icon: '🎖️', detail: '達成記録と称号',
+      show: () => el('section', { class: 'panel' }, el('p', { class: 'muted' }, '実績・称号の内容は準備中です。')) },
   ] },
 ];
 const facility = facilityGroups.flatMap(({ cards }) => cards)
