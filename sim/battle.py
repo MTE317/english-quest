@@ -146,8 +146,8 @@ def allowed(u, s, ctx):
     return True
 
 import db as _db
-HP_ITEMS = sorted([n for n, it in _db.ITEMS.items() if it["effect"] in ("heal_hp", "heal_hp_pct")], key=lambda n: -float(_db.ITEMS[n]["value"]))
-MP_ITEMS = sorted([n for n, it in _db.ITEMS.items() if it["effect"] in ("heal_mp", "heal_mp_pct")], key=lambda n: -float(_db.ITEMS[n]["value"]))
+HP_ITEMS = sorted([n for n, it in _db.ITEMS.items() if it["effect"] == "heal_hp"], key=lambda n: -float(_db.ITEMS[n]["value"]))   # 店で買う固定量（シミュレーターは固定量だけ使う）
+MP_ITEMS = sorted([n for n, it in _db.ITEMS.items() if it["effect"] == "heal_mp"], key=lambda n: -float(_db.ITEMS[n]["value"]))
 def item_amount(n, mx):
     it = _db.ITEMS[n]; v = float(it["value"])
     return mx * v / 100 if it["effect"].endswith("_pct") else v

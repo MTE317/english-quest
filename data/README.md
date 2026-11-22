@@ -39,7 +39,8 @@
 | materials.csv | 素材768種 |
 | dungeons.csv | ダンジョン60か所（★ごとに5つ：標準・深層・近場・素材の宝庫・季節の地）。enemy_mul＝敵の強さ、income_mul＝お金の倍率 |
 | dungeon_floors.csv / drop_tables.csv | 階ごとの敵Lv・戦闘数 / ドロップ率 |
-| items.csv / shop_inventory.csv | 消耗品（回復量は固定。回復量が多いものほど高い）/ 店の品ぞろえ |
+| items.csv / shop_inventory.csv | 消耗品（回復は固定量と割合の2種類。能力を上げる薬は調合のみ）/ 店の品ぞろえ |
+| alchemy_recipes.csv | 調合のレシピ（素材は種別と★で指定） |
 | inn_rooms.csv / facilities.csv / facility_ranks.csv / facility_effects.csv | 宿屋・町の施設 |
 | enhance_rates.csv / rarities.csv / recipes.csv | 強化（費用は1.8^強化値で増える）・レアリティ・制作 |
 | enchant_grades.csv | エンチャントのグレード（工房のランク）ごとの費用 |
