@@ -2,6 +2,7 @@ import { el, render } from '../dom.js';
 import { craft, brew, enhance, dismantle, reroll, enchant, enchantFamilies, facilityUpgrade } from '../workshop.js?v=features-2';
 import { borrow, repayLoan, loanLimit, payOverdue } from '../town.js?v=features-2';
 import { chooseRuneEffect, runeChangeCost, equipRune, openRuneSlot, unlockJob } from '../temple.js?v=features-2';
+import { describeFixedEffects } from '../equipment-effects.js';
 
 const heading = (text) => el('h2', {}, text);
 const btn = (text, onclick, disabled = false) => el('button', { onclick, disabled }, text);
@@ -22,22 +23,55 @@ export function workshopView(data, g, act, rng, selection) {
   });
   const alchemy = data.alchemyRecipes.filter((recipe) => Number(recipe.workshop_rank) <= g.facilities.item_shop);
   const deck = el('div');
+  const categoryOf = (def) => ['head', 'body', 'arm'].includes(def.slot) ? 'armor' : def.slot;
+  const craftCategories = [['weapon', '武器'], ['armor', '防具'], ['cloak', 'マント'], ['accessory', 'アクセサリー']];
   function redraw() {
     const selectedBrew = alchemy.find((recipe) => recipe.id === selection.brew) ?? alchemy[0];
     const gear = g.storage.gear.find((item) => item.uid === selection.gear) ?? g.storage.gear[0];
-    const selectedDef = usableDefs.find((def) => def.id === selection.recipe) ?? usableDefs[0];
+    const mode = selection.craftMode ?? 'special';
+    const category = selection.craftCategory ?? 'weapon';
+    const star = selection.craftStar ?? 'all';
+    const filtered = usableDefs.filter((def) =>
+      Boolean(def.recipeId) === (mode === 'special')
+      && categoryOf(def) === category && (star === 'all' || def.star === Number(star)))
+      .sort((a, b) => a.itemLv - b.itemLv || a.name.localeCompare(b.name, 'ja'));
+    const selectedDef = filtered.find((def) => def.id === selection.recipe) ?? filtered[0];
     const recipe = data.recipes.find((r) => r.id === selectedDef?.id);
+    const needs = recipe ? String(recipe.materials).split('|').filter(Boolean).map((token) => {
+      const [id, count] = token.split(':');
+      return { id, count: Number(count), name: data.materials.get(id)?.name ?? id, have: g.storage.materials[id] ?? 0 };
+    }) : [];
+    const canMake = Boolean(selectedDef) && (recipe
+      ? g.gold >= Number(recipe.gold) && needs.every((m) => m.have >= m.count)
+        && (!recipe.derive_from || g.storage.gear.some((it) => it.id === recipe.derive_from && it.crafted))
+      : true);
     render(deck,
       heading('制作'),
+      select('制作方法', [['special', '専用レシピ'], ['standard', '通常制作']],
+        (value) => { selection.craftMode = value; selection.recipe = null; redraw(); }, mode),
+      select('装備種別', craftCategories,
+        (value) => { selection.craftCategory = value; selection.recipe = null; redraw(); }, category),
+      select('★', [['all', 'すべて'], ...Array.from({ length: 12 }, (_, i) => [String(i + 1), `★${i + 1}`])],
+        (value) => { selection.craftStar = value; selection.recipe = null; redraw(); }, star),
+      el('p', { class: 'muted small' }, `条件に合う制作候補：${filtered.length}件（施設ランクで解放）`),
       selectedDef ? [
-        select('装備', usableDefs.map((def) => [def.id, def.name]), (id) => { selection.recipe = id; redraw(); }, selectedDef.id),
+        select('装備', filtered.map((def) => [def.id, `★${def.star} ${def.name}（Lv${def.itemLv}）`]),
+          (id) => { selection.recipe = id; redraw(); }, selectedDef.id),
+        selectedDef.recipeDescription ? el('p', { class: 'small' }, selectedDef.recipeDescription) : null,
         selectedDef.slot === 'weapon' ? el('p', { class: 'small muted' },
           `武器特性：${data.weaponTypes.get(selectedDef.kind)?.feature ?? 'なし'}`) : null,
-        el('p', { class: 'small muted' }, recipe
-          ? `${recipe.gold} G・${recipe.materials}${recipe.derive_from ? '・派生元 ' + data.equipment.get(recipe.derive_from)?.name : ''}`
-          : `${data.economy.get(selectedDef.star).craft_gold} G・★${selectedDef.star}以上の通常素材4個`),
-        btn('制作する', () => act((game) => craft(data, game, selectedDef))),
-      ] : el('p', {}, '作れる装備がありません。'),
+        describeFixedEffects(data, selectedDef) ? el('p', { class: 'small' },
+          `固定効果：${describeFixedEffects(data, selectedDef)}`) : null,
+        recipe ? [
+          el('p', { class: 'small' }, `制作費：${recipe.gold} G（所持：${g.gold} G）`),
+          ...needs.map((m) => el('p', { class: 'small muted' },
+            `${m.name} ×${m.count}（所持：${m.have}）`)),
+          recipe.derive_from ? el('p', { class: 'small muted' },
+            `派生元：${data.equipment.get(recipe.derive_from)?.name ?? recipe.derive_from}（制作済みの現物を消費）`) : null,
+        ] : el('p', { class: 'small muted' },
+          `${data.economy.get(selectedDef.star).craft_gold} G・★${selectedDef.star}以上の通常素材4個`),
+        btn('制作する', () => act((game) => craft(data, game, selectedDef)), !canMake),
+      ] : el('p', { class: 'muted' }, 'この条件で作れる装備はありません。施設ランクか絞り込みを確認してください。'),
       heading('倉庫の装備'),
       gear ? [
         select('加工する装備', g.storage.gear.map((item) => [String(item.uid), `${data.equipment.get(item.id)?.name ?? item.id} +${item.enh}`]),
@@ -56,8 +90,10 @@ export function workshopView(data, g, act, rng, selection) {
   function gearOptions(item) {
     const definition = data.equipment.get(item.id);
     const stats = Object.entries(item.affixes ?? {});
+    const effectText = item.crafted ? describeFixedEffects(data, definition) : '';
     const enchantments = (item.enchants ?? []).map((effect, index) => el('div', { class: 'small' }, `枠${index + 1} ${effect.stat} +${effect.value}`));
     return [
+      effectText ? el('p', { class: 'small' }, `固定効果：${effectText}`) : null,
       el('p', { class: 'small muted' }, `強化石 ${g.storage.materials.enhancement_stone ?? 0}個`),
       btn('強化する', () => act((game) => enhance(data, game, item, rng()))),
       btn('分解する', () => {
