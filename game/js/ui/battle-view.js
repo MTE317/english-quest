@@ -6,6 +6,7 @@ import { speak, canSpeak } from '../speech.js';
 import { nextTurn, actionOptions, setPending, resolvePending, targetKind, canAct, skillMp, collectBattleHits } from '../battle.js?v=hit-effects-1';
 import { maxHp, maxMp } from '../character.js?v=features-2';
 import { el, render } from '../dom.js';
+import { unlockBattleSound, playBattleHitSound } from '../battle-sound.js?v=hit-sound-1';
 
 const TARGET_PROMPT = {
   enemy: '攻撃する敵を選ぶ',
@@ -38,6 +39,7 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
     party,
     log,
     panel);
+  screen.addEventListener('click', unlockBattleSound, { capture: true });
 
   async function loop() {
     const hits = !b.pending && !b.turn && !b.result
@@ -74,12 +76,19 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
       }
       impacts.set(card, impact);
     }
+    let soundPlayed = false;
     return Array.from(impacts, ([card, { damage, fromAttack }]) => {
       card.classList.add('battle-hit');
       if (fromAttack) card.classList.add('battle-attack-hit');
       const popup = el('span', {
         class: 'battle-hit-number',
         'aria-hidden': 'true',
+        onanimationstart: fromAttack ? () => {
+          // 画面上で同時に出る命中演出は、同じ音を一度だけ鳴らす。
+          if (soundPlayed) return;
+          soundPlayed = true;
+          playBattleHitSound();
+        } : null,
         onanimationend: () => {
           popup.remove();
           card.classList.remove('battle-hit', 'battle-attack-hit');
@@ -308,6 +317,7 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
 
   return {
     start() {
+      if (window.navigator?.userActivation?.isActive) unlockBattleSound();
       render(view, screen);
       window.scrollTo(0, 0);
       loop();
