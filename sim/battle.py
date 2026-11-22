@@ -100,6 +100,9 @@ def attack_value(u, ctx, t, sk, party, cm=1.0, expected=False, rng=None, S=None,
 
 def deal(u, t, dmg, ctx, S):
     if dmg <= 0: return
+    if hasattr(u, "job"):
+        dmg *= T.get("jmul", {}).get(u.job, 1.0)
+        _d = S.setdefault("dmg_band", {}); _k = f"{u.job}|{u.lv // 10}"; _d[_k] = _d.get(_k, 0) + min(dmg, max(t.hp, 0))
     t.hp -= dmg
     es = ctx.est[id(t)]
     for k in SKIP_UNTIL_HIT: es.pop(k, None)
@@ -190,6 +193,7 @@ def use_item(u, party, ctx, cm, S, items):
 
 def choose_and_act(u, party, enemies, ctx, cm, rng, S, items):
     _a = S.setdefault("acts_by_job", {}); _a[u.job] = _a.get(u.job, 0) + 1
+    _b = S.setdefault("acts_band", {}); _k = f"{u.job}|{u.lv // 10}"; _b[_k] = _b.get(_k, 0) + 1
     alive_p = [c for c in party if can_act(c, ctx)]; alive_e = [e for e in enemies if e.hp > 0]
     ko = [c for c in party if c.hp <= 0]
     boss = any(e.boss for e in alive_e)
