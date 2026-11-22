@@ -22,3 +22,21 @@ export function seededRng(seed = 1) {
 }
 export const DAY = 86400000;
 export const T0 = new Date(2026, 10, 21, 12, 0, 0).getTime();
+
+import { buildGameData } from '../js/gamedata.js';
+/** data/ から GameData を作る（ブラウザの loadGameData と同じ中身） */
+export function realGameData() {
+  return buildGameData({
+    balance: readJson('balance.json'),
+    jobs: readCsv('jobs.csv').rows,
+    jobsMid: readCsv('jobs_mid.csv').rows,
+    aptitude: readCsv('aptitude.csv').rows,
+    jobWeaponApt: readCsv('job_weapon_aptitude.csv').rows,
+    jobArmorApt: readCsv('job_armor_aptitude.csv').rows,
+    weaponTypes: readCsv('weapon_types.csv').rows,
+    armorWeights: readCsv('armor_weights.csv').rows,
+    equipment: readCsv('equipment.csv').rows,
+    icons: readCsv('appearance_icons.csv').rows,
+    rarities: readCsv('rarities.csv').rows,
+  });
+}

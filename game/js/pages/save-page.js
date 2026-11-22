@@ -1,7 +1,9 @@
 // 動作確認用：自動保存・ダンジョンの途中からの再開・全滅で入る前に戻る、を試す画面
-// パーティや戦闘はまだないので、お金・日数・拾った物は「仮」の値を増やすだけ
+// 戦闘とダンジョンはまだないので、報酬（お金・素材・装備・経験値）は「仮」の値を足すだけ
 import { GameSession } from '../save.js';
 import { LearningStore } from '../storage.js';
+import { loadGameData } from '../gamedata.js';
+import { gainXp, makeGear } from '../character.js';
 import { el, render } from '../dom.js';
 
 const view = document.getElementById('view');
@@ -9,18 +11,18 @@ const session = new GameSession();
 session.installAutoSave(window);
 const learning = new LearningStore();
 
-// 仮の進み具合（パーティ・持ち物は次の段階で作る）
-const trialGame = () => ({ trial: true, day: 1, gold: 0, materials: {}, gear: [] });
+let data;
 
 const fmt = (ms) => (ms ? new Date(ms).toLocaleString('ja-JP') : '—');
 
 function summary() {
   const g = session.game;
-  const mats = Object.entries(g.materials ?? {}).map(([id, n]) => `${id}×${n}`).join('、') || 'なし';
+  const mats = Object.entries(g.storage.materials).map(([id, n]) => `${id}×${n}`).join('、') || 'なし';
   return el('div', { class: 'panel small' },
     el('div', {}, `日数：${g.day}日目　お金：${g.gold}`),
     el('div', {}, `素材：${mats}`),
-    el('div', {}, `装備：${(g.gear ?? []).length}個`),
+    el('div', {}, `倉庫の装備：${g.storage.gear.length}個`),
+    el('div', {}, `レベル：${g.party.map((m) => `${m.name} Lv${m.lv}`).join('、')}`),
   );
 }
 
@@ -29,7 +31,7 @@ function runPanel() {
   return el('div', { class: 'panel small' },
     el('div', {}, `ダンジョンの中：${r.dungeonId}（${r.floor}階・戦闘 ${r.battlesDone}回）`),
     el('div', {}, r.battle ? `戦闘の途中：${r.battle.turn}ターン目・敵のHP ${r.battle.enemyHp}` : '戦闘はしていない'),
-    el('div', { class: 'muted' }, `入る前の状態：${r.snapshot.day}日目・お金 ${r.snapshot.gold}`),
+    el('div', { class: 'muted' }, `入る前の状態：${r.snapshot.day}日目・お金 ${r.snapshot.gold}・${r.snapshot.party.map((m) => `Lv${m.lv}`).join(' ')}`),
   );
 }
 
@@ -46,8 +48,8 @@ function draw() {
     el('div', { class: 'muted' }, `学習記録：${learning.size}語（全滅しても消えない）`),
   ));
 
-  if (!session.hasSave) {
-    parts.push(el('button', { class: 'primary', onclick: () => { session.startNew(trialGame()); draw(); } }, 'はじめから（仮の進み具合）'));
+  if (!session.hasSave || !session.game.party) {
+    parts.push(el('a', { class: 'btn primary', href: 'party.html' }, 'パーティを作ってはじめる'));
     return render(view, parts);
   }
 
@@ -80,12 +82,20 @@ function draw() {
           onclick: () => {
             session.endBattle((g) => {
               g.gold += 10;
-              g.materials.trial_mat = (g.materials.trial_mat ?? 0) + 1;
-              g.gear.push({ id: 'trial_gear' });
+              g.storage.materials.trial_mat = (g.storage.materials.trial_mat ?? 0) + 1;
+              g.storage.gear.push(makeGear(g, [...data.equipment.keys()][0]));
+              for (const m of g.party) gainXp(data, m, 30);
             });
-            draw();
+            (async () => {
+  try {
+    data = await loadGameData();
+    draw();
+  } catch (e) {
+    render(view, el('p', { class: 'error' }, `読み込みに失敗：${e.message}`));
+  }
+})();
           },
-        }, '戦闘に勝つ（お金+10・素材+1・装備+1 の仮の報酬）'),
+        }, '戦闘に勝つ（お金+10・素材+1・装備+1・経験値+30 の仮の報酬）'),
       );
     }
     parts.push(el('button', { class: 'ghost error', onclick: () => { session.wipe(); draw(); } }, '全滅する（入る前に戻る）'));
@@ -108,4 +118,11 @@ function draw() {
   render(view, parts);
 }
 
-draw();
+(async () => {
+  try {
+    data = await loadGameData();
+    draw();
+  } catch (e) {
+    render(view, el('p', { class: 'error' }, `読み込みに失敗：${e.message}`));
+  }
+})();
