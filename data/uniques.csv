@@ -107,3 +107,16 @@ u_bounty_12_1,黄金の聖なる鹿の楽器,weapon,instrument,,121,12,bounty_12
 u_bounty_12_2,眠らずの炎の悪魔の魔導書,weapon,tome,,121,12,bounty_12_2,0.5,LUK:18|STR:18|CRT:18|特効:demon:30
 u_bounty_12_3,黄金の光の精の革の籠手,arm,,medium,121,12,bounty_12_3,0.5,CRT:18|DEF:18|STR:18|経験値:8
 u_bounty_12_4,笑う結晶像の楽器,weapon,instrument,,121,12,bounty_12_4,0.5,CRT:18|LUK:18|STR:18|先制:20
+u_arena_champion_01,石壁の剣闘王の証,weapon,sword,,11,1,arena_champion_01,0,STR:4|MAG:4|DEF:3|RES:3
+u_arena_champion_02,鉄壁の盾王の証,weapon,hammer,,21,2,arena_champion_02,0,STR:6|MAG:6|DEF:4|RES:4
+u_arena_champion_03,疾風の翼王の証,weapon,bow,,31,3,arena_champion_03,0,STR:8|MAG:8|DEF:5|RES:5
+u_arena_champion_04,蒼雷の機神の証,weapon,gun,,41,4,arena_champion_04,0,STR:9|MAG:9|DEF:6|RES:6
+u_arena_champion_05,紅蓮の闘将の証,weapon,scythe,,51,5,arena_champion_05,0,STR:11|MAG:11|DEF:7|RES:7
+u_arena_champion_06,砂塵の守護獣の証,weapon,staff,,61,6,arena_champion_06,0,STR:13|MAG:13|DEF:8|RES:8
+u_arena_champion_07,天空の覇鳥の証,weapon,spear,,71,7,arena_champion_07,0,STR:15|MAG:15|DEF:10|RES:10
+u_arena_champion_08,断界の巨神の証,weapon,axe,,81,8,arena_champion_08,0,STR:17|MAG:17|DEF:11|RES:11
+u_arena_champion_09,冥府の審判者の証,weapon,katana,,91,9,arena_champion_09,0,STR:18|MAG:18|DEF:12|RES:12
+u_arena_champion_10,竜刃の皇帝の証,weapon,greatsword,,101,10,arena_champion_10,0,STR:20|MAG:20|DEF:13|RES:13
+u_arena_champion_11,光冠の天獣の証,weapon,fan,,111,11,arena_champion_11,0,STR:22|MAG:22|DEF:14|RES:14
+u_arena_champion_12,虚無の終焉竜の証,weapon,tome,,121,12,arena_champion_12,0,STR:24|MAG:24|DEF:16|RES:16
+u_arena_champion_13,闘技場の覇王の証,weapon,sword,,125,12,arena_champion_13,0,STR:26|MAG:26|DEF:17|RES:17

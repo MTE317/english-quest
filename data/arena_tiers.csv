@@ -1,0 +1,14 @@
+﻿id,rank,name,first_medals,repeat_medals,title,gear_id,timed_title,direction_title
+arena_01,1,★1級,8,1,闘技場★1級制覇,u_arena_champion_01,★1の俊英,★1の翻訳士
+arena_02,2,★2級,11,1,闘技場★2級制覇,u_arena_champion_02,★2の俊英,★2の翻訳士
+arena_03,3,★3級,14,2,闘技場★3級制覇,u_arena_champion_03,★3の俊英,★3の翻訳士
+arena_04,4,★4級,17,2,闘技場★4級制覇,u_arena_champion_04,★4の俊英,★4の翻訳士
+arena_05,5,★5級,20,2,闘技場★5級制覇,u_arena_champion_05,★5の俊英,★5の翻訳士
+arena_06,6,★6級,23,3,闘技場★6級制覇,u_arena_champion_06,★6の俊英,★6の翻訳士
+arena_07,7,★7級,26,3,闘技場★7級制覇,u_arena_champion_07,★7の俊英,★7の翻訳士
+arena_08,8,★8級,29,3,闘技場★8級制覇,u_arena_champion_08,★8の俊英,★8の翻訳士
+arena_09,9,★9級,32,4,闘技場★9級制覇,u_arena_champion_09,★9の俊英,★9の翻訳士
+arena_10,10,★10級,35,4,闘技場★10級制覇,u_arena_champion_10,★10の俊英,★10の翻訳士
+arena_11,11,★11級,38,4,闘技場★11級制覇,u_arena_champion_11,★11の俊英,★11の翻訳士
+arena_12,12,★12級,41,5,闘技場★12級制覇,u_arena_champion_12,★12の俊英,★12の翻訳士
+arena_13,13,覇王級,44,5,闘技場の覇者,u_arena_champion_13,瞬刻の覇王,言霊の覇王
