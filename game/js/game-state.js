@@ -44,6 +44,7 @@ export function normalizeGame(data, game) {
   game.overdue = game.overdue ?? 0;
   game.notices = game.notices ?? [];
   game.unlockedJobs = game.unlockedJobs ?? [];
+  game.examsPassed = game.examsPassed ?? [];
   for (const m of game.party ?? []) {
     m.persist = m.persist ?? []; m.room = m.room ?? null; m.ap = m.ap ?? { [m.job]: 0 };
     m.learned = m.learned ?? []; m.common = m.common ?? []; m.mastery = m.mastery ?? {};

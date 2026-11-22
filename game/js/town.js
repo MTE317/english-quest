@@ -199,7 +199,7 @@ export function nextRankStatus(data, game) {
   if (next.needsBossClear && !Object.keys(game.cleared ?? {}).some((id) => data.dungeons.get(id)?.rank === cur.maxDungeonRank)) {
     needs.push(`★${cur.maxDungeonRank}のダンジョンを踏破する`);
   }
-  if (next.needsExam) needs.push('昇格試験に合格する（チェックリスト10番で作る）');
+  if (next.needsExam && !(game.examsPassed ?? []).includes(next.id)) needs.push('昇格試験に合格する（ギルドの資料室のとなり）');
   return { next, needs, examOnly: needs.length === 1 && next.needsExam };
 }
 

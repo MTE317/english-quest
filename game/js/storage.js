@@ -35,11 +35,17 @@ export class LearningStore {
     this.storage = safeStorage(storage);
     this.words = new Map();
     this.daily = new Map(); // 学習の日付 → { answered, correct }
+    this.read = new Set(); // 資料室で読み解いたルーン
+    this.awakened = {}; // 覚醒した石 → { day }
+    this.exams = {}; // 試験 → { lastFailDay, passedDay }
     this.load();
   }
   load() {
     this.words.clear();
     this.daily.clear();
+    this.read = new Set();
+    this.awakened = {};
+    this.exams = {};
     if (!this.storage) return;
     try {
       const raw = this.storage.getItem(LEARNING_KEY);
@@ -47,6 +53,9 @@ export class LearningStore {
       const obj = JSON.parse(raw);
       for (const [id, a] of Object.entries(obj.words ?? {})) this.words.set(id, unpack(a));
       for (const [day, a] of Object.entries(obj.daily ?? {})) this.daily.set(Number(day), { answered: a[0], correct: a[1] });
+      this.read = new Set(obj.read ?? []);
+      this.awakened = obj.awakened ?? {};
+      this.exams = obj.exams ?? {};
     } catch (e) {
       console.warn('学習記録を読めなかった', e);
     }
@@ -57,7 +66,9 @@ export class LearningStore {
     for (const [id, rec] of this.words) words[id] = pack(rec);
     const daily = {};
     for (const [day, t] of this.daily) daily[day] = [t.answered, t.correct];
-    this.storage.setItem(LEARNING_KEY, JSON.stringify({ v: 1, words, daily }));
+    this.storage.setItem(LEARNING_KEY, JSON.stringify({
+      v: 1, words, daily, read: [...this.read], awakened: this.awakened, exams: this.exams,
+    }));
   }
   get(id) { return this.words.get(id) ?? null; }
   set(id, rec) { this.words.set(id, rec); this.save(); }
@@ -74,7 +85,15 @@ export class LearningStore {
   get size() { return this.words.size; }
   /** 保存している文字数（容量の目安） */
   byteSize() { return this.storage?.getItem(LEARNING_KEY)?.length ?? 0; }
-  clear() { this.words.clear(); this.daily.clear(); this.storage?.removeItem(LEARNING_KEY); }
+  /** 資料室で読み解いた（予習カードを見た） */
+  markRead(ids) { for (const id of ids) this.read.add(id); this.save(); }
+  isRead(id) { return this.read.has(id) || this.words.has(id); }
+  setAwakened(stoneId, day) { this.awakened[stoneId] = { day }; this.save(); }
+  setExam(key, value) { this.exams[key] = { ...(this.exams[key] ?? {}), ...value }; this.save(); }
+  clear() {
+    this.words.clear(); this.daily.clear(); this.read = new Set(); this.awakened = {}; this.exams = {};
+    this.storage?.removeItem(LEARNING_KEY);
+  }
 }
 
 /** ゲームの進み具合（自動保存）だけを消す。学習記録には触らない。 */

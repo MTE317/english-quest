@@ -170,6 +170,8 @@ export function returnToTown(data, session, useItem = null) {
     }
     unloadBackpack(game, run.backpack);
     for (const m of game.party) m.room = null; // 宿屋の良い部屋の効果は1回の遠征だけ
+    const asked = run.quiz?.asked ?? 0;
+    if (asked > 0 && run.earned.xp > 0) game.xpPerQuestion = run.earned.xp / asked; // 鍛錬の経験値の目安（sim と同じ考え方）
     if (run.cleared) {
       game.cleared = game.cleared ?? {};
       game.cleared[run.dungeonId] = (game.cleared[run.dungeonId] ?? 0) + 1;
