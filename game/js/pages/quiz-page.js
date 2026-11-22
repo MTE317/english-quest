@@ -1,10 +1,10 @@
 // 動作確認用：ルーンストーンを選んで10問解く画面
-import { loadCsv, loadJson } from '../data.js';
+import { loadCsv, loadJson } from '../data.js?v=features-1';
 import { buildLexicon } from '../lexicon.js';
-import { Scheduler, STAGE_LABEL, dayToString } from '../srs.js';
-import { LearningStore, now, getDebugDayOffset, setDebugDayOffset } from '../storage.js';
+import { Scheduler, STAGE_LABEL, dayToString } from '../srs.js?v=features-1';
+import { LearningStore, now, getDebugDayOffset, setDebugDayOffset } from '../storage.js?v=features-1';
 import { QuestionPicker, REASON_LABEL } from '../picker.js';
-import { makeQuestion, DIRECTION, DIRECTION_LABEL } from '../quiz.js';
+import { makeQuestion, DIRECTION, DIRECTION_LABEL } from '../quiz.js?v=features-1';
 import { speak, canSpeak } from '../speech.js';
 import { el, render, stars } from '../dom.js';
 

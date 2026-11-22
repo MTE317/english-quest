@@ -1,19 +1,19 @@
 // ギルドの学び舎：資料室（予習）・石碑の間（石の一覧と覚醒の試練）・訓練場（鍛錬）・昇格試験
-import { loadGameData } from '../gamedata.js';
-import { loadCsv, loadJson } from '../data.js';
+import { loadGameData } from '../gamedata.js?v=features-1';
+import { loadCsv, loadJson } from '../data.js?v=features-1';
 import { buildLexicon } from '../lexicon.js';
-import { Scheduler, STAGE_LABEL } from '../srs.js';
-import { LearningStore, now } from '../storage.js';
+import { Scheduler, STAGE_LABEL } from '../srs.js?v=features-1';
+import { LearningStore, now } from '../storage.js?v=features-1';
 import { QuestionPicker } from '../picker.js';
-import { GameSession } from '../save.js';
-import { normalizeGame } from '../game-state.js';
-import { seededRng, currentRank } from '../dungeon.js';
-import { checkRankUp } from '../town.js';
+import { GameSession } from '../save.js?v=features-1';
+import { normalizeGame } from '../game-state.js?v=features-1';
+import { seededRng, currentRank } from '../dungeon.js?v=features-1';
+import { checkRankUp } from '../town.js?v=features-1';
 import {
   stoneProgress, nextUnread, trialBlock, trialPlan, finishExam, promotionBlock, promotionPlan, starLearnedRatio,
   trainingReward, applyTraining,
-} from '../study.js';
-import { runQuiz } from '../ui/quiz-runner.js';
+} from '../study.js?v=features-1';
+import { runQuiz } from '../ui/quiz-runner.js?v=features-1';
 import { speak, canSpeak } from '../speech.js';
 import { el, render, stars } from '../dom.js';
 
@@ -87,14 +87,20 @@ function startTrial(stoneId) {
   const plan = trialPlan(data, lex, stoneId, rng());
   let i = 0;
   runQuiz({
-    view, lex, scheduler, store, total: plan.words.length, title: '覚醒の試練',
+    view, lex, scheduler, store, total: plan.words.length, format: 'mixed', title: '覚醒の試練',
     next: () => ({ word: lex.wordsById.get(plan.words[i++]) }),
     onDone: (correct, total) => {
-      const passed = finishExam(data, store, plan, correct, today(), () => store.setAwakened(stoneId, today()));
+      const passed = finishExam(data, store, plan, correct, today(), () => {
+        store.setAwakened(stoneId, today());
+        session.update((game) => {
+          const title = 'ルーンを覚醒させし者';
+          if (!game.titles.includes(title)) game.titles.push(title);
+        });
+      });
       render(view,
         el('h2', {}, passed ? '✨ 石が覚醒した！' : '試練に失敗…'),
         el('div', { class: 'panel center' }, el('div', { class: 'prompt' }, `${correct} / ${total}`), el('div', { class: 'muted' }, `合格は ${Math.round(plan.passRate * 100)}%`)),
-        passed ? el('p', { class: 'small' }, '覚醒した石は、神殿で刻印にはめられる（チェックリスト12番で作る）。') : el('p', { class: 'small' }, '次の日に再挑戦できる。'),
+        passed ? el('p', { class: 'small' }, '神殿で刻印にはめられます。') : el('p', { class: 'small' }, '次の日に再挑戦できる。'),
         el('button', { class: 'primary', onclick: () => { tab = 'hall'; draw(); } }, '石碑の間へ'));
     },
   });
@@ -157,7 +163,7 @@ function exam() {
       el('div', {}, `今のランク：${currentRank(data, g).title}`),
       next ? el('div', {}, `次のランク：${next.title}${next.needsExam ? '（昇格試験あり）' : '（試験なし。ギルドのポイントで上がる）'}`) : null,
       el('div', {}, `★${star}のルーンの習得：${r.learned} / ${r.total}（${Math.round(r.ratio * 100)}%）`)),
-    next?.needsExam ? el('button', { class: 'primary', disabled: !!block, onclick: () => startPromotion() }, block || '昇格試験を受ける') : null,
+    next?.id === 'S' ? el('a', { class: 'btn primary', href: 'challenge.html' }, '最終試験へ') : next?.needsExam ? el('button', { class: 'primary', disabled: !!block, onclick: () => startPromotion() }, block || '昇格試験を受ける') : null,
     el('p', { class: 'muted small' }, '合格したうえで、ギルドのポイントと「今の★のダンジョンを踏破」がそろうとランクが上がる。'),
   ];
 }
@@ -166,7 +172,7 @@ function startPromotion() {
   const plan = promotionPlan(data, lex, session.game, rng());
   let i = 0;
   runQuiz({
-    view, lex, scheduler, store, total: plan.words.length, title: '昇格試験',
+    view, lex, scheduler, store, total: plan.words.length, format: 'mixed', title: '昇格試験',
     next: () => ({ word: lex.wordsById.get(plan.words[i++]) }),
     onDone: (correct, total) => {
       const lines = [];

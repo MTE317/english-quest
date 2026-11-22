@@ -115,3 +115,14 @@ export function setDebugDayOffset(days, storage) {
 export function now(storage) {
   return Date.now() + getDebugDayOffset(storage) * 86400000;
 }
+
+const SETTINGS_KEY = 'englishQuest.settings.v1';
+
+export function loadSettings(storage) {
+  try { return JSON.parse(safeStorage(storage)?.getItem(SETTINGS_KEY) || '{}') ?? {}; }
+  catch { return {}; }
+}
+
+export function saveSettings(settings, storage) {
+  safeStorage(storage)?.setItem(SETTINGS_KEY, JSON.stringify(settings));
+}

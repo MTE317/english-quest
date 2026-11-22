@@ -1,4 +1,4 @@
-import { maxHp, maxMp } from '../character.js';
+import { maxHp, maxMp } from '../character.js?v=features-1';
 import { el } from '../dom.js';
 
 function resource(label, value, max) {

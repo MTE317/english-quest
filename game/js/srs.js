@@ -113,8 +113,12 @@ export class Scheduler {
   dayOf(nowMs) { return dayIndex(nowMs, this.dayBoundaryHour); }
 
   review(rec, correct, nowMs) {
+    return this.reviewGrade(rec, correct ? 3 : 1, nowMs);
+  }
+
+  reviewGrade(rec, g, nowMs) {
     const today = this.dayOf(nowMs);
-    const g = correct ? 3 : 1;
+    const correct = g >= 2;
     let s;
     let d;
     if (!rec) {
@@ -127,7 +131,7 @@ export class Scheduler {
         s = this.shortTermStability(rec.s, g);
       } else {
         const r = this.retrievability(elapsed, rec.s);
-        s = correct ? this.recallStability(rec.d, rec.s, r) : this.forgetStability(rec.d, rec.s, r);
+        s = correct ? rec.s + (this.recallStability(rec.d, rec.s, r) - rec.s) * (g === 2 ? this.w[15] : 1) : this.forgetStability(rec.d, rec.s, r);
       }
     }
     s = Math.max(s, 0.1);

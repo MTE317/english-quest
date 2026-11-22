@@ -1,10 +1,10 @@
 // 戦況を表示したまま、下段をコマンド・対象の案内・問題・結果に切り替える。
-import { now } from '../storage.js';
+import { now } from '../storage.js?v=features-1';
 import { QuestionPicker, REASON_LABEL } from '../picker.js';
-import { makeQuestion, DIRECTION } from '../quiz.js';
+import { makePracticeQuestion, questionDirection, DIRECTION } from '../quiz.js?v=features-1';
 import { speak, canSpeak } from '../speech.js';
-import { nextTurn, actionOptions, setPending, resolvePending, targetKind, canAct } from '../battle.js';
-import { maxHp, maxMp } from '../character.js';
+import { nextTurn, actionOptions, setPending, resolvePending, targetKind, canAct, skillMp } from '../battle.js?v=features-1';
+import { maxHp, maxMp } from '../character.js?v=features-1';
 import { el, render } from '../dom.js';
 
 const TARGET_PROMPT = {
@@ -13,7 +13,7 @@ const TARGET_PROMPT = {
   ko_ally: '倒れた味方を選ぶ',
 };
 
-export function createBattleView({ view, data, lex, scheduler, store, session, onEnd }) {
+export function createBattleView({ view, data, lex, scheduler, store, session, onEnd, settings = {} }) {
   const run = session.run;
   const b = run.battle;
   const g = session.game;
@@ -32,7 +32,7 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
   const panel = el('section', { class: 'battle-controls', 'aria-labelledby': 'battle-controls-title' });
   const screen = el('div', { class: 'battle-screen' },
     el('div', { class: 'battle-location' },
-      el('h2', {}, data.dungeons.get(run.dungeonId).name),
+      el('h2', {}, run.label ?? data.dungeons.get(run.dungeonId).name),
       el('span', { class: 'battle-floor' }, `${run.floor}階`), turn),
     enemies,
     party,
@@ -79,7 +79,8 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
         el('span', { class: 'battle-enemy-icon', 'aria-hidden': 'true' }, enemy.icon),
         el('span', { class: 'battle-unit-name' }, enemy.name, enemy.boss ? ' 👑' : '', enemy.eliteId ? ' ⚠' : ''),
         resource('HP', enemy.hp, enemy.maxHp, 'hp'),
-        conditions(enemy.statuses));
+        conditions(enemy.statuses),
+        enemy.revealed ? el('span', { class: 'battle-conditions' }, '弱点 ' + enemy.weak.map((id) => data.elements.get(id)?.name ?? id).join('・')) : null);
     }));
     render(party, g.party.map((member, index) => {
       const hp = maxHp(data, member);
@@ -128,7 +129,7 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
     if (sub === 'skill' || sub === 'item') {
       const isSkill = sub === 'skill';
       const choices = isSkill
-        ? opts.skills.map(({ skill, reason }) => listChoice(skill.name, `MP ${skill.mp}`, reason,
+        ? opts.skills.map(({ skill, reason }) => listChoice(skill.name, `MP ${skillMp(data, member, skill)}`, reason,
           () => choose({ type: 'skill', skillId: skill.id }), reason))
         : opts.items.map(({ item, count, reason }) => listChoice(item.name, `×${count}`, reason || item.description,
           () => choose({ type: 'item', itemId: item.id }), reason));
@@ -185,11 +186,15 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
   }
 
   function ask(action) {
-    const next = picker.next();
-    const dir = Math.random() < 0.5 ? DIRECTION.EN_JA : DIRECTION.JA_EN;
-    const q = makeQuestion(next.word, lex, { direction: dir, familiar: scheduler.isFamiliar(store.get(next.word.id)) });
+    const review = run.questionPool?.length ? run.questionPool : null;
+    const next = review?.length
+      ? { word: lex.wordsById.get(review[(run.challengeQuestions ?? 0) % review.length]), reason: 'practice' }
+      : picker.next();
+    if (review?.length) run.challengeQuestions = (run.challengeQuestions ?? 0) + 1;
+    const dir = questionDirection(run.direction ?? settings.direction ?? DIRECTION.EN_JA);
+    const q = makePracticeQuestion(next.word, lex, { direction: dir, format: run.challenge ? 'meaning' : settings.format ?? 'meaning', familiar: scheduler.isFamiliar(store.get(next.word.id)) });
     setPending(b, action, {
-      wordId: next.word.id, reason: next.reason, direction: q.direction, prompt: q.prompt, choices: q.choices, answerIndex: q.answerIndex,
+      wordId: next.word.id, reason: next.reason, format: q.format, deadline: run.timeLimit ? Date.now() + 1000 * run.timeLimit : null, direction: q.direction, prompt: q.prompt, choices: q.choices, answerIndex: q.answerIndex,
     });
     run.quiz = picker.toState();
     session.save();
@@ -210,14 +215,22 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
     const title = `${g.party[actor].name}の${actionLabel(action)}`;
     drawField(actor, {}, action);
 
+    let timeout;
     function answer(index) {
-      if (!b.pending) return;
-      const correct = index === q.answerIndex;
+      if (!b.pending || !panel.isConnected) return;
+      clearTimeout(timeout);
+      const timedOut = index < 0 || (q.deadline && Date.now() >= q.deadline);
+      if (timedOut) run.timedOut = true;
+      const correct = !timedOut && index === q.answerIndex;
       const time = now();
       const rec = scheduler.review(store.get(word.id), correct, time);
       store.recordAnswer(word.id, rec, scheduler.dayOf(time), correct);
       picker.report(word.id, correct);
       run.quiz = picker.toState();
+      const rewards = (b.learningRewards ??= { answers: 0, total: 0 });
+      const weights = data.balance.rewards?.learning_weights ?? { due: 1.2, new: 1.2, retry: 1, practice: 0.8 };
+      rewards.answers += 1;
+      rewards.total += correct ? weights[q.reason] ?? 1 : 1;
       resolvePending(data, g, b, correct);
       session.save();
 
@@ -226,7 +239,7 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
         el('div', { class: `battle-result ${correct ? 'good' : 'bad'}`, role: 'status' },
           el('strong', {}, correct ? '正解！' : `正解は「${q.choices[q.answerIndex].text}」`),
           el('span', {}, `${word.en} ＝ ${word.ja}`),
-          correct ? null : el('span', { class: 'battle-result-choice' }, `選んだ答え　${q.choices[index].text}`)),
+          timedOut ? el('span', {}, '時間切れ') : correct ? null : el('span', { class: 'battle-result-choice' }, `選んだ答え　${q.choices[index].text}`)),
         el('div', { class: 'battle-result-actions' },
           pronounce(word), el('button', { class: 'battle-next', onclick: loop }, '次へ →')),
       ], { focus: false });
@@ -235,11 +248,12 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
 
     showPanel(title, [
       el('div', { class: 'battle-question' },
-        el('div', { class: 'battle-prompt', lang: isEn ? 'en' : 'ja' }, q.prompt),
+        el('div', { class: 'battle-prompt', style: 'white-space: pre-line', lang: isEn ? 'en' : 'ja' }, q.prompt),
         isEn ? pronounce(word) : null),
       el('div', { class: 'battle-answers' }, q.choices.map((choice, index) =>
         el('button', { onclick: () => answer(index), lang: isEn ? 'ja' : 'en' }, choice.text))),
-    ], { detail: el('span', { class: `tag ${q.reason}` }, REASON_LABEL[q.reason]), question: true });
+    ], { detail: el('span', { class: `tag ${q.reason}` }, run.timeLimit ? `${run.timeLimit}秒` : REASON_LABEL[q.reason]), question: true });
+    if (q.deadline) timeout = setTimeout(() => answer(-1), Math.max(0, q.deadline - Date.now()));
   }
 
   function pronounce(word) {

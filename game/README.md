@@ -58,3 +58,26 @@ python3 -m http.server 8000
 cd game
 node --test tests/*.test.js
 ```
+
+## 追加の入口
+
+- 町の神殿から、詠唱の間・JPでの転職・中級ジョブの解放・刻印を利用できる。
+- 町の工房・調合、銀行・投資から、装備や道具の加工と施設の管理を行える。
+- メニューの「記録と設定」で、習熟の履歴・図鑑・称号・ダンジョンの出題方法を確認できる。
+
+### 別管理のコンテンツ
+
+闘技場の対戦データは、公開する環境の `data/` に次の CSV を置くと有効になる。
+`rank` が1〜12なら同じ★の冒険者ランク、13ならSランクが必要。
+
+| ファイル | 列 |
+|---|---|
+| `arena_tiers.csv` | `id,rank,name,first_medals,repeat_medals,title,gear_id,timed_title,direction_title` |
+| `arena_battles.csv` | `id,tier_id,battle,enemies`（`battle` は1〜5、`enemies` は `monster_id:Lv|monster_id:Lv`） |
+| `arena_shop.csv` | `id,gear_id,medals` |
+
+上級ジョブ・追加ダンジョン・固有装備を公開する環境には、必要な行だけを
+`data/extra_game_data.json` に入れる。値は既存 CSV と同じ列名をキーにした行の配列。
+対応するキーは `jobsAdvanced`、`jobUnlocks`、`jobWeaponApt`、`jobArmorApt`、
+`skills`、`jobMastery`、`monsters`、`materials`、`dungeons`、`dungeonFloors`、
+`dropTables`、`uniques`。出題教材は `rune_stones.csv` と `lexicon.csv` で追加する。

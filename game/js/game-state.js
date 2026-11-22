@@ -1,6 +1,6 @@
 // 新しいゲームの進み具合（セーブの game の中身）
-import { createMember } from './character.js';
-import { ensureLoadout } from './growth.js';
+import { createMember } from './character.js?v=features-1';
+import { ensureLoadout } from './growth.js?v=features-1';
 
 export const PARTY_SIZE = 4;
 
@@ -43,6 +43,8 @@ export function normalizeGame(data, game) {
   game.cleared = game.cleared ?? {};
   game.overdue = game.overdue ?? 0;
   game.notices = game.notices ?? [];
+  game.jp ??= 0;
+  game.titles ??= [];
   game.unlockedJobs = game.unlockedJobs ?? [];
   game.examsPassed = game.examsPassed ?? [];
   for (const m of game.party ?? []) {

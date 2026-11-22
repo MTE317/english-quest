@@ -16,6 +16,7 @@
     <a class="btn" href="quiz.html">ルーンの問題（10問）</a>
     <a class="btn" href="save.html">セーブの確認</a>
     <a class="btn" href="data.html">データ確認</a>
+    <a class="btn" href="records.html">記録と設定</a>
     <p id="save-status" class="muted small"></p>
     <details class="panel">
       <summary>デバッグ</summary>
@@ -26,8 +27,8 @@
     </details>
   </main>
   <script type="module">
-    import { GameSession } from './js/save.js';
-    import { LearningStore, safeStorage, setDebugDayOffset } from './js/storage.js';
+    import { GameSession } from './js/save.js?v=features-1';
+    import { LearningStore, safeStorage, setDebugDayOffset } from './js/storage.js?v=features-1';
     const storage = safeStorage();
     const s = new GameSession({ storage });
     const line = document.getElementById('save-status');
@@ -46,7 +47,7 @@
       if (!confirm(`${target}を初期化しますか？ 消去したデータは元に戻せません。ほかに開いているゲームのタブがあれば、閉じてから実行してください。`)) return;
       try {
         if (!storage) throw new Error('ブラウザーの保存領域を使用できません。');
-        s.deleteSave();
+        s.deleteSave({ includeLearning });
         if (includeLearning) {
           new LearningStore(storage).clear();
           setDebugDayOffset(0, storage);

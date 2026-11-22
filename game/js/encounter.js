@@ -1,9 +1,33 @@
-// 出てくる敵を決める（ダンジョンと階から）。季節・強い個体・賞金首はチェックリスト7・13番で足す。
-import { makeEnemy } from './battle.js';
+// 出てくる敵を決める（ダンジョンと階から）。
+import { makeEnemy } from './battle.js?v=features-1';
 
 /** そのダンジョンにふだん出るモンスター */
-export function monsterPool(data, dungeonId) {
-  return [...data.monsters.values()].filter((m) => m.role === 'normal' && m.dungeons.includes(dungeonId));
+export function monsterPool(data, dungeonId, season) {
+  const pool = [...data.monsters.values()].filter((m) => m.dungeons.includes(dungeonId));
+  const seasonal = pool.filter((m) => m.role === 'season' && m.season === season);
+  const removed = new Set(seasonal.flatMap((m) => (m.replaces ?? '').split('|')));
+  return [...pool.filter((m) => m.role === 'normal' && !removed.has(m.id)), ...seasonal];
+}
+
+function eliteFor(data, rank, rng) {
+  if (rng() >= (data.balance.dungeon?.elite_rate ?? 0.08)) return null;
+  const allowed = data.elitePrefixes.filter((p) => p.minStar <= rank && p.appearRate > 0);
+  let draw = rng() * allowed.reduce((sum, p) => sum + p.appearRate, 0);
+  return allowed.find((p) => (draw -= p.appearRate) < 0)?.id ?? null;
+}
+
+export function planBounty(data, game, dungeonId, rng) {
+  const pool = [...data.monsters.values()].filter((m) => m.role === 'bounty' && m.dungeons.includes(dungeonId));
+  if (!pool.length) return null;
+  const active = pool.filter((m) => game.quests.some((q) => q.type === 'bounty' && q.target === m.id && q.progress < q.count));
+  const options = active.length ? active : pool;
+  const chance = data.dropTables.get(dungeonId)?.bountyChance ?? 0;
+  if (rng() >= chance * (active.length ? 2 : 1)) return null;
+  const floors = data.dungeonFloors.filter((row) => row.dungeonId === dungeonId && row.battles > Number(row.lastBattleIsBoss));
+  if (!floors.length) return null;
+  const row = floors[Math.floor(rng() * floors.length)];
+  return { monsterId: options[Math.floor(rng() * options.length)].id, floor: row.floor,
+    battle: Math.floor(rng() * (row.battles - Number(row.lastBattleIsBoss))) };
 }
 
 export function floorRow(data, dungeonId, floor) {
@@ -23,9 +47,9 @@ export function bossEscorts(data) {
  * @param rng () => 0〜1 の乱数
  * @param boss true ならボス戦（ボス＋ふだんの敵）
  */
-export function makeEncounter(data, dungeonId, floor, rng, { boss = false } = {}) {
+export function makeEncounter(data, dungeonId, floor, rng, { boss = false, season, bountyId, elites = false } = {}) {
   const row = floorRow(data, dungeonId, floor);
-  const pool = monsterPool(data, dungeonId);
+  const pool = monsterPool(data, dungeonId, season);
   if (!pool.length) throw new Error(`${dungeonId} に出るモンスターがいない`);
   const enemies = [];
   if (boss) {
@@ -35,7 +59,13 @@ export function makeEncounter(data, dungeonId, floor, rng, { boss = false } = {}
   const count = boss ? bossEscorts(data) : row.enemiesPerBattle;
   for (let k = 0; k < count; k++) {
     const m = pool[Math.floor(rng() * pool.length)];
-    enemies.push(makeEnemy(data, m.id, { lv: row.enemyLevel, dungeonId }));
+    const eliteId = elites ? eliteFor(data, data.dungeons.get(dungeonId).rank, rng) : null;
+    enemies.push(makeEnemy(data, m.id, { lv: row.enemyLevel, dungeonId, eliteId }));
+  }
+  if (bountyId) {
+    const enemy = makeEnemy(data, bountyId, { lv: row.enemyLevel, dungeonId, boss: true });
+    if (boss) enemies.push({ ...enemy, bounty: true });
+    else enemies[0] = { ...enemy, bounty: true };
   }
   // 同じ名前が並ぶときは A・B… をつける
   const seen = {};

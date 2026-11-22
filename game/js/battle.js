@@ -9,8 +9,8 @@
 // 式は data/balance.json から読む。balance.json に式として書かれていないもの（説明の文だけのもの）は、
 // シミュレーター（sim/battle.py・sim/core.py）と同じ式を BATTLE_FORMULAS に置いて使う（docs/requests.md で依頼済み）。
 import { evaluate } from './expr.js';
-import { computeStats, gearDef, weaponPower, maxHp, maxMp } from './character.js';
-import { actionSkills, memberMods, addMasteryKill } from './growth.js';
+import { computeStats, gearDef, weaponPower, maxHp, maxMp, gearEffects, affixSum } from './character.js?v=features-1';
+import { actionSkills, memberMods, addMasteryKill } from './growth.js?v=features-1';
 
 /** balance.json にまだ式がないもの（sim と同じ） */
 export const BATTLE_FORMULAS = Object.freeze({
@@ -124,6 +124,11 @@ export function createBattle(data, game, { enemies, seed = Date.now(), canFlee =
     })),
     enemies, partyBuffs: {}, delayed: [], pending: null, log: [],
   };
+  const curse = partyPassive(data, game, b, 'open_curse');
+  if (curse) for (const enemy of b.enemies) {
+    enemy.debuffs.def = [curse, f(data, 'max_rounds')];
+    enemy.debuffs.res = [curse, f(data, 'max_rounds')];
+  }
   log(b, `${enemies.map((e) => e.name).join('・')}が あらわれた！`);
   return b;
 }
@@ -147,6 +152,10 @@ export function canAct(game, b, i) {
 const livingEnemies = (b) => b.enemies.map((e, i) => i).filter((i) => b.enemies[i].hp > 0);
 
 /** 戦闘中の能力値（状態異常・強化を合わせたもの） */
+function partyPassive(data, game, b, key) {
+  return Math.max(0, ...game.party.map((m, index) => canAct(game, b, index) ? memberMods(data, m)[key] ?? 0 : 0));
+}
+
 export function battleStats(data, game, b, i) {
   const m = game.party[i];
   const st = { ...computeStats(data, m) };
@@ -156,6 +165,7 @@ export function battleStats(data, game, b, i) {
     const buff = 1 + Math.min(data.balance.battle.buff_cap, bval(b.partyBuffs, k) + bval(a.buffs, k));
     st[k] = st[k] * buff * (down ? 1 - data.statusEffects.get('statdown').value : 1);
   }
+  if (b.round <= 3) st.res *= 1 + partyPassive(data, game, b, 'start_res');
   if (has(a, 'dot_strdown', data)) st.str *= 1 - data.statusEffects.get('statdown').value; // 火傷は STR も下がる（sim と同じく能力ダウンと同じ幅）
   st.crit += bval(a.buffs, 'crt');
   st.evasion += bval(b.partyBuffs, 'eva') + bval(a.buffs, 'eva');
@@ -178,7 +188,7 @@ function startRound(data, game, b) {
   const first = b.firstBattle && b.round === 1;
   game.party.forEach((m, i) => {
     if (!canAct(game, b, i)) return;
-    let spd = battleStats(data, game, b, i).spd * (1 + (first ? m.room?.spd1 ?? 0 : 0));
+    let spd = battleStats(data, game, b, i).spd * (1 + (first ? m.room?.spd1 ?? 0 : 0) + (b.round === 1 ? affixSum(m, 'FIRST_SPD') / 100 : 0));
     if (b.round === 1 && memberMods(data, m).first) spd += 1e6; // 早撃ち：1ターン目は必ず先に動く
     units.push({ side: 'ally', i, spd });
   });
@@ -318,15 +328,20 @@ function isMagicSkill(s) {
 }
 
 /** スキルを今使えるか → 使えない理由（使えるなら ''） */
+export function skillMp(data, member, skill) {
+  const rate = data.balance.mp_rules?.skill_mp_per_lv ?? 0;
+  return Math.ceil(skill.mp * (1 + rate * (member.lv - 1)));
+}
+
 function skillBlock(data, game, b, i, s) {
   const m = game.party[i];
   const a = b.allies[i];
-  if (m.mp < s.mp) return 'MP が足りない';
+  if (m.mp < skillMp(data, m, s)) return 'MP が足りない';
   if (s.effect.once && a.once.includes(s.id)) return 'この戦闘ではもう使った';
   if (ATTACK_SKILL_KINDS.includes(s.kind) && has(a, 'no_attack_skill', data)) return '恐怖で使えない';
   if (isMagicSkill(s) && has(a, 'no_magic', data)) return '沈黙で使えない';
   if (!isMagicSkill(s) && ['attack', 'fixed_damage', 'self_buff', 'imbue'].includes(s.kind) && has(a, 'no_phys_skill', data)) return '封印で使えない';
-  if (s.kind === 'utility') return 'まだ使えない（ダンジョンを作るときに追加）';
+  if (s.kind === 'utility' && !['thief_p2_s1', 'hunter_p2_s1'].includes(s.id)) return '効果が設定されていません';
   if (s.effect.imbue_only && !a.imbue) return '剣気をまとっていない';
   return '';
 }
@@ -373,7 +388,7 @@ export function targetKind(data, action) {
   const tgt = s.effect.tgt;
   switch (s.kind) {
     case 'attack': return tgt === 'all' || tgt === 'random' ? 'enemies' : 'enemy';
-    case 'status': case 'debuff': return tgt === 'all' ? 'enemies' : 'enemy';
+    case 'utility': case 'status': case 'debuff': return tgt === 'all' ? 'enemies' : 'enemy';
     case 'fixed_damage': case 'delayed': return 'enemies';
     case 'heal': case 'cure': case 'ally_buff': case 'mp_give': return 'ally';
     case 'revive': return 'ko_ally';
@@ -424,7 +439,17 @@ export function resolvePending(data, game, b, correct) {
   if (m.hp <= 0) return { cm };
 
   const act = p.action;
-  if (act.type === 'attack') doAttack(data, game, b, i, null, act.target, cm);
+  if (act.type === 'attack') {
+    doAttack(data, game, b, i, null, act.target, cm);
+    if (correct) {
+      const max = maxMp(data, m);
+      const recovery = Math.min(max - m.mp, Math.ceil(max * (data.balance.mp_rules?.normal_attack_regen_rate ?? 0)));
+      if (recovery > 0) {
+        m.mp += recovery;
+        log(b, `${m.name}のMPが ${recovery} 回復`);
+      }
+    }
+  }
   else if (act.type === 'skill') doSkill(data, game, b, i, data.skills.get(act.skillId), act.target, cm);
   else if (act.type === 'item') doItem(data, game, b, i, data.items.get(act.itemId), act.target, cm);
   else if (act.type === 'flee') doFlee(data, game, b, correct);
@@ -462,13 +487,16 @@ function attackDamage(data, game, b, i, e, skill, cm, { offhand = false } = {}) 
   const wdef = weapon ? gearDef(data, weapon) : null;
   const wt = wdef ? data.weaponTypes.get(wdef.kind) : null;
   const base = skill?.effect.base ?? 'weapon';
+  const mods = memberMods(data, m);
   let kind; let els; let hits;
   let imb = 1;
   if (base === 'weapon') {
     kind = wt && WEAPON_TRAITS.magic.includes(wt.id) ? 'mag' : 'phys';
     els = (wt?.elements ?? []).filter((x) => x !== 'none');
-    hits = wt?.hits?.length ? wt.hits : [1];
-    if (a.imbue && kind === 'phys') { els = skill?.effect.imbue_only ? [a.imbue] : [...els.slice(0, 1), a.imbue]; imb = f(data, 'imbue_mul'); }
+    if (wdef?.addedElement) els = [...new Set([...els, wdef.addedElement])];
+    if (weapon) els = [...new Set([...els, ...Object.keys(gearEffects(weapon)).filter((key) => key.startsWith('ELEMENT:')).map((key) => key.slice(8))])];
+    hits = wt?.id === 'fist' && mods.fist ? [mods.fist, mods.fist] : wt?.hits?.length ? wt.hits : [1];
+    if (a.imbue && kind === 'phys') { els = skill?.effect.imbue_only ? [a.imbue] : [...els.slice(0, 1), a.imbue]; imb = f(data, 'imbue_mul') + (mods.imbue ?? 0); }
   } else {
     kind = base === 'phys' ? 'phys' : 'mag';
     els = skill.elements;
@@ -477,18 +505,22 @@ function attackDamage(data, game, b, i, e, skill, cm, { offhand = false } = {}) 
   if (skill?.effect.hits) hits = skill.effect.hits;
   const mult = skill?.effect.m ?? 1;
   const statVal = kind === 'phys'
-    ? st.str * (WEAPON_TRAITS.str_mul[wt?.id] ?? 1) * (skill?.effect.beststat ? 1 : 1)
+    ? (skill?.effect.beststat ? Math.max(st.str, st.mag) : st.str) * (WEAPON_TRAITS.str_mul[wt?.id] ?? 1) + st.mag * (mods.mag2phys ?? 0)
     : st.mag * (WEAPON_TRAITS.mag_mul[wt?.id] ?? 1) * (1 + bval(a.buffs, 'magb'));
-  const wpow = weaponPower(data, m, weapon);
+  const wpow = weaponPower(data, m, weapon) + st.mag * (mods.mag_to_atk ?? 0);
   const song = game.party.some((x, j) => x.job === 'bard' && canAct(game, b, j)) ? data.balance.battle.bard_song : 0;
   const dm = 1 + Math.min(data.balance.battle.buff_cap, song + bval(b.partyBuffs, 'dmg') + (kind === 'phys' ? bval(a.buffs, 'str') : 0));
   // パッシブ：武器・属性・種別へのダメージ、ピンチのときのダメージ
-  const mods = memberMods(data, m);
   let pm = 1;
   for (const [names, v] of mods.wdmg ?? []) if (base === 'weapon' && wt && names.some((n) => nameIs(data.weaponTypes, wt.id, n))) pm += v;
   for (const [name, v] of mods.edmg ?? []) if (els.some((el) => nameIs(data.elements, el, name))) pm += v;
   for (const [names, v] of mods.tdmg ?? []) if (enemy.types.some((t) => names.some((n) => nameIs(data.monsterTypes, t, n)))) pm += v;
-  for (const [k, v] of Object.entries(weapon?.affixes ?? {})) if (k.startsWith('特効:') && enemy.types.includes(k.slice(3))) pm += v / 100;
+  for (const type of enemy.types) pm += ((weapon ? gearEffects(weapon)['特効:' + type] ?? 0 : 0) + affixSum(m, 'TYPE_BONUS:' + type)) / 100;
+  if (wt?.id === 'gun' && base === 'phys' && skill) pm += mods.bullet ?? 0;
+  if (els.some((id) => ['wind', 'earth', 'water'].includes(id) && enemy.weak.includes(id))) pm += mods.weak_wew ?? 0;
+  if (Object.keys(enemy.debuffs).length || enemy.statuses.poison) pm += mods.vs_debuffed ?? 0;
+  if (!skill) pm += mods.normal_damage ?? 0;
+  if (kind === 'mag') pm += mods.magic_damage ?? 0;
   if (mods.lowhp_dmg && m.hp < maxHp(data, m) * 0.5) pm += mods.lowhp_dmg;
   const atk = (statVal + (base === 'weapon' || kind === 'mag' ? wpow : wpow * 0.8)) * mult * cm * dm * imb * pm;
   const pierce = kind === 'phys' ? (wt?.defPierce ?? 0) + (skill?.effect.defign ?? 0) : 0;
@@ -506,7 +538,7 @@ function attackDamage(data, game, b, i, e, skill, cm, { offhand = false } = {}) 
     if (crit) crits += 1;
     if (!hit) { misses += 1; continue; }
     total += h * evaluate(f(data, 'ally_damage'), {
-      atk, em, df, crit: crit ? data.balance.battle.crit_mult + (mods.crit_dmg ?? 0) : 1, r: between(b, f(data, 'ally_rand')),
+      atk, em, df, crit: crit ? data.balance.battle.crit_mult + (mods.crit_dmg ?? 0) + (mods.crit_damage ?? 0) : 1, r: between(b, f(data, 'ally_rand')),
     });
   }
   return { damage: Math.round(total), crits, misses, em };
@@ -538,7 +570,7 @@ function doAttack(data, game, b, i, skill, target, cm) {
   const kind = skill ? targetKind(data, { type: 'skill', skillId: skill.id }) : 'enemy';
   const mainDef = m.equip.weapon ? gearDef(data, m.equip.weapon) : null;
   const wt = mainDef ? data.weaponTypes.get(mainDef.kind) : null;
-  const allMul = !skill && wt ? WEAPON_TRAITS.hits_all_mul[wt.id] : null; // 鞭：通常攻撃が全体に
+  const allMul = !skill && wt ? (wt.id === 'whip' ? memberMods(data, m).whip ?? WEAPON_TRAITS.hits_all_mul.whip : null) : null; // 鞭：通常攻撃が全体に
   if (!skill) log(b, `${m.name}の攻撃！`);
   if (skill?.effect.tgt === 'random') {
     for (let n = 0; n < (skill.effect.n ?? 1); n++) {
@@ -597,7 +629,7 @@ function doSkill(data, game, b, i, s, target, cm) {
   const a = b.allies[i];
   const block = skillBlock(data, game, b, i, s);
   if (block) { log(b, `${s.name}は使えなかった（${block}）`); return; }
-  m.mp -= s.mp;
+  m.mp -= skillMp(data, m, s);
   if (s.effect.once) a.once.push(s.id);
   log(b, `${m.name}の${s.name}！`);
   const e = s.effect;
@@ -608,6 +640,24 @@ function doSkill(data, game, b, i, s, target, cm) {
     return evaluate(f(data, 'heal'), { MAG: st.mag, wpow: st.attack, m: e.m ?? 1, heal_mul: WEAPON_TRAITS.heal_mul[wt?.id] ?? 1 }) * cm * (1 + (memberMods(data, m).healp ?? 0));
   };
   switch (s.kind) {
+    case 'utility': {
+      const enemy = b.enemies[target];
+      if (!enemy || enemy.hp <= 0) break;
+      if (s.id === 'hunter_p2_s1') {
+        if (!chance(b, cm)) { log(b, '弱点を見極められなかった'); break; }
+        enemy.revealed = true;
+        const names = enemy.weak.map((id) => data.elements.get(id)?.name ?? id);
+        log(b, `${enemy.name}の弱点：${names.join('・') || 'なし'}`);
+      } else if (!enemy.stolen && chance(b, cm * 0.5)) {
+        const id = data.monsters.get(enemy.monsterId)?.materialCommon;
+        if (id && data.materials.has(id)) {
+          enemy.stolen = true;
+          (b.stolen ??= []).push(id);
+          log(b, `${data.materials.get(id).name}を盗んだ`);
+        }
+      } else log(b, '盗めなかった');
+      break;
+    }
     case 'attack':
       doAttack(data, game, b, i, s, target, cm);
       break;
@@ -643,7 +693,10 @@ function doSkill(data, game, b, i, s, target, cm) {
       break;
     }
     case 'party_buff':
-      for (const [k, v] of Object.entries(e.buff ?? {})) b.partyBuffs[k] = [v * cm, (e.turns ?? 1) + 1];
+      for (const [k, v] of Object.entries(e.buff ?? {})) {
+        const song = s.job === 'bard' ? memberMods(data, m) : {};
+        b.partyBuffs[k] = [(v + (k === 'dmg' ? song.song ?? 0 : 0)) * cm, (e.turns ?? 1) + 1 + (song.song_turns ?? 0)];
+      }
       log(b, '味方全員が力を得た');
       break;
     case 'self_buff':
@@ -723,7 +776,8 @@ function cureAlly(data, game, b, j, pred) {
 function doItem(data, game, b, i, it, target, cm) {
   const m = game.party[i];
   if (!game.items[it.id]) { log(b, `${it.name}を持っていない`); return; }
-  game.items[it.id] -= 1;
+  const preserve = partyPassive(data, game, b, 'save');
+  if (!(preserve > 0 && chance(b, preserve))) game.items[it.id] -= 1;
   if (game.items[it.id] <= 0) delete game.items[it.id];
   log(b, `${m.name}は${it.name}を使った`);
   cm *= 1 + (memberMods(data, m).itemp ?? 0); // 薬の知識
@@ -817,8 +871,11 @@ function enemyTurn(data, game, b, e) {
   if (!magic && Object.keys(enemy.statuses).includes('blind') && chance(b, data.statusEffects.get('blind').value)) { log(b, `${enemy.name}の攻撃ははずれた`); return; }
   const atk = (magic ? enemy.mag : enemy.str) * (1 - bval(enemy.debuffs, 'str')) * (Object.keys(enemy.statuses).includes('fear') ? 0.8 : 1);
   const df = magic ? ts.res : ts.def;
-  const cut = 1 - Math.min(0.8, bval(b.partyBuffs, 'cut') + bval(ta.buffs, 'cut') + (magic ? 0 : bval(ta.buffs, 'pcut')));
-  const ecut = enemy.attackElement ? 1 - bval(b.partyBuffs, `eres:${enemy.attackElement}`) : 1;
+  const cut = 1 - Math.min(0.8, bval(b.partyBuffs, 'cut') + bval(ta.buffs, 'cut') + (memberMods(data, target).damage_cut ?? 0) + (magic ? 0 : bval(ta.buffs, 'pcut')));
+  const resist = enemy.attackElement
+    ? bval(b.partyBuffs, `eres:${enemy.attackElement}`) + affixSum(target, `ELEM_RES:${enemy.attackElement}`) / 100 + partyPassive(data, game, b, 'party_eres')
+    : 0;
+  const ecut = 1 - Math.min(1, resist + (magic || enemy.attackElement ? partyPassive(data, game, b, 'party_ecut') : 0));
   const dmg = evaluate(f(data, 'enemy_damage'), { atk, df, r: between(b, f(data, 'enemy_rand')) }) * cover * cut * ecut;
   const elName = enemy.attackElement ? data.elements.get(enemy.attackElement)?.name : null;
   damageAlly(data, game, b, t, dmg, `${enemy.name}の${magic ? `${elName ?? ''}魔法` : '攻撃'}！ ${target.name}に`);
@@ -875,7 +932,7 @@ export function battleRewards(data, game, b) {
       x *= evaluate(f(data, 'overlevel'), { Lv: m.lv, enemyLv: e.lv });
       sum += x;
     }
-    return Math.round(sum * (1 + (memberMods(data, m).xp ?? 0) + (m.equip ? Object.values(m.equip).reduce((a, g) => a + (g?.affixes?.['経験値'] ?? g?.affixes?.EXP ?? 0), 0) / 100 : 0)));
+    return Math.round(sum * (1 + (memberMods(data, m).xp ?? 0) + (affixSum(m, 'EXP') + affixSum(m, '経験値')) / 100));
   });
   return { xp, ap: game.party.map((m, i) => (canAct(game, b, i) ? ap : 0)) };
 }

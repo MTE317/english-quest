@@ -1,21 +1,22 @@
 // ダンジョンの画面：行き先とルーンストーンを選ぶ → 階を進む → 戦闘 → 帰還ポイント・ボス → 町へ
-import { loadGameData } from '../gamedata.js';
-import { loadCsv, loadJson } from '../data.js';
+import { loadGameData } from '../gamedata.js?v=features-1';
+import { loadCsv, loadJson } from '../data.js?v=features-1';
 import { buildLexicon } from '../lexicon.js';
-import { Scheduler } from '../srs.js';
-import { LearningStore, now } from '../storage.js';
+import { Scheduler } from '../srs.js?v=features-1';
+import { LearningStore, now, loadSettings } from '../storage.js?v=features-1';
 import { QuestionPicker } from '../picker.js';
-import { GameSession } from '../save.js';
-import { normalizeGame } from '../game-state.js';
+import { GameSession } from '../save.js?v=features-1';
+import { normalizeGame } from '../game-state.js?v=features-1';
 import {
   allowedDungeons, startRun, startNextBattle, afterBattle, returnToTown, continueRun, resolveLoot,
   isBossBattle, runFloorRow, returnItems, currentRank, useItemOutsideBattle, FIELD_ITEM_EFFECTS,
-} from '../dungeon.js?v=victory-1';
-import { backpackSlots, backpackUsed, addItem } from '../loot.js';
-import { maxHp, maxMp } from '../character.js';
-import { createBattleView } from '../ui/battle-view.js?v=inline-quiz-1';
-import { createVictoryView } from '../ui/victory-view.js?v=victory-1';
-import { stoneAllowed } from '../study.js';
+} from '../dungeon.js?v=features-1';
+import { backpackSlots, backpackUsed, addItem } from '../loot.js?v=features-1';
+import { maxHp, maxMp } from '../character.js?v=features-1';
+import { createBattleView } from '../ui/battle-view.js?v=features-1';
+import { createVictoryView } from '../ui/victory-view.js?v=features-1';
+import { updateRuneModifiers } from '../temple.js?v=features-1';
+import { stoneAllowed } from '../study.js?v=features-1';
 import { el, render, stars } from '../dom.js';
 
 const view = document.getElementById('view');
@@ -50,8 +51,19 @@ function showTown(message = null) {
     const stones = lex.stones.filter((s) => stoneAllowed(lex, store, scheduler, s, dg.rank, rank.maxDungeonRank, scheduler.dayOf(now())));
     st.stoneId = stones.find((s) => s.id === st.stoneId)?.id ?? stones[0]?.id ?? null;
     render(stoneSel, stones.map((s) => el('option', { value: s.id, selected: s.id === st.stoneId }, `${stars(s.star)} ${s.name}`)));
-    info.textContent = `${dg.kind}・${dg.floors}階・${dg.days}日かかる・帰還ポイント ${dg.returnPointFloor ? `${dg.returnPointFloor}階のあと` : 'なし'}　${dg.character}`;
+    departure.disabled = !st.stoneId;
+    info.textContent = `${dg.kind}・${dg.floors}階・${dg.days}日かかる・帰還ポイント ${dg.returnPointFloor ? `${dg.returnPointFloor}階のあと` : 'なし'}　${dg.character}${stones.length ? '' : '　持ち込める教材がありません。'}`;
   };
+  const departure = el('button', {
+    class: 'primary',
+    onclick: () => {
+      if (!st.stoneId) return;
+      if (session.game.party.every((m) => m.hp <= 0)) { showTown('全員倒れている。宿屋や神殿で回復してから出発しよう。'); return; }
+      const picker = new QuestionPicker({ lex, store, scheduler, stoneId: st.stoneId, nowMs: now() });
+      startRun(data, session, { dungeonId: st.dungeonId, stoneId: st.stoneId, quizState: picker.toState(), seed: (Date.now() ^ (Math.random() * 2 ** 32)) >>> 0 });
+      showRun();
+    },
+  }, '出発する');
   fill();
   render(view,
     message ? el('div', { class: 'panel small' }, message) : null,
@@ -62,16 +74,7 @@ function showTown(message = null) {
         dungeons.map((d) => el('option', { value: d.id }, `${stars(d.rank)} ${d.name}${g.cleared?.[d.id] ? '（踏破済み）' : ''}`)))),
     info,
     el('label', { class: 'small' }, '持っていくルーンストーン（★がダンジョン以上。今の★の石をすべて読み解くと1つ上も）', stoneSel),
-    el('button', {
-      class: 'primary',
-      onclick: () => {
-        if (!st.stoneId) return;
-        if (session.game.party.every((m) => m.hp <= 0)) { showTown('全員倒れている。宿屋や神殿で回復してから出発しよう。'); return; }
-        const picker = new QuestionPicker({ lex, store, scheduler, stoneId: st.stoneId, nowMs: now() });
-        startRun(data, session, { dungeonId: st.dungeonId, stoneId: st.stoneId, quizState: picker.toState(), seed: (Date.now() ^ (Math.random() * 2 ** 32)) >>> 0 });
-        showRun();
-      },
-    }, '出発する'),
+    departure,
     debugTools(),
   );
 }
@@ -203,6 +206,7 @@ function showFieldItems(result) {
 function battleView() {
   return createBattleView({
     view, data, lex, scheduler, store, session,
+    settings: loadSettings(),
     onEnd: () => {
       const { dungeonId, floor, battleIndex } = session.run;
       const dg = data.dungeons.get(dungeonId);
@@ -224,6 +228,7 @@ function battleView() {
 
 (async () => {
   try {
+    if (session.run?.challenge) { location.replace('challenge.html'); return; }
     const [gd, srsFile, stones, lexicon] = await Promise.all([
       loadGameData(), loadJson('srs.json'), loadCsv('rune_stones.csv'), loadCsv('lexicon.csv'),
     ]);
@@ -232,7 +237,9 @@ function battleView() {
     scheduler = new Scheduler(srs);
     lex = buildLexicon(stones.rows, lexicon.rows);
     store = new LearningStore();
-    if (session.game && !session.readOnly) { normalizeGame(data, session.game); session.save(); }
+    if (session.game && !session.readOnly) { normalizeGame(data, session.game);
+      updateRuneModifiers(data, session.game, lex, store, scheduler, scheduler.dayOf(now()));
+      session.save(); }
     if (session.inDungeon && session.run.backpack) showRun();
     else if (session.inDungeon) { session.leaveDungeon(); showTown(); } // 古い形の遠征（セーブの確認画面で始めたもの）は終わらせる
     else showTown();

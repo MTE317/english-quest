@@ -2,7 +2,7 @@
 // 式は data/balance.json から読む。balance.json に式として書かれていないもの（説明の文だけのもの）は、
 // シミュレーター（sim/core.py）と同じ式を下の SIM_FORMULAS に置いて使う。docs/requests.md で balance.json への追加を依頼済み。
 import { evaluate, isFormula } from './expr.js';
-import { memberMods, masteryMul, masteryLevel, masteryNeeded, ensureLoadout } from './growth.js';
+import { memberMods, masteryMul, masteryLevel, masteryNeeded, ensureLoadout } from './growth.js?v=features-1';
 
 export const STATS = ['hp', 'str', 'mag', 'def', 'res', 'spd', 'luk'];
 export const STAT_LABEL = { hp: 'HP', str: 'STR', mag: 'MAG', def: 'DEF', res: 'RES', spd: 'SPD', luk: 'LUK' };
@@ -97,9 +97,17 @@ function grade(data, member, stat) {
   return g;
 }
 
-function affixSum(member, key) {
+export function gearEffects(gear) {
+  const out = {};
+  const scale = gear.enh >= 10 ? 1.1 : gear.enh >= 5 ? 1.05 : 1;
+  for (const [key, value] of Object.entries(gear.affixes ?? {})) out[key] = value * scale;
+  for (const slot of gear.enchants ?? []) out[slot.stat] = (out[slot.stat] ?? 0) + slot.value;
+  return out;
+}
+
+export function affixSum(member, key) {
   let v = 0;
-  for (const gear of Object.values(member.equip)) if (gear?.affixes?.[key]) v += gear.affixes[key];
+  for (const gear of Object.values(member.equip ?? {})) if (gear) v += gearEffects(gear)[key] ?? 0;
   return v;
 }
 
@@ -169,7 +177,7 @@ export function computeStats(data, member) {
   }
   out.def += armor;
   out.res += armor;
-  if (member.equip.cloak) out.res += evaluate(formula(data, 'cloak_res'), { itemLv: gearDef(data, member.equip.cloak).itemLv });
+  if (member.equip.cloak) out.res += evaluate(formula(data, 'cloak_res'), { itemLv: gearDef(data, member.equip.cloak).itemLv }) * member.equip.cloak.quality * (1 + 0.05 * member.equip.cloak.enh);
   const mainDef = member.equip.weapon ? gearDef(data, member.equip.weapon) : null;
   const wt = mainDef ? data.weaponTypes.get(mainDef.kind) : null;
   out.spd += armorSpd / ARMOR_SLOTS.length + (wt?.spdMod ?? 0);
