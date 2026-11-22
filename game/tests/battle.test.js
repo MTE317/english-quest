@@ -61,7 +61,7 @@ test('敵の能力値は balance.json の式（★の補正・ボスの倍率を
   const raw = evaluate(E.hp, { Lv: 3, hp_mul: m.hpMul, 'dungeon.enemy_mul': dg.enemyMul, 'hp_rank_mul[★]': E.hp_rank_mul[dg.rank] });
   assert.equal(e.maxHp, Math.round(raw));
   const boss = makeEnemy(data, 'slime', { lv: 3, dungeonId: 'mossy_cave', boss: true });
-  assert.equal(boss.maxHp, Math.round(raw * E.boss_hp_mul));
+  assert.equal(boss.maxHp, Math.round(raw * E.boss_hp_mul * (E.hp_boss_rank_mul?.[dg.rank] ?? 1)));
   const elite = makeEnemy(data, 'slime', { lv: 3, dungeonId: 'mossy_cave', eliteId: 'giant' });
   assert.ok(elite.maxHp > e.maxHp && elite.name.startsWith('巨大な'));
 });

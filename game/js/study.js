@@ -2,10 +2,10 @@
 // 学習の記録（読み解いた・覚醒・試験の結果）は LearningStore に入れる（ゲームの進み具合とは別。全滅しても残る）。
 // 予習カードを見ただけでは報酬は出ない（CLAUDE.md）。強くなるのは問題に正解したときだけ。
 import { evaluate } from './expr.js';
-import { gainXp } from './character.js?v=features-2';
-import { memberMods } from './growth.js?v=features-2';
-import { BATTLE_FORMULAS } from './battle.js?v=features-2';
-import { currentRank } from './dungeon.js?v=features-2';
+import { gainXp } from './character.js?v=balance-builds-1';
+import { memberMods } from './growth.js?v=balance-builds-1';
+import { BATTLE_FORMULAS } from './battle.js?v=balance-builds-1';
+import { currentRank } from './dungeon.js?v=balance-builds-1';
 
 export const STUDY_FORMULAS = Object.freeze({
   promotion_learned_ratio: 0.8, // exams.csv の unlock「その★のルーンの8割を習得」

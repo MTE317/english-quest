@@ -1,10 +1,10 @@
 ﻿id,name,elements,hands,power_mul,spd_mod,crit_bonus,def_pierce,hits,feature,dual_wield,attack_stat,traits_json
-sword,剣,slash,1,1.0,0,0,0,1.0,標準。クセがない,1,phys,{}
-greatsword,大剣,slash,2,1.15,-3,0,0,1.0,高威力だが行動が遅い,0,phys,{}
+sword,剣,slash,1,1.0,0,0,0,1.0,武器スキルのMP消費を10%抑える。二刀流可能,1,phys,"{""weapon_skill_mp_mul"": 0.9}"
+greatsword,大剣,slash,2,1.25,-3,0,0,1.0,高い武器攻撃力。武器スキルのダメージ×1.10。行動は遅い,0,phys,"{""weapon_skill_mul"": 1.1}"
 katana,刀,slash,1,1.0,0,0.08,0,1.0,クリティカル率が高い,1,phys,{}
 dagger,短剣,slash|pierce,1,1.0,2,0,0,1.0,SPD+2。素材ドロップ率+5%（重複なし）,1,phys,"{""material_drop_mul"":1.05}"
 axe,斧,slash,1,1.0,0,0,0.2,1.0,敵の防御を一部無視,1,phys,{}
-spear,槍,pierce,2,1.0,0,0,0,1.0,通常攻撃で15%の確率で別の敵1体に50%ダメージ,0,phys,"{""splash_chance"":0.15,""splash_mul"":0.5}"
+spear,槍,pierce,2,1.0,0,0,0,1.0,通常攻撃で30%の確率で別の敵1体に65%ダメージ,0,phys,"{""splash_chance"": 0.3, ""splash_mul"": 0.65}"
 bow,弓,pierce,2,1.0,0,0,0,1.0,弱点への武器攻撃×1.20。暗闇のミス確率が半分,0,phys,"{""weak_damage_mul"":1.2,""blind_miss_mul"":0.5}"
 hammer,鎚,blunt,1,1.0,0,0,0,1.0,通常攻撃命中時10%でスタン,1,phys,"{""normal_status"":{""id"":""stun"",""chance"":0.1}}"
 fist,拳,blunt,2,1.0,0,0,0,0.65|0.65,2回攻撃（2回とも×0.65）,0,phys,{}

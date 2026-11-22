@@ -135,7 +135,10 @@ test('弓は弱点攻撃の倍率が高く、短剣はSPDと素材の入手確�
   assert.equal(speedWith - computeStats(data, thief.party[0]).spd, 2);
   thief.party[0].equip.weapon = oldDagger;
   const enemy = { monsterId: 'slime', boss: false, bounty: false };
-  const getMats = () => rollBattleLoot(data, thief, 'mossy_cave', 1, [enemy], () => 0.56).materials;
+  // 基礎ドロップ率が調整されても、短剣あり/なしの境目を検証する。
+  const chance = data.dropTables.get('mossy_cave').materialRate;
+  const bonus = data.weaponTypes.get('dagger').traits.material_drop_mul - 1;
+  const getMats = () => rollBattleLoot(data, thief, 'mossy_cave', 1, [enemy], () => chance * (1 + bonus / 2)).materials;
   assert.ok(getMats().some((m) => m.id === 'slime_mat'));
   thief.party[0].equip.weapon = null;
   assert.ok(!getMats().some((m) => m.id === 'slime_mat'));

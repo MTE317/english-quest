@@ -1,6 +1,6 @@
 // 新しいゲームの進み具合（セーブの game の中身）
-import { createMember } from './character.js?v=features-2';
-import { ensureLoadout } from './growth.js?v=features-2';
+import { createMember } from './character.js?v=balance-builds-1';
+import { ensureLoadout } from './growth.js?v=balance-builds-1';
 
 export const PARTY_SIZE = 4;
 
@@ -28,8 +28,9 @@ export function createNewGame(data, partySpecs) {
 
 /**
  * 古いセーブにない項目を足す（あとから増えた項目。セーブを読んだら呼ぶ）
+ * 専用制作の固定効果は現行マスタへそろえる。遠征中は全滅時の復元元にも適用する。
  */
-export function normalizeGame(data, game) {
+export function normalizeGame(data, game, run = null) {
   if (!game) return game;
   game.storage = game.storage ?? { gear: [], materials: {} };
   game.items = game.items ?? {};
@@ -51,6 +52,19 @@ export function normalizeGame(data, game) {
     m.persist = m.persist ?? []; m.room = m.room ?? null; m.ap = m.ap ?? { [m.job]: 0 };
     m.learned = m.learned ?? []; m.common = m.common ?? []; m.mastery = m.mastery ?? {};
     if (data.skills) ensureLoadout(data, m);
+    for (const gear of Object.values(m.equip ?? {})) alignCraftedEffects(data, gear);
   }
+  for (const gear of game.storage.gear ?? []) alignCraftedEffects(data, gear);
+  // route・進行・戦闘状態は触らず、入場時のゲームの写しだけを同じ規則で移行する。
+  if (run?.snapshot && run.snapshot !== game) normalizeGame(data, run.snapshot);
   return game;
+}
+
+function alignCraftedEffects(data, gear) {
+  if (!gear?.crafted) return;
+  const def = data.equipment?.get(gear.id);
+  if (!def?.recipeId || def.unique || def.setId) return;
+  // 制作品は振り直せないため、affixes はレシピの固定効果だけ。
+  // 効果の辞書をコピーし、マスタや別の装備・入場時の写しと共有しない。
+  gear.affixes = { ...(def.fixedEffects ?? {}) };
 }

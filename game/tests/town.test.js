@@ -35,16 +35,16 @@ test('月末に会費を払う。足りなければ滞納になり、次の月�
   assert.equal(calendarOf(data, 1).season.id, 'spring');
 });
 
-test('クエスト：掲示板の件数はランクの perk。討伐を受けて倒すと報告でき、お金とポイントが入る', () => {
+test('クエスト：掲示6件から地域討伐を受け、指定場所で倒すと報告できる', () => {
   const g = fresh();
-  assert.equal(boardSize(data, g), 2); // 見習い「クエスト掲示板 2件」
+  assert.equal(boardSize(data, g), 6);
   g.board = makeBoard(data, g, rng());
-  assert.equal(g.board.length, 2);
+  assert.equal(g.board.length, 6);
   let q;
   for (let k = 0; k < 50 && !q; k++) { g.board = makeBoard(data, g, seededRng({ rng: k })); q = g.board.find((x) => x.type === 'hunt'); }
-  acceptQuest(g, q.uid);
+  acceptQuest(data, g, q.uid, rng());
   assert.equal(canReport(data, g, q), false);
-  countKills(g, Array.from({ length: q.count }, () => makeEnemy(data, q.target, { lv: 1 })));
+  countKills(g, Array.from({ length: q.count }, () => makeEnemy(data, q.targetIds[0], { lv: 1 })), q.dungeonId);
   assert.equal(canReport(data, g, q), true);
   const gold0 = g.gold;
   const lines = reportQuest(data, g, q.uid, rng());
@@ -148,35 +148,36 @@ test('古いセーブに足りない項目を足す', () => {
   assert.deepEqual(g.party[0].persist, []);
 });
 
-test('掲示板：受けたクエストも枠を使う。報告するとその場で補充。月末では入れかわらない', () => {
+test('掲示板：受注とは別に6候補を保ち、月末だけでは入れかわらない', () => {
   const g = fresh();
   const n = boardSize(data, g);
   fillBoard(data, g, rng());
   assert.equal(g.board.length, n);
   const first = g.board[0];
-  acceptQuest(g, first.uid);
-  assert.equal(g.board.length + g.quests.length, n);
+  acceptQuest(data, g, first.uid, rng());
+  assert.equal(g.board.length, n);
+  assert.equal(g.quests.length, 1);
   fillBoard(data, g, rng());
-  assert.equal(g.board.length, n - 1); // 受けた分は補充しない（受けられるのも N件まで）
+  assert.equal(g.board.length, n); // 未受注の候補は受注枠と別に6件
   const offers = g.board.map((q) => q.uid);
   advanceDays(data, g, TOWN_FORMULAS.days_per_month);
   assert.deepEqual(g.board.map((q) => q.uid), offers);
-  // 報告すると、空いた枠に新しい依頼
+  // 報告後も未受注の6候補を維持
   first.type = 'hunt'; first.progress = first.count;
   reportQuest(data, g, first.uid, rng());
   assert.equal(g.quests.length, 0);
   assert.equal(g.board.length, n);
-  assert.ok(g.board.some((q) => !offers.includes(q.uid)));
+  assert.deepEqual(g.board.map((q) => q.uid), offers);
 });
 
 test('掲示板：入れかえは受けていない枠だけ', () => {
   const g = fresh();
   fillBoard(data, g, rng());
   const kept = g.board[0];
-  acceptQuest(g, kept.uid);
+  acceptQuest(data, g, kept.uid, rng());
   const old = g.board.map((q) => q.uid);
   refreshBoard(data, g, seededRng({ rng: 77 }));
   assert.deepEqual(g.quests.map((q) => q.uid), [kept.uid]);
-  assert.equal(g.board.length + g.quests.length, boardSize(data, g));
+  assert.equal(g.board.length, boardSize(data, g));
   assert.ok(g.board.every((q) => !old.includes(q.uid)));
 });

@@ -1,8 +1,8 @@
 import { el, render } from '../dom.js';
-import { craft, brew, enhance, dismantle, reroll, enchant, enchantFamilies, facilityUpgrade } from '../workshop.js?v=features-2';
-import { borrow, repayLoan, loanLimit, payOverdue } from '../town.js?v=features-2';
-import { chooseRuneEffect, runeChangeCost, equipRune, openRuneSlot, unlockJob } from '../temple.js?v=features-2';
-import { describeFixedEffects } from '../equipment-effects.js';
+import { craft, brew, enhance, dismantle, reroll, enchant, enchantFamilies, facilityUpgrade } from '../workshop.js?v=balance-builds-1';
+import { borrow, repayLoan, loanLimit, payOverdue } from '../town.js?v=balance-builds-1';
+import { chooseRuneEffect, runeChangeCost, equipRune, openRuneSlot, unlockJob, jobDiscoveryProgress } from '../temple.js?v=balance-builds-1';
+import { describeFixedEffects, effectLabel, describeEffect } from '../equipment-effects.js?v=balance-builds-1';
 import { equipmentIcon } from './equipment-icons.js';
 
 const heading = (text) => el('h2', {}, text);
@@ -96,7 +96,7 @@ export function workshopView(data, g, act, rng, selection) {
     const icon = equipmentIcon(definition);
     const stats = Object.entries(item.affixes ?? {});
     const effectText = item.crafted ? describeFixedEffects(data, definition) : '';
-    const enchantments = (item.enchants ?? []).map((effect, index) => el('div', { class: 'small' }, `枠${index + 1} ${effect.stat} +${effect.value}`));
+    const enchantments = (item.enchants ?? []).map((effect, index) => el('div', { class: 'small' }, `枠${index + 1} ${describeEffect(data, effect.stat, effect.value)}`));
     return [
       icon ? el('p', { class: 'gear-with-icon' },
         icon, el('span', {}, `${definition.name}${item.enh > 0 ? ` +${item.enh}` : ''}`)) : null,
@@ -108,7 +108,7 @@ export function workshopView(data, g, act, rng, selection) {
       }),
       item.crafted ? [enchantments, enchantForm(item, definition)] : null,
       !item.crafted && !definition.unique && !definition.setId && stats.length ? panel('効果の振り直し',
-        stats.map(([key, value]) => btn(`${key} +${value} を振り直す`, () => act((game) => reroll(data, game, item, key, rng()))))) : null,
+        stats.map(([key, value]) => btn(`${describeEffect(data, key, value)} を振り直す`, () => act((game) => reroll(data, game, item, key, rng()))))) : null,
     ];
   }
 
@@ -117,7 +117,7 @@ export function workshopView(data, g, act, rng, selection) {
     if (!mats.length) return el('p', { class: 'small muted' }, '付与に使える素材がありません。');
     const familySelect = el('select', { class: 'select' });
     const materialSelect = el('select', { class: 'select', onchange: () => fill() }, mats.map((m) => option(m.name, m.id)));
-    const fill = () => render(familySelect, enchantFamilies(data, def, data.materials.get(materialSelect.value) ?? mats[0]).map((id) => option(id, id)));
+    const fill = () => render(familySelect, enchantFamilies(data, def, data.materials.get(materialSelect.value) ?? mats[0]).map((id) => option(effectLabel(data, id), id)));
     fill();
     const facility = def.slot === 'weapon' ? 'weapon_workshop' : ['accessory', 'cloak'].includes(def.slot) ? 'accessory_workshop' : 'armor_workshop';
     const grades = el('select', { class: 'select' }, data.enchantGrades.filter((r) => Number(r.workshop_rank) <= g.facilities[facility]).map((row) => option(`グレード${row.grade}・${row.gold} G`, row.grade)));
@@ -158,10 +158,22 @@ export function managementView(data, g, act) {
 export function templeExtras(data, g, act, lex, store) {
   const stones = lex.stones.filter((stone) => store.awakened[stone.id]);
   return [
-    panel('中級ジョブの解放', [...data.jobUnlocks.values()].map((rule) => {
+    panel('中級ジョブの解放', [...data.jobUnlocks.values()].filter((rule) => data.jobsById.get(rule.job_id)?.tier === 'mid').map((rule) => {
       const name = data.jobsById.get(rule.job_id).name;
-      const opened = g.unlockedJobs.includes(rule.job_id);
-      if (opened || rule.method !== '素材') return el('p', {}, `${name} ・ ${opened ? '解放済み' : 'ダンジョンで発見'}`);
+      const opened = (g.unlockedJobs ?? []).includes(rule.job_id);
+      if (opened) return el('p', {}, `${name} ・ 解放済み`);
+      if (rule.method === '発見') {
+        const progress = jobDiscoveryProgress(data, g, rule.job_id);
+        const dungeon = data.dungeons.get(progress.dungeonId);
+        return el('div', { class: 'panel small' }, el('strong', {}, name),
+          el('p', {}, `発見先：${dungeon?.name ?? progress.dungeonId}${dungeon ? `（★${dungeon.rank}）` : ''}`),
+          el('p', {}, progress.guarantee == null
+            ? `ボス撃破時に確率で発見・現在${progress.clears}回踏破`
+            : `${progress.guarantee}回踏破までに発見・現在${progress.clears}回踏破`),
+          progress.guarantee != null && progress.clears + 1 >= progress.guarantee
+            ? el('p', { class: 'muted' }, '次の踏破で確定して発見します。') : null);
+      }
+      if (rule.method !== '素材') return el('p', {}, `${name} ・ ダンジョンで発見`);
       return el('div', {}, el('p', {}, `${name} ・ ${rule.materials}`),
         btn('素材を捧げて解放', () => act((game) => unlockJob(data, game, rule.job_id))));
     })),

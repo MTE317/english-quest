@@ -49,7 +49,11 @@ test('入ると日数を使い、全滅すると日数・お金・経験値・�
   startNextBattle(data, s); fightOut(s, 0);
   const r = afterBattle(data, s);
   assert.equal(r.result, 'lose');
-  assert.deepEqual(s.game, before);
+  const { catalog, ...progress } = s.game;
+  const { catalog: priorCatalog, ...priorProgress } = before;
+  assert.deepEqual(progress, priorProgress);
+  assert.deepEqual(catalog.gear, priorCatalog?.gear ?? []);
+  assert.ok(catalog.monsters.length > 0); // 敗戦で得た魔物の知識は次の挑戦へ残る
   assert.equal(s.inDungeon, false);
 });
 
@@ -141,14 +145,14 @@ test('道具は種類ごとに10個まで', () => {
 test('掲示板：町に戻ると受けていない枠が入れかわり、全滅したら入る前のまま', async () => {
   const { fillBoard, acceptQuest, boardSize } = await import('../js/town.js');
   const s = newSession();
-  s.update((g) => { fillBoard(data, g, seededRng({ rng: 5 })); acceptQuest(g, g.board[0].uid); g.items.return_feather = 1; });
+  s.update((g) => { fillBoard(data, g, seededRng({ rng: 5 })); acceptQuest(data, g, g.board[0].uid, seededRng({ rng: 6 })); g.items.return_feather = 1; });
   const accepted = s.game.quests.map((q) => q.uid);
   const offers = s.game.board.map((q) => q.uid);
   // 帰還の羽で帰る → 受けていない枠だけ入れかわる
   startRun(data, s, { dungeonId: 'mossy_cave', stoneId: 'rs_1_001', quizState: null, seed: 1 });
   returnToTown(data, s, 'return_feather');
   assert.deepEqual(s.game.quests.map((q) => q.uid), accepted);
-  assert.equal(s.game.board.length + s.game.quests.length, boardSize(data, s.game));
+  assert.equal(s.game.board.length, boardSize(data, s.game));
   assert.ok(s.game.board.every((q) => !offers.includes(q.uid)));
   // 全滅 → 掲示板は入る前のまま
   const before = s.game.board.map((q) => q.uid);

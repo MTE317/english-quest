@@ -3,7 +3,7 @@ warrior,戦士,物理アタッカー,B,A,D,B,D,B,C,slash,魔法に弱い,sword,h
 knight,ナイト,タンク,A,C,D,A,A,D,D,blunt,火力が低く遅い,hammer,heavy,80,1.0
 black_mage,黒魔道士,魔法アタッカー,B,D,A,D,A,B,D,fire|ice|thunder,物理にもろい,tome,light,80,1.0
 white_mage,白魔道士,ヒーラー,C,D,B,C,A,C,B,light,攻撃力が低い,staff,light,80,1.0
-thief,盗賊,スピード・ドロップ,C,B,D,C,D,A,A,slash,一撃が軽い,dagger,medium,80,1.4
+thief,盗賊,スピード・ドロップ,C,B,D,C,D,A,A,slash,一撃が軽い,dagger,medium,80,1.0
 monk,武闘家,打撃アタッカー,A,A,D,C,D,B,C,blunt,重装不可・魔法に弱い,fist,medium,80,1.0
-hunter,狩人,弱点を突く,B,A,D,B,C,C,C,pierce,突出した能力がない,bow,medium,80,2.0
+hunter,狩人,弱点を突く,B,A,D,B,C,C,C,pierce,突出した能力がない,bow,medium,80,1.0
 bard,吟遊詩人,バッファー,C,D,B,D,B,A,B,light|dark,本人の火力は低め,instrument,light,80,1.0

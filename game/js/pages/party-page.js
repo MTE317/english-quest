@@ -1,23 +1,25 @@
 // パーティの画面：キャラメイク（仮）・4人の一覧・能力値・装備8枠
 import { loadGameData } from '../gamedata.js?v=features-2';
-import { GameSession } from '../save.js?v=features-2';
-import { createNewGame, PARTY_SIZE, normalizeGame } from '../game-state.js?v=features-2';
+import { loadJson } from '../data.js';
+import { GameSession } from '../save.js?v=balance-builds-1';
+import { createNewGame, PARTY_SIZE, normalizeGame } from '../game-state.js?v=balance-builds-1';
 import {
   computeStats, SLOTS, SLOT_LABEL, STAT_LABEL, canEquip, equipFromStorage, unequip, gearDef,
   aptitudeGrade, xpToNext, levelCap, gainXp, makeGear,
-} from '../character.js?v=jrpg-1';
+} from '../character.js?v=balance-builds-1';
 import {
   jobPaths, isLearned, learnBlock, learnSkill, equipBlock, equipSkill, unequipSkill, capacity, usedCapacity,
   commonPoints, commonBlock, learnCommon, masteryLevel, isJobMastered,
-} from '../growth.js?v=features-2';
-import { skillMp } from '../battle.js?v=jrpg-1';
+} from '../growth.js?v=balance-builds-1';
+import { skillMp } from '../battle.js?v=balance-builds-1';
 import { el, render, stars } from '../dom.js';
-import { describeFixedEffects } from '../equipment-effects.js';
+import { describeFixedEffects } from '../equipment-effects.js?v=balance-builds-1';
 
 import { setSceneMusic } from '../battle-music.js?v=jrpg-1';
 
 import { installGameShell } from '../ui/game-shell.js';
 import { weaponIcon } from '../ui/weapon-icons.js';
+import { buildGuideView } from '../ui/build-guide.js?v=balance-builds-1';
 import { armorIcon, equipmentIcon } from '../ui/equipment-icons.js';
 
 const view = document.getElementById('view');
@@ -26,6 +28,8 @@ const session = new GameSession();
 installGameShell('party', session);
 session.installAutoSave(window);
 let data;
+let buildGuides;
+let guideRequest = 0;
 
 const pct = (x) => `${Math.round(x * 1000) / 10}%`;
 const iconOf = (id) => data.icons.find((i) => i.id === id)?.icon ?? '❔';
@@ -36,7 +40,8 @@ function showCreate() {
   const baseJobs = data.jobs.filter((j) => j.tier === 'base');
   const names = ['アレン', 'リゼ', 'ノア', 'ミラ'];
   const specs = Array.from({ length: PARTY_SIZE }, (_, i) => ({
-    name: names[i] ?? `${i + 1}人目`, job: baseJobs[i % baseJobs.length].id,
+    name: names[i] ?? `${i + 1}人目`,
+    job: baseJobs.find(job => job.id === data.balance.new_game?.party_jobs?.[i])?.id ?? baseJobs[i % baseJobs.length].id,
     icon: data.icons[i % data.icons.length].id,
   }));
   const roster = el('div', { class: 'recruit-roster', role: 'group', 'aria-label': '編集する仲間' });
@@ -81,6 +86,7 @@ function showCreate() {
     el('section', { class: 'recruit-screen' },
       el('h2', { class: 'chapter-title' }, 'パーティを作る'),
       el('p', { class: 'muted' }, '仲間を選ぶと、名前・ジョブ・見た目を変更できます。この編成のまま出発もできます。'),
+      el('p', { class: 'small muted' }, `初期装備と支度金 ${data.balance.new_game?.gold ?? 0} G を持って出発します。回復役を1人入れると、長く戦いやすくなります。`),
       roster, editor,
       el('button', { class: 'primary', onclick: () => {
         if (session.hasSave && !confirm('いまのセーブを上書きして、はじめから始めます。よろしいですか？（学習記録は消えません）')) return;
@@ -105,6 +111,9 @@ function showParty() {
     session.inDungeon ? el('div', { class: 'panel small error' }, 'ダンジョンの中では装備を変えられません。') : null,
     el('div', { class: 'muted small' }, `${g.day}日目・お金 ${g.gold}・倉庫の装備 ${g.storage.gear.length}個`),
     el('h2', { class: 'chapter-title' }, '冒険中の仲間'),
+    el('button', { class: 'build-guide-entry', onclick: () => showBuildGuide() },
+      el('strong', {}, 'ビルド手引き'),
+      el('span', { class: 'small' }, '武器・技能・エンチャントの組み合わせを探す →')),
     el('ul', { class: 'choice-list party-roster' },
       g.party.map((m, i) => {
         const st = computeStats(data, m);
@@ -121,6 +130,28 @@ function showParty() {
       el('button', { class: 'ghost', onclick: showCreate }, '新しい編成を決める')) : null,
   );
   window.scrollTo(0, 0);
+}
+
+// ---------------- 読むだけで試す方針を決められるビルド手引き ----------------
+async function showBuildGuide(index = null) {
+  const request = ++guideRequest;
+  const member = index == null ? null : session.game.party[index];
+  const backLabel = member ? `← ${member.name}の装備へ` : '← パーティの一覧へ';
+  const onBack = () => { guideRequest++; if (index == null) showParty(); else showMember(index); };
+  render(view, el('button', { class: 'ghost', onclick: onBack }, backLabel),
+    el('p', { class: 'muted', role: 'status' }, 'ビルド手引きを読み込んでいます…'));
+  try {
+    buildGuides ??= (await loadJson('build_guides.json')).data;
+    if (request !== guideRequest) return;
+    render(view, buildGuideView(data, buildGuides, {
+      game: session.game, member, onBack, backLabel, onNavigate: () => window.scrollTo(0, 0),
+    }));
+  } catch (error) {
+    if (request !== guideRequest) return;
+    render(view, el('button', { class: 'ghost', onclick: onBack }, backLabel),
+      el('p', { class: 'error', role: 'status' }, `手引きを読み込めませんでした：${error.message}`),
+      el('button', { onclick: () => showBuildGuide(index) }, 'もう一度読み込む'));
+  }
 }
 
 // ---------------- 1人の詳しい画面 ----------------
@@ -163,7 +194,8 @@ function showMember(index) {
     memberBanner(m),
     el('div', { class: 'row' },
       el('button', { onclick: () => showSkills(index) }, 'スキルツリー'),
-      el('button', { onclick: () => showCommon(index) }, '共通ツリー')),
+      el('button', { onclick: () => showCommon(index) }, '共通ツリー'),
+      el('button', { onclick: () => showBuildGuide(index) }, 'ビルド手引き')),
     el('h2', {}, '装備'),
     el('ul', { class: 'equipment-slots' },
       SLOTS.map((slot) => {
@@ -216,6 +248,8 @@ function showSkills(index, jobId, skillId, message = '') {
     render(detail, el('h2', {}, skill.name),
       el('p', { class: 'muted small' }, [skill.path, skill.kind === 'passive' ? 'パッシブ' : `MP ${skillMp(data, member, skill)}`,
         `必要枠 ${skill.cost}`, skill.isFinal && '奥義'].filter(Boolean).join('・')),
+      skill.kind === 'mp_give' && skill.effect.transfer
+        ? el('p', { class: 'small' }, '自分のMPを仲間へ分けます。技能の消費MPに加え、実際に渡した分も自分のMPから減ります。') : null,
       !learned
         ? el('button', { class: 'primary', disabled: !!learnReason,
           onclick: () => updateSkill((m) => learnSkill(data, m, skill.id)) }, learnReason || `覚える（AP ${skill.apToLearn}）`)
@@ -380,7 +414,7 @@ function debugTools() {
 (async () => {
   try {
     data = await loadGameData();
-    if (session.game?.party && !session.readOnly) { normalizeGame(data, session.game); session.save(); }
+    if (session.game?.party && !session.readOnly) { normalizeGame(data, session.game, session.run); session.save(); }
     if (session.hasSave && session.game?.party) showParty();
     else showCreate();
   } catch (e) {

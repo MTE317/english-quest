@@ -1,4 +1,4 @@
-import { GameSession } from '../save.js?v=features-2';
+import { GameSession } from '../save.js?v=balance-builds-1';
 import { loadGameData } from '../gamedata.js?v=features-2';
 import { LearningStore, loadSettings, saveSettings } from '../storage.js?v=features-2';
 import { dayToString } from '../srs.js?v=features-2';

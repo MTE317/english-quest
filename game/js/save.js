@@ -4,6 +4,7 @@
 // - 自動保存は1つ。戦闘が1つ終わるたびに保存し、ダンジョンの途中で閉じても再開できる
 // - 読み込み直して全滅をなかったことにはできない
 // - 全滅したら、ゲームの進み具合はダンジョンに入る前に戻す。学習記録（storage.js の LearningStore）は別の場所なので残る
+// - 遭遇した魔物と、実戦で調べた弱点・耐性は、全滅しても次の挑戦へ引き継ぐ
 //
 // 中身
 //   { version, savedAt, game, run }
@@ -17,6 +18,7 @@
 //   → 負けそうなときに閉じて開き直しても、同じ戦闘の同じところから続く
 // - 全員倒れたら、画面に出す前に wipe() を呼ぶ（その場で保存される）
 import { SAVE_KEY, safeStorage } from './storage.js?v=features-2';
+import { encounterMonsters, learnMonsterElements } from './monster-knowledge.js';
 
 export const SAVE_VERSION = 1;
 const CHANT_BACKUP_KEY = 'englishQuest.chantBackup.v1';
@@ -26,6 +28,17 @@ const BROKEN_KEY = `${SAVE_KEY}.broken`;
 const MIGRATIONS = {};
 
 const clone = (x) => (x == null ? x : structuredClone(x));
+
+/** 所持品や装備図鑑を戻したあとに、魔物について実際に得た知識だけを重ねる。 */
+function carryMonsterKnowledge(game, catalog) {
+  const seen = Array.isArray(catalog?.monsters) ? catalog.monsters.filter((id) => typeof id === 'string' && id) : [];
+  if (seen.length) encounterMonsters(game, seen.map((monsterId) => ({ monsterId })));
+  for (const [monsterId, entry] of Object.entries(catalog?.affinities ?? {})) {
+    if (!entry || typeof entry !== 'object') continue;
+    const elements = Array.isArray(entry.elements) ? entry.elements.filter((id) => typeof id === 'string') : [];
+    learnMonsterElements(game, { monsterId }, elements, entry.scanned === true);
+  }
+}
 
 /** セーブの読み書きだけをする（1つの場所に上書き） */
 export class SaveStore {
@@ -200,14 +213,16 @@ export class GameSession {
   /**
    * 全滅：ゲームの進み具合をダンジョンに入る前に戻して、すぐ保存する。
    * 学習記録は別の場所にあるので、ここでは触らない（残る）。
+   * 魔物の遭遇記録・調べた相性は残す。入手した装備の記録や報酬は戻す。
    */
   wipe() {
     this.#needRun();
     const run = this.state.run;
-    const { chants, jp } = this.state.game;
+    const { chants, jp, catalog } = this.state.game;
     this.state.game = clone(run.snapshot);
     if (chants != null) this.state.game.chants = chants;
     if (jp != null) this.state.game.jp = jp;
+    carryMonsterKnowledge(this.state.game, catalog);
     this.state.run = null;
     this.state.lastWipe = { at: this.now(), dungeonId: run.dungeonId, floor: run.floor, battlesDone: run.battlesDone };
     this.save();

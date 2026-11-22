@@ -1,0 +1,3379 @@
+{
+  "schema": 1,
+  "engine": "game/js/battle.js",
+  "lifecycle": "game/js/pages/challenge-page.js",
+  "sourceSha256": "df053e543c749ce73cd7ab486cd2a239c5104194a089e72425165611202d1a07",
+  "sourceUnchangedAtCompletion": true,
+  "override": {},
+  "sampling": {
+    "seed": 515051,
+    "stride": 7919,
+    "runsPerScenario": 16,
+    "detailCount": 0
+  },
+  "assumptions": {
+    "party": "推奨Lvのある★1級はLv5、★2級はLv10。それ以降の★3〜12は同★標準ダンジョンの平均敵Lv。13級はLv99・★12装備・第5段スキル。両条件の装備段階は同じ。明示的なlevel/stage指定があれば優先。",
+    "preparation": "preparedは各階級の最終チャンピオンに耐性・属性を合わせる。装備・技能の合法性は共通preparePartyに従う。",
+    "battle": "CSVの既存65戦。makeEnemyにdungeonIdを渡さず、冠付きなし、firstBattle=false、逃走なし。乱数を先読みしない共通fight方策。",
+    "attrition": "HP・MP・持続異常・残り道具を持越し。勝利後はfinishBattleのみ。自然回復・EXP/AP・レベルアップ・ドロップなし。",
+    "intermission": "戦間は実useItemOutsideBattleで蘇生、持続異常治療、HP60%未満、MP30%未満の順に有限在庫から使う。戦闘中も同じ在庫を使う。",
+    "loss": "敗退時は実ゲームで消耗品も戻る。seed詳細のconsumedは試行中の使用数、inventoryLossは成功時だけ。",
+    "interpretation": "各戦winRateWhenReachedは到達試行が分母。clearRateは全試行が分母。nullはその戦への到達・踏破例がない。操作時間の実測ではない。"
+  },
+  "scenarios": [
+    {
+      "tierId": "arena_01",
+      "rank": 1,
+      "profile": "balanced",
+      "preparation": "standard",
+      "accuracy": 0.8,
+      "referenceDungeonId": "mossy_cave",
+      "equipmentStar": 1,
+      "level": 5,
+      "stage": 1,
+      "preparedForMonster": "arena_champion_01",
+      "intermissionItems": true,
+      "runs": 16,
+      "wins": 11,
+      "clearRate": 0.6875,
+      "clearQuestions": 82.36363636363636,
+      "clearQuestionsP90": 87,
+      "attemptQuestions": 81.5625,
+      "hpRemaining": 0.30245760812728767,
+      "mpRemaining": 0.10651289009497962,
+      "consumablesPerClear": 5.636363636363637,
+      "battles": [
+        {
+          "battle": 1,
+          "enemies": [
+            {
+              "id": "slime",
+              "lv": 1,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 5.4375,
+          "winQuestions": 5.4375,
+          "questionsP90": 6
+        },
+        {
+          "battle": 2,
+          "enemies": [
+            {
+              "id": "exp_mossy_cave_1",
+              "lv": 2,
+              "boss": false
+            },
+            {
+              "id": "poison_cap",
+              "lv": 2,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 11.1875,
+          "winQuestions": 11.1875,
+          "questionsP90": 13
+        },
+        {
+          "battle": 3,
+          "enemies": [
+            {
+              "id": "m01_001",
+              "lv": 3,
+              "boss": false
+            },
+            {
+              "id": "exp_mossy_cave_2",
+              "lv": 3,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 15.875,
+          "winQuestions": 15.875,
+          "questionsP90": 19
+        },
+        {
+          "battle": 4,
+          "enemies": [
+            {
+              "id": "exp_mossy_cave_3",
+              "lv": 4,
+              "boss": false
+            },
+            {
+              "id": "exp_mossy_cave_4",
+              "lv": 4,
+              "boss": false
+            },
+            {
+              "id": "m01_004",
+              "lv": 4,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 33.9375,
+          "winQuestions": 33.9375,
+          "questionsP90": 40
+        },
+        {
+          "battle": 5,
+          "enemies": [
+            {
+              "id": "arena_champion_01",
+              "lv": 5,
+              "boss": true
+            }
+          ],
+          "attempts": 16,
+          "wins": 11,
+          "winRateWhenReached": 0.6875,
+          "questions": 15.125,
+          "winQuestions": 16.363636363636363,
+          "questionsP90": 19
+        }
+      ],
+      "seedDetails": {
+        "fastestClears": [],
+        "longestAttempts": [],
+        "deepestFailures": []
+      }
+    },
+    {
+      "tierId": "arena_01",
+      "rank": 1,
+      "profile": "balanced",
+      "preparation": "prepared",
+      "accuracy": 0.8,
+      "referenceDungeonId": "mossy_cave",
+      "equipmentStar": 1,
+      "level": 5,
+      "stage": 1,
+      "preparedForMonster": "arena_champion_01",
+      "intermissionItems": true,
+      "runs": 16,
+      "wins": 14,
+      "clearRate": 0.875,
+      "clearQuestions": 80.71428571428571,
+      "clearQuestionsP90": 88,
+      "attemptQuestions": 80.125,
+      "hpRemaining": 0.31482568376570025,
+      "mpRemaining": 0.10607675906183367,
+      "consumablesPerClear": 5.714285714285714,
+      "battles": [
+        {
+          "battle": 1,
+          "enemies": [
+            {
+              "id": "slime",
+              "lv": 1,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 5.4375,
+          "winQuestions": 5.4375,
+          "questionsP90": 6
+        },
+        {
+          "battle": 2,
+          "enemies": [
+            {
+              "id": "exp_mossy_cave_1",
+              "lv": 2,
+              "boss": false
+            },
+            {
+              "id": "poison_cap",
+              "lv": 2,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 11.1875,
+          "winQuestions": 11.1875,
+          "questionsP90": 13
+        },
+        {
+          "battle": 3,
+          "enemies": [
+            {
+              "id": "m01_001",
+              "lv": 3,
+              "boss": false
+            },
+            {
+              "id": "exp_mossy_cave_2",
+              "lv": 3,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 15.375,
+          "winQuestions": 15.375,
+          "questionsP90": 17
+        },
+        {
+          "battle": 4,
+          "enemies": [
+            {
+              "id": "exp_mossy_cave_3",
+              "lv": 4,
+              "boss": false
+            },
+            {
+              "id": "exp_mossy_cave_4",
+              "lv": 4,
+              "boss": false
+            },
+            {
+              "id": "m01_004",
+              "lv": 4,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 32.1875,
+          "winQuestions": 32.1875,
+          "questionsP90": 36
+        },
+        {
+          "battle": 5,
+          "enemies": [
+            {
+              "id": "arena_champion_01",
+              "lv": 5,
+              "boss": true
+            }
+          ],
+          "attempts": 16,
+          "wins": 14,
+          "winRateWhenReached": 0.875,
+          "questions": 15.9375,
+          "winQuestions": 16.642857142857142,
+          "questionsP90": 19
+        }
+      ],
+      "seedDetails": {
+        "fastestClears": [],
+        "longestAttempts": [],
+        "deepestFailures": []
+      }
+    },
+    {
+      "tierId": "arena_02",
+      "rank": 2,
+      "profile": "balanced",
+      "preparation": "standard",
+      "accuracy": 0.8,
+      "referenceDungeonId": "ruined_fort",
+      "equipmentStar": 2,
+      "level": 10,
+      "stage": 1,
+      "preparedForMonster": "arena_champion_02",
+      "intermissionItems": true,
+      "runs": 16,
+      "wins": 14,
+      "clearRate": 0.875,
+      "clearQuestions": 77.07142857142857,
+      "clearQuestionsP90": 88,
+      "attemptQuestions": 77.625,
+      "hpRemaining": 0.3182150160677768,
+      "mpRemaining": 0.08990147783251233,
+      "consumablesPerClear": 5.857142857142857,
+      "battles": [
+        {
+          "battle": 1,
+          "enemies": [
+            {
+              "id": "poison_spider",
+              "lv": 6,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 5.6875,
+          "winQuestions": 5.6875,
+          "questionsP90": 7
+        },
+        {
+          "battle": 2,
+          "enemies": [
+            {
+              "id": "exp_ruined_fort_4",
+              "lv": 7,
+              "boss": false
+            },
+            {
+              "id": "wisp_dragonfly",
+              "lv": 7,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 13.4375,
+          "winQuestions": 13.4375,
+          "questionsP90": 18
+        },
+        {
+          "battle": 3,
+          "enemies": [
+            {
+              "id": "m02_002",
+              "lv": 8,
+              "boss": false
+            },
+            {
+              "id": "exp_ruined_fort_5",
+              "lv": 8,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 15.125,
+          "winQuestions": 15.125,
+          "questionsP90": 17
+        },
+        {
+          "battle": 4,
+          "enemies": [
+            {
+              "id": "exp_ruined_fort_6",
+              "lv": 9,
+              "boss": false
+            },
+            {
+              "id": "exp_ruined_fort_7",
+              "lv": 9,
+              "boss": false
+            },
+            {
+              "id": "m02_005",
+              "lv": 9,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 28,
+          "winQuestions": 28,
+          "questionsP90": 33
+        },
+        {
+          "battle": 5,
+          "enemies": [
+            {
+              "id": "arena_champion_02",
+              "lv": 10,
+              "boss": true
+            }
+          ],
+          "attempts": 16,
+          "wins": 14,
+          "winRateWhenReached": 0.875,
+          "questions": 15.375,
+          "winQuestions": 15.785714285714286,
+          "questionsP90": 19
+        }
+      ],
+      "seedDetails": {
+        "fastestClears": [],
+        "longestAttempts": [],
+        "deepestFailures": []
+      }
+    },
+    {
+      "tierId": "arena_02",
+      "rank": 2,
+      "profile": "balanced",
+      "preparation": "prepared",
+      "accuracy": 0.8,
+      "referenceDungeonId": "ruined_fort",
+      "equipmentStar": 2,
+      "level": 10,
+      "stage": 1,
+      "preparedForMonster": "arena_champion_02",
+      "intermissionItems": true,
+      "runs": 16,
+      "wins": 16,
+      "clearRate": 1,
+      "clearQuestions": 75.9375,
+      "clearQuestionsP90": 83,
+      "attemptQuestions": 75.9375,
+      "hpRemaining": 0.46648133946830267,
+      "mpRemaining": 0.10632183908045977,
+      "consumablesPerClear": 5.4375,
+      "battles": [
+        {
+          "battle": 1,
+          "enemies": [
+            {
+              "id": "poison_spider",
+              "lv": 6,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 5.75,
+          "winQuestions": 5.75,
+          "questionsP90": 7
+        },
+        {
+          "battle": 2,
+          "enemies": [
+            {
+              "id": "exp_ruined_fort_4",
+              "lv": 7,
+              "boss": false
+            },
+            {
+              "id": "wisp_dragonfly",
+              "lv": 7,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 12.8125,
+          "winQuestions": 12.8125,
+          "questionsP90": 16
+        },
+        {
+          "battle": 3,
+          "enemies": [
+            {
+              "id": "m02_002",
+              "lv": 8,
+              "boss": false
+            },
+            {
+              "id": "exp_ruined_fort_5",
+              "lv": 8,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 15.25,
+          "winQuestions": 15.25,
+          "questionsP90": 17
+        },
+        {
+          "battle": 4,
+          "enemies": [
+            {
+              "id": "exp_ruined_fort_6",
+              "lv": 9,
+              "boss": false
+            },
+            {
+              "id": "exp_ruined_fort_7",
+              "lv": 9,
+              "boss": false
+            },
+            {
+              "id": "m02_005",
+              "lv": 9,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 29.125,
+          "winQuestions": 29.125,
+          "questionsP90": 34
+        },
+        {
+          "battle": 5,
+          "enemies": [
+            {
+              "id": "arena_champion_02",
+              "lv": 10,
+              "boss": true
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 13,
+          "winQuestions": 13,
+          "questionsP90": 16
+        }
+      ],
+      "seedDetails": {
+        "fastestClears": [],
+        "longestAttempts": [],
+        "deepestFailures": []
+      }
+    },
+    {
+      "tierId": "arena_03",
+      "rank": 3,
+      "profile": "balanced",
+      "preparation": "standard",
+      "accuracy": 0.8,
+      "referenceDungeonId": "howling_canyon",
+      "equipmentStar": 3,
+      "level": 17,
+      "stage": 2,
+      "preparedForMonster": "arena_champion_03",
+      "intermissionItems": true,
+      "runs": 16,
+      "wins": 16,
+      "clearRate": 1,
+      "clearQuestions": 59.6875,
+      "clearQuestionsP90": 67,
+      "attemptQuestions": 59.6875,
+      "hpRemaining": 0.6651951672862454,
+      "mpRemaining": 0.29782608695652174,
+      "consumablesPerClear": 4.4375,
+      "battles": [
+        {
+          "battle": 1,
+          "enemies": [
+            {
+              "id": "canyon_wolf",
+              "lv": 17,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 5,
+          "winQuestions": 5,
+          "questionsP90": 5
+        },
+        {
+          "battle": 2,
+          "enemies": [
+            {
+              "id": "exp_howling_canyon_7",
+              "lv": 18,
+              "boss": false
+            },
+            {
+              "id": "owl_sage",
+              "lv": 18,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 12.5,
+          "winQuestions": 12.5,
+          "questionsP90": 15
+        },
+        {
+          "battle": 3,
+          "enemies": [
+            {
+              "id": "m03_003",
+              "lv": 19,
+              "boss": false
+            },
+            {
+              "id": "exp_howling_canyon_8",
+              "lv": 19,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 11.5,
+          "winQuestions": 11.5,
+          "questionsP90": 14
+        },
+        {
+          "battle": 4,
+          "enemies": [
+            {
+              "id": "exp_ancient_library_1",
+              "lv": 20,
+              "boss": false
+            },
+            {
+              "id": "exp_ancient_library_2",
+              "lv": 20,
+              "boss": false
+            },
+            {
+              "id": "m03_006",
+              "lv": 20,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 22.125,
+          "winQuestions": 22.125,
+          "questionsP90": 28
+        },
+        {
+          "battle": 5,
+          "enemies": [
+            {
+              "id": "arena_champion_03",
+              "lv": 20,
+              "boss": true
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 8.5625,
+          "winQuestions": 8.5625,
+          "questionsP90": 10
+        }
+      ],
+      "seedDetails": {
+        "fastestClears": [],
+        "longestAttempts": [],
+        "deepestFailures": []
+      }
+    },
+    {
+      "tierId": "arena_03",
+      "rank": 3,
+      "profile": "balanced",
+      "preparation": "prepared",
+      "accuracy": 0.8,
+      "referenceDungeonId": "howling_canyon",
+      "equipmentStar": 3,
+      "level": 17,
+      "stage": 2,
+      "preparedForMonster": "arena_champion_03",
+      "intermissionItems": true,
+      "runs": 16,
+      "wins": 16,
+      "clearRate": 1,
+      "clearQuestions": 59.0625,
+      "clearQuestionsP90": 65,
+      "attemptQuestions": 59.0625,
+      "hpRemaining": 0.7131632308212235,
+      "mpRemaining": 0.43097826086956526,
+      "consumablesPerClear": 4.125,
+      "battles": [
+        {
+          "battle": 1,
+          "enemies": [
+            {
+              "id": "canyon_wolf",
+              "lv": 17,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 5,
+          "winQuestions": 5,
+          "questionsP90": 5
+        },
+        {
+          "battle": 2,
+          "enemies": [
+            {
+              "id": "exp_howling_canyon_7",
+              "lv": 18,
+              "boss": false
+            },
+            {
+              "id": "owl_sage",
+              "lv": 18,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 11.6875,
+          "winQuestions": 11.6875,
+          "questionsP90": 14
+        },
+        {
+          "battle": 3,
+          "enemies": [
+            {
+              "id": "m03_003",
+              "lv": 19,
+              "boss": false
+            },
+            {
+              "id": "exp_howling_canyon_8",
+              "lv": 19,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 11,
+          "winQuestions": 11,
+          "questionsP90": 12
+        },
+        {
+          "battle": 4,
+          "enemies": [
+            {
+              "id": "exp_ancient_library_1",
+              "lv": 20,
+              "boss": false
+            },
+            {
+              "id": "exp_ancient_library_2",
+              "lv": 20,
+              "boss": false
+            },
+            {
+              "id": "m03_006",
+              "lv": 20,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 23.9375,
+          "winQuestions": 23.9375,
+          "questionsP90": 29
+        },
+        {
+          "battle": 5,
+          "enemies": [
+            {
+              "id": "arena_champion_03",
+              "lv": 20,
+              "boss": true
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 7.4375,
+          "winQuestions": 7.4375,
+          "questionsP90": 9
+        }
+      ],
+      "seedDetails": {
+        "fastestClears": [],
+        "longestAttempts": [],
+        "deepestFailures": []
+      }
+    },
+    {
+      "tierId": "arena_04",
+      "rank": 4,
+      "profile": "balanced",
+      "preparation": "standard",
+      "accuracy": 0.8,
+      "referenceDungeonId": "sunken_temple",
+      "equipmentStar": 4,
+      "level": 24,
+      "stage": 2,
+      "preparedForMonster": "arena_champion_04",
+      "intermissionItems": true,
+      "runs": 16,
+      "wins": 15,
+      "clearRate": 0.9375,
+      "clearQuestions": 72.2,
+      "clearQuestionsP90": 77,
+      "attemptQuestions": 72.8125,
+      "hpRemaining": 0.5251621271076524,
+      "mpRemaining": 0.3146853146853147,
+      "consumablesPerClear": 5.866666666666666,
+      "battles": [
+        {
+          "battle": 1,
+          "enemies": [
+            {
+              "id": "guardian_automaton",
+              "lv": 25,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 7.6875,
+          "winQuestions": 7.6875,
+          "questionsP90": 10
+        },
+        {
+          "battle": 2,
+          "enemies": [
+            {
+              "id": "exp_clockwork_mine_2",
+              "lv": 26,
+              "boss": false
+            },
+            {
+              "id": "m04_001",
+              "lv": 26,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 10.3125,
+          "winQuestions": 10.3125,
+          "questionsP90": 12
+        },
+        {
+          "battle": 3,
+          "enemies": [
+            {
+              "id": "m04_004",
+              "lv": 27,
+              "boss": false
+            },
+            {
+              "id": "exp_clockwork_mine_3",
+              "lv": 27,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 12.4375,
+          "winQuestions": 12.4375,
+          "questionsP90": 18
+        },
+        {
+          "battle": 4,
+          "enemies": [
+            {
+              "id": "exp_clockwork_mine_4",
+              "lv": 28,
+              "boss": false
+            },
+            {
+              "id": "exp_clockwork_mine_5",
+              "lv": 28,
+              "boss": false
+            },
+            {
+              "id": "m04_007",
+              "lv": 28,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 25.4375,
+          "winQuestions": 25.4375,
+          "questionsP90": 30
+        },
+        {
+          "battle": 5,
+          "enemies": [
+            {
+              "id": "arena_champion_04",
+              "lv": 28,
+              "boss": true
+            }
+          ],
+          "attempts": 16,
+          "wins": 15,
+          "winRateWhenReached": 0.9375,
+          "questions": 16.9375,
+          "winQuestions": 16.8,
+          "questionsP90": 19
+        }
+      ],
+      "seedDetails": {
+        "fastestClears": [],
+        "longestAttempts": [],
+        "deepestFailures": []
+      }
+    },
+    {
+      "tierId": "arena_04",
+      "rank": 4,
+      "profile": "balanced",
+      "preparation": "prepared",
+      "accuracy": 0.8,
+      "referenceDungeonId": "sunken_temple",
+      "equipmentStar": 4,
+      "level": 24,
+      "stage": 2,
+      "preparedForMonster": "arena_champion_04",
+      "intermissionItems": true,
+      "runs": 16,
+      "wins": 16,
+      "clearRate": 1,
+      "clearQuestions": 66.875,
+      "clearQuestionsP90": 73,
+      "attemptQuestions": 66.875,
+      "hpRemaining": 0.6967260457198443,
+      "mpRemaining": 0.4090909090909091,
+      "consumablesPerClear": 3.6875,
+      "battles": [
+        {
+          "battle": 1,
+          "enemies": [
+            {
+              "id": "guardian_automaton",
+              "lv": 25,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 7,
+          "winQuestions": 7,
+          "questionsP90": 9
+        },
+        {
+          "battle": 2,
+          "enemies": [
+            {
+              "id": "exp_clockwork_mine_2",
+              "lv": 26,
+              "boss": false
+            },
+            {
+              "id": "m04_001",
+              "lv": 26,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 11.1875,
+          "winQuestions": 11.1875,
+          "questionsP90": 13
+        },
+        {
+          "battle": 3,
+          "enemies": [
+            {
+              "id": "m04_004",
+              "lv": 27,
+              "boss": false
+            },
+            {
+              "id": "exp_clockwork_mine_3",
+              "lv": 27,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 11.6875,
+          "winQuestions": 11.6875,
+          "questionsP90": 14
+        },
+        {
+          "battle": 4,
+          "enemies": [
+            {
+              "id": "exp_clockwork_mine_4",
+              "lv": 28,
+              "boss": false
+            },
+            {
+              "id": "exp_clockwork_mine_5",
+              "lv": 28,
+              "boss": false
+            },
+            {
+              "id": "m04_007",
+              "lv": 28,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 24.875,
+          "winQuestions": 24.875,
+          "questionsP90": 28
+        },
+        {
+          "battle": 5,
+          "enemies": [
+            {
+              "id": "arena_champion_04",
+              "lv": 28,
+              "boss": true
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 12.125,
+          "winQuestions": 12.125,
+          "questionsP90": 15
+        }
+      ],
+      "seedDetails": {
+        "fastestClears": [],
+        "longestAttempts": [],
+        "deepestFailures": []
+      }
+    },
+    {
+      "tierId": "arena_05",
+      "rank": 5,
+      "profile": "balanced",
+      "preparation": "standard",
+      "accuracy": 0.8,
+      "referenceDungeonId": "obsidian_volcano",
+      "equipmentStar": 5,
+      "level": 31,
+      "stage": 2,
+      "preparedForMonster": "arena_champion_05",
+      "intermissionItems": true,
+      "runs": 16,
+      "wins": 16,
+      "clearRate": 1,
+      "clearQuestions": 67.6875,
+      "clearQuestionsP90": 72,
+      "attemptQuestions": 67.6875,
+      "hpRemaining": 0.6827305825242719,
+      "mpRemaining": 0.37499999999999994,
+      "consumablesPerClear": 4.3125,
+      "battles": [
+        {
+          "battle": 1,
+          "enemies": [
+            {
+              "id": "frost_wolf",
+              "lv": 31,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 4.875,
+          "winQuestions": 4.875,
+          "questionsP90": 5
+        },
+        {
+          "battle": 2,
+          "enemies": [
+            {
+              "id": "exp_frozen_peak_5",
+              "lv": 32,
+              "boss": false
+            },
+            {
+              "id": "m05_002",
+              "lv": 32,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 13.5,
+          "winQuestions": 13.5,
+          "questionsP90": 16
+        },
+        {
+          "battle": 3,
+          "enemies": [
+            {
+              "id": "m05_005",
+              "lv": 33,
+              "boss": false
+            },
+            {
+              "id": "exp_frozen_peak_6",
+              "lv": 33,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 15.125,
+          "winQuestions": 15.125,
+          "questionsP90": 18
+        },
+        {
+          "battle": 4,
+          "enemies": [
+            {
+              "id": "exp_frozen_peak_7",
+              "lv": 34,
+              "boss": false
+            },
+            {
+              "id": "exp_frozen_peak_8",
+              "lv": 34,
+              "boss": false
+            },
+            {
+              "id": "lava_golem",
+              "lv": 34,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 22.3125,
+          "winQuestions": 22.3125,
+          "questionsP90": 26
+        },
+        {
+          "battle": 5,
+          "enemies": [
+            {
+              "id": "arena_champion_05",
+              "lv": 34,
+              "boss": true
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 11.875,
+          "winQuestions": 11.875,
+          "questionsP90": 15
+        }
+      ],
+      "seedDetails": {
+        "fastestClears": [],
+        "longestAttempts": [],
+        "deepestFailures": []
+      }
+    },
+    {
+      "tierId": "arena_05",
+      "rank": 5,
+      "profile": "balanced",
+      "preparation": "prepared",
+      "accuracy": 0.8,
+      "referenceDungeonId": "obsidian_volcano",
+      "equipmentStar": 5,
+      "level": 31,
+      "stage": 2,
+      "preparedForMonster": "arena_champion_05",
+      "intermissionItems": true,
+      "runs": 16,
+      "wins": 16,
+      "clearRate": 1,
+      "clearQuestions": 65.6875,
+      "clearQuestionsP90": 71,
+      "attemptQuestions": 65.6875,
+      "hpRemaining": 0.7450000000000001,
+      "mpRemaining": 0.41228070175438597,
+      "consumablesPerClear": 3.75,
+      "battles": [
+        {
+          "battle": 1,
+          "enemies": [
+            {
+              "id": "frost_wolf",
+              "lv": 31,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 4.875,
+          "winQuestions": 4.875,
+          "questionsP90": 5
+        },
+        {
+          "battle": 2,
+          "enemies": [
+            {
+              "id": "exp_frozen_peak_5",
+              "lv": 32,
+              "boss": false
+            },
+            {
+              "id": "m05_002",
+              "lv": 32,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 13.25,
+          "winQuestions": 13.25,
+          "questionsP90": 16
+        },
+        {
+          "battle": 3,
+          "enemies": [
+            {
+              "id": "m05_005",
+              "lv": 33,
+              "boss": false
+            },
+            {
+              "id": "exp_frozen_peak_6",
+              "lv": 33,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 15.4375,
+          "winQuestions": 15.4375,
+          "questionsP90": 18
+        },
+        {
+          "battle": 4,
+          "enemies": [
+            {
+              "id": "exp_frozen_peak_7",
+              "lv": 34,
+              "boss": false
+            },
+            {
+              "id": "exp_frozen_peak_8",
+              "lv": 34,
+              "boss": false
+            },
+            {
+              "id": "lava_golem",
+              "lv": 34,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 22.0625,
+          "winQuestions": 22.0625,
+          "questionsP90": 26
+        },
+        {
+          "battle": 5,
+          "enemies": [
+            {
+              "id": "arena_champion_05",
+              "lv": 34,
+              "boss": true
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 10.0625,
+          "winQuestions": 10.0625,
+          "questionsP90": 13
+        }
+      ],
+      "seedDetails": {
+        "fastestClears": [],
+        "longestAttempts": [],
+        "deepestFailures": []
+      }
+    },
+    {
+      "tierId": "arena_06",
+      "rank": 6,
+      "profile": "balanced",
+      "preparation": "standard",
+      "accuracy": 0.8,
+      "referenceDungeonId": "sand_tomb",
+      "equipmentStar": 6,
+      "level": 38,
+      "stage": 3,
+      "preparedForMonster": "arena_champion_06",
+      "intermissionItems": true,
+      "runs": 16,
+      "wins": 16,
+      "clearRate": 1,
+      "clearQuestions": 73.125,
+      "clearQuestionsP90": 81,
+      "attemptQuestions": 73.125,
+      "hpRemaining": 0.7081890999838996,
+      "mpRemaining": 0.07521984924623115,
+      "consumablesPerClear": 3.875,
+      "battles": [
+        {
+          "battle": 1,
+          "enemies": [
+            {
+              "id": "m06_006",
+              "lv": 39,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 7.5,
+          "winQuestions": 7.5,
+          "questionsP90": 9
+        },
+        {
+          "battle": 2,
+          "enemies": [
+            {
+              "id": "exp_millennium_root_8",
+              "lv": 40,
+              "boss": false
+            },
+            {
+              "id": "m06_011",
+              "lv": 40,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 13.5,
+          "winQuestions": 13.5,
+          "questionsP90": 15
+        },
+        {
+          "battle": 3,
+          "enemies": [
+            {
+              "id": "m06_014",
+              "lv": 41,
+              "boss": false
+            },
+            {
+              "id": "exp_storm_lighthouse_1",
+              "lv": 41,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 16.625,
+          "winQuestions": 16.625,
+          "questionsP90": 21
+        },
+        {
+          "battle": 4,
+          "enemies": [
+            {
+              "id": "exp_storm_lighthouse_2",
+              "lv": 42,
+              "boss": false
+            },
+            {
+              "id": "exp_storm_lighthouse_3",
+              "lv": 42,
+              "boss": false
+            },
+            {
+              "id": "m06_002",
+              "lv": 42,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 18.4375,
+          "winQuestions": 18.4375,
+          "questionsP90": 22
+        },
+        {
+          "battle": 5,
+          "enemies": [
+            {
+              "id": "arena_champion_06",
+              "lv": 42,
+              "boss": true
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 17.0625,
+          "winQuestions": 17.0625,
+          "questionsP90": 21
+        }
+      ],
+      "seedDetails": {
+        "fastestClears": [],
+        "longestAttempts": [],
+        "deepestFailures": []
+      }
+    },
+    {
+      "tierId": "arena_06",
+      "rank": 6,
+      "profile": "balanced",
+      "preparation": "prepared",
+      "accuracy": 0.8,
+      "referenceDungeonId": "sand_tomb",
+      "equipmentStar": 6,
+      "level": 38,
+      "stage": 3,
+      "preparedForMonster": "arena_champion_06",
+      "intermissionItems": true,
+      "runs": 16,
+      "wins": 16,
+      "clearRate": 1,
+      "clearQuestions": 68.9375,
+      "clearQuestionsP90": 77,
+      "attemptQuestions": 68.9375,
+      "hpRemaining": 0.8516543229753663,
+      "mpRemaining": 0.22346105527638188,
+      "consumablesPerClear": 2.6875,
+      "battles": [
+        {
+          "battle": 1,
+          "enemies": [
+            {
+              "id": "m06_006",
+              "lv": 39,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 7.3125,
+          "winQuestions": 7.3125,
+          "questionsP90": 9
+        },
+        {
+          "battle": 2,
+          "enemies": [
+            {
+              "id": "exp_millennium_root_8",
+              "lv": 40,
+              "boss": false
+            },
+            {
+              "id": "m06_011",
+              "lv": 40,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 13.625,
+          "winQuestions": 13.625,
+          "questionsP90": 16
+        },
+        {
+          "battle": 3,
+          "enemies": [
+            {
+              "id": "m06_014",
+              "lv": 41,
+              "boss": false
+            },
+            {
+              "id": "exp_storm_lighthouse_1",
+              "lv": 41,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 16.125,
+          "winQuestions": 16.125,
+          "questionsP90": 19
+        },
+        {
+          "battle": 4,
+          "enemies": [
+            {
+              "id": "exp_storm_lighthouse_2",
+              "lv": 42,
+              "boss": false
+            },
+            {
+              "id": "exp_storm_lighthouse_3",
+              "lv": 42,
+              "boss": false
+            },
+            {
+              "id": "m06_002",
+              "lv": 42,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 18.375,
+          "winQuestions": 18.375,
+          "questionsP90": 22
+        },
+        {
+          "battle": 5,
+          "enemies": [
+            {
+              "id": "arena_champion_06",
+              "lv": 42,
+              "boss": true
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 13.5,
+          "winQuestions": 13.5,
+          "questionsP90": 15
+        }
+      ],
+      "seedDetails": {
+        "fastestClears": [],
+        "longestAttempts": [],
+        "deepestFailures": []
+      }
+    },
+    {
+      "tierId": "arena_07",
+      "rank": 7,
+      "profile": "balanced",
+      "preparation": "standard",
+      "accuracy": 0.8,
+      "referenceDungeonId": "sky_isles",
+      "equipmentStar": 7,
+      "level": 45,
+      "stage": 3,
+      "preparedForMonster": "arena_champion_07",
+      "intermissionItems": true,
+      "runs": 16,
+      "wins": 10,
+      "clearRate": 0.625,
+      "clearQuestions": 100.6,
+      "clearQuestionsP90": 113,
+      "attemptQuestions": 100.875,
+      "hpRemaining": 0.2532711562199973,
+      "mpRemaining": 0.05638766519823788,
+      "consumablesPerClear": 6.7,
+      "battles": [
+        {
+          "battle": 1,
+          "enemies": [
+            {
+              "id": "m07_007",
+              "lv": 46,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 8.6875,
+          "winQuestions": 8.6875,
+          "questionsP90": 10
+        },
+        {
+          "battle": 2,
+          "enemies": [
+            {
+              "id": "exp_rusted_armory_3",
+              "lv": 47,
+              "boss": false
+            },
+            {
+              "id": "m07_012",
+              "lv": 47,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 16.625,
+          "winQuestions": 16.625,
+          "questionsP90": 20
+        },
+        {
+          "battle": 3,
+          "enemies": [
+            {
+              "id": "m07_015",
+              "lv": 48,
+              "boss": false
+            },
+            {
+              "id": "exp_rusted_armory_4",
+              "lv": 48,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 21.875,
+          "winQuestions": 21.875,
+          "questionsP90": 25
+        },
+        {
+          "battle": 4,
+          "enemies": [
+            {
+              "id": "exp_rusted_armory_5",
+              "lv": 49,
+              "boss": false
+            },
+            {
+              "id": "exp_rusted_armory_6",
+              "lv": 49,
+              "boss": false
+            },
+            {
+              "id": "m07_003",
+              "lv": 49,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 38.125,
+          "winQuestions": 38.125,
+          "questionsP90": 50
+        },
+        {
+          "battle": 5,
+          "enemies": [
+            {
+              "id": "arena_champion_07",
+              "lv": 49,
+              "boss": true
+            }
+          ],
+          "attempts": 16,
+          "wins": 10,
+          "winRateWhenReached": 0.625,
+          "questions": 15.5625,
+          "winQuestions": 16.5,
+          "questionsP90": 21
+        }
+      ],
+      "seedDetails": {
+        "fastestClears": [],
+        "longestAttempts": [],
+        "deepestFailures": []
+      }
+    },
+    {
+      "tierId": "arena_07",
+      "rank": 7,
+      "profile": "balanced",
+      "preparation": "prepared",
+      "accuracy": 0.8,
+      "referenceDungeonId": "sky_isles",
+      "equipmentStar": 7,
+      "level": 45,
+      "stage": 3,
+      "preparedForMonster": "arena_champion_07",
+      "intermissionItems": true,
+      "runs": 16,
+      "wins": 16,
+      "clearRate": 1,
+      "clearQuestions": 87.1875,
+      "clearQuestionsP90": 96,
+      "attemptQuestions": 87.1875,
+      "hpRemaining": 0.6868485118639419,
+      "mpRemaining": 0.07007158590308371,
+      "consumablesPerClear": 4.25,
+      "battles": [
+        {
+          "battle": 1,
+          "enemies": [
+            {
+              "id": "m07_007",
+              "lv": 46,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 8.1875,
+          "winQuestions": 8.1875,
+          "questionsP90": 9
+        },
+        {
+          "battle": 2,
+          "enemies": [
+            {
+              "id": "exp_rusted_armory_3",
+              "lv": 47,
+              "boss": false
+            },
+            {
+              "id": "m07_012",
+              "lv": 47,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 13.6875,
+          "winQuestions": 13.6875,
+          "questionsP90": 16
+        },
+        {
+          "battle": 3,
+          "enemies": [
+            {
+              "id": "m07_015",
+              "lv": 48,
+              "boss": false
+            },
+            {
+              "id": "exp_rusted_armory_4",
+              "lv": 48,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 20.25,
+          "winQuestions": 20.25,
+          "questionsP90": 25
+        },
+        {
+          "battle": 4,
+          "enemies": [
+            {
+              "id": "exp_rusted_armory_5",
+              "lv": 49,
+              "boss": false
+            },
+            {
+              "id": "exp_rusted_armory_6",
+              "lv": 49,
+              "boss": false
+            },
+            {
+              "id": "m07_003",
+              "lv": 49,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 31.3125,
+          "winQuestions": 31.3125,
+          "questionsP90": 38
+        },
+        {
+          "battle": 5,
+          "enemies": [
+            {
+              "id": "arena_champion_07",
+              "lv": 49,
+              "boss": true
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 13.75,
+          "winQuestions": 13.75,
+          "questionsP90": 17
+        }
+      ],
+      "seedDetails": {
+        "fastestClears": [],
+        "longestAttempts": [],
+        "deepestFailures": []
+      }
+    },
+    {
+      "tierId": "arena_08",
+      "rank": 8,
+      "profile": "balanced",
+      "preparation": "standard",
+      "accuracy": 0.8,
+      "referenceDungeonId": "black_forest",
+      "equipmentStar": 8,
+      "level": 52,
+      "stage": 3,
+      "preparedForMonster": "arena_champion_08",
+      "intermissionItems": true,
+      "runs": 16,
+      "wins": 7,
+      "clearRate": 0.4375,
+      "clearQuestions": 88.28571428571429,
+      "clearQuestionsP90": 95,
+      "attemptQuestions": 85.375,
+      "hpRemaining": 0.2935306438703745,
+      "mpRemaining": 0.0938375350140056,
+      "consumablesPerClear": 5.857142857142857,
+      "battles": [
+        {
+          "battle": 1,
+          "enemies": [
+            {
+              "id": "m08_008",
+              "lv": 53,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 11.0625,
+          "winQuestions": 11.0625,
+          "questionsP90": 14
+        },
+        {
+          "battle": 2,
+          "enemies": [
+            {
+              "id": "exp_mirror_maze_6",
+              "lv": 54,
+              "boss": false
+            },
+            {
+              "id": "m08_013",
+              "lv": 54,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 17.9375,
+          "winQuestions": 17.9375,
+          "questionsP90": 21
+        },
+        {
+          "battle": 3,
+          "enemies": [
+            {
+              "id": "m08_001",
+              "lv": 55,
+              "boss": false
+            },
+            {
+              "id": "exp_mirror_maze_7",
+              "lv": 55,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 17.875,
+          "winQuestions": 17.875,
+          "questionsP90": 22
+        },
+        {
+          "battle": 4,
+          "enemies": [
+            {
+              "id": "exp_mirror_maze_8",
+              "lv": 56,
+              "boss": false
+            },
+            {
+              "id": "exp_bog_kingdom_1",
+              "lv": 56,
+              "boss": false
+            },
+            {
+              "id": "m08_004",
+              "lv": 56,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 18.5625,
+          "winQuestions": 18.5625,
+          "questionsP90": 22
+        },
+        {
+          "battle": 5,
+          "enemies": [
+            {
+              "id": "arena_champion_08",
+              "lv": 56,
+              "boss": true
+            }
+          ],
+          "attempts": 16,
+          "wins": 7,
+          "winRateWhenReached": 0.4375,
+          "questions": 19.9375,
+          "winQuestions": 21.714285714285715,
+          "questionsP90": 23
+        }
+      ],
+      "seedDetails": {
+        "fastestClears": [],
+        "longestAttempts": [],
+        "deepestFailures": []
+      }
+    },
+    {
+      "tierId": "arena_08",
+      "rank": 8,
+      "profile": "balanced",
+      "preparation": "prepared",
+      "accuracy": 0.8,
+      "referenceDungeonId": "black_forest",
+      "equipmentStar": 8,
+      "level": 52,
+      "stage": 3,
+      "preparedForMonster": "arena_champion_08",
+      "intermissionItems": true,
+      "runs": 16,
+      "wins": 11,
+      "clearRate": 0.6875,
+      "clearQuestions": 85.63636363636364,
+      "clearQuestionsP90": 92,
+      "attemptQuestions": 86.1875,
+      "hpRemaining": 0.3067653528971922,
+      "mpRemaining": 0.09055258467023174,
+      "consumablesPerClear": 5.818181818181818,
+      "battles": [
+        {
+          "battle": 1,
+          "enemies": [
+            {
+              "id": "m08_008",
+              "lv": 53,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 11.0625,
+          "winQuestions": 11.0625,
+          "questionsP90": 14
+        },
+        {
+          "battle": 2,
+          "enemies": [
+            {
+              "id": "exp_mirror_maze_6",
+              "lv": 54,
+              "boss": false
+            },
+            {
+              "id": "m08_013",
+              "lv": 54,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 18,
+          "winQuestions": 18,
+          "questionsP90": 21
+        },
+        {
+          "battle": 3,
+          "enemies": [
+            {
+              "id": "m08_001",
+              "lv": 55,
+              "boss": false
+            },
+            {
+              "id": "exp_mirror_maze_7",
+              "lv": 55,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 17.8125,
+          "winQuestions": 17.8125,
+          "questionsP90": 21
+        },
+        {
+          "battle": 4,
+          "enemies": [
+            {
+              "id": "exp_mirror_maze_8",
+              "lv": 56,
+              "boss": false
+            },
+            {
+              "id": "exp_bog_kingdom_1",
+              "lv": 56,
+              "boss": false
+            },
+            {
+              "id": "m08_004",
+              "lv": 56,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 19,
+          "winQuestions": 19,
+          "questionsP90": 22
+        },
+        {
+          "battle": 5,
+          "enemies": [
+            {
+              "id": "arena_champion_08",
+              "lv": 56,
+              "boss": true
+            }
+          ],
+          "attempts": 16,
+          "wins": 11,
+          "winRateWhenReached": 0.6875,
+          "questions": 20.3125,
+          "winQuestions": 20.90909090909091,
+          "questionsP90": 26
+        }
+      ],
+      "seedDetails": {
+        "fastestClears": [],
+        "longestAttempts": [],
+        "deepestFailures": []
+      }
+    },
+    {
+      "tierId": "arena_09",
+      "rank": 9,
+      "profile": "balanced",
+      "preparation": "standard",
+      "accuracy": 0.8,
+      "referenceDungeonId": "demon_gate",
+      "equipmentStar": 9,
+      "level": 59,
+      "stage": 4,
+      "preparedForMonster": "arena_champion_09",
+      "intermissionItems": true,
+      "runs": 16,
+      "wins": 5,
+      "clearRate": 0.3125,
+      "clearQuestions": 95,
+      "clearQuestionsP90": 101,
+      "attemptQuestions": 91.9375,
+      "hpRemaining": 0.29957550030321406,
+      "mpRemaining": 0.09717314487632508,
+      "consumablesPerClear": 6.4,
+      "battles": [
+        {
+          "battle": 1,
+          "enemies": [
+            {
+              "id": "m09_009",
+              "lv": 60,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 10.625,
+          "winQuestions": 10.625,
+          "questionsP90": 13
+        },
+        {
+          "battle": 2,
+          "enemies": [
+            {
+              "id": "exp_ruby_vein_1",
+              "lv": 61,
+              "boss": false
+            },
+            {
+              "id": "m09_014",
+              "lv": 61,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 17.1875,
+          "winQuestions": 17.1875,
+          "questionsP90": 20
+        },
+        {
+          "battle": 3,
+          "enemies": [
+            {
+              "id": "m09_002",
+              "lv": 62,
+              "boss": false
+            },
+            {
+              "id": "exp_ruby_vein_2",
+              "lv": 62,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 14,
+          "winQuestions": 14,
+          "questionsP90": 17
+        },
+        {
+          "battle": 4,
+          "enemies": [
+            {
+              "id": "exp_ruby_vein_3",
+              "lv": 63,
+              "boss": false
+            },
+            {
+              "id": "exp_ruby_vein_4",
+              "lv": 63,
+              "boss": false
+            },
+            {
+              "id": "m09_005",
+              "lv": 63,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 32.3125,
+          "winQuestions": 32.3125,
+          "questionsP90": 41
+        },
+        {
+          "battle": 5,
+          "enemies": [
+            {
+              "id": "arena_champion_09",
+              "lv": 63,
+              "boss": true
+            }
+          ],
+          "attempts": 16,
+          "wins": 5,
+          "winRateWhenReached": 0.3125,
+          "questions": 17.8125,
+          "winQuestions": 20.2,
+          "questionsP90": 22
+        }
+      ],
+      "seedDetails": {
+        "fastestClears": [],
+        "longestAttempts": [],
+        "deepestFailures": []
+      }
+    },
+    {
+      "tierId": "arena_09",
+      "rank": 9,
+      "profile": "balanced",
+      "preparation": "prepared",
+      "accuracy": 0.8,
+      "referenceDungeonId": "demon_gate",
+      "equipmentStar": 9,
+      "level": 59,
+      "stage": 4,
+      "preparedForMonster": "arena_champion_09",
+      "intermissionItems": true,
+      "runs": 16,
+      "wins": 15,
+      "clearRate": 0.9375,
+      "clearQuestions": 91.66666666666667,
+      "clearQuestionsP90": 101,
+      "attemptQuestions": 91,
+      "hpRemaining": 0.5290074792803721,
+      "mpRemaining": 0.11118963486454654,
+      "consumablesPerClear": 4.8,
+      "battles": [
+        {
+          "battle": 1,
+          "enemies": [
+            {
+              "id": "m09_009",
+              "lv": 60,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 10.5,
+          "winQuestions": 10.5,
+          "questionsP90": 13
+        },
+        {
+          "battle": 2,
+          "enemies": [
+            {
+              "id": "exp_ruby_vein_1",
+              "lv": 61,
+              "boss": false
+            },
+            {
+              "id": "m09_014",
+              "lv": 61,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 16.75,
+          "winQuestions": 16.75,
+          "questionsP90": 19
+        },
+        {
+          "battle": 3,
+          "enemies": [
+            {
+              "id": "m09_002",
+              "lv": 62,
+              "boss": false
+            },
+            {
+              "id": "exp_ruby_vein_2",
+              "lv": 62,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 15.25,
+          "winQuestions": 15.25,
+          "questionsP90": 18
+        },
+        {
+          "battle": 4,
+          "enemies": [
+            {
+              "id": "exp_ruby_vein_3",
+              "lv": 63,
+              "boss": false
+            },
+            {
+              "id": "exp_ruby_vein_4",
+              "lv": 63,
+              "boss": false
+            },
+            {
+              "id": "m09_005",
+              "lv": 63,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 15,
+          "winRateWhenReached": 0.9375,
+          "questions": 34.625,
+          "winQuestions": 34.46666666666667,
+          "questionsP90": 39
+        },
+        {
+          "battle": 5,
+          "enemies": [
+            {
+              "id": "arena_champion_09",
+              "lv": 63,
+              "boss": true
+            }
+          ],
+          "attempts": 15,
+          "wins": 15,
+          "winRateWhenReached": 1,
+          "questions": 14.8,
+          "winQuestions": 14.8,
+          "questionsP90": 18
+        }
+      ],
+      "seedDetails": {
+        "fastestClears": [],
+        "longestAttempts": [],
+        "deepestFailures": []
+      }
+    },
+    {
+      "tierId": "arena_10",
+      "rank": 10,
+      "profile": "balanced",
+      "preparation": "standard",
+      "accuracy": 0.8,
+      "referenceDungeonId": "dragon_spine",
+      "equipmentStar": 10,
+      "level": 66,
+      "stage": 4,
+      "preparedForMonster": "arena_champion_10",
+      "intermissionItems": true,
+      "runs": 16,
+      "wins": 5,
+      "clearRate": 0.3125,
+      "clearQuestions": 121.2,
+      "clearQuestionsP90": 129,
+      "attemptQuestions": 113.5,
+      "hpRemaining": 0.2583009840209443,
+      "mpRemaining": 0.0720257234726688,
+      "consumablesPerClear": 6.2,
+      "battles": [
+        {
+          "battle": 1,
+          "enemies": [
+            {
+              "id": "m10_010",
+              "lv": 67,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 10.875,
+          "winQuestions": 10.875,
+          "questionsP90": 13
+        },
+        {
+          "battle": 2,
+          "enemies": [
+            {
+              "id": "exp_sacred_beast_wood_4",
+              "lv": 68,
+              "boss": false
+            },
+            {
+              "id": "m10_015",
+              "lv": 68,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 22.4375,
+          "winQuestions": 22.4375,
+          "questionsP90": 27
+        },
+        {
+          "battle": 3,
+          "enemies": [
+            {
+              "id": "m10_003",
+              "lv": 69,
+              "boss": false
+            },
+            {
+              "id": "exp_sacred_beast_wood_5",
+              "lv": 69,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 20.125,
+          "winQuestions": 20.125,
+          "questionsP90": 24
+        },
+        {
+          "battle": 4,
+          "enemies": [
+            {
+              "id": "exp_sacred_beast_wood_6",
+              "lv": 70,
+              "boss": false
+            },
+            {
+              "id": "exp_sacred_beast_wood_7",
+              "lv": 70,
+              "boss": false
+            },
+            {
+              "id": "m10_006",
+              "lv": 70,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 15,
+          "winRateWhenReached": 0.9375,
+          "questions": 39.9375,
+          "winQuestions": 42,
+          "questionsP90": 46
+        },
+        {
+          "battle": 5,
+          "enemies": [
+            {
+              "id": "arena_champion_10",
+              "lv": 70,
+              "boss": true
+            }
+          ],
+          "attempts": 15,
+          "wins": 5,
+          "winRateWhenReached": 0.3333333333333333,
+          "questions": 21.466666666666665,
+          "winQuestions": 23.6,
+          "questionsP90": 26
+        }
+      ],
+      "seedDetails": {
+        "fastestClears": [],
+        "longestAttempts": [],
+        "deepestFailures": []
+      }
+    },
+    {
+      "tierId": "arena_10",
+      "rank": 10,
+      "profile": "balanced",
+      "preparation": "prepared",
+      "accuracy": 0.8,
+      "referenceDungeonId": "dragon_spine",
+      "equipmentStar": 10,
+      "level": 66,
+      "stage": 4,
+      "preparedForMonster": "arena_champion_10",
+      "intermissionItems": true,
+      "runs": 16,
+      "wins": 16,
+      "clearRate": 1,
+      "clearQuestions": 105.875,
+      "clearQuestionsP90": 115,
+      "attemptQuestions": 105.875,
+      "hpRemaining": 0.7874650176040443,
+      "mpRemaining": 0.17936093247588425,
+      "consumablesPerClear": 3.375,
+      "battles": [
+        {
+          "battle": 1,
+          "enemies": [
+            {
+              "id": "m10_010",
+              "lv": 67,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 12.25,
+          "winQuestions": 12.25,
+          "questionsP90": 14
+        },
+        {
+          "battle": 2,
+          "enemies": [
+            {
+              "id": "exp_sacred_beast_wood_4",
+              "lv": 68,
+              "boss": false
+            },
+            {
+              "id": "m10_015",
+              "lv": 68,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 21.0625,
+          "winQuestions": 21.0625,
+          "questionsP90": 26
+        },
+        {
+          "battle": 3,
+          "enemies": [
+            {
+              "id": "m10_003",
+              "lv": 69,
+              "boss": false
+            },
+            {
+              "id": "exp_sacred_beast_wood_5",
+              "lv": 69,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 18.8125,
+          "winQuestions": 18.8125,
+          "questionsP90": 23
+        },
+        {
+          "battle": 4,
+          "enemies": [
+            {
+              "id": "exp_sacred_beast_wood_6",
+              "lv": 70,
+              "boss": false
+            },
+            {
+              "id": "exp_sacred_beast_wood_7",
+              "lv": 70,
+              "boss": false
+            },
+            {
+              "id": "m10_006",
+              "lv": 70,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 35.0625,
+          "winQuestions": 35.0625,
+          "questionsP90": 41
+        },
+        {
+          "battle": 5,
+          "enemies": [
+            {
+              "id": "arena_champion_10",
+              "lv": 70,
+              "boss": true
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 18.6875,
+          "winQuestions": 18.6875,
+          "questionsP90": 22
+        }
+      ],
+      "seedDetails": {
+        "fastestClears": [],
+        "longestAttempts": [],
+        "deepestFailures": []
+      }
+    },
+    {
+      "tierId": "arena_11",
+      "rank": 11,
+      "profile": "balanced",
+      "preparation": "standard",
+      "accuracy": 0.8,
+      "referenceDungeonId": "heaven_temple",
+      "equipmentStar": 11,
+      "level": 73,
+      "stage": 4,
+      "preparedForMonster": "arena_champion_11",
+      "intermissionItems": true,
+      "runs": 16,
+      "wins": 9,
+      "clearRate": 0.5625,
+      "clearQuestions": 92.55555555555556,
+      "clearQuestionsP90": 99,
+      "attemptQuestions": 94.8125,
+      "hpRemaining": 0.47926788444661583,
+      "mpRemaining": 0.09882005899705015,
+      "consumablesPerClear": 5.111111111111111,
+      "battles": [
+        {
+          "battle": 1,
+          "enemies": [
+            {
+              "id": "m11_011",
+              "lv": 74,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 10.125,
+          "winQuestions": 10.125,
+          "questionsP90": 13
+        },
+        {
+          "battle": 2,
+          "enemies": [
+            {
+              "id": "exp_dragon_king_vault_7",
+              "lv": 75,
+              "boss": false
+            },
+            {
+              "id": "m11_001",
+              "lv": 75,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 15.875,
+          "winQuestions": 15.875,
+          "questionsP90": 18
+        },
+        {
+          "battle": 3,
+          "enemies": [
+            {
+              "id": "m11_004",
+              "lv": 76,
+              "boss": false
+            },
+            {
+              "id": "exp_dragon_king_vault_8",
+              "lv": 76,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 17.8125,
+          "winQuestions": 17.8125,
+          "questionsP90": 21
+        },
+        {
+          "battle": 4,
+          "enemies": [
+            {
+              "id": "exp_dream_garden_1",
+              "lv": 77,
+              "boss": false
+            },
+            {
+              "id": "exp_dream_garden_2",
+              "lv": 77,
+              "boss": false
+            },
+            {
+              "id": "m11_007",
+              "lv": 77,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 33.25,
+          "winQuestions": 33.25,
+          "questionsP90": 38
+        },
+        {
+          "battle": 5,
+          "enemies": [
+            {
+              "id": "arena_champion_11",
+              "lv": 77,
+              "boss": true
+            }
+          ],
+          "attempts": 16,
+          "wins": 9,
+          "winRateWhenReached": 0.5625,
+          "questions": 17.75,
+          "winQuestions": 18.11111111111111,
+          "questionsP90": 21
+        }
+      ],
+      "seedDetails": {
+        "fastestClears": [],
+        "longestAttempts": [],
+        "deepestFailures": []
+      }
+    },
+    {
+      "tierId": "arena_11",
+      "rank": 11,
+      "profile": "balanced",
+      "preparation": "prepared",
+      "accuracy": 0.8,
+      "referenceDungeonId": "heaven_temple",
+      "equipmentStar": 11,
+      "level": 73,
+      "stage": 4,
+      "preparedForMonster": "arena_champion_11",
+      "intermissionItems": true,
+      "runs": 16,
+      "wins": 16,
+      "clearRate": 1,
+      "clearQuestions": 78.25,
+      "clearQuestionsP90": 85,
+      "attemptQuestions": 78.25,
+      "hpRemaining": 0.8527247373992347,
+      "mpRemaining": 0.1730272861356932,
+      "consumablesPerClear": 2.25,
+      "battles": [
+        {
+          "battle": 1,
+          "enemies": [
+            {
+              "id": "m11_011",
+              "lv": 74,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 8.3125,
+          "winQuestions": 8.3125,
+          "questionsP90": 11
+        },
+        {
+          "battle": 2,
+          "enemies": [
+            {
+              "id": "exp_dragon_king_vault_7",
+              "lv": 75,
+              "boss": false
+            },
+            {
+              "id": "m11_001",
+              "lv": 75,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 12.8125,
+          "winQuestions": 12.8125,
+          "questionsP90": 14
+        },
+        {
+          "battle": 3,
+          "enemies": [
+            {
+              "id": "m11_004",
+              "lv": 76,
+              "boss": false
+            },
+            {
+              "id": "exp_dragon_king_vault_8",
+              "lv": 76,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 17.8125,
+          "winQuestions": 17.8125,
+          "questionsP90": 21
+        },
+        {
+          "battle": 4,
+          "enemies": [
+            {
+              "id": "exp_dream_garden_1",
+              "lv": 77,
+              "boss": false
+            },
+            {
+              "id": "exp_dream_garden_2",
+              "lv": 77,
+              "boss": false
+            },
+            {
+              "id": "m11_007",
+              "lv": 77,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 25.6875,
+          "winQuestions": 25.6875,
+          "questionsP90": 30
+        },
+        {
+          "battle": 5,
+          "enemies": [
+            {
+              "id": "arena_champion_11",
+              "lv": 77,
+              "boss": true
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 13.625,
+          "winQuestions": 13.625,
+          "questionsP90": 15
+        }
+      ],
+      "seedDetails": {
+        "fastestClears": [],
+        "longestAttempts": [],
+        "deepestFailures": []
+      }
+    },
+    {
+      "tierId": "arena_12",
+      "rank": 12,
+      "profile": "balanced",
+      "preparation": "standard",
+      "accuracy": 0.8,
+      "referenceDungeonId": "world_tree_top",
+      "equipmentStar": 12,
+      "level": 80,
+      "stage": 5,
+      "preparedForMonster": "arena_champion_12",
+      "intermissionItems": true,
+      "runs": 16,
+      "wins": 6,
+      "clearRate": 0.375,
+      "clearQuestions": 97.33333333333333,
+      "clearQuestionsP90": 105,
+      "attemptQuestions": 96.3125,
+      "hpRemaining": 0.3020970047791199,
+      "mpRemaining": 0.08356039963669393,
+      "consumablesPerClear": 5.666666666666667,
+      "battles": [
+        {
+          "battle": 1,
+          "enemies": [
+            {
+              "id": "m12_012",
+              "lv": 81,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 10.3125,
+          "winQuestions": 10.3125,
+          "questionsP90": 12
+        },
+        {
+          "battle": 2,
+          "enemies": [
+            {
+              "id": "exp_twilight_border_2",
+              "lv": 82,
+              "boss": false
+            },
+            {
+              "id": "m12_002",
+              "lv": 82,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 18.1875,
+          "winQuestions": 18.1875,
+          "questionsP90": 23
+        },
+        {
+          "battle": 3,
+          "enemies": [
+            {
+              "id": "m12_005",
+              "lv": 83,
+              "boss": false
+            },
+            {
+              "id": "exp_twilight_border_3",
+              "lv": 83,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 11.8125,
+          "winQuestions": 11.8125,
+          "questionsP90": 15
+        },
+        {
+          "battle": 4,
+          "enemies": [
+            {
+              "id": "exp_twilight_border_4",
+              "lv": 84,
+              "boss": false
+            },
+            {
+              "id": "exp_twilight_border_5",
+              "lv": 84,
+              "boss": false
+            },
+            {
+              "id": "m12_008",
+              "lv": 84,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 37.875,
+          "winQuestions": 37.875,
+          "questionsP90": 42
+        },
+        {
+          "battle": 5,
+          "enemies": [
+            {
+              "id": "arena_champion_12",
+              "lv": 84,
+              "boss": true
+            }
+          ],
+          "attempts": 16,
+          "wins": 6,
+          "winRateWhenReached": 0.375,
+          "questions": 18.125,
+          "winQuestions": 22.666666666666668,
+          "questionsP90": 26
+        }
+      ],
+      "seedDetails": {
+        "fastestClears": [],
+        "longestAttempts": [],
+        "deepestFailures": []
+      }
+    },
+    {
+      "tierId": "arena_12",
+      "rank": 12,
+      "profile": "balanced",
+      "preparation": "prepared",
+      "accuracy": 0.8,
+      "referenceDungeonId": "world_tree_top",
+      "equipmentStar": 12,
+      "level": 80,
+      "stage": 5,
+      "preparedForMonster": "arena_champion_12",
+      "intermissionItems": true,
+      "runs": 16,
+      "wins": 16,
+      "clearRate": 1,
+      "clearQuestions": 86.9375,
+      "clearQuestionsP90": 96,
+      "attemptQuestions": 86.9375,
+      "hpRemaining": 0.7411897651838836,
+      "mpRemaining": 0.09051430517711172,
+      "consumablesPerClear": 3,
+      "battles": [
+        {
+          "battle": 1,
+          "enemies": [
+            {
+              "id": "m12_012",
+              "lv": 81,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 10.3125,
+          "winQuestions": 10.3125,
+          "questionsP90": 12
+        },
+        {
+          "battle": 2,
+          "enemies": [
+            {
+              "id": "exp_twilight_border_2",
+              "lv": 82,
+              "boss": false
+            },
+            {
+              "id": "m12_002",
+              "lv": 82,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 16.75,
+          "winQuestions": 16.75,
+          "questionsP90": 21
+        },
+        {
+          "battle": 3,
+          "enemies": [
+            {
+              "id": "m12_005",
+              "lv": 83,
+              "boss": false
+            },
+            {
+              "id": "exp_twilight_border_3",
+              "lv": 83,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 11.4375,
+          "winQuestions": 11.4375,
+          "questionsP90": 14
+        },
+        {
+          "battle": 4,
+          "enemies": [
+            {
+              "id": "exp_twilight_border_4",
+              "lv": 84,
+              "boss": false
+            },
+            {
+              "id": "exp_twilight_border_5",
+              "lv": 84,
+              "boss": false
+            },
+            {
+              "id": "m12_008",
+              "lv": 84,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 33.75,
+          "winQuestions": 33.75,
+          "questionsP90": 39
+        },
+        {
+          "battle": 5,
+          "enemies": [
+            {
+              "id": "arena_champion_12",
+              "lv": 84,
+              "boss": true
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 14.6875,
+          "winQuestions": 14.6875,
+          "questionsP90": 17
+        }
+      ],
+      "seedDetails": {
+        "fastestClears": [],
+        "longestAttempts": [],
+        "deepestFailures": []
+      }
+    },
+    {
+      "tierId": "arena_13",
+      "rank": 13,
+      "profile": "balanced",
+      "preparation": "standard",
+      "accuracy": 0.8,
+      "referenceDungeonId": "world_tree_top",
+      "equipmentStar": 12,
+      "level": 99,
+      "stage": 5,
+      "preparedForMonster": "arena_champion_13",
+      "intermissionItems": true,
+      "runs": 16,
+      "wins": 3,
+      "clearRate": 0.1875,
+      "clearQuestions": 108.66666666666667,
+      "clearQuestionsP90": 119,
+      "attemptQuestions": 107,
+      "hpRemaining": 0.34994113689875544,
+      "mpRemaining": 0.13431151241534986,
+      "consumablesPerClear": 6,
+      "battles": [
+        {
+          "battle": 1,
+          "enemies": [
+            {
+              "id": "m12_013",
+              "lv": 96,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 8.875,
+          "winQuestions": 8.875,
+          "questionsP90": 10
+        },
+        {
+          "battle": 2,
+          "enemies": [
+            {
+              "id": "exp_twilight_border_5",
+              "lv": 97,
+              "boss": false
+            },
+            {
+              "id": "m12_003",
+              "lv": 97,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 15.75,
+          "winQuestions": 15.75,
+          "questionsP90": 20
+        },
+        {
+          "battle": 3,
+          "enemies": [
+            {
+              "id": "m12_006",
+              "lv": 98,
+              "boss": false
+            },
+            {
+              "id": "exp_twilight_border_6",
+              "lv": 98,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 20.125,
+          "winQuestions": 20.125,
+          "questionsP90": 24
+        },
+        {
+          "battle": 4,
+          "enemies": [
+            {
+              "id": "exp_twilight_border_7",
+              "lv": 99,
+              "boss": false
+            },
+            {
+              "id": "exp_twilight_border_8",
+              "lv": 99,
+              "boss": false
+            },
+            {
+              "id": "m12_009",
+              "lv": 99,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 44.625,
+          "winQuestions": 44.625,
+          "questionsP90": 54
+        },
+        {
+          "battle": 5,
+          "enemies": [
+            {
+              "id": "arena_champion_13",
+              "lv": 99,
+              "boss": true
+            }
+          ],
+          "attempts": 16,
+          "wins": 3,
+          "winRateWhenReached": 0.1875,
+          "questions": 17.625,
+          "winQuestions": 20.666666666666668,
+          "questionsP90": 21
+        }
+      ],
+      "seedDetails": {
+        "fastestClears": [],
+        "longestAttempts": [],
+        "deepestFailures": []
+      }
+    },
+    {
+      "tierId": "arena_13",
+      "rank": 13,
+      "profile": "balanced",
+      "preparation": "prepared",
+      "accuracy": 0.8,
+      "referenceDungeonId": "world_tree_top",
+      "equipmentStar": 12,
+      "level": 99,
+      "stage": 5,
+      "preparedForMonster": "arena_champion_13",
+      "intermissionItems": true,
+      "runs": 16,
+      "wins": 16,
+      "clearRate": 1,
+      "clearQuestions": 103.5625,
+      "clearQuestionsP90": 112,
+      "attemptQuestions": 103.5625,
+      "hpRemaining": 0.6390877270433905,
+      "mpRemaining": 0.131489841986456,
+      "consumablesPerClear": 3.8125,
+      "battles": [
+        {
+          "battle": 1,
+          "enemies": [
+            {
+              "id": "m12_013",
+              "lv": 96,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 8.875,
+          "winQuestions": 8.875,
+          "questionsP90": 10
+        },
+        {
+          "battle": 2,
+          "enemies": [
+            {
+              "id": "exp_twilight_border_5",
+              "lv": 97,
+              "boss": false
+            },
+            {
+              "id": "m12_003",
+              "lv": 97,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 17.125,
+          "winQuestions": 17.125,
+          "questionsP90": 20
+        },
+        {
+          "battle": 3,
+          "enemies": [
+            {
+              "id": "m12_006",
+              "lv": 98,
+              "boss": false
+            },
+            {
+              "id": "exp_twilight_border_6",
+              "lv": 98,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 19.5625,
+          "winQuestions": 19.5625,
+          "questionsP90": 24
+        },
+        {
+          "battle": 4,
+          "enemies": [
+            {
+              "id": "exp_twilight_border_7",
+              "lv": 99,
+              "boss": false
+            },
+            {
+              "id": "exp_twilight_border_8",
+              "lv": 99,
+              "boss": false
+            },
+            {
+              "id": "m12_009",
+              "lv": 99,
+              "boss": false
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 41.4375,
+          "winQuestions": 41.4375,
+          "questionsP90": 46
+        },
+        {
+          "battle": 5,
+          "enemies": [
+            {
+              "id": "arena_champion_13",
+              "lv": 99,
+              "boss": true
+            }
+          ],
+          "attempts": 16,
+          "wins": 16,
+          "winRateWhenReached": 1,
+          "questions": 16.5625,
+          "winQuestions": 16.5625,
+          "questionsP90": 20
+        }
+      ],
+      "seedDetails": {
+        "fastestClears": [],
+        "longestAttempts": [],
+        "deepestFailures": []
+      }
+    }
+  ]
+}

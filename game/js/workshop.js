@@ -1,9 +1,10 @@
 import { parseAmounts, splitList } from './csv.js';
-import { makeGear } from './character.js?v=features-2';
-import { rollAffixes } from './loot.js?v=features-2';
-import { matchesNeed, parseMaterialNeed } from './town.js?v=features-2';
-import { currentRank } from './dungeon.js?v=features-2';
-import { consumeMaterials } from './temple.js?v=features-2';
+import { makeGear } from './character.js?v=balance-builds-1';
+import { rollAffixes } from './loot.js?v=balance-builds-1';
+import { matchesNeed, parseMaterialNeed } from './town.js?v=balance-builds-1';
+import { currentRank } from './dungeon.js?v=balance-builds-1';
+import { consumeMaterials } from './temple.js?v=balance-builds-1';
+import { describeEffect } from './equipment-effects.js?v=balance-builds-1';
 
 const facilityFor = (def) => def.slot === 'weapon' ? 'weapon_workshop'
   : ['cloak', 'accessory'].includes(def.slot) ? 'accessory_workshop' : 'armor_workshop';
@@ -123,7 +124,7 @@ export function reroll(data, game, gear, stat, rng) {
   delete gear.affixes[stat];
   gear.affixes[key] = value;
   gear.rerolls = (gear.rerolls ?? 0) + 1;
-  return `${key} +${value} が付いた。`;
+  return `${describeEffect(data, key, value)} が付いた。`;
 }
 
 export function enchantFamilies(data, def, material) {
@@ -153,5 +154,5 @@ export function enchant(data, game, gear, slot, materialId, family, grade) {
   pay(game, Number(row.gold), { [materialId]: 1 });
   gear.enchants ??= [];
   gear.enchants[slot] = { stat: family, value };
-  return `${family} +${value} を付けた。`;
+  return `${describeEffect(data, family, value)} を付けた。`;
 }
