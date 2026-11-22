@@ -1,10 +1,10 @@
 // 戦況を表示したまま、下段をコマンド・対象の案内・問題・結果に切り替える。
-import { now } from '../storage.js?v=features-1';
+import { now } from '../storage.js?v=features-2';
 import { QuestionPicker, REASON_LABEL } from '../picker.js';
-import { makePracticeQuestion, questionDirection, DIRECTION } from '../quiz.js?v=features-1';
+import { makePracticeQuestion, questionDirection, DIRECTION } from '../quiz.js?v=features-2';
 import { speak, canSpeak } from '../speech.js';
-import { nextTurn, actionOptions, setPending, resolvePending, targetKind, canAct, skillMp } from '../battle.js?v=features-1';
-import { maxHp, maxMp } from '../character.js?v=features-1';
+import { nextTurn, actionOptions, setPending, resolvePending, targetKind, canAct, skillMp } from '../battle.js?v=features-2';
+import { maxHp, maxMp } from '../character.js?v=features-2';
 import { el, render } from '../dom.js';
 
 const TARGET_PROMPT = {

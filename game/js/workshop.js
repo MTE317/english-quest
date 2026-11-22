@@ -1,9 +1,9 @@
 import { parseAmounts, splitList } from './csv.js';
-import { makeGear } from './character.js?v=features-1';
-import { rollAffixes } from './loot.js?v=features-1';
-import { matchesNeed, parseMaterialNeed } from './town.js?v=features-1';
-import { currentRank } from './dungeon.js?v=features-1';
-import { consumeMaterials } from './temple.js?v=features-1';
+import { makeGear } from './character.js?v=features-2';
+import { rollAffixes } from './loot.js?v=features-2';
+import { matchesNeed, parseMaterialNeed } from './town.js?v=features-2';
+import { currentRank } from './dungeon.js?v=features-2';
+import { consumeMaterials } from './temple.js?v=features-2';
 
 const facilityFor = (def) => def.slot === 'weapon' ? 'weapon_workshop'
   : ['cloak', 'accessory'].includes(def.slot) ? 'accessory_workshop' : 'armor_workshop';

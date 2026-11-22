@@ -1,19 +1,19 @@
 // ギルドの学び舎：資料室（予習）・石碑の間（石の一覧と覚醒の試練）・訓練場（鍛錬）・昇格試験
-import { loadGameData } from '../gamedata.js?v=features-1';
-import { loadCsv, loadJson } from '../data.js?v=features-1';
+import { loadGameData } from '../gamedata.js?v=features-2';
+import { loadCsv, loadJson } from '../data.js?v=features-2';
 import { buildLexicon } from '../lexicon.js';
-import { Scheduler, STAGE_LABEL } from '../srs.js?v=features-1';
-import { LearningStore, now } from '../storage.js?v=features-1';
+import { Scheduler, STAGE_LABEL } from '../srs.js?v=features-2';
+import { LearningStore, now } from '../storage.js?v=features-2';
 import { QuestionPicker } from '../picker.js';
-import { GameSession } from '../save.js?v=features-1';
-import { normalizeGame } from '../game-state.js?v=features-1';
-import { seededRng, currentRank } from '../dungeon.js?v=features-1';
-import { checkRankUp } from '../town.js?v=features-1';
+import { GameSession } from '../save.js?v=features-2';
+import { normalizeGame } from '../game-state.js?v=features-2';
+import { seededRng, currentRank } from '../dungeon.js?v=features-2';
+import { checkRankUp } from '../town.js?v=features-2';
 import {
   stoneProgress, nextUnread, trialBlock, trialPlan, finishExam, promotionBlock, promotionPlan, starLearnedRatio,
   trainingReward, applyTraining,
-} from '../study.js?v=features-1';
-import { runQuiz } from '../ui/quiz-runner.js?v=features-1';
+} from '../study.js?v=features-2';
+import { runQuiz } from '../ui/quiz-runner.js?v=features-2';
 import { speak, canSpeak } from '../speech.js';
 import { el, render, stars } from '../dom.js';
 

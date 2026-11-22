@@ -1,6 +1,6 @@
 // 新しいゲームの進み具合（セーブの game の中身）
-import { createMember } from './character.js?v=features-1';
-import { ensureLoadout } from './growth.js?v=features-1';
+import { createMember } from './character.js?v=features-2';
+import { ensureLoadout } from './growth.js?v=features-2';
 
 export const PARTY_SIZE = 4;
 
