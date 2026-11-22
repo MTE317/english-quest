@@ -12,7 +12,7 @@ import { nextRankStatus, checkRankUp } from '../town.js?v=features-1';
 import { updateRuneModifiers } from '../temple.js?v=features-1';
 import { makeGear } from '../character.js?v=features-1';
 import { examWords, starLearnedRatio } from '../study.js?v=features-1';
-import { createBattleView } from '../ui/battle-view.js?v=features-1';
+import { createBattleView } from '../ui/battle-view.js?v=hit-effects-1';
 import { runQuiz } from '../ui/quiz-runner.js?v=features-1';
 import { el, render } from '../dom.js';
 

@@ -3,7 +3,7 @@ import { now } from '../storage.js?v=features-1';
 import { QuestionPicker, REASON_LABEL } from '../picker.js';
 import { makePracticeQuestion, questionDirection, DIRECTION } from '../quiz.js?v=features-1';
 import { speak, canSpeak } from '../speech.js';
-import { nextTurn, actionOptions, setPending, resolvePending, targetKind, canAct, skillMp } from '../battle.js?v=features-1';
+import { nextTurn, actionOptions, setPending, resolvePending, targetKind, canAct, skillMp, collectBattleHits } from '../battle.js?v=hit-effects-1';
 import { maxHp, maxMp } from '../character.js?v=features-1';
 import { el, render } from '../dom.js';
 
@@ -39,12 +39,55 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
     log,
     panel);
 
-  function loop() {
-    if (!b.pending && !b.turn && !b.result) nextTurn(data, g, b);
+  async function loop() {
+    const hits = !b.pending && !b.turn && !b.result
+      ? collectBattleHits(b, () => nextTurn(data, g, b))
+      : [];
     session.save();
-    if (b.result) return onEnd(b.result);
+    if (b.result) {
+      if (hits.length) {
+        drawField(null);
+        panel.inert = true;
+        const popups = playHits(hits);
+        await Promise.allSettled(popups.flatMap((popup) =>
+          popup.getAnimations().map((animation) => animation.finished)));
+      }
+      if (screen.isConnected) return onEnd(b.result);
+      return;
+    }
     if (b.pending) return showQuestion();
-    return showCommand();
+    showCommand();
+    playHits(hits);
+  }
+
+  function playHits(hits) {
+    const cardFor = ({ side, i }) => (side === 'ally' ? party : enemies).children[i];
+    const impacts = new Map();
+    for (const { target, source, damage } of hits) {
+      const card = cardFor(target);
+      // 二刀流や連続した敵の攻撃は、受けたカードごとに合計して表示する。
+      const impact = impacts.get(card) ?? { damage: 0, fromAttack: false };
+      impact.damage += damage;
+      if (source) {
+        cardFor(source).classList.add('battle-striking');
+        impact.fromAttack = true;
+      }
+      impacts.set(card, impact);
+    }
+    return Array.from(impacts, ([card, { damage, fromAttack }]) => {
+      card.classList.add('battle-hit');
+      if (fromAttack) card.classList.add('battle-attack-hit');
+      const popup = el('span', {
+        class: 'battle-hit-number',
+        'aria-hidden': 'true',
+        onanimationend: () => {
+          popup.remove();
+          card.classList.remove('battle-hit', 'battle-attack-hit');
+        },
+      }, `−${damage}`);
+      card.append(popup);
+      return popup;
+    });
   }
 
   function resource(label, value, max, cls) {
@@ -231,7 +274,7 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
       const weights = data.balance.rewards?.learning_weights ?? { due: 1.2, new: 1.2, retry: 1, practice: 0.8 };
       rewards.answers += 1;
       rewards.total += correct ? weights[q.reason] ?? 1 : 1;
-      resolvePending(data, g, b, correct);
+      const hits = collectBattleHits(b, () => resolvePending(data, g, b, correct));
       session.save();
 
       drawField(actor, {}, action);
@@ -244,6 +287,7 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
           pronounce(word), el('button', { class: 'battle-next', onclick: loop }, '次へ →')),
       ], { focus: false });
       panel.querySelector('.battle-next').focus();
+      playHits(hits);
     }
 
     showPanel(title, [

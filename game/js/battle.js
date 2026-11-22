@@ -138,6 +138,24 @@ function log(b, text) {
   if (b.log.length > 40) b.log.splice(0, b.log.length - 40);
 }
 
+// 演出用の命中情報は処理中だけ集め、セーブには入れない。
+const hitCollectors = new WeakMap();
+
+export function collectBattleHits(b, advance) {
+  const hits = [];
+  hitCollectors.set(b, hits);
+  try {
+    advance();
+    return hits;
+  } finally {
+    hitCollectors.delete(b);
+  }
+}
+
+function recordHit(b, side, i, damage, source) {
+  if (damage > 0) hitCollectors.get(b)?.push({ target: { side, i }, source, damage });
+}
+
 // ---------------- 状態の見方 ----------------
 const has = (unit, kind, data) => Object.keys(unit.statuses).some((id) => data.statusEffects.get(id)?.kind === kind);
 const statusOfKind = (unit, kind, data) => Object.keys(unit.statuses).find((id) => data.statusEffects.get(id)?.kind === kind);
@@ -287,9 +305,10 @@ function allyTurnStart(data, game, b, i) {
   return true;
 }
 
-function damageAlly(data, game, b, i, amount, prefix) {
+function damageAlly(data, game, b, i, amount, prefix, source) {
   const m = game.party[i];
   const dmg = Math.max(1, Math.round(amount));
+  if (m.hp > 0) recordHit(b, 'ally', i, dmg, source);
   m.hp = Math.max(0, m.hp - dmg);
   log(b, `${prefix} ${dmg}のダメージ`);
   if (m.hp <= 0 && memberMods(data, m).endure && !b.allies[i].endured) {
@@ -464,7 +483,7 @@ function selfHit(data, game, b, i) {
   const st = battleStats(data, game, b, i);
   const ts = battleStats(data, game, b, t);
   const dmg = (st.str + st.attack) * f(data, 'confused_self_hit') * 100 / (100 + ts.def);
-  damageAlly(data, game, b, t, dmg, `${game.party[i].name}は${game.party[t].name}を攻撃！`);
+  damageAlly(data, game, b, t, dmg, `${game.party[i].name}は${game.party[t].name}を攻撃！`, { side: 'ally', i });
 }
 
 // ---------------- 攻撃 ----------------
@@ -548,6 +567,7 @@ function hitEnemy(data, game, b, i, e, damage, prefix = '') {
   const enemy = b.enemies[e];
   if (damage <= 0) return;
   const wasAlive = enemy.hp > 0;
+  if (wasAlive) recordHit(b, 'enemy', e, damage, { side: 'ally', i });
   enemy.hp = Math.max(0, enemy.hp - damage);
   if (wasAlive && enemy.hp <= 0 && game.party[i]) {
     const m = game.party[i];
@@ -596,7 +616,9 @@ function doAttack(data, game, b, i, skill, target, cm) {
     if (skill?.effect.drain) m.mp = Math.min(maxMp(data, m), m.mp + Math.min(10, Math.round(r.damage * skill.effect.drain / 10)));
   }
   if (skill?.effect.selfcost) {
+    const before = m.hp;
     m.hp = Math.max(1, Math.round(m.hp - maxHp(data, m) * skill.effect.selfcost));
+    recordHit(b, 'ally', i, before - m.hp);
     log(b, `${m.name}は反動を受けた`);
   }
 }
@@ -833,6 +855,7 @@ function enemyTurn(data, game, b, e) {
     const st = data.statusEffects.get(id);
     if (st?.kind.startsWith('dot')) {
       const d = Math.round(enemy.maxHp * (enemy.boss ? st.value * 0.4 : st.value) * (s.n ?? 1));
+      if (enemy.hp > 0) recordHit(b, 'enemy', e, d);
       enemy.hp = Math.max(0, enemy.hp - d);
       log(b, `${enemy.name}は${st.name}で ${d}のダメージ`);
     }
@@ -878,7 +901,7 @@ function enemyTurn(data, game, b, e) {
   const ecut = 1 - Math.min(1, resist + (magic || enemy.attackElement ? partyPassive(data, game, b, 'party_ecut') : 0));
   const dmg = evaluate(f(data, 'enemy_damage'), { atk, df, r: between(b, f(data, 'enemy_rand')) }) * cover * cut * ecut;
   const elName = enemy.attackElement ? data.elements.get(enemy.attackElement)?.name : null;
-  damageAlly(data, game, b, t, dmg, `${enemy.name}の${magic ? `${elName ?? ''}魔法` : '攻撃'}！ ${target.name}に`);
+  damageAlly(data, game, b, t, dmg, `${enemy.name}の${magic ? `${elName ?? ''}魔法` : '攻撃'}！ ${target.name}に`, { side: 'enemy', i: e });
   for (const id of Object.keys(ta.statuses)) if (data.statusEffects.get(id)?.kind === 'skip_until_hit') delete ta.statuses[id];
   if (target.hp <= 0) return;
   // 反撃

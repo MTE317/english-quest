@@ -13,7 +13,7 @@ import {
 } from '../dungeon.js?v=features-1';
 import { backpackSlots, backpackUsed, addItem } from '../loot.js?v=features-1';
 import { maxHp, maxMp } from '../character.js?v=features-1';
-import { createBattleView } from '../ui/battle-view.js?v=features-1';
+import { createBattleView } from '../ui/battle-view.js?v=hit-effects-1';
 import { createVictoryView } from '../ui/victory-view.js?v=features-1';
 import { updateRuneModifiers } from '../temple.js?v=features-1';
 import { stoneAllowed } from '../study.js?v=features-1';

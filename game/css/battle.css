@@ -200,6 +200,92 @@ body:has(.battle-screen) { background: #10171e; }
   border-color: #b79557;
 }
 
+.battle-screen :is(.battle-enemy, .battle-ally) { position: relative; }
+.battle-enemy { --battle-strike-step: 7px; }
+.battle-ally { --battle-strike-step: -5px; }
+.battle-striking :is(.battle-enemy-icon, .battle-ally-icon) {
+  animation: battle-strike 280ms ease-out;
+}
+@keyframes battle-strike {
+  30% {
+    transform: translateY(var(--battle-strike-step)) scale(var(--battle-strike-scale, 1.16));
+    filter: drop-shadow(0 0 5px #ffd77a);
+  }
+}
+
+.battle-screen .battle-hit {
+  --battle-impact-delay: 0ms;
+  z-index: 1;
+  animation: battle-impact 380ms ease-out var(--battle-impact-delay);
+}
+.battle-screen .battle-attack-hit { --battle-impact-delay: 85ms; }
+@keyframes battle-impact {
+  0%, 22% {
+    transform: scale(var(--battle-hit-scale, 1.04));
+    background: #582a31;
+    border-color: #ff8c82;
+    box-shadow: 0 0 0 2px #ff75634d, 0 0 14px #ff55494d;
+    opacity: 1;
+  }
+}
+
+.battle-attack-hit::after {
+  content: "";
+  position: absolute;
+  top: 42%;
+  left: 50%;
+  width: min(66%, 80px);
+  height: 3px;
+  border-radius: 50%;
+  background: #fff1c4;
+  box-shadow: 0 0 8px 2px #ff8863;
+  pointer-events: none;
+  animation: battle-hit-spark 230ms ease-out var(--battle-impact-delay) both;
+}
+@keyframes battle-hit-spark {
+  0% { opacity: 0; transform: translate(-50%, -50%) rotate(-30deg) scaleX(.35); }
+  20% { opacity: .95; }
+  100% { opacity: 0; transform: translate(-50%, -50%) rotate(-30deg) scaleX(1); }
+}
+
+.battle-hit-number {
+  position: absolute;
+  z-index: 1;
+  top: 1px;
+  right: 3px;
+  padding: 1px 6px;
+  border: 1px solid #ff9c8c;
+  border-radius: 6px;
+  background: #351923;
+  color: #ffe1d8;
+  font-size: clamp(.85rem, 4.5vw, 1.1rem);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.15;
+  white-space: nowrap;
+  pointer-events: none;
+  animation: battle-hit-number 670ms ease-out var(--battle-impact-delay) both;
+}
+.battle-enemy .battle-hit-number {
+  border-color: #ffc27f;
+  color: #ffebbd;
+}
+@keyframes battle-hit-number {
+  from { opacity: 0; transform: translateY(0); }
+  10%, 70% { opacity: 1; }
+  to { opacity: 0; transform: translateY(var(--battle-number-rise, -18px)); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .battle-screen {
+    --battle-strike-scale: 1;
+    --battle-hit-scale: 1;
+    --battle-number-rise: 0px;
+  }
+  .battle-screen :is(.battle-enemy, .battle-ally) { --battle-strike-step: 0px; }
+  .battle-attack-hit::after { content: none; }
+}
+
 .battle-log { color: var(--battle-dim); font-size: .78rem; }
 .battle-log summary {
   min-height: 36px;
