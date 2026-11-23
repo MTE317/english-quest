@@ -22,21 +22,29 @@ test('新規開始はパーティー共有1000G。旧セーブの所持金は書
   assert.equal(g.gold, 37);
 });
 
-test('全★・全季節の掲示が6件で種類を持ち、重複せず達成できる対象を出す', () => {
-  for (let star = 1; star <= 12; star++) for (let seasonIndex = 0; seasonIndex < 4; seasonIndex++) {
-    const g = fresh(); g.rank = `R${String(star).padStart(2, '0')}`; g.day = 1 + seasonIndex * 30;
-    board(g, star * 19 + seasonIndex);
-    assert.equal(g.board.length, 6, `★${star} 季節${seasonIndex}`);
+test('発見済みの冒険先だけで季節ごとに掲示6件を生成し、高ランクでも未公開地点を出さない', () => {
+  for (let seasonIndex = 0; seasonIndex < 4; seasonIndex++) {
+    const g = fresh();
+    g.rank = seasonIndex % 2 ? 'S' : 'R01';
+    g.day = 1 + seasonIndex * 30;
+    board(g, 19 + seasonIndex);
+    assert.equal(g.board.length, 6);
     assert.equal(new Set(g.board.map(questKey)).size, 6);
-    assert.deepEqual(g.board.map((q) => q.type).sort(), ['boss', 'bounty', 'gather', 'gather', 'hunt', 'hunt']);
     const season = calendarOf(data, g.day).season.id;
+    const initial = new Set(['mossy_cave', 'sunlit_forest', 'goblin_quarry']);
     for (const q of g.board) {
-      assert.equal(data.dungeons.get(q.dungeonId).rank, star);
+      assert.ok(initial.has(q.dungeonId), q.dungeonId);
       const pool = monsterPool(data, q.dungeonId, season);
       if (q.type === 'hunt') assert.ok(pool.some((m) => q.targetIds.includes(m.id)));
       if (q.type === 'gather') assert.ok(pool.some((m) => q.materialIds.includes(m.materialCommon)));
       if (q.type === 'bounty') assert.equal(data.monsters.get(q.target).role, 'bounty');
     }
+    g.cleared.mossy_cave = 1;
+    g.cleared.sunlit_forest = 1;
+    refreshBoard(data, g, seededRng(31 + seasonIndex));
+    assert.equal(g.board.length, 6);
+    const unlocked = new Set([...initial, 'ruined_fort', 'misty_marsh']);
+    assert.ok(g.board.every((q) => unlocked.has(q.dungeonId)));
   }
 });
 

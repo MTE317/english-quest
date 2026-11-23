@@ -3,9 +3,8 @@
 import { evaluate } from './expr.js';
 import { makeGear, maxHp, maxMp, gearDef } from './character.js?v=build36-1';
 import { addItem } from './loot.js?v=build36-1';
-import { currentRank, allowedDungeons } from './dungeon.js?v=systems-v1';
+import { currentRank, allowedDungeons } from './dungeon.js?v=trial-five-1';
 import { monsterPool } from './encounter.js?v=systems-v1';
-import { buildWorldMap } from './world-map.js';
 import { unlockReportedHuntJobs } from './temple.js?v=systems-v1';
 
 export const TOWN_FORMULAS = Object.freeze({
@@ -117,28 +116,27 @@ export function questDestination(data, q) {
 
 /** 今の季節・行ける場所で取り組める依頼を候補にする。 */
 function questCandidates(data, game) {
-  const scope = questBoardAreas(data, game).find(area => area.id === game.questBoardArea);
-  const star = scope?.star ?? currentRank(data, game).maxDungeonRank;
   const season = calendarOf(data, game.day).season?.id;
-  const definitions = data.quests.filter((q) => q.rank === star && data.questTypes.some((t) => t.id === q.type));
-  const dungeons = scope?.dungeons ?? allowedDungeons(data, game).filter(d => d.rank === star);
+  const dungeons = allowedDungeons(data, game);
+  const ranks = new Set(dungeons.map(({ rank }) => rank));
+  const definitions = data.quests.filter((q) => ranks.has(q.rank) && data.questTypes.some((t) => t.id === q.type));
   const places = dungeons.map((dungeon) => {
     const available = monsterPool(data, dungeon.id, season);
     const residents = [...data.monsters.values()].filter((m) => ['normal', 'season'].includes(m.role) && m.dungeons.includes(dungeon.id));
     const materialIds = [...new Set(residents.map((m) => m.materialCommon))]
-      .filter((id) => data.materials.get(id)?.kind === 'common' && data.materials.get(id)?.rank === star).sort();
+      .filter((id) => data.materials.get(id)?.kind === 'common' && data.materials.get(id)?.rank === dungeon.rank).sort();
     return { dungeon, available, residents, materialIds };
   });
   const candidates = [];
   for (const def of definitions) {
     if (def.type === 'bounty') {
       const monster = data.monsters.get(def.target);
-      const destinations = dungeons.filter((d) => monster?.role === 'bounty' && monster.dungeons.includes(d.id));
+      const destinations = dungeons.filter((d) => d.rank === def.rank && monster?.role === 'bounty' && monster.dungeons.includes(d.id));
       if (destinations.length) candidates.push({ def, target: monster.id, dungeonId: destinations[0].id, destinationIds: destinations.map((d) => d.id) });
       continue;
     }
     for (const { dungeon, available, residents, materialIds } of places) {
-      if (!available.length) continue;
+      if (dungeon.rank !== def.rank || !available.length) continue;
       const base = { def, dungeonId: dungeon.id, destinationIds: [dungeon.id] };
       if (def.type === 'hunt') {
         candidates.push({ ...base, target: dungeon.id, targetMode: 'dungeon', targetIds: residents.map((m) => m.id) });
@@ -152,23 +150,13 @@ function questCandidates(data, game) {
   return candidates;
 }
 
+// 旧地域別掲示を一時停止。発見済みの冒険先を一つの掲示板に集約する。
 export function questBoardAreas(data, game) {
-  const world = buildWorldMap(data.dungeons, allowedDungeons(data, game), game);
-  return world.regions.flatMap(region => [...new Set(region.dungeons.map(d => d.rank))].map(star => ({
-    id: `${region.id}:${star}`, region: region.id, star, dungeons: region.dungeons.filter(d => d.rank === star),
-  })));
+  return [{ id: 'available', dungeons: allowedDungeons(data, game) }];
 }
 
 export function selectQuestBoardArea(data, game, areaId, rng = Math.random) {
-  if (areaId && !questBoardAreas(data, game).some(area => area.id === areaId)) throw new Error('この地域の依頼はまだ受けられません。');
-  const previous = game.questBoardArea ?? '';
-  if (previous !== areaId) {
-    game.questBoardByArea ??= {};
-    game.questBoardByArea[previous] = game.board;
-    game.board = game.questBoardByArea[areaId] ?? [];
-    game.questBoardArea = areaId;
-    delete game.specialQuest;
-  }
+  if (areaId && areaId !== 'available') throw new Error('地域別掲示板は現在使用していません。');
   return fillBoard(data, game, rng);
 }
 
@@ -191,10 +179,13 @@ function createQuestOffer(data, game, candidate, rng) {
 // 受注中の契約・預かり金も game に保存され、全滅時は遠征開始前の状態へ戻る。
 export function fillBoard(data, game, rng = Math.random) {
   game.quests ??= [];
-  if (game.questBoardVersion !== 2) {
-    game.board = []; // 未受注だけ更新。旧セーブの受注済み契約はそのまま残す。
+  if (game.questBoardVersion !== 3) {
+    game.board = []; // 旧地域の未受注分だけ更新。受注済み契約と預かり金は維持する。
     game.questBoardUsed = [];
-    game.questBoardVersion = 2;
+    game.questBoardByArea = {};
+    delete game.questBoardArea;
+    delete game.specialQuest;
+    game.questBoardVersion = 3;
   }
   game.board ??= [];
   game.questBoardUsed ??= [];

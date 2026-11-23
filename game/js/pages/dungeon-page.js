@@ -9,15 +9,15 @@ import { GameSession } from '../save.js?v=rune-study-1';
 import { normalizeGame } from '../game-state.js?v=party6-1';
 import {
   allowedDungeons, allowedStones, expeditionFee, startRun, startNextBattle, afterBattle, returnToTown, continueRun, resolveLoot,
-  dungeonRegion, isBossBattle, runFloorRow, runFloorCount, returnItems, currentRank, useItemOutsideBattle, FIELD_ITEM_EFFECTS,
-} from '../dungeon.js?v=expedition-study-1';
+  isBossBattle, runFloorRow, runFloorCount, returnItems, currentRank, useItemOutsideBattle, FIELD_ITEM_EFFECTS,
+} from '../dungeon.js?v=trial-five-1';
 import { backpackSlots, backpackUsed, addItem } from '../loot.js?v=build36-1';
 import { maxHp, maxMp } from '../character.js?v=build36-1';
 import { createBattleView } from '../ui/battle-view.js?v=systems-v1';
 import { createVictoryView } from '../ui/victory-view.js?v=pixel-town-1';
 import { el, render, stars } from '../dom.js';
-import { buildWorldMap, newDiscoveries } from '../world-map.js?v=world-map-1';
-import { createWorldMapView } from '../ui/world-map-view.js?v=world-map-1';
+import { buildWorldMap, newDiscoveries } from '../world-map.js?v=trial-five-1';
+import { createWorldMapView } from '../ui/world-map-view.js?v=trial-five-1';
 import { setSceneMusic } from '../battle-music.js?v=music-suite-1';
 
 import { expeditionScene } from '../ui/scenery.js';
@@ -70,19 +70,12 @@ function showDeparture(message = null) {
   const beginner = rank.maxDungeonRank === 1 && nearby && (g.cleared?.[nearby.id] ?? 0) < 3 && averageLevel < 5;
   const suggested = beginner ? nearby : dungeons.find(d => d.rank === rank.maxDungeonRank && d.kind === '標準') ?? dungeons[0];
   const st = { dungeonId: suggested.id, stoneId: null };
-  const regions = new Map();
-  for (const dungeon of dungeons) {
-    const region = dungeonRegion(dungeon);
-    if (!regions.has(region)) regions.set(region, []);
-    regions.get(region).push(el('option', { value: dungeon.id, selected: dungeon.id === st.dungeonId },
-      stars(dungeon.rank) + ' ' + dungeon.name + (g.cleared?.[dungeon.id] ? '（踏破済み）' : '')));
-  }
-  const destinations = [...regions].map(([label, options]) => el('optgroup', { label }, options));
+  // 地域の接続線とノードは再設計中。公開中の5か所だけを一覧で表示する。
   const dungeonLabel = (dungeon) => stars(dungeon.rank) + ' ' + dungeon.name
     + (g.cleared?.[dungeon.id] ? '（踏破済み）' : '');
   const world = buildWorldMap(data.dungeons, dungeons, g);
   const seen = Array.isArray(g.worldMapSeen) ? g.worldMapSeen : [];
-  const discoveries = newDiscoveries(world.regions, seen);
+  const discoveries = newDiscoveries(world.dungeons, seen);
   const destinationHeading = el('h3', { tabindex: '-1' });
   const lure = el('input', { type: 'checkbox' });
   const stoneSel = el('select', { class: 'select', 'aria-describedby': 'expedition-study-help', onchange: (e) => { st.stoneId = e.target.value; } });
@@ -116,7 +109,7 @@ function showDeparture(message = null) {
     },
   }, '出発する');
   const atlas = createWorldMapView({
-    world, discoveries, selectedDungeon: st.dungeonId, dungeonLabel,
+    world, discoveries, selectedDungeon: st.dungeonId,
     onDungeon: (id) => {
       st.dungeonId = id;
       fill();
@@ -132,9 +125,6 @@ function showDeparture(message = null) {
       message ? el('p', { class: 'panel error', role: 'alert' }, message, '　', el('a', { href: 'index.html?facility=temple' }, '神殿へ')) : null,
       atlas,
       el('div', { class: 'panel departure-plan' },
-        el('label', {}, '世界地図から行き先を選ぶ',
-          el('select', { class: 'select', onchange: (e) => { st.dungeonId = e.target.value; fill(); } },
-            destinations)),
         destinationHeading,
         info,
         g.items.bounty_lure > 0 ? el('label', {}, lure, ` おびき寄せ香を1個使う（所持 ${g.items.bounty_lure}）`) : null,
@@ -266,7 +256,7 @@ function showReturned(pack) {
       el('div', { class: 'muted' }, '拾った物は町の倉庫に入った。')),
     el('div', { class: 'row' },
       el('a', { class: 'btn primary', href: 'index.html' }, '町へ'),
-      el('button', { type: 'button', onclick: () => { showDeparture(); window.scrollTo(0, 0); } }, '世界地図へ')));
+      el('button', { type: 'button', onclick: () => { showDeparture(); window.scrollTo(0, 0); } }, '冒険先一覧へ')));
 }
 
 function lootActions(result) {

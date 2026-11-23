@@ -7,13 +7,14 @@
 //   'return_point' … 帰還ポイント（帰るか先へ進むかを選ぶ）
 //   'cleared'      … いちばん奥のボスを倒した（町に帰るだけ）
 import { createBattle, finishBattle, battleRewards, curedBy } from './battle.js?v=systems-v1';
-import { makeEncounter, floorRow, planBounty, dungeonRouteUnlocked } from './encounter.js?v=systems-v1';
+import { makeEncounter, floorRow, planBounty } from './encounter.js?v=systems-v1';
 import { rollBattleLoot, addToBackpack, swapIntoBackpack, unloadBackpack } from './loot.js?v=build36-1';
 import { gainXp, maxHp, maxMp, affixSum } from './character.js?v=build36-1';
-import { advanceDays, calendarOf, countKills, refreshBoard } from './town.js?v=systems-v1';
+import { advanceDays, calendarOf, countKills, refreshBoard } from './town.js?v=trial-five-1';
 import { discoverJobs, recordStoredMaterials } from './temple.js?v=systems-v1';
 import { memberMods } from './growth.js?v=build36-1';
 import { planExploration, resolveExploration, commitExploration, explorationEntryAllowed } from './exploration.js';
+import { isTrialDungeonUnlocked } from './world-map.js?v=trial-five-1';
 
 /** 乱数の種から 0〜1 の乱数を返す関数（状態は obj[key] に入れて保存できる） */
 export function seededRng(obj, key = 'rng') {
@@ -27,11 +28,11 @@ export function currentRank(data, game) {
   return data.ranks.find((r) => r.id === game.rank) ?? data.ranks[0];
 }
 
-/** 今の冒険者ランクで行けるダンジョン */
+/** 先行5か所だけを公開。ランクではなく踏破によって新しい冒険先を発見する。 */
 export function allowedDungeons(data, game) {
-  const max = currentRank(data, game).maxDungeonRank;
-  return [...data.dungeons.values()].filter((dungeon) => dungeon.rank <= max && dungeonRouteUnlocked(data, game, dungeon)
-    && explorationEntryAllowed(data.balance.dungeon?.exploration, game, dungeon.id))
+  return [...data.dungeons.values()]
+    .filter((dungeon) => isTrialDungeonUnlocked(game, dungeon.id)
+      && explorationEntryAllowed(data.balance.dungeon?.exploration, game, dungeon.id))
     .sort((a, b) => a.rank - b.rank);
 }
 
@@ -64,7 +65,7 @@ export function allowedStones(lex) {
 export function startRun(data, session, { dungeonId, stoneId, quizState, seed, bountyLure = false }) {
   const dg = data.dungeons.get(dungeonId);
   if (!dg) throw new Error(`ダンジョン ${dungeonId} がない`);
-  if (!allowedDungeons(data, session.game).includes(dg)) throw new Error('今のランクでは入れない');
+  if (!allowedDungeons(data, session.game).includes(dg)) throw new Error('この冒険先はまだ発見していません。');
   const fee = expeditionFee(data, dg);
   if (session.game.gold < fee) throw new Error(`遠征費 ${fee} G が必要です。`);
   if (bountyLure && !(session.game.items.bounty_lure > 0)) throw new Error('おびき寄せ香を持っていません。');

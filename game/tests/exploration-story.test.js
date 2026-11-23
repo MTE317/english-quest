@@ -5,34 +5,43 @@ import { createNewGame, defaultPartySpecs } from '../js/game-state.js';
 import { commitExploration } from '../js/exploration.js';
 import { explorationStories, acceptExplorationStory, reportExplorationStory } from '../js/exploration-story.js';
 
-test('探索依頼は安全帰還後に掲示し、新規踏破を一度だけ報酬に換える', () => {
+test('現在遊べる探索依頼は安全帰還後に掲示し、新規踏破で一度だけ報酬を受け取る', () => {
   const data = loadData();
   const game = createNewGame(data, defaultPartySpecs(data));
-  game.rank = 'R02';
   const [first, second] = data.balance.exploration_stories;
   game.cleared = { [first.dungeon]: 1, [second.dungeon]: 1 };
-  const source = [
-    { key: 'survey', flag: first.flag },
-    { key: 'entrance', discovery: second.discovery },
-  ];
   assert.deepEqual(explorationStories(data, game), []);
   assert.throws(() => acceptExplorationStory(data, game, first.id));
-  commitExploration(game, source);
-  assert.deepEqual(explorationStories(data, game).map(x => x.id), [first.id]);
+  commitExploration(game, [
+    { key: 'survey', flag: first.flag },
+    { key: 'entrance', discovery: second.discovery },
+  ]);
+  assert.deepEqual(explorationStories(data, game).map((x) => x.id), [first.id]);
+  acceptExplorationStory(data, game, first.id);
+  assert.throws(() => reportExplorationStory(data, game, first.id));
+  game.cleared[first.dungeon]++;
+  const gold = game.gold, points = game.rankPoints;
+  reportExplorationStory(data, game, first.id);
+  assert.equal(game.gold - gold, first.reward.gold);
+  assert.equal(game.rankPoints - points, first.reward.points);
+  assert.throws(() => reportExplorationStory(data, game, first.id));
+  assert.ok(!explorationStories(data, game).some(({ id }) => id === second.id));
+  assert.throws(() => acceptExplorationStory(data, game, second.id));
+});
 
-  for (const story of [first, second]) {
-    acceptExplorationStory(data, game, story.id);
-    assert.throws(() => reportExplorationStory(data, game, story.id));
-    game.cleared[story.dungeon]++;
-    if (story.objectiveFlag) {
-      assert.throws(() => reportExplorationStory(data, game, story.id));
-      commitExploration(game, [{ key: 'objective', flag: story.objectiveFlag }]);
-    }
-    const gold = game.gold, points = game.rankPoints;
-    reportExplorationStory(data, game, story.id);
-    assert.equal(game.gold - gold, story.reward.gold);
-    assert.equal(game.rankPoints - points, story.reward.points);
-    for (const [id, count] of Object.entries(story.reward.materials)) assert.equal(game.storage.materials[id], count);
-    assert.throws(() => reportExplorationStory(data, game, story.id));
-  }
+test('すでに受注済みの旧探索依頼は非公開地点でも報告できる', () => {
+  const data = loadData();
+  const game = createNewGame(data, defaultPartySpecs(data));
+  const [first, second] = data.balance.exploration_stories;
+  game.explorationStories = { [first.id]: { claimed: true }, [second.id]: { clearsAtAcceptance: 1 } };
+  game.cleared = { [second.dungeon]: 2 };
+  commitExploration(game, [
+    { key: 'entrance', discovery: second.discovery },
+    { key: 'tablet', flag: second.objectiveFlag },
+  ]);
+  assert.equal(explorationStories(data, game).find(({ id }) => id === second.id)?.ready, true);
+  const gold = game.gold;
+  reportExplorationStory(data, game, second.id);
+  assert.equal(game.gold - gold, second.reward.gold);
+  assert.equal(game.explorationStories[second.id].claimed, true);
 });

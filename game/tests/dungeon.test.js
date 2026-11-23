@@ -58,35 +58,38 @@ function fightOut(session, acc = 1, seed = 1) {
   while (nextTurn(data, session.game, b)) { setPending(b, { type: 'attack', target: 0 }, {}); resolvePending(data, session.game, b, r() < acc); session.save(); }
 }
 
-test('ランクで行けるダンジョンが決まる（見習いは★1だけ）', () => {
+test('先行5か所は踏破で解放され、ランクでは増えない', () => {
   const game = createNewGame(data, party);
-  assert.ok(allowedDungeons(data, game).every((d) => d.rank === 1));
-  game.rank = 'R02';
-  assert.ok(allowedDungeons(data, game).some((d) => d.rank === 2));
+  assert.deepEqual(allowedDungeons(data, game).map(({ id }) => id).sort(),
+    ['mossy_cave', 'sunlit_forest', 'goblin_quarry'].sort());
+  game.rank = 'S';
+  assert.equal(allowedDungeons(data, game).length, 3);
+  game.rank = 'R01';
+  game.cleared.mossy_cave = 1;
+  assert.ok(allowedDungeons(data, game).some(({ id }) => id === 'ruined_fort'));
+  assert.ok(!allowedDungeons(data, game).some(({ id }) => id === 'misty_marsh'));
+  game.cleared.sunlit_forest = 1;
+  assert.equal(allowedDungeons(data, game).length, 5);
 });
 
-test('★4昇格後は地図に載った目的地へ既存教材で出発し、帰還して討伐を報告できる', () => {
+test('★2の冒険先も踏破で発見すればR01のまま既存教材で遠征し、依頼を報告できる', () => {
   const session = newSession();
   const game = session.game;
   const rng = seededRng({ rng: 9 });
-  const atlas = () => buildWorldMap(data.dungeons, allowedDungeons(data, game), game);
-  game.rank = 'R03+';
-  game.rankPoints = 48;
-  game.cleared.howling_canyon = 1;
-  game.examsPassed = ['R04'];
+  game.cleared.mossy_cave = 1;
   game.gold = 1000;
   for (const member of game.party) {
     gainXp(data, member, 1000000);
     member.hp = maxHp(data, member);
     member.mp = maxMp(data, member);
   }
-  assert.ok(atlas().regions.flatMap(region => region.dungeons).every(dungeon => dungeon.rank <= 3));
-  checkRankUp(data, game);
-  assert.equal(game.rank, 'R04');
+  assert.equal(game.rank, 'R01');
+  const available = allowedDungeons(data, game);
+  assert.ok(available.some(({ id }) => id === 'ruined_fort'));
+  assert.equal(buildWorldMap(data.dungeons, available, game).dungeons.length, 4);
   makeBoard(data, game, rng);
   const offer = game.board.find(quest => quest.type === 'boss');
-  assert.equal(offer?.rank, 4);
-  assert.ok(atlas().regions.some(region => region.dungeons.some(dungeon => dungeon.id === offer.dungeonId)));
+  assert.ok(offer && available.some(({ id }) => id === offer.dungeonId));
   const quest = acceptQuest(data, game, offer.uid, rng);
 
   const empty = { id: 'empty', star: 4 };
@@ -432,7 +435,7 @@ test('周回の箱と採集は再発生し、満杯時は再開後に既存の�
   }
 });
 
-test('現行の固定発見で行き先を記録し、入場は既存ランク規則に従う', () => {
+test('旧探索イベントは残すが、対象外のダンジョンはランクや記録だけで開かない', () => {
   const session = newSession();
   const options = { ...expedition, dungeonId: 'sunlit_forest' };
   const event = data.balance.dungeon.exploration.fixed[options.dungeonId].find(({ type }) => type === 'discover');
@@ -443,9 +446,11 @@ test('現行の固定発見で行き先を記録し、入場は既存ランク�
   assert.equal(session.run.explorationNotices.find(({ type }) => type === 'discover').discovery, event.discovery);
   returnToTown(data, session);
   assert.equal(session.game.exploration.discoveries[event.discovery], true);
+  session.game.rank = 'S';
   assert.ok(!allowedDungeons(data, session.game).some(({ id }) => id === target));
-  session.game.rank = 'R02';
-  assert.ok(allowedDungeons(data, session.game).some(({ id }) => id === target));
+  assert.ok(!allowedDungeons(data, session.game).some(({ id }) => id === 'misty_marsh'));
+  session.game.cleared.sunlit_forest = 1;
+  assert.ok(allowedDungeons(data, session.game).some(({ id }) => id === 'misty_marsh'));
 });
 
 test('休憩は生存者だけを部分回復し、上限を超えない', () => {
