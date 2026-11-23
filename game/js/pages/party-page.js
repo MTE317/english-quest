@@ -194,6 +194,7 @@ function showMember(index) {
     memberBanner(m),
     el('div', { class: 'row' },
       el('button', { onclick: () => showSkills(index) }, 'スキルツリー'),
+      el('button', { onclick: () => showLoadout(index) }, 'スキル装備'),
       el('button', { onclick: () => showCommon(index) }, '共通ツリー')),
     el('h2', {}, '装備'),
     el('ul', { class: 'equipment-slots' },
@@ -211,6 +212,70 @@ function showMember(index) {
     el('details', { class: 'panel' }, el('summary', {}, '能力値'),
       el('p', { class: 'muted small' }, m.lv < cap ? `次のレベルまで ${xpToNext(data, m.lv) - m.xp}` : '最大レベル'),
       el('table', { class: 'stat-table' }, el('tbody', {}, statRows.map(([k, v]) => el('tr', {}, el('th', {}, k), el('td', {}, String(v))))))),
+  );
+  window.scrollTo(0, 0);
+}
+
+// ---------------- スキル装備・取り外し ----------------
+// 転職前のジョブで習得したスキルもまとめて管理する。
+function showLoadout(index, kind = 'actions', message = '') {
+  const member = session.game.party[index];
+  const cap = capacity(data, member);
+  const used = usedCapacity(data, member);
+  const isPassiveKind = kind === 'passives';
+  const equippedIds = member.loadout?.[kind] ?? [];
+  const skills = [...data.skills.values()]
+    .filter((skill) => (skill.kind === 'passive') === isPassiveKind && isLearned(member, skill))
+    .sort((a, b) => Number(equippedIds.includes(b.id)) - Number(equippedIds.includes(a.id))
+      || Number(a.job !== member.job) - Number(b.job !== member.job)
+      || a.job.localeCompare(b.job) || a.path.localeCompare(b.path) || a.stage - b.stage);
+
+  function changeSkill(skill, equipped) {
+    try {
+      session.update((game) => {
+        const target = game.party[index];
+        if (equipped) unequipSkill(target, skill.id);
+        else equipSkill(data, target, skill.id);
+      });
+      showLoadout(index, kind);
+    } catch (error) {
+      showLoadout(index, kind, error.message);
+    }
+  }
+
+  function skillCard(skill) {
+    const equipped = equippedIds.includes(skill.id);
+    const blocked = !equipped ? equipBlock(data, member, skill) : '';
+    return el('li', { class: 'panel skill-loadout-card' },
+      el('div', { class: 'skill-loadout-info' },
+        el('strong', {}, skill.name, equipped ? ' ・装着中' : ''),
+        el('p', { class: 'muted small' }, `${jobName(skill.job)}・${skill.path}・必要枠 ${skill.cost}${isPassiveKind ? '' : `・MP ${skillMp(data, member, skill)}`}`),
+        el('p', { class: 'small' }, describeSkillEffect(data, skill))),
+      el('button', {
+        class: equipped ? 'ghost' : 'primary',
+        disabled: !!blocked,
+        title: blocked || '',
+        onclick: () => changeSkill(skill, equipped),
+      }, equipped ? '取り外す' : blocked || '装着する'));
+  }
+
+  render(view,
+    el('button', { class: 'ghost', onclick: () => showMember(index) }, `← ${member.name}へ`),
+    memberSwitcher(index, (next) => showLoadout(next, kind)),
+    memberBanner(member),
+    el('h2', {}, 'スキル装備'),
+    el('p', { class: 'muted small' }, '習得済みのスキルは、転職前のジョブのものもここで装着・取り外しできます。ほかのジョブの奥義は装着できません。'),
+    el('p', { class: 'panel small' }, `通常枠 ${used.actions}/${cap.actions}・パッシブ枠 ${used.passives}/${cap.passives}`),
+    message ? el('p', { class: 'error', role: 'status' }, message) : null,
+    el('div', { class: 'row', role: 'group', 'aria-label': 'スキルの種類' },
+      el('button', { class: isPassiveKind ? 'ghost' : 'primary', 'aria-pressed': String(!isPassiveKind),
+        onclick: () => showLoadout(index, 'actions') }, `通常スキル（${used.actions}/${cap.actions}）`),
+      el('button', { class: isPassiveKind ? 'primary' : 'ghost', 'aria-pressed': String(isPassiveKind),
+        onclick: () => showLoadout(index, 'passives') }, `パッシブ（${used.passives}/${cap.passives}）`)),
+    skills.length
+      ? el('ul', { class: 'choice-list skill-loadout-list' }, skills.map(skillCard))
+      : el('p', { class: 'panel muted' }, '習得済みのスキルはありません。スキルツリーで習得できます。'),
+    el('button', { class: 'ghost', onclick: () => showSkills(index) }, 'スキルツリーを見る'),
   );
   window.scrollTo(0, 0);
 }
