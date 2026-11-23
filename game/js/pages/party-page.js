@@ -1,15 +1,15 @@
 // パーティの画面：キャラメイク・6人の一覧・能力値・装備8枠
 import { loadGameData } from '../gamedata.js?v=rune-study-1';
 import { GameSession } from '../save.js?v=rune-study-1';
-import { createNewGame, defaultPartySpecs, normalizeGame } from '../game-state.js?v=party6-1';
+import { createNewGame, defaultPartySpecs, normalizeGame } from '../game-state.js?v=skill-loadout-3';
 import {
   computeStats, SLOTS, SLOT_LABEL, STAT_LABEL, canEquip, equipFromStorage, unequip, gearDef,
   aptitudeGrade, xpToNext, levelCap, gainXp, makeGear,
-} from '../character.js?v=build36-1';
+} from '../character.js?v=skill-loadout-3';
 import {
   jobPaths, isLearned, skillPrerequisite, learnBlock, learnSkill, equipBlock, equipSkill, unequipSkill, capacity, usedCapacity,
   commonPoints, commonBlock, learnCommon, masteryLevel, isJobMastered,
-} from '../growth.js?v=build36-1';
+} from '../growth.js?v=skill-loadout-3';
 import { skillMp } from '../battle.js?v=build36-1';
 import { el, render, stars } from '../dom.js';
 import { describeFixedEffects } from '../equipment-effects.js?v=build36-1';
