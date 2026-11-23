@@ -51,7 +51,10 @@ export function jobPaths(data, jobId) {
 }
 /** 覚えているか（ap_to_learn が0のものは最初から） */
 export function isLearned(member, skill) {
-  return skill.apToLearn === 0 || (member.learned ?? []).includes(skill.id);
+  if ((member.learned ?? []).includes(skill.id)) return true;
+  // AP 0 は「そのジョブに初めて就いた時点で覚える初期スキル」。
+  // 未経験ジョブの初期スキルまで全員共通で使える状態にはしない。
+  return skill.apToLearn === 0 && Object.hasOwn(member.ap ?? {}, skill.job);
 }
 /** 同じ枝の一つ前の段階。習得判定と詳細表示で共有する。 */
 export function skillPrerequisite(data, skill) {
@@ -81,14 +84,31 @@ export function learnSkill(data, member, skillId) {
 }
 
 // ---------------- スキルの枠（ほかのジョブのスキルも持ち出せる） ----------------
+const isPassive = (s) => s.kind === 'passive';
+
+/** 既存セーブを含め、アクティブとパッシブをスキル種別どおりに必ず分離する。 */
+function normalizeLoadout(data, member) {
+  const current = member.loadout ?? { actions: [], passives: [] };
+  const ids = [...(current.actions ?? []), ...(current.passives ?? [])];
+  const actions = [];
+  const passives = [];
+  for (const id of ids) {
+    const skill = data.skills.get(id);
+    if (!skill || !isLearned(member, skill)) continue;
+    const list = isPassive(skill) ? passives : actions;
+    if (!list.includes(id)) list.push(id);
+  }
+  member.loadout = { actions, passives };
+  return member.loadout;
+}
+
 export function ensureLoadout(data, member) {
-  if (member.loadout) return member.loadout;
+  if (member.loadout) return normalizeLoadout(data, member);
   // はじめて：今のジョブの覚えているスキルを入るだけつける
   member.loadout = { actions: [], passives: [] };
   for (const s of jobSkills(data, member.job)) if (isLearned(member, s) && !equipBlock(data, member, s)) equipSkill(data, member, s.id);
   return member.loadout;
 }
-const isPassive = (s) => s.kind === 'passive';
 export function capacity(data, member) {
   const m = commonMods(data, member);
   return {
@@ -97,13 +117,13 @@ export function capacity(data, member) {
   };
 }
 export function usedCapacity(data, member) {
-  const lo = member.loadout ?? { actions: [], passives: [] };
+  const lo = normalizeLoadout(data, member);
   const sum = (ids) => ids.reduce((a, id) => a + (data.skills.get(id)?.cost ?? 0), 0);
   return { actions: sum(lo.actions), passives: sum(lo.passives) };
 }
 /** 枠につけられるか → 理由 */
 export function equipBlock(data, member, skill) {
-  const lo = member.loadout ?? { actions: [], passives: [] };
+  const lo = normalizeLoadout(data, member);
   const list = isPassive(skill) ? lo.passives : lo.actions;
   if (list.includes(skill.id)) return 'つけている';
   if (!isLearned(member, skill)) return '覚えていない';
