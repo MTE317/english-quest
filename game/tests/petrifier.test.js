@@ -136,3 +136,37 @@ test('パッシブ・耐性・正答の率と、通常正規化した重複装�
   const { probes } = await import('../verification/petrifier/probes.mjs');
   assert.ok(probes(256).sourceUnchangedAtCompletion);
 });
+
+
+test('確定した境界: 命中付き銃技だけ石化率が増え、既存の状態専用石化弾は対象外', () => {
+  const oldSkill = data.skills.get('gunner_p2_s5');
+  assert.equal(oldSkill.kind, 'status');
+  assert.deepEqual(oldSkill.effect.st, ['石化', .35]);
+  let boosted = 0, oldSuccess = 0;
+  for (let i = 0; i < 256; i++) {
+    const seed = 1217071 + i * 7919;
+    const plain = context({ seed }), passive = context({ seed, passive: true });
+    use(plain); use(passive);
+    assert.ok(plain.enemies[0].hp < 100000);
+    assert.equal(passive.enemies[0].hp, plain.enemies[0].hp);
+    const p = !!plain.enemies[0].statuses.petrify, q = !!passive.enemies[0].statuses.petrify;
+    assert.ok(!p || q);
+    if (!p && q) boosted++;
+    const outcomes = [];
+    for (const enabled of [false, true]) {
+      const c = context({ seed, passive: enabled });
+      // 習得済みの持出し技能を使う検証用セーブ。実ユーザーの保存には触れない。
+      c.m.learned.push(oldSkill.id);
+      c.m.loadout.actions = [oldSkill.id];
+      c.enemies[0].evasion = 1;
+      assert.equal(actionOptions(data, c.game, c.b, 0).skills.find(x => x.skill.id === oldSkill.id).reason, '');
+      use(c, oldSkill.id);
+      assert.equal(c.enemies[0].hp, 100000);
+      outcomes.push(!!c.enemies[0].statuses.petrify);
+    }
+    assert.equal(outcomes[0], outcomes[1], `状態専用技能はseed ${seed}でも補正しない`);
+    if (outcomes[0]) oldSuccess++;
+  }
+  assert.ok(boosted > 0, '命中付き銃技には補正が働く');
+  assert.ok(oldSuccess > 0 && oldSuccess < 256, '状態専用技は従来の確率判定を行う');
+});
