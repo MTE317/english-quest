@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createNewGame } from '../js/game-state.js';
 import {
-  learnBlock, learnSkill, isLearned, jobSkills, equipBlock, equipSkill, unequipSkill, capacity, usedCapacity, actionSkills,
+  learnBlock, learnSkill, isLearned, jobSkills, ensureLoadout, equipBlock, equipSkill, unequipSkill, capacity, usedCapacity, actionSkills,
   commonPoints, learnCommon, commonBlock, memberMods, parseBonusText, isJobMastered, masteryLevel, addMasteryKill,
   changeJob, availableJobs, GROWTH_FORMULAS,
 } from '../js/growth.js';
@@ -19,6 +19,20 @@ test('最初は1段目のスキルを覚えていて、枠についている', (
   assert.ok(s1.every((s) => isLearned(w, s)));
   assert.ok(actionSkills(data, w).length > 0);
   assert.ok(actionSkills(data, w).every((s) => s.job === 'warrior' && s.kind !== 'passive'));
+});
+
+test('未経験ジョブの初期スキルは共有されず、装備枠はアクティブ・パッシブに分離される', () => {
+  const w = fresh().party[0];
+  const foreign = jobSkills(data, 'black_mage').find((s) => s.stage === 1);
+  assert.equal(isLearned(w, foreign), false);
+
+  const active = jobSkills(data, 'warrior').find((s) => s.stage === 1 && s.kind !== 'passive');
+  const passive = jobSkills(data, 'warrior').find((s) => s.kind === 'passive');
+  w.learned.push(passive.id);
+  w.loadout = { actions: [passive.id, active.id], passives: [active.id, passive.id] };
+  ensureLoadout(data, w);
+  assert.deepEqual(w.loadout.actions, [active.id]);
+  assert.deepEqual(w.loadout.passives, [passive.id]);
 });
 
 test('AP で2段目を覚える（前の段が必要・AP が減る・パッシブは能力値に入る）', () => {
@@ -39,9 +53,11 @@ test('枠：cost の合計が上限まで。ほかのジョブのスキルも持
   const g = fresh(); const w = g.party[0];
   const cap = capacity(data, w);
   assert.equal(cap.actions, GROWTH_FORMULAS.action_capacity);
-  // 黒魔道士のスキルを覚えていることにする
+  // 未経験ジョブの初期スキルは共有されない。転職経験があれば持ち出せる。
   const fire = jobSkills(data, 'black_mage').find((s) => s.stage === 1 && s.kind === 'attack');
-  assert.equal(equipBlock(data, w, fire), ''); // 1段目は最初から覚えている扱い
+  assert.equal(equipBlock(data, w, fire), '覚えていない');
+  w.ap.black_mage = 0; // 一度そのジョブに就いた履歴
+  assert.equal(equipBlock(data, w, fire), '');
   equipSkill(data, w, fire.id);
   assert.ok(actionSkills(data, w).includes(fire));
   const fin = jobSkills(data, 'black_mage').find((s) => s.isFinal);
