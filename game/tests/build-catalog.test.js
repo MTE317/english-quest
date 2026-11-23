@@ -29,9 +29,9 @@ test('開発専用36ビルドは公開14職・16武器を含み、既存12編成
   assert.equal(BUILD_CATALOG.builds.length, 36);
   assert.equal(new Set(BUILD_CATALOG.builds.map((b) => b.id)).size, 36);
   assert.equal(new Set(BUILD_CATALOG.builds.map((b) => b.name)).size, 36);
-  assert.equal(Object.keys(PROFILES).length, 48);
+  assert.equal(Object.keys(PROFILES).length, 49);
   assert.deepEqual(Object.keys(LEGACY_PROFILES), [
-    'balanced', 'poison', 'bleed', 'critical', 'weakness', 'counter',
+    'balanced6', 'balanced', 'poison', 'bleed', 'critical', 'weakness', 'counter',
     'spellblade', 'support', 'healer', 'magic', 'supplies', 'brawler',
   ]);
   for (const [id, profile] of Object.entries(LEGACY_PROFILES)) assert.equal(PROFILES[id], profile);

@@ -192,7 +192,7 @@ function buildBattleData(raw) {
   }));
   const monsters = raw.monsters.map((r) => ({
     id: r.id, name: r.name, icon: r.icon, rank: toNumber(r.dungeon_rank, 1), dungeons: splitList(r.dungeons),
-    types: splitList(r.types), weak: splitList(r.weak), resist: splitList(r.resist), immune: splitList(r.immune),
+    types: splitList(r.types), weak: splitList(r.weak), resist: splitList(r.resist), strongWeak: splitList(r.strong_weak), immune: splitList(r.immune),
     hpMul: toNumber(r.hp_mul, 1), atkMul: toNumber(r.atk_mul, 1), defMul: toNumber(r.def_mul, 1), resMul: toNumber(r.res_mul, 1), spdMul: toNumber(r.spd_mul, 1),
     magicRate: toNumber(r.magic_rate, 0), status: r.status || null, statusRate: toNumber(r.status_rate, 0),
     attackElement: r.attack_element && r.attack_element !== 'none' ? r.attack_element : null,
@@ -202,7 +202,7 @@ function buildBattleData(raw) {
   const skills = raw.skills.map((r) => ({
     id: r.id, job: r.job, path: r.path, stage: toNumber(r.stage, 1), name: r.name, kind: r.kind,
     cost: toNumber(r.cost, 0), mp: toNumber(r.mp, 0), apToLearn: toNumber(r.ap_to_learn, 0), isFinal: r.is_final === '1',
-    elements: splitList(r.element).filter((e) => e !== 'none'),
+    elements: splitList(r.element),
     effect: parseJsonCell(r.effect_json, `skills.csv の ${r.id}`),
   }));
   const items = raw.items.map((r) => ({

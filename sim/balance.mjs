@@ -9,7 +9,7 @@ import { buildGameData, GAME_FILES } from '../game/js/gamedata.js';
 import { parseCsv } from '../game/js/csv.js';
 import { maxHp, maxMp, gainXp, gearDef, gearEffects, affixSum } from '../game/js/character.js';
 import { memberMods } from '../game/js/growth.js';
-import { createBattle, nextTurn, actionOptions, setPending, resolvePending, finishBattle, battleRewards, skillMp, battleStats, curedBy, enemyIntent } from '../game/js/battle.js';
+import { createBattle, nextTurn, actionOptions, setPending, resolvePending, finishBattle, battleRewards, skillMp, battleStats, curedBy, enemyIntent, elementMul } from '../game/js/battle.js';
 import { makeEncounter, planBounty } from '../game/js/encounter.js';
 import { rollBattleLoot } from '../game/js/loot.js';
 import { recoverAfterBattle, useItemOutsideBattle } from '../game/js/dungeon.js';
@@ -45,14 +45,14 @@ export function sourceFingerprint() {
 }
 function affinity(data, enemy, elements) {
   if (!elements.length) return 1;
-  return elements.reduce((sum, id) => sum + (enemy.weak.includes(id) ? data.balance.battle.weak : enemy.resist.includes(id) ? data.balance.battle.resist : 1), 0) / elements.length;
+  return Math.max(...elements.map((id) => elementMul(data, enemy, id)));
 }
 function attackEstimate(data, game, b, i, skill, target) {
   const m = game.party[i]; const st = battleStats(data, game, b, i); const e = b.enemies[target];
   const def = m.equip.weapon && gearDef(data, m.equip.weapon); const wt = data.weaponTypes.get(def?.kind);
   const fx = skill?.effect ?? {}; const base = fx.base ?? 'weapon';
   const mag = base === 'mag' || base === 'weapon' && wt?.attackStat === 'mag';
-  let elements = base === 'weapon' ? (wt?.elements ?? []).filter(x => x !== 'none') : (skill?.elements ?? []);
+  let elements = base === 'weapon' ? [...(wt?.elements ?? [])] : (skill?.elements ?? []);
   if (base === 'weapon') {
     if (def?.addedElement) elements.push(def.addedElement);
     if (m.equip.weapon) elements.push(...Object.keys(gearEffects(m.equip.weapon)).filter(key => key.startsWith('ELEMENT:')).map(key => key.slice(8)));
@@ -60,9 +60,10 @@ function attackEstimate(data, game, b, i, skill, target) {
     if (b.allies[i].imbue && !mag) elements = [b.allies[i].imbue];
   }
   if (fx.element && fx.element !== 'best') elements = [fx.element];
+  if (!elements.length && mag) elements = ['none'];
   let em = affinity(data, e, elements);
   if (fx.element === 'best') em = Math.max(...(skill.elements?.length ? skill.elements : ['wind', 'earth', 'water']).map(id => affinity(data, e, [id])));
-  if (fx.noresist) em = Math.max(1, em);
+  if (fx.noresist && em > 0) em = Math.max(1, em);
   let damage = ((mag ? st.mag : st.str) + st.attack) * (fx.m ?? 1) * em * 100 / (100 + (mag ? e.res : e.def) * (1 - (fx.defign ?? 0)));
   // 旧12編成の方策は保持し、新36案では新効果と通常攻撃の武器特性も見積もる。
   // 実戦処理や将来の乱数は呼ばず、現在見えている状態だけを使う近似値。

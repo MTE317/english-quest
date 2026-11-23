@@ -12,6 +12,7 @@ import { parseAmounts } from '../game/js/csv.js';
 
 // 既存12編成のID・比較条件を残し、開発カタログの36編成を追加する。
 export const LEGACY_PROFILES = Object.freeze({
+  balanced6: { name: '基本6人編成', jobs: ['warrior', 'knight', 'black_mage', 'white_mage', 'thief', 'bard'], minStar: 1 },
   balanced: { name: '基本編成', jobs: ['warrior', 'knight', 'black_mage', 'white_mage'], minStar: 1 },
   poison: { name: '毒刃の持久戦', jobs: ['thief', 'hexer', 'knight', 'white_mage'], weapons: ['dagger', 'tome', 'hammer', 'staff'], minStar: 3 },
   bleed: { name: '出血鎌の追い込み', jobs: ['warrior', 'hexer', 'bard', 'white_mage'], weapons: ['scythe', 'tome', 'instrument', 'staff'], minStar: 3 },
@@ -220,7 +221,7 @@ export function prepareParty(data, dungeon, profileId = 'balanced', preparation 
   const itemCap = dungeon.itemLvMin + 3;
   const enhancement = Math.min(3, Math.floor(dungeon.rank / 4));
   const prepared = preparation === 'prepared';
-  const specialized = profileId !== 'balanced';
+  const specialized = !['balanced', 'balanced6'].includes(profileId);
   const idx = index(data);
   // 過去の4人比較は人数を明示して保ち、新規プレイの6人設定から切り離す。
   const game = createNewGame(data, profile.jobs.map((job, i) => ({ name: `${i + 1}:${job}`, job, icon: 'x' })), { partySize: profile.jobs.length });

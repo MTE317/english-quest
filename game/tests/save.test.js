@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { GameSession, SaveStore, SAVE_VERSION } from '../js/save.js';
 import { LearningStore, SAVE_KEY, LEARNING_KEY } from '../js/storage.js';
 import { Scheduler } from '../js/srs.js';
-import { encounterMonsters, learnMonsterElements, monsterKnowledge } from '../js/monster-knowledge.js';
+import { encounterMonsters, learnMonsterElements } from '../js/monster-knowledge.js';
 import { MemoryStorage, readJson, T0 } from './helpers.js';
 
 const newGame = () => ({ day: 1, gold: 100, materials: { goblin_mat: 2 }, gear: [] });
@@ -94,13 +94,14 @@ test('全滅しても学習記録は残る', () => {
   assert.ok(mem.getItem(LEARNING_KEY));
 });
 
-test('全滅後も遭遇・調べた相性だけを引き継ぎ、経験値・持ち物・装備図鑑・依頼進捗は戻す', () => {
+test('全滅すると図鑑・討伐数・依頼進捗を入場時に戻す', () => {
   const mem = new MemoryStorage();
   const s = reopen(mem);
   const before = {
     ...newGame(),
     party: [{ lv: 2, xp: 4, ap: { warrior: 2 }, learned: ['slash_1'] }],
     items: { potion: 3 },
+    kills: { goblin: 2 },
     quests: [{ uid: 1, progress: 0, depositPaid: 30 }],
     catalog: {
       gear: ['wood_sword'], monsters: ['goblin'],
@@ -122,40 +123,15 @@ test('全滅後も遭遇・調べた相性だけを引き継ぎ、経験値・�
     game.party[0] = { lv: 3, xp: 20, ap: { warrior: 6 }, learned: ['slash_1', 'slash_2'] };
     game.items.potion -= 2;
     game.quests[0].progress = 1;
+    game.kills.goblin += 1;
   });
   const resumed = reopen(mem);
-  const lostCatalog = resumed.game.catalog;
-  const snapshotCatalog = resumed.run.snapshot.catalog;
   resumed.wipe();
-  const expected = {
-    ...before,
-    catalog: {
-      gear: ['wood_sword'], monsters: ['goblin', 'owl_boss', 'unexamined_slime'],
-      affinities: {
-        goblin: { elements: ['slash', 'fire', 'dark'], scanned: false },
-        owl_boss: { elements: ['ice', 'wind'], scanned: true },
-      },
-    },
-  };
-  assert.deepEqual(resumed.game, expected);
-  assert.deepEqual(reopen(mem).game, expected);
-  assert.deepEqual(snapshotCatalog, before.catalog);
-  assert.notStrictEqual(resumed.game.catalog.affinities.owl_boss, lostCatalog.affinities.owl_boss);
-
-  const data = { elements: new Map([
-    ['none', { name: '無' }], ['slash', { name: '斬' }], ['fire', { name: '火' }],
-    ['ice', { name: '氷' }], ['wind', { name: '風' }], ['dark', { name: '闇' }], ['light', { name: '光' }],
-  ]) };
-  assert.deepEqual(monsterKnowledge(data, resumed.game, goblin), {
-    weak: ['火'], resist: ['闇'], normal: ['斬'], scanned: false,
-  });
-  assert.deepEqual(monsterKnowledge(data, resumed.game, boss), {
-    weak: ['氷', '風'], resist: [], normal: [], scanned: true,
-  });
-  assert.equal(resumed.game.catalog.affinities.unexamined_slime, undefined);
+  assert.deepEqual(resumed.game, before);
+  assert.deepEqual(reopen(mem).game, before);
 });
 
-test('古いセーブの初遭遇と相性調査も残り、再挑戦で得た知識は重複せず蓄積する', () => {
+test('旧セーブでも遠征中の初遭遇と相性調査は全滅で戻る', () => {
   const mem = new MemoryStorage();
   const s = reopen(mem);
   s.startNew(newGame()); // 旧セーブには catalog 自体がない
@@ -172,10 +148,7 @@ test('古いセーブの初遭遇と相性調査も残り、再挑戦で得た�
     learnMonsterElements(game, enemy, ['fire', 'ice'], true);
   });
   s.wipe();
-  assert.deepEqual(reopen(mem).game, {
-    ...newGame(),
-    catalog: { gear: [], monsters: ['slime'], affinities: { slime: { elements: ['fire', 'ice'], scanned: true } } },
-  });
+  assert.deepEqual(reopen(mem).game, newGame());
 });
 
 test('町に帰ると run がなくなり、ダンジョンで得たものは残る', () => {

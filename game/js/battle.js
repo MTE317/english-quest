@@ -125,9 +125,11 @@ export function makeEnemy(data, monsterId, { lv, dungeonId = null, boss = false,
   };
   const maxHpV = Math.round(evaluate(E.hp, env) * (boss ? E.boss_hp_mul * (E.hp_boss_rank_mul?.[star] ?? 1) : 1));
   const atk = evaluate(E.str_mag, env) * (boss ? E.boss_atk_mul * (E.atk_boss_rank_mul?.[star] ?? 1) : 1);
+  const maxMp = Math.max(4, Math.round(6 + lv * 0.6)) * (boss ? 2 : 1);
   return {
+    mp: maxMp, maxMp,
     monsterId, name: elite ? `${elite.prefix}${m.name}` : m.name, icon: m.icon, lv, boss, eliteId,
-    types: m.types, weak: m.weak, resist: m.resist, immune: m.immune, magicRate: m.magicRate,
+    types: m.types, weak: m.weak, resist: m.resist, strongWeak: m.strongWeak, immune: m.immune, magicRate: m.magicRate,
     status: elite?.mods.status?.id ?? m.status, statusRate: elite?.mods.status?.rate ?? m.statusRate,
     attackElement: elite?.mods.element ?? m.attackElement,
     evasion: em.other.eva ?? 0, regen: em.other.regen ?? 0,
@@ -147,7 +149,7 @@ export function createBattle(data, game, { enemies, seed = Date.now(), canFlee =
   const b = {
     v: 1, rng: seed >>> 0, round: 0, queue: [], turn: null, result: null, canFlee, firstBattle,
     allies: game.party.map((m) => ({
-      statuses: Object.fromEntries((m.persist ?? []).map((id) => [id, { turns: data.statusEffects.get(id)?.turns ?? 99, n: 1, ...m.persistState?.[id] }])),
+      statuses: Object.fromEntries((m.persist ?? []).filter((id) => data.statusEffects.has(id) && id !== 'stun' && id !== 'taunt').map((id) => [id, { turns: data.statusEffects.get(id)?.turns ?? 99, n: 1, ...m.persistState?.[id] }])),
       buffs: {}, imbue: null, once: [], endured: false,
       firstAttackUsed: false, normalSkillReady: false, evadeCounterRound: -1,
     })),
@@ -196,7 +198,8 @@ function isPetrified(b, i) {
 export function canAct(game, b, i) {
   return game.party[i].hp > 0 && !isPetrified(b, i);
 }
-const livingEnemies = (b) => b.enemies.map((e, i) => i).filter((i) => b.enemies[i].hp > 0);
+export const enemyCanAct = (enemy) => enemy.hp > 0 && !enemy.statuses?.petrify;
+const livingEnemies = (b) => b.enemies.map((e, i) => i).filter((i) => enemyCanAct(b.enemies[i]));
 
 /** 戦闘中の能力値（状態異常・強化を合わせたもの） */
 function partyPassive(data, game, b, key) {
@@ -219,10 +222,10 @@ export function battleStats(data, game, b, i) {
   return st;
 }
 
-function elementMul(data, enemy, el) {
+export function elementMul(data, enemy, el) {
   const bt = data.balance.battle;
-  if (enemy.immune?.includes(el)) return 0;
-  if (!el || el === 'none') return 1;
+  if (enemy.immune?.includes(el)) return bt.immune;
+  if (enemy.strongWeak?.includes(el)) return 2;
   if (enemy.weak.includes(el)) return bt.weak;
   if (enemy.resist.includes(el)) return bt.resist;
   return 1;
@@ -241,7 +244,7 @@ function startRound(data, game, b) {
     units.push({ side: 'ally', i, spd });
   });
   b.enemies.forEach((e, i) => {
-    if (e.hp > 0) units.push({ side: 'enemy', i, spd: e.spd * (e.statuses.statdown ? 1 - data.statusEffects.get('statdown').value : 1)
+    if (enemyCanAct(e)) units.push({ side: 'enemy', i, spd: e.spd * (e.statuses.statdown ? 1 - data.statusEffects.get('statdown').value : 1)
       * (1 - Math.min(f(data, 'debuff_cap'), bval(e.debuffs, 'spd'))) });
   });
   for (const u of units) u.spd *= between(b, f(data, 'turn_rand'));
@@ -253,7 +256,7 @@ function endRound(data, game, b) {
   // 時間差の攻撃
   for (const d of b.delayed) {
     d.turns -= 1;
-    if (d.turns === 0 && b.enemies[d.target].hp > 0) {
+    if (d.turns === 0 && enemyCanAct(b.enemies[d.target])) {
       hitEnemy(data, game, b, d.actor, d.target, d.damage, { ...d, prefix: '刻印が発動！' });
     }
   }
@@ -285,8 +288,11 @@ function tick(buffs) {
 
 function checkEnd(game, b) {
   if (b.result) return true;
-  if (!b.enemies.some((e) => e.hp > 0 && !e.statuses.petrify)) { b.result = 'win'; log(b, '敵をすべて倒した！'); }
-  else if (!game.party.some((m, i) => canAct(game, b, i))) { b.result = 'lose'; log(b, 'パーティは全滅した…'); }
+  if (!game.party.some((m, i) => canAct(game, b, i))) { b.result = 'lose'; log(b, 'パーティは全滅した…'); }
+  else if (!b.enemies.some(enemyCanAct)) {
+    b.result = 'win';
+    log(b, b.enemies.some((enemy) => enemy.hp > 0) ? '残りの敵はすべて石化した！' : '敵をすべて倒した！');
+  }
   return !!b.result;
 }
 
@@ -308,7 +314,7 @@ export function nextTurn(data, game, b) {
     if (checkEnd(game, b)) return null;
     const u = b.queue.shift();
     if (u.side === 'enemy') {
-      if (b.enemies[u.i].hp > 0) enemyTurn(data, game, b, u.i);
+      if (enemyCanAct(b.enemies[u.i])) enemyTurn(data, game, b, u.i);
       continue;
     }
     const m = game.party[u.i];
@@ -322,7 +328,7 @@ export function nextTurn(data, game, b) {
       }
       a.normalSkillReady = false;
       log(b, m.name + 'は' + forced.name + 'で攻撃が乱れた！');
-      forcedAllyAttack(data, game, b, u.i, forced.kind === 'random_target');
+      forcedAllyAttack(data, game, b, u.i, forced.kind === 'charm');
     }
     tickStatuses(data, b, a, m.name);
   }
@@ -362,7 +368,7 @@ function forcedAction(data, b, unit) {
 function updateMp(data, statuses, resources, maximum, regen) {
   if (!Number.isFinite(resources.mp) || !Number.isFinite(maximum)) return;
   const leak = data.statusEffects.get(statusOfKind({ statuses }, 'mp_drain', data));
-  if (leak) resources.mp = Math.max(0, resources.mp - Math.round(maximum * leak.value));
+  if (leak) resources.mp = Math.max(0, resources.mp - Math.max(1, Math.round(maximum * leak.value)));
   if (resources.hp > 0 && !statuses.petrify && regen > 0) {
     resources.mp = Math.min(maximum, resources.mp + Math.round(maximum * regen));
   }
@@ -503,7 +509,7 @@ const BATTLE_ITEM_EFFECTS = ['heal_hp', 'heal_hp_pct', 'heal_hp_all', 'heal_hp_a
 /** 逃げられる確率。装備の逃走補正は逃げる行動を選ぶ本人の分だけを足す。 */
 export function fleeRate(data, game, b, actor = b.turn?.side === 'ally' ? b.turn.i : null) {
   const al = game.party.map((m, i) => i).filter((i) => canAct(game, b, i));
-  const ae = b.enemies.filter((e) => e.hp > 0);
+  const ae = b.enemies.filter(enemyCanAct);
   if (!b.canFlee || ae.some((e) => e.boss) || al.some((i) => has(b.allies[i], 'noevade_noflee', data))) return 0;
   const avg = (arr) => arr.reduce((x, y) => x + y, 0) / Math.max(1, arr.length);
   const sts = al.map((i) => battleStats(data, game, b, i));
@@ -606,14 +612,32 @@ export function resolvePending(data, game, b, correct) {
   return { cm };
 }
 
-function forcedAllyAttack(data, game, b, i, includeSelf) {
-  const targets = game.party.map((x, j) => j).filter((j) => game.party[j].hp > 0 && (includeSelf || j !== i));
+function forcedAllyAttack(data, game, b, i, charmed) {
+  const allyTargets = game.party.flatMap((m, j) => canAct(game, b, j) && (!charmed || j !== i) ? [{ side: 'ally', i: j }] : []);
+  const targets = charmed ? allyTargets : [...allyTargets, ...livingEnemies(b).map((j) => ({ side: 'enemy', i: j }))];
   if (!targets.length || !allyBleed(data, game, b, i)) return;
-  const t = pick(b, targets);
+  const member = game.party[i];
+  const skills = charmed ? knownSkills(data, member).filter((skill) => skill.kind === 'attack' && !skillBlock(data, game, b, i, skill)) : [];
+  const skill = pick(b, [null, ...skills]);
+  if (skill) {
+    member.mp -= skillMp(data, member, skill);
+    if (skill.effect.once) b.allies[i].once.push(skill.id);
+    log(b, member.name + 'は' + skill.name + 'を使った');
+  }
+  const target = pick(b, targets);
+  if (target.side === 'enemy') {
+    doAttack(data, game, b, i, null, target.i, 1);
+    return;
+  }
   const st = battleStats(data, game, b, i);
-  const ts = battleStats(data, game, b, t);
-  const dmg = (st.str + st.attack) * f(data, 'confused_self_hit') * 100 / (100 + ts.def);
-  damageAlly(data, game, b, t, dmg, `${game.party[i].name}は${game.party[t].name}を攻撃！`, { side: 'ally', i });
+  const magic = skill?.effect.base === 'mag';
+  const power = (magic ? st.mag : st.str) + st.attack;
+  const victims = skill?.effect.tgt === 'all' ? allyTargets : [target];
+  for (const victim of victims) {
+    const defense = battleStats(data, game, b, victim.i);
+    const damage = power * (skill?.effect.m ?? 1) * f(data, 'confused_self_hit') * 100 / (100 + (magic ? defense.res : defense.def));
+    damageAlly(data, game, b, victim.i, damage, member.name + 'は' + game.party[victim.i].name + 'を攻撃！', { side: 'ally', i });
+  }
 }
 
 // ---------------- 攻撃 ----------------
@@ -642,7 +666,7 @@ function attackDamage(data, game, b, i, e, skill, cm, { offhand = false, actionB
   let imb = 1;
   if (base === 'weapon') {
     kind = wt?.attackStat === 'mag' ? 'mag' : 'phys';
-    els = (wt?.elements ?? []).filter((x) => x !== 'none');
+    els = wt?.elements ?? [];
     if (wdef?.addedElement) els = [...new Set([...els, wdef.addedElement])];
     if (weapon) els = [...new Set([...els, ...Object.keys(gearEffects(weapon)).filter((key) => key.startsWith('ELEMENT:')).map((key) => key.slice(8))])];
     hits = wt?.id === 'fist' && mods.fist ? [mods.fist, mods.fist] : wt?.hits?.length ? wt.hits : [1];
@@ -657,6 +681,7 @@ function attackDamage(data, game, b, i, e, skill, cm, { offhand = false, actionB
     const choices = skill.elements?.length ? skill.elements : ['wind', 'earth', 'water'];
     els = [choices.reduce((best, el) => elementMul(data, enemy, el) > elementMul(data, enemy, best) ? el : best, choices[0])];
   } else if (skill?.effect.element) els = [skill.effect.element];
+  if (!els.length && kind === 'mag') els = ['none'];
   if (skill?.effect.hits) hits = skill.effect.hits;
   const mult = (skill?.effect.m ?? 1) * (skill && base === 'weapon' ? traits.weapon_skill_mul ?? 1 : 1);
   const statVal = kind === 'phys'
@@ -692,7 +717,8 @@ function attackDamage(data, game, b, i, e, skill, cm, { offhand = false, actionB
   const down = enemy.statuses.statdown ? 1 - (data.statusEffects.get('statdown')?.value ?? 0) : 1;
   const df = (kind === 'phys' ? enemy.def * (1 - pierce) * (1 - Math.min(f(data, 'debuff_cap'), bval(enemy.debuffs, 'def')))
     : enemy.res * (1 - Math.min(f(data, 'debuff_cap'), bval(enemy.debuffs, 'res')))) * down;
-  let em = els.length ? els.reduce((x, el) => x + (skill?.effect.noresist ? Math.max(1, elementMul(data, enemy, el)) : elementMul(data, enemy, el)), 0) / els.length : 1;
+  let em = els.length ? Math.max(...els.map((el) => elementMul(data, enemy, el))) : 1;
+  if (skill?.effect.noresist && em > 0) em = Math.max(1, em);
   if (em > 1) em *= skill?.effect.wb ?? 1;
   if (em > 1 && mods.weak_all) em *= 1 + mods.weak_all;
   if (base === 'weapon' && em > 1) em *= traits.weak_damage_mul ?? 1;
@@ -720,6 +746,11 @@ function hitEnemy(data, game, b, i, e, damage, { prefix = '', em = 1, elements =
   const enemy = b.enemies[e];
   if (!landed || enemy.hp <= 0) return;
   const wasAlive = enemy.hp > 0;
+  if (damage === 0) {
+    learnMonsterElements(game, enemy, elements);
+    if (em === 0) log(b, enemy.name + 'には効かなかった');
+    return;
+  }
   if (wasAlive) {
     learnMonsterElements(game, enemy, elements);
     recordHit(b, 'enemy', e, damage, i == null ? undefined : { side: 'ally', i }, hitEffectiveness(em));
@@ -1087,16 +1118,17 @@ function doSkill(data, game, b, i, s, target, cm, normalSkillReady = false) {
       const itemLv = m.equip.weapon ? gearDef(data, m.equip.weapon).itemLv : 1;
       for (const t of livingEnemies(b)) {
         const en = b.enemies[t];
-        const em = s.elements.length ? elementMul(data, en, s.elements[0]) : 1;
+        const elements = s.elements.length ? s.elements : ['none'];
+        const em = Math.max(...elements.map((el) => elementMul(data, en, el)));
         const damage = Math.round(evaluate(f(data, 'fixed_damage'), { itemLv, em, RES: en.res }) * cm * between(b, f(data, 'enemy_rand')));
-        hitEnemy(data, game, b, i, t, damage, { em, elements: s.elements.slice(0, 1) });
+        hitEnemy(data, game, b, i, t, damage, { em, elements, landed: true });
       }
       break;
     }
     case 'delayed':
       for (const t of livingEnemies(b)) {
         const r = attackDamage(data, game, b, i, t, { ...s, effect: { ...e, base: 'mag' } }, cm);
-        b.delayed.push({ turns: e.delay ?? 1, target: t, actor: i, damage: r.damage, em: r.em, elements: r.elements });
+        b.delayed.push({ turns: e.delay ?? 1, target: t, actor: i, damage: r.damage, em: r.em, elements: r.elements, landed: r.landed });
       }
       log(b, `${e.delay ?? 1}ターン後に発動する`);
       break;
@@ -1133,7 +1165,7 @@ function doItem(data, game, b, i, it, target, cm) {
   log(b, `${m.name}は${it.name}を使った`);
   cm *= 1 + (memberMods(data, m).itemp ?? 0); // 薬の知識
   const one = game.party[target] ? target : i;
-  const alive = game.party.map((x, j) => j).filter((j) => game.party[j].hp > 0);
+  const alive = game.party.map((x, j) => j).filter((j) => canAct(game, b, j));
   const [elOrGroup, num] = String(it.valueText ?? '').split(':');
   const turns = (it.turns ?? 1) + 1;
   switch (it.effect) {
@@ -1182,13 +1214,14 @@ function doFlee(data, game, b, correct, actor) {
 export function enemyIntent(data, enemy, round) {
   const rule = data.balance.boss_patterns ?? {};
   const every = Math.max(2, Number(rule.sweep_every ?? 3));
-  const enabled = rule.enabled !== false && enemy.boss;
+  const sweepMp = Number(rule.sweep_mp ?? 4);
+  const enabled = rule.enabled !== false && enemy.boss && (enemy.mp ?? Infinity) >= sweepMp;
   const locked = enemy.statuses?.fear || (enemy.magicRate >= 0.5 ? enemy.statuses?.silence : enemy.statuses?.seal);
   const sweep = Boolean(enabled && !locked && round > 0 && round % every === 0);
   const warning = Boolean(enabled && !locked && round > 0 && (round + 1) % every === 0);
   const element = enemy.attackElement;
   const elementName = element ? data.elements.get(element)?.name ?? element : '';
-  return { sweep, warning, power: sweep ? Number(rule.sweep_power ?? 0.65) : 1,
+  return { sweep, warning, mp: sweep ? sweepMp : 0, power: sweep ? Number(rule.sweep_power ?? 0.65) : 1,
     label: sweep ? `全体${elementName || '強'}攻撃` : warning ? `次の巡に全体${elementName || '強'}攻撃` : '通常攻撃' };
 }
 
@@ -1275,6 +1308,7 @@ function enemyTurn(data, game, b, e) {
   if (!alive.length) { finishEnemyTurn(enemy, data, b); return; }
   const intent = enemyIntent(data, enemy, b.round);
   if (intent.warning) log(b, `${enemy.name}が力をためている！ 次の巡は全体攻撃`);
+  if (intent.sweep && Number.isFinite(enemy.mp)) enemy.mp -= intent.mp;
   if (intent.sweep) log(b, `${enemy.name}の${intent.label}！`);
   const targets = intent.sweep ? alive : [weighted(b, alive, (j) => 1 + bval(b.allies[j].buffs, 'taunt') * f(data, 'taunt_weight'))];
   for (const original of targets) {
@@ -1292,7 +1326,9 @@ function enemyTurn(data, game, b, e) {
     if (target.hp <= 0) continue;
     const ta = b.allies[t];
     const ts = battleStats(data, game, b, t);
-    const magic = chance(b, enemy.magicRate) && !enemy.statuses.silence;
+    const magic = chance(b, enemy.magicRate) && !enemy.statuses.silence
+      && (intent.sweep || (enemy.mp ?? Infinity) >= 2);
+    if (magic && !intent.sweep && Number.isFinite(enemy.mp)) enemy.mp -= 2;
     if (!magic && enemy.statuses.blind && chance(b, data.statusEffects.get('blind').value)) { log(b, `${enemy.name}の攻撃ははずれた`); continue; }
     if (!has(ta, 'noevade_noflee', data) && chance(b, ts.evasion)) {
       log(b, `${target.name}はひらりとかわした`);
