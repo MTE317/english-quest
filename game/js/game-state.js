@@ -2,6 +2,7 @@
 import { createMember, maxHp, maxMp, levelCap } from './character.js?v=build36-1';
 import { ensureLoadout, jobSkills, isLearned } from './growth.js?v=build36-1';
 import { parseAmounts } from './csv.js';
+import { recordStoredMaterials } from './temple.js';
 
 export const PARTY_SIZE = 6;
 
@@ -49,6 +50,7 @@ export function normalizeGame(data, game, run = null, { expandParty = true } = {
   if (!game) return game;
   game.storage = game.storage ?? { gear: [], materials: {} };
   game.storage.materials ??= {};
+  recordStoredMaterials(game);
   game.items = game.items ?? {};
   game.rank = game.rank ?? data.ranks?.[0]?.id ?? null;
   game.rankPoints = game.rankPoints ?? 0;
@@ -58,7 +60,8 @@ export function normalizeGame(data, game, run = null, { expandParty = true } = {
   game.quests = game.quests ?? [];
   game.board = game.board ?? null;
   game.cleared = game.cleared ?? {};
-  game.overdue = game.overdue ?? 0;
+  // 旧会費の滞納だけを清算する。銀行からの融資残高は保持する。
+  delete game.overdue;
   game.notices = game.notices ?? [];
   game.jp ??= 0;
   game.titles ??= [];

@@ -12,7 +12,7 @@ import { craft, enhance, brew, dismantle, facilityUpgrade } from '../js/workshop
 import { borrow, repayLoan } from '../js/town.js';
 import { unlockJob } from '../js/temple.js';
 import { makeEncounter, monsterPool } from '../js/encounter.js';
-import { acceptChain, chainStep, claimChain, talkChain, updateChains } from '../js/quest-chain.js';
+import { acceptChain, acceptChainPart, chainStep, nextChainOffer, claimChain, talkChain, updateChains } from '../js/quest-chain.js';
 import { makePracticeQuestion, DIRECTION } from '../js/quiz.js';
 import { MemoryStorage, T0, readCsv, readJson, realLexicon } from './helpers.js';
 
@@ -112,8 +112,13 @@ test('季節の敵、賞金首、連続クエストの進行と報告', () => {
   const chain = data.questChains[0];
   acceptChain(g, chain);
   talkChain(g, chain);
+  assert.equal(chainStep(chain, g), null);
+  assert.equal(nextChainOffer(chain, g).kind, 'explore');
+  acceptChainPart(g, chain);
   let step = chainStep(chain, g);
   updateChains(data, g, step.target, step.goal, []);
+  assert.equal(chainStep(chain, g), null);
+  acceptChainPart(g, chain);
   step = chainStep(chain, g);
   updateChains(data, g, step.target, 1, Array.from({ length: step.goal }, () => ({ hp: 0 })));
   assert.equal(chainStep(chain, g).kind, 'reward');

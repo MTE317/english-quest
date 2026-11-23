@@ -1,7 +1,8 @@
 import { el, render } from '../dom.js';
+import { parseAmounts } from '../csv.js';
 import { craft, brew, enhance, dismantle, reroll, enchant, enchantFamilies, facilityUpgrade } from '../workshop.js?v=build36-1';
-import { borrow, repayLoan, loanLimit, payOverdue } from '../town.js?v=build36-1';
-import { unlockJob, jobDiscoveryProgress } from '../temple.js?v=rune-study-1';
+import { borrow, repayLoan, loanLimit } from '../town.js?v=systems-v1';
+import { unlockJob, jobDiscoveryProgress, offeringRevealed } from '../temple.js?v=systems-v1';
 import { describeFixedEffects, effectLabel, describeEffect } from '../equipment-effects.js?v=build36-1';
 import { equipmentIcon } from './equipment-icons.js';
 
@@ -137,12 +138,11 @@ export function managementView(data, g, act) {
   const limit = loanLimit(data, g);
   return [
     heading('銀行'),
-    el('div', { class: 'panel small' }, `融資残高 ${g.loan ?? 0} G ・ 上限 ${limit} G ・ 滞納 ${g.overdue} G`,
+    el('div', { class: 'panel small' }, `融資残高 ${g.loan ?? 0} G ・ 上限 ${limit} G`,
       amount,
       el('div', { class: 'row' },
         btn('借りる', () => act((game) => borrow(data, game, Number(amount.value)))),
-        btn('返済する', () => act((game) => repayLoan(game, Number(amount.value))))),
-      g.overdue ? btn('滞納を払う', () => act((game) => `滞納を ${payOverdue(game, game.gold)} G 払った。`)) : null),
+        btn('返済する', () => act((game) => repayLoan(game, Number(amount.value)))))),
     heading('町への投資'),
     data.facilities.map((f) => {
       const current = g.facilities[f.id] ?? 1;
@@ -156,25 +156,39 @@ export function managementView(data, g, act) {
 }
 
 export function templeExtras(data, g, act) {
+  const rules = [...data.jobUnlocks.values()];
+  const advanced = rules.filter(rule => data.jobsById.get(rule.job_id)?.publicRelease);
+  const renderUnlock = (rule) => {
+    const job = data.jobsById.get(rule.job_id);
+    const name = job.name;
+    const opened = (g.unlockedJobs ?? []).includes(rule.job_id);
+    if (opened) return el('p', {}, `${name} ・ 解放済み`);
+    if (rule.method === '発見') {
+      const progress = jobDiscoveryProgress(data, g, rule.job_id);
+      const dungeon = data.dungeons.get(progress.dungeonId);
+      return el('div', { class: 'panel small' }, el('strong', {}, name),
+        el('p', {}, `発見先：${dungeon?.name ?? progress.dungeonId}${dungeon ? `（★${dungeon.rank}）` : ''}`),
+        el('p', {}, progress.guarantee == null
+          ? `ボス撃破時に確率で発見・現在${progress.clears}回踏破`
+          : `${progress.guarantee}回踏破までに発見・現在${progress.clears}回踏破`),
+        progress.guarantee != null && progress.clears + 1 >= progress.guarantee
+          ? el('p', { class: 'muted' }, '次の踏破で確定して発見します。') : null);
+    }
+    if (rule.method !== '素材') return el('p', {}, `${name} ・ ダンジョンで発見`);
+    const concealed = job.tier === 'advanced';
+    if (concealed && !offeringRevealed(data, g, rule)) return null;
+    const requirements = parseAmounts(rule.materials);
+    const materials = requirements.map(({ id, count }) => {
+      const known = !concealed || g.discoveredMaterials?.[id] || g.storage.materials[id] > 0;
+      return known ? `${data.materials.get(id)?.name ?? id} ×${count}` : '？？？';
+    }).join('、');
+    const ready = requirements.every(({ id, count }) => (g.storage.materials[id] ?? 0) >= count);
+    return el('div', {}, el('p', {}, `${concealed ? '未知の儀式' : name} ・ ${materials}`),
+      el('button', { disabled: !ready, onclick: () => act(game => unlockJob(data, game, rule.job_id)) }, '素材を捧げて解放'));
+  };
+  const offerings = advanced.map(renderUnlock).filter(Boolean);
   return [
-    panel('中級ジョブの解放', [...data.jobUnlocks.values()].filter((rule) => data.jobsById.get(rule.job_id)?.tier === 'mid').map((rule) => {
-      const name = data.jobsById.get(rule.job_id).name;
-      const opened = (g.unlockedJobs ?? []).includes(rule.job_id);
-      if (opened) return el('p', {}, `${name} ・ 解放済み`);
-      if (rule.method === '発見') {
-        const progress = jobDiscoveryProgress(data, g, rule.job_id);
-        const dungeon = data.dungeons.get(progress.dungeonId);
-        return el('div', { class: 'panel small' }, el('strong', {}, name),
-          el('p', {}, `発見先：${dungeon?.name ?? progress.dungeonId}${dungeon ? `（★${dungeon.rank}）` : ''}`),
-          el('p', {}, progress.guarantee == null
-            ? `ボス撃破時に確率で発見・現在${progress.clears}回踏破`
-            : `${progress.guarantee}回踏破までに発見・現在${progress.clears}回踏破`),
-          progress.guarantee != null && progress.clears + 1 >= progress.guarantee
-            ? el('p', { class: 'muted' }, '次の踏破で確定して発見します。') : null);
-      }
-      if (rule.method !== '素材') return el('p', {}, `${name} ・ ダンジョンで発見`);
-      return el('div', {}, el('p', {}, `${name} ・ ${rule.materials}`),
-        btn('素材を捧げて解放', () => act((game) => unlockJob(data, game, rule.job_id))));
-    })),
+    panel('中級ジョブの解放', rules.filter((rule) => data.jobsById.get(rule.job_id)?.tier === 'mid').map(renderUnlock)),
+    offerings.length ? panel('神殿の儀式', offerings) : null,
   ];
 }

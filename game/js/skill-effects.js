@@ -15,6 +15,9 @@ function passiveText(data, key, value) {
   if (key === 'edmg') return `${names(value[0])}属性ダメージ +${pct(value[1])}`;
   if (key === 'tdmg') return `${names(value[0])}へのダメージ +${pct(value[1])}`;
   const special = {
+    bounty_chance: () => `賞金首の遭遇率 +${pct(value)}（パーティーで1人分）`,
+    poison_spread: () => `毒・猛毒の敵を倒すと、別の敵1体に同じ状態を付与（基礎確率${pct(value)}、1巡1回）`,
+    thunder_crit_mp: () => `正解した雷属性攻撃で会心ダメージを与えると、最大MPの${pct(value)}を回復（装備効果と合わせて1行動1回・技能は支払MPまで）`,
     lowhp_dmg: () => `HPが半分未満の時、与ダメージ +${pct(value)}`,
     kill_mp: () => `敵を倒すとMPを${value}回復`,
     cover: () => `単体攻撃を受ける味方をかばう（基礎確率${pct(value)}）`,

@@ -8,14 +8,12 @@ import { QuestionPicker } from '../picker.js';
 import { GameSession } from '../save.js?v=rune-study-1';
 import { normalizeGame } from '../game-state.js?v=party6-1';
 import {
-  allowedDungeons, startRun, startNextBattle, afterBattle, returnToTown, continueRun, resolveLoot,
+  allowedDungeons, expeditionFee, startRun, startNextBattle, afterBattle, returnToTown, continueRun, resolveLoot,
   dungeonRegion, isBossBattle, runFloorRow, runFloorCount, returnItems, currentRank, useItemOutsideBattle, FIELD_ITEM_EFFECTS,
-} from '../dungeon.js?v=exploration-1';
-  canTrainIn, isBossBattle, runFloorRow, runFloorCount, returnItems, currentRank, useItemOutsideBattle, FIELD_ITEM_EFFECTS,
-} from '../dungeon.js?v=build36-1';
+} from '../dungeon.js?v=systems-v1';
 import { backpackSlots, backpackUsed, addItem } from '../loot.js?v=build36-1';
 import { maxHp, maxMp } from '../character.js?v=build36-1';
-import { createBattleView } from '../ui/battle-view.js?v=music-suite-1';
+import { createBattleView } from '../ui/battle-view.js?v=systems-v1';
 import { createVictoryView } from '../ui/victory-view.js?v=pixel-town-1';
 import { stoneAllowed } from '../study.js?v=build36-1';
 import { el, render, stars } from '../dom.js';
@@ -81,33 +79,31 @@ function showDeparture(message = null) {
       stars(dungeon.rank) + ' ' + dungeon.name + (g.cleared?.[dungeon.id] ? '（踏破済み）' : '')));
   }
   const destinations = [...regions].map(([label, options]) => el('optgroup', { label }, options));
-  const st = { dungeonId: suggested.id, stoneId: null, training: false };
-  const training = el('input', { type: 'checkbox', onchange: (e) => { st.training = e.target.checked; } });
-  const trainingOption = el('label', {}, training, ' 育成探索（ボスなし）');
   const dungeonLabel = (dungeon) => stars(dungeon.rank) + ' ' + dungeon.name
     + (g.cleared?.[dungeon.id] ? '（踏破済み）' : '');
   const world = buildWorldMap(data.dungeons, dungeons, g);
   const seen = Array.isArray(g.worldMapSeen) ? g.worldMapSeen : [];
   const discoveries = newDiscoveries(world.regions, seen);
   const destinationHeading = el('h3', { tabindex: '-1' });
+  const lure = el('input', { type: 'checkbox' });
   const stoneSel = el('select', { class: 'select', onchange: (e) => { st.stoneId = e.target.value; } });
   const info = el('div', { class: 'route-info', 'aria-live': 'polite' });
   const fill = () => {
     const dg = data.dungeons.get(st.dungeonId);
     destinationHeading.textContent = dungeonLabel(dg);
-    trainingOption.hidden = !canTrainIn(dg);
-    training.checked = st.training = canTrainIn(dg) && st.training;
     document.querySelector('.page-heading').className = `bar page-heading scene-${expeditionScene(dg.id)}`;
     // ★がダンジョン以上で、今のランクの★まで（1つ下の★の石をすべて読み解けば1つ上まで）
     const stones = lex.stones.filter((s) => stoneAllowed(lex, store, scheduler, s, dg.rank, rank.maxDungeonRank, scheduler.dayOf(now())));
     st.stoneId = stones.find((s) => s.id === st.stoneId)?.id ?? stones[0]?.id ?? null;
     render(stoneSel, stones.map((s) => el('option', { value: s.id, selected: s.id === st.stoneId }, `${stars(s.star)} ${s.name}`)));
-    departure.disabled = !st.stoneId;
+    const fee = expeditionFee(data, dg);
+    departure.disabled = !st.stoneId || g.gold < fee;
     render(info, el('div', { class: 'route-facts' },
-      [['階層', `${dg.floors}階`], ['所要日数', `${dg.days}日`], ['帰還地点', dg.returnPointFloor ? `${dg.returnPointFloor}階の後` : 'なし']]
+      [['階層', `${dg.floors}階`], ['所要日数', `${dg.days}日`], ['遠征費', fee ? `${fee} G` : '無料'], ['帰還地点', dg.returnPointFloor ? `${dg.returnPointFloor}階の後` : 'なし']]
         .map(([key, value]) => el('div', {}, el('small', {}, key), el('strong', {}, value)))),
       el('p', { class: 'muted small' }, [dg.kind, dg.character].filter(Boolean).join(' ／ ')),
-      !stones.length ? el('p', { class: 'error' }, '持ち込めるルーンストーンがありません。') : null);
+      !stones.length ? el('p', { class: 'error' }, '持ち込めるルーンストーンがありません。') : null,
+      g.gold < fee ? el('p', { class: 'error' }, '遠征費が足りません。') : null);
   };
   const departure = el('button', {
     class: 'primary',
@@ -115,7 +111,8 @@ function showDeparture(message = null) {
       if (!st.stoneId) return;
       if (session.game.party.every((m) => m.hp <= 0)) { showDeparture('全員倒れている。宿屋や神殿で回復してから出発しよう。'); return; }
       const picker = new QuestionPicker({ lex, store, scheduler, stoneId: st.stoneId, nowMs: now() });
-      startRun(data, session, { dungeonId: st.dungeonId, stoneId: st.stoneId, quizState: picker.toState(), seed: (Date.now() ^ (Math.random() * 2 ** 32)) >>> 0 });
+      startRun(data, session, { dungeonId: st.dungeonId, stoneId: st.stoneId, quizState: picker.toState(),
+        seed: (Date.now() ^ (Math.random() * 2 ** 32)) >>> 0, bountyLure: lure.checked });
       showRun();
     },
   }, '出発する');
@@ -140,8 +137,8 @@ function showDeparture(message = null) {
           el('select', { class: 'select', onchange: (e) => { st.dungeonId = e.target.value; fill(); } },
             destinations)),
         destinationHeading,
-        trainingOption,
         info,
+        g.items.bounty_lure > 0 ? el('label', {}, lure, ` おびき寄せ香を1個使う（所持 ${g.items.bounty_lure}）`) : null,
         el('label', {}, '持っていくルーンストーン', stoneSel),
         el('details', { class: 'stone-help' }, el('summary', {}, '教材を選ぶ条件'),
           el('p', {}, `今のランクは「${rank.title}」。行き先以上の★の石を選べます。今の★の石をすべて読み解くと、1つ上の★の石も持ち込めます。`)),

@@ -776,6 +776,7 @@ function hitEnemy(data, game, b, i, e, damage, { prefix = '', em = 1, elements =
     addMasteryKill(data, m); // 武器の熟練度
     const km = memberMods(data, m).kill_mp;
     if (km) m.mp = Math.min(maxMp(data, m), m.mp + km);
+    spreadPoison(data, game, b, i, enemy);
   }
   // 睡眠・凍結は攻撃を受けると覚める
   for (const id of Object.keys(enemy.statuses)) if (data.statusEffects.get(id)?.kind === 'skip_until_hit') delete enemy.statuses[id];
@@ -806,6 +807,8 @@ function doAttack(data, game, b, i, skill, target, cm, { normalSkillReady = fals
   if (cycleBonus > 0) log(b, `${m.name}は通常攻撃から技能へつないだ！`);
   let onHitMpGranted = false;
   let criticalMpGranted = false;
+  const thunderCritMp = memberMods(data, m).thunder_crit_mp ?? 0;
+  const gearCritMp = affixSum(m, 'CRIT_MP') / 100;
   let extraHitGranted = false;
   let absorbedHp = 0;
   let actualDamage = 0;
@@ -836,9 +839,12 @@ function doAttack(data, game, b, i, skill, target, cm, { normalSkillReady = fals
       grantMp(Math.ceil(maxMp(data, m) * Math.min(f(data, 'on_hit_mp_cap'), affixSum(m, 'MP_ON_HIT') / 100)), '');
       onHitMpGranted = true;
     }
-    if (cm === 1 && hit?.crits > 0 && !criticalMpGranted && affixSum(m, 'CRIT_MP') > 0) {
-      grantMp(Math.ceil(maxMp(data, m) * Math.min(f(data, 'critical_mp_cap'), affixSum(m, 'CRIT_MP') / 100)), '会心の余韻！');
-      criticalMpGranted = true;
+    if (cm === 1 && hit?.crits > 0 && !criticalMpGranted) {
+      const rate = gearCritMp + (hit.elements?.includes('thunder') ? thunderCritMp : 0);
+      if (rate > 0) {
+        grantMp(Math.ceil(maxMp(data, m) * Math.min(f(data, 'critical_mp_cap'), rate)), '会心の余韻！');
+        criticalMpGranted = true;
+      }
     }
     // 吸魔と会心回復を合わせても、この技能で払ったMPを超えて回収しない。
     if (cm === 1 && skill?.effect.drain) grantMp(Math.round(dealt * skill.effect.drain / 10), '');
@@ -958,6 +964,19 @@ function inflictByActor(data, game, b, actor, target, status, cm) {
   return inflictEnemy(data, b, target, status, cm,
     (mods.stat_rate ?? 0) + affixSum(member, 'STATUS_RATE') / 100,
     { actor, potency: 1 + Math.min(f(data, 'dot_power_cap'), (mods.dot_power ?? 0) + affixSum(member, 'DOT_POWER') / 100) });
+}
+
+function spreadPoison(data, game, b, actor, defeated) {
+  const member = game.party[actor], ally = b.allies[actor];
+  if (!member || !canAct(game, b, actor) || ally.poisonSpreadRound === b.round) return;
+  const rate = memberMods(data, member).poison_spread ?? 0;
+  if (rate <= 0) return;
+  const id = ['toxic', 'poison'].find(status => defeated.statuses[status]);
+  if (!id) return;
+  const target = b.enemies.findIndex(enemy => enemyCanAct(enemy) && !enemy.statuses[id] && enemy.statusAffinity?.[id] !== '×');
+  if (target < 0) return;
+  ally.poisonSpreadRound = b.round;
+  inflictByActor(data, game, b, actor, target, [data.statusEffects.get(id).name, rate], 1);
 }
 
 /** 敵に状態異常をかける。継続ダメージと行動封じを別々に調整する。 */
@@ -1274,6 +1293,7 @@ function enemyTurn(data, game, b, e) {
         if (owner) {
           addMasteryKill(data, owner);
           owner.mp = Math.min(maxMp(data, owner), owner.mp + (memberMods(data, owner).kill_mp ?? 0));
+          spreadPoison(data, game, b, state.actor, enemy);
         }
         break;
       }
@@ -1315,6 +1335,7 @@ function enemyTurn(data, game, b, e) {
     if (enemy.hp === 0 && owner) {
       addMasteryKill(data, owner);
       owner.mp = Math.min(maxMp(data, owner), owner.mp + (memberMods(data, owner).kill_mp ?? 0));
+      spreadPoison(data, game, b, state.actor, enemy);
     }
   }
   if (forced && enemy.hp > 0) {

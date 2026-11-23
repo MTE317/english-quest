@@ -3,7 +3,7 @@ import { now } from '../storage.js?v=rune-study-1';
 import { QuestionPicker, REASON_LABEL } from '../picker.js';
 import { makePracticeQuestion, questionDirection, questionSpeech, DIRECTION } from '../quiz.js?v=question-speech-1';
 import { speak, canSpeak, stopSpeech } from '../speech.js?v=music-suite-1';
-import { nextTurn, actionOptions, setPending, prepareQuizAction, resolvePending, targetKind, canAct, skillMp, collectBattleHits, enemyIntent, enemyCanAct } from '../battle.js?v=build36-1';
+import { nextTurn, actionOptions, setPending, prepareQuizAction, resolvePending, targetKind, canAct, skillMp, collectBattleHits, enemyIntent, enemyCanAct } from '../battle.js?v=systems-v1';
 import { maxHp, maxMp } from '../character.js?v=build36-1';
 import { el, render } from '../dom.js';
 import { expeditionScene } from './scenery.js';

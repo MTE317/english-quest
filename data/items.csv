@@ -1,5 +1,6 @@
 ﻿id,name,price,shop_rank,effect,value,target,description,turns,source
 potion,回復薬,20,1,heal_hp,150,ally,味方1人のHPを150回復,,店
+bounty_lure,賞金首のおびき寄せ香,30,1,bounty_lure,15,self,出発時に使うと賞金首の遭遇率が15ポイント上がる,,店
 hi_potion,上回復薬,90,3,heal_hp,400,ally,味方1人のHPを400回復,,店
 x_potion,特上回復薬,350,6,heal_hp,800,ally,味方1人のHPを800回復,,店
 elixir,秘薬,1200,9,heal_hp,1500,ally,"味方1人のHPを1,500回復",,店

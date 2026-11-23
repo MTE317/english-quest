@@ -2,18 +2,19 @@
 import { loadGameData } from '../gamedata.js?v=rune-study-1';
 import { GameSession } from '../save.js?v=rune-study-1';
 import { normalizeGame } from '../game-state.js?v=party6-1';
-import { currentRank, seededRng } from '../dungeon.js?v=build36-1';
+import { currentRank, seededRng } from '../dungeon.js?v=systems-v1';
 import {
-  calendarOf, guildFee, fillBoard, boardSize, questAcceptLimit, acceptQuest, canAcceptQuest, abandonQuest, canReport, reportQuest, questText, questProgress, questDestination, questRewardGold, questDepositTotal, questAbandonRefund, nextRankStatus, stayInn, revive, reviveCost, checkRankUp,
+  calendarOf, fillBoard, boardSize, questAcceptLimit, acceptQuest, canAcceptQuest, abandonQuest, canReport, reportQuest, questText, questProgress, questDestination, questRewardGold, questRankPoints, questDepositTotal, questAbandonRefund, nextRankStatus, stayInn, revive, reviveCost, checkRankUp,
   canExpandBackpack, expandBackpack, feeTier,
   nextBackpackTier,
-} from '../town.js?v=build36-1';
+  questBoardAreas, selectQuestBoardArea,
+} from '../town.js?v=systems-v1';
 import { backpackSlots } from '../loot.js?v=build36-1';
 import { maxHp, maxMp, gearDef } from '../character.js?v=build36-1';
 import { availableJobs, changeJob } from '../growth.js?v=build36-1';
-import { chainStep, stepLabel, acceptChain, talkChain, deliverChain, claimChain } from '../quest-chain.js?v=features-2';
-import { cureAtTemple } from '../temple.js?v=rune-study-1';
-import { workshopView, managementView, templeExtras } from '../ui/facility-view.js?v=build36-1';
+import { chainStep, stepLabel, nextChainOffer, acceptChainPart, talkChain, deliverChain, claimChain } from '../quest-chain.js?v=systems-v1';
+import { cureAtTemple, recordStoredMaterials } from '../temple.js?v=systems-v1';
+import { workshopView, managementView, templeExtras } from '../ui/facility-view.js?v=systems-v1';
 import { itemShopView, gearShopView } from '../ui/town-shops.js?v=pixel-town-1';
 import { weaponIcon } from '../ui/weapon-icons.js';
 import { equipmentIcon } from '../ui/equipment-icons.js';
@@ -72,7 +73,7 @@ function facilityLink(id) {
 function act(fn) {
   try {
     let msg;
-    session.update((g) => { msg = fn(g); });
+    session.update((g) => { msg = fn(g); recordStoredMaterials(g); });
     flash = { ok: true, text: Array.isArray(msg) ? msg.join('　') : msg };
   } catch (e) { flash = { ok: false, text: e.message }; }
   draw();
@@ -103,7 +104,6 @@ function townActions(g) {
     reportable ? el('a', { href: facilityLink('guild') + '#guild-active' }, `報告できる依頼 ${reportable}件`) : null,
     down || cure ? el('a', { href: facilityLink('temple') }, down ? `戦闘不能 ${down}人・神殿へ` : '状態異常の治療へ') : null,
     rest ? el('a', { href: facilityLink('inn') }, 'HP・MPの回復へ') : null,
-    g.overdue ? el('a', { href: facilityLink('manage') }, '会費の滞納を確認') : null,
   ].filter(Boolean);
   return actions.length ? el('nav', { class: 'town-actions', 'aria-label': '町でできること' }, actions) : null;
 }
@@ -179,7 +179,7 @@ function guild() {
     const accept = accepted ? null : canAcceptQuest(data, g, q);
     const destination = questDestination(data, q);
     const deposit = accepted ? q.depositPaid ?? 0 : q.depositGold ?? 0;
-    const refund = questAbandonRefund(data, q);
+    const refund = questAbandonRefund(data, q, g.day);
     const type = data.questTypes.find((type) => type.id === q.type)?.name ?? '依頼';
     return el('li', { class: `guild-contract${ready ? ' reportable' : ''}` },
       el('div', { class: 'guild-contract-meta' },
@@ -188,7 +188,10 @@ function guild() {
       el('h3', {}, questText(data, q)),
       destination ? el('p', { class: 'small' }, `行き先　${destination}`) : null,
       el('p', {}, `報酬　${rewardText(q)}`),
-      el('p', { class: 'small' }, deposit ? `${accepted ? '預かり中' : '受注保証金'} ${deposit} G（達成時に全額返還）` : '受注無料'),
+      el('p', { class: 'small' }, deposit ? `${accepted ? '預かり中' : '受注保証金'} ${deposit} G（${q.special ? '期限内の達成で全額返還' : '達成時に全額返還'}）` : '受注無料'),
+      q.special ? el('p', { class: 'small' }, accepted
+        ? `期限 ${q.deadlineDay}日目${q.completedDay != null ? `・達成 ${q.completedDay}日目` : g.day > q.deadlineDay ? '・期限超過' : ''}`
+        : `受注から${q.daysToComplete}日。期限内の達成でゴールド報酬30%増。`) : null,
       accepted ? el('progress', { max: q.count, value: questProgress(data, g, q), 'aria-label': '依頼の進み具合' }) : null,
       accepted ? el('span', {}, `${questProgress(data, g, q)} / ${q.count}`) : null,
       accepted
@@ -203,31 +206,48 @@ function guild() {
         el('button', { onclick: () => act((gg) => abandonQuest(data, gg, q.uid, rng())) }, 'この依頼を取り下げる')) : null);
   };
   const tabs = [['board', '掲示板'], ['active', `受注中 ${g.quests.length}`], ['rank', '昇格・連続依頼']];
+  const chains = data.questChains.filter(chain => Number(chain.star) <= currentRank(data, g).maxDungeonRank);
   const switcher = el('div', { class: 'district-switch', role: 'group', 'aria-label': '酒場の窓口' },
     tabs.map(([id, title]) => el('button', { 'aria-pressed': String(guildTab === id), onclick: () => {
       guildTab = id; flash = null; draw();
       view.querySelector('.district-switch [aria-pressed="true"]')?.focus({ preventScroll: true });
     } }, title)));
-  if (guildTab === 'board') return [switcher, el('section', { class: 'guild-board', 'aria-labelledby': 'guild-board-title' },
+  if (guildTab === 'board') {
+    const areas = questBoardAreas(data, g);
+    const listed = g.questBoardArea ?? '';
+    return [switcher, el('section', { class: 'guild-board', 'aria-labelledby': 'guild-board-title' },
     el('header', {}, el('h2', { id: 'guild-board-title' }, '依頼掲示板'),
       el('span', {}, `掲示 ${g.board.length}件・受注 ${g.quests.length} / ${questAcceptLimit(data, g)}件`)),
-    el('p', { class: 'small muted' }, `所持金 ${g.gold} G・預けている保証金 ${questDepositTotal(g)} G。期限はなく、帰還・全滅でも受注は継続します。`),
+    el('label', {}, '地域と難度', el('select', { class: 'select', onchange: e => {
+      session.update(game => selectQuestBoardArea(data, game, e.target.value, rng()));
+      draw();
+    } }, el('option', { value: '', selected: !areas.some(area => area.id === listed) }, '現在のランク'),
+    areas.map(area => el('option', { value: area.id, selected: area.id === listed }, `地域 ${area.region}・★${area.star}`)))),
+    el('p', { class: 'small muted' }, `所持金 ${g.gold} G・預けている保証金 ${questDepositTotal(g)} G。`),
+    g.specialQuest ? el('ul', { class: 'guild-contracts' }, card(g.specialQuest, false)) : null,
+    chains.filter(chain => Number(chain.star) === (areas.find(area => area.id === listed)?.star ?? currentRank(data, g).maxDungeonRank))
+      .map(chain => {
+        const offer = nextChainOffer(chain, g);
+        return offer ? el('div', { class: 'panel small' }, el('strong', {}, chain.title),
+          el('button', { onclick: () => act(game => { acceptChainPart(game, chain); guildTab = 'rank'; return '連続依頼を受けた。'; }) }, '連続依頼を受ける')) : null;
+      }),
     g.board.length ? el('ul', { class: 'guild-contracts' }, g.board.map((q) => card(q, false)))
       : el('p', {}, 'この掲示分の依頼は出そろいました。遠征から戻ると新しい依頼が届きます。'))];
+  }
   if (guildTab === 'active') return [switcher, el('section', { class: 'guild-board', id: 'guild-active' },
     el('header', {}, el('h2', {}, '受けている依頼'), el('span', {}, `報告可 ${pending}件・受注 ${g.quests.length} / ${questAcceptLimit(data, g)}件`)),
-    el('p', { class: 'small muted' }, `預かり保証金 ${questDepositTotal(g)} G。達成報告で全額返還されます。`),
+    el('p', { class: 'small muted' }, `預かり保証金 ${questDepositTotal(g)} G。`),
     g.quests.length ? el('ul', { class: 'guild-contracts' },
       [...g.quests].sort((a,b) => Number(canReport(data, g, b)) - Number(canReport(data, g, a))).map((q) => card(q, true)))
       : el('p', {}, '掲示板で依頼を受けると、ここで進み具合を確認できます。'))];
   return [switcher,
     el('details', { class: 'panel small' }, el('summary', {}, '連続クエスト'),
-      data.questChains.filter((chain) => Number(chain.star) <= currentRank(data, g).maxDungeonRank).map((chain) => {
+      chains.filter(chain => g.chains?.[chain.id]).map((chain) => {
         const state = g.chains?.[chain.id];
         const step = chainStep(chain, g);
         return el('div', { class: 'panel small' }, chain.title,
           state?.claimed ? el('div', {}, '達成済み') : null,
-          !state ? el('button', { onclick: () => act((game) => { acceptChain(game, chain); return '連続クエストを受けた。'; }) }, '受ける') : null,
+          state.awaitingAcceptance ? el('p', {}, '続きの依頼が掲示板にあります。') : null,
           step ? el('p', {}, stepLabel(data, step)) : null,
           step?.kind === 'talk' ? el('button', { onclick: () => act((game) => talkChain(game, chain)) }, '話す') : null,
           step?.kind === 'gather' ? el('button', { onclick: () => act((game) => deliverChain(data, game, chain)) }, '納品する') : null,
@@ -245,9 +265,7 @@ function rewardText(q) {
   const def = data.quests.find((x) => x.id === q.questId);
   const gold = questRewardGold(data, session.game, q);
   const item = def?.rewardItem?.includes('確定ではない') ? '固有装備は討伐時に抽選' : def?.rewardItem;
-  const gap = currentRank(data, session.game).maxDungeonRank - q.rank;
-  const rules = data.balance.guild_points ?? {};
-  const points = (def?.rankPoints ?? 0) * (gap === 0 ? rules.same_rank ?? 1 : gap === 1 ? rules.one_rank_lower ?? 0.5 : 0);
+  const points = questRankPoints(data, session.game, q);
   return [gold ? `${gold} G` : null, item || null, `ポイント ${points}`].filter(Boolean).join('・');
 }
 
@@ -354,7 +372,7 @@ function draw() {
   render(view, sceneHeader(facility.name, scene, { detail: facility.detail, returnToTown: true, status: statusBar(g) }),
     flash?.text ? el('div', { class: `action-feedback ${flash.ok ? '' : 'error'}`, role: 'status' }, flash.text, el('button', { 'aria-label': '通知を閉じる', onclick: (e) => { flash = null; e.currentTarget.parentNode.remove(); } }, '×')) : null,
     facility.id === 'manage' ? el('p', { class: 'panel small' },
-      `${cal.month}か月目・月末まで${cal.daysLeft}日・月末の会費 ${guildFee(data, g)}`) : null,
+      `${cal.month}か月目・月末まで${cal.daysLeft}日`) : null,
     facility.show());
 }
 
