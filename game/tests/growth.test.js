@@ -35,6 +35,20 @@ test('未経験ジョブの初期スキルは共有されず、装備枠はア�
   assert.deepEqual(w.loadout.passives, [passive.id]);
 });
 
+test('同じジョブの仲間同士でも習得・装着状態は共有しない', () => {
+  const specs = Array.from({ length: 6 }, (_, i) => ({ name: `warrior${i + 1}`, job: 'warrior', icon: 'x' }));
+  const g = createNewGame(data, specs);
+  const first = g.party[0];
+  const second = g.party[1];
+  const passive = jobSkills(data, 'warrior').find((s) => s.kind === 'passive' && s.stage === 2);
+  first.ap.warrior = passive.apToLearn;
+  learnSkill(data, first, passive.id);
+  assert.equal(isLearned(first, passive), true);
+  assert.equal(isLearned(second, passive), false);
+  assert.ok(first.loadout.passives.includes(passive.id));
+  assert.ok(!second.loadout.passives.includes(passive.id));
+});
+
 test('AP で2段目を覚える（前の段が必要・AP が減る・パッシブは能力値に入る）', () => {
   const g = fresh(); const w = g.party[0];
   const s2 = jobSkills(data, 'warrior').find((s) => s.name === '鉄の体'); // 守り2段目：HP+10%
