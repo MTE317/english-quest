@@ -98,7 +98,7 @@ function select(scene, restart = false) {
     player.volume = scene === 'victory' ? 0.15 : scene === 'battle' ? 0.3 : 0.23;
     player.src = new URL(`../audio/${tracks[scene]}.mp3?v=${revision}`, import.meta.url).href;
   }
-  player.muted = speechPlaying;
+  player.muted = speechPlaying && current !== 'battle';
   play();
 }
 
@@ -122,5 +122,6 @@ export function finishBattleMusic(result) {
 
 export function setSpeechPlaying(playing) {
   speechPlaying = Boolean(playing);
-  if (player) player.muted = speechPlaying;
+  // 英語音声と戦闘BGMは重ねて流す。その他の場面では従来のミュートを維持する。
+  if (player) player.muted = speechPlaying && current !== 'battle';
 }
