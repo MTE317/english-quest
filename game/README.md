@@ -76,6 +76,12 @@ python3 -m http.server 8000
 
 ## テスト
 
+### 連続クエスト廃止後の配信互換
+
+`data/quest_chains.csv` は旧ブラウザーのキャッシュに残ったデータローダー向けに、見出しだけの空ファイルとして残す。削除すると旧ローダーの必須読み込みが404となり、町の起動が止まる。現行のマニフェストと `GAME_FILES` には追加しない。連続クエストの内容・受注機能は復活させず、旧セーブの精算は `retired-quests.js` が行う。
+
+`tests/retired-quests.test.js` で互換CSV、新規ゲーム、旧24依頼の再読込時の一度限りの精算、遠征中の復元元と全滅を確認する。
+
 ```
 cd game
 node --test tests/*.test.js  # recipes.test.js（171件・制作・戦闘の回帰テスト）を含む
