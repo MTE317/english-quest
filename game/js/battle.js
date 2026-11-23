@@ -496,7 +496,11 @@ function isMagicSkill(s) {
 /** スキルを今使えるか → 使えない理由（使えるなら ''） */
 export function skillMp(data, member, skill) {
   const rate = data.balance.mp_rules?.skill_mp_per_lv ?? 0;
-  const reduction = Math.min(0.5, affixSum(member, 'MP_SAVE') / 100);
+  const elements = skill.effect?.element ? [skill.effect.element] : skill.elements?.length ? skill.elements : ['none'];
+  const neutralMagic = skill.kind === 'attack' && skill.effect?.base === 'mag'
+    && elements.length > 0 && elements.every(id => id === 'none');
+  const reduction = Math.min(0.5, affixSum(member, 'MP_SAVE') / 100
+    + (neutralMagic ? memberMods(data, member).neutral_magic_mp_save ?? 0 : 0));
   const weaponSkill = skill.kind === 'attack' && (skill.effect?.base ?? 'weapon') === 'weapon';
   const weaponMul = weaponSkill ? weaponTraits(data, member.equip?.weapon).weapon_skill_mp_mul ?? 1 : 1;
   return Math.ceil(skill.mp * (1 + rate * (member.lv - 1)) * (1 - reduction) * weaponMul);
@@ -719,8 +723,9 @@ function attackDamage(data, game, b, i, e, skill, cm, { offhand = false, actionB
   // 睡眠・凍結は hitEnemy で解ける前に判定する。異常の種類を重ねても上限は共有。
   const legacyDownBonus = enemy.debuffs.abilityDown ? Math.max(0, affixSum(m, 'VS_STATUS:statdown') / 100) : 0;
   let statusDamage = Object.keys(enemy.statuses).reduce((sum, id) => sum + Math.max(0, affixSum(m, `VS_STATUS:${id}`) / 100), legacyDownBonus);
-  for (const [ids, rate, weaponType] of mods.status_count_damage ?? []) {
+  for (const [ids, rate, weaponType, element] of mods.status_count_damage ?? []) {
     if (weaponType && (base !== 'weapon' || wt?.id !== weaponType)) continue;
+    if (element && !els.includes(element)) continue;
     statusDamage += [...new Set(ids)].filter(id => enemy.statuses[id]).length * rate;
   }
   pm += Math.min(f(data, 'status_damage_cap'), statusDamage) + actionBonus;

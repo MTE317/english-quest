@@ -2,3 +2,6 @@
 stormcaster,雷術士,単体雷魔法と会心時のMP回収,C,D,A,D,B,B,A,thunder,雷耐性と複数敵に弱い,tome,light,素材,300,1.0
 venomist,毒術士,複数戦で毒を伝播させる,C,B,C,C,C,A,B,pierce,単体戦と毒耐性に弱い,dagger,light,素材,200,1.0
 bloodblade,血刃士,火傷と出血を重ねて鎌で攻める,B,A,D,C,C,B,C,slash|fire,継続傷が効かない敵に弱い,scythe,medium,討伐報告,220,1.0
+infernalist,炎術士,火傷した敵への炎全体魔法,B,D,A,D,A,B,D,fire,炎耐性と火傷無効に弱い,tome,light,素材,250,1.0
+seal_archer,封技弓士,封印と弓の追撃,B,A,D,B,C,C,C,pierce,封印無効に弱い,bow,medium,討伐報告,220,1.0
+neutralist,無相術士,無属性直接魔法とMP節約,B,D,A,D,A,B,D,none,属性弱点を突けない,tome,light,素材,200,1.0
