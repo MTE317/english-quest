@@ -5,13 +5,13 @@ import { buildLexicon } from '../lexicon.js';
 import { Scheduler } from '../srs.js?v=features-2';
 import { LearningStore, now } from '../storage.js?v=rune-study-1';
 import { GameSession } from '../save.js?v=rune-study-1';
-import { normalizeGame } from '../game-state.js?v=build36-1';
+import { normalizeGame } from '../game-state.js?v=party6-1';
 import { createBattle, makeEnemy, finishBattle } from '../battle.js?v=build36-1';
 import { currentRank, useItemOutsideBattle, FIELD_ITEM_EFFECTS } from '../dungeon.js?v=build36-1';
 import { nextRankStatus, checkRankUp } from '../town.js?v=build36-1';
 import { makeGear } from '../character.js?v=build36-1';
 import { examWords, starLearnedRatio, arenaReviewWords } from '../study.js?v=build36-1';
-import { createBattleView } from '../ui/battle-view.js?v=pixel-town-1';
+import { createBattleView } from '../ui/battle-view.js?v=party6-1';
 import { runQuiz } from '../ui/quiz-runner.js?v=rune-study-1';
 import { el, render } from '../dom.js';
 import { setSceneMusic } from '../battle-music.js?v=rune-study-1';
@@ -159,6 +159,10 @@ function showItems() {
 }
 
 function draw() {
+  if (session.game && !session.readOnly && !session.inDungeon) {
+    normalizeGame(data, session.game);
+    session.save();
+  }
   const game = session.game;
   const run = session.run;
   if (!game?.party || (run && !run.challenge)) {

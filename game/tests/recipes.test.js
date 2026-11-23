@@ -9,7 +9,7 @@ import { readCsv, readJson } from './helpers.js';
 
 const data = buildGameData(Object.fromEntries(Object.entries(GAME_FILES).map(([key, name]) =>
   [key, name.endsWith('.json') ? readJson(name) : readCsv(name).rows])));
-const party = (job = 'warrior') => [job, 'knight', 'black_mage', 'white_mage']
+const party = (job = 'warrior') => [job, 'knight', 'black_mage', 'white_mage', 'thief', 'bard']
   .map((j) => ({ job: j, name: j, icon: 'x' }));
 const fresh = (job = 'warrior') => createNewGame(data, party(job));
 

@@ -717,7 +717,9 @@
       "warrior",
       "knight",
       "black_mage",
-      "white_mage"
+      "white_mage",
+      "thief",
+      "bard"
     ]
   },
   "balance_targets": {

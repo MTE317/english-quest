@@ -12,10 +12,12 @@ const party = [
   { name: 'ベル', job: 'knight', icon: 'human_02' },
   { name: 'クロ', job: 'black_mage', icon: 'fantasy_01' },
   { name: 'シロ', job: 'white_mage', icon: 'animal_01' },
+  { name: 'エル', job: 'thief', icon: 'human_03' },
+  { name: 'ファ', job: 'bard', icon: 'human_04' },
 ];
 const fresh = () => createNewGame(data, party);
 
-test('4人・装備8枠・Lv1・HP/MP満タン・最初の装備', () => {
+test('6人・装備8枠・Lv1・HP/MP満タン・最初の装備', () => {
   const g = fresh();
   assert.equal(g.party.length, PARTY_SIZE);
   for (const m of g.party) {
@@ -89,7 +91,7 @@ test('二刀流：片手武器だけ。両手武器・鞭は不可。武器を�
   equipFromStorage(data, g, w, 'weapon', gs.uid);
   assert.equal(w.equip.offhand, null);
   assert.equal(canEquip(data, w, 'offhand', makeGear(g, 'sword_t1')).ok, false);
-  const bard = createNewGame(data, [party[0], party[1], party[2], { name: 'ド', job: 'bard', icon: 'x' }]).party[3];
+  const bard = createNewGame(data, [party[0], party[1], party[2], { name: 'ド', job: 'bard', icon: 'x' }, ...party.slice(4)]).party[3];
   assert.equal(canEquip(data, bard, 'offhand', makeGear(g, 'whip_t1')).ok, false);
 });
 
@@ -110,7 +112,7 @@ test('レベル：xp_to_next で上がり、HP も増える。上限は level_ca
 
 test('すべてのジョブで最初の能力値が計算できる', () => {
   for (const job of data.jobs) {
-    const g = createNewGame(data, [{ name: 'a', job: job.id, icon: 'x' }, party[1], party[2], party[3]]);
+    const g = createNewGame(data, [{ name: 'a', job: job.id, icon: 'x' }, ...party.slice(1)]);
     const st = computeStats(data, g.party[0]);
     for (const v of Object.values(st)) assert.ok(Number.isFinite(v), `${job.id}`);
   }

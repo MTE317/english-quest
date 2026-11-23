@@ -8,7 +8,7 @@ import { MemoryStorage, readCsv, readJson, T0 } from './helpers.js';
 
 const data = buildGameData(Object.fromEntries(Object.entries(GAME_FILES).map(([key, name]) =>
   [key, name.endsWith('.json') ? readJson(name) : readCsv(name).rows])));
-const fresh = () => createNewGame(data, ['thief', 'warrior', 'knight', 'white_mage'].map((job) => ({ job, name: job, icon: 'x' })));
+const fresh = () => createNewGame(data, ['thief', 'warrior', 'knight', 'white_mage', 'thief', 'bard'].map((job) => ({ job, name: job, icon: 'x' })));
 function legacyCraft(game, id = 'craft_dagger_s2') {
   const gear = makeGear(game, id, { quality: 1.15, enh: 7, affixes: { 'STATUS_ON_HIT:poison': 20, OLD_FIXED: 99 } });
   gear.crafted = true;

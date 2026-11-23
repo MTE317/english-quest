@@ -18,7 +18,7 @@ const rules = { ...master, balance: { ...master.balance, battle_formulas: {
 const criticalRules = { ...rules, balance: { ...rules.balance, battle_formulas: { ...rules.balance.battle_formulas, crit_cap: 1 } } };
 
 function setup({ job = 'warrior', weapon = 'sword_t1', count = 1, data = rules, seed = 3 } = {}) {
-  const game = createNewGame(data, [job, 'warrior', 'black_mage', 'white_mage'].map((j, i) => ({ name: `仲間${i + 1}`, job: j, icon: 'x' })));
+  const game = createNewGame(data, [job, 'warrior', 'black_mage', 'white_mage', 'thief', 'bard'].map((j, i) => ({ name: `仲間${i + 1}`, job: j, icon: 'x' })));
   for (const member of game.party) {
     member.lv = 20;
     member.loadout = { actions: [], passives: [] };

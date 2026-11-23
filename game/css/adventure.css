@@ -148,6 +148,23 @@ details[open] .stop-label::after { transform: rotate(-45deg); }
 .roster-resources { display: grid; gap: 5px; margin-top: 9px; font-size: .8rem; color: var(--muted); font-variant-numeric: tabular-nums; }
 .roster-resources .meter { background: #0c1421; margin: 0; height: 5px; }
 .departure-plan { padding: clamp(13px,3vw,24px); }
+.expedition-party { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 7px; padding: 8px; }
+.expedition-party .expedition-member { display: grid; align-content: start; gap: 4px; min-width: 0; padding: 7px; background: #0f1d31; border: 1px solid var(--line); }
+.expedition-member-heading { display: flex; align-items: center; gap: 6px; min-width: 0; }
+.expedition-member-heading .pixel-portrait { flex-shrink: 0; }
+.expedition-member-copy strong { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: .8rem; }
+.expedition-member-copy small { display: block; color: var(--muted); font-size: .7rem; }
+.expedition-resource { display: grid; grid-template-columns: auto minmax(0,1fr); gap: 2px 3px; min-width: 0; color: var(--muted); font-size: .7rem; font-variant-numeric: tabular-nums; }
+.expedition-resource-value { min-width: 0; text-align: right; overflow-wrap: anywhere; }
+.expedition-meter { grid-column: 1 / -1; height: 4px; background: #07101f; overflow: hidden; }
+.expedition-meter > span { display: block; height: 100%; background: var(--good); }
+.expedition-resource.mp .expedition-meter > span { background: #8abde5; }
+.expedition-conditions { color: #f2b2a3; font-size: .7rem; overflow-wrap: anywhere; }
+.field-item-targets { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 6px; margin-top: 8px; }
+.field-item-targets button { min-width: 0; min-height: 44px; margin: 0; padding: 7px 5px; }
+@media (max-width: 359px) {
+  .expedition-party { grid-template-columns: repeat(2,minmax(0,1fr)); }
+}
 .route-facts { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); border: 1px solid #485971; background: #0d1a2c; border-radius: 5px; }
 .route-facts > div { padding: 8px 10px; min-width: 0; overflow-wrap: anywhere; }
 .route-facts > div + div { border-left: 1px solid var(--line); }

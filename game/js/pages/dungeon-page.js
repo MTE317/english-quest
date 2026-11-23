@@ -6,14 +6,14 @@ import { Scheduler } from '../srs.js?v=features-2';
 import { LearningStore, now, loadSettings } from '../storage.js?v=rune-study-1';
 import { QuestionPicker } from '../picker.js';
 import { GameSession } from '../save.js?v=rune-study-1';
-import { normalizeGame } from '../game-state.js?v=build36-1';
+import { normalizeGame } from '../game-state.js?v=party6-1';
 import {
   allowedDungeons, startRun, startNextBattle, afterBattle, returnToTown, continueRun, resolveLoot,
   isBossBattle, runFloorRow, runFloorCount, returnItems, currentRank, useItemOutsideBattle, FIELD_ITEM_EFFECTS,
 } from '../dungeon.js?v=build36-1';
 import { backpackSlots, backpackUsed, addItem } from '../loot.js?v=build36-1';
 import { maxHp, maxMp } from '../character.js?v=build36-1';
-import { createBattleView } from '../ui/battle-view.js?v=pixel-town-1';
+import { createBattleView } from '../ui/battle-view.js?v=party6-1';
 import { createVictoryView } from '../ui/victory-view.js?v=pixel-town-1';
 import { stoneAllowed } from '../study.js?v=build36-1';
 import { el, render, stars } from '../dom.js';
@@ -32,15 +32,31 @@ let data; let lex; let scheduler; let store; let srs;
 const gearName = (g) => `${data.equipment.get(g.id).name}${g.rarity && g.rarity !== 'common' ? `（${data.rarityTable.find((r) => r.id === g.rarity)?.name ?? '固有'}）` : ''}`;
 
 function partyPanel() {
-  return el('div', { class: 'panel small' }, session.game.party.map((m) => el('div', { class: `expedition-member${m.hp <= 0 ? ' error' : ''}` },
-    portraitIcon(m.icon, { small: true }),
-    el('span', { class: 'expedition-member-copy' }, `${m.name} Lv${m.lv}　HP ${m.hp}/${maxHp(data, m)}　MP ${m.mp}/${maxMp(data, m)}`,
-      m.persist?.length ? `　${m.persist.map((id) => data.statusEffects.get(id)?.name).join('・')}` : ''))));
+  const resource = (label, value, max, kind) => el('span', { class: `expedition-resource ${kind}` },
+    el('span', {}, label), el('span', { class: 'expedition-resource-value' }, `${value}/${max}`),
+    el('span', { class: 'expedition-meter', 'aria-hidden': 'true' },
+      el('span', { style: `width:${max > 0 ? Math.max(0, Math.min(100, value / max * 100)) : 0}%` })));
+  return el('div', { class: 'panel expedition-party', role: 'group', 'aria-label': `仲間${session.game.party.length}人の状態` },
+    session.game.party.map((m) => {
+      const conditions = m.persist?.map((id) => data.statusEffects.get(id)?.name ?? id) ?? [];
+      if (m.hp <= 0) conditions.unshift('戦闘不能');
+      return el('div', { class: `expedition-member${m.hp <= 0 ? ' error' : ''}`, role: 'group', 'aria-label': `${m.name} Lv${m.lv}` },
+        el('div', { class: 'expedition-member-heading' }, portraitIcon(m.icon, { small: true }),
+          el('span', { class: 'expedition-member-copy' },
+            el('strong', { title: m.name }, m.name), el('small', {}, `Lv${m.lv}`))),
+        resource('HP', m.hp, maxHp(data, m), 'hp'),
+        resource('MP', m.mp, maxMp(data, m), 'mp'),
+        conditions.length ? el('span', { class: 'expedition-conditions' }, conditions.join('・')) : null);
+    }));
 }
 
 // ---------------- 行き先を選ぶ（町） ----------------
 function showDeparture(message = null) {
   setSceneMusic('dungeon');
+  if (session.game && !session.readOnly && !session.inDungeon) {
+    normalizeGame(data, session.game);
+    session.save();
+  }
   const g = session.game;
   if (!g?.party) {
     render(view, el('p', {}, 'まだパーティがいません。'), el('a', { class: 'btn primary', href: 'party.html' }, 'パーティを作る'));
@@ -180,6 +196,8 @@ function summary(run) {
 
 function showReturned(pack) {
   setSceneMusic('town');
+  normalizeGame(data, session.game);
+  session.save();
   render(view,
     el('h2', {}, '町に帰った'),
     el('div', { class: 'panel small' },
@@ -216,7 +234,8 @@ function showFieldItems(result) {
       const it = data.items.get(id);
       return el('div', { class: 'panel small' },
         el('div', { class: 'choice-title' }, `${it.name} ×${g.items[id]}`), el('div', { class: 'muted' }, it.description),
-        el('div', { class: 'row' }, g.party.map((m, i) => el('button', {
+        el('div', { class: 'field-item-targets', role: 'group', 'aria-label': `${it.name}を使う仲間` }, g.party.map((m, i) => el('button', {
+          'aria-label': `${m.name}に${it.name}を使う`,
           onclick: () => {
             try { session.update((game) => useItemOutsideBattle(data, game, id, i)); showFieldItems(result); } catch (e) { alert(e.message); }
           },
@@ -240,6 +259,8 @@ function battleView() {
       const dg = data.dungeons.get(dungeonId);
       const r = afterBattle(data, session);
       if (r.result === 'lose') {
+        normalizeGame(data, session.game);
+        session.save();
         render(view,
           el('h2', {}, '全滅…'),
           el('p', {}, 'ダンジョンに入る前の状態に戻った（お金・素材・拾った装備・経験値・日数）。'),

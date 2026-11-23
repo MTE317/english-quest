@@ -11,7 +11,7 @@ const data = buildGameData(Object.fromEntries(Object.entries(GAME_FILES).map(([k
 const added = new Set(data.balance.content_updates.build36_skills);
 const oldData = { ...data, skills: new Map([...data.skills].filter(([id]) => !added.has(id))) };
 const affected = [...new Set([...added].map((id) => data.skills.get(id).job))];
-const fresh = (job = 'monk') => createNewGame(data, [job, 'knight', 'black_mage', 'white_mage']
+const fresh = (job = 'monk') => createNewGame(data, [job, 'knight', 'black_mage', 'white_mage', 'thief', 'bard']
   .map((id) => ({ job: id, name: id, icon: 'x' })));
 
 function legacy() {

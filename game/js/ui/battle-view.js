@@ -38,13 +38,14 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
   });
   const turn = el('span', { class: 'battle-turn' });
   const enemies = el('div', { class: 'battle-enemies', 'data-count': b.enemies.length, 'aria-label': '敵', role: 'group' });
-  const party = el('div', { id: 'battle-party', class: 'battle-party', 'data-count': g.party.length, 'aria-label': '味方', role: 'group' });
+  const party = el('div', { id: 'battle-party', class: 'battle-party', 'data-count': g.party.length, 'aria-label': `味方${g.party.length}人`, role: 'group' });
+  const partyToggleLabel = `仲間${g.party.length}人の状態を見る`;
   const partyToggle = el('button', { class: 'battle-party-toggle', 'aria-controls': party.id, 'aria-expanded': 'false',
     onclick: () => {
       const open = partyToggle.getAttribute('aria-expanded') !== 'true';
       partyToggle.setAttribute('aria-expanded', String(open));
-      partyToggle.textContent = open ? '仲間の状態を閉じる' : '仲間の状態を見る';
-    } }, '仲間の状態を見る');
+      partyToggle.textContent = open ? '仲間の状態を閉じる' : partyToggleLabel;
+    } }, partyToggleLabel);
   const latest = el('span', { class: 'battle-log-latest' });
   const history = el('ul', { class: 'battle-history' });
   const log = el('details', { class: 'battle-log' },
@@ -149,7 +150,7 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
     const cls = `${className}${select ? ' targetable' : ''}${chosen ? ' chosen' : ''}`;
     return select
       ? el('button', { class: cls, 'aria-label': label, onclick: select }, children)
-      : el('div', { class: cls }, children);
+      : el('div', { class: cls, role: 'group', 'aria-label': label }, children);
   }
 
   function inspectEnemy(enemy) {
@@ -204,11 +205,12 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
       const classes = `battle-ally${index === actor ? ' active' : ''}${member.hp <= 0 ? ' down' : ''}`;
       const status = member.hp <= 0 ? '戦闘不能' : `HP ${member.hp}/${hp}、MP ${member.mp}/${mp}`;
       const conditionNames = battleConditionLabels(data, { ...b.allies[index], hp: member.hp });
-      const label = [member.name, status, ...conditionNames].join('、');
+      const label = [member.name, index === actor ? '行動中' : '', status, ...conditionNames, targetable ? '対象に選ぶ' : ''].filter(Boolean).join('、');
       return unitCard(classes, chosen, label, targetable ? () => select(index) : null,
-        el('span', { class: 'battle-ally-icon', 'aria-hidden': 'true' }, portraitIcon(member.icon, { small: true })),
+        el('span', { class: 'battle-ally-heading' },
+          el('span', { class: 'battle-ally-icon', 'aria-hidden': 'true' }, portraitIcon(member.icon, { small: true })),
+          el('span', { class: 'battle-unit-name', title: member.name }, member.name)),
         el('span', { class: 'battle-ally-info' },
-          el('span', { class: 'battle-unit-name' }, member.name),
           resource('HP', member.hp, hp, 'hp'),
           resource('MP', member.mp, mp, 'mp'),
           conditions(conditionNames)));
@@ -221,7 +223,7 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
     log.hidden = question;
     screen.classList.toggle('answering', question);
     partyToggle.setAttribute('aria-expanded', 'false');
-    partyToggle.textContent = '仲間の状態を見る';
+    partyToggle.textContent = partyToggleLabel;
     const heading = el('h3', { id: 'battle-controls-title', tabindex: '-1' }, title);
     render(panel,
       el('div', { class: 'battle-controls-head' }, heading, detail,

@@ -17,7 +17,7 @@ const data = { ...master, balance: { ...master.balance, battle_formulas: {
 } } };
 
 function prepare({ job = 'warrior', weapon, seed = 1, count = 1, boss = false, rules = data } = {}) {
-  const game = createNewGame(rules, [job, 'warrior', 'black_mage', 'white_mage'].map((j) => ({ name: j, job: j, icon: 'x' })));
+  const game = createNewGame(rules, [job, 'warrior', 'black_mage', 'white_mage', 'thief', 'bard'].map((j) => ({ name: j, job: j, icon: 'x' })));
   const member = game.party[0];
   for (const m of game.party) { m.lv = 20; m.hp = maxHp(rules, m); m.mp = maxMp(rules, m); }
   if (weapon) {

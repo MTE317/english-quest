@@ -13,7 +13,7 @@ import { readCsv, readJson, seededRng } from './helpers.js';
 const data = buildGameData(Object.fromEntries(Object.entries(GAME_FILES).map(([key, name]) =>
   [key, name.endsWith('.json') ? readJson(name) : readCsv(name).rows])));
 const fresh = (job = 'warrior') => createNewGame(data,
-  [job, 'knight', 'black_mage', 'white_mage'].map((id) => ({ name: id, job: id, icon: 'x' })));
+  [job, 'knight', 'black_mage', 'white_mage', 'thief', 'bard'].map((id) => ({ name: id, job: id, icon: 'x' })));
 const additions = data.balance.content_updates;
 
 test('追加18制作は対応工房と実在素材で作れ、専用効果を保ったまま別の効果を付与できる', () => {

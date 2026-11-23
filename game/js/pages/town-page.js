@@ -1,7 +1,7 @@
 // 町をホームにして、施設カードから各施設を開く。
 import { loadGameData } from '../gamedata.js?v=rune-study-1';
 import { GameSession } from '../save.js?v=rune-study-1';
-import { normalizeGame } from '../game-state.js?v=build36-1';
+import { normalizeGame } from '../game-state.js?v=party6-1';
 import { currentRank, seededRng } from '../dungeon.js?v=build36-1';
 import {
   calendarOf, guildFee, fillBoard, boardSize, questAcceptLimit, acceptQuest, canAcceptQuest, abandonQuest, canReport, reportQuest, questText, questProgress, questDestination, questRewardGold, questDepositTotal, questAbandonRefund, nextRankStatus, stayInn, revive, reviveCost, checkRankUp,
