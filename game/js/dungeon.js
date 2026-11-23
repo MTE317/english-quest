@@ -53,12 +53,9 @@ export function expeditionFee(data, dungeon) {
   return Math.round(data.economy.get(dungeon.rank).run_income * dungeon.incomeMul * (config.expedition_fee_rate ?? 0));
 }
 
-/**
- * 持っていけるルーンストーン：石の★がダンジョンの★以上（srs.json の stone_star_must_be_gte_dungeon_star）
- */
-export function allowedStones(srs, lex, dungeon) {
-  if (srs.stone_star_must_be_gte_dungeon_star === false) return lex.stones;
-  return lex.stones.filter((s) => s.star >= dungeon.rank);
+/** 遠征の行き先にかかわらず、出題できる教材を選べる。 */
+export function allowedStones(lex) {
+  return lex.stones.filter((stone) => lex.wordsByStone.get(stone.id)?.length > 0);
 }
 
 /**

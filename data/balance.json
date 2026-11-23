@@ -694,8 +694,7 @@
     "backlog_cap": 50,
     "prior_known": "★1で65%、★が上がるごとに-7%（標準の人）",
     "first_seen_correct": 0.45,
-    "stability_growth": 2.3,
-    "stones_ahead": "今の★の石を全部読んだら、1つ上の★の石も持ち込める"
+    "stability_growth": 2.3
   },
   "temple": {
     "revive": "神殿での復活代 = 30 × レベル（1人）。町に倒れたまま帰ったときだけかかる"

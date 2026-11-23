@@ -10,14 +10,12 @@
  "reduce_new_when_due_over": 50,
  "reduced_new_per_run": 5,
  "training_advances_day": false,
- "stone_star_must_be_gte_dungeon_star": true,
  "distractors": {
   "early": "他の石から",
   "late": "同じ石の似た単語から"
  },
  "wipe_keeps_learning_record": true,
  "storage": "単語ごとに段階・次の復習日・連続正解数などを保存（15,000語で1MB未満）",
- "stones_ahead": "今の★の石を全部読んだら、1つ上の★の石も持ち込める（ダンジョンの★以上ならよい）",
  "fsrs_w": "FSRS-5 の公開されている初期値（ゲーム側の FALLBACK を正とする）",
  "maximum_interval_days": 36500,
  "learned_streak": 3,

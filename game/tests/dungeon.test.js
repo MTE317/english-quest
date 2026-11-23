@@ -9,8 +9,13 @@ import {
 import { backpackSlots, backpackUsed, addToBackpack, rollBattleLoot, rollGearDrop, addItem } from '../js/loot.js';
 import { makeEnemy } from '../js/battle.js';
 import { maxHp, maxMp, gainXp, computeStats } from '../js/character.js';
-import { realGameData, realLexicon, readJson, readCsv, MemoryStorage } from './helpers.js';
+import { realGameData, realLexicon, readJson, readCsv, MemoryStorage, T0 } from './helpers.js';
 import { planExploration } from '../js/exploration.js';
+import { buildWorldMap } from '../js/world-map.js';
+import { acceptQuest, canReport, checkRankUp, makeBoard, reportQuest } from '../js/town.js';
+import { QuestionPicker } from '../js/picker.js';
+import { Scheduler } from '../js/srs.js';
+import { LearningStore } from '../js/storage.js';
 
 const data = realGameData();
 const lex = realLexicon();
@@ -53,14 +58,61 @@ function fightOut(session, acc = 1, seed = 1) {
   while (nextTurn(data, session.game, b)) { setPending(b, { type: 'attack', target: 0 }, {}); resolvePending(data, session.game, b, r() < acc); session.save(); }
 }
 
-test('ランクで行けるダンジョンが決まる（見習いは★1だけ）。石は★がダンジョン以上', () => {
+test('ランクで行けるダンジョンが決まる（見習いは★1だけ）', () => {
   const game = createNewGame(data, party);
   assert.ok(allowedDungeons(data, game).every((d) => d.rank === 1));
   game.rank = 'R02';
   assert.ok(allowedDungeons(data, game).some((d) => d.rank === 2));
-  const srs = readJson('srs.json');
-  const d2 = [...data.dungeons.values()].find((d) => d.rank === 2);
-  assert.ok(allowedStones(srs, lex, d2).every((s) => s.star >= 2));
+});
+
+test('★4昇格後は地図に載った目的地へ既存教材で出発し、帰還して討伐を報告できる', () => {
+  const session = newSession();
+  const game = session.game;
+  const rng = seededRng({ rng: 9 });
+  const atlas = () => buildWorldMap(data.dungeons, allowedDungeons(data, game), game);
+  game.rank = 'R03+';
+  game.rankPoints = 48;
+  game.cleared.howling_canyon = 1;
+  game.examsPassed = ['R04'];
+  game.gold = 1000;
+  for (const member of game.party) {
+    gainXp(data, member, 1000000);
+    member.hp = maxHp(data, member);
+    member.mp = maxMp(data, member);
+  }
+  assert.ok(atlas().regions.flatMap(region => region.dungeons).every(dungeon => dungeon.rank <= 3));
+  checkRankUp(data, game);
+  assert.equal(game.rank, 'R04');
+  makeBoard(data, game, rng);
+  const offer = game.board.find(quest => quest.type === 'boss');
+  assert.equal(offer?.rank, 4);
+  assert.ok(atlas().regions.some(region => region.dungeons.some(dungeon => dungeon.id === offer.dungeonId)));
+  const quest = acceptQuest(data, game, offer.uid, rng);
+
+  const empty = { id: 'empty', star: 4 };
+  const stones = allowedStones({ ...lex, stones: [...lex.stones, empty] });
+  assert.deepEqual(stones.map(stone => stone.star), [1, 2, 3]);
+  const stoneId = stones[0].id;
+  const picker = new QuestionPicker({
+    lex, store: new LearningStore(new MemoryStorage()), scheduler: new Scheduler(readJson('srs.json')),
+    stoneId, nowMs: T0, rng,
+  });
+  assert.ok(picker.next());
+  startRun(data, session, { dungeonId: offer.dungeonId, stoneId, quizState: picker.toState(), seed: 9 });
+  assert.equal(session.run.stoneId, stoneId);
+  for (let i = 0; i < 12 && session.run?.state !== 'cleared'; i++) {
+    if (session.run.state === 'return_point') { continueRun(session); continue; }
+    if (session.run.state === 'loot') { resolveLoot(data, session, null); continue; }
+    startNextBattle(data, session);
+    fightOut(session);
+    assert.notEqual(afterBattle(data, session).result, 'lose');
+  }
+  assert.equal(session.run?.state, 'cleared');
+  returnToTown(data, session);
+  assert.equal(session.inDungeon, false);
+  assert.ok(canReport(data, session.game, quest));
+  reportQuest(data, session.game, quest.uid, rng);
+  assert.ok(!session.game.quests.some(active => active.uid === quest.uid));
 });
 
 test('入ると日数を使い、全滅すると日数・お金・経験値・拾った物がすべて戻る', () => {

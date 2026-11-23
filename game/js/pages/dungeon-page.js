@@ -8,14 +8,13 @@ import { QuestionPicker } from '../picker.js';
 import { GameSession } from '../save.js?v=rune-study-1';
 import { normalizeGame } from '../game-state.js?v=party6-1';
 import {
-  allowedDungeons, expeditionFee, startRun, startNextBattle, afterBattle, returnToTown, continueRun, resolveLoot,
+  allowedDungeons, allowedStones, expeditionFee, startRun, startNextBattle, afterBattle, returnToTown, continueRun, resolveLoot,
   dungeonRegion, isBossBattle, runFloorRow, runFloorCount, returnItems, currentRank, useItemOutsideBattle, FIELD_ITEM_EFFECTS,
-} from '../dungeon.js?v=systems-v1';
+} from '../dungeon.js?v=expedition-study-1';
 import { backpackSlots, backpackUsed, addItem } from '../loot.js?v=build36-1';
 import { maxHp, maxMp } from '../character.js?v=build36-1';
 import { createBattleView } from '../ui/battle-view.js?v=systems-v1';
 import { createVictoryView } from '../ui/victory-view.js?v=pixel-town-1';
-import { stoneAllowed } from '../study.js?v=build36-1';
 import { el, render, stars } from '../dom.js';
 import { buildWorldMap, newDiscoveries } from '../world-map.js?v=world-map-1';
 import { createWorldMapView } from '../ui/world-map-view.js?v=world-map-1';
@@ -92,9 +91,9 @@ function showDeparture(message = null) {
     const dg = data.dungeons.get(st.dungeonId);
     destinationHeading.textContent = dungeonLabel(dg);
     document.querySelector('.page-heading').className = `bar page-heading scene-${expeditionScene(dg.id)}`;
-    // ★がダンジョン以上で、今のランクの★まで（1つ下の★の石をすべて読み解けば1つ上まで）
-    const stones = lex.stones.filter((s) => stoneAllowed(lex, store, scheduler, s, dg.rank, rank.maxDungeonRank, scheduler.dayOf(now())));
-    st.stoneId = stones.find((s) => s.id === st.stoneId)?.id ?? stones[0]?.id ?? null;
+    const stones = allowedStones(lex);
+    st.stoneId = stones.find((s) => s.id === st.stoneId)?.id
+      ?? stones.find((s) => s.star === dg.rank)?.id ?? stones[0]?.id ?? null;
     render(stoneSel, stones.map((s) => el('option', { value: s.id, selected: s.id === st.stoneId }, `${stars(s.star)} ${s.name}`)));
     const fee = expeditionFee(data, dg);
     departure.disabled = !st.stoneId || g.gold < fee;
@@ -141,7 +140,7 @@ function showDeparture(message = null) {
         g.items.bounty_lure > 0 ? el('label', {}, lure, ` おびき寄せ香を1個使う（所持 ${g.items.bounty_lure}）`) : null,
         el('label', {}, '持っていくルーンストーン', stoneSel),
         el('details', { class: 'stone-help' }, el('summary', {}, '教材を選ぶ条件'),
-          el('p', {}, `今のランクは「${rank.title}」。行き先以上の★の石を選べます。今の★の石をすべて読み解くと、1つ上の★の石も持ち込めます。`)),
+          el('p', {}, '行き先の★に関係なく、復習したい教材を選べます。')),
         departure),
       el('details', { class: 'panel' }, el('summary', {}, `仲間の状態（${g.party.length}人）`), partyPanel()),
       new URLSearchParams(location.search).has('debug') ? debugTools() : null)

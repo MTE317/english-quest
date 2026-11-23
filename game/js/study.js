@@ -35,17 +35,6 @@ export function nextUnread(lex, store, stoneId, n) {
   return (lex.wordsByStone.get(stoneId) ?? []).filter((w) => !store.isRead(w.id)).slice(0, n);
 }
 
-/**
- * 持っていける石：★がダンジョン以上で、今のランクの★までか、1つ下の★の石をすべて読み解いていれば1つ上まで（srs.json の stones_ahead）
- */
-export function stoneAllowed(lex, store, scheduler, stone, dungeonRank, rankStar, today) {
-  if (stone.star < dungeonRank || !lex.wordsByStone.get(stone.id)?.length) return false;
-  if (stone.star <= rankStar) return true;
-  if (stone.star > rankStar + 1) return false;
-  const below = lex.stones.filter((s) => s.star === stone.star - 1);
-  return below.length > 0 && below.every((s) => stoneProgress(lex, store, scheduler, s.id, today).allRead);
-}
-
 /** 闘技場の総復習。セットの所属や確認テストの合否ではなく、項目ごとの学習記録で選ぶ。 */
 export function arenaReviewWords(lex, store) {
   return lex.words.filter((word) => store.isRead(word.id));

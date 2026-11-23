@@ -5,7 +5,7 @@ import { LearningStore, LEARNING_KEY } from '../js/storage.js';
 import { buildLexicon } from '../js/lexicon.js';
 import { Scheduler } from '../js/srs.js';
 import {
-  stoneProgress, nextUnread, stoneAllowed, trialBlock, trialPlan, finishExam, promotionBlock, promotionPlan, starLearnedRatio,
+  stoneProgress, nextUnread, trialBlock, trialPlan, finishExam, promotionBlock, promotionPlan, starLearnedRatio,
   trainingReward, applyTraining, examWords, arenaReviewWords,
 } from '../js/study.js';
 import { nextRankStatus, checkRankUp } from '../js/town.js';
@@ -30,17 +30,6 @@ test('資料室：読み解くと進み具合に入る。報酬はない（お�
   assert.equal(JSON.stringify(g), before);
   // 記録が残る
   assert.equal(new LearningStore(store.storage).read.size, 5);
-});
-
-test('1つ上の★の石：今の★の石をすべて読み解くと持ち込める', () => {
-  const store = new LearningStore(new MemoryStorage());
-  const s2 = lex.stones.find((s) => s.star === 2);
-  assert.equal(stoneAllowed(lex, store, sch, s2, 1, 1, today), false);
-  store.markRead(lex.wordsByStone.get('rs_1_001').map((w) => w.id));
-  assert.equal(stoneAllowed(lex, store, sch, s2, 1, 1, today), true);
-  const s3 = lex.stones.find((s) => s.star === 3);
-  assert.equal(stoneAllowed(lex, store, sch, s3, 1, 1, today), false);
-  assert.equal(stoneAllowed(lex, store, sch, lex.stones[0], 2, 2, today), false); // ★がダンジョンより低い
 });
 
 test('確認テストは予習前・合格後・当日の不合格後でも任意で受け直せ、成長や称号を付けない', () => {
