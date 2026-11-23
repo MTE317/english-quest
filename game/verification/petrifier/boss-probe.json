@@ -1,0 +1,21 @@
+{
+  "fingerprint": "846f2b8a97a8cda4cb49d104e88260bd302a6358b308f6f4c043ccc34eb1e63c",
+  "sourceUnchangedAtCompletion": true,
+  "rows": [
+    {
+      "id": "sand_tomb_boss",
+      "trials": 128,
+      "damage": 117.3359375,
+      "noIgnoreControlDamage": 97.34375,
+      "stone": 0
+    },
+    {
+      "id": "millennium_root_boss",
+      "trials": 128,
+      "damage": 285.421875,
+      "noIgnoreControlDamage": 242.625,
+      "stone": 0
+    }
+  ],
+  "limits": "正式ボスLv45への単発正解攻撃。対照のみ防御無視を0にした検証用コピーで、バランス値の変更ではない。連戦完走率ではない。"
+}

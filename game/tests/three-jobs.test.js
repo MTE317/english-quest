@@ -30,7 +30,7 @@ function act(game, skillId, {statuses=[],passive=true,immune=false,correct=true,
  return {game,b,enemies,damage:100000-enemies[0].hp};
 }
 test('3職・9技能を追加し、6人と1024体・既存の適性を維持',()=>{
- assert.equal(data.jobs.length,20);assert.equal(data.monsters.size,1024);assert.equal(fresh().party.length,6);
+ assert.equal(data.jobs.length,21);assert.equal(data.monsters.size,1024);assert.equal(fresh().party.length,6);
  for(const job of jobs){assert.equal([...data.skills.values()].filter(s=>s.job===job).length,3);assert.ok(!availableJobs(data,fresh()).some(j=>j.id===job));}
 });
 for(const job of ['infernalist','neutralist'])test(`${job}: 奉納は安全帰還後に発見、全滅で巻戻し、必要数だけ消費`,()=>{

@@ -1,0 +1,3451 @@
+{
+  "fingerprint": "846f2b8a97a8cda4cb49d104e88260bd302a6358b308f6f4c043ccc34eb1e63c",
+  "sourceUnchangedAtCompletion": true,
+  "harnessSha256": "859d9cd311b855f6e343dc618a7330e3cf669c26d3c1ab012fbb357483de3463",
+  "runs": 40,
+  "seed": 1217071,
+  "accuracy": 0.8,
+  "level": 45,
+  "itemCap": 54,
+  "fixtures": {
+    "gunner": [
+      {
+        "job": "warrior",
+        "lv": 45,
+        "loadout": {
+          "actions": [
+            "warrior_p1_s1",
+            "warrior_p2_s1",
+            "warrior_p3_s1",
+            "warrior_p1_s3",
+            "warrior_p2_s3",
+            "warrior_p3_s3"
+          ],
+          "passives": [
+            "warrior_p1_s2",
+            "warrior_p2_s2",
+            "warrior_p3_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "sword_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "heavy_head_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "heavy_body_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "heavy_arm_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "knight",
+        "lv": 45,
+        "loadout": {
+          "actions": [
+            "knight_p1_s1",
+            "knight_p2_s1",
+            "knight_p3_s1",
+            "knight_p1_s3",
+            "knight_p2_s3",
+            "knight_p3_s3"
+          ],
+          "passives": [
+            "knight_p1_s2",
+            "knight_p2_s2",
+            "knight_p3_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "hammer_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "heavy_head_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "heavy_body_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "heavy_arm_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "black_mage",
+        "lv": 45,
+        "loadout": {
+          "actions": [
+            "black_mage_p1_s1",
+            "black_mage_p2_s1",
+            "black_mage_p3_s1",
+            "black_mage_p1_s3",
+            "black_mage_p2_s3",
+            "black_mage_p3_s3"
+          ],
+          "passives": [
+            "black_mage_p1_s2",
+            "black_mage_p2_s2",
+            "black_mage_p3_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "tome_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "light_head_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "light_body_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "light_arm_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "white_mage",
+        "lv": 45,
+        "loadout": {
+          "actions": [
+            "white_mage_p1_s3",
+            "white_mage_p1_s1",
+            "white_mage_p2_s1",
+            "white_mage_p3_s1",
+            "white_mage_p2_s3"
+          ],
+          "passives": [
+            "white_mage_p1_s2",
+            "white_mage_p2_s2",
+            "white_mage_p3_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "staff_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "light_head_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "light_body_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "light_arm_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "thief",
+        "lv": 45,
+        "loadout": {
+          "actions": [
+            "thief_p1_s1",
+            "thief_p2_s1",
+            "thief_p3_s1",
+            "thief_p4_s1",
+            "thief_p4_s2",
+            "thief_p1_s3",
+            "thief_p2_s3"
+          ],
+          "passives": [
+            "thief_p1_s2",
+            "thief_p2_s2",
+            "thief_p3_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "dagger_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "medium_head_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "medium_body_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "medium_arm_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "gunner",
+        "lv": 45,
+        "loadout": {
+          "actions": [
+            "gunner_p1_s1",
+            "gunner_p2_s1",
+            "gunner_p2_s2",
+            "gunner_p1_s3",
+            "gunner_p2_s3"
+          ],
+          "passives": [
+            "gunner_p1_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "gun_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "medium_head_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "medium_body_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "medium_arm_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      }
+    ],
+    "petrifier_native": [
+      {
+        "job": "warrior",
+        "lv": 45,
+        "loadout": {
+          "actions": [
+            "warrior_p1_s1",
+            "warrior_p2_s1",
+            "warrior_p3_s1",
+            "warrior_p1_s3",
+            "warrior_p2_s3",
+            "warrior_p3_s3"
+          ],
+          "passives": [
+            "warrior_p1_s2",
+            "warrior_p2_s2",
+            "warrior_p3_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "sword_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "heavy_head_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "heavy_body_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "heavy_arm_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "knight",
+        "lv": 45,
+        "loadout": {
+          "actions": [
+            "knight_p1_s1",
+            "knight_p2_s1",
+            "knight_p3_s1",
+            "knight_p1_s3",
+            "knight_p2_s3",
+            "knight_p3_s3"
+          ],
+          "passives": [
+            "knight_p1_s2",
+            "knight_p2_s2",
+            "knight_p3_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "hammer_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "heavy_head_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "heavy_body_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "heavy_arm_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "black_mage",
+        "lv": 45,
+        "loadout": {
+          "actions": [
+            "black_mage_p1_s1",
+            "black_mage_p2_s1",
+            "black_mage_p3_s1",
+            "black_mage_p1_s3",
+            "black_mage_p2_s3",
+            "black_mage_p3_s3"
+          ],
+          "passives": [
+            "black_mage_p1_s2",
+            "black_mage_p2_s2",
+            "black_mage_p3_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "tome_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "light_head_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "light_body_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "light_arm_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "white_mage",
+        "lv": 45,
+        "loadout": {
+          "actions": [
+            "white_mage_p1_s3",
+            "white_mage_p1_s1",
+            "white_mage_p2_s1",
+            "white_mage_p3_s1",
+            "white_mage_p2_s3"
+          ],
+          "passives": [
+            "white_mage_p1_s2",
+            "white_mage_p2_s2",
+            "white_mage_p3_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "staff_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "light_head_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "light_body_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "light_arm_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "thief",
+        "lv": 45,
+        "loadout": {
+          "actions": [
+            "thief_p1_s1",
+            "thief_p2_s1",
+            "thief_p3_s1",
+            "thief_p4_s1",
+            "thief_p4_s2",
+            "thief_p1_s3",
+            "thief_p2_s3"
+          ],
+          "passives": [
+            "thief_p1_s2",
+            "thief_p2_s2",
+            "thief_p3_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "dagger_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "medium_head_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "medium_body_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "medium_arm_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "petrifier",
+        "lv": 45,
+        "loadout": {
+          "actions": [
+            "petrifier_shot",
+            "petrifier_pierce",
+            "petrifier_volley"
+          ],
+          "passives": [
+            "petrifier_aim"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "gun_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "medium_head_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "medium_body_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "medium_arm_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      }
+    ],
+    "petrifier": [
+      {
+        "job": "warrior",
+        "lv": 45,
+        "loadout": {
+          "actions": [
+            "warrior_p1_s1",
+            "warrior_p2_s1",
+            "warrior_p3_s1",
+            "warrior_p1_s3",
+            "warrior_p2_s3",
+            "warrior_p3_s3"
+          ],
+          "passives": [
+            "warrior_p1_s2",
+            "warrior_p2_s2",
+            "warrior_p3_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "sword_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "heavy_head_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "heavy_body_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "heavy_arm_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "knight",
+        "lv": 45,
+        "loadout": {
+          "actions": [
+            "knight_p1_s1",
+            "knight_p2_s1",
+            "knight_p3_s1",
+            "knight_p1_s3",
+            "knight_p2_s3",
+            "knight_p3_s3"
+          ],
+          "passives": [
+            "knight_p1_s2",
+            "knight_p2_s2",
+            "knight_p3_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "hammer_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "heavy_head_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "heavy_body_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "heavy_arm_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "black_mage",
+        "lv": 45,
+        "loadout": {
+          "actions": [
+            "black_mage_p1_s1",
+            "black_mage_p2_s1",
+            "black_mage_p3_s1",
+            "black_mage_p1_s3",
+            "black_mage_p2_s3",
+            "black_mage_p3_s3"
+          ],
+          "passives": [
+            "black_mage_p1_s2",
+            "black_mage_p2_s2",
+            "black_mage_p3_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "tome_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "light_head_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "light_body_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "light_arm_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "white_mage",
+        "lv": 45,
+        "loadout": {
+          "actions": [
+            "white_mage_p1_s3",
+            "white_mage_p1_s1",
+            "white_mage_p2_s1",
+            "white_mage_p3_s1",
+            "white_mage_p2_s3"
+          ],
+          "passives": [
+            "white_mage_p1_s2",
+            "white_mage_p2_s2",
+            "white_mage_p3_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "staff_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "light_head_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "light_body_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "light_arm_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "thief",
+        "lv": 45,
+        "loadout": {
+          "actions": [
+            "thief_p1_s1",
+            "thief_p2_s1",
+            "thief_p3_s1",
+            "thief_p4_s1",
+            "thief_p4_s2",
+            "thief_p1_s3",
+            "thief_p2_s3"
+          ],
+          "passives": [
+            "thief_p1_s2",
+            "thief_p2_s2",
+            "thief_p3_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "dagger_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "medium_head_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "medium_body_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "medium_arm_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "petrifier",
+        "lv": 45,
+        "loadout": {
+          "actions": [
+            "petrifier_shot",
+            "petrifier_pierce",
+            "petrifier_volley"
+          ],
+          "passives": [
+            "petrifier_aim"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "gun_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "medium_head_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "medium_body_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "medium_arm_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      }
+    ],
+    "no_passive": [
+      {
+        "job": "warrior",
+        "lv": 45,
+        "loadout": {
+          "actions": [
+            "warrior_p1_s1",
+            "warrior_p2_s1",
+            "warrior_p3_s1",
+            "warrior_p1_s3",
+            "warrior_p2_s3",
+            "warrior_p3_s3"
+          ],
+          "passives": [
+            "warrior_p1_s2",
+            "warrior_p2_s2",
+            "warrior_p3_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "sword_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "heavy_head_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "heavy_body_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "heavy_arm_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "knight",
+        "lv": 45,
+        "loadout": {
+          "actions": [
+            "knight_p1_s1",
+            "knight_p2_s1",
+            "knight_p3_s1",
+            "knight_p1_s3",
+            "knight_p2_s3",
+            "knight_p3_s3"
+          ],
+          "passives": [
+            "knight_p1_s2",
+            "knight_p2_s2",
+            "knight_p3_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "hammer_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "heavy_head_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "heavy_body_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "heavy_arm_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "black_mage",
+        "lv": 45,
+        "loadout": {
+          "actions": [
+            "black_mage_p1_s1",
+            "black_mage_p2_s1",
+            "black_mage_p3_s1",
+            "black_mage_p1_s3",
+            "black_mage_p2_s3",
+            "black_mage_p3_s3"
+          ],
+          "passives": [
+            "black_mage_p1_s2",
+            "black_mage_p2_s2",
+            "black_mage_p3_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "tome_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "light_head_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "light_body_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "light_arm_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "white_mage",
+        "lv": 45,
+        "loadout": {
+          "actions": [
+            "white_mage_p1_s3",
+            "white_mage_p1_s1",
+            "white_mage_p2_s1",
+            "white_mage_p3_s1",
+            "white_mage_p2_s3"
+          ],
+          "passives": [
+            "white_mage_p1_s2",
+            "white_mage_p2_s2",
+            "white_mage_p3_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "staff_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "light_head_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "light_body_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "light_arm_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "thief",
+        "lv": 45,
+        "loadout": {
+          "actions": [
+            "thief_p1_s1",
+            "thief_p2_s1",
+            "thief_p3_s1",
+            "thief_p4_s1",
+            "thief_p4_s2",
+            "thief_p1_s3",
+            "thief_p2_s3"
+          ],
+          "passives": [
+            "thief_p1_s2",
+            "thief_p2_s2",
+            "thief_p3_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "dagger_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "medium_head_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "medium_body_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "medium_arm_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "petrifier",
+        "lv": 45,
+        "loadout": {
+          "actions": [
+            "petrifier_shot",
+            "petrifier_pierce",
+            "petrifier_volley"
+          ],
+          "passives": []
+        },
+        "equip": {
+          "weapon": {
+            "id": "gun_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "medium_head_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "medium_body_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "medium_arm_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      }
+    ],
+    "pierce_only": [
+      {
+        "job": "warrior",
+        "lv": 45,
+        "loadout": {
+          "actions": [
+            "warrior_p1_s1",
+            "warrior_p2_s1",
+            "warrior_p3_s1",
+            "warrior_p1_s3",
+            "warrior_p2_s3",
+            "warrior_p3_s3"
+          ],
+          "passives": [
+            "warrior_p1_s2",
+            "warrior_p2_s2",
+            "warrior_p3_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "sword_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "heavy_head_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "heavy_body_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "heavy_arm_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "knight",
+        "lv": 45,
+        "loadout": {
+          "actions": [
+            "knight_p1_s1",
+            "knight_p2_s1",
+            "knight_p3_s1",
+            "knight_p1_s3",
+            "knight_p2_s3",
+            "knight_p3_s3"
+          ],
+          "passives": [
+            "knight_p1_s2",
+            "knight_p2_s2",
+            "knight_p3_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "hammer_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "heavy_head_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "heavy_body_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "heavy_arm_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "black_mage",
+        "lv": 45,
+        "loadout": {
+          "actions": [
+            "black_mage_p1_s1",
+            "black_mage_p2_s1",
+            "black_mage_p3_s1",
+            "black_mage_p1_s3",
+            "black_mage_p2_s3",
+            "black_mage_p3_s3"
+          ],
+          "passives": [
+            "black_mage_p1_s2",
+            "black_mage_p2_s2",
+            "black_mage_p3_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "tome_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "light_head_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "light_body_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "light_arm_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "white_mage",
+        "lv": 45,
+        "loadout": {
+          "actions": [
+            "white_mage_p1_s3",
+            "white_mage_p1_s1",
+            "white_mage_p2_s1",
+            "white_mage_p3_s1",
+            "white_mage_p2_s3"
+          ],
+          "passives": [
+            "white_mage_p1_s2",
+            "white_mage_p2_s2",
+            "white_mage_p3_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "staff_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "light_head_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "light_body_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "light_arm_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "thief",
+        "lv": 45,
+        "loadout": {
+          "actions": [
+            "thief_p1_s1",
+            "thief_p2_s1",
+            "thief_p3_s1",
+            "thief_p4_s1",
+            "thief_p4_s2",
+            "thief_p1_s3",
+            "thief_p2_s3"
+          ],
+          "passives": [
+            "thief_p1_s2",
+            "thief_p2_s2",
+            "thief_p3_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "dagger_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "medium_head_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "medium_body_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "medium_arm_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "petrifier",
+        "lv": 45,
+        "loadout": {
+          "actions": [
+            "petrifier_pierce"
+          ],
+          "passives": []
+        },
+        "equip": {
+          "weapon": {
+            "id": "gun_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "medium_head_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "medium_body_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "medium_arm_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      }
+    ],
+    "gunner_pair": [
+      {
+        "job": "warrior",
+        "lv": 45,
+        "loadout": {
+          "actions": [
+            "warrior_p1_s1",
+            "warrior_p2_s1",
+            "warrior_p3_s1",
+            "warrior_p1_s3",
+            "warrior_p2_s3",
+            "warrior_p3_s3"
+          ],
+          "passives": [
+            "warrior_p1_s2",
+            "warrior_p2_s2",
+            "warrior_p3_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "sword_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "heavy_head_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "heavy_body_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "heavy_arm_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "knight",
+        "lv": 45,
+        "loadout": {
+          "actions": [
+            "knight_p1_s1",
+            "knight_p2_s1",
+            "knight_p3_s1",
+            "knight_p1_s3",
+            "knight_p2_s3",
+            "knight_p3_s3"
+          ],
+          "passives": [
+            "knight_p1_s2",
+            "knight_p2_s2",
+            "knight_p3_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "hammer_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "heavy_head_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "heavy_body_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "heavy_arm_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "gunner",
+        "lv": 45,
+        "loadout": {
+          "actions": [
+            "gunner_p1_s1",
+            "gunner_p2_s1",
+            "gunner_p2_s2",
+            "gunner_p1_s3",
+            "gunner_p2_s3"
+          ],
+          "passives": [
+            "gunner_p1_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "gun_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "medium_head_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "medium_body_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "medium_arm_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "white_mage",
+        "lv": 45,
+        "loadout": {
+          "actions": [
+            "white_mage_p1_s3",
+            "white_mage_p1_s1",
+            "white_mage_p2_s1",
+            "white_mage_p3_s1",
+            "white_mage_p2_s3"
+          ],
+          "passives": [
+            "white_mage_p1_s2",
+            "white_mage_p2_s2",
+            "white_mage_p3_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "staff_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "light_head_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "light_body_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "light_arm_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "thief",
+        "lv": 45,
+        "loadout": {
+          "actions": [
+            "thief_p1_s1",
+            "thief_p2_s1",
+            "thief_p3_s1",
+            "thief_p4_s1",
+            "thief_p4_s2",
+            "thief_p1_s3",
+            "thief_p2_s3"
+          ],
+          "passives": [
+            "thief_p1_s2",
+            "thief_p2_s2",
+            "thief_p3_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "dagger_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "medium_head_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "medium_body_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "medium_arm_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "gunner",
+        "lv": 45,
+        "loadout": {
+          "actions": [
+            "gunner_p1_s1",
+            "gunner_p2_s1",
+            "gunner_p2_s2",
+            "gunner_p1_s3",
+            "gunner_p2_s3"
+          ],
+          "passives": [
+            "gunner_p1_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "gun_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "medium_head_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "medium_body_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "medium_arm_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      }
+    ],
+    "mixed": [
+      {
+        "job": "warrior",
+        "lv": 45,
+        "loadout": {
+          "actions": [
+            "warrior_p1_s1",
+            "warrior_p2_s1",
+            "warrior_p3_s1",
+            "warrior_p1_s3",
+            "warrior_p2_s3",
+            "warrior_p3_s3"
+          ],
+          "passives": [
+            "warrior_p1_s2",
+            "warrior_p2_s2",
+            "warrior_p3_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "sword_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "heavy_head_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "heavy_body_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "heavy_arm_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "knight",
+        "lv": 45,
+        "loadout": {
+          "actions": [
+            "knight_p1_s1",
+            "knight_p2_s1",
+            "knight_p3_s1",
+            "knight_p1_s3",
+            "knight_p2_s3",
+            "knight_p3_s3"
+          ],
+          "passives": [
+            "knight_p1_s2",
+            "knight_p2_s2",
+            "knight_p3_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "hammer_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "heavy_head_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "heavy_body_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "heavy_arm_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "petrifier",
+        "lv": 45,
+        "loadout": {
+          "actions": [
+            "petrifier_shot",
+            "petrifier_pierce",
+            "petrifier_volley"
+          ],
+          "passives": [
+            "petrifier_aim"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "gun_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "medium_head_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "medium_body_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "medium_arm_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "white_mage",
+        "lv": 45,
+        "loadout": {
+          "actions": [
+            "white_mage_p1_s3",
+            "white_mage_p1_s1",
+            "white_mage_p2_s1",
+            "white_mage_p3_s1",
+            "white_mage_p2_s3"
+          ],
+          "passives": [
+            "white_mage_p1_s2",
+            "white_mage_p2_s2",
+            "white_mage_p3_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "staff_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "light_head_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "light_body_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "light_arm_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "thief",
+        "lv": 45,
+        "loadout": {
+          "actions": [
+            "thief_p1_s1",
+            "thief_p2_s1",
+            "thief_p3_s1",
+            "thief_p4_s1",
+            "thief_p4_s2",
+            "thief_p1_s3",
+            "thief_p2_s3"
+          ],
+          "passives": [
+            "thief_p1_s2",
+            "thief_p2_s2",
+            "thief_p3_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "dagger_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "medium_head_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "medium_body_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "medium_arm_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "petrifier",
+        "lv": 45,
+        "loadout": {
+          "actions": [
+            "petrifier_shot",
+            "petrifier_pierce",
+            "petrifier_volley"
+          ],
+          "passives": [
+            "petrifier_aim"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "gun_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "medium_head_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "medium_body_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "medium_arm_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t11",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      }
+    ]
+  },
+  "rows": [
+    {
+      "variant": "gunner",
+      "dungeonId": "sand_tomb",
+      "runs": 40,
+      "wins": 38,
+      "questions": 63.875,
+      "mp": 0.07783018867924532,
+      "normal": {
+        "reached": 80,
+        "wins": 80,
+        "questions": 17.175,
+        "petrified": 0,
+        "bossPetrified": 0,
+        "pierceDamage": 0,
+        "stoneFinishes": 0,
+        "selections": {
+          "gunner_p1_s3": 153,
+          "thief_p1_s3": 232,
+          "warrior_p3_s3": 152,
+          "black_mage_p1_s3": 117,
+          "white_mage_p3_s1": 113,
+          "knight_p3_s1": 127,
+          "black_mage_p1_s1": 40,
+          "white_mage_p1_s1": 22,
+          "warrior_p3_s1": 64,
+          "white_mage_p1_s3": 56,
+          "thief_p4_s1": 7,
+          "gunner_p2_s3": 83,
+          "black_mage_p3_s3": 40,
+          "knight_p2_s3": 19,
+          "black_mage_p2_s3": 4,
+          "warrior_p1_s1": 7,
+          "knight_p2_s1": 14,
+          "black_mage_p3_s1": 21,
+          "gunner_p2_s1": 15,
+          "warrior_p1_s3": 3,
+          "gunner_p1_s1": 3,
+          "thief_p1_s1": 2
+        }
+      },
+      "boss": {
+        "reached": 40,
+        "wins": 38,
+        "questions": 29.525,
+        "petrified": 0,
+        "bossPetrified": 0,
+        "pierceDamage": 0,
+        "stoneFinishes": 0,
+        "selections": {
+          "gunner_p1_s1": 55,
+          "thief_p3_s1": 68,
+          "black_mage_p1_s3": 73,
+          "warrior_p3_s3": 61,
+          "white_mage_p1_s3": 74,
+          "knight_p1_s1": 41,
+          "thief_p1_s3": 41,
+          "white_mage_p3_s1": 55,
+          "knight_p2_s3": 78,
+          "black_mage_p1_s1": 61,
+          "warrior_p3_s1": 76,
+          "knight_p1_s3": 20,
+          "gunner_p1_s3": 39,
+          "white_mage_p1_s1": 35,
+          "warrior_p1_s3": 3,
+          "warrior_p1_s1": 17,
+          "gunner_p2_s3": 6,
+          "black_mage_p3_s3": 18,
+          "gunner_p2_s1": 9,
+          "gunner_p2_s2": 2,
+          "white_mage_p2_s3": 16,
+          "black_mage_p2_s3": 1,
+          "thief_p4_s1": 3,
+          "knight_p3_s3": 1,
+          "knight_p3_s1": 1,
+          "black_mage_p3_s1": 2
+        }
+      }
+    },
+    {
+      "variant": "gunner",
+      "dungeonId": "millennium_root",
+      "runs": 40,
+      "wins": 19,
+      "questions": 124.775,
+      "mp": 0.07051886792452831,
+      "normal": {
+        "reached": 196,
+        "wins": 187,
+        "questions": 22.214285714285715,
+        "petrified": 0,
+        "bossPetrified": 0,
+        "pierceDamage": 0,
+        "stoneFinishes": 0,
+        "selections": {
+          "gunner_p1_s3": 245,
+          "thief_p1_s3": 365,
+          "warrior_p3_s3": 237,
+          "black_mage_p1_s3": 208,
+          "white_mage_p3_s1": 264,
+          "knight_p3_s1": 340,
+          "black_mage_p1_s1": 230,
+          "white_mage_p1_s1": 144,
+          "warrior_p3_s1": 200,
+          "black_mage_p2_s3": 60,
+          "knight_p2_s3": 105,
+          "white_mage_p1_s3": 138,
+          "gunner_p2_s3": 54,
+          "thief_p4_s1": 43,
+          "gunner_p1_s1": 144,
+          "thief_p1_s1": 29,
+          "gunner_p2_s1": 60,
+          "black_mage_p2_s1": 24,
+          "warrior_p1_s1": 37,
+          "warrior_p1_s3": 15,
+          "knight_p2_s1": 8,
+          "white_mage_p2_s1": 6,
+          "white_mage_p2_s3": 3
+        }
+      },
+      "boss": {
+        "reached": 31,
+        "wins": 19,
+        "questions": 20.548387096774192,
+        "petrified": 0,
+        "bossPetrified": 0,
+        "pierceDamage": 0,
+        "stoneFinishes": 0,
+        "selections": {
+          "thief_p3_s1": 36,
+          "warrior_p3_s1": 35,
+          "white_mage_p1_s1": 29,
+          "knight_p1_s1": 14,
+          "thief_p1_s1": 2,
+          "black_mage_p2_s1": 3,
+          "gunner_p1_s1": 39,
+          "knight_p3_s1": 22,
+          "warrior_p1_s1": 20,
+          "black_mage_p1_s1": 43,
+          "knight_p2_s3": 14,
+          "white_mage_p1_s3": 2,
+          "gunner_p1_s3": 4,
+          "gunner_p2_s1": 8,
+          "thief_p4_s1": 7,
+          "thief_p1_s3": 5,
+          "warrior_p1_s3": 3,
+          "white_mage_p3_s1": 7,
+          "thief_p4_s2": 1,
+          "black_mage_p1_s3": 1,
+          "knight_p1_s3": 2,
+          "warrior_p3_s3": 1
+        }
+      }
+    },
+    {
+      "variant": "petrifier_native",
+      "dungeonId": "sand_tomb",
+      "runs": 40,
+      "wins": 39,
+      "questions": 67.15,
+      "mp": 0.7023584905660377,
+      "normal": {
+        "reached": 80,
+        "wins": 80,
+        "questions": 18.075,
+        "petrified": 0.075,
+        "bossPetrified": 0,
+        "pierceDamage": 466.5,
+        "stoneFinishes": 5,
+        "selections": {
+          "thief_p1_s3": 243,
+          "petrifier_pierce": 127,
+          "warrior_p3_s3": 159,
+          "black_mage_p1_s3": 122,
+          "white_mage_p3_s1": 113,
+          "knight_p3_s1": 140,
+          "petrifier_volley": 18,
+          "black_mage_p1_s1": 44,
+          "white_mage_p1_s1": 25,
+          "knight_p2_s3": 22,
+          "warrior_p3_s1": 73,
+          "white_mage_p1_s3": 65,
+          "black_mage_p3_s3": 40,
+          "black_mage_p2_s3": 7,
+          "thief_p4_s1": 6,
+          "knight_p2_s1": 13,
+          "black_mage_p3_s1": 27,
+          "petrifier_shot": 2,
+          "warrior_p1_s1": 4
+        }
+      },
+      "boss": {
+        "reached": 40,
+        "wins": 39,
+        "questions": 31,
+        "petrified": 0,
+        "bossPetrified": 0,
+        "pierceDamage": 219.125,
+        "stoneFinishes": 0,
+        "selections": {
+          "thief_p3_s1": 70,
+          "black_mage_p1_s3": 74,
+          "warrior_p3_s3": 58,
+          "white_mage_p1_s1": 40,
+          "knight_p2_s3": 91,
+          "warrior_p3_s1": 83,
+          "white_mage_p2_s3": 16,
+          "thief_p1_s3": 38,
+          "black_mage_p1_s1": 56,
+          "white_mage_p1_s3": 68,
+          "petrifier_pierce": 33,
+          "white_mage_p3_s1": 64,
+          "knight_p1_s1": 34,
+          "knight_p1_s3": 23,
+          "warrior_p1_s1": 14,
+          "black_mage_p3_s3": 15,
+          "black_mage_p3_s1": 6,
+          "knight_p3_s3": 1,
+          "black_mage_p2_s3": 1,
+          "knight_p2_s1": 1,
+          "warrior_p1_s3": 2,
+          "petrifier_volley": 1,
+          "petrifier_shot": 1
+        }
+      }
+    },
+    {
+      "variant": "petrifier_native",
+      "dungeonId": "millennium_root",
+      "runs": 40,
+      "wins": 16,
+      "questions": 127.375,
+      "mp": 0.2233490566037736,
+      "normal": {
+        "reached": 198,
+        "wins": 188,
+        "questions": 22.752525252525253,
+        "petrified": 0.050505050505050504,
+        "bossPetrified": 0,
+        "pierceDamage": 523.1818181818181,
+        "stoneFinishes": 7,
+        "selections": {
+          "thief_p1_s3": 372,
+          "petrifier_pierce": 328,
+          "warrior_p3_s3": 234,
+          "black_mage_p1_s3": 198,
+          "white_mage_p3_s1": 272,
+          "knight_p3_s1": 330,
+          "petrifier_volley": 27,
+          "black_mage_p1_s1": 222,
+          "white_mage_p1_s1": 150,
+          "knight_p2_s3": 124,
+          "warrior_p3_s1": 229,
+          "black_mage_p2_s3": 70,
+          "thief_p1_s1": 33,
+          "white_mage_p1_s3": 149,
+          "thief_p4_s1": 55,
+          "warrior_p1_s1": 29,
+          "warrior_p1_s3": 18,
+          "black_mage_p2_s1": 29,
+          "white_mage_p2_s1": 6,
+          "knight_p2_s1": 6,
+          "white_mage_p2_s3": 2,
+          "petrifier_shot": 1,
+          "thief_p4_s2": 1
+        }
+      },
+      "boss": {
+        "reached": 30,
+        "wins": 16,
+        "questions": 19.666666666666668,
+        "petrified": 0,
+        "bossPetrified": 0,
+        "pierceDamage": 591.7,
+        "stoneFinishes": 0,
+        "selections": {
+          "white_mage_p1_s1": 34,
+          "thief_p3_s1": 34,
+          "warrior_p3_s1": 32,
+          "black_mage_p2_s1": 7,
+          "black_mage_p1_s1": 28,
+          "petrifier_pierce": 61,
+          "thief_p4_s1": 14,
+          "black_mage_p1_s3": 4,
+          "knight_p3_s1": 14,
+          "warrior_p1_s1": 24,
+          "thief_p1_s3": 4,
+          "warrior_p1_s3": 1,
+          "white_mage_p3_s1": 5,
+          "knight_p1_s1": 13,
+          "knight_p2_s3": 9,
+          "warrior_p3_s3": 2,
+          "white_mage_p2_s1": 2,
+          "knight_p1_s3": 3,
+          "white_mage_p1_s3": 2
+        }
+      }
+    },
+    {
+      "variant": "petrifier",
+      "dungeonId": "sand_tomb",
+      "runs": 40,
+      "wins": 39,
+      "questions": 65.25,
+      "mp": 0.06202830188679246,
+      "normal": {
+        "reached": 80,
+        "wins": 80,
+        "questions": 17.0875,
+        "petrified": 0.725,
+        "bossPetrified": 0,
+        "pierceDamage": 0,
+        "stoneFinishes": 44,
+        "selections": {
+          "thief_p1_s3": 240,
+          "petrifier_volley": 79,
+          "warrior_p3_s3": 162,
+          "black_mage_p1_s3": 134,
+          "white_mage_p3_s1": 126,
+          "knight_p3_s1": 140,
+          "petrifier_shot": 156,
+          "white_mage_p1_s3": 49,
+          "warrior_p3_s1": 57,
+          "knight_p2_s3": 23,
+          "white_mage_p1_s1": 27,
+          "white_mage_p2_s1": 1,
+          "black_mage_p1_s1": 27,
+          "black_mage_p3_s3": 36,
+          "black_mage_p2_s3": 7,
+          "knight_p2_s1": 14,
+          "black_mage_p3_s1": 21,
+          "thief_p4_s1": 2,
+          "thief_p1_s1": 2,
+          "warrior_p1_s1": 1
+        }
+      },
+      "boss": {
+        "reached": 40,
+        "wins": 39,
+        "questions": 31.075,
+        "petrified": 0.2,
+        "bossPetrified": 0,
+        "pierceDamage": 37.45,
+        "stoneFinishes": 8,
+        "selections": {
+          "thief_p3_s1": 71,
+          "warrior_p3_s1": 83,
+          "white_mage_p1_s3": 79,
+          "knight_p1_s1": 40,
+          "petrifier_shot": 51,
+          "white_mage_p3_s1": 54,
+          "knight_p2_s3": 102,
+          "thief_p1_s3": 46,
+          "white_mage_p1_s1": 30,
+          "black_mage_p1_s3": 76,
+          "warrior_p3_s3": 53,
+          "petrifier_pierce": 14,
+          "black_mage_p1_s1": 60,
+          "warrior_p1_s1": 10,
+          "white_mage_p2_s3": 8,
+          "knight_p1_s3": 16,
+          "black_mage_p3_s3": 13,
+          "black_mage_p3_s1": 5,
+          "knight_p3_s1": 6,
+          "warrior_p1_s3": 3,
+          "black_mage_p2_s3": 1,
+          "thief_p4_s1": 5,
+          "knight_p3_s3": 3
+        }
+      }
+    },
+    {
+      "variant": "petrifier",
+      "dungeonId": "millennium_root",
+      "runs": 40,
+      "wins": 19,
+      "questions": 129.475,
+      "mp": 0.05377358490566038,
+      "normal": {
+        "reached": 200,
+        "wins": 195,
+        "questions": 22.675,
+        "petrified": 0.41,
+        "bossPetrified": 0,
+        "pierceDamage": 0,
+        "stoneFinishes": 68,
+        "selections": {
+          "thief_p1_s3": 363,
+          "petrifier_volley": 80,
+          "warrior_p3_s3": 259,
+          "black_mage_p1_s3": 207,
+          "white_mage_p3_s1": 293,
+          "knight_p3_s1": 344,
+          "petrifier_shot": 330,
+          "white_mage_p1_s3": 148,
+          "warrior_p3_s1": 203,
+          "white_mage_p1_s1": 158,
+          "knight_p2_s3": 99,
+          "thief_p4_s1": 45,
+          "thief_p1_s1": 34,
+          "warrior_p1_s1": 35,
+          "warrior_p1_s3": 13,
+          "black_mage_p2_s3": 69,
+          "black_mage_p1_s1": 206,
+          "black_mage_p2_s1": 35,
+          "white_mage_p2_s1": 9,
+          "knight_p2_s1": 8
+        }
+      },
+      "boss": {
+        "reached": 35,
+        "wins": 19,
+        "questions": 18.4,
+        "petrified": 0.22857142857142856,
+        "bossPetrified": 0,
+        "pierceDamage": 10.685714285714285,
+        "stoneFinishes": 7,
+        "selections": {
+          "petrifier_shot": 34,
+          "white_mage_p1_s1": 25,
+          "warrior_p1_s1": 22,
+          "thief_p3_s1": 43,
+          "black_mage_p1_s1": 38,
+          "warrior_p3_s1": 32,
+          "knight_p3_s1": 26,
+          "white_mage_p3_s1": 12,
+          "thief_p4_s1": 15,
+          "knight_p1_s1": 9,
+          "thief_p1_s3": 5,
+          "black_mage_p2_s1": 8,
+          "knight_p1_s3": 2,
+          "knight_p2_s3": 9,
+          "warrior_p1_s3": 2,
+          "thief_p1_s1": 2,
+          "white_mage_p2_s1": 1,
+          "black_mage_p1_s3": 2,
+          "petrifier_pierce": 2,
+          "warrior_p3_s3": 1,
+          "knight_p2_s1": 1
+        }
+      }
+    },
+    {
+      "variant": "no_passive",
+      "dungeonId": "sand_tomb",
+      "runs": 40,
+      "wins": 39,
+      "questions": 66.05,
+      "mp": 0.05778301886792454,
+      "normal": {
+        "reached": 80,
+        "wins": 80,
+        "questions": 17.475,
+        "petrified": 0.6125,
+        "bossPetrified": 0,
+        "pierceDamage": 0,
+        "stoneFinishes": 39,
+        "selections": {
+          "thief_p1_s3": 244,
+          "petrifier_volley": 79,
+          "warrior_p3_s3": 159,
+          "black_mage_p1_s3": 136,
+          "white_mage_p3_s1": 126,
+          "knight_p3_s1": 142,
+          "petrifier_shot": 157,
+          "white_mage_p1_s3": 51,
+          "warrior_p3_s1": 61,
+          "knight_p2_s3": 27,
+          "white_mage_p1_s1": 27,
+          "white_mage_p2_s1": 1,
+          "black_mage_p1_s1": 28,
+          "black_mage_p3_s3": 36,
+          "black_mage_p2_s3": 7,
+          "knight_p2_s1": 14,
+          "black_mage_p3_s1": 22,
+          "thief_p4_s1": 2,
+          "thief_p1_s1": 3,
+          "warrior_p1_s1": 1
+        }
+      },
+      "boss": {
+        "reached": 40,
+        "wins": 39,
+        "questions": 31.1,
+        "petrified": 0.2,
+        "bossPetrified": 0,
+        "pierceDamage": 40.6,
+        "stoneFinishes": 8,
+        "selections": {
+          "thief_p3_s1": 69,
+          "warrior_p3_s1": 80,
+          "white_mage_p1_s3": 81,
+          "knight_p1_s1": 42,
+          "petrifier_shot": 51,
+          "white_mage_p3_s1": 55,
+          "knight_p2_s3": 101,
+          "thief_p1_s3": 46,
+          "white_mage_p1_s1": 30,
+          "black_mage_p1_s3": 76,
+          "warrior_p3_s3": 53,
+          "petrifier_pierce": 15,
+          "black_mage_p1_s1": 57,
+          "warrior_p1_s1": 14,
+          "white_mage_p2_s3": 9,
+          "knight_p1_s3": 16,
+          "black_mage_p3_s3": 13,
+          "black_mage_p3_s1": 5,
+          "knight_p3_s1": 7,
+          "warrior_p1_s3": 3,
+          "black_mage_p2_s3": 1,
+          "thief_p4_s1": 4,
+          "knight_p3_s3": 3
+        }
+      }
+    },
+    {
+      "variant": "no_passive",
+      "dungeonId": "millennium_root",
+      "runs": 40,
+      "wins": 19,
+      "questions": 131.4,
+      "mp": 0.05660377358490567,
+      "normal": {
+        "reached": 200,
+        "wins": 194,
+        "questions": 23.08,
+        "petrified": 0.33,
+        "bossPetrified": 0,
+        "pierceDamage": 0,
+        "stoneFinishes": 56,
+        "selections": {
+          "thief_p1_s3": 362,
+          "petrifier_volley": 80,
+          "warrior_p3_s3": 256,
+          "black_mage_p1_s3": 209,
+          "white_mage_p3_s1": 291,
+          "knight_p3_s1": 353,
+          "petrifier_shot": 327,
+          "white_mage_p1_s3": 151,
+          "warrior_p3_s1": 221,
+          "white_mage_p1_s1": 160,
+          "knight_p2_s3": 108,
+          "thief_p4_s1": 52,
+          "thief_p1_s1": 35,
+          "warrior_p1_s1": 30,
+          "warrior_p1_s3": 13,
+          "black_mage_p2_s3": 67,
+          "black_mage_p1_s1": 204,
+          "black_mage_p2_s1": 37,
+          "white_mage_p2_s1": 8,
+          "knight_p2_s1": 8,
+          "white_mage_p2_s3": 2
+        }
+      },
+      "boss": {
+        "reached": 34,
+        "wins": 19,
+        "questions": 18.823529411764707,
+        "petrified": 0.17647058823529413,
+        "bossPetrified": 0,
+        "pierceDamage": 11,
+        "stoneFinishes": 6,
+        "selections": {
+          "petrifier_shot": 35,
+          "white_mage_p1_s1": 27,
+          "warrior_p1_s1": 23,
+          "thief_p3_s1": 41,
+          "black_mage_p1_s1": 34,
+          "warrior_p3_s1": 29,
+          "knight_p3_s1": 21,
+          "white_mage_p3_s1": 9,
+          "thief_p4_s1": 19,
+          "knight_p1_s1": 11,
+          "thief_p1_s3": 6,
+          "black_mage_p2_s1": 7,
+          "black_mage_p1_s3": 3,
+          "knight_p1_s3": 1,
+          "warrior_p1_s3": 3,
+          "thief_p1_s1": 1,
+          "white_mage_p2_s1": 1,
+          "knight_p2_s3": 8,
+          "petrifier_pierce": 2,
+          "warrior_p3_s3": 2,
+          "knight_p2_s1": 1
+        }
+      }
+    },
+    {
+      "variant": "pierce_only",
+      "dungeonId": "sand_tomb",
+      "runs": 40,
+      "wins": 36,
+      "questions": 69.075,
+      "mp": 0.08584905660377362,
+      "normal": {
+        "reached": 80,
+        "wins": 80,
+        "questions": 18.725,
+        "petrified": 0,
+        "bossPetrified": 0,
+        "pierceDamage": 614.075,
+        "stoneFinishes": 0,
+        "selections": {
+          "thief_p1_s3": 251,
+          "petrifier_pierce": 282,
+          "warrior_p3_s3": 165,
+          "black_mage_p1_s3": 132,
+          "white_mage_p3_s1": 127,
+          "knight_p3_s1": 144,
+          "white_mage_p1_s3": 65,
+          "black_mage_p1_s1": 37,
+          "warrior_p3_s1": 73,
+          "thief_p4_s1": 4,
+          "black_mage_p3_s3": 40,
+          "white_mage_p1_s1": 27,
+          "black_mage_p2_s3": 8,
+          "knight_p2_s3": 21,
+          "black_mage_p3_s1": 28,
+          "knight_p2_s1": 17,
+          "warrior_p1_s1": 4,
+          "warrior_p1_s3": 4
+        }
+      },
+      "boss": {
+        "reached": 40,
+        "wins": 36,
+        "questions": 31.625,
+        "petrified": 0,
+        "bossPetrified": 0,
+        "pierceDamage": 434.8,
+        "stoneFinishes": 0,
+        "selections": {
+          "petrifier_pierce": 103,
+          "thief_p3_s1": 73,
+          "black_mage_p1_s3": 73,
+          "warrior_p3_s3": 55,
+          "white_mage_p1_s1": 39,
+          "knight_p2_s3": 99,
+          "thief_p1_s3": 38,
+          "warrior_p3_s1": 75,
+          "white_mage_p1_s3": 74,
+          "black_mage_p1_s1": 54,
+          "white_mage_p3_s1": 61,
+          "knight_p1_s1": 42,
+          "warrior_p1_s1": 16,
+          "knight_p1_s3": 18,
+          "knight_p3_s1": 4,
+          "black_mage_p3_s3": 15,
+          "black_mage_p3_s1": 5,
+          "white_mage_p2_s3": 5,
+          "black_mage_p2_s3": 2,
+          "knight_p3_s3": 1,
+          "white_mage_p2_s1": 1,
+          "warrior_p1_s3": 2,
+          "thief_p4_s1": 2
+        }
+      }
+    },
+    {
+      "variant": "pierce_only",
+      "dungeonId": "millennium_root",
+      "runs": 40,
+      "wins": 16,
+      "questions": 131.15,
+      "mp": 0.09858490566037739,
+      "normal": {
+        "reached": 198,
+        "wins": 186,
+        "questions": 23.626262626262626,
+        "petrified": 0,
+        "bossPetrified": 0,
+        "pierceDamage": 449.2121212121212,
+        "stoneFinishes": 0,
+        "selections": {
+          "thief_p1_s3": 358,
+          "petrifier_pierce": 483,
+          "warrior_p3_s3": 239,
+          "black_mage_p1_s3": 216,
+          "white_mage_p3_s1": 281,
+          "knight_p3_s1": 356,
+          "white_mage_p1_s3": 154,
+          "black_mage_p1_s1": 234,
+          "warrior_p3_s1": 226,
+          "black_mage_p2_s3": 64,
+          "knight_p2_s3": 119,
+          "thief_p4_s1": 60,
+          "white_mage_p1_s1": 151,
+          "warrior_p1_s1": 34,
+          "thief_p1_s1": 40,
+          "black_mage_p2_s1": 39,
+          "warrior_p1_s3": 11,
+          "knight_p2_s1": 7,
+          "white_mage_p2_s1": 7,
+          "white_mage_p2_s3": 1
+        }
+      },
+      "boss": {
+        "reached": 28,
+        "wins": 16,
+        "questions": 20.285714285714285,
+        "petrified": 0,
+        "bossPetrified": 0,
+        "pierceDamage": 237.53571428571428,
+        "stoneFinishes": 0,
+        "selections": {
+          "thief_p3_s1": 38,
+          "white_mage_p1_s1": 28,
+          "black_mage_p2_s1": 7,
+          "warrior_p3_s1": 36,
+          "petrifier_pierce": 37,
+          "warrior_p1_s1": 17,
+          "thief_p1_s1": 3,
+          "black_mage_p1_s1": 25,
+          "thief_p1_s3": 7,
+          "knight_p2_s3": 7,
+          "knight_p3_s1": 15,
+          "knight_p1_s1": 8,
+          "white_mage_p3_s1": 9,
+          "thief_p4_s1": 7,
+          "white_mage_p1_s3": 2,
+          "warrior_p1_s3": 1,
+          "knight_p3_s3": 1,
+          "black_mage_p1_s3": 2,
+          "knight_p1_s3": 1
+        }
+      }
+    },
+    {
+      "variant": "gunner_pair",
+      "dungeonId": "sand_tomb",
+      "runs": 40,
+      "wins": 36,
+      "questions": 72.325,
+      "mp": 0.08042452830188684,
+      "normal": {
+        "reached": 80,
+        "wins": 80,
+        "questions": 18.9,
+        "petrified": 0,
+        "bossPetrified": 0,
+        "pierceDamage": 0,
+        "stoneFinishes": 0,
+        "selections": {
+          "gunner_p1_s3": 300,
+          "thief_p1_s3": 244,
+          "warrior_p3_s3": 149,
+          "white_mage_p3_s1": 133,
+          "knight_p3_s1": 150,
+          "thief_p1_s1": 2,
+          "warrior_p3_s1": 87,
+          "white_mage_p1_s3": 63,
+          "white_mage_p1_s1": 27,
+          "gunner_p1_s1": 10,
+          "gunner_p2_s3": 175,
+          "gunner_p2_s1": 34,
+          "knight_p2_s3": 16,
+          "knight_p2_s1": 11,
+          "warrior_p1_s1": 4,
+          "thief_p4_s1": 4,
+          "gunner_p2_s2": 4,
+          "warrior_p1_s3": 1
+        }
+      },
+      "boss": {
+        "reached": 40,
+        "wins": 36,
+        "questions": 34.525,
+        "petrified": 0,
+        "bossPetrified": 0,
+        "pierceDamage": 0,
+        "stoneFinishes": 0,
+        "selections": {
+          "warrior_p3_s3": 63,
+          "white_mage_p1_s3": 92,
+          "thief_p3_s1": 68,
+          "gunner_p1_s1": 130,
+          "warrior_p3_s1": 91,
+          "thief_p1_s3": 41,
+          "gunner_p1_s3": 66,
+          "white_mage_p3_s1": 60,
+          "knight_p1_s1": 36,
+          "knight_p2_s3": 106,
+          "knight_p1_s3": 17,
+          "white_mage_p2_s3": 6,
+          "white_mage_p1_s1": 35,
+          "knight_p3_s1": 10,
+          "gunner_p2_s3": 12,
+          "gunner_p2_s1": 21,
+          "warrior_p1_s1": 20,
+          "gunner_p2_s2": 1,
+          "knight_p3_s3": 4,
+          "thief_p4_s1": 2
+        }
+      }
+    },
+    {
+      "variant": "gunner_pair",
+      "dungeonId": "millennium_root",
+      "runs": 40,
+      "wins": 17,
+      "questions": 139.95,
+      "mp": 0.07287735849056605,
+      "normal": {
+        "reached": 196,
+        "wins": 183,
+        "questions": 25.372448979591837,
+        "petrified": 0,
+        "bossPetrified": 0,
+        "pierceDamage": 0,
+        "stoneFinishes": 0,
+        "selections": {
+          "gunner_p1_s3": 467,
+          "thief_p1_s3": 378,
+          "warrior_p3_s3": 231,
+          "white_mage_p3_s1": 329,
+          "knight_p3_s1": 372,
+          "warrior_p3_s1": 248,
+          "white_mage_p1_s1": 157,
+          "gunner_p2_s1": 153,
+          "warrior_p1_s1": 46,
+          "gunner_p1_s1": 341,
+          "thief_p1_s1": 25,
+          "gunner_p2_s3": 123,
+          "white_mage_p1_s3": 145,
+          "warrior_p1_s3": 15,
+          "white_mage_p2_s1": 6,
+          "thief_p4_s1": 59,
+          "knight_p2_s3": 91,
+          "knight_p2_s1": 7
+        }
+      },
+      "boss": {
+        "reached": 27,
+        "wins": 17,
+        "questions": 23.14814814814815,
+        "petrified": 0,
+        "bossPetrified": 0,
+        "pierceDamage": 0,
+        "stoneFinishes": 0,
+        "selections": {
+          "gunner_p1_s1": 68,
+          "thief_p3_s1": 36,
+          "warrior_p1_s1": 17,
+          "thief_p4_s1": 8,
+          "white_mage_p1_s1": 33,
+          "warrior_p3_s1": 31,
+          "knight_p1_s1": 9,
+          "knight_p3_s1": 21,
+          "thief_p4_s2": 1,
+          "knight_p2_s3": 7,
+          "thief_p1_s3": 8,
+          "gunner_p2_s1": 21,
+          "gunner_p1_s3": 3,
+          "warrior_p3_s3": 1,
+          "white_mage_p3_s1": 9,
+          "thief_p1_s1": 1
+        }
+      }
+    },
+    {
+      "variant": "mixed",
+      "dungeonId": "sand_tomb",
+      "runs": 40,
+      "wins": 37,
+      "questions": 72.025,
+      "mp": 0.05047169811320754,
+      "normal": {
+        "reached": 80,
+        "wins": 80,
+        "questions": 17.5375,
+        "petrified": 1.175,
+        "bossPetrified": 0,
+        "pierceDamage": 0,
+        "stoneFinishes": 63,
+        "selections": {
+          "thief_p1_s3": 238,
+          "petrifier_volley": 148,
+          "warrior_p3_s3": 174,
+          "white_mage_p3_s1": 133,
+          "knight_p3_s1": 150,
+          "petrifier_shot": 295,
+          "white_mage_p1_s3": 42,
+          "warrior_p3_s1": 53,
+          "white_mage_p1_s1": 38,
+          "knight_p2_s3": 20,
+          "knight_p2_s1": 11,
+          "thief_p4_s1": 2,
+          "thief_p1_s1": 3,
+          "warrior_p1_s3": 1
+        }
+      },
+      "boss": {
+        "reached": 40,
+        "wins": 37,
+        "questions": 36.95,
+        "petrified": 0.475,
+        "bossPetrified": 0,
+        "pierceDamage": 206.525,
+        "stoneFinishes": 19,
+        "selections": {
+          "thief_p3_s1": 73,
+          "warrior_p3_s3": 56,
+          "white_mage_p1_s1": 51,
+          "thief_p1_s3": 54,
+          "petrifier_shot": 112,
+          "warrior_p3_s1": 85,
+          "petrifier_pierce": 80,
+          "white_mage_p3_s1": 76,
+          "knight_p2_s3": 102,
+          "white_mage_p1_s3": 66,
+          "knight_p1_s1": 40,
+          "knight_p1_s3": 23,
+          "knight_p3_s1": 17,
+          "white_mage_p2_s3": 5,
+          "warrior_p1_s1": 16,
+          "warrior_p1_s3": 5,
+          "thief_p4_s1": 5,
+          "knight_p3_s3": 4
+        }
+      }
+    },
+    {
+      "variant": "mixed",
+      "dungeonId": "millennium_root",
+      "runs": 40,
+      "wins": 19,
+      "questions": 143.875,
+      "mp": 0.05660377358490567,
+      "normal": {
+        "reached": 199,
+        "wins": 192,
+        "questions": 25.668341708542712,
+        "petrified": 0.8341708542713567,
+        "bossPetrified": 0,
+        "pierceDamage": 0,
+        "stoneFinishes": 120,
+        "selections": {
+          "thief_p1_s3": 377,
+          "petrifier_volley": 160,
+          "warrior_p3_s3": 261,
+          "white_mage_p3_s1": 365,
+          "knight_p3_s1": 435,
+          "petrifier_shot": 704,
+          "white_mage_p1_s3": 132,
+          "white_mage_p1_s1": 156,
+          "warrior_p3_s1": 233,
+          "thief_p4_s1": 55,
+          "warrior_p1_s1": 27,
+          "knight_p2_s3": 99,
+          "thief_p1_s1": 39,
+          "white_mage_p2_s1": 8,
+          "warrior_p1_s3": 3,
+          "thief_p4_s2": 2,
+          "knight_p2_s1": 15,
+          "white_mage_p2_s3": 2
+        }
+      },
+      "boss": {
+        "reached": 33,
+        "wins": 19,
+        "questions": 19.606060606060606,
+        "petrified": 0.48484848484848486,
+        "bossPetrified": 0,
+        "pierceDamage": 114.15151515151516,
+        "stoneFinishes": 12,
+        "selections": {
+          "petrifier_shot": 62,
+          "thief_p3_s1": 39,
+          "white_mage_p1_s1": 25,
+          "thief_p4_s1": 4,
+          "warrior_p1_s1": 27,
+          "knight_p1_s1": 12,
+          "warrior_p3_s1": 31,
+          "knight_p3_s1": 14,
+          "petrifier_pierce": 13,
+          "thief_p1_s1": 3,
+          "white_mage_p3_s1": 11,
+          "thief_p4_s2": 2,
+          "thief_p1_s3": 5,
+          "knight_p3_s3": 1,
+          "white_mage_p1_s3": 3,
+          "knight_p2_s3": 8,
+          "white_mage_p2_s1": 1,
+          "knight_p1_s3": 1
+        }
+      }
+    }
+  ],
+  "duplicates": {
+    "matched": 12,
+    "total": 12
+  }
+}

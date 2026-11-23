@@ -1,0 +1,87 @@
+{
+  "fingerprint": "846f2b8a97a8cda4cb49d104e88260bd302a6358b308f6f4c043ccc34eb1e63c",
+  "sourceUnchangedAtCompletion": true,
+  "runs": 2000,
+  "seed": 1217071,
+  "step": 7919,
+  "target": "goblin Lv45、HP100000の制御標的。通常耐性/指定耐性、自然遭遇率ではない",
+  "rows": [
+    {
+      "id": "shot",
+      "skill": "petrifier_shot",
+      "passive": false,
+      "runs": 2000,
+      "successes": 342,
+      "rate": 0.171,
+      "finishedByStone": 342
+    },
+    {
+      "id": "shot_aim",
+      "skill": "petrifier_shot",
+      "passive": true,
+      "runs": 2000,
+      "successes": 404,
+      "rate": 0.202,
+      "finishedByStone": 404
+    },
+    {
+      "id": "shot_duplicate",
+      "skill": "petrifier_shot",
+      "passive": true,
+      "duplicate": true,
+      "runs": 2000,
+      "successes": 404,
+      "rate": 0.202,
+      "finishedByStone": 404
+    },
+    {
+      "id": "shot_wrong",
+      "skill": "petrifier_shot",
+      "passive": true,
+      "wrong": true,
+      "runs": 2000,
+      "successes": 115,
+      "rate": 0.0575,
+      "finishedByStone": 115
+    },
+    {
+      "id": "shot_resistant",
+      "skill": "petrifier_shot",
+      "passive": true,
+      "affinity": "△",
+      "runs": 2000,
+      "successes": 212,
+      "rate": 0.106,
+      "finishedByStone": 212
+    },
+    {
+      "id": "shot_immune",
+      "skill": "petrifier_shot",
+      "passive": true,
+      "affinity": "×",
+      "runs": 2000,
+      "successes": 0,
+      "rate": 0,
+      "finishedByStone": 0
+    },
+    {
+      "id": "shot_boss",
+      "skill": "petrifier_shot",
+      "passive": true,
+      "boss": true,
+      "runs": 2000,
+      "successes": 0,
+      "rate": 0,
+      "finishedByStone": 0
+    },
+    {
+      "id": "volley_aim",
+      "skill": "petrifier_volley",
+      "passive": true,
+      "runs": 2000,
+      "successes": 280,
+      "rate": 0.14,
+      "finishedByStone": 280
+    }
+  ]
+}

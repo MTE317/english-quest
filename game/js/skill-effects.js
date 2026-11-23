@@ -21,6 +21,7 @@ function passiveText(data, key, value) {
   }
   const special = {
     neutral_magic_mp_save: () => `無属性の直接魔法技能のMP軽減率 +${pct(value)}（装備と合計で最大50%）`,
+    gun_petrify_rate: () => `銃の武器依存攻撃技能の石化基礎率を${1 + value}倍にする（耐性・免疫・上限は維持）`,
     bounty_chance: () => `賞金首の遭遇率 +${pct(value)}（パーティーで1人分）`,
     poison_spread: () => `毒・猛毒の敵を倒すと、別の敵1体に同じ状態を付与（基礎確率${pct(value)}、1巡1回）`,
     thunder_crit_mp: () => `正解した雷属性攻撃で会心ダメージを与えると、最大MPの${pct(value)}を回復（装備効果と合わせて1行動1回・技能は支払MPまで）`,
@@ -80,6 +81,7 @@ export function describeSkillEffect(data, skill) {
   const effect = skill.effect ?? {};
   const target = effect.tgt === 'all' ? '敵全体' : effect.tgt === 'random' ? 'ランダムな敵' : '敵一体';
   const parts = [];
+  if (effect.require_weapon) parts.push(`${data.weaponTypes.get(effect.require_weapon)?.name ?? effect.require_weapon}装備時のみ使用可能`);
   switch (skill.kind) {
     case 'passive':
       parts.push(...Object.entries(effect.mod ?? {}).map(([key, value]) => passiveText(data, key, value)).filter(Boolean));

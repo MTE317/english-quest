@@ -509,6 +509,9 @@ export function skillMp(data, member, skill) {
 function skillBlock(data, game, b, i, s) {
   const m = game.party[i];
   const a = b.allies[i];
+  if (s.effect.require_weapon && (!m.equip.weapon || gearDef(data, m.equip.weapon).kind !== s.effect.require_weapon)) {
+    return `${data.weaponTypes.get(s.effect.require_weapon)?.name ?? s.effect.require_weapon}を装備すると使える`;
+  }
   if (m.mp < skillMp(data, m, s)) return 'MP が足りない';
   if (s.effect.once && a.once.includes(s.id)) return 'この戦闘ではもう使った';
   if (ATTACK_SKILL_KINDS.includes(s.kind) && has(a, 'no_attack_skill', data)) return '恐怖で使えない';
@@ -969,8 +972,16 @@ const CONTROL_KINDS = new Set(['skip_until_hit', 'skip_once', 'skip_chance', 'pe
 
 function applyAttackStatuses(data, game, b, actor, target, effect, cm) {
   if (b.enemies[target].hp <= 0) return;
-  if (effect.st) inflictByActor(data, game, b, actor, target, effect.st, cm);
-  for (const status of effect.extra_st ?? []) inflictByActor(data, game, b, actor, target, status, cm);
+  const member = game.party[actor];
+  const gunAttack = effect.base === 'weapon' && member.equip.weapon
+    && gearDef(data, member.equip.weapon).kind === 'gun';
+  const apply = (status) => {
+    const multiplier = gunAttack && data.statusByName.get(status[0])?.id === 'petrify'
+      ? 1 + (memberMods(data, member).gun_petrify_rate ?? 0) : 1;
+    inflictByActor(data, game, b, actor, target, [status[0], status[1] * multiplier], cm);
+  };
+  if (effect.st) apply(effect.st);
+  for (const status of effect.extra_st ?? []) apply(status);
 }
 
 function inflictByActor(data, game, b, actor, target, status, cm) {

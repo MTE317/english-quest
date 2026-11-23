@@ -5,3 +5,4 @@ bloodblade,血刃士,火傷と出血を重ねて鎌で攻める,B,A,D,C,C,B,C,sl
 infernalist,炎術士,火傷した敵への炎全体魔法,B,D,A,D,A,B,D,fire,炎耐性と火傷無効に弱い,tome,light,素材,250,1.0
 seal_archer,封技弓士,封印と弓の追撃,B,A,D,B,C,C,C,pierce,封印無効に弱い,bow,medium,討伐報告,220,1.0
 neutralist,無相術士,無属性直接魔法とMP節約,B,D,A,D,A,B,D,none,属性弱点を突けない,tome,light,素材,200,1.0
+petrifier,石弾士,石化銃撃と土の貫通弾,B,C,D,B,C,A,A,earth,石化免疫と土耐性,gun,medium,素材,240,1.0
