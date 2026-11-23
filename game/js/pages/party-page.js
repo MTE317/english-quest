@@ -246,17 +246,23 @@ function showLoadout(index, kind = 'actions', message = '') {
   function skillCard(skill) {
     const equipped = equippedIds.includes(skill.id);
     const blocked = !equipped ? equipBlock(data, member, skill) : '';
-    return el('li', { class: 'panel skill-loadout-card' },
-      el('div', { class: 'skill-loadout-info' },
-        el('strong', {}, skill.name, equipped ? ' ・装着中' : ''),
-        el('p', { class: 'muted small' }, `${jobName(skill.job)}・${skill.path}・必要枠 ${skill.cost}${isPassiveKind ? '' : `・MP ${skillMp(data, member, skill)}`}`),
-        el('p', { class: 'small' }, describeSkillEffect(data, skill))),
-      el('button', {
-        class: equipped ? 'ghost' : 'primary',
-        disabled: !!blocked,
-        title: blocked || '',
-        onclick: () => changeSkill(skill, equipped),
-      }, equipped ? '取り外す' : blocked || '装着する'));
+    const icon = isPassiveKind ? '◆' : '✦';
+    return el('li', { class: `skill-loadout-card${equipped ? ' equipped' : ''}` },
+      el('div', { class: 'skill-loadout-card-main' },
+        el('div', { class: 'skill-loadout-icon', 'aria-hidden': 'true' }, icon),
+        el('div', { class: 'skill-loadout-info' },
+          el('div', { class: 'skill-loadout-title-row' },
+            el('strong', { class: 'skill-loadout-name' }, skill.name),
+            equipped ? el('span', { class: 'skill-loadout-badge' }, '装着中') : null),
+          el('p', { class: 'muted small' }, `${jobName(skill.job)}・${skill.path}・必要枠 ${skill.cost}${isPassiveKind ? '' : `・MP ${skillMp(data, member, skill)}`}`),
+          el('p', { class: 'small skill-loadout-description' }, describeSkillEffect(data, skill)))),
+      el('div', { class: 'skill-loadout-actions' },
+        el('button', {
+          class: equipped ? 'ghost' : 'primary',
+          disabled: !!blocked,
+          title: blocked || '',
+          onclick: () => changeSkill(skill, equipped),
+        }, equipped ? '取り外す' : blocked || '装着する')));
   }
 
   render(view,
@@ -265,17 +271,29 @@ function showLoadout(index, kind = 'actions', message = '') {
     memberBanner(member),
     el('h2', {}, 'スキル装備'),
     el('p', { class: 'muted small' }, '習得済みのスキルは、転職前のジョブのものもここで装着・取り外しできます。ほかのジョブの奥義は装着できません。'),
-    el('p', { class: 'panel small' }, `通常枠 ${used.actions}/${cap.actions}・パッシブ枠 ${used.passives}/${cap.passives}`),
     message ? el('p', { class: 'error', role: 'status' }, message) : null,
-    el('div', { class: 'row', role: 'group', 'aria-label': 'スキルの種類' },
-      el('button', { class: isPassiveKind ? 'ghost' : 'primary', 'aria-pressed': String(!isPassiveKind),
-        onclick: () => showLoadout(index, 'actions') }, `アクティブ（${used.actions}/${cap.actions}）`),
-      el('button', { class: isPassiveKind ? 'primary' : 'ghost', 'aria-pressed': String(isPassiveKind),
-        onclick: () => showLoadout(index, 'passives') }, `パッシブ（${used.passives}/${cap.passives}）`)),
-    skills.length
-      ? el('ul', { class: 'choice-list skill-loadout-list' }, skills.map(skillCard))
-      : el('p', { class: 'panel muted' }, '習得済みのスキルはありません。スキルツリーで習得できます。'),
-    el('button', { class: 'ghost', onclick: () => showSkills(index) }, 'スキルツリーを見る'),
+    el('div', { class: 'skill-loadout-shell' },
+      el('div', { class: 'skill-loadout-tabs', role: 'tablist', 'aria-label': 'スキルの種類' },
+        el('button', {
+          class: `skill-loadout-tab${isPassiveKind ? '' : ' active'}`,
+          role: 'tab',
+          'aria-selected': String(!isPassiveKind),
+          onclick: () => showLoadout(index, 'actions'),
+        }, `アクティブ（${used.actions}/${cap.actions}）`),
+        el('button', {
+          class: `skill-loadout-tab${isPassiveKind ? ' active' : ''}`,
+          role: 'tab',
+          'aria-selected': String(isPassiveKind),
+          onclick: () => showLoadout(index, 'passives'),
+        }, `パッシブ（${used.passives}/${cap.passives}）`)),
+      el('section', { class: 'skill-loadout-board', 'aria-live': 'polite' },
+        skills.length
+          ? el('ul', { class: 'skill-loadout-list' }, skills.map(skillCard))
+          : el('div', { class: 'skill-loadout-empty' },
+            el('span', { class: 'skill-loadout-empty-icon', 'aria-hidden': 'true' }, isPassiveKind ? '◆' : '✦'),
+            el('p', { class: 'muted' }, '習得済みのスキルはありません。'),
+            el('p', { class: 'small muted' }, 'スキルツリーで習得すると、ここから装着できます。')))),
+    el('button', { class: 'ghost skill-loadout-tree-link', onclick: () => showSkills(index) }, 'スキルツリーを見る'),
   );
   window.scrollTo(0, 0);
 }
