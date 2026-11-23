@@ -152,7 +152,7 @@ test('BGMオフは勝利演出中でも停止し、再びオンにした場面�
   assert.equal(player.paused, false);
 });
 
-test('英語読み上げ中は場面変更・勝利演出でもミュートを保ち、終了時に戻す', async (t) => {
+test('英語読み上げ中は戦闘BGMのみ音量を維持し、他の場面ではミュートする', async (t) => {
   const { music, players } = await setup(t);
   music.setSpeechPlaying(true);
   music.setSceneMusic('town');
@@ -160,10 +160,31 @@ test('英語読み上げ中は場面変更・勝利演出でもミュートを�
   assert.equal(player.muted, true);
   music.setSceneMusic('tavern');
   assert.equal(player.muted, true);
+
+  // 町から読み上げ中に戦闘へ入っても、戦闘BGMをミュートしない。
   music.startBattleMusic();
+  assert.equal(player.muted, false);
+  assert.equal(player.volume, 0.3);
+  assert.equal(player.paused, false);
+
+  // 戦闘中に読み上げが始まった場合もBGMの音量は変わらない。
+  music.setSpeechPlaying(false);
+  music.setSpeechPlaying(true);
+  assert.equal(player.muted, false);
+  assert.equal(player.volume, 0.3);
+
+  // 勝利ファンファーレや探索中の読み上げは従来どおりミュートする。
   music.finishBattleMusic('win');
   assert.equal(player.muted, true);
   player.finish();
+  assert.equal(player.muted, true);
+  music.setSpeechPlaying(false);
+  assert.equal(player.muted, false);
+
+  music.startBattleMusic();
+  music.setSpeechPlaying(true);
+  assert.equal(player.muted, false);
+  music.finishBattleMusic('lose');
   assert.equal(player.muted, true);
   music.setSpeechPlaying(false);
   assert.equal(player.muted, false);
