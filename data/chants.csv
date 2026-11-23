@@ -1,87 +1,207 @@
-﻿id,book,chapter,level,ja,en,alt_en,note
-c0001,b01,1,1,これまでの経歴を順を追って教えていただけますか？,Could you walk me through your background?,,walk me through your background（これまでの経歴を私に順を追って説明する）
-c0002,b01,1,1,これまでの経歴を教えていただけますか？,Could you tell me about your background?,,background（経歴・これまでの経験）
-c0003,b01,1,1,現職では、技術チームと協力しています。,"In my current role, I work with technical teams.",,role（役割・職務）
-c0004,b01,1,1,フィールドサービスエンジニアとしてキャリアをスタートしました。,I started my career as a field service engineer.,,start my career as a field service engineer（フィールドサービスエンジニアとしてキャリアをスタートする）
-c0005,b01,1,1,フィールドサービスエンジニアとして機器を保守していました。,I maintained equipment as a field service engineer.,,maintain（（機器を）保守する）
-c0006,b01,1,1,テクニカルサポートの分野にも経験を広げました。,I expanded my experience into technical support.,,expand my experience into technical support（テクニカルサポートの分野にも経験を広げる）
-c0007,b01,1,1,カスタマーサポートの立ち上げを担当していました。,I was responsible for setting up customer support.,,be responsible for（〜を担当している）
-c0008,b01,1,1,新規事業のカスタマーサポートの立ち上げに携わりました。,I helped set up customer support for a new business.,,set up（（体制・事業などを）立ち上げる・整える）
-c0009,b01,1,1,外部パートナーと協力して、業務の流れを改善しました。,I worked with our external partner to improve the process.,,work with（〜と協力する）
-c0010,b01,1,1,技術チームや外部パートナーと協力しています。,I work with technical teams and external partners.,,external partner（外部パートナー）
-c0011,b01,1,1,機械や関連機器を保守していました。,I maintained machines and related equipment.,,related equipment（関連機器）
-c0012,b01,1,1,テクニカルサポートの経験があります。,I have experience in technical support.,,technical support（テクニカルサポート・技術サポート）
-c0013,b01,1,1,品質保証の分野にも経験を広げました。,I expanded my experience into quality assurance.,,quality assurance（品質保証）
-c0014,b01,1,1,カスタマーサポート業務の改善に取り組みました。,I worked on improving customer support operations.,,customer support operations（カスタマーサポート業務・運用）
-c0015,b01,1,1,本日はお時間を割いていただき、ありがとうございます。,Thank you for taking the time to meet with me today.,,take the time to meet with me today（今日、私と会うために時間を割く）
-c0016,b01,2,1,これまでの経験を活かせる職務を探しています。,I'm looking for a role where I can use my experience.,,look for（〜を探す・求める）
-c0017,b01,2,1,経験の幅を広げる機会が限られています。,There are limited opportunities to expand my experience.,,limited opportunities（限られた機会）
-c0018,b01,2,1,テクニカルサポートの経験を活かせると考えています。,I believe I can use my experience in technical support.,,use my experience in technical support（テクニカルサポートの経験を活かす）
-c0019,b01,2,1,新しいスキルを身につけ、新しいことに挑戦したいです。,I'd like to learn new skills and take on new challenges.,,take on new challenges（新しいことに挑戦する）
-c0020,b01,2,1,カスタマーサポートの経験を活かして貢献できると考えています。,I believe I can contribute through my experience in customer support.,,contribute（貢献する）
-c0021,b01,2,1,その経験を土台にして、さらに成長したいです。,I'd like to build on that experience.,,build on（〜を土台にしてさらに伸ばす）
-c0022,b01,2,1,これまでの経験はこの職務にどう活かせますか？,How is your previous experience relevant to this role?,,be relevant to（〜に関連している・〜に活かせる）
-c0023,b01,2,1,なぜ現職を辞めようと考えているのですか？,Why are you looking to leave your current job?,,leave my current job（現職を辞める）
-c0024,b01,2,1,今の会社の将来に少し不安があります。,I have some concerns about my current company's future.,,have concerns about（〜について懸念がある）
-c0025,b01,2,1,当社の製品は市場で差別化しにくくなっています。,Our products are becoming less differentiated in the market.,,become less differentiated（差別化が弱まる）
-c0026,b01,2,1,会社は現在、赤字で事業を続けています。,The company is now operating at a loss.,,operate at a loss（赤字で事業を続ける）
-c0027,b01,2,1,キャリアを築いていける環境を探しています。,I'm looking for an environment where I can build my career.,,build my career（自分のキャリアを築く）
-c0028,b01,2,1,長期的にキャリアを築いていきたいです。,I'd like to build my career over the long term.,,over the long term（長期的に）
-c0029,b01,2,1,この職種に関心があります。,I'm interested in this position.,,be interested in（〜に関心がある）
-c0030,b01,2,1,当社のどこに魅力を感じましたか？,What attracted you to our company?,,What attracted you to our company?（当社のどこに魅力を感じましたか？）
-c0031,b01,2,1,この職務のどこに魅力を感じますか？,What appeals to you about this role?,,appeal to（〜の関心を引く・〜にとって魅力がある）
-c0032,b01,2,1,この分野で技術的な専門性を身につけたいです。,I'd like to develop my technical expertise in this field.,,develop technical expertise（技術的な専門性を身につける）
-c0033,b01,3,2,私の理解では、その製品はエンジニアによるデータの可視化を支援します。,My understanding is that the product helps engineers visualize data.,,my understanding is that（私の理解では〜です）
-c0034,b01,3,2,それによって、エンジニアは工程を監視できます。,It allows engineers to monitor their processes.,,allow engineers to monitor their processes（エンジニアが担当する工程を監視できるようにする）
-c0035,b01,3,2,エンジニアはデータを使って問題を特定できます。,Engineers can use the data to identify problems.,,identify problems（問題を特定する）
-c0036,b01,3,2,技術的なトラブルの調査・解決の経験があります。,I have experience in technical troubleshooting.,,technical troubleshooting（技術的なトラブルの調査・解決）
-c0037,b01,3,2,業務プロセスの改善経験があります。,I have experience in process improvement.,,process improvement（業務プロセスの改善）
-c0038,b01,3,2,技術チームと協力して顧客の問題を解決します。,I work with technical teams to solve customer problems.,,solve customer problems（顧客の問題を解決する）
-c0039,b01,3,2,その製品はメーカーのデータ収集を支援します。,The product helps manufacturers collect data.,,manufacturer（製造業者・メーカー）
-c0040,b01,3,2,顧客の製造工程の改善を支援したいです。,I'd like to help customers improve their manufacturing processes.,,manufacturing process（製造工程）
-c0041,b01,3,2,その製品は、チームが複数のシステムからデータを収集するのを支援します。,The product helps teams collect data from different systems.,,collect（（データなどを）収集する）
-c0042,b01,3,2,エンジニアは複数のシステムのデータを可視化できます。,Engineers can visualize data from different systems.,,visualize（可視化する）
-c0043,b01,3,2,その製品はエンジニアのデータ分析を支援します。,The product helps engineers analyze data.,,analyze（分析する）
-c0044,b01,3,2,運転担当者は担当工程を監視できます。,Operators can monitor their processes.,,operator（（設備などの）運転・操作担当者）
-c0045,b01,3,2,エンジニアと運転担当者は工程を監視できます。,Engineers and operators can monitor their processes.,,monitor（（状態・工程などを）監視する）
-c0046,b01,3,2,顧客の業務改善を支援したいです。,I'd like to help customers improve their operations.,,improve operations（業務・運用を改善する）
-c0047,b01,3,2,顧客が製品を効果的に使えるよう支援したいです。,I'd like to help customers use the product effectively.,,effectively（効果的に・うまく）
-c0048,b01,4,2,問題解決には手順を整理して取り組みます。,I take a structured approach to solving problems.,,take a structured approach（手順を整理して取り組む）
-c0049,b01,4,2,外部に委託しているカスタマーサポートの品質を改善しました。,I improved the quality of our outsourced customer support.,,outsourced（外部委託された）
-c0050,b01,4,2,データ入力のミス率は約20％でした。,The data entry error rate was around 20%.,,data entry error rate（データ入力のミス率）
-c0051,b01,4,2,問題を把握するためにミスの内容を確認しました。,I reviewed the errors to understand the problems.,,review（（内容や状況を）確認する・見直す）
-c0052,b01,4,2,パートナーと協力してフィードバックを伝えました。,I worked with our partner to provide feedback.,,provide feedback（フィードバックを伝える）
-c0053,b01,4,2,その結果、ミス率を5％以下に下げました。,"As a result, we reduced the error rate to 5% or less.",,as a result（その結果）
-c0054,b01,4,2,ミス率を5％以下に下げました。,We reduced the error rate to 5% or less.,,reduce the error rate to 5% or less（ミス率を5％以下に下げる）
-c0055,b01,4,2,この実績を誇りに思っています。,I'm proud of this achievement.,,be proud of（〜を誇りに思う）
-c0056,b01,4,2,それが、数字で確認できるサポート品質の改善につながりました。,It led to a measurable improvement in our support quality.,,lead to（〜につながる）
-c0057,b01,4,2,特に誇りに思っている実績の一つは、サポート品質を改善したことです。,One achievement I'm particularly proud of is improving support quality.,,particularly（特に）
-c0058,b01,4,2,これまでで一番大きな実績は何だと思いますか？,What would you consider your biggest accomplishment so far?,,accomplishment（成し遂げたこと・実績）
-c0059,b01,4,2,サポートの品質を改善しました。,We improved our support quality.,,support quality（サポートの品質）
-c0060,b01,4,2,ミス率を5％未満に下げました。,We reduced the error rate to below 5%.,,below 5%（5％未満）
-c0061,b01,5,3,問題についてじっくり考えすぎてしまうことがあります。,I sometimes spend too much time thinking a problem through.,,think a problem through（問題についてじっくり考える）
-c0062,b01,5,3,ときどき一人で問題についてじっくり考えます。,I sometimes think a problem through on my own.,,on my own（一人で・自力で）
-c0063,b01,5,3,行動する前に考えすぎてしまうことがあります。,I sometimes spend too much time thinking before taking action.,,take action（行動を起こす）
-c0064,b01,5,3,早い段階でたたき台を共有します。,I share a rough draft early.,,rough draft（たたき台・下書き）
-c0065,b01,5,3,たたき台を共有し、意見を求めます。,I share a rough draft and ask for feedback.,,ask for feedback（意見・フィードバックを求める）
-c0066,b01,5,3,こうすることで、物事をより早く進められます。,This helps me move forward more quickly.,,move forward（前に進む・物事を進める）
-c0067,b01,5,3,顧客の問題を解決することが、私の原動力です。,I'm motivated by solving customer problems.,,be motivated by（〜に意欲を感じる・〜が原動力になる）
-c0068,b01,5,3,成果がはっきり見えると、やりがいを感じます。,I find it rewarding when I can see clear results.,,I find it rewarding when I can see clear results.（成果がはっきり見えると、やりがいを感じます。）
-c0069,b01,5,3,問題について考え抜くのに時間をかけすぎてしまいます。,I spend too much time thinking a problem through.,,spend time thinking through a problem（問題をじっくり考えることに時間をかける）
-c0070,b01,5,3,早い段階で初期案を共有します。,I share an initial idea early.,,initial idea（最初の案・初期案）
-c0071,b01,5,3,関係者にたたき台を共有します。,I share a rough draft with the people involved.,,the people involved（関係者）
-c0072,b01,5,3,仕事の進め方を改善することに意欲を感じます。,I'm motivated by improving the way we work.,,the way we work（私たちの仕事の進め方）
-c0073,b01,5,3,目に見える成果が出ると、特にやりがいを感じます。,I find it especially rewarding when I can see clear results.,,clear results（目に見える成果・明確な結果）
-c0074,b01,6,3,まずは製品を学ぶことに注力します。,I would focus on learning the products.,,focus on（〜に注力する）
-c0075,b01,6,3,この職務でしっかりと成果を出すことに注力したいです。,I'd like to focus on delivering strong results in this position.,,deliver strong results（しっかりと成果を出す）
-c0076,b01,6,3,製品についての知識を深めたいです。,I'd like to deepen my knowledge of the product.,,deepen my knowledge of the product（製品についての知識を深める）
-c0077,b01,6,3,顧客から頼りにされる人になりたいです。,I'd like to become someone customers can rely on.,,rely on（〜を頼りにする）
-c0078,b01,6,3,経験を積むにつれて、チームにより貢献したいです。,"As I gain experience, I hope to contribute more to the team.",,gain experience（経験を積む）
-c0079,b01,6,3,経験を積みながら、担当範囲を広げたいです。,I hope to expand my responsibilities as I gain experience.,,expand my responsibilities（自分の担当範囲を広げる）
-c0080,b01,6,3,基本的な顧客の問い合わせに自力で対応できるようになりたいです。,I'd like to handle basic customer inquiries independently.,,handle customer inquiries（顧客からの問い合わせに対応する）
-c0081,b01,6,3,基本的な問い合わせに自力で対応できるようになることが目標です。,My goal is to handle basic inquiries independently.,,independently（自力で・自立して）
-c0082,b01,6,3,最初の90日間は何を優先しますか？,What would your priorities be during your first 90 days?,,priority（優先事項）
-c0083,b01,6,3,経験豊富なチームメンバーから学びます。,I would learn from experienced team members.,,learn from（〜から学ぶ）
-c0084,b01,6,3,よくある問題を把握するために、過去のサポート事例を確認します。,I would review past support cases to understand common issues.,,past support case（過去のサポート事例）
-c0085,b01,6,3,よくある問題を把握したいです。,I'd like to understand common issues.,,common issue（よくある問題）
-c0086,b01,6,3,どのタイミングで助けを求めるべきか判断できるようになることが目標です。,My goal is to know when to ask for help.,,know when to ask for help（どのタイミングで助けを求めるべきか判断できる）
+﻿id,book,chapter,level,ja,en,alt_en,note,priority
+c0001,b01,1,1,これまでの経歴を順を追って教えていただけますか？,Could you walk me through your background?,,walk me through your background（これまでの経歴を私に順を追って説明する）,
+c0002,b01,1,1,これまでの経歴を教えていただけますか？,Could you tell me about your background?,,background（経歴・これまでの経験）,
+c0003,b01,1,1,現職では、技術チームと協力しています。,"In my current role, I work with technical teams.",,role（役割・職務）,
+c0004,b01,1,1,フィールドサービスエンジニアとしてキャリアをスタートしました。,I started my career as a field service engineer.,,start my career as a field service engineer（フィールドサービスエンジニアとしてキャリアをスタートする）,
+c0005,b01,1,1,フィールドサービスエンジニアとして機器を保守していました。,I maintained equipment as a field service engineer.,,maintain（（機器を）保守する）,
+c0006,b01,1,1,テクニカルサポートの分野にも経験を広げました。,I expanded my experience into technical support.,,expand my experience into technical support（テクニカルサポートの分野にも経験を広げる）,
+c0007,b01,1,1,カスタマーサポートの立ち上げを担当していました。,I was responsible for setting up customer support.,,be responsible for（〜を担当している）,
+c0008,b01,1,1,新規事業のカスタマーサポートの立ち上げに携わりました。,I helped set up customer support for a new business.,,set up（（体制・事業などを）立ち上げる・整える）,
+c0009,b01,1,1,外部パートナーと協力して、業務の流れを改善しました。,I worked with our external partner to improve the process.,,work with（〜と協力する）,
+c0010,b01,1,1,技術チームや外部パートナーと協力しています。,I work with technical teams and external partners.,,external partner（外部パートナー）,
+c0011,b01,1,1,機械や関連機器を保守していました。,I maintained machines and related equipment.,,related equipment（関連機器）,
+c0012,b01,1,1,テクニカルサポートの経験があります。,I have experience in technical support.,,technical support（テクニカルサポート・技術サポート）,
+c0013,b01,1,1,品質保証の分野にも経験を広げました。,I expanded my experience into quality assurance.,,quality assurance（品質保証）,
+c0014,b01,1,1,カスタマーサポート業務の改善に取り組みました。,I worked on improving customer support operations.,,customer support operations（カスタマーサポート業務・運用）,
+c0015,b01,1,1,本日はお時間を割いていただき、ありがとうございます。,Thank you for taking the time to meet with me today.,,take the time to meet with me today（今日、私と会うために時間を割く）,
+c0016,b01,2,1,これまでの経験を活かせる職務を探しています。,I'm looking for a role where I can use my experience.,,look for（〜を探す・求める）,
+c0017,b01,2,1,経験の幅を広げる機会が限られています。,There are limited opportunities to expand my experience.,,limited opportunities（限られた機会）,
+c0018,b01,2,1,テクニカルサポートの経験を活かせると考えています。,I believe I can use my experience in technical support.,,use my experience in technical support（テクニカルサポートの経験を活かす）,
+c0019,b01,2,1,新しいスキルを身につけ、新しいことに挑戦したいです。,I'd like to learn new skills and take on new challenges.,,take on new challenges（新しいことに挑戦する）,
+c0020,b01,2,1,カスタマーサポートの経験を活かして貢献できると考えています。,I believe I can contribute through my experience in customer support.,,contribute（貢献する）,
+c0021,b01,2,1,その経験を土台にして、さらに成長したいです。,I'd like to build on that experience.,,build on（〜を土台にしてさらに伸ばす）,
+c0022,b01,2,1,これまでの経験はこの職務にどう活かせますか？,How is your previous experience relevant to this role?,,be relevant to（〜に関連している・〜に活かせる）,
+c0023,b01,2,1,なぜ現職を辞めようと考えているのですか？,Why are you looking to leave your current job?,,leave my current job（現職を辞める）,
+c0024,b01,2,1,今の会社の将来に少し不安があります。,I have some concerns about my current company's future.,,have concerns about（〜について懸念がある）,
+c0025,b01,2,1,当社の製品は市場で差別化しにくくなっています。,Our products are becoming less differentiated in the market.,,become less differentiated（差別化が弱まる）,
+c0026,b01,2,1,会社は現在、赤字で事業を続けています。,The company is now operating at a loss.,,operate at a loss（赤字で事業を続ける）,
+c0027,b01,2,1,キャリアを築いていける環境を探しています。,I'm looking for an environment where I can build my career.,,build my career（自分のキャリアを築く）,
+c0028,b01,2,1,長期的にキャリアを築いていきたいです。,I'd like to build my career over the long term.,,over the long term（長期的に）,
+c0029,b01,2,1,この職種に関心があります。,I'm interested in this position.,,be interested in（〜に関心がある）,
+c0030,b01,2,1,当社のどこに魅力を感じましたか？,What attracted you to our company?,,What attracted you to our company?（当社のどこに魅力を感じましたか？）,
+c0031,b01,2,1,この職務のどこに魅力を感じますか？,What appeals to you about this role?,,appeal to（〜の関心を引く・〜にとって魅力がある）,
+c0032,b01,2,1,この分野で技術的な専門性を身につけたいです。,I'd like to develop my technical expertise in this field.,,develop technical expertise（技術的な専門性を身につける）,
+c0033,b01,3,2,私の理解では、その製品はエンジニアによるデータの可視化を支援します。,My understanding is that the product helps engineers visualize data.,,my understanding is that（私の理解では〜です）,
+c0034,b01,3,2,それによって、エンジニアは工程を監視できます。,It allows engineers to monitor their processes.,,allow engineers to monitor their processes（エンジニアが担当する工程を監視できるようにする）,
+c0035,b01,3,2,エンジニアはデータを使って問題を特定できます。,Engineers can use the data to identify problems.,,identify problems（問題を特定する）,
+c0036,b01,3,2,技術的なトラブルの調査・解決の経験があります。,I have experience in technical troubleshooting.,,technical troubleshooting（技術的なトラブルの調査・解決）,
+c0037,b01,3,2,業務プロセスの改善経験があります。,I have experience in process improvement.,,process improvement（業務プロセスの改善）,
+c0038,b01,3,2,技術チームと協力して顧客の問題を解決します。,I work with technical teams to solve customer problems.,,solve customer problems（顧客の問題を解決する）,
+c0039,b01,3,2,その製品はメーカーのデータ収集を支援します。,The product helps manufacturers collect data.,,manufacturer（製造業者・メーカー）,
+c0040,b01,3,2,顧客の製造工程の改善を支援したいです。,I'd like to help customers improve their manufacturing processes.,,manufacturing process（製造工程）,
+c0041,b01,3,2,その製品は、チームが複数のシステムからデータを収集するのを支援します。,The product helps teams collect data from different systems.,,collect（（データなどを）収集する）,
+c0042,b01,3,2,エンジニアは複数のシステムのデータを可視化できます。,Engineers can visualize data from different systems.,,visualize（可視化する）,
+c0043,b01,3,2,その製品はエンジニアのデータ分析を支援します。,The product helps engineers analyze data.,,analyze（分析する）,
+c0044,b01,3,2,運転担当者は担当工程を監視できます。,Operators can monitor their processes.,,operator（（設備などの）運転・操作担当者）,
+c0045,b01,3,2,エンジニアと運転担当者は工程を監視できます。,Engineers and operators can monitor their processes.,,monitor（（状態・工程などを）監視する）,
+c0046,b01,3,2,顧客の業務改善を支援したいです。,I'd like to help customers improve their operations.,,improve operations（業務・運用を改善する）,
+c0047,b01,3,2,顧客が製品を効果的に使えるよう支援したいです。,I'd like to help customers use the product effectively.,,effectively（効果的に・うまく）,
+c0048,b01,4,2,問題解決には手順を整理して取り組みます。,I take a structured approach to solving problems.,,take a structured approach（手順を整理して取り組む）,
+c0049,b01,4,2,外部に委託しているカスタマーサポートの品質を改善しました。,I improved the quality of our outsourced customer support.,,outsourced（外部委託された）,
+c0050,b01,4,2,データ入力のミス率は約20％でした。,The data entry error rate was around 20%.,,data entry error rate（データ入力のミス率）,
+c0051,b01,4,2,問題を把握するためにミスの内容を確認しました。,I reviewed the errors to understand the problems.,,review（（内容や状況を）確認する・見直す）,
+c0052,b01,4,2,パートナーと協力してフィードバックを伝えました。,I worked with our partner to provide feedback.,,provide feedback（フィードバックを伝える）,
+c0053,b01,4,2,その結果、ミス率を5％以下に下げました。,"As a result, we reduced the error rate to 5% or less.",,as a result（その結果）,
+c0054,b01,4,2,ミス率を5％以下に下げました。,We reduced the error rate to 5% or less.,,reduce the error rate to 5% or less（ミス率を5％以下に下げる）,
+c0055,b01,4,2,この実績を誇りに思っています。,I'm proud of this achievement.,,be proud of（〜を誇りに思う）,
+c0056,b01,4,2,それが、数字で確認できるサポート品質の改善につながりました。,It led to a measurable improvement in our support quality.,,lead to（〜につながる）,
+c0057,b01,4,2,特に誇りに思っている実績の一つは、サポート品質を改善したことです。,One achievement I'm particularly proud of is improving support quality.,,particularly（特に）,
+c0058,b01,4,2,これまでで一番大きな実績は何だと思いますか？,What would you consider your biggest accomplishment so far?,,accomplishment（成し遂げたこと・実績）,
+c0059,b01,4,2,サポートの品質を改善しました。,We improved our support quality.,,support quality（サポートの品質）,
+c0060,b01,4,2,ミス率を5％未満に下げました。,We reduced the error rate to below 5%.,,below 5%（5％未満）,
+c0061,b01,5,3,問題についてじっくり考えすぎてしまうことがあります。,I sometimes spend too much time thinking a problem through.,,think a problem through（問題についてじっくり考える）,
+c0062,b01,5,3,ときどき一人で問題についてじっくり考えます。,I sometimes think a problem through on my own.,,on my own（一人で・自力で）,
+c0063,b01,5,3,行動する前に考えすぎてしまうことがあります。,I sometimes spend too much time thinking before taking action.,,take action（行動を起こす）,
+c0064,b01,5,3,早い段階でたたき台を共有します。,I share a rough draft early.,,rough draft（たたき台・下書き）,
+c0065,b01,5,3,たたき台を共有し、意見を求めます。,I share a rough draft and ask for feedback.,,ask for feedback（意見・フィードバックを求める）,
+c0066,b01,5,3,こうすることで、物事をより早く進められます。,This helps me move forward more quickly.,,move forward（前に進む・物事を進める）,
+c0067,b01,5,3,顧客の問題を解決することが、私の原動力です。,I'm motivated by solving customer problems.,,be motivated by（〜に意欲を感じる・〜が原動力になる）,
+c0068,b01,5,3,成果がはっきり見えると、やりがいを感じます。,I find it rewarding when I can see clear results.,,I find it rewarding when I can see clear results.（成果がはっきり見えると、やりがいを感じます。）,
+c0069,b01,5,3,問題について考え抜くのに時間をかけすぎてしまいます。,I spend too much time thinking a problem through.,,spend time thinking through a problem（問題をじっくり考えることに時間をかける）,
+c0070,b01,5,3,早い段階で初期案を共有します。,I share an initial idea early.,,initial idea（最初の案・初期案）,
+c0071,b01,5,3,関係者にたたき台を共有します。,I share a rough draft with the people involved.,,the people involved（関係者）,
+c0072,b01,5,3,仕事の進め方を改善することに意欲を感じます。,I'm motivated by improving the way we work.,,the way we work（私たちの仕事の進め方）,
+c0073,b01,5,3,目に見える成果が出ると、特にやりがいを感じます。,I find it especially rewarding when I can see clear results.,,clear results（目に見える成果・明確な結果）,
+c0074,b01,6,3,まずは製品を学ぶことに注力します。,I would focus on learning the products.,,focus on（〜に注力する）,
+c0075,b01,6,3,この職務でしっかりと成果を出すことに注力したいです。,I'd like to focus on delivering strong results in this position.,,deliver strong results（しっかりと成果を出す）,
+c0076,b01,6,3,製品についての知識を深めたいです。,I'd like to deepen my knowledge of the product.,,deepen my knowledge of the product（製品についての知識を深める）,
+c0077,b01,6,3,顧客から頼りにされる人になりたいです。,I'd like to become someone customers can rely on.,,rely on（〜を頼りにする）,
+c0078,b01,6,3,経験を積むにつれて、チームにより貢献したいです。,"As I gain experience, I hope to contribute more to the team.",,gain experience（経験を積む）,
+c0079,b01,6,3,経験を積みながら、担当範囲を広げたいです。,I hope to expand my responsibilities as I gain experience.,,expand my responsibilities（自分の担当範囲を広げる）,
+c0080,b01,6,3,基本的な顧客の問い合わせに自力で対応できるようになりたいです。,I'd like to handle basic customer inquiries independently.,,handle customer inquiries（顧客からの問い合わせに対応する）,
+c0081,b01,6,3,基本的な問い合わせに自力で対応できるようになることが目標です。,My goal is to handle basic inquiries independently.,,independently（自力で・自立して）,
+c0082,b01,6,3,最初の90日間は何を優先しますか？,What would your priorities be during your first 90 days?,,priority（優先事項）,
+c0083,b01,6,3,経験豊富なチームメンバーから学びます。,I would learn from experienced team members.,,learn from（〜から学ぶ）,
+c0084,b01,6,3,よくある問題を把握するために、過去のサポート事例を確認します。,I would review past support cases to understand common issues.,,past support case（過去のサポート事例）,
+c0085,b01,6,3,よくある問題を把握したいです。,I'd like to understand common issues.,,common issue（よくある問題）,
+c0086,b01,6,3,どのタイミングで助けを求めるべきか判断できるようになることが目標です。,My goal is to know when to ask for help.,,know when to ask for help（どのタイミングで助けを求めるべきか判断できる）,
+c_p00_001,b_p00,01,1,それを確認します。,I'll check it.,,,S
+c_p00_002,b_p00,01,2,今日の午後に電話します。,I'll call you this afternoon.,,,S
+c_p00_003,b_p00,01,1,もう一度試します。,I'll try again.,,,S
+c_p00_004,b_p00,01,2,後で資料を送ります。,I'll send you the document later.,,,S
+c_p00_005,b_p00,02,2,今、対応できます。,I'm available now.,,,S
+c_p00_006,b_p00,02,2,まだ準備ができていません。,I'm not ready yet.,,,S
+c_p00_007,b_p00,02,3,状況は改善しています。,The situation is improving.,,,S
+c_p00_008,b_p00,02,2,その予定で大丈夫です。,That schedule works for me.,,,S
+c_p00_009,b_p00,03,1,質問があります。,I have a question.,,,S
+c_p00_010,b_p00,03,2,それは重要な問題です。,That's an important issue.,,,S
+c_p00_011,b_p00,03,2,計画を変更しましょう。,Let's change the plan.,,,S
+c_p00_012,b_p00,03,2,結果を共有します。,I'll share the results.,,,S
+c_p00_013,b_p00,04,2,すでに確認しました。,I've already checked it.,,,S
+c_p00_014,b_p00,04,2,明日までに対応します。,I'll take care of it by tomorrow.,,,S
+c_p00_015,b_p00,04,3,まだ決まっていません。,It hasn't been decided yet.,,,S
+c_p00_016,b_p00,04,2,時間があれば参加します。,I'll join if I have time.,,,S
+c_p00_017,b_p00,05,3,その件を調査します。,I'll look into the issue.,,,S
+c_p00_018,b_p00,05,3,原因が分かりました。,I figured out the cause.,,,S
+c_p00_019,b_p00,05,2,アカウントの設定を手伝ってください。,Please help me set up the account.,,,S
+c_p00_020,b_p00,05,3,会議を延期しましょう。,Let's put off the meeting.,,,S
+c_p00_021,b_p00,05,3,明日その件の状況を確認します。,I'll follow up on the issue tomorrow.,,,S
+c_p00_022,b_p00,05,2,その番号を書き留めます。,I'll write down the number.,,,S
+c_p00_023,b_p00,06,2,お名前を教えていただけますか？,Could you tell me your name?,,,S
+c_p00_024,b_p00,06,2,何を探していますか？,What are you looking for?,,,S
+c_p00_025,b_p00,06,1,これは何ですか？,What is this?,,,S
+c_p00_026,b_p00,06,2,どういう意味ですか？,What do you mean?,,,S
+c_p00_027,b_p00,06,2,もう一度言っていただけますか？,Could you say that again?,,,S
+c_p00_028,b_p00,06,2,もう少しゆっくり話していただけますか？,Could you speak a little more slowly?,,,S
+c_p00_029,b_p00,06,2,今、少しお時間ありますか？,Do you have a minute?,,,S
+c_p00_030,b_p00,06,2,何か質問はありますか？,Do you have any questions?,,,S
+c_p00_031,b_p00,06,2,どちらがよいですか？,Which do you prefer?,,,S
+c_p00_032,b_p00,06,3,いつがご都合よいですか？,When would be a good time for you?,,,S
+c_p00_033,b_p00,06,1,今どこにいますか？,Where are you now?,,,S
+c_p00_034,b_p00,06,2,なぜそう思うのですか？,Why do you think that?,,,S
+c_p00_035,b_p00,06,2,どうすればよいですか？,What should I do?,,,S
+c_p00_036,b_p00,06,2,1つ確認してもよいですか？,Can I confirm one thing?,,,S
+c_p00_037,b_p00,06,3,どこまで進んでいますか？,How far along are we?,,,S
+c_p00_038,b_p00,06,3,何が問題の原因ですか？,What's causing the problem?,,,S
+c_p00_039,b_p00,06,2,何か進展はありましたか？,Do you have any updates?,,,S
+c_p00_040,b_p00,06,2,具体例を挙げてもらえますか？,Could you give me an example?,,,S
+c_p00_041,b_p00,06,2,これについてもう少し詳しく教えてください。,Could you tell me more about this?,,,S
+c_p00_042,b_p00,06,3,私の理解で合っていますか？,Did I understand that correctly?,,,S
+c_p00_043,b_p00,07,1,なるほど。,I see.,,,S
+c_p00_044,b_p00,07,1,わかりました。,Got it.,,,S
+c_p00_045,b_p00,07,1,その通りです。,Exactly.,,,S
+c_p00_046,b_p00,07,2,それは納得できます。,That makes sense.,,,S
+c_p00_047,b_p00,07,2,それでよいと思います。,Sounds good to me.,,,S
+c_p00_048,b_p00,07,1,賛成です。,I agree.,,,S
+c_p00_049,b_p00,07,1,そう思います。,I think so.,,,S
+c_p00_050,b_p00,07,1,そうは思いません。,I don't think so.,,,S
+c_p00_051,b_p00,07,2,それは知りませんでした。,I didn't know that.,,,S
+c_p00_052,b_p00,07,2,確かにそうですね。,That's true.,,,S
+c_p00_053,b_p00,07,1,それはよかったですね！,That's great!,,,S
+c_p00_054,b_p00,07,2,それは残念ですね。,That's too bad.,,,S
+c_p00_055,b_p00,07,1,問題ありません。,No problem.,,,S
+c_p00_056,b_p00,07,2,ありがとうございます。助かります。,Thank you. I appreciate it.,,,S
+c_p00_057,b_p00,07,3,あなたの気持ちはわかります。,I understand how you feel.,,,S
+c_p00_058,b_p00,08,2,これを手伝っていただけますか？,Could you help me with this?,,,S
+c_p00_059,b_p00,08,2,これを確認していただけますか？,Could you check this?,,,S
+c_p00_060,b_p00,08,2,ファイルを送っていただけますか？,Could you send me the file?,,,S
+c_p00_061,b_p00,08,2,少しお時間をいただけますか？,Could you give me a moment?,,,S
+c_p00_062,b_p00,08,2,もう一度説明していただけますか？,Could you explain it again?,,,S
+c_p00_063,b_p00,08,3,会議を明日に変更できますか？,Could we move the meeting to tomorrow?,,,S
+c_p00_064,b_p00,08,1,電話してもよいですか？,Can I call you?,,,S
+c_p00_065,b_p00,08,2,ここに座ってもよいですか？,May I sit here?,,,S
+c_p00_066,b_p00,08,1,一緒に確認しましょう。,Let's check it together.,,,S
+c_p00_067,b_p00,08,1,休憩しましょう。,Let's take a break.,,,S
+c_p00_068,b_p00,08,3,こちらの案をおすすめします。,I'd recommend this option.,,,S
+c_p00_069,b_p00,08,2,まずこちらを試すのはどうですか？,How about trying this first?,,,S
+c_p00_070,b_p00,08,3,ご都合のよい時間を教えてください。,Please let me know when you're available.,,,S
+c_p00_071,b_p00,08,3,ご意見を聞かせてください。,I'd like to hear your thoughts.,,,S
+c_p00_072,b_p00,08,2,今は対応できません。,I can't do that right now.,,,S
+c_p00_073,b_p00,08,2,今回は参加できません。,I can't make it this time.,,,S
+c_p00_074,b_p00,08,2,金曜日のほうが都合がよいです。,Friday works better for me.,,,S
+c_p00_075,b_p00,08,3,少し考える時間をください。,Could you give me some time to think?,,,S
+c_p00_076,b_p00,08,2,今日はここまでにしましょう。,Let's stop here for today.,,,S
+c_p00_077,b_p00,08,3,予定を変更してもよいでしょうか？,Would it be okay to change the schedule?,,,S
+c_p00_078,b_p00,08,2,この件は明日話せますか？,Could we discuss this tomorrow?,,,S
+c_p00_079,b_p00,08,2,お時間をいただきありがとうございます。,Thank you for your time.,,,S
+c_p00_080,b_p00,08,3,申し訳ありませんが、その日は難しいです。,"I'm sorry, but that day doesn't work for me.",,,S
+c_p00_081,b_p00,09,2,いい考えだと思います。,I think it's a good idea.,,,S
+c_p00_082,b_p00,09,3,私は別の意見です。,I have a different opinion.,,,S
+c_p00_083,b_p00,09,2,主な理由は費用です。,The main reason is the cost.,,,S
+c_p00_084,b_p00,09,2,理由を説明します。,Let me explain why.,,,S
+c_p00_085,b_p00,09,2,その点には賛成です。,I agree with that point.,,,S
+c_p00_086,b_p00,09,3,ただし、懸念があります。,"However, I have a concern.",,,S
+c_p00_087,b_p00,09,2,状況によります。,It depends on the situation.,,,S
+c_p00_088,b_p00,09,3,私の経験では、この方法はうまくいきます。,"In my experience, this approach works well.",,,S
+c_p00_089,b_p00,09,3,例えば、この方法を試せます。,"For example, we could try this approach.",,,S
+c_p00_090,b_p00,09,2,重要なのは品質です。,The important thing is quality.,,,S
+c_p00_091,b_p00,09,3,まず全体像を説明します。,"First, I'll explain the big picture.",,,S
+c_p00_092,b_p00,09,2,もう少し詳しく説明します。,Let me explain in more detail.,,,S
+c_p00_093,b_p00,09,3,私が言いたいのはこの点です。,That's the point I'm trying to make.,,,S
+c_p00_094,b_p00,09,3,私はこの提案を支持します。,I support this proposal.,,,S
+c_p00_095,b_p00,09,3,どちらの案にもメリットがあります。,Both options have advantages.,,,S
+c_p00_096,b_p00,09,2,この方法のほうが簡単です。,This approach is simpler.,,,S
+c_p00_097,b_p00,09,2,別の選択肢も考えましょう。,Let's consider another option.,,,S
+c_p00_098,b_p00,09,3,その判断を裏付ける根拠があります。,We have evidence to support that decision.,,,S
+c_p00_099,b_p00,09,3,現時点ではそれが最善の選択肢だと思います。,I think that's the best option for now.,,,S
+c_p00_100,b_p00,10,2,確認して折り返し連絡します。,I'll check and get back to you.,,,S
+c_p00_101,b_p00,10,2,進捗を随時お知らせします。,I'll keep you updated.,,,S
+c_p00_102,b_p00,10,1,作業が完了しました。,I've finished the task.,,,S
+c_p00_103,b_p00,10,2,まだ作業中です。,I'm still working on it.,,,S
+c_p00_104,b_p00,10,3,明日までに報告します。,I'll report back by tomorrow.,,,S
+c_p00_105,b_p00,10,3,予定より遅れています。,We're running behind schedule.,,,S
+c_p00_106,b_p00,10,2,予定どおり進んでいます。,We're on schedule.,,,S
+c_p00_107,b_p00,10,3,問題が発生しました。,We've run into a problem.,,,S
+c_p00_108,b_p00,10,3,原因を調査しています。,We're investigating the cause.,,,S
+c_p00_109,b_p00,10,2,詳細をメールで送ります。,I'll email you the details.,,,S
+c_p00_110,b_p00,10,1,会議は3時に始まります。,The meeting starts at three.,,,S
+c_p00_111,b_p00,10,2,会議の時間を変更しました。,I've changed the meeting time.,,,S
+c_p00_112,b_p00,10,2,現在の状況を共有します。,I'll share the current status.,,,S
+c_p00_113,b_p00,10,3,担当者に確認します。,I'll check with the person in charge.,,,S
+c_p00_114,b_p00,10,2,変更があればお知らせします。,I'll let you know if anything changes.,,,S
+c_p00_115,b_p00,10,3,この件の対応を優先します。,I'll prioritize this issue.,,,S
+c_p00_116,b_p00,10,3,ご返信をお待ちしております。,I look forward to your reply.,,,S
+c_p00_117,b_p00,10,3,この件は解決済みです。,This issue has been resolved.,,,S
+c_p00_118,b_p00,10,3,対応にもう少し時間が必要です。,We need more time to handle this.,,,S
+c_p00_119,b_p00,10,2,今日中に更新します。,I'll update it by the end of today.,,,S
+c_p00_120,b_p00,10,3,次の手順を確認しましょう。,Let's confirm the next steps.,,,S

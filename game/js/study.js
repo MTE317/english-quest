@@ -39,7 +39,9 @@ export function nextUnread(lex, store, stoneId, n) {
  * 持っていける石：★がダンジョン以上で、今のランクの★までか、1つ下の★の石をすべて読み解いていれば1つ上まで（srs.json の stones_ahead）
  */
 export function stoneAllowed(lex, store, scheduler, stone, dungeonRank, rankStar, today) {
-  if (stone.star < dungeonRank || !lex.wordsByStone.get(stone.id)?.length) return false;
+  if (!lex.wordsByStone.get(stone.id)?.length) return false;
+  if (stone.category) return true;
+  if (stone.star < dungeonRank) return false;
   if (stone.star <= rankStar) return true;
   if (stone.star > rankStar + 1) return false;
   const below = lex.stones.filter((s) => s.star === stone.star - 1);
@@ -96,10 +98,14 @@ export function finishExam(data, store, plan, correct, today, onPass) {
 
 /** 昇格試験：今の★のルーンの何割を習得したか */
 export function starLearnedRatio(lex, store, scheduler, star) {
-  const words = lex.words.filter((w) => w.star === star);
+  const words = promotionWords(lex, star);
   if (!words.length) return { ratio: 0, learned: 0, total: 0 };
   const learned = words.filter((w) => scheduler.stageOf(store.get(w.id)) === 'learned').length;
   return { ratio: learned / words.length, learned, total: words.length };
+}
+
+function promotionWords(lex, star) {
+  return lex.words.filter((w) => w.star === star && !lex.stonesById.get(w.stoneId)?.category);
 }
 
 export function promotionBlock(data, lex, store, scheduler, game, today) {
@@ -120,7 +126,7 @@ export function promotionPlan(data, lex, game, rng) {
   const star = currentRank(data, game).maxDungeonRank;
   return {
     key: `promotion:${data.ranks[idx + 1].id}`, examId: 'promotion', rankId: data.ranks[idx + 1].id,
-    words: examWords(lex.words.filter((w) => w.star === star), e.questions, rng).map((w) => w.id), passRate: e.passRate,
+    words: examWords(promotionWords(lex, star), e.questions, rng).map((w) => w.id), passRate: e.passRate,
   };
 }
 

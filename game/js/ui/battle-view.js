@@ -1,7 +1,7 @@
 // 戦況を表示したまま、下段をコマンド・対象の案内・問題・結果に切り替える。
 import { now } from '../storage.js?v=rune-study-1';
 import { QuestionPicker, REASON_LABEL } from '../picker.js';
-import { makePracticeQuestion, questionDirection, questionSpeech, DIRECTION } from '../quiz.js?v=question-speech-1';
+import { makePracticeQuestion, questionDirection, questionSpeech, DIRECTION } from '../quiz.js?v=practical-english-1';
 import { speak, canSpeak, stopSpeech } from '../speech.js?v=music-suite-1';
 import { nextTurn, actionOptions, setPending, prepareQuizAction, resolvePending, targetKind, canAct, skillMp, collectBattleHits, enemyIntent, enemyCanAct } from '../battle.js?v=systems-v1';
 import { maxHp, maxMp } from '../character.js?v=build36-1';
@@ -326,6 +326,7 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
     const q = makePracticeQuestion(next.word, lex, { direction: dir, format: run.challenge ? 'meaning' : settings.format ?? 'meaning', familiar: scheduler.isFamiliar(store.get(next.word.id)) });
     setPending(b, action, {
       wordId: next.word.id, reason: next.reason, format: q.format, deadline: run.timeLimit ? Date.now() + 1000 * run.timeLimit : null, direction: q.direction, prompt: q.prompt, choices: q.choices, answerIndex: q.answerIndex,
+      difficulty: next.word.priority ? next.word.star : undefined,
     });
     run.quiz = picker.toState();
     session.save();
@@ -385,7 +386,7 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
 
     showPanel(title, [
       el('div', { class: 'battle-question' },
-        el('div', { class: 'battle-prompt-wrap' }, el('small', {}, instruction),
+        el('div', { class: 'battle-prompt-wrap' }, el('small', {}, q.difficulty ? `${instruction} · ${'★'.repeat(q.difficulty)}` : instruction),
           el('div', { class: 'battle-prompt', style: 'white-space: pre-line', lang: isEn ? 'en' : 'ja' }, q.prompt)),
         pronounce(voice.prompt)),
       el('div', { class: 'battle-answers' }, q.choices.map((choice, index) =>

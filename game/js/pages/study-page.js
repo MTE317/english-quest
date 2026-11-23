@@ -12,8 +12,8 @@ import { checkRankUp } from '../town.js?v=build36-1';
 import {
   stoneProgress, nextUnread, trialBlock, trialPlan, finishExam, promotionBlock, promotionPlan, starLearnedRatio,
   trainingReward, applyTraining,
-} from '../study.js?v=build36-1';
-import { runQuiz } from '../ui/quiz-runner.js?v=music-suite-1';
+} from '../study.js?v=practical-english-1';
+import { runQuiz } from '../ui/quiz-runner.js?v=practical-english-1';
 import { speak, canSpeak } from '../speech.js?v=music-suite-1';
 import { el, render, stars } from '../dom.js';
 
@@ -101,10 +101,11 @@ function hall() {
 
 function startTrial(stoneId) {
   const plan = trialPlan(data, lex, stoneId, rng());
+  const wordsById = new Map(lex.wordsByStone.get(stoneId).map((word) => [word.id, word]));
   let i = 0;
   runQuiz({
     view, lex, scheduler, store, total: plan.words.length, format: 'mixed', title: '確認テスト',
-    next: () => ({ word: lex.wordsById.get(plan.words[i++]) }),
+    next: () => ({ word: wordsById.get(plan.words[i++]) }),
     onDone: (correct, total) => {
       const passed = finishExam(data, store, plan, correct, today());
       render(view,

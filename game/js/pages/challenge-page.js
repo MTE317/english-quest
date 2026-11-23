@@ -10,9 +10,9 @@ import { createBattle, makeEnemy, finishBattle } from '../battle.js?v=build36-1'
 import { currentRank, useItemOutsideBattle, FIELD_ITEM_EFFECTS } from '../dungeon.js?v=build36-1';
 import { nextRankStatus, checkRankUp } from '../town.js?v=build36-1';
 import { makeGear } from '../character.js?v=build36-1';
-import { examWords, starLearnedRatio, arenaReviewWords } from '../study.js?v=build36-1';
-import { createBattleView } from '../ui/battle-view.js?v=music-suite-1';
-import { runQuiz } from '../ui/quiz-runner.js?v=music-suite-1';
+import { examWords, starLearnedRatio, arenaReviewWords } from '../study.js?v=practical-english-1';
+import { createBattleView } from '../ui/battle-view.js?v=practical-english-1';
+import { runQuiz } from '../ui/quiz-runner.js?v=practical-english-1';
 import { el, render } from '../dom.js';
 import { setSceneMusic } from '../battle-music.js?v=music-suite-1';
 

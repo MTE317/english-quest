@@ -55,7 +55,7 @@ export function pickDistractors(word, lex, { familiar, direction, rng = Math.ran
   const take = (cands) => {
     for (const w of cands) {
       if (result.length >= count) break;
-      if (w.id === word.id || used.has(shown(w))) continue; // 同じ表示の選択肢は出さない
+      if (w.id === word.id || w.priority || used.has(shown(w))) continue;
       used.add(shown(w));
       result.push(w);
     }
@@ -90,14 +90,17 @@ export function pickDistractors(word, lex, { familiar, direction, rng = Math.ran
  * @returns {{ word, direction, prompt, choices: {id, text}[], answerIndex, distractorSource }}
  */
 export function makeQuestion(word, lex, { direction, familiar, rng = Math.random }) {
-  const { words, source } = pickDistractors(word, lex, { familiar, direction, rng });
-  const shown = (w) => (direction === DIRECTION.EN_JA ? w.ja : w.en);
+  const curated = word.distractorsJa?.length === CHOICES - 1;
+  if (curated) direction = DIRECTION.EN_JA;
+  const { words, source } = curated
+    ? { words: word.distractorsJa.map((ja, i) => ({ id: `${word.id}:distractor:${i}`, ja })), source: 'curated' }
+    : pickDistractors(word, lex, { familiar, direction, rng });
   const options = shuffle([word, ...words], rng);
   return {
     word,
     direction,
-    prompt: direction === DIRECTION.EN_JA ? word.en : word.ja,
-    choices: options.map((w) => ({ id: w.id, text: shown(w) })),
+    prompt: direction === DIRECTION.EN_JA ? [word.en, word.contextEn].filter(Boolean).join('\n') : word.ja,
+    choices: options.map((w) => ({ id: w.id, text: direction === DIRECTION.EN_JA ? w.ja : w.en })),
     answerIndex: options.findIndex((w) => w.id === word.id),
     distractorSource: source,
   };
@@ -109,7 +112,7 @@ const CLOZE_BLANK = '＿＿＿';
 export function makePracticeQuestion(word, lex, options) {
   const { format = 'mixed', rng = Math.random } = options;
   const fallback = () => makeQuestion(word, lex, options);
-  if (format === 'meaning' || word.kind === 'word' || !word.exampleEn || !word.exampleJa) return fallback();
+  if (word.priority || format === 'meaning' || word.kind === 'word' || !word.exampleEn || !word.exampleJa) return fallback();
   const mode = format === 'mixed' ? ['meaning', 'cloze', 'situation'][Math.floor(rng() * 3)] : format;
   if (mode === 'meaning') return fallback();
 

@@ -32,7 +32,7 @@ test('穴埋めは空欄のまま出題を読み、回答後に完成した英�
 
 test('4択：選択肢は4つ、正解は1つ、同じ表示はない', () => {
   const rng = seededRng(7);
-  for (const w of lex.words) {
+  for (const w of lex.words.filter((word) => !word.priority)) {
     for (const direction of [DIRECTION.EN_JA, DIRECTION.JA_EN]) {
       for (const familiar of [false, true]) {
         const q = makeQuestion(w, lex, { direction, familiar, rng });

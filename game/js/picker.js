@@ -64,7 +64,8 @@ export class QuestionPicker {
     const pick = (id, reason) => {
       this.asked += 1;
       this.lastAskedAt.set(id, this.asked);
-      return { word: this.lex.wordsById.get(id), reason };
+      const word = this.stoneWords().find((item) => item.id === id) ?? this.lex.wordsById.get(id);
+      return { word, reason };
     };
 
     // 1. かすれたルーン（この回でまだ出していないもの）

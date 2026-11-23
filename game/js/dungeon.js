@@ -58,7 +58,7 @@ export function expeditionFee(data, dungeon) {
  */
 export function allowedStones(srs, lex, dungeon) {
   if (srs.stone_star_must_be_gte_dungeon_star === false) return lex.stones;
-  return lex.stones.filter((s) => s.star >= dungeon.rank);
+  return lex.stones.filter((s) => s.category || s.star >= dungeon.rank);
 }
 
 /**

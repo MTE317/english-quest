@@ -1,91 +1,391 @@
-﻿id,stone_id,kind,en,ja,pos,example_en,example_ja,star,source,license
-lx_r1_001,rs_1_001,idiom,walk me through your background,これまでの経歴を私に順を追って説明する,,Could you walk me through your background?,これまでの経歴を順を追って教えていただけますか？,1,面接原稿①質問,own
-lx_r1_002,rs_1_001,word,background,経歴・これまでの経験,,Could you tell me about your background?,これまでの経歴を教えていただけますか？,1,面接原稿①⑥質問,own
-lx_r1_003,rs_1_001,word,role,役割・職務,,"In my current role, I work with technical teams.",現職では、技術チームと協力しています。,1,面接原稿①②回答,own
-lx_r1_004,rs_1_001,phrase,start my career as a field service engineer,フィールドサービスエンジニアとしてキャリアをスタートする,,I started my career as a field service engineer.,フィールドサービスエンジニアとしてキャリアをスタートしました。,1,面接原稿①回答,own
-lx_r1_005,rs_1_001,word,maintain,（機器を）保守する,,I maintained equipment as a field service engineer.,フィールドサービスエンジニアとして機器を保守していました。,1,面接原稿①回答,own
-lx_r1_006,rs_1_001,phrase,expand my experience into technical support,テクニカルサポートの分野にも経験を広げる,,I expanded my experience into technical support.,テクニカルサポートの分野にも経験を広げました。,1,面接原稿①②回答,own
-lx_r1_007,rs_1_001,idiom,be responsible for,〜を担当している,,I was responsible for setting up customer support.,カスタマーサポートの立ち上げを担当していました。,1,面接原稿①回答,own
-lx_r1_008,rs_1_001,phrasal_verb,set up,（体制・事業などを）立ち上げる・整える,,I helped set up customer support for a new business.,新規事業のカスタマーサポートの立ち上げに携わりました。,1,面接原稿①②回答,own
-lx_r1_009,rs_1_001,phrase,work with,〜と協力する,,I worked with our external partner to improve the process.,外部パートナーと協力して、業務の流れを改善しました。,1,面接原稿①⑥⑦⑨回答,own
-lx_r1_010,rs_1_001,phrase,external partner,外部パートナー,,I work with technical teams and external partners.,技術チームや外部パートナーと協力しています。,1,面接原稿①⑥⑨回答,own
-lx_r1_011,rs_1_001,phrasal_verb,look for,〜を探す・求める,,I'm looking for a role where I can use my experience.,これまでの経験を活かせる職務を探しています。,1,面接原稿②質問・回答,own
-lx_r1_012,rs_1_001,phrase,limited opportunities,限られた機会,,There are limited opportunities to expand my experience.,経験の幅を広げる機会が限られています。,1,面接原稿②回答,own
-lx_r1_013,rs_1_001,phrase,use my experience in technical support,テクニカルサポートの経験を活かす,,I believe I can use my experience in technical support.,テクニカルサポートの経験を活かせると考えています。,1,面接原稿②④回答,own
-lx_r1_014,rs_1_001,idiom,take on new challenges,新しいことに挑戦する,,I'd like to learn new skills and take on new challenges.,新しいスキルを身につけ、新しいことに挑戦したいです。,1,面接原稿②回答,own
-lx_r1_015,rs_1_001,word,contribute,貢献する,,I believe I can contribute through my experience in customer support.,カスタマーサポートの経験を活かして貢献できると考えています。,1,面接原稿③⑧回答,own
-lx_r1_016,rs_1_001,phrasal_verb,build on,〜を土台にしてさらに伸ばす,,I'd like to build on that experience.,その経験を土台にして、さらに成長したいです。,1,面接原稿③④回答,own
-lx_r1_017,rs_1_001,phrase,be relevant to,〜に関連している・〜に活かせる,,How is your previous experience relevant to this role?,これまでの経験はこの職務にどう活かせますか？,1,面接原稿⑥質問,own
-lx_r1_018,rs_1_001,phrase,field service engineer,フィールドサービスエンジニア・現地で機器の保守などを行う技術者,,I started my career as a field service engineer.,フィールドサービスエンジニアとしてキャリアをスタートしました。,1,面接原稿①回答,own
-lx_r1_019,rs_1_001,phrase,related equipment,関連機器,,I maintained machines and related equipment.,機械や関連機器を保守していました。,1,面接原稿①回答,own
-lx_r1_020,rs_1_001,phrase,technical support,テクニカルサポート・技術サポート,,I have experience in technical support.,テクニカルサポートの経験があります。,1,面接原稿①③④回答,own
-lx_r1_021,rs_1_001,phrase,quality assurance,品質保証,,I expanded my experience into quality assurance.,品質保証の分野にも経験を広げました。,1,面接原稿①回答,own
-lx_r1_022,rs_1_001,phrase,customer support operations,カスタマーサポート業務・運用,,I worked on improving customer support operations.,カスタマーサポート業務の改善に取り組みました。,1,面接原稿②回答,own
-lx_r1_023,rs_1_001,phrase,take the time to meet with me today,今日、私と会うために時間を割く,,Thank you for taking the time to meet with me today.,本日はお時間を割いていただき、ありがとうございます。,1,面接原稿①回答,own
-lx_r1_024,rs_1_001,phrase,leave my current job,現職を辞める,,Why are you looking to leave your current job?,なぜ現職を辞めようと考えているのですか？,1,面接原稿②質問,own
-lx_r1_025,rs_1_001,phrase,have concerns about,〜について懸念がある,,I have some concerns about my current company's future.,今の会社の将来に少し不安があります。,1,面接原稿②回答,own
-lx_r1_026,rs_1_001,phrase,become less differentiated,差別化が弱まる,,Our products are becoming less differentiated in the market.,当社の製品は市場で差別化しにくくなっています。,1,面接原稿②回答,own
-lx_r1_027,rs_1_001,phrase,operate at a loss,赤字で事業を続ける,,The company is now operating at a loss.,会社は現在、赤字で事業を続けています。,1,面接原稿②回答,own
-lx_r1_028,rs_1_001,phrase,build my career,自分のキャリアを築く,,I'm looking for an environment where I can build my career.,キャリアを築いていける環境を探しています。,1,面接原稿②回答,own
-lx_r1_029,rs_1_001,phrase,over the long term,長期的に,,I'd like to build my career over the long term.,長期的にキャリアを築いていきたいです。,1,面接原稿②回答,own
-lx_r1_030,rs_1_001,phrase,be interested in,〜に関心がある,,I'm interested in this position.,この職種に関心があります。,1,面接原稿③④回答,own
-lx_r1_031,rs_1_001,idiom,What attracted you to our company?,当社のどこに魅力を感じましたか？,,What attracted you to our company?,当社のどこに魅力を感じましたか？,1,面接原稿③質問,own
-lx_r1_032,rs_1_001,idiom,appeal to,〜の関心を引く・〜にとって魅力がある,,What appeals to you about this role?,この職務のどこに魅力を感じますか？,1,面接原稿④質問,own
-lx_r1_033,rs_1_001,phrase,develop technical expertise,技術的な専門性を身につける,,I'd like to develop my technical expertise in this field.,この分野で技術的な専門性を身につけたいです。,1,面接原稿③回答,own
-lx_r2_001,rs_2_001,phrase,my understanding is that,私の理解では〜です,,My understanding is that the product helps engineers visualize data.,私の理解では、その製品はエンジニアによるデータの可視化を支援します。,2,面接原稿⑤回答,own
-lx_r2_002,rs_2_001,phrase,allow engineers to monitor their processes,エンジニアが担当する工程を監視できるようにする,,It allows engineers to monitor their processes.,それによって、エンジニアは工程を監視できます。,2,面接原稿⑤回答,own
-lx_r2_003,rs_2_001,phrase,identify problems,問題を特定する,,Engineers can use the data to identify problems.,エンジニアはデータを使って問題を特定できます。,2,面接原稿⑤回答,own
-lx_r2_004,rs_2_001,phrase,technical troubleshooting,技術的なトラブルの調査・解決,,I have experience in technical troubleshooting.,技術的なトラブルの調査・解決の経験があります。,2,面接原稿⑥回答,own
-lx_r2_005,rs_2_001,phrase,process improvement,業務プロセスの改善,,I have experience in process improvement.,業務プロセスの改善経験があります。,2,面接原稿⑥回答,own
-lx_r2_006,rs_2_001,phrase,solve customer problems,顧客の問題を解決する,,I work with technical teams to solve customer problems.,技術チームと協力して顧客の問題を解決します。,2,面接原稿①⑥⑪回答,own
-lx_r2_007,rs_2_001,phrase,take a structured approach,手順を整理して取り組む,,I take a structured approach to solving problems.,問題解決には手順を整理して取り組みます。,2,面接原稿⑦回答,own
-lx_r2_008,rs_2_001,word,outsourced,外部委託された,,I improved the quality of our outsourced customer support.,外部に委託しているカスタマーサポートの品質を改善しました。,2,面接原稿⑦⑨回答,own
-lx_r2_009,rs_2_001,phrase,data entry error rate,データ入力のミス率,,The data entry error rate was around 20%.,データ入力のミス率は約20％でした。,2,面接原稿⑦⑨回答,own
-lx_r2_010,rs_2_001,word,review,（内容や状況を）確認する・見直す,,I reviewed the errors to understand the problems.,問題を把握するためにミスの内容を確認しました。,2,面接原稿⑦⑫回答,own
-lx_r2_011,rs_2_001,phrase,provide feedback,フィードバックを伝える,,I worked with our partner to provide feedback.,パートナーと協力してフィードバックを伝えました。,2,面接原稿⑦回答,own
-lx_r2_012,rs_2_001,phrase,as a result,その結果,,"As a result, we reduced the error rate to 5% or less.",その結果、ミス率を5％以下に下げました。,2,面接原稿⑦回答,own
-lx_r2_013,rs_2_001,phrase,reduce the error rate to 5% or less,ミス率を5％以下に下げる,,We reduced the error rate to 5% or less.,ミス率を5％以下に下げました。,2,面接原稿⑦⑨回答,own
-lx_r2_014,rs_2_001,idiom,be proud of,〜を誇りに思う,,I'm proud of this achievement.,この実績を誇りに思っています。,2,面接原稿⑨質問・回答,own
-lx_r2_015,rs_2_001,phrasal_verb,lead to,〜につながる,,It led to a measurable improvement in our support quality.,それが、数字で確認できるサポート品質の改善につながりました。,2,面接原稿⑨回答,own
-lx_r2_016,rs_2_001,phrase,measurable improvement,測定できる改善・数字で確認できる改善,,It led to a measurable improvement in our support quality.,サポート品質の改善を数字で確認できました。,2,面接原稿⑨回答,own
-lx_r2_017,rs_2_001,word,manufacturer,製造業者・メーカー,,The product helps manufacturers collect data.,その製品はメーカーのデータ収集を支援します。,2,面接原稿⑤回答,own
-lx_r2_018,rs_2_001,phrase,manufacturing process,製造工程,,I'd like to help customers improve their manufacturing processes.,顧客の製造工程の改善を支援したいです。,2,面接原稿③回答,own
-lx_r2_019,rs_2_001,word,collect,（データなどを）収集する,,The product helps teams collect data from different systems.,その製品は、チームが複数のシステムからデータを収集するのを支援します。,2,面接原稿⑤回答,own
-lx_r2_020,rs_2_001,word,visualize,可視化する,,Engineers can visualize data from different systems.,エンジニアは複数のシステムのデータを可視化できます。,2,面接原稿⑤回答,own
-lx_r2_021,rs_2_001,word,analyze,分析する,,The product helps engineers analyze data.,その製品はエンジニアのデータ分析を支援します。,2,面接原稿⑤回答,own
-lx_r2_022,rs_2_001,word,operator,（設備などの）運転・操作担当者,,Operators can monitor their processes.,運転担当者は担当工程を監視できます。,2,面接原稿⑤回答,own
-lx_r2_023,rs_2_001,word,monitor,（状態・工程などを）監視する,,Engineers and operators can monitor their processes.,エンジニアと運転担当者は工程を監視できます。,2,面接原稿⑤回答,own
-lx_r2_024,rs_2_001,phrase,improve operations,業務・運用を改善する,,I'd like to help customers improve their operations.,顧客の業務改善を支援したいです。,2,面接原稿④⑤回答,own
-lx_r2_025,rs_2_001,word,effectively,効果的に・うまく,,I'd like to help customers use the product effectively.,顧客が製品を効果的に使えるよう支援したいです。,2,面接原稿⑥⑦回答,own
-lx_r2_026,rs_2_001,word,particularly,特に,,One achievement I'm particularly proud of is improving support quality.,特に誇りに思っている実績の一つは、サポート品質を改善したことです。,2,面接原稿⑦質問・⑨回答,own
-lx_r2_027,rs_2_001,word,accomplishment,成し遂げたこと・実績,,What would you consider your biggest accomplishment so far?,これまでで一番大きな実績は何だと思いますか？,2,面接原稿⑨質問,own
-lx_r2_028,rs_2_001,phrase,support quality,サポートの品質,,We improved our support quality.,サポートの品質を改善しました。,2,面接原稿⑨回答,own
-lx_r2_029,rs_2_001,phrase,below 5%,5％未満,,We reduced the error rate to below 5%.,ミス率を5％未満に下げました。,2,面接原稿⑨回答,own
-lx_r2_030,rs_2_001,phrase,5% or less,5％以下,,We reduced the error rate to 5% or less.,ミス率を5％以下に下げました。,2,面接原稿⑦回答,own
-lx_r3_001,rs_3_001,phrasal_verb,think a problem through,問題についてじっくり考える,,I sometimes spend too much time thinking a problem through.,問題についてじっくり考えすぎてしまうことがあります。,3,面接原稿⑩回答,own
-lx_r3_002,rs_3_001,idiom,on my own,一人で・自力で,,I sometimes think a problem through on my own.,ときどき一人で問題についてじっくり考えます。,3,面接原稿⑩回答,own
-lx_r3_003,rs_3_001,idiom,take action,行動を起こす,,I sometimes spend too much time thinking before taking action.,行動する前に考えすぎてしまうことがあります。,3,面接原稿⑩回答,own
-lx_r3_004,rs_3_001,phrase,rough draft,たたき台・下書き,,I share a rough draft early.,早い段階でたたき台を共有します。,3,面接原稿⑩回答,own
-lx_r3_005,rs_3_001,phrase,ask for feedback,意見・フィードバックを求める,,I share a rough draft and ask for feedback.,たたき台を共有し、意見を求めます。,3,面接原稿⑩回答,own
-lx_r3_006,rs_3_001,idiom,move forward,前に進む・物事を進める,,This helps me move forward more quickly.,こうすることで、物事をより早く進められます。,3,面接原稿⑩回答,own
-lx_r3_007,rs_3_001,phrase,be motivated by,〜に意欲を感じる・〜が原動力になる,,I'm motivated by solving customer problems.,顧客の問題を解決することが、私の原動力です。,3,面接原稿⑪回答,own
-lx_r3_008,rs_3_001,phrase,I find it rewarding when I can see clear results.,成果がはっきり見えると、やりがいを感じます。,,I find it rewarding when I can see clear results.,成果がはっきり見えると、やりがいを感じます。,3,面接原稿⑪質問・回答,own
-lx_r3_009,rs_3_001,idiom,focus on,〜に注力する,,I would focus on learning the products.,まずは製品を学ぶことに注力します。,3,面接原稿⑧⑫回答・⑫質問,own
-lx_r3_010,rs_3_001,phrase,deliver strong results,しっかりと成果を出す,,I'd like to focus on delivering strong results in this position.,この職務でしっかりと成果を出すことに注力したいです。,3,面接原稿⑧回答,own
-lx_r3_011,rs_3_001,phrase,deepen my knowledge of the product,製品についての知識を深める,,I'd like to deepen my knowledge of the product.,製品についての知識を深めたいです。,3,面接原稿⑧回答,own
-lx_r3_012,rs_3_001,idiom,rely on,〜を頼りにする,,I'd like to become someone customers can rely on.,顧客から頼りにされる人になりたいです。,3,面接原稿⑧回答,own
-lx_r3_013,rs_3_001,phrase,gain experience,経験を積む,,"As I gain experience, I hope to contribute more to the team.",経験を積むにつれて、チームにより貢献したいです。,3,面接原稿⑧回答,own
-lx_r3_014,rs_3_001,phrase,expand my responsibilities,自分の担当範囲を広げる,,I hope to expand my responsibilities as I gain experience.,経験を積みながら、担当範囲を広げたいです。,3,面接原稿⑧回答,own
-lx_r3_015,rs_3_001,phrase,handle customer inquiries,顧客からの問い合わせに対応する,,I'd like to handle basic customer inquiries independently.,基本的な顧客の問い合わせに自力で対応できるようになりたいです。,3,面接原稿⑫回答,own
-lx_r3_016,rs_3_001,word,independently,自力で・自立して,,My goal is to handle basic inquiries independently.,基本的な問い合わせに自力で対応できるようになることが目標です。,3,面接原稿⑫回答,own
-lx_r3_017,rs_3_001,phrase,spend time thinking through a problem,問題をじっくり考えることに時間をかける,,I spend too much time thinking a problem through.,問題について考え抜くのに時間をかけすぎてしまいます。,3,面接原稿⑩回答,own
-lx_r3_018,rs_3_001,phrase,initial idea,最初の案・初期案,,I share an initial idea early.,早い段階で初期案を共有します。,3,面接原稿⑩回答,own
-lx_r3_019,rs_3_001,phrase,the people involved,関係者,,I share a rough draft with the people involved.,関係者にたたき台を共有します。,3,面接原稿⑩回答,own
-lx_r3_020,rs_3_001,phrase,the way we work,私たちの仕事の進め方,,I'm motivated by improving the way we work.,仕事の進め方を改善することに意欲を感じます。,3,面接原稿⑪回答,own
-lx_r3_021,rs_3_001,phrase,clear results,目に見える成果・明確な結果,,I find it especially rewarding when I can see clear results.,目に見える成果が出ると、特にやりがいを感じます。,3,面接原稿⑪回答,own
-lx_r3_022,rs_3_001,word,priority,優先事項,,What would your priorities be during your first 90 days?,最初の90日間は何を優先しますか？,3,面接原稿⑫質問,own
-lx_r3_023,rs_3_001,phrase,learn from,〜から学ぶ,,I would learn from experienced team members.,経験豊富なチームメンバーから学びます。,3,面接原稿⑫回答,own
-lx_r3_024,rs_3_001,phrase,experienced team member,経験豊富なチームメンバー,,I would learn from experienced team members.,経験豊富なチームメンバーから学びます。,3,面接原稿⑫回答,own
-lx_r3_025,rs_3_001,phrase,past support case,過去のサポート事例,,I would review past support cases to understand common issues.,よくある問題を把握するために、過去のサポート事例を確認します。,3,面接原稿⑫回答,own
-lx_r3_026,rs_3_001,phrase,common issue,よくある問題,,I'd like to understand common issues.,よくある問題を把握したいです。,3,面接原稿⑫回答,own
-lx_r3_027,rs_3_001,phrase,know when to ask for help,どのタイミングで助けを求めるべきか判断できる,,My goal is to know when to ask for help.,どのタイミングで助けを求めるべきか判断できるようになることが目標です。,3,面接原稿⑫回答,own
+﻿id,stone_id,kind,en,ja,pos,example_en,example_ja,star,source,license,priority,history_id,context_en,distractors_ja
+lx_r1_001,rs_1_001,idiom,walk me through your background,これまでの経歴を私に順を追って説明する,,Could you walk me through your background?,これまでの経歴を順を追って教えていただけますか？,1,面接原稿①質問,own,,,,
+lx_r1_002,rs_1_001,word,background,経歴・これまでの経験,,Could you tell me about your background?,これまでの経歴を教えていただけますか？,1,面接原稿①⑥質問,own,,,,
+lx_r1_003,rs_1_001,word,role,役割・職務,,"In my current role, I work with technical teams.",現職では、技術チームと協力しています。,1,面接原稿①②回答,own,,,,
+lx_r1_004,rs_1_001,phrase,start my career as a field service engineer,フィールドサービスエンジニアとしてキャリアをスタートする,,I started my career as a field service engineer.,フィールドサービスエンジニアとしてキャリアをスタートしました。,1,面接原稿①回答,own,,,,
+lx_r1_005,rs_1_001,word,maintain,（機器を）保守する,,I maintained equipment as a field service engineer.,フィールドサービスエンジニアとして機器を保守していました。,1,面接原稿①回答,own,,,,
+lx_r1_006,rs_1_001,phrase,expand my experience into technical support,テクニカルサポートの分野にも経験を広げる,,I expanded my experience into technical support.,テクニカルサポートの分野にも経験を広げました。,1,面接原稿①②回答,own,,,,
+lx_r1_007,rs_1_001,idiom,be responsible for,〜を担当している,,I was responsible for setting up customer support.,カスタマーサポートの立ち上げを担当していました。,1,面接原稿①回答,own,,,,
+lx_r1_008,rs_1_001,phrasal_verb,set up,（体制・事業などを）立ち上げる・整える,,I helped set up customer support for a new business.,新規事業のカスタマーサポートの立ち上げに携わりました。,1,面接原稿①②回答,own,,,,
+lx_r1_009,rs_1_001,phrase,work with,〜と協力する,,I worked with our external partner to improve the process.,外部パートナーと協力して、業務の流れを改善しました。,1,面接原稿①⑥⑦⑨回答,own,,,,
+lx_r1_010,rs_1_001,phrase,external partner,外部パートナー,,I work with technical teams and external partners.,技術チームや外部パートナーと協力しています。,1,面接原稿①⑥⑨回答,own,,,,
+lx_r1_011,rs_1_001,phrasal_verb,look for,〜を探す・求める,,I'm looking for a role where I can use my experience.,これまでの経験を活かせる職務を探しています。,1,面接原稿②質問・回答,own,,,,
+lx_r1_012,rs_1_001,phrase,limited opportunities,限られた機会,,There are limited opportunities to expand my experience.,経験の幅を広げる機会が限られています。,1,面接原稿②回答,own,,,,
+lx_r1_013,rs_1_001,phrase,use my experience in technical support,テクニカルサポートの経験を活かす,,I believe I can use my experience in technical support.,テクニカルサポートの経験を活かせると考えています。,1,面接原稿②④回答,own,,,,
+lx_r1_014,rs_1_001,idiom,take on new challenges,新しいことに挑戦する,,I'd like to learn new skills and take on new challenges.,新しいスキルを身につけ、新しいことに挑戦したいです。,1,面接原稿②回答,own,,,,
+lx_r1_015,rs_1_001,word,contribute,貢献する,,I believe I can contribute through my experience in customer support.,カスタマーサポートの経験を活かして貢献できると考えています。,1,面接原稿③⑧回答,own,,,,
+lx_r1_016,rs_1_001,phrasal_verb,build on,〜を土台にしてさらに伸ばす,,I'd like to build on that experience.,その経験を土台にして、さらに成長したいです。,1,面接原稿③④回答,own,,,,
+lx_r1_017,rs_1_001,phrase,be relevant to,〜に関連している・〜に活かせる,,How is your previous experience relevant to this role?,これまでの経験はこの職務にどう活かせますか？,1,面接原稿⑥質問,own,,,,
+lx_r1_018,rs_1_001,phrase,field service engineer,フィールドサービスエンジニア・現地で機器の保守などを行う技術者,,I started my career as a field service engineer.,フィールドサービスエンジニアとしてキャリアをスタートしました。,1,面接原稿①回答,own,,,,
+lx_r1_019,rs_1_001,phrase,related equipment,関連機器,,I maintained machines and related equipment.,機械や関連機器を保守していました。,1,面接原稿①回答,own,,,,
+lx_r1_020,rs_1_001,phrase,technical support,テクニカルサポート・技術サポート,,I have experience in technical support.,テクニカルサポートの経験があります。,1,面接原稿①③④回答,own,,,,
+lx_r1_021,rs_1_001,phrase,quality assurance,品質保証,,I expanded my experience into quality assurance.,品質保証の分野にも経験を広げました。,1,面接原稿①回答,own,,,,
+lx_r1_022,rs_1_001,phrase,customer support operations,カスタマーサポート業務・運用,,I worked on improving customer support operations.,カスタマーサポート業務の改善に取り組みました。,1,面接原稿②回答,own,,,,
+lx_r1_023,rs_1_001,phrase,take the time to meet with me today,今日、私と会うために時間を割く,,Thank you for taking the time to meet with me today.,本日はお時間を割いていただき、ありがとうございます。,1,面接原稿①回答,own,,,,
+lx_r1_024,rs_1_001,phrase,leave my current job,現職を辞める,,Why are you looking to leave your current job?,なぜ現職を辞めようと考えているのですか？,1,面接原稿②質問,own,,,,
+lx_r1_025,rs_1_001,phrase,have concerns about,〜について懸念がある,,I have some concerns about my current company's future.,今の会社の将来に少し不安があります。,1,面接原稿②回答,own,,,,
+lx_r1_026,rs_1_001,phrase,become less differentiated,差別化が弱まる,,Our products are becoming less differentiated in the market.,当社の製品は市場で差別化しにくくなっています。,1,面接原稿②回答,own,,,,
+lx_r1_027,rs_1_001,phrase,operate at a loss,赤字で事業を続ける,,The company is now operating at a loss.,会社は現在、赤字で事業を続けています。,1,面接原稿②回答,own,,,,
+lx_r1_028,rs_1_001,phrase,build my career,自分のキャリアを築く,,I'm looking for an environment where I can build my career.,キャリアを築いていける環境を探しています。,1,面接原稿②回答,own,,,,
+lx_r1_029,rs_1_001,phrase,over the long term,長期的に,,I'd like to build my career over the long term.,長期的にキャリアを築いていきたいです。,1,面接原稿②回答,own,,,,
+lx_r1_030,rs_1_001,phrase,be interested in,〜に関心がある,,I'm interested in this position.,この職種に関心があります。,1,面接原稿③④回答,own,,,,
+lx_r1_031,rs_1_001,idiom,What attracted you to our company?,当社のどこに魅力を感じましたか？,,What attracted you to our company?,当社のどこに魅力を感じましたか？,1,面接原稿③質問,own,,,,
+lx_r1_032,rs_1_001,idiom,appeal to,〜の関心を引く・〜にとって魅力がある,,What appeals to you about this role?,この職務のどこに魅力を感じますか？,1,面接原稿④質問,own,,,,
+lx_r1_033,rs_1_001,phrase,develop technical expertise,技術的な専門性を身につける,,I'd like to develop my technical expertise in this field.,この分野で技術的な専門性を身につけたいです。,1,面接原稿③回答,own,,,,
+lx_r2_001,rs_2_001,phrase,my understanding is that,私の理解では〜です,,My understanding is that the product helps engineers visualize data.,私の理解では、その製品はエンジニアによるデータの可視化を支援します。,2,面接原稿⑤回答,own,,,,
+lx_r2_002,rs_2_001,phrase,allow engineers to monitor their processes,エンジニアが担当する工程を監視できるようにする,,It allows engineers to monitor their processes.,それによって、エンジニアは工程を監視できます。,2,面接原稿⑤回答,own,,,,
+lx_r2_003,rs_2_001,phrase,identify problems,問題を特定する,,Engineers can use the data to identify problems.,エンジニアはデータを使って問題を特定できます。,2,面接原稿⑤回答,own,,,,
+lx_r2_004,rs_2_001,phrase,technical troubleshooting,技術的なトラブルの調査・解決,,I have experience in technical troubleshooting.,技術的なトラブルの調査・解決の経験があります。,2,面接原稿⑥回答,own,,,,
+lx_r2_005,rs_2_001,phrase,process improvement,業務プロセスの改善,,I have experience in process improvement.,業務プロセスの改善経験があります。,2,面接原稿⑥回答,own,,,,
+lx_r2_006,rs_2_001,phrase,solve customer problems,顧客の問題を解決する,,I work with technical teams to solve customer problems.,技術チームと協力して顧客の問題を解決します。,2,面接原稿①⑥⑪回答,own,,,,
+lx_r2_007,rs_2_001,phrase,take a structured approach,手順を整理して取り組む,,I take a structured approach to solving problems.,問題解決には手順を整理して取り組みます。,2,面接原稿⑦回答,own,,,,
+lx_r2_008,rs_2_001,word,outsourced,外部委託された,,I improved the quality of our outsourced customer support.,外部に委託しているカスタマーサポートの品質を改善しました。,2,面接原稿⑦⑨回答,own,,,,
+lx_r2_009,rs_2_001,phrase,data entry error rate,データ入力のミス率,,The data entry error rate was around 20%.,データ入力のミス率は約20％でした。,2,面接原稿⑦⑨回答,own,,,,
+lx_r2_010,rs_2_001,word,review,（内容や状況を）確認する・見直す,,I reviewed the errors to understand the problems.,問題を把握するためにミスの内容を確認しました。,2,面接原稿⑦⑫回答,own,,,,
+lx_r2_011,rs_2_001,phrase,provide feedback,フィードバックを伝える,,I worked with our partner to provide feedback.,パートナーと協力してフィードバックを伝えました。,2,面接原稿⑦回答,own,,,,
+lx_r2_012,rs_2_001,phrase,as a result,その結果,,"As a result, we reduced the error rate to 5% or less.",その結果、ミス率を5％以下に下げました。,2,面接原稿⑦回答,own,,,,
+lx_r2_013,rs_2_001,phrase,reduce the error rate to 5% or less,ミス率を5％以下に下げる,,We reduced the error rate to 5% or less.,ミス率を5％以下に下げました。,2,面接原稿⑦⑨回答,own,,,,
+lx_r2_014,rs_2_001,idiom,be proud of,〜を誇りに思う,,I'm proud of this achievement.,この実績を誇りに思っています。,2,面接原稿⑨質問・回答,own,,,,
+lx_r2_015,rs_2_001,phrasal_verb,lead to,〜につながる,,It led to a measurable improvement in our support quality.,それが、数字で確認できるサポート品質の改善につながりました。,2,面接原稿⑨回答,own,,,,
+lx_r2_016,rs_2_001,phrase,measurable improvement,測定できる改善・数字で確認できる改善,,It led to a measurable improvement in our support quality.,サポート品質の改善を数字で確認できました。,2,面接原稿⑨回答,own,,,,
+lx_r2_017,rs_2_001,word,manufacturer,製造業者・メーカー,,The product helps manufacturers collect data.,その製品はメーカーのデータ収集を支援します。,2,面接原稿⑤回答,own,,,,
+lx_r2_018,rs_2_001,phrase,manufacturing process,製造工程,,I'd like to help customers improve their manufacturing processes.,顧客の製造工程の改善を支援したいです。,2,面接原稿③回答,own,,,,
+lx_r2_019,rs_2_001,word,collect,（データなどを）収集する,,The product helps teams collect data from different systems.,その製品は、チームが複数のシステムからデータを収集するのを支援します。,2,面接原稿⑤回答,own,,,,
+lx_r2_020,rs_2_001,word,visualize,可視化する,,Engineers can visualize data from different systems.,エンジニアは複数のシステムのデータを可視化できます。,2,面接原稿⑤回答,own,,,,
+lx_r2_021,rs_2_001,word,analyze,分析する,,The product helps engineers analyze data.,その製品はエンジニアのデータ分析を支援します。,2,面接原稿⑤回答,own,,,,
+lx_r2_022,rs_2_001,word,operator,（設備などの）運転・操作担当者,,Operators can monitor their processes.,運転担当者は担当工程を監視できます。,2,面接原稿⑤回答,own,,,,
+lx_r2_023,rs_2_001,word,monitor,（状態・工程などを）監視する,,Engineers and operators can monitor their processes.,エンジニアと運転担当者は工程を監視できます。,2,面接原稿⑤回答,own,,,,
+lx_r2_024,rs_2_001,phrase,improve operations,業務・運用を改善する,,I'd like to help customers improve their operations.,顧客の業務改善を支援したいです。,2,面接原稿④⑤回答,own,,,,
+lx_r2_025,rs_2_001,word,effectively,効果的に・うまく,,I'd like to help customers use the product effectively.,顧客が製品を効果的に使えるよう支援したいです。,2,面接原稿⑥⑦回答,own,,,,
+lx_r2_026,rs_2_001,word,particularly,特に,,One achievement I'm particularly proud of is improving support quality.,特に誇りに思っている実績の一つは、サポート品質を改善したことです。,2,面接原稿⑦質問・⑨回答,own,,,,
+lx_r2_027,rs_2_001,word,accomplishment,成し遂げたこと・実績,,What would you consider your biggest accomplishment so far?,これまでで一番大きな実績は何だと思いますか？,2,面接原稿⑨質問,own,,,,
+lx_r2_028,rs_2_001,phrase,support quality,サポートの品質,,We improved our support quality.,サポートの品質を改善しました。,2,面接原稿⑨回答,own,,,,
+lx_r2_029,rs_2_001,phrase,below 5%,5％未満,,We reduced the error rate to below 5%.,ミス率を5％未満に下げました。,2,面接原稿⑨回答,own,,,,
+lx_r2_030,rs_2_001,phrase,5% or less,5％以下,,We reduced the error rate to 5% or less.,ミス率を5％以下に下げました。,2,面接原稿⑦回答,own,,,,
+lx_r3_001,rs_3_001,phrasal_verb,think a problem through,問題についてじっくり考える,,I sometimes spend too much time thinking a problem through.,問題についてじっくり考えすぎてしまうことがあります。,3,面接原稿⑩回答,own,,,,
+lx_r3_002,rs_3_001,idiom,on my own,一人で・自力で,,I sometimes think a problem through on my own.,ときどき一人で問題についてじっくり考えます。,3,面接原稿⑩回答,own,,,,
+lx_r3_003,rs_3_001,idiom,take action,行動を起こす,,I sometimes spend too much time thinking before taking action.,行動する前に考えすぎてしまうことがあります。,3,面接原稿⑩回答,own,,,,
+lx_r3_004,rs_3_001,phrase,rough draft,たたき台・下書き,,I share a rough draft early.,早い段階でたたき台を共有します。,3,面接原稿⑩回答,own,,,,
+lx_r3_005,rs_3_001,phrase,ask for feedback,意見・フィードバックを求める,,I share a rough draft and ask for feedback.,たたき台を共有し、意見を求めます。,3,面接原稿⑩回答,own,,,,
+lx_r3_006,rs_3_001,idiom,move forward,前に進む・物事を進める,,This helps me move forward more quickly.,こうすることで、物事をより早く進められます。,3,面接原稿⑩回答,own,,,,
+lx_r3_007,rs_3_001,phrase,be motivated by,〜に意欲を感じる・〜が原動力になる,,I'm motivated by solving customer problems.,顧客の問題を解決することが、私の原動力です。,3,面接原稿⑪回答,own,,,,
+lx_r3_008,rs_3_001,phrase,I find it rewarding when I can see clear results.,成果がはっきり見えると、やりがいを感じます。,,I find it rewarding when I can see clear results.,成果がはっきり見えると、やりがいを感じます。,3,面接原稿⑪質問・回答,own,,,,
+lx_r3_009,rs_3_001,idiom,focus on,〜に注力する,,I would focus on learning the products.,まずは製品を学ぶことに注力します。,3,面接原稿⑧⑫回答・⑫質問,own,,,,
+lx_r3_010,rs_3_001,phrase,deliver strong results,しっかりと成果を出す,,I'd like to focus on delivering strong results in this position.,この職務でしっかりと成果を出すことに注力したいです。,3,面接原稿⑧回答,own,,,,
+lx_r3_011,rs_3_001,phrase,deepen my knowledge of the product,製品についての知識を深める,,I'd like to deepen my knowledge of the product.,製品についての知識を深めたいです。,3,面接原稿⑧回答,own,,,,
+lx_r3_012,rs_3_001,idiom,rely on,〜を頼りにする,,I'd like to become someone customers can rely on.,顧客から頼りにされる人になりたいです。,3,面接原稿⑧回答,own,,,,
+lx_r3_013,rs_3_001,phrase,gain experience,経験を積む,,"As I gain experience, I hope to contribute more to the team.",経験を積むにつれて、チームにより貢献したいです。,3,面接原稿⑧回答,own,,,,
+lx_r3_014,rs_3_001,phrase,expand my responsibilities,自分の担当範囲を広げる,,I hope to expand my responsibilities as I gain experience.,経験を積みながら、担当範囲を広げたいです。,3,面接原稿⑧回答,own,,,,
+lx_r3_015,rs_3_001,phrase,handle customer inquiries,顧客からの問い合わせに対応する,,I'd like to handle basic customer inquiries independently.,基本的な顧客の問い合わせに自力で対応できるようになりたいです。,3,面接原稿⑫回答,own,,,,
+lx_r3_016,rs_3_001,word,independently,自力で・自立して,,My goal is to handle basic inquiries independently.,基本的な問い合わせに自力で対応できるようになることが目標です。,3,面接原稿⑫回答,own,,,,
+lx_r3_017,rs_3_001,phrase,spend time thinking through a problem,問題をじっくり考えることに時間をかける,,I spend too much time thinking a problem through.,問題について考え抜くのに時間をかけすぎてしまいます。,3,面接原稿⑩回答,own,,,,
+lx_r3_018,rs_3_001,phrase,initial idea,最初の案・初期案,,I share an initial idea early.,早い段階で初期案を共有します。,3,面接原稿⑩回答,own,,,,
+lx_r3_019,rs_3_001,phrase,the people involved,関係者,,I share a rough draft with the people involved.,関係者にたたき台を共有します。,3,面接原稿⑩回答,own,,,,
+lx_r3_020,rs_3_001,phrase,the way we work,私たちの仕事の進め方,,I'm motivated by improving the way we work.,仕事の進め方を改善することに意欲を感じます。,3,面接原稿⑪回答,own,,,,
+lx_r3_021,rs_3_001,phrase,clear results,目に見える成果・明確な結果,,I find it especially rewarding when I can see clear results.,目に見える成果が出ると、特にやりがいを感じます。,3,面接原稿⑪回答,own,,,,
+lx_r3_022,rs_3_001,word,priority,優先事項,,What would your priorities be during your first 90 days?,最初の90日間は何を優先しますか？,3,面接原稿⑫質問,own,,,,
+lx_r3_023,rs_3_001,phrase,learn from,〜から学ぶ,,I would learn from experienced team members.,経験豊富なチームメンバーから学びます。,3,面接原稿⑫回答,own,,,,
+lx_r3_024,rs_3_001,phrase,experienced team member,経験豊富なチームメンバー,,I would learn from experienced team members.,経験豊富なチームメンバーから学びます。,3,面接原稿⑫回答,own,,,,
+lx_r3_025,rs_3_001,phrase,past support case,過去のサポート事例,,I would review past support cases to understand common issues.,よくある問題を把握するために、過去のサポート事例を確認します。,3,面接原稿⑫回答,own,,,,
+lx_r3_026,rs_3_001,phrase,common issue,よくある問題,,I'd like to understand common issues.,よくある問題を把握したいです。,3,面接原稿⑫回答,own,,,,
+lx_r3_027,rs_3_001,phrase,know when to ask for help,どのタイミングで助けを求めるべきか判断できる,,My goal is to know when to ask for help.,どのタイミングで助けを求めるべきか判断できるようになることが目標です。,3,面接原稿⑫回答,own,,,,
+lx_p00_01_001,rs_p00_01,word,be,〜である,verb,,,1,00. 最重要・実用英語,own,S,,I want to be a teacher.,電源を切る|書き留める|身につける
+lx_p00_01_002,rs_p00_01,word,have,持っている,verb,,,1,00. 最重要・実用英語,own,S,,,電源を切る|書き留める|身につける
+lx_p00_01_003,rs_p00_01,word,do,する,verb,,,1,00. 最重要・実用英語,own,S,,,電源を切る|書き留める|身につける
+lx_p00_01_004,rs_p00_01,word,go,行く,verb,,,1,00. 最重要・実用英語,own,S,,,時間|責任|より多く
+lx_p00_01_005,rs_p00_01,word,come,来る,verb,,,1,00. 最重要・実用英語,own,S,,,電源を切る|書き留める|身につける
+lx_p00_01_006,rs_p00_01,word,get,受け取る,verb,,,1,00. 最重要・実用英語,own,S,,Did you get my email?,電源を切る|書き留める|身につける
+lx_p00_01_007,rs_p00_01,word,make,作る,verb,,,1,00. 最重要・実用英語,own,S,,,電源を切る|書き留める|身につける
+lx_p00_01_008,rs_p00_01,word,take,取る,verb,,,1,00. 最重要・実用英語,own,S,,Take one from the box.,電源を切る|書き留める|身につける
+lx_p00_01_009,rs_p00_01,word,give,与える,verb,,,1,00. 最重要・実用英語,own,S,,,電源を切る|書き留める|身につける
+lx_p00_01_010,rs_p00_01,word,put,置く,verb,,,1,00. 最重要・実用英語,own,S,,,影響|〜なので|あきらめる
+lx_p00_01_011,rs_p00_01,word,use,使う,verb,,,1,00. 最重要・実用英語,own,S,,,なぜ|結論|監視する
+lx_p00_01_012,rs_p00_01,word,see,見える,verb,,,1,00. 最重要・実用英語,own,S,,I can see the mountains.,電源を切る|書き留める|身につける
+lx_p00_01_013,rs_p00_01,word,look,見る,verb,,,1,00. 最重要・実用英語,own,S,,Look at the screen.,電源を切る|書き留める|身につける
+lx_p00_01_014,rs_p00_01,word,say,言う,verb,,,1,00. 最重要・実用英語,own,S,,,勧める|添付する|古い
+lx_p00_01_015,rs_p00_01,word,tell,伝える,verb,,,1,00. 最重要・実用英語,own,S,,,電源を切る|書き留める|身につける
+lx_p00_01_016,rs_p00_01,word,ask,尋ねる,verb,,,1,00. 最重要・実用英語,own,S,,,電源を切る|書き留める|身につける
+lx_p00_01_017,rs_p00_01,word,know,知っている,verb,,,1,00. 最重要・実用英語,own,S,,,電源を切る|書き留める|身につける
+lx_p00_01_018,rs_p00_01,word,think,思う,verb,,,1,00. 最重要・実用英語,own,S,,,予定|明日|目を覚ます
+lx_p00_01_019,rs_p00_01,word,want,欲しい,verb,,,1,00. 最重要・実用英語,own,S,,,はい|古い|間違い
+lx_p00_01_020,rs_p00_01,word,need,必要とする,verb,,,1,00. 最重要・実用英語,own,S,,,電源を切る|書き留める|身につける
+lx_p00_01_021,rs_p00_01,word,like,好む,verb,,,1,00. 最重要・実用英語,own,S,,,責任|より多く|取り組む
+lx_p00_01_022,rs_p00_01,word,help,助ける,verb,,,1,00. 最重要・実用英語,own,S,,,電源を切る|書き留める|身につける
+lx_p00_01_023,rs_p00_01,word,work,働く,verb,,,1,00. 最重要・実用英語,own,S,,,快適な|仕事|影響
+lx_p00_01_024,rs_p00_01,word,call,電話する,verb,,,1,00. 最重要・実用英語,own,S,,,電源を切る|書き留める|身につける
+lx_p00_01_025,rs_p00_01,word,try,試す,verb,,,1,00. 最重要・実用英語,own,S,,,いいえ|比べる|忙しい
+lx_p00_01_026,rs_p00_01,word,bring,持ってくる,verb,,,2,00. 最重要・実用英語,own,S,,,電源を切る|書き留める|身につける
+lx_p00_01_027,rs_p00_01,word,keep,保つ,verb,,,2,00. 最重要・実用英語,own,S,,,〜なので|あきらめる|勧める
+lx_p00_01_028,rs_p00_01,word,leave,離れる,verb,,,2,00. 最重要・実用英語,own,S,,What time do we leave the office?,電源を切る|書き留める|身につける
+lx_p00_01_029,rs_p00_01,word,find,見つける,verb,,,2,00. 最重要・実用英語,own,S,,,電源を切る|書き留める|身につける
+lx_p00_01_030,rs_p00_01,word,start,始める,verb,,,2,00. 最重要・実用英語,own,S,,,電源を切る|書き留める|身につける
+lx_p00_01_031,rs_p00_01,word,finish,終える,verb,,,2,00. 最重要・実用英語,own,S,,,電源を切る|書き留める|身につける
+lx_p00_01_032,rs_p00_01,word,move,動く,verb,,,2,00. 最重要・実用英語,own,S,,,機会|〜だけ|身につける
+lx_p00_01_033,rs_p00_01,word,turn,向きを変える,verb,,,2,00. 最重要・実用英語,own,S,,Turn left at the corner.,電源を切る|書き留める|身につける
+lx_p00_01_034,rs_p00_01,word,open,開ける,verb,,,2,00. 最重要・実用英語,own,S,,,電源を切る|書き留める|身につける
+lx_p00_01_035,rs_p00_01,word,close,閉める,verb,,,2,00. 最重要・実用英語,own,S,,,電源を切る|書き留める|身につける
+lx_p00_01_036,rs_p00_01,word,wait,待つ,verb,,,2,00. 最重要・実用英語,own,S,,,はい|仮定する|快適な
+lx_p00_01_037,rs_p00_01,word,send,送る,verb,,,2,00. 最重要・実用英語,own,S,,,電源を切る|書き留める|身につける
+lx_p00_01_038,rs_p00_01,word,receive,受け取る,verb,,,2,00. 最重要・実用英語,own,S,,,電源を切る|書き留める|身につける
+lx_p00_01_039,rs_p00_01,word,show,見せる,verb,,,2,00. 最重要・実用英語,own,S,,,電源を切る|書き留める|身につける
+lx_p00_01_040,rs_p00_01,word,change,変える,verb,,,2,00. 最重要・実用英語,own,S,,Can we change the time?,電源を切る|書き留める|身につける
+lx_p00_01_041,rs_p00_01,word,choose,選ぶ,verb,,,2,00. 最重要・実用英語,own,S,,,電源を切る|なぜ|結論
+lx_p00_01_042,rs_p00_01,word,decide,決める,verb,,,2,00. 最重要・実用英語,own,S,,,電源を切る|書き留める|身につける
+lx_p00_01_043,rs_p00_01,word,explain,説明する,verb,,,2,00. 最重要・実用英語,own,S,,,電源を切る|書き留める|身につける
+lx_p00_01_044,rs_p00_01,word,share,共有する,verb,,,2,00. 最重要・実用英語,own,S,,,電源を切る|書き留める|身につける
+lx_p00_01_045,rs_p00_01,word,check,確認する,verb,,,2,00. 最重要・実用英語,own,S,,,添付する|世話をする|提出する
+lx_p00_01_046,rs_p00_01,word,meet,会う,verb,,,2,00. 最重要・実用英語,own,S,,,今|代わりに|世話をする
+lx_p00_01_047,rs_p00_01,word,join,参加する,verb,,,2,00. 最重要・実用英語,own,S,,,電源を切る|書き留める|身につける
+lx_p00_01_048,rs_p00_01,word,pay,支払う,verb,,,2,00. 最重要・実用英語,own,S,,,古い|予定|明日
+lx_p00_01_049,rs_p00_01,word,buy,買う,verb,,,2,00. 最重要・実用英語,own,S,,,〜だけ|身につける|はい
+lx_p00_01_050,rs_p00_01,word,spend,費やす,verb,,,2,00. 最重要・実用英語,own,S,,,謝罪する|提出する|安定した
+lx_p00_01_051,rs_p00_01,word,save,節約する,verb,,,2,00. 最重要・実用英語,own,S,,We need to save money.,電源を切る|書き留める|身につける
+lx_p00_01_052,rs_p00_01,word,plan,計画する,verb,,,2,00. 最重要・実用英語,own,S,,We need to plan the meeting.,電源を切る|書き留める|身につける
+lx_p00_01_053,rs_p00_01,word,prepare,準備する,verb,,,2,00. 最重要・実用英語,own,S,,,電源を切る|書き留める|身につける
+lx_p00_01_054,rs_p00_01,word,learn,学ぶ,verb,,,2,00. 最重要・実用英語,own,S,,,間違い|いつも|電源を切る
+lx_p00_01_055,rs_p00_01,word,remember,覚えている,verb,,,2,00. 最重要・実用英語,own,S,,,電源を切る|書き留める|身につける
+lx_p00_01_056,rs_p00_01,word,handle,対処する,verb,,,3,00. 最重要・実用英語,own,S,,,電源を切る|書き留める|身につける
+lx_p00_01_057,rs_p00_01,word,manage,管理する,verb,,,3,00. 最重要・実用英語,own,S,,,電源を切る|書き留める|身につける
+lx_p00_01_058,rs_p00_01,word,arrange,手配する,verb,,,3,00. 最重要・実用英語,own,S,,,電源を切る|書き留める|身につける
+lx_p00_01_059,rs_p00_01,word,solve,解決する,verb,,,3,00. 最重要・実用英語,own,S,,,電源を切る|書き留める|身につける
+lx_p00_01_060,rs_p00_01,word,avoid,避ける,verb,,,3,00. 最重要・実用英語,own,S,,,電源を切る|書き留める|身につける
+lx_p00_01_061,rs_p00_01,word,improve,改善する,verb,,,3,00. 最重要・実用英語,own,S,,,電源を切る|書き留める|身につける
+lx_p00_01_062,rs_p00_01,word,provide,提供する,verb,,,3,00. 最重要・実用英語,own,S,,,電源を切る|書き留める|身につける
+lx_p00_01_063,rs_p00_01,word,support,支援する,verb,,,3,00. 最重要・実用英語,own,S,,,電源を切る|書き留める|身につける
+lx_p00_01_064,rs_p00_01,word,require,必要とする,verb,,,3,00. 最重要・実用英語,own,S,,,電源を切る|書き留める|身につける
+lx_p00_01_065,rs_p00_01,word,consider,検討する,verb,,,3,00. 最重要・実用英語,own,S,,,電源を切る|書き留める|身につける
+lx_p00_02_001,rs_p00_02,word,good,よい,,,,1,00. 最重要・実用英語,own,S,,,仕事|影響|〜なので
+lx_p00_02_002,rs_p00_02,word,bad,悪い,,,,1,00. 最重要・実用英語,own,S,,,電源を切る|なぜ|結論
+lx_p00_02_003,rs_p00_02,word,new,新しい,,,,1,00. 最重要・実用英語,own,S,,,比べる|待つ|来る
+lx_p00_02_004,rs_p00_02,word,old,古い,,,,1,00. 最重要・実用英語,own,S,,,チーム|今|代わりに
+lx_p00_02_005,rs_p00_02,word,big,大きい,,,,1,00. 最重要・実用英語,own,S,,,書き留める|どこ|根拠
+lx_p00_02_006,rs_p00_02,word,small,小さい,,,,1,00. 最重要・実用英語,own,S,,,添付する|開ける|時間
+lx_p00_02_007,rs_p00_02,word,easy,簡単な,,,,1,00. 最重要・実用英語,own,S,,,予定|明日|目を覚ます
+lx_p00_02_008,rs_p00_02,word,hard,難しい,,,,1,00. 最重要・実用英語,own,S,,This test is hard.,身につける|はい|仮定する
+lx_p00_02_009,rs_p00_02,word,ready,準備ができた,,,,1,00. 最重要・実用英語,own,S,,,提出する|送る|仕事
+lx_p00_02_010,rs_p00_02,word,busy,忙しい,,,,1,00. 最重要・実用英語,own,S,,,間違い|いつも|電源を切る
+lx_p00_02_011,rs_p00_02,word,available,都合がつく,,,,2,00. 最重要・実用英語,own,S,,Are you available this afternoon?,取り組む|いいえ|比べる
+lx_p00_02_012,rs_p00_02,word,possible,可能な,,,,2,00. 最重要・実用英語,own,S,,,出席する|説明する|チーム
+lx_p00_02_013,rs_p00_02,word,necessary,必要な,,,,2,00. 最重要・実用英語,own,S,,,顧客|時々|書き留める
+lx_p00_02_014,rs_p00_02,word,important,重要な,,,,2,00. 最重要・実用英語,own,S,,,あきらめる|勧める|添付する
+lx_p00_02_015,rs_p00_02,word,different,異なる,,,,2,00. 最重要・実用英語,own,S,,,来る|謝罪する|監視する
+lx_p00_02_016,rs_p00_02,word,similar,似ている,,,,2,00. 最重要・実用英語,own,S,,,送る|書き留める|仮定する
+lx_p00_02_017,rs_p00_02,word,clear,明確な,,,,2,00. 最重要・実用英語,own,S,,,世話をする|謝罪する|提出する
+lx_p00_02_018,rs_p00_02,word,correct,正しい,,,,2,00. 最重要・実用英語,own,S,,,〜である|避ける|間違い
+lx_p00_02_019,rs_p00_02,word,wrong,間違っている,,,,2,00. 最重要・実用英語,own,S,,,書き留める|仮定する|開ける
+lx_p00_02_020,rs_p00_02,word,useful,役立つ,,,,2,00. 最重要・実用英語,own,S,,,誰|断る|出席する
+lx_p00_02_021,rs_p00_02,word,enough,十分な,,,,2,00. 最重要・実用英語,own,S,,,買う|準備する|顧客
+lx_p00_02_022,rs_p00_02,word,safe,安全な,,,,2,00. 最重要・実用英語,own,S,,,影響|〜なので|あきらめる
+lx_p00_02_023,rs_p00_02,word,careful,注意深い,,,,2,00. 最重要・実用英語,own,S,,,なぜ|結論|監視する
+lx_p00_02_024,rs_p00_02,word,common,一般的な,,,,2,00. 最重要・実用英語,own,S,,,待つ|来る|機会
+lx_p00_02_025,rs_p00_02,word,usual,いつもの,,,,2,00. 最重要・実用英語,own,S,,,今|代わりに|世話をする
+lx_p00_02_026,rs_p00_02,word,simple,単純な,,,,2,00. 最重要・実用英語,own,S,,,どこ|根拠|〜である
+lx_p00_02_027,rs_p00_02,word,serious,深刻な,,,,2,00. 最重要・実用英語,own,S,,,開ける|時間|責任
+lx_p00_02_028,rs_p00_02,word,urgent,緊急の,,,,2,00. 最重要・実用英語,own,S,,,明日|目を覚ます|誰
+lx_p00_02_029,rs_p00_02,word,better,よりよい,,,,2,00. 最重要・実用英語,own,S,,,今|目を覚ます|誰
+lx_p00_02_030,rs_p00_02,word,worse,より悪い,,,,2,00. 最重要・実用英語,own,S,,,送る|仕事|影響
+lx_p00_02_031,rs_p00_02,word,comfortable,快適な,,,,2,00. 最重要・実用英語,own,S,,,いつも|電源を切る|なぜ
+lx_p00_02_032,rs_p00_02,word,difficult,難しい,,,,2,00. 最重要・実用英語,own,S,,,いいえ|比べる|待つ
+lx_p00_02_033,rs_p00_02,word,stable,安定した,,,,3,00. 最重要・実用英語,own,S,,,説明する|チーム|今
+lx_p00_02_034,rs_p00_02,word,likely,ありそうな,,,,3,00. 最重要・実用英語,own,S,,,時々|書き留める|どこ
+lx_p00_02_035,rs_p00_02,word,flexible,柔軟な,,,,3,00. 最重要・実用英語,own,S,,,勧める|添付する|開ける
+lx_p00_02_036,rs_p00_02,word,efficient,効率的な,,,,3,00. 最重要・実用英語,own,S,,,節約する|予定|明日
+lx_p00_02_037,rs_p00_02,word,increase,増加する,,,,3,00. 最重要・実用英語,own,S,,,来る|謝罪する|監視する
+lx_p00_02_038,rs_p00_02,word,decrease,減少する,,,,3,00. 最重要・実用英語,own,S,,,送る|書き留める|仮定する
+lx_p00_02_039,rs_p00_02,word,remain,〜のままである,,,,3,00. 最重要・実用英語,own,S,,,提出する|節約する|あきらめる
+lx_p00_02_040,rs_p00_02,word,depend,左右される,,,,3,00. 最重要・実用英語,own,S,,,謝罪する|監視する|準備する
+lx_p00_02_041,rs_p00_02,word,recover,回復する,,,,3,00. 最重要・実用英語,own,S,,,書き留める|仮定する|開ける
+lx_p00_02_042,rs_p00_02,word,worsen,悪化する,,,,3,00. 最重要・実用英語,own,S,,,節約する|あきらめる|添付する
+lx_p00_03_001,rs_p00_03,word,time,時間,noun,,,1,00. 最重要・実用英語,own,S,,,送る|快適な|明日
+lx_p00_03_002,rs_p00_03,word,day,日,noun,,,1,00. 最重要・実用英語,own,S,,,〜だけ|身につける|はい
+lx_p00_03_003,rs_p00_03,word,week,週,noun,,,1,00. 最重要・実用英語,own,S,,,謝罪する|提出する|送る
+lx_p00_03_004,rs_p00_03,word,person,人,noun,,,1,00. 最重要・実用英語,own,S,,,避ける|安定した|〜だけ
+lx_p00_03_005,rs_p00_03,word,people,人々,noun,,,1,00. 最重要・実用英語,own,S,,,代わりに|世話をする|謝罪する
+lx_p00_03_006,rs_p00_03,word,thing,もの・こと,noun,,,1,00. 最重要・実用英語,own,S,,,根拠|〜である|避ける
+lx_p00_03_007,rs_p00_03,word,place,場所,noun,,,1,00. 最重要・実用英語,own,S,,,緊急の|今|代わりに
+lx_p00_03_008,rs_p00_03,word,way,方法,noun,,,1,00. 最重要・実用英語,own,S,,,書き留める|どこ|根拠
+lx_p00_03_009,rs_p00_03,word,job,仕事,noun,,,1,00. 最重要・実用英語,own,S,,,添付する|開ける|緊急の
+lx_p00_03_010,rs_p00_03,word,team,チーム,noun,,,1,00. 最重要・実用英語,own,S,,,古い|時々|書き留める
+lx_p00_03_011,rs_p00_03,word,question,質問,noun,,,1,00. 最重要・実用英語,own,S,,,あきらめる|勧める|添付する
+lx_p00_03_012,rs_p00_03,word,answer,答え,noun,,,1,00. 最重要・実用英語,own,S,,,監視する|節約する|古い
+lx_p00_03_013,rs_p00_03,word,problem,問題,noun,,,1,00. 最重要・実用英語,own,S,,,難しい|〜なので|あきらめる
+lx_p00_03_014,rs_p00_03,word,idea,考え,noun,,,1,00. 最重要・実用英語,own,S,,,なぜ|結論|監視する
+lx_p00_03_015,rs_p00_03,word,reason,理由,noun,,,1,00. 最重要・実用英語,own,S,,,出席する|説明する|忙しい
+lx_p00_03_016,rs_p00_03,word,issue,問題・課題,noun,,,2,00. 最重要・実用英語,own,S,,We need to resolve this issue.,いつも|電源を切る|なぜ
+lx_p00_03_017,rs_p00_03,word,point,要点,noun,,,2,00. 最重要・実用英語,own,S,,You missed my main point.,いいえ|比べる|待つ
+lx_p00_03_018,rs_p00_03,word,result,結果,noun,,,2,00. 最重要・実用英語,own,S,,,説明する|忙しい|いつも
+lx_p00_03_019,rs_p00_03,word,plan,計画,noun,,,2,00. 最重要・実用英語,own,S,,The plan is ready.,より多く|取り組む|いいえ
+lx_p00_03_020,rs_p00_03,word,task,作業,noun,,,2,00. 最重要・実用英語,own,S,,,断る|出席する|説明する
+lx_p00_03_021,rs_p00_03,word,goal,目標,noun,,,2,00. 最重要・実用英語,own,S,,,準備する|安全な|より多く
+lx_p00_03_022,rs_p00_03,word,option,選択肢,noun,,,2,00. 最重要・実用英語,own,S,,,目を覚ます|誰|断る
+lx_p00_03_023,rs_p00_03,word,schedule,予定,noun,,,2,00. 最重要・実用英語,own,S,,,仮定する|買う|準備する
+lx_p00_03_024,rs_p00_03,word,meeting,会議,noun,,,2,00. 最重要・実用英語,own,S,,,快適な|明日|目を覚ます
+lx_p00_03_025,rs_p00_03,word,message,メッセージ,noun,,,2,00. 最重要・実用英語,own,S,,,身につける|はい|仮定する
+lx_p00_03_026,rs_p00_03,word,information,情報,noun,,,2,00. 最重要・実用英語,own,S,,,提出する|送る|快適な
+lx_p00_03_027,rs_p00_03,word,detail,詳細,noun,,,2,00. 最重要・実用英語,own,S,,,安定した|〜だけ|身につける
+lx_p00_03_028,rs_p00_03,word,mistake,間違い,noun,,,2,00. 最重要・実用英語,own,S,,,世話をする|謝罪する|提出する
+lx_p00_03_029,rs_p00_03,word,change,変更,noun,,,2,00. 最重要・実用英語,own,S,,We made a change to the schedule.,〜である|避ける|安定した
+lx_p00_03_030,rs_p00_03,word,difference,違い,noun,,,2,00. 最重要・実用英語,own,S,,,今|代わりに|世話をする
+lx_p00_03_031,rs_p00_03,word,process,過程・手順,noun,,,2,00. 最重要・実用英語,own,S,,,どこ|根拠|〜である
+lx_p00_03_032,rs_p00_03,word,customer,顧客,noun,,,2,00. 最重要・実用英語,own,S,,,開ける|緊急の|今
+lx_p00_03_033,rs_p00_03,word,company,会社,noun,,,2,00. 最重要・実用英語,own,S,,,時々|書き留める|どこ
+lx_p00_03_034,rs_p00_03,word,request,依頼,noun,,,2,00. 最重要・実用英語,own,S,,,勧める|添付する|開ける
+lx_p00_03_035,rs_p00_03,word,solution,解決策,noun,,,2,00. 最重要・実用英語,own,S,,,節約する|古い|時々
+lx_p00_03_036,rs_p00_03,word,priority,優先事項,noun,,,3,00. 最重要・実用英語,own,S,lx_r3_022,,〜なので|あきらめる|勧める
+lx_p00_03_037,rs_p00_03,word,progress,進捗,noun,,,3,00. 最重要・実用英語,own,S,,,結論|監視する|節約する
+lx_p00_03_038,rs_p00_03,word,feedback,意見・評価,noun,,,3,00. 最重要・実用英語,own,S,,,来る|難しい|〜なので
+lx_p00_03_039,rs_p00_03,word,concern,懸念,noun,,,3,00. 最重要・実用英語,own,S,,,電源を切る|なぜ|結論
+lx_p00_03_040,rs_p00_03,word,approach,取り組み方,noun,,,3,00. 最重要・実用英語,own,S,,Let's try a different approach.,比べる|待つ|来る
+lx_p00_03_041,rs_p00_03,word,outcome,結果,noun,,,3,00. 最重要・実用英語,own,S,,,忙しい|いつも|電源を切る
+lx_p00_03_042,rs_p00_03,word,opportunity,機会,noun,,,3,00. 最重要・実用英語,own,S,,,取り組む|いいえ|比べる
+lx_p00_03_043,rs_p00_03,word,responsibility,責任,noun,,,3,00. 最重要・実用英語,own,S,,,出席する|説明する|忙しい
+lx_p00_03_044,rs_p00_03,word,requirement,要件,noun,,,3,00. 最重要・実用英語,own,S,,,安全な|より多く|取り組む
+lx_p00_03_045,rs_p00_03,word,impact,影響,noun,,,3,00. 最重要・実用英語,own,S,,,誰|断る|出席する
+lx_p00_04_001,rs_p00_04,word,and,そして,,,,1,00. 最重要・実用英語,own,S,,,しかし|または|〜なので
+lx_p00_04_002,rs_p00_04,word,but,しかし,,,,1,00. 最重要・実用英語,own,S,,,そして|または|〜なので
+lx_p00_04_003,rs_p00_04,word,or,または,,,,1,00. 最重要・実用英語,own,S,,,そして|しかし|〜するとき
+lx_p00_04_004,rs_p00_04,word,so,だから,,,,1,00. 最重要・実用英語,own,S,,,しかし|または|もし〜なら
+lx_p00_04_005,rs_p00_04,word,if,もし〜なら,,,,1,00. 最重要・実用英語,own,S,,,そして|〜だけれど|だから
+lx_p00_04_006,rs_p00_04,word,because,〜なので,,,,1,00. 最重要・実用英語,own,S,,,〜するとき|〜だけれど|そして
+lx_p00_04_007,rs_p00_04,word,when,〜するとき,,,,1,00. 最重要・実用英語,own,S,,,〜なので|〜でない限り|しかし
+lx_p00_04_008,rs_p00_04,word,in,〜の中に,,,,1,00. 最重要・実用英語,own,S,,The keys are in the bag.,〜の上に|〜の外に|〜の下に
+lx_p00_04_009,rs_p00_04,word,on,〜の上に,,,,1,00. 最重要・実用英語,own,S,,The book is on the table.,〜の下に|〜の中に|〜の隣に
+lx_p00_04_010,rs_p00_04,word,at,〜で・場所や時刻,,,,1,00. 最重要・実用英語,own,S,,Meet me at the station.,〜の向かいに|〜の手前で|〜を通って
+lx_p00_04_011,rs_p00_04,word,to,〜へ,,,,1,00. 最重要・実用英語,own,S,,We went to the station.,〜から|〜の手前で|〜の隣に
+lx_p00_04_012,rs_p00_04,word,from,〜から,,,,1,00. 最重要・実用英語,own,S,,I came from Tokyo.,〜へ|〜の外で|〜の周りに
+lx_p00_04_013,rs_p00_04,word,with,〜と一緒に,,,,1,00. 最重要・実用英語,own,S,,I went with my sister.,〜なしで|〜について|〜の前に
+lx_p00_04_014,rs_p00_04,word,for,〜のために,,,,1,00. 最重要・実用英語,own,S,,This gift is for you.,〜の代わりに|〜について|〜の近くで
+lx_p00_04_015,rs_p00_04,word,about,〜について,,,,1,00. 最重要・実用英語,own,S,,We talked about the project.,〜から|〜に加えて|〜の向かいに
+lx_p00_04_016,rs_p00_04,word,can,〜できる,,,,1,00. 最重要・実用英語,own,S,,I can swim.,〜しなければならない|〜する予定だ|〜すべき
+lx_p00_04_017,rs_p00_04,word,will,〜するつもりだ,,,,1,00. 最重要・実用英語,own,S,,I will call you tonight.,〜すべき|〜かもしれない|〜してはいけない
+lx_p00_04_018,rs_p00_04,word,not,〜でない,,,,1,00. 最重要・実用英語,own,S,,,忙しい|難しい|はい
+lx_p00_04_019,rs_p00_04,word,now,今,,,,1,00. 最重要・実用英語,own,S,,,快適な|仕事|影響
+lx_p00_04_020,rs_p00_04,word,today,今日,,,,1,00. 最重要・実用英語,own,S,,,書き留める|どこ|根拠
+lx_p00_04_021,rs_p00_04,word,tomorrow,明日,,,,1,00. 最重要・実用英語,own,S,,,添付する|開ける|緊急の
+lx_p00_04_022,rs_p00_04,word,yesterday,昨日,,,,1,00. 最重要・実用英語,own,S,,,古い|予定|電源を切る
+lx_p00_04_023,rs_p00_04,word,always,いつも,,,,1,00. 最重要・実用英語,own,S,,,取り組む|いいえ|比べる
+lx_p00_04_024,rs_p00_04,word,often,よく,,,,1,00. 最重要・実用英語,own,S,,,出席する|説明する|忙しい
+lx_p00_04_025,rs_p00_04,word,sometimes,時々,,,,1,00. 最重要・実用英語,own,S,,,安全な|顧客|身につける
+lx_p00_04_026,rs_p00_04,word,never,決して〜ない,,,,1,00. 最重要・実用英語,own,S,,,古い|間違い|忙しい
+lx_p00_04_027,rs_p00_04,word,all,すべて,,,,1,00. 最重要・実用英語,own,S,,,〜である|避ける|安定した
+lx_p00_04_028,rs_p00_04,word,some,いくつかの,,,,1,00. 最重要・実用英語,own,S,,,時間|責任|あきらめる
+lx_p00_04_029,rs_p00_04,word,very,とても,,,,1,00. 最重要・実用英語,own,S,,,なぜ|結論|監視する
+lx_p00_04_030,rs_p00_04,word,only,〜だけ,,,,1,00. 最重要・実用英語,own,S,,,待つ|来る|難しい
+lx_p00_04_031,rs_p00_04,word,also,〜もまた,,,,1,00. 最重要・実用英語,own,S,,,チーム|目を覚ます|誰
+lx_p00_04_032,rs_p00_04,word,more,より多く,,,,1,00. 最重要・実用英語,own,S,,,はい|仮定する|買う
+lx_p00_04_033,rs_p00_04,word,before,〜の前に,,,,2,00. 最重要・実用英語,own,S,,,送る|快適な|仕事
+lx_p00_04_034,rs_p00_04,word,after,〜の後に,,,,2,00. 最重要・実用英語,own,S,,,間違い|書き留める|どこ
+lx_p00_04_035,rs_p00_04,word,already,すでに,,,,2,00. 最重要・実用英語,own,S,,,勧める|添付する|開ける
+lx_p00_04_036,rs_p00_04,word,still,まだ,,,,2,00. 最重要・実用英語,own,S,,I'm still waiting.,節約する|古い|予定
+lx_p00_04_037,rs_p00_04,word,yet,まだ・否定文,,,,2,00. 最重要・実用英語,own,S,,I haven't finished yet.,機会|取り組む|いいえ
+lx_p00_04_038,rs_p00_04,word,soon,まもなく,,,,2,00. 最重要・実用英語,own,S,,,断る|出席する|説明する
+lx_p00_04_039,rs_p00_04,word,later,後で,,,,2,00. 最重要・実用英語,own,S,,,準備する|安全な|顧客
+lx_p00_04_040,rs_p00_04,word,usually,普段は,,,,2,00. 最重要・実用英語,own,S,,,影響|世話をする|謝罪する
+lx_p00_04_041,rs_p00_04,word,probably,おそらく,,,,2,00. 最重要・実用英語,own,S,,,根拠|〜である|避ける
+lx_p00_04_042,rs_p00_04,word,several,いくつかの,,,,2,00. 最重要・実用英語,own,S,,,緊急の|時間|責任
+lx_p00_04_043,rs_p00_04,word,any,何かの,,,,2,00. 最重要・実用英語,own,S,,,電源を切る|なぜ|結論
+lx_p00_04_044,rs_p00_04,word,every,すべての,,,,2,00. 最重要・実用英語,own,S,,,比べる|待つ|来る
+lx_p00_04_045,rs_p00_04,word,by,〜までに・期限,,,,2,00. 最重要・実用英語,own,S,,Please reply by Friday.,〜までずっと|〜の後に|〜を過ぎてから
+lx_p00_04_046,rs_p00_04,word,until,〜までずっと,,,,2,00. 最重要・実用英語,own,S,,I'll wait until Friday.,〜より前に|〜を過ぎてから|〜までに・期限
+lx_p00_04_047,rs_p00_04,word,should,〜すべき,,,,2,00. 最重要・実用英語,own,S,,,〜するつもりだ|〜できる|〜し終えた
+lx_p00_04_048,rs_p00_04,word,could,〜できる・丁寧な依頼,,,,2,00. 最重要・実用英語,own,S,,Could you open the window?,〜しなければならない|〜するつもりだ|〜してはいけない
+lx_p00_04_049,rs_p00_04,word,would,〜だろう・丁寧な依頼,,,,2,00. 最重要・実用英語,own,S,,Would you help me with this?,〜しなければならない|〜してはいけない|〜すべき
+lx_p00_04_050,rs_p00_04,word,then,それから,,,,2,00. 最重要・実用英語,own,S,,,監視する|節約する|古い
+lx_p00_04_051,rs_p00_04,word,must,〜しなければならない,,,,2,00. 最重要・実用英語,own,S,,,〜してもよい|〜かもしれない|〜する必要はない
+lx_p00_04_052,rs_p00_04,word,although,〜だけれど,,,,3,00. 最重要・実用英語,own,S,,,〜なので|もし〜なら|そして
+lx_p00_04_053,rs_p00_04,word,unless,〜でない限り,,,,3,00. 最重要・実用英語,own,S,,,〜するとき|〜なので|または
+lx_p00_04_054,rs_p00_04,word,instead,代わりに,,,,3,00. 最重要・実用英語,own,S,,,仕事|影響|世話をする
+lx_p00_04_055,rs_p00_04,word,however,しかしながら,,,,3,00. 最重要・実用英語,own,S,,,だから|そして|つまり
+lx_p00_05_001,rs_p00_05,phrasal_verb,wake up,目を覚ます,,,,1,00. 最重要・実用英語,own,S,,,誰|断る|出席する
+lx_p00_05_002,rs_p00_05,phrasal_verb,get up,起き上がる,,,,1,00. 最重要・実用英語,own,S,,,出席する|避ける|比べる
+lx_p00_05_003,rs_p00_05,phrasal_verb,sit down,座る,,,,1,00. 最重要・実用英語,own,S,,,出席する|避ける|比べる
+lx_p00_05_004,rs_p00_05,phrasal_verb,come back,戻ってくる,,,,1,00. 最重要・実用英語,own,S,,,出席する|避ける|比べる
+lx_p00_05_005,rs_p00_05,phrasal_verb,go out,外出する,,,,1,00. 最重要・実用英語,own,S,,,出席する|避ける|比べる
+lx_p00_05_006,rs_p00_05,phrasal_verb,look for,探す,,,,2,00. 最重要・実用英語,own,S,lx_r1_011,,チーム|今|代わりに
+lx_p00_05_007,rs_p00_05,phrasal_verb,find out,突き止める,,,,2,00. 最重要・実用英語,own,S,,,出席する|避ける|比べる
+lx_p00_05_008,rs_p00_05,phrasal_verb,look at,〜を見る,,,,2,00. 最重要・実用英語,own,S,,,出席する|避ける|比べる
+lx_p00_05_009,rs_p00_05,phrasal_verb,look after,世話をする,,,,2,00. 最重要・実用英語,own,S,,,出席する|避ける|比べる
+lx_p00_05_010,rs_p00_05,phrasal_verb,pick up,迎えに行く,,,,2,00. 最重要・実用英語,own,S,,I'll pick you up at the station.,はい|仮定する|買う
+lx_p00_05_011,rs_p00_05,phrasal_verb,turn on,電源を入れる,,,,2,00. 最重要・実用英語,own,S,,,出席する|避ける|比べる
+lx_p00_05_012,rs_p00_05,phrasal_verb,turn off,電源を切る,,,,2,00. 最重要・実用英語,own,S,,,出席する|避ける|比べる
+lx_p00_05_013,rs_p00_05,phrasal_verb,put on,身につける,,,,2,00. 最重要・実用英語,own,S,,,出席する|避ける|比べる
+lx_p00_05_014,rs_p00_05,phrasal_verb,take off,脱ぐ,,,,2,00. 最重要・実用英語,own,S,,Please take off your shoes.,説明する|忙しい|チーム
+lx_p00_05_015,rs_p00_05,phrasal_verb,get in,乗り込む,,,,2,00. 最重要・実用英語,own,S,,,顧客|時々|どこ
+lx_p00_05_016,rs_p00_05,phrasal_verb,get out,外に出る,,,,2,00. 最重要・実用英語,own,S,,Get out of the car.,出席する|避ける|比べる
+lx_p00_05_017,rs_p00_05,phrasal_verb,come in,入る,,,,2,00. 最重要・実用英語,own,S,,,出席する|避ける|比べる
+lx_p00_05_018,rs_p00_05,phrasal_verb,go back,戻る,,,,2,00. 最重要・実用英語,own,S,,,出席する|避ける|比べる
+lx_p00_05_019,rs_p00_05,phrasal_verb,give up,あきらめる,,,,2,00. 最重要・実用英語,own,S,,,出席する|避ける|比べる
+lx_p00_05_020,rs_p00_05,phrasal_verb,keep up with,〜についていく,,,,2,00. 最重要・実用英語,own,S,,,避ける|安定した|間違い
+lx_p00_05_021,rs_p00_05,phrasal_verb,check out,確認する,,,,2,00. 最重要・実用英語,own,S,,Check out this new feature.,送る|謝罪する|〜である
+lx_p00_05_022,rs_p00_05,phrasal_verb,set up,設定する,,,,2,00. 最重要・実用英語,own,S,,Please set up your new account.,出席する|避ける|比べる
+lx_p00_05_023,rs_p00_05,phrasal_verb,fill out,記入する,,,,2,00. 最重要・実用英語,own,S,,,出席する|避ける|比べる
+lx_p00_05_024,rs_p00_05,phrasal_verb,write down,書き留める,,,,2,00. 最重要・実用英語,own,S,,,出席する|避ける|比べる
+lx_p00_05_025,rs_p00_05,phrasal_verb,call back,折り返し電話する,,,,2,00. 最重要・実用英語,own,S,,,来る|提出する|避ける
+lx_p00_05_026,rs_p00_05,phrasal_verb,get back to,折り返し連絡する,,,,2,00. 最重要・実用英語,own,S,,,勧める|出席する|準備する
+lx_p00_05_027,rs_p00_05,phrasal_verb,deal with,対処する,,,,2,00. 最重要・実用英語,own,S,,,出席する|避ける|比べる
+lx_p00_05_028,rs_p00_05,phrasal_verb,take care of,世話をする,,,,2,00. 最重要・実用英語,own,S,,,出席する|避ける|比べる
+lx_p00_05_029,rs_p00_05,phrasal_verb,work on,取り組む,,,,2,00. 最重要・実用英語,own,S,,,緊急の|時間|責任
+lx_p00_05_030,rs_p00_05,phrasal_verb,go ahead,先に進む,,,,2,00. 最重要・実用英語,own,S,,,明日|誰|断る
+lx_p00_05_031,rs_p00_05,phrasal_verb,look into,調査する,,,,3,00. 最重要・実用英語,own,S,,,出席する|避ける|比べる
+lx_p00_05_032,rs_p00_05,phrasal_verb,figure out,理解する,,,,3,00. 最重要・実用英語,own,S,,,出席する|避ける|比べる
+lx_p00_05_033,rs_p00_05,phrasal_verb,follow up on,状況を追って確認する,,,,3,00. 最重要・実用英語,own,S,,,出席する|避ける|比べる
+lx_p00_05_034,rs_p00_05,phrasal_verb,come up with,考え出す,,,,3,00. 最重要・実用英語,own,S,,,比べる|待つ|来る
+lx_p00_05_035,rs_p00_05,phrasal_verb,carry out,実行する,,,,3,00. 最重要・実用英語,own,S,,,出席する|避ける|比べる
+lx_p00_05_036,rs_p00_05,phrasal_verb,put off,延期する,,,,3,00. 最重要・実用英語,own,S,,,出席する|避ける|比べる
+lx_p00_05_037,rs_p00_05,phrasal_verb,go through,詳しく確認する,,,,3,00. 最重要・実用英語,own,S,,Let's go through each item.,出席する|避ける|比べる
+lx_p00_05_038,rs_p00_05,phrasal_verb,bring up,話題に出す,,,,3,00. 最重要・実用英語,own,S,,,古い|予定|明日
+lx_p00_05_039,rs_p00_05,phrasal_verb,run into,問題に遭遇する,,,,3,00. 最重要・実用英語,own,S,,We ran into a problem.,出席する|避ける|比べる
+lx_p00_05_040,rs_p00_05,phrasal_verb,sort out,解決する,,,,3,00. 最重要・実用英語,own,S,,,準備する|添付する|説明する
+lx_p00_06_001,rs_p00_06,word,who,誰,,,,1,00. 最重要・実用英語,own,S,,,何|どこ|なぜ
+lx_p00_06_002,rs_p00_06,word,what,何,,,,1,00. 最重要・実用英語,own,S,,,誰|どこ|どちら
+lx_p00_06_003,rs_p00_06,word,where,どこ,,,,1,00. 最重要・実用英語,own,S,,,誰|なぜ|どのように
+lx_p00_06_004,rs_p00_06,word,why,なぜ,,,,1,00. 最重要・実用英語,own,S,,,どこ|何|どのように
+lx_p00_06_005,rs_p00_06,word,how,どのように,,,,2,00. 最重要・実用英語,own,S,,,なぜ|どちら|どこ
+lx_p00_06_006,rs_p00_06,word,which,どちら,,,,2,00. 最重要・実用英語,own,S,,,なぜ|誰|どのように
+lx_p00_06_007,rs_p00_06,word,repeat,繰り返す,,,,2,00. 最重要・実用英語,own,S,,,監視する|節約する|古い
+lx_p00_06_008,rs_p00_06,word,clarify,明確にする,,,,3,00. 最重要・実用英語,own,S,,,送る|書き留める|仮定する
+lx_p00_07_001,rs_p00_07,word,yes,はい,,,,1,00. 最重要・実用英語,own,S,,,いいえ|わかりません|たぶん
+lx_p00_07_002,rs_p00_07,word,no,いいえ,,,,1,00. 最重要・実用英語,own,S,,,はい|もちろん|そのとおり
+lx_p00_07_003,rs_p00_07,word,sure,もちろん,,,,2,00. 最重要・実用英語,own,S,,"Sure, I can help.",いいえ|わかりません|たぶん
+lx_p00_07_004,rs_p00_07,word,understand,理解する,,,,2,00. 最重要・実用英語,own,S,,,来る|謝罪する|監視する
+lx_p00_07_005,rs_p00_07,word,exactly,そのとおり,,,,2,00. 最重要・実用英語,own,S,,,おそらく|わかりません|違います
+lx_p00_08_001,rs_p00_08,word,please,お願いします,,,,1,00. 最重要・実用英語,own,S,,,難しい|機会|〜だけ
+lx_p00_08_002,rs_p00_08,word,suggest,提案する,,,,2,00. 最重要・実用英語,own,S,,,添付する|説明する|身につける
+lx_p00_08_003,rs_p00_08,word,offer,申し出る,,,,2,00. 最重要・実用英語,own,S,,,仮定する|開ける|電源を切る
+lx_p00_08_004,rs_p00_08,word,accept,受け入れる,,,,2,00. 最重要・実用英語,own,S,,,あきらめる|監視する|準備する
+lx_p00_08_005,rs_p00_08,word,refuse,断る,,,,2,00. 最重要・実用英語,own,S,,,書き留める|提出する|節約する
+lx_p00_08_006,rs_p00_08,word,agree,賛成する,,,,2,00. 最重要・実用英語,own,S,,,来る|比べる|送る
+lx_p00_08_007,rs_p00_08,word,prefer,〜のほうを好む,,,,2,00. 最重要・実用英語,own,S,,,緊急の|時間|責任
+lx_p00_08_008,rs_p00_08,word,recommend,勧める,,,,3,00. 最重要・実用英語,own,S,,,説明する|身につける|出席する
+lx_p00_08_009,rs_p00_08,word,apologize,謝罪する,,,,3,00. 最重要・実用英語,own,S,,,開ける|電源を切る|添付する
+lx_p00_09_001,rs_p00_09,word,true,本当の,,,,1,00. 最重要・実用英語,own,S,,,責任|より多く|取り組む
+lx_p00_09_002,rs_p00_09,word,false,誤った,,,,1,00. 最重要・実用英語,own,S,,,誰|添付する|開ける
+lx_p00_09_003,rs_p00_09,word,opinion,意見,,,,2,00. 最重要・実用英語,own,S,,,機会|〜だけ|身につける
+lx_p00_09_004,rs_p00_09,word,believe,信じる,,,,2,00. 最重要・実用英語,own,S,,,あきらめる|出席する|避ける
+lx_p00_09_005,rs_p00_09,word,guess,推測する,,,,2,00. 最重要・実用英語,own,S,,,電源を切る|断る|送る
+lx_p00_09_006,rs_p00_09,word,mean,意味する,,,,2,00. 最重要・実用英語,own,S,,What does this word mean?,避ける|世話をする|監視する
+lx_p00_09_007,rs_p00_09,word,matter,重要である,,,,2,00. 最重要・実用英語,own,S,,Your opinion does matter.,送る|書き留める|添付する
+lx_p00_09_008,rs_p00_09,word,compare,比べる,,,,2,00. 最重要・実用英語,own,S,,,監視する|準備する|勧める
+lx_p00_09_009,rs_p00_09,word,fact,事実,,,,2,00. 最重要・実用英語,own,S,,,チーム|今|代わりに
+lx_p00_09_010,rs_p00_09,word,case,場合,,,,2,00. 最重要・実用英語,own,S,,What should we do in this case?,書き留める|どこ|提出する
+lx_p00_09_011,rs_p00_09,word,assume,仮定する,,,,3,00. 最重要・実用英語,own,S,,,身につける|提出する|節約する
+lx_p00_09_012,rs_p00_09,word,perspective,視点,,,,3,00. 最重要・実用英語,own,S,,,時間|責任|より多く
+lx_p00_09_013,rs_p00_09,word,evidence,根拠,,,,3,00. 最重要・実用英語,own,S,,,目を覚ます|誰|断る
+lx_p00_09_014,rs_p00_09,word,conclusion,結論,,,,3,00. 最重要・実用英語,own,S,,,出席する|説明する|忙しい
+lx_p00_10_001,rs_p00_10,word,email,メール,,,,1,00. 最重要・実用英語,own,S,,,仕事|影響|〜なので
+lx_p00_10_002,rs_p00_10,word,report,報告する,,,,1,00. 最重要・実用英語,own,S,,Please report the issue.,仮定する|避ける|世話をする
+lx_p00_10_003,rs_p00_10,word,follow,従う,,,,1,00. 最重要・実用英語,own,S,,Follow the instructions.,比べる|節約する|古い
+lx_p00_10_004,rs_p00_10,word,update,最新情報を伝える,,,,2,00. 最重要・実用英語,own,S,,Please update me on your progress.,謝罪する|説明する|身につける
+lx_p00_10_005,rs_p00_10,word,contact,連絡する,,,,2,00. 最重要・実用英語,own,S,,,勧める|送る|書き留める
+lx_p00_10_006,rs_p00_10,word,confirm,確認する,,,,2,00. 最重要・実用英語,own,S,,,世話をする|開ける|電源を切る
+lx_p00_10_007,rs_p00_10,word,inform,知らせる,,,,2,00. 最重要・実用英語,own,S,,,あきらめる|〜である|来る
+lx_p00_10_008,rs_p00_10,word,reply,返信する,,,,2,00. 最重要・実用英語,own,S,,,身につける|比べる|準備する
+lx_p00_10_009,rs_p00_10,word,remind,思い出させる,,,,2,00. 最重要・実用英語,own,S,,,書き留める|仮定する|避ける
+lx_p00_10_010,rs_p00_10,word,attach,添付する,,,,2,00. 最重要・実用英語,own,S,,,電源を切る|断る|節約する
+lx_p00_10_011,rs_p00_10,word,submit,提出する,,,,2,00. 最重要・実用英語,own,S,,,来る|謝罪する|説明する
+lx_p00_10_012,rs_p00_10,word,attend,出席する,,,,2,00. 最重要・実用英語,own,S,,,準備する|勧める|送る
+lx_p00_10_013,rs_p00_10,word,postpone,延期する,,,,2,00. 最重要・実用英語,own,S,,,避ける|世話をする|開ける
+lx_p00_10_014,rs_p00_10,word,coordinate,調整する,,,,3,00. 最重要・実用英語,own,S,,,節約する|あきらめる|〜である
+lx_p00_10_015,rs_p00_10,word,notify,通知する,,,,3,00. 最重要・実用英語,own,S,,,説明する|身につける|比べる
+lx_p00_10_016,rs_p00_10,word,monitor,監視する,,,,3,00. 最重要・実用英語,own,S,lx_r2_023,,送る|書き留める|仮定する
+lx_p00_10_017,rs_p00_10,word,escalate,上位に報告・対応を引き上げる,,,,3,00. 最重要・実用英語,own,S,,Escalate the issue to your manager.,開ける|電源を切る|断る

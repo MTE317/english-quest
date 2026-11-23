@@ -13,9 +13,9 @@ import {
 } from '../dungeon.js?v=systems-v1';
 import { backpackSlots, backpackUsed, addItem } from '../loot.js?v=build36-1';
 import { maxHp, maxMp } from '../character.js?v=build36-1';
-import { createBattleView } from '../ui/battle-view.js?v=systems-v1';
+import { createBattleView } from '../ui/battle-view.js?v=practical-english-1';
 import { createVictoryView } from '../ui/victory-view.js?v=pixel-town-1';
-import { stoneAllowed } from '../study.js?v=build36-1';
+import { stoneAllowed } from '../study.js?v=practical-english-1';
 import { el, render, stars } from '../dom.js';
 import { buildWorldMap, newDiscoveries } from '../world-map.js?v=world-map-1';
 import { createWorldMapView } from '../ui/world-map-view.js?v=world-map-1';
@@ -95,7 +95,12 @@ function showDeparture(message = null) {
     // ★がダンジョン以上で、今のランクの★まで（1つ下の★の石をすべて読み解けば1つ上まで）
     const stones = lex.stones.filter((s) => stoneAllowed(lex, store, scheduler, s, dg.rank, rank.maxDungeonRank, scheduler.dayOf(now())));
     st.stoneId = stones.find((s) => s.id === st.stoneId)?.id ?? stones[0]?.id ?? null;
-    render(stoneSel, stones.map((s) => el('option', { value: s.id, selected: s.id === st.stoneId }, `${stars(s.star)} ${s.name}`)));
+    const option = (s) => el('option', { value: s.id, selected: s.id === st.stoneId }, s.star ? `${stars(s.star)} ${s.name}` : s.name);
+    const categories = [...new Set(stones.filter((s) => s.category).map((s) => s.category))];
+    render(stoneSel, stones.filter((s) => !s.category).map(option), categories.map((category) => {
+      const group = stones.filter((s) => s.category === category);
+      return el('optgroup', { label: group[0].theme }, group.map(option));
+    }));
     const fee = expeditionFee(data, dg);
     departure.disabled = !st.stoneId || g.gold < fee;
     render(info, el('div', { class: 'route-facts' },

@@ -5,7 +5,7 @@ import { Scheduler } from '../srs.js?v=features-2';
 import { now } from '../storage.js?v=rune-study-1';
 import { speak, canSpeak, stopSpeech } from '../speech.js?v=music-suite-1';
 import { chantDay, nextChant, recordChant } from '../chant.js?v=features-2';
-import { el, render } from '../dom.js';
+import { el, render, stars } from '../dom.js';
 
 import { setSceneMusic } from '../battle-music.js?v=music-suite-1';
 
@@ -22,13 +22,15 @@ async function start() {
       el('a', { class: 'btn', href: session.inDungeon ? 'dungeon.html' : 'party.html' }, session.inDungeon ? 'ダンジョンへ戻る' : 'パーティを作る'));
     return;
   }
-  const [configFile, srsFile, bookFile, chantFile] = await Promise.all([
-    loadJson('chant.json'), loadJson('srs.json'), loadCsv('grimoires.csv'), loadCsv('chants.csv'),
+  const [configFile, srsFile, bookFile, chantFile, stoneFile] = await Promise.all([
+    loadJson('chant.json'), loadJson('srs.json'), loadCsv('grimoires.csv'), loadCsv('chants.csv'), loadCsv('rune_stones.csv'),
   ]);
   const config = configFile.data;
   const scheduler = new Scheduler({ ...srsFile.data, desired_retention: config.desired_retention, day_boundary_hour: config.day_boundary_hour });
   const books = bookFile.rows;
   const all = chantFile.rows.filter((c) => c.en && c.ja);
+  const chaptersByCategory = new Map(stoneFile.rows.filter((s) => s.category)
+    .map((s) => [`${s.category}:${s.order}`, s.name_ja]));
   let bookId = books[0]?.id;
   let chapter = '';
   if (!books.length || !all.length) {
@@ -40,6 +42,7 @@ async function start() {
     stopSpeech();
     const { daily, limit, choice } = chantDay(session.game, config, scheduler.dayOf(now()));
     const chapters = [...new Set(all.filter((c) => c.book === bookId).map((c) => c.chapter))];
+    const category = books.find((b) => b.id === bookId)?.category;
     const bookName = (b) => b.name_ja || b.name || b.title || b.id;
     render(view, message ? el('p', { role: 'status' }, message) : null,
       el('h2', { class: 'chapter-title' }, '瞬間英作文'),
@@ -49,7 +52,8 @@ async function start() {
       el('label', {}, '魔導書', el('select', { class: 'select', onchange: (e) => { bookId = e.target.value; chapter = ''; showMenu(); } },
         books.map((b) => el('option', { value: b.id, selected: b.id === bookId }, bookName(b))))),
       el('label', {}, '章', el('select', { class: 'select', onchange: (e) => { chapter = e.target.value; } },
-        el('option', { value: '' }, 'すべて'), chapters.map((c) => el('option', { value: c, selected: c === chapter }, `第${c}章`)))),
+        el('option', { value: '' }, 'すべて'), chapters.map((c) => el('option', { value: c, selected: c === chapter },
+          chaptersByCategory.get(`${category}:${Number(c)}`) ?? `第${c}章`)))),
       el('label', {}, '1日の目安', el('select', { class: 'select', onchange: (e) => {
         const option = Number(e.target.value);
         session.update((g) => { g.chants = { ...g.chants, option }; });
@@ -86,7 +90,9 @@ async function start() {
       grades.querySelector('button')?.focus();
     } }, '答えを見る');
     render(view, el('p', { class: 'muted small' }, `今回の獲得JP ${totalJp}`),
-      el('div', { class: 'panel chant-card' }, el('h2', {}, '英語で唱える'), el('p', { class: 'chant-japanese' }, c.ja), reveal, answer),
+      el('div', { class: 'panel chant-card' }, el('h2', {}, '英語で唱える'),
+        c.priority ? el('p', { class: 'muted small' }, `優先度${c.priority} · ${stars(Number(c.level))}`) : null,
+        el('p', { class: 'chant-japanese' }, c.ja), reveal, answer),
       el('button', { class: 'ghost', onclick: () => showMenu(`獲得JP ${totalJp}`) }, '終了する'));
   }
 

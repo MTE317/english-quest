@@ -60,7 +60,9 @@ test('ランクで行けるダンジョンが決まる（見習いは★1だけ�
   assert.ok(allowedDungeons(data, game).some((d) => d.rank === 2));
   const srs = readJson('srs.json');
   const d2 = [...data.dungeons.values()].find((d) => d.rank === 2);
-  assert.ok(allowedStones(srs, lex, d2).every((s) => s.star >= 2));
+  const stones = allowedStones(srs, lex, d2);
+  assert.ok(stones.every((s) => s.category || s.star >= 2));
+  assert.equal(stones.filter((s) => s.category === '00').length, 10);
 });
 
 test('入ると日数を使い、全滅すると日数・お金・経験値・拾った物がすべて戻る', () => {
