@@ -134,16 +134,18 @@ function coreAttack(base) {
 
 function statusProbe(base) {
   const statusId = base.build.mechanics.find((id) => STATUS_IDS.has(id));
+  const abilityDown = statusId === 'statdown';
   const candidates = [base.build, ...base.build.allies].flatMap((definition, actor) => (definition.actions ?? []).map((id) => ({ actor, skill: base.data.skills.get(id) })))
-    .filter(({ skill }) => base.data.statusByName.get(skill.effect.st?.[0])?.id === statusId);
+    .filter(({ skill }) => abilityDown ? skill.effect.st?.[0] === '能力ダウン' : base.data.statusByName.get(skill.effect.st?.[0])?.id === statusId);
   if (['sleep', 'freeze'].includes(statusId)) candidates.sort((a, b) => b.actor - a.actor);
   assert.ok(candidates.length, `${base.build.id}: 対応状態の付与技能がない`);
   const source = candidates[0];
   const result = search(base, `${statusId}付与と状態別特効`, {}, (ctx) => {
     act(ctx, source.actor, skillAction(source.skill.id));
-    const status = ctx.battle.enemies[0].statuses[statusId];
+    const target = ctx.battle.enemies[0];
+    const status = abilityDown ? target.debuffs.abilityDown : target.statuses[statusId];
     if (!status) return null;
-    const potency = status.potency;
+    const potency = abilityDown ? target.debuffs.str[0] : status.potency;
     const comparison = pairedStrike(ctx, coreAttack(base), (control) => removeEffects(control, 0, [`VS_STATUS:${statusId}`]));
     const observations = { statusId, appliedBy: source.actor, skillId: source.skill.id, potency,
       damageWithStatusEffect: damageTotal(comparison.actual), damageWithoutStatusEffect: damageTotal(comparison.without) };

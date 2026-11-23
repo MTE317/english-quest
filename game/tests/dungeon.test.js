@@ -49,11 +49,7 @@ test('入ると日数を使い、全滅すると日数・お金・経験値・�
   startNextBattle(data, s); fightOut(s, 0);
   const r = afterBattle(data, s);
   assert.equal(r.result, 'lose');
-  const { catalog, ...progress } = s.game;
-  const { catalog: priorCatalog, ...priorProgress } = before;
-  assert.deepEqual(progress, priorProgress);
-  assert.deepEqual(catalog.gear, priorCatalog?.gear ?? []);
-  assert.ok(catalog.monsters.length > 0); // 敗戦で得た魔物の知識は次の挑戦へ残る
+  assert.deepEqual(s.game, before);
   assert.equal(s.inDungeon, false);
 });
 
@@ -161,4 +157,39 @@ test('掲示板：町に戻ると受けていない枠が入れかわり、全�
   startNextBattle(data, s); fightOut(s, 0);
   assert.equal(afterBattle(data, s).result, 'lose');
   assert.deepEqual(s.game.board.map((q) => q.uid), before);
+});
+
+test('石化だけの勝利でも討伐依頼・経験値・ドロップを精算する', () => {
+  const session = newSession();
+  startRun(data, session, { dungeonId: 'mossy_cave', stoneId: 'rs_1_001', seed: 1 });
+  startNextBattle(data, session);
+  const battle = session.run.battle;
+  const target = battle.enemies[0].monsterId;
+  session.game.quests = [{ type: 'hunt', target, count: 99, progress: 0 }];
+  for (const enemy of battle.enemies) enemy.statuses.petrify = { turns: 99, n: 1 };
+  assert.equal(nextTurn(data, session.game, battle), null);
+  const result = afterBattle(data, session);
+  assert.equal(result.result, 'win');
+  assert.equal(session.game.quests[0].progress, battle.enemies.filter((enemy) => enemy.monsterId === target).length);
+  assert.ok(result.growth.every(({ xp }) => xp > 0));
+  assert.ok(result.loot.gold > 0);
+});
+
+test('ボスなしの育成探索は通常の討伐と報酬を受け取り、ボス踏破数を加算しない', () => {
+  const session = newSession();
+  startRun(data, session, { dungeonId: 'sunlit_forest', stoneId: 'rs_1_001', seed: 1, training: true });
+  const gold = session.game.gold;
+  while (session.run.state !== 'cleared') {
+    if (session.run.state === 'return_point') { continueRun(session); continue; }
+    if (session.run.state === 'loot') { resolveLoot(data, session, null); continue; }
+    assert.equal(isBossBattle(data, session.run), false);
+    startNextBattle(data, session);
+    assert.ok(session.run.battle.enemies.every((enemy) => !enemy.boss));
+    for (const enemy of session.run.battle.enemies) enemy.hp = 0;
+    nextTurn(data, session.game, session.run.battle);
+    assert.equal(afterBattle(data, session).result, 'win');
+  }
+  returnToTown(data, session);
+  assert.equal(session.game.cleared.sunlit_forest, undefined);
+  assert.ok(session.game.gold > gold);
 });

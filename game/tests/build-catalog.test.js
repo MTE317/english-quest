@@ -29,9 +29,9 @@ test('開発専用36ビルドは公開14職・16武器を含み、既存12編成
   assert.equal(BUILD_CATALOG.builds.length, 36);
   assert.equal(new Set(BUILD_CATALOG.builds.map((b) => b.id)).size, 36);
   assert.equal(new Set(BUILD_CATALOG.builds.map((b) => b.name)).size, 36);
-  assert.equal(Object.keys(PROFILES).length, 48);
+  assert.equal(Object.keys(PROFILES).length, 51);
   assert.deepEqual(Object.keys(LEGACY_PROFILES), [
-    'balanced', 'poison', 'bleed', 'critical', 'weakness', 'counter',
+    'balanced6', 'balanced', 'poison', 'bleed', 'critical', 'weakness', 'counter',
     'spellblade', 'support', 'healer', 'magic', 'supplies', 'brawler',
   ]);
   for (const [id, profile] of Object.entries(LEGACY_PROFILES)) assert.equal(PROFILES[id], profile);
@@ -125,7 +125,7 @@ test('最低進度と★12の全36編成で、必須技能と付与が実際に�
   }
 });
 
-test('状態異常12種の供給手段を持ち、睡眠・凍結は味方にも核となる付与と支援を用意する', () => {
+test('状態異常11種の供給手段を持ち、睡眠・凍結は味方にも核となる付与と支援を用意する', () => {
   const statuses = new Set();
   for (const build of BUILD_CATALOG.builds.filter((b) => b.category === 'status')) {
     for (const id of build.actions) {
@@ -134,7 +134,7 @@ test('状態異常12種の供給手段を持ち、睡眠・凍結は味方にも
       if (status) statuses.add(status.id);
     }
   }
-  assert.deepEqual([...statuses].sort(), ['poison', 'toxic', 'burn', 'bleed', 'sleep', 'paralysis', 'freeze', 'stun', 'bind', 'silence', 'blind', 'statdown'].sort());
+  assert.deepEqual([...statuses].sort(), ['poison', 'toxic', 'burn', 'bleed', 'sleep', 'paralysis', 'freeze', 'stun', 'bind', 'silence', 'blind'].sort());
   const sleep = prepared('dream_executioner');
   assert.ok(sleep.party[0].loadout.actions.includes('thief_p4_s2'));
   assert.ok(sleep.party[2].loadout.actions.includes('bard_p2_s3'));

@@ -124,3 +124,14 @@ export function makeEncounter(data, dungeonId, floor, rng, {
   }
   return enemies;
 }
+
+
+/** 深層地域の開放条件。現行の依頼・踏破済みデータも経路を開く。 */
+export function dungeonRouteUnlocked(data, game, dungeon) {
+  const cleared = game.cleared ?? {};
+  if (dungeon.kind !== '深層' || dungeon.rank <= 3 || cleared[dungeon.id]) return true;
+  if (game.quests?.some((quest) => quest.dungeonId === dungeon.id || quest.destinationIds?.includes(dungeon.id)
+    || data.monsters.get(quest.target)?.dungeons.includes(dungeon.id))) return true;
+  const previousRegionEnd = Math.floor((dungeon.rank - 1) / 3) * 3;
+  return [...data.dungeons.values()].some((entry) => entry.kind === '標準' && entry.rank >= previousRegionEnd && cleared[entry.id] > 0);
+}

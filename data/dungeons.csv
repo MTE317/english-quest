@@ -39,7 +39,7 @@ giants_stair,8,巨人の階段,深層,3,6,50,71,85,3,giants_stair_boss,0.95,1.65
 mirror_maze,8,鏡の迷宮,近場,1,2,51,71,85,1,mirror_maze_boss,1.00,0.65,近場。短い。混乱が多い
 bog_kingdom,8,毒沼の王国,素材の宝庫,2,3,50,71,85,2,bog_kingdom_boss,1.08,0.90,素材の宝庫。猛毒が多いが、素材がたくさん出る
 thunder_plateau,8,雷鳴の高原,季節の地,2,3,50,71,85,2,thunder_plateau_boss,1.00,1.05,季節の地。季節で高原の天気と住人が変わる
-demon_gate,9,魔界の門,標準,2,3,57,81,95,2,demon_gate_boss,1.00,1.00,標準。標準。呪いと衰弱が多い
+demon_gate,9,魔界の門,標準,2,3,57,81,95,2,demon_gate_boss,1.00,1.00,標準。標準。呪いと魔力漏出が多い
 starfall_tower,9,星降る塔,深層,3,6,57,81,95,3,starfall_tower_boss,0.95,1.65,深層。長い。魔法の敵が多い
 bone_bridge,9,骨の橋,近場,1,2,58,81,95,1,bone_bridge_boss,1.00,0.65,近場。短い。アンデッドが多い
 ruby_vein,9,紅玉の鉱脈,素材の宝庫,2,3,57,81,95,2,ruby_vein_boss,1.08,0.90,素材の宝庫。硬い敵が多いが、素材がたくさん出る

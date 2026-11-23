@@ -3,7 +3,7 @@ import { now } from '../storage.js?v=rune-study-1';
 import { QuestionPicker, REASON_LABEL } from '../picker.js';
 import { makePracticeQuestion, questionDirection, questionSpeech, DIRECTION } from '../quiz.js?v=question-speech-1';
 import { speak, canSpeak, stopSpeech } from '../speech.js?v=music-suite-1';
-import { nextTurn, actionOptions, setPending, prepareQuizAction, resolvePending, targetKind, canAct, skillMp, collectBattleHits, enemyIntent } from '../battle.js?v=build36-1';
+import { nextTurn, actionOptions, setPending, prepareQuizAction, resolvePending, targetKind, canAct, skillMp, collectBattleHits, enemyIntent, enemyCanAct } from '../battle.js?v=build36-1';
 import { maxHp, maxMp } from '../character.js?v=build36-1';
 import { el, render } from '../dom.js';
 import { expeditionScene } from './scenery.js';
@@ -177,7 +177,8 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
     render(enemies, b.enemies.map((enemy, index) => {
       const targetable = kind === 'enemy' && indices.includes(index);
       const chosen = selectedKind === 'enemy' && action.target === index;
-      const label = `${enemy.name}、HP ${enemy.hp}/${enemy.maxHp}`;
+      const label = enemy.name + '、HP ' + enemy.hp + '/' + enemy.maxHp +
+        (enemy.maxMp == null ? '' : '、MP ' + enemy.mp + '/' + enemy.maxMp);
       const known = monsterKnowledge(data, g, enemy);
       const intent = enemyIntent(data, enemy, b.round);
       const pendingEnemyTurn = b.queue?.some(turn => turn.side === 'enemy' && turn.i === index)
@@ -194,6 +195,8 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
         targetable ? null : el('span', { class: 'battle-inspect', 'aria-hidden': 'true' }, '図鑑'),
         el('span', { class: 'battle-unit-name' }, enemy.name, enemy.boss ? ' 👑' : '', enemy.eliteId ? ' ⚠' : ''),
         resource('HP', enemy.hp, enemy.maxHp, 'hp'),
+        enemy.maxMp == null ? null : resource('MP', enemy.mp, enemy.maxMp, 'mp'),
+        enemy.tactics ? el('span', { class: 'battle-intent' }, { heal: '回復術', ward: '自己強化', disrupt: '弱体化' }[enemy.tactics]) : null,
         intentLabel ? el('span', { class: `battle-intent${imminent ? ' imminent' : ''}` }, intentLabel) : null,
         conditions(battleConditionLabels(data, enemy)),
         known.weak.length ? el('span', { class: 'battle-known-weak' }, '弱点 ' + known.weak.join('・')) : null);
@@ -287,7 +290,7 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
 
     let indices;
     if (kind === 'enemy') {
-      indices = b.enemies.flatMap((enemy, index) => enemy.hp > 0 ? [index] : []);
+      indices = b.enemies.flatMap((enemy, index) => enemyCanAct(enemy) ? [index] : []);
     } else if (kind === 'ko_ally') {
       indices = g.party.flatMap((member, index) => member.hp <= 0 ? [index] : []);
     } else {

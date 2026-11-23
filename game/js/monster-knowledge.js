@@ -9,7 +9,7 @@ export function learnMonsterElements(game, enemy, elements, scanned = false) {
   if (!game.catalog?.monsters?.includes(enemy.monsterId)) encounterMonsters(game, [enemy]);
   const discoveries = (game.catalog.affinities ??= {});
   const entry = (discoveries[enemy.monsterId] ??= { elements: [], scanned: false });
-  entry.elements = [...new Set([...entry.elements, ...elements.filter((id) => id && id !== 'none')])];
+  entry.elements = [...new Set([...entry.elements, ...elements.filter((id) => id)])];
   entry.scanned ||= scanned;
 }
 
@@ -22,11 +22,13 @@ export function monsterKnowledge(data, game, enemy) {
   const resist = [];
   const normal = [];
   for (const [id, element] of data.elements) {
-    if (id === 'none') continue;
-    if (enemy.weak.includes(id)) {
+    if (enemy.strongWeak?.includes(id)) {
+      if (known.has(id) || scanned) weak.push('★' + element.name);
+    } else if (enemy.weak.includes(id)) {
       if (known.has(id) || scanned) weak.push(element.name);
     } else if (known.has(id)) {
-      (enemy.resist.includes(id) ? resist : normal).push(element.name);
+      if (enemy.immune?.includes(id)) resist.push('×' + element.name);
+      else (enemy.resist.includes(id) ? resist : normal).push(element.name);
     }
   }
   return { weak, resist, normal, scanned };

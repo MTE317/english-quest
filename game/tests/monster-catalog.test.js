@@ -7,13 +7,14 @@ test('モンスター図鑑は1,024体、既存のカテゴリと新闘技場ボ
   const data = realGameData(), rows = readCsv('monsters.csv').rows;
   assert.equal(rows.length, 1024);
   assert.equal(data.monsters.size, 1024);
+  assert.equal(data.statusEffects.size, 20);
   assert.deepEqual(counts(rows,'role'), { normal:663, season:240, boss:60, bounty:48, arena:13 });
   for (const row of rows) {
     assert.equal(new Set(row.types.split('|')).size, row.types.split('|').length);
     for (const type of row.types.split('|')) assert.ok(data.monsterTypes.has(type), row.id + ': ' + type);
     for (const element of [...row.weak.split('|'),...row.resist.split('|')].filter(Boolean)) assert.ok(data.elements.has(element), row.id + ': ' + element);
     for (const x of row.weak.split('|').filter(Boolean)) assert.ok(!row.resist.split('|').includes(x), row.id + ': duplicated affinity ' + x);
-    if (row.status) assert.ok(data.statusEffects.has(row.status),row.id + ': ' + row.status);
+    if (row.status) assert.ok(data.statusEffects.has(row.status) || row.status === 'statdown',row.id + ': ' + row.status);
     for (const mid of [row.material_common, row.material_rare].filter(Boolean)) assert.ok(data.materials.has(mid),row.id + ': ' + mid);
   }
 });
