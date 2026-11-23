@@ -9,7 +9,7 @@ import { buildGameData, GAME_FILES } from '../game/js/gamedata.js';
 import { parseCsv } from '../game/js/csv.js';
 import { maxHp, maxMp, gainXp, gearDef, gearEffects, affixSum } from '../game/js/character.js';
 import { memberMods } from '../game/js/growth.js';
-import { createBattle, nextTurn, actionOptions, setPending, prepareQuizAction, resolvePending, finishBattle, battleRewards, skillMp, battleStats, curedBy, enemyIntent, elementMul } from '../game/js/battle.js';
+import { createBattle, nextTurn, actionOptions, setPending, prepareQuizAction, resolvePending, finishBattle, battleRewards, skillMp, battleStats, curedBy, enemyIntent, elementMul, canAct } from '../game/js/battle.js';
 import { makeEncounter, planBounty } from '../game/js/encounter.js';
 import { rollBattleLoot } from '../game/js/loot.js';
 import { recoverAfterBattle, useItemOutsideBattle } from '../game/js/dungeon.js';
@@ -100,6 +100,28 @@ function attackEstimate(data, game, b, i, skill, target) {
   return score;
 }
 
+// 睡眠や凍結は命中で解除される。今巡の次の手番で使い切れる便益だけを見積もる。
+function fragileControlValue(data, game, b, status, enemyIndex) {
+  const enemy = b.enemies[enemyIndex];
+  if (enemy.boss && (enemy.controlGuardUntil ?? 0) >= b.round && enemy.controlGuardUntil > 0) return 0;
+  const affinity = { '★': 2, '◎': 1.5, '〇': 1, '△': .5, '×': 0 }[enemy.statusAffinity?.[status.id]] ?? 1;
+  if (!affinity) return 0;
+  const next = b.queue.find(turn => turn.side === 'enemy' ? turn.i === enemyIndex :
+    canAct(game, b, turn.i) && !Object.keys(b.allies[turn.i].statuses).some(id =>
+      ['skip_until_hit', 'skip_once'].includes(data.statusEffects.get(id)?.kind)));
+  if (!next) return 0;
+  const rules = data.balance.battle_formulas;
+  const chanceMultiplier = affinity * (enemy.boss ? rules.boss_control_mul * .5 ** (enemy.statusHits?.[status.id] ?? 0) : 1);
+  if (next.side === 'enemy') return Math.max(enemy.str, enemy.mag) * .35 * chanceMultiplier;
+  const ally = game.party[next.i];
+  const weapon = ally.equip.weapon && data.weaponTypes.get(gearDef(data, ally.equip.weapon).kind);
+  const trait = weapon?.traits.vs_status;
+  const bonus = Math.min(rules.status_damage_cap, affixSum(ally, `VS_STATUS:${status.id}`) / 100)
+    + (trait?.id === status.id ? (trait.mul ?? 1) - 1 : 0);
+  const hit = attackEstimate(data, game, b, next.i, null, enemyIndex);
+  return Math.max(0, Math.min(enemy.hp - hit, hit * bonus)) * chanceMultiplier;
+}
+
 /** 未来の乱数を読まない固定ルールの方策。人間の最適操作を表すものではない。 */
 export function chooseAction(data, game, b, options = actionOptions(data, game, b, b.turn.i)) {
   const i = b.turn.i, member = game.party[i];
@@ -157,7 +179,9 @@ export function chooseAction(data, game, b, options = actionOptions(data, game, 
       if (setup && primaryTurn >= 0) {
         const target = living.find(({ e, j }) => {
           const enemyTurn = b.queue.findIndex(turn => turn.side === 'enemy' && turn.i === j);
-          return !finishers.some(id => e.statuses[id]) && (!e.boss || (e.controlGuardUntil ?? 0) < b.round)
+            return !finishers.some(id => e.statuses[id]) &&
+              e.statusAffinity?.[data.statusByName.get(setup.effect.st[0])?.id] !== '×' &&
+              (!e.boss || (e.controlGuardUntil ?? 0) < b.round)
             && (enemyTurn < 0 || primaryTurn < enemyTurn) && e.hp > attackEstimate(data, game, b, 0, null, j) * 1.3;
         });
         if (target) return { type: 'skill', skillId: setup.id, target: target.j };
@@ -230,6 +254,10 @@ export function chooseAction(data, game, b, options = actionOptions(data, game, 
       const targets = s.effect.tgt === 'all' ? living : [{ e, j }];
       for (const target of targets) {
         if (target.e.statuses[status.id]) continue;
+        if (status.kind === 'skip_until_hit') {
+          score += fragileControlValue(data, game, b, status, target.j) * s.effect.st[1];
+          continue;
+        }
         const bossMul = target.e.boss ? .75 : 1;
         if (status.kind.startsWith('dot')) score += target.e.maxHp * status.value * 2.4 * s.effect.st[1] * bossMul
           * (target.e.boss ? .65 : 1) * (1 + affixSum(member, 'DOT_POWER') / 100);

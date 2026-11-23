@@ -106,7 +106,7 @@ elementalist_p2_s4,elementalist,精霊の加護,4,属性の守り,passive,2,0,40
 gunner_p1_s1,gunner,射撃,1,速射,attack,1,4,0,0,,"{""base"": ""weapon"", ""m"": 0.75, ""hits"": [1, 1]}"
 gunner_p1_s2,gunner,射撃,2,早撃ち,passive,1,0,20,0,,"{""mod"": {""first"": 1}}"
 gunner_p1_s3,gunner,射撃,3,貫通弾,attack,2,8,30,0,,"{""base"": ""weapon"", ""m"": 1.5, ""defign"": 0.5}"
-gunner_p1_s4,gunner,射撃,4,弾幕,attack,5,18,40,1,,"{""base"": ""weapon"", ""m"": 0.8, ""tgt"": ""all"", ""hits"": [1, 1]}"
+gunner_p1_s4,gunner,射撃,4,弾幕,attack,5,18,40,1,,"{""base"": ""weapon"", ""m"": 0.72, ""tgt"": ""all"", ""hits"": [1, 1]}"
 gunner_p2_s1,gunner,特殊弾,1,焼夷弾,attack,1,4,0,0,fire,"{""base"": ""phys"", ""m"": 1.2, ""st"": [""火傷"", 0.3]}"
 gunner_p2_s2,gunner,特殊弾,2,冷凍弾,attack,1,4,20,0,ice,"{""base"": ""phys"", ""m"": 1.2, ""st"": [""束縛"", 0.25]}"
 gunner_p2_s3,gunner,特殊弾,3,雷撃弾,attack,2,8,30,0,thunder,"{""base"": ""phys"", ""m"": 0.8, ""tgt"": ""all""}"
