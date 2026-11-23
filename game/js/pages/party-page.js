@@ -269,7 +269,7 @@ function showLoadout(index, kind = 'actions', message = '') {
     message ? el('p', { class: 'error', role: 'status' }, message) : null,
     el('div', { class: 'row', role: 'group', 'aria-label': 'スキルの種類' },
       el('button', { class: isPassiveKind ? 'ghost' : 'primary', 'aria-pressed': String(!isPassiveKind),
-        onclick: () => showLoadout(index, 'actions') }, `通常スキル（${used.actions}/${cap.actions}）`),
+        onclick: () => showLoadout(index, 'actions') }, `アクティブ（${used.actions}/${cap.actions}）`),
       el('button', { class: isPassiveKind ? 'primary' : 'ghost', 'aria-pressed': String(isPassiveKind),
         onclick: () => showLoadout(index, 'passives') }, `パッシブ（${used.passives}/${cap.passives}）`)),
     skills.length
