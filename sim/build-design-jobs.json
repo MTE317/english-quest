@@ -1,0 +1,2338 @@
+{
+  "schemaVersion": 1,
+  "jobs": [
+    {
+      "id": "warrior",
+      "name": "戦士",
+      "tier": "base",
+      "role": "物理アタッカー",
+      "weapon": "sword",
+      "elements": [
+        "slash"
+      ],
+      "unlock": "初期",
+      "status": "existing",
+      "actives": [
+        "warrior_p1_s1",
+        "warrior_p1_s3",
+        "warrior_p2_s1",
+        "warrior_p2_s3",
+        "warrior_p3_s1",
+        "warrior_p3_s3"
+      ],
+      "passives": [
+        "warrior_p1_s2",
+        "warrior_p2_s2",
+        "warrior_p2_s4",
+        "warrior_p3_s2",
+        "warrior_p3_s4",
+        "warrior_p1_s5",
+        "warrior_p2_s5",
+        "warrior_p3_s5"
+      ],
+      "ultimate": "warrior_p1_s4",
+      "builds": [
+        4,
+        5,
+        13,
+        16,
+        23,
+        24,
+        27,
+        28,
+        40,
+        41,
+        67,
+        69,
+        71,
+        72,
+        73,
+        91
+      ],
+      "planningWeapon": "sword",
+      "statusFocus": [
+        "taunt",
+        "bleed"
+      ]
+    },
+    {
+      "id": "knight",
+      "name": "ナイト",
+      "tier": "base",
+      "role": "タンク",
+      "weapon": "hammer",
+      "elements": [
+        "blunt"
+      ],
+      "unlock": "初期",
+      "status": "existing",
+      "actives": [
+        "knight_p1_s1",
+        "knight_p1_s3",
+        "knight_p2_s1",
+        "knight_p2_s3",
+        "knight_p3_s1",
+        "knight_p3_s3",
+        "knight_p2_s5"
+      ],
+      "passives": [
+        "knight_p1_s2",
+        "knight_p2_s2",
+        "knight_p2_s4",
+        "knight_p3_s2",
+        "knight_p3_s4",
+        "knight_p1_s5",
+        "knight_p3_s5"
+      ],
+      "ultimate": "knight_p1_s4",
+      "builds": [
+        8,
+        17,
+        23,
+        24,
+        56,
+        65,
+        66,
+        72,
+        76,
+        85,
+        88,
+        90
+      ],
+      "planningWeapon": "hammer",
+      "statusFocus": [
+        "stun",
+        "taunt"
+      ]
+    },
+    {
+      "id": "black_mage",
+      "name": "黒魔道士",
+      "tier": "base",
+      "role": "魔法アタッカー",
+      "weapon": "tome",
+      "elements": [
+        "fire",
+        "ice",
+        "thunder"
+      ],
+      "unlock": "初期",
+      "status": "existing",
+      "actives": [
+        "black_mage_p1_s1",
+        "black_mage_p1_s3",
+        "black_mage_p2_s1",
+        "black_mage_p2_s3",
+        "black_mage_p2_s4",
+        "black_mage_p3_s1",
+        "black_mage_p3_s3",
+        "black_mage_p2_s5"
+      ],
+      "passives": [
+        "black_mage_p1_s2",
+        "black_mage_p2_s2",
+        "black_mage_p3_s2",
+        "black_mage_p3_s4",
+        "black_mage_p1_s5",
+        "black_mage_p3_s5"
+      ],
+      "ultimate": "black_mage_p1_s4",
+      "builds": [
+        21,
+        29,
+        49,
+        52,
+        53,
+        54,
+        59,
+        79,
+        83,
+        87
+      ],
+      "planningWeapon": "tome",
+      "statusFocus": [
+        "burn",
+        "freeze",
+        "paralysis"
+      ]
+    },
+    {
+      "id": "white_mage",
+      "name": "白魔道士",
+      "tier": "base",
+      "role": "ヒーラー",
+      "weapon": "staff",
+      "elements": [
+        "light"
+      ],
+      "unlock": "初期",
+      "status": "existing",
+      "actives": [
+        "white_mage_p1_s1",
+        "white_mage_p1_s3",
+        "white_mage_p2_s1",
+        "white_mage_p2_s3",
+        "white_mage_p3_s1",
+        "white_mage_p3_s3",
+        "white_mage_p3_s4",
+        "white_mage_p3_s5"
+      ],
+      "passives": [
+        "white_mage_p1_s2",
+        "white_mage_p2_s2",
+        "white_mage_p2_s4",
+        "white_mage_p3_s2",
+        "white_mage_p1_s5",
+        "white_mage_p2_s5"
+      ],
+      "ultimate": "white_mage_p1_s4",
+      "builds": [
+        25,
+        31,
+        32,
+        33,
+        50,
+        58,
+        77,
+        80,
+        85,
+        88,
+        90
+      ],
+      "planningWeapon": "staff",
+      "statusFocus": [
+        "bind"
+      ]
+    },
+    {
+      "id": "thief",
+      "name": "盗賊",
+      "tier": "base",
+      "role": "スピード・ドロップ",
+      "weapon": "dagger",
+      "elements": [
+        "slash"
+      ],
+      "unlock": "初期",
+      "status": "existing",
+      "actives": [
+        "thief_p1_s1",
+        "thief_p1_s3",
+        "thief_p2_s1",
+        "thief_p2_s3",
+        "thief_p3_s1",
+        "thief_p3_s3",
+        "thief_p4_s1",
+        "thief_p4_s2"
+      ],
+      "passives": [
+        "thief_p1_s2",
+        "thief_p2_s2",
+        "thief_p2_s4",
+        "thief_p3_s2",
+        "thief_p3_s4",
+        "thief_p1_s5",
+        "thief_p2_s5",
+        "thief_p3_s5"
+      ],
+      "ultimate": "thief_p1_s4",
+      "builds": [
+        1,
+        5,
+        11,
+        14,
+        15,
+        37,
+        38,
+        39,
+        47,
+        64,
+        86,
+        98,
+        99
+      ],
+      "planningWeapon": "dagger",
+      "statusFocus": [
+        "poison",
+        "blind",
+        "sleep",
+        "bind"
+      ]
+    },
+    {
+      "id": "monk",
+      "name": "武闘家",
+      "tier": "base",
+      "role": "打撃アタッカー",
+      "weapon": "fist",
+      "elements": [
+        "blunt"
+      ],
+      "unlock": "初期",
+      "status": "existing",
+      "actives": [
+        "monk_p1_s1",
+        "monk_p1_s3",
+        "monk_p2_s1",
+        "monk_p2_s3",
+        "monk_p3_s1",
+        "monk_p3_s3",
+        "monk_p1_s5",
+        "monk_p2_s5",
+        "monk_p4_s1"
+      ],
+      "passives": [
+        "monk_p1_s2",
+        "monk_p2_s2",
+        "monk_p2_s4",
+        "monk_p3_s2",
+        "monk_p3_s4",
+        "monk_p3_s5"
+      ],
+      "ultimate": "monk_p1_s4",
+      "builds": [
+        5,
+        6,
+        13,
+        42,
+        66,
+        73,
+        82,
+        86
+      ],
+      "planningWeapon": "fist",
+      "statusFocus": [
+        "paralysis",
+        "seal",
+        "stun"
+      ]
+    },
+    {
+      "id": "hunter",
+      "name": "狩人",
+      "tier": "base",
+      "role": "弱点を突く",
+      "weapon": "bow",
+      "elements": [
+        "pierce"
+      ],
+      "unlock": "初期",
+      "status": "existing",
+      "actives": [
+        "hunter_p1_s1",
+        "hunter_p1_s3",
+        "hunter_p2_s1",
+        "hunter_p2_s3",
+        "hunter_p3_s1",
+        "hunter_p3_s3",
+        "hunter_p3_s4",
+        "hunter_p3_s5"
+      ],
+      "passives": [
+        "hunter_p1_s2",
+        "hunter_p2_s2",
+        "hunter_p2_s4",
+        "hunter_p3_s2",
+        "hunter_p1_s5",
+        "hunter_p2_s5"
+      ],
+      "ultimate": "hunter_p1_s4",
+      "builds": [
+        9,
+        18,
+        42,
+        59,
+        61,
+        68,
+        87,
+        93,
+        97
+      ],
+      "planningWeapon": "bow",
+      "statusFocus": [
+        "bind",
+        "sleep",
+        "blind",
+        "petrify"
+      ]
+    },
+    {
+      "id": "bard",
+      "name": "吟遊詩人",
+      "tier": "base",
+      "role": "バッファー",
+      "weapon": "instrument",
+      "elements": [
+        "light",
+        "dark"
+      ],
+      "unlock": "初期",
+      "status": "existing",
+      "actives": [
+        "bard_p1_s1",
+        "bard_p1_s3",
+        "bard_p2_s1",
+        "bard_p2_s3",
+        "bard_p2_s4",
+        "bard_p3_s1",
+        "bard_p3_s3",
+        "bard_p2_s5",
+        "bard_p3_s5"
+      ],
+      "passives": [
+        "bard_p1_s2",
+        "bard_p2_s2",
+        "bard_p3_s2",
+        "bard_p3_s4",
+        "bard_p1_s5"
+      ],
+      "ultimate": "bard_p1_s4",
+      "builds": [
+        25,
+        30,
+        35,
+        39,
+        43,
+        44,
+        45,
+        46,
+        55,
+        57,
+        78,
+        81,
+        89,
+        96
+      ],
+      "planningWeapon": "instrument",
+      "statusFocus": [
+        "sleep",
+        "weaken"
+      ]
+    },
+    {
+      "id": "elementalist",
+      "name": "精霊術士",
+      "tier": "mid",
+      "role": "風・土・水の魔法",
+      "weapon": null,
+      "elements": [],
+      "unlock": "発見（★3奥地）",
+      "status": "existing",
+      "actives": [
+        "elementalist_p1_s1",
+        "elementalist_p1_s2",
+        "elementalist_p1_s3",
+        "elementalist_p2_s2",
+        "elementalist_p2_s3",
+        "elementalist_p1_s5"
+      ],
+      "passives": [
+        "elementalist_p2_s1",
+        "elementalist_p2_s4",
+        "elementalist_p2_s5"
+      ],
+      "ultimate": "elementalist_p1_s4",
+      "builds": [
+        25,
+        53,
+        55,
+        56,
+        57,
+        59,
+        75,
+        76,
+        84,
+        95
+      ],
+      "planningWeapon": "staff",
+      "planningElements": [
+        "wind",
+        "earth",
+        "water"
+      ],
+      "statusFocus": []
+    },
+    {
+      "id": "gunner",
+      "name": "銃士",
+      "tier": "mid",
+      "role": "銃のスペシャリスト",
+      "weapon": null,
+      "elements": [],
+      "unlock": "素材",
+      "status": "existing",
+      "actives": [
+        "gunner_p1_s1",
+        "gunner_p1_s3",
+        "gunner_p2_s1",
+        "gunner_p2_s2",
+        "gunner_p2_s3",
+        "gunner_p2_s5"
+      ],
+      "passives": [
+        "gunner_p1_s2",
+        "gunner_p2_s4",
+        "gunner_p1_s5"
+      ],
+      "ultimate": "gunner_p1_s4",
+      "builds": [
+        19,
+        48,
+        62,
+        81,
+        89
+      ],
+      "planningWeapon": "gun",
+      "planningElements": [
+        "pierce",
+        "fire",
+        "ice",
+        "thunder"
+      ],
+      "statusFocus": [
+        "burn",
+        "freeze",
+        "paralysis",
+        "petrify"
+      ]
+    },
+    {
+      "id": "dancer",
+      "name": "踊り子",
+      "tier": "mid",
+      "role": "鞭と舞の支援役",
+      "weapon": null,
+      "elements": [],
+      "unlock": "素材",
+      "status": "existing",
+      "actives": [
+        "dancer_p1_s1",
+        "dancer_p1_s3",
+        "dancer_p2_s1",
+        "dancer_p2_s3",
+        "dancer_p1_s5",
+        "dancer_p2_s5"
+      ],
+      "passives": [
+        "dancer_p1_s2",
+        "dancer_p2_s2",
+        "dancer_p2_s4"
+      ],
+      "ultimate": "dancer_p1_s4",
+      "builds": [
+        20,
+        33,
+        36,
+        63,
+        64,
+        74,
+        82
+      ],
+      "planningWeapon": "fan",
+      "planningElements": [
+        "wind",
+        "blunt"
+      ],
+      "statusFocus": [
+        "bind",
+        "stun"
+      ]
+    },
+    {
+      "id": "spellblade",
+      "name": "魔法剣士",
+      "tier": "mid",
+      "role": "武器に属性をのせる",
+      "weapon": null,
+      "elements": [],
+      "unlock": "発見（★2奥地）",
+      "status": "existing",
+      "actives": [
+        "spellblade_p1_s1",
+        "spellblade_p1_s2",
+        "spellblade_p1_s3",
+        "spellblade_p2_s1",
+        "spellblade_p2_s3",
+        "spellblade_p3_s1",
+        "spellblade_p3_s2"
+      ],
+      "passives": [
+        "spellblade_p2_s2",
+        "spellblade_p2_s4",
+        "spellblade_p1_s5",
+        "spellblade_p2_s5"
+      ],
+      "ultimate": "spellblade_p1_s4",
+      "builds": [
+        3,
+        7,
+        18,
+        22,
+        28,
+        40,
+        47,
+        52,
+        60
+      ],
+      "planningWeapon": "sword",
+      "planningElements": [
+        "slash",
+        "fire",
+        "ice",
+        "thunder"
+      ],
+      "statusFocus": [
+        "burn",
+        "freeze"
+      ]
+    },
+    {
+      "id": "hexer",
+      "name": "呪術師",
+      "tier": "mid",
+      "role": "弱体化と闇の魔法",
+      "weapon": null,
+      "elements": [],
+      "unlock": "素材",
+      "status": "existing",
+      "actives": [
+        "hexer_p1_s1",
+        "hexer_p1_s2",
+        "hexer_p1_s3",
+        "hexer_p2_s1",
+        "hexer_p2_s3",
+        "hexer_p1_s5",
+        "hexer_p3_s1",
+        "hexer_p3_s2"
+      ],
+      "passives": [
+        "hexer_p2_s2",
+        "hexer_p2_s4",
+        "hexer_p2_s5"
+      ],
+      "ultimate": "hexer_p1_s4",
+      "builds": [
+        10,
+        12,
+        43,
+        44,
+        47,
+        51,
+        58,
+        92,
+        94
+      ],
+      "planningWeapon": "tome",
+      "planningElements": [
+        "dark"
+      ],
+      "statusFocus": [
+        "curse",
+        "doom",
+        "silence",
+        "weaken"
+      ]
+    },
+    {
+      "id": "apothecary",
+      "name": "薬師",
+      "tier": "mid",
+      "role": "アイテムと調合",
+      "weapon": null,
+      "elements": [],
+      "unlock": "素材",
+      "status": "existing",
+      "actives": [
+        "apothecary_p1_s1",
+        "apothecary_p1_s3",
+        "apothecary_p2_s1",
+        "apothecary_p3_s1"
+      ],
+      "passives": [
+        "apothecary_p1_s2",
+        "apothecary_p2_s2",
+        "apothecary_p2_s3",
+        "apothecary_p2_s4",
+        "apothecary_p1_s5",
+        "apothecary_p2_s5"
+      ],
+      "ultimate": "apothecary_p1_s4",
+      "builds": [
+        2,
+        26,
+        33,
+        34,
+        38,
+        100
+      ],
+      "planningWeapon": "dagger",
+      "planningElements": [
+        "pierce"
+      ],
+      "statusFocus": [
+        "poison",
+        "toxic"
+      ]
+    },
+    {
+      "id": "venomist",
+      "name": "毒術士",
+      "tier": "advanced",
+      "status": "proposed",
+      "role": "毒の伝播者の専門運用",
+      "weapon": "dagger",
+      "elements": [
+        "pierce"
+      ],
+      "statuses": [
+        "poison",
+        "toxic"
+      ],
+      "builds": [
+        37,
+        38,
+        39
+      ],
+      "unlock": {
+        "type": "independent_milestone",
+        "condition": "毒持ちの希少敵を調査",
+        "requiresJob": null
+      },
+      "training": {
+        "style": "free_choice",
+        "prerequisites": [],
+        "actives": [
+          {
+            "name": "毒の継承",
+            "description": "毒を付けて撃破した敵から別敵1体へ毒を移す",
+            "portable": true
+          }
+        ],
+        "passives": [
+          {
+            "name": "病蝕の刃",
+            "description": "毒と猛毒を別種として数え、毒敵を倒した時だけ伝播",
+            "portable": true
+          }
+        ],
+        "ultimate": {
+          "name": "毒環の宴",
+          "description": "敵全体に毒を試行し、最初の撃破だけ伝播",
+          "portable": false,
+          "limitPerBattle": 1
+        }
+      }
+    },
+    {
+      "id": "bloodblade",
+      "name": "血刃士",
+      "tier": "advanced",
+      "status": "proposed",
+      "role": "灼痛の双剣の専門運用",
+      "weapon": "scythe",
+      "elements": [
+        "slash",
+        "fire"
+      ],
+      "statuses": [
+        "bleed",
+        "burn"
+      ],
+      "builds": [
+        40
+      ],
+      "unlock": {
+        "type": "independent_milestone",
+        "condition": "出血を使う討伐依頼",
+        "requiresJob": null
+      },
+      "training": {
+        "style": "free_choice",
+        "prerequisites": [],
+        "actives": [
+          {
+            "name": "灼血斬",
+            "description": "灼刃の後に血風を使い別々の継続傷を狙う",
+            "portable": true
+          }
+        ],
+        "passives": [
+          {
+            "name": "継続傷の心得",
+            "description": "火傷か出血中の敵への鎌威力を増加",
+            "portable": true
+          }
+        ],
+        "ultimate": {
+          "name": "緋の刈り取り",
+          "description": "敵単体に鎌撃、火傷と出血を順に判定",
+          "portable": false,
+          "limitPerBattle": 1
+        }
+      }
+    },
+    {
+      "id": "dread_guard",
+      "name": "威圧騎士",
+      "tier": "advanced",
+      "status": "proposed",
+      "role": "威圧の恐怖騎士の専門運用",
+      "weapon": "hammer",
+      "elements": [
+        "blunt"
+      ],
+      "statuses": [
+        "fear",
+        "taunt"
+      ],
+      "builds": [
+        41
+      ],
+      "unlock": {
+        "type": "independent_milestone",
+        "condition": "救援任務を達成",
+        "requiresJob": null
+      },
+      "training": {
+        "style": "free_choice",
+        "prerequisites": [],
+        "actives": [
+          {
+            "name": "威圧の号令",
+            "description": "恐怖を試行し挑発へつなげる",
+            "portable": true
+          }
+        ],
+        "passives": [
+          {
+            "name": "恐怖下の防陣",
+            "description": "恐怖中の敵に狙われた時だけ軽減",
+            "portable": true
+          }
+        ],
+        "ultimate": {
+          "name": "不退の王壁",
+          "description": "挑発と自己軽減を付与し恐怖を単体に試行",
+          "portable": false,
+          "limitPerBattle": 1
+        }
+      }
+    },
+    {
+      "id": "seal_archer",
+      "name": "封技弓士",
+      "tier": "advanced",
+      "status": "proposed",
+      "role": "武技封じの狩人の専門運用",
+      "weapon": "bow",
+      "elements": [
+        "pierce"
+      ],
+      "statuses": [
+        "seal"
+      ],
+      "builds": [
+        42
+      ],
+      "unlock": {
+        "type": "independent_milestone",
+        "condition": "技能主体の敵を討伐",
+        "requiresJob": null
+      },
+      "training": {
+        "style": "free_choice",
+        "prerequisites": [],
+        "actives": [
+          {
+            "name": "封技の矢",
+            "description": "封印を試行する刺突",
+            "portable": true
+          }
+        ],
+        "passives": [
+          {
+            "name": "封印追撃",
+            "description": "封印済み対象への射撃威力を増加",
+            "portable": true
+          }
+        ],
+        "ultimate": {
+          "name": "静寂の一射",
+          "description": "同一敵に封印試行してから高命中刺突",
+          "portable": false,
+          "limitPerBattle": 1
+        }
+      }
+    },
+    {
+      "id": "mana_breaker",
+      "name": "破魔術士",
+      "tier": "advanced",
+      "status": "proposed",
+      "role": "魔力枯渇の魔封師の専門運用",
+      "weapon": "tome",
+      "elements": [
+        "dark"
+      ],
+      "statuses": [
+        "weaken",
+        "silence"
+      ],
+      "builds": [
+        43,
+        44
+      ],
+      "unlock": {
+        "type": "independent_milestone",
+        "condition": "魔力漏出を使う敵を調査",
+        "requiresJob": null
+      },
+      "training": {
+        "style": "free_choice",
+        "prerequisites": [],
+        "actives": [
+          {
+            "name": "魔脈断ち",
+            "description": "魔力漏出を付与し、敵のMPを固定量削る",
+            "portable": true
+          }
+        ],
+        "passives": [
+          {
+            "name": "枯渇特効",
+            "description": "対象MPが閾値以下なら魔法を増幅",
+            "portable": true
+          }
+        ],
+        "ultimate": {
+          "name": "無明の牢",
+          "description": "魔力漏出と呪いをそれぞれ試行しMPを減らす",
+          "portable": false,
+          "limitPerBattle": 1
+        }
+      }
+    },
+    {
+      "id": "jester",
+      "name": "道化師",
+      "tier": "advanced",
+      "status": "proposed",
+      "role": "惑乱の道化師の専門運用",
+      "weapon": "fan",
+      "elements": [
+        "wind"
+      ],
+      "statuses": [
+        "confusion"
+      ],
+      "builds": [
+        45
+      ],
+      "unlock": {
+        "type": "independent_milestone",
+        "condition": "旅芸人の依頼を達成",
+        "requiresJob": null
+      },
+      "training": {
+        "style": "free_choice",
+        "prerequisites": [],
+        "actives": [
+          {
+            "name": "惑いの舞",
+            "description": "単体へ混乱を試行",
+            "portable": true
+          }
+        ],
+        "passives": [
+          {
+            "name": "誤行動の余波",
+            "description": "敵の混乱誤行動後にMPを回復",
+            "portable": true
+          }
+        ],
+        "ultimate": {
+          "name": "千面の夜",
+          "description": "全敵に混乱を試行し、1巡だけ味方RESを上げる",
+          "portable": false,
+          "limitPerBattle": 1
+        }
+      }
+    },
+    {
+      "id": "puppeteer",
+      "name": "傀儡師",
+      "tier": "advanced",
+      "status": "proposed",
+      "role": "魅了の傀儡師の専門運用",
+      "weapon": "instrument",
+      "elements": [
+        "dark"
+      ],
+      "statuses": [
+        "charm"
+      ],
+      "builds": [
+        46
+      ],
+      "unlock": {
+        "type": "independent_milestone",
+        "condition": "魅了を使う敵を調査",
+        "requiresJob": null
+      },
+      "training": {
+        "style": "free_choice",
+        "prerequisites": [],
+        "actives": [
+          {
+            "name": "傀儡の調べ",
+            "description": "単体へ魅了を試行",
+            "portable": true
+          }
+        ],
+        "passives": [
+          {
+            "name": "魅了の遮蔽",
+            "description": "魅了による強制行動後に自分へ小障壁",
+            "portable": true
+          }
+        ],
+        "ultimate": {
+          "name": "人形劇の幕",
+          "description": "敵単体に魅了を試行し味方1人に障壁",
+          "portable": false,
+          "limitPerBattle": 1
+        }
+      }
+    },
+    {
+      "id": "doom_seer",
+      "name": "死刻師",
+      "tier": "advanced",
+      "status": "proposed",
+      "role": "死刻の祈祷師の専門運用",
+      "weapon": "tome",
+      "elements": [
+        "dark",
+        "ice"
+      ],
+      "statuses": [
+        "doom",
+        "sleep",
+        "freeze"
+      ],
+      "builds": [
+        47
+      ],
+      "unlock": {
+        "type": "independent_milestone",
+        "condition": "地下墓地の依頼を達成",
+        "requiresJob": null
+      },
+      "training": {
+        "style": "free_choice",
+        "prerequisites": [],
+        "actives": [
+          {
+            "name": "眠りの宣告",
+            "description": "死の宣告後に睡眠で時間を稼ぐ",
+            "portable": true
+          }
+        ],
+        "passives": [
+          {
+            "name": "長期詠唱の心得",
+            "description": "宣告が残る敵の攻撃から受けるダメージを軽減",
+            "portable": true
+          }
+        ],
+        "ultimate": {
+          "name": "黄泉の刻限",
+          "description": "単体に死の宣告と睡眠を順に試行",
+          "portable": false,
+          "limitPerBattle": 1
+        }
+      }
+    },
+    {
+      "id": "petrifier",
+      "name": "石弾士",
+      "tier": "advanced",
+      "status": "proposed",
+      "role": "石化狩りの術士の専門運用",
+      "weapon": "gun",
+      "elements": [
+        "earth"
+      ],
+      "statuses": [
+        "petrify"
+      ],
+      "builds": [
+        48
+      ],
+      "unlock": {
+        "type": "independent_milestone",
+        "condition": "石化解除素材を納品",
+        "requiresJob": null
+      },
+      "training": {
+        "style": "free_choice",
+        "prerequisites": [],
+        "actives": [
+          {
+            "name": "硬化弾",
+            "description": "石化を試行する銃撃",
+            "portable": true
+          }
+        ],
+        "passives": [
+          {
+            "name": "石化の狙い",
+            "description": "低い基礎率だけを補正し免疫は維持",
+            "portable": true
+          }
+        ],
+        "ultimate": {
+          "name": "石化の斉射",
+          "description": "敵全体に低率の石化を1体ずつ試行",
+          "portable": false,
+          "limitPerBattle": 1
+        }
+      }
+    },
+    {
+      "id": "neutralist",
+      "name": "無相術士",
+      "tier": "advanced",
+      "status": "proposed",
+      "role": "無相の賢者の専門運用",
+      "weapon": "tome",
+      "elements": [
+        "none"
+      ],
+      "statuses": [],
+      "builds": [
+        49
+      ],
+      "unlock": {
+        "type": "independent_milestone",
+        "condition": "無属性の古文書を納品",
+        "requiresJob": null
+      },
+      "training": {
+        "style": "free_choice",
+        "prerequisites": [],
+        "actives": [
+          {
+            "name": "無相弾",
+            "description": "無属性の単体魔法",
+            "portable": true
+          }
+        ],
+        "passives": [
+          {
+            "name": "無相の節約",
+            "description": "無属性魔法のMPを軽減",
+            "portable": true
+          }
+        ],
+        "ultimate": {
+          "name": "白紙の星",
+          "description": "高威力の無属性単体魔法",
+          "portable": false,
+          "limitPerBattle": 1
+        }
+      }
+    },
+    {
+      "id": "lightkeeper",
+      "name": "光導士",
+      "tier": "advanced",
+      "status": "proposed",
+      "role": "破邪の光術師の専門運用",
+      "weapon": "staff",
+      "elements": [
+        "light"
+      ],
+      "statuses": [
+        "curse"
+      ],
+      "builds": [
+        50,
+        77
+      ],
+      "unlock": {
+        "type": "independent_milestone",
+        "condition": "呪い解除の救護任務",
+        "requiresJob": null
+      },
+      "training": {
+        "style": "free_choice",
+        "prerequisites": [],
+        "actives": [
+          {
+            "name": "浄光",
+            "description": "光単体魔法と味方の治療を使い分ける",
+            "portable": true
+          }
+        ],
+        "passives": [
+          {
+            "name": "清浄障壁",
+            "description": "実際に解除した味方へ小障壁",
+            "portable": true
+          }
+        ],
+        "ultimate": {
+          "name": "黎明の祈り",
+          "description": "味方全体を小回復し、解除対象だけに小障壁",
+          "portable": false,
+          "limitPerBattle": 1
+        }
+      }
+    },
+    {
+      "id": "nocturne",
+      "name": "夜術士",
+      "tier": "advanced",
+      "status": "proposed",
+      "role": "冥影の夜術師の専門運用",
+      "weapon": "tome",
+      "elements": [
+        "dark"
+      ],
+      "statuses": [],
+      "builds": [
+        51,
+        58
+      ],
+      "unlock": {
+        "type": "independent_milestone",
+        "condition": "光と闇の遺物を調査",
+        "requiresJob": null
+      },
+      "training": {
+        "style": "free_choice",
+        "prerequisites": [],
+        "actives": [
+          {
+            "name": "夜吸の弾",
+            "description": "闇の単体魔法に実ダメージ依存の吸収",
+            "portable": true
+          }
+        ],
+        "passives": [
+          {
+            "name": "闇の吸収",
+            "description": "闇攻撃時の吸収量を増加",
+            "portable": true
+          }
+        ],
+        "ultimate": {
+          "name": "双極の月",
+          "description": "光と闇から相性のよい方で単体を攻撃",
+          "portable": false,
+          "limitPerBattle": 1
+        }
+      }
+    },
+    {
+      "id": "infernalist",
+      "name": "炎術士",
+      "tier": "advanced",
+      "status": "proposed",
+      "role": "炎獄の掃討者の専門運用",
+      "weapon": "tome",
+      "elements": [
+        "fire"
+      ],
+      "statuses": [
+        "burn"
+      ],
+      "builds": [
+        52
+      ],
+      "unlock": {
+        "type": "independent_milestone",
+        "condition": "火山の調査依頼",
+        "requiresJob": null
+      },
+      "training": {
+        "style": "free_choice",
+        "prerequisites": [],
+        "actives": [
+          {
+            "name": "炎獄輪",
+            "description": "全体炎魔法と火傷を試行",
+            "portable": true
+          }
+        ],
+        "passives": [
+          {
+            "name": "火傷への余熱",
+            "description": "火傷の敵への炎威力増加",
+            "portable": true
+          }
+        ],
+        "ultimate": {
+          "name": "灰燼の火雨",
+          "description": "全体炎魔法と低率火傷、1対象1判定",
+          "portable": false,
+          "limitPerBattle": 1
+        }
+      }
+    },
+    {
+      "id": "iceguard",
+      "name": "氷晶術士",
+      "tier": "advanced",
+      "status": "proposed",
+      "role": "氷晶の守護魔導士の専門運用",
+      "weapon": "staff",
+      "elements": [
+        "ice"
+      ],
+      "statuses": [
+        "freeze"
+      ],
+      "builds": [
+        53
+      ],
+      "unlock": {
+        "type": "independent_milestone",
+        "condition": "氷地の防衛依頼",
+        "requiresJob": null
+      },
+      "training": {
+        "style": "free_choice",
+        "prerequisites": [],
+        "actives": [
+          {
+            "name": "氷晶壁",
+            "description": "敵1体へ氷攻撃して自身の障壁を補充",
+            "portable": true
+          }
+        ],
+        "passives": [
+          {
+            "name": "氷晶保全",
+            "description": "障壁中だけ氷技能のMPを軽減",
+            "portable": true
+          }
+        ],
+        "ultimate": {
+          "name": "氷宮の守り",
+          "description": "味方全体へ小障壁、敵1体に氷魔法",
+          "portable": false,
+          "limitPerBattle": 1
+        }
+      }
+    },
+    {
+      "id": "stormcaster",
+      "name": "雷術士",
+      "tier": "advanced",
+      "status": "proposed",
+      "role": "雷迅の連撃師の専門運用",
+      "weapon": "tome",
+      "elements": [
+        "thunder"
+      ],
+      "statuses": [
+        "paralysis"
+      ],
+      "builds": [
+        54
+      ],
+      "unlock": {
+        "type": "independent_milestone",
+        "condition": "雷の遺物を納品",
+        "requiresJob": null
+      },
+      "training": {
+        "style": "free_choice",
+        "prerequisites": [],
+        "actives": [
+          {
+            "name": "鎖雷",
+            "description": "敵1体に多段雷",
+            "portable": true
+          }
+        ],
+        "passives": [
+          {
+            "name": "雷撃会心の還元",
+            "description": "雷直接命中の会心時MPを1行動1回回復",
+            "portable": true
+          }
+        ],
+        "ultimate": {
+          "name": "百雷の嵐",
+          "description": "敵1体に高威力多段雷、麻痺を1回試行",
+          "portable": false,
+          "limitPerBattle": 1
+        }
+      }
+    },
+    {
+      "id": "winddancer",
+      "name": "風奏士",
+      "tier": "advanced",
+      "status": "proposed",
+      "role": "風刃の奏者の専門運用",
+      "weapon": "fan",
+      "elements": [
+        "wind"
+      ],
+      "statuses": [],
+      "builds": [
+        55,
+        63
+      ],
+      "unlock": {
+        "type": "independent_milestone",
+        "condition": "風鳴りの調査依頼",
+        "requiresJob": null
+      },
+      "training": {
+        "style": "free_choice",
+        "prerequisites": [],
+        "actives": [
+          {
+            "name": "風の構え",
+            "description": "風攻撃とSPD上昇を使い分ける",
+            "portable": true
+          }
+        ],
+        "passives": [
+          {
+            "name": "回避舞の余韻",
+            "description": "回避時にMP回復し舞を更新",
+            "portable": true
+          }
+        ],
+        "ultimate": {
+          "name": "風環の舞",
+          "description": "味方全体へSPD・回避バフ",
+          "portable": false,
+          "limitPerBattle": 1
+        }
+      }
+    },
+    {
+      "id": "earthbinder",
+      "name": "土導士",
+      "tier": "advanced",
+      "status": "proposed",
+      "role": "大地の鉄壁術師の専門運用",
+      "weapon": "staff",
+      "elements": [
+        "earth"
+      ],
+      "statuses": [
+        "stun"
+      ],
+      "builds": [
+        56
+      ],
+      "unlock": {
+        "type": "independent_milestone",
+        "condition": "岩石の採集依頼",
+        "requiresJob": null
+      },
+      "training": {
+        "style": "free_choice",
+        "prerequisites": [],
+        "actives": [
+          {
+            "name": "石壁の一撃",
+            "description": "土攻撃から自己DEF強化を優先",
+            "portable": true
+          }
+        ],
+        "passives": [
+          {
+            "name": "土撃の障壁",
+            "description": "土直接命中で自己小障壁",
+            "portable": true
+          }
+        ],
+        "ultimate": {
+          "name": "大地の砦",
+          "description": "味方全体へDEFバフ、自己のみ障壁",
+          "portable": false,
+          "limitPerBattle": 1
+        }
+      }
+    },
+    {
+      "id": "tidecaller",
+      "name": "潮導士",
+      "tier": "advanced",
+      "status": "proposed",
+      "role": "潮流の導師の専門運用",
+      "weapon": "staff",
+      "elements": [
+        "water"
+      ],
+      "statuses": [],
+      "builds": [
+        57,
+        89
+      ],
+      "unlock": {
+        "type": "independent_milestone",
+        "condition": "水域の救援依頼",
+        "requiresJob": null
+      },
+      "training": {
+        "style": "free_choice",
+        "prerequisites": [],
+        "actives": [
+          {
+            "name": "潮巡り",
+            "description": "水魔法か味方単体へのMP譲渡",
+            "portable": true
+          }
+        ],
+        "passives": [
+          {
+            "name": "資源分配",
+            "description": "水命中後の自己MP回復",
+            "portable": true
+          }
+        ],
+        "ultimate": {
+          "name": "満潮の祈り",
+          "description": "自分のMPを複数の味方へ上限付きで移す",
+          "portable": false,
+          "limitPerBattle": 1
+        }
+      }
+    },
+    {
+      "id": "prism",
+      "name": "元素学士",
+      "tier": "advanced",
+      "status": "proposed",
+      "role": "四元素の適応師の専門運用",
+      "weapon": "tome",
+      "elements": [
+        "fire",
+        "ice",
+        "wind",
+        "earth"
+      ],
+      "statuses": [],
+      "builds": [
+        59
+      ],
+      "unlock": {
+        "type": "independent_milestone",
+        "condition": "四属性の図鑑記録",
+        "requiresJob": null
+      },
+      "training": {
+        "style": "free_choice",
+        "prerequisites": [],
+        "actives": [
+          {
+            "name": "四相選び",
+            "description": "炎氷風土のうち有利な属性で攻撃",
+            "portable": true
+          }
+        ],
+        "passives": [
+          {
+            "name": "弱点時の節約",
+            "description": "判明済みの弱点に合う技能の費用軽減",
+            "portable": true
+          }
+        ],
+        "ultimate": {
+          "name": "四相転換",
+          "description": "炎氷風土から対象ごとに最良属性を選ぶ全体攻撃",
+          "portable": false,
+          "limitPerBattle": 1
+        }
+      }
+    },
+    {
+      "id": "fusionsword",
+      "name": "融合剣士",
+      "tier": "advanced",
+      "status": "proposed",
+      "role": "物魔の融合剣士の専門運用",
+      "weapon": "sword",
+      "elements": [
+        "slash",
+        "thunder"
+      ],
+      "statuses": [],
+      "builds": [
+        60,
+        70
+      ],
+      "unlock": {
+        "type": "independent_milestone",
+        "condition": "複属性装備を制作",
+        "requiresJob": null
+      },
+      "training": {
+        "style": "free_choice",
+        "prerequisites": [],
+        "actives": [
+          {
+            "name": "融合斬",
+            "description": "付与属性を使う物理斬撃",
+            "portable": true
+          }
+        ],
+        "passives": [
+          {
+            "name": "魔力転写",
+            "description": "MAGの一部を武器攻撃へ加える",
+            "portable": true
+          }
+        ],
+        "ultimate": {
+          "name": "双刃の交差",
+          "description": "主手・副手の属性で各1撃",
+          "portable": false,
+          "limitPerBattle": 1
+        }
+      }
+    },
+    {
+      "id": "lancer",
+      "name": "盾穿槍兵",
+      "tier": "advanced",
+      "status": "proposed",
+      "role": "盾穿ちの槍兵の専門運用",
+      "weapon": "spear",
+      "elements": [
+        "pierce"
+      ],
+      "statuses": [],
+      "builds": [
+        61,
+        69
+      ],
+      "unlock": {
+        "type": "independent_milestone",
+        "condition": "重装の強敵を討伐",
+        "requiresJob": null
+      },
+      "training": {
+        "style": "free_choice",
+        "prerequisites": [],
+        "actives": [
+          {
+            "name": "穿盾の溜め",
+            "description": "溜めて単体刺突を撃つ",
+            "portable": true
+          }
+        ],
+        "passives": [
+          {
+            "name": "刺突の集中",
+            "description": "溜め後の刺突だけDEF貫通",
+            "portable": true
+          }
+        ],
+        "ultimate": {
+          "name": "裂陣槍",
+          "description": "単体の障壁を削った後に刺突",
+          "portable": false,
+          "limitPerBattle": 1
+        }
+      }
+    },
+    {
+      "id": "marksman",
+      "name": "連弾士",
+      "tier": "advanced",
+      "status": "proposed",
+      "role": "連弾のガンナーの専門運用",
+      "weapon": "gun",
+      "elements": [
+        "pierce"
+      ],
+      "statuses": [],
+      "builds": [
+        62,
+        68
+      ],
+      "unlock": {
+        "type": "independent_milestone",
+        "condition": "標的射撃の依頼",
+        "requiresJob": null
+      },
+      "training": {
+        "style": "free_choice",
+        "prerequisites": [],
+        "actives": [
+          {
+            "name": "連弾観測",
+            "description": "速射または精密調査を選択",
+            "portable": true
+          }
+        ],
+        "passives": [
+          {
+            "name": "多段の会心",
+            "description": "多段射撃の会心後にMP回復",
+            "portable": true
+          }
+        ],
+        "ultimate": {
+          "name": "追跡斉射",
+          "description": "単体へ高命中の多段射撃",
+          "portable": false,
+          "limitPerBattle": 1
+        }
+      }
+    },
+    {
+      "id": "whipwarden",
+      "name": "捕縛師",
+      "tier": "advanced",
+      "status": "proposed",
+      "role": "毒鞭の捕縛師の専門運用",
+      "weapon": "whip",
+      "elements": [
+        "blunt"
+      ],
+      "statuses": [
+        "bind",
+        "poison"
+      ],
+      "builds": [
+        64
+      ],
+      "unlock": {
+        "type": "independent_milestone",
+        "condition": "捕獲依頼を達成",
+        "requiresJob": null
+      },
+      "training": {
+        "style": "free_choice",
+        "prerequisites": [],
+        "actives": [
+          {
+            "name": "毒網の鞭",
+            "description": "敵全体に低率の毒と束縛を試行",
+            "portable": true
+          }
+        ],
+        "passives": [
+          {
+            "name": "全体付与の心得",
+            "description": "敵全体への付与率を増加",
+            "portable": true
+          }
+        ],
+        "ultimate": {
+          "name": "大捕縛",
+          "description": "敵全体に束縛を試行し、付与成功対象へ打撃",
+          "portable": false,
+          "limitPerBattle": 1
+        }
+      }
+    },
+    {
+      "id": "breakhammer",
+      "name": "破壁士",
+      "tier": "advanced",
+      "status": "proposed",
+      "role": "鉄鎚の盾崩しの専門運用",
+      "weapon": "hammer",
+      "elements": [
+        "blunt"
+      ],
+      "statuses": [
+        "stun"
+      ],
+      "builds": [
+        65,
+        72
+      ],
+      "unlock": {
+        "type": "independent_milestone",
+        "condition": "障壁持ちの敵を調査",
+        "requiresJob": null
+      },
+      "training": {
+        "style": "free_choice",
+        "prerequisites": [],
+        "actives": [
+          {
+            "name": "破壁鎚",
+            "description": "障壁を先に削る単体打撃",
+            "portable": true
+          }
+        ],
+        "passives": [
+          {
+            "name": "被弾の鉄気",
+            "description": "実HP被弾ごとにDEF段階を得る",
+            "portable": true
+          }
+        ],
+        "ultimate": {
+          "name": "砦砕き",
+          "description": "単体の障壁に強い打撃、スタン試行",
+          "portable": false,
+          "limitPerBattle": 1
+        }
+      }
+    },
+    {
+      "id": "swordreturn",
+      "name": "返刃士",
+      "tier": "advanced",
+      "status": "proposed",
+      "role": "返し斬りの剣豪の専門運用",
+      "weapon": "katana",
+      "elements": [
+        "slash"
+      ],
+      "statuses": [
+        "blind"
+      ],
+      "builds": [
+        66,
+        88
+      ],
+      "unlock": {
+        "type": "independent_milestone",
+        "condition": "回避の演習依頼",
+        "requiresJob": null
+      },
+      "training": {
+        "style": "free_choice",
+        "prerequisites": [],
+        "actives": [
+          {
+            "name": "返しの構え",
+            "description": "回避準備から直接反撃を狙う",
+            "portable": true
+          }
+        ],
+        "passives": [
+          {
+            "name": "返刃会心",
+            "description": "反撃だけ会心率を増加",
+            "portable": true
+          }
+        ],
+        "ultimate": {
+          "name": "一閃返し",
+          "description": "次の敵直接攻撃を回避した時に一度だけ反撃",
+          "portable": false,
+          "limitPerBattle": 1
+        }
+      }
+    },
+    {
+      "id": "redaxe",
+      "name": "背水斧士",
+      "tier": "advanced",
+      "status": "proposed",
+      "role": "重斧の背水戦士の専門運用",
+      "weapon": "axe",
+      "elements": [
+        "slash"
+      ],
+      "statuses": [],
+      "builds": [
+        67,
+        73
+      ],
+      "unlock": {
+        "type": "independent_milestone",
+        "condition": "消耗戦の闘技依頼",
+        "requiresJob": null
+      },
+      "training": {
+        "style": "free_choice",
+        "prerequisites": [],
+        "actives": [
+          {
+            "name": "血誓の斧",
+            "description": "HPを払って単体を強打",
+            "portable": true
+          }
+        ],
+        "passives": [
+          {
+            "name": "再生の盾",
+            "description": "低HP時に再生と被ダメ軽減",
+            "portable": true
+          }
+        ],
+        "ultimate": {
+          "name": "命燃やし",
+          "description": "HPを消費して単体を強打し、撃破時のみHP一部回復",
+          "portable": false,
+          "limitPerBattle": 1
+        }
+      }
+    },
+    {
+      "id": "wardweaver",
+      "name": "障壁織士",
+      "tier": "advanced",
+      "status": "proposed",
+      "role": "回避障壁の舞踏士の専門運用",
+      "weapon": "fan",
+      "elements": [
+        "wind"
+      ],
+      "statuses": [],
+      "builds": [
+        74,
+        84
+      ],
+      "unlock": {
+        "type": "independent_milestone",
+        "condition": "障壁の救護依頼",
+        "requiresJob": null
+      },
+      "training": {
+        "style": "free_choice",
+        "prerequisites": [],
+        "actives": [
+          {
+            "name": "護風の舞",
+            "description": "自分の回避を強化して障壁獲得を狙う",
+            "portable": true
+          }
+        ],
+        "passives": [
+          {
+            "name": "回避障壁",
+            "description": "回避時に小障壁、派生から再発動なし",
+            "portable": true
+          }
+        ],
+        "ultimate": {
+          "name": "護風の幕",
+          "description": "味方全体に小障壁と一時回避強化",
+          "portable": false,
+          "limitPerBattle": 1
+        }
+      }
+    },
+    {
+      "id": "runeguard",
+      "name": "魔力盾士",
+      "tier": "advanced",
+      "status": "proposed",
+      "role": "魔力盾の騎士の専門運用",
+      "weapon": "hammer",
+      "elements": [
+        "blunt"
+      ],
+      "statuses": [],
+      "builds": [
+        71,
+        76,
+        79
+      ],
+      "unlock": {
+        "type": "independent_milestone",
+        "condition": "魔力結晶を納品",
+        "requiresJob": null
+      },
+      "training": {
+        "style": "free_choice",
+        "prerequisites": [],
+        "actives": [
+          {
+            "name": "魔力盾",
+            "description": "自己にMP肩代わりを設定",
+            "portable": true
+          }
+        ],
+        "passives": [
+          {
+            "name": "消費反転",
+            "description": "確定MP消費の一部を小障壁へ変換",
+            "portable": true
+          }
+        ],
+        "ultimate": {
+          "name": "枯れぬ砦",
+          "description": "MPを消費し味方全体に属性軽減",
+          "portable": false,
+          "limitPerBattle": 1
+        }
+      }
+    },
+    {
+      "id": "lifeclerk",
+      "name": "生命司祭",
+      "tier": "advanced",
+      "status": "proposed",
+      "role": "魔力調達の祈祷師の専門運用",
+      "weapon": "staff",
+      "elements": [
+        "light"
+      ],
+      "statuses": [],
+      "builds": [
+        78,
+        80
+      ],
+      "unlock": {
+        "type": "independent_milestone",
+        "condition": "救護物資を納品",
+        "requiresJob": null
+      },
+      "training": {
+        "style": "free_choice",
+        "prerequisites": [],
+        "actives": [
+          {
+            "name": "生命譲渡",
+            "description": "自HPを消費し味方単体を回復",
+            "portable": true
+          }
+        ],
+        "passives": [
+          {
+            "name": "補助の還元",
+            "description": "通常攻撃でのMP回収を補助",
+            "portable": true
+          }
+        ],
+        "ultimate": {
+          "name": "救命の誓い",
+          "description": "自HPを消費し味方全体を回復",
+          "portable": false,
+          "limitPerBattle": 1
+        }
+      }
+    },
+    {
+      "id": "tactician",
+      "name": "連携軍師",
+      "tier": "advanced",
+      "status": "proposed",
+      "role": "会心号令の軍師団の専門運用",
+      "weapon": "instrument",
+      "elements": [
+        "none"
+      ],
+      "statuses": [],
+      "builds": [
+        81,
+        82,
+        83,
+        85,
+        86,
+        87,
+        90
+      ],
+      "unlock": {
+        "type": "independent_milestone",
+        "condition": "複数の救援依頼",
+        "requiresJob": null
+      },
+      "training": {
+        "style": "free_choice",
+        "prerequisites": [],
+        "actives": [
+          {
+            "name": "連携の号令",
+            "description": "味方の次の会心を受け取る号令を出す",
+            "portable": true
+          }
+        ],
+        "passives": [
+          {
+            "name": "味方行動への応援",
+            "description": "味方会心で自身の次の適格行動を強化",
+            "portable": true
+          }
+        ],
+        "ultimate": {
+          "name": "総員の号令",
+          "description": "味方全体に軽減を付与し、次の戦闘不能時に一度だけ生存者へ障壁",
+          "portable": false,
+          "limitPerBattle": 1
+        }
+      }
+    },
+    {
+      "id": "greatblade",
+      "name": "巨剣士",
+      "tier": "advanced",
+      "status": "proposed",
+      "role": "溜め斬りの巨剣士の専門運用",
+      "weapon": "greatsword",
+      "elements": [
+        "slash"
+      ],
+      "statuses": [],
+      "builds": [
+        91
+      ],
+      "unlock": {
+        "type": "independent_milestone",
+        "condition": "重量武器の演習依頼",
+        "requiresJob": null
+      },
+      "training": {
+        "style": "free_choice",
+        "prerequisites": [],
+        "actives": [
+          {
+            "name": "重刃の溜め",
+            "description": "次の単体武器技能を予約強化",
+            "portable": true
+          }
+        ],
+        "passives": [
+          {
+            "name": "溜めの節約",
+            "description": "溜め後の費用を軽減",
+            "portable": true
+          }
+        ],
+        "ultimate": {
+          "name": "山割り",
+          "description": "単体に大威力斬撃、溜めがあれば費用を軽減",
+          "portable": false,
+          "limitPerBattle": 1
+        }
+      }
+    },
+    {
+      "id": "delayer",
+      "name": "遅延術士",
+      "tier": "advanced",
+      "status": "proposed",
+      "role": "遅延爆破の魔術師の専門運用",
+      "weapon": "tome",
+      "elements": [
+        "fire"
+      ],
+      "statuses": [],
+      "builds": [
+        92
+      ],
+      "unlock": {
+        "type": "independent_milestone",
+        "condition": "予告を使う敵を調査",
+        "requiresJob": null
+      },
+      "training": {
+        "style": "free_choice",
+        "prerequisites": [],
+        "actives": [
+          {
+            "name": "遅延爆弾",
+            "description": "敵単体へ次巡の炎ダメージを予約",
+            "portable": true
+          }
+        ],
+        "passives": [
+          {
+            "name": "予約効果の強化",
+            "description": "時間差攻撃の威力増加",
+            "portable": true
+          }
+        ],
+        "ultimate": {
+          "name": "時限の火雨",
+          "description": "敵全体に次巡の炎ダメージを予約",
+          "portable": false,
+          "limitPerBattle": 1
+        }
+      }
+    },
+    {
+      "id": "fieldscout",
+      "name": "観測斥候",
+      "tier": "advanced",
+      "status": "proposed",
+      "role": "図鑑探究の狩人の専門運用",
+      "weapon": "bow",
+      "elements": [
+        "pierce"
+      ],
+      "statuses": [],
+      "builds": [
+        97,
+        99
+      ],
+      "unlock": {
+        "type": "independent_milestone",
+        "condition": "異なる地域の図鑑記録",
+        "requiresJob": null
+      },
+      "training": {
+        "style": "free_choice",
+        "prerequisites": [],
+        "actives": [
+          {
+            "name": "精密調査",
+            "description": "未判明の相性を優先して調査",
+            "portable": true
+          }
+        ],
+        "passives": [
+          {
+            "name": "撤退の段取り",
+            "description": "逃走可能戦の逃走判定を補助",
+            "portable": true
+          }
+        ],
+        "ultimate": {
+          "name": "先導の矢",
+          "description": "敵全体の未判明相性を1件ずつ公開",
+          "portable": false,
+          "limitPerBattle": 1
+        }
+      }
+    },
+    {
+      "id": "raider",
+      "name": "収集盗賊",
+      "tier": "advanced",
+      "status": "proposed",
+      "role": "希少素材の盗賊の専門運用",
+      "weapon": "dagger",
+      "elements": [
+        "pierce"
+      ],
+      "statuses": [],
+      "builds": [
+        98
+      ],
+      "unlock": {
+        "type": "independent_milestone",
+        "condition": "盗取素材の納品",
+        "requiresJob": null
+      },
+      "training": {
+        "style": "free_choice",
+        "prerequisites": [],
+        "actives": [
+          {
+            "name": "選別盗み",
+            "description": "未盗取対象に選別盗みを試行",
+            "portable": true
+          }
+        ],
+        "passives": [
+          {
+            "name": "盗取の心得",
+            "description": "希少盗取判定の補正を戦闘1回",
+            "portable": true
+          }
+        ],
+        "ultimate": {
+          "name": "影の収奪",
+          "description": "敵単体への盗取を試行、盗取済みフラグを順守",
+          "portable": false,
+          "limitPerBattle": 1
+        }
+      }
+    },
+    {
+      "id": "quartermaster",
+      "name": "遠征補給士",
+      "tier": "advanced",
+      "status": "proposed",
+      "role": "遠征の補給師の専門運用",
+      "weapon": "dagger",
+      "elements": [
+        "pierce"
+      ],
+      "statuses": [],
+      "builds": [
+        100
+      ],
+      "unlock": {
+        "type": "independent_milestone",
+        "condition": "補給路の依頼",
+        "requiresJob": null
+      },
+      "training": {
+        "style": "free_choice",
+        "prerequisites": [],
+        "actives": [
+          {
+            "name": "小休止の手当",
+            "description": "勝利後に1回の治療機会を予約",
+            "portable": true
+          }
+        ],
+        "passives": [
+          {
+            "name": "消耗品節約",
+            "description": "戦闘間の消耗品消費時に限定して節約",
+            "portable": true
+          }
+        ],
+        "ultimate": {
+          "name": "遠征の備え",
+          "description": "戦闘中の味方全体に防御バフと小回復",
+          "portable": false,
+          "limitPerBattle": 1
+        }
+      }
+    },
+    {
+      "id": "fistguard",
+      "name": "護拳士",
+      "tier": "advanced",
+      "status": "proposed",
+      "role": "雷縛の拳士の専門運用",
+      "weapon": "fist",
+      "elements": [
+        "blunt"
+      ],
+      "statuses": [
+        "stun",
+        "paralysis"
+      ],
+      "builds": [
+        6,
+        8,
+        24
+      ],
+      "unlock": {
+        "type": "independent_milestone",
+        "condition": "拳の防衛演習",
+        "requiresJob": null
+      },
+      "training": {
+        "style": "free_choice",
+        "prerequisites": [],
+        "actives": [
+          {
+            "name": "護拳の構え",
+            "description": "直接打撃を受ける前に防護の構え",
+            "portable": true
+          }
+        ],
+        "passives": [
+          {
+            "name": "打撃ガード",
+            "description": "打撃被弾後に軽減を積む",
+            "portable": true
+          }
+        ],
+        "ultimate": {
+          "name": "雷光の護拳",
+          "description": "敵単体に打撃・麻痺を試行して自分に軽減",
+          "portable": false,
+          "limitPerBattle": 1
+        }
+      }
+    }
+  ]
+}

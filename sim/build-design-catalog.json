@@ -1,0 +1,6153 @@
+{
+  "schemaVersion": 1,
+  "baseCommit": "9404bdb9cac0c90d98c05be60e220009fdd24e8c",
+  "notes": {
+    "existing": "既存機構で構成可能と見込む。検証状況は別欄。",
+    "requires_addition": "核効果か技能の追加が必要。",
+    "hold": "追加仕様の決定待ち。",
+    "existingParts": "現行CSVの部品候補。始動案全体の動作確認を意味しない。"
+  },
+  "builds": [
+    {
+      "number": 1,
+      "id": "poison_assassin",
+      "name": "毒刃アサシン",
+      "origin": "existing36",
+      "status": "existing",
+      "weapon": [
+        "dagger"
+      ],
+      "action": "毒刃を当ててから毒特効の攻撃へ移る。毒が残る間は通常攻撃でMPを保つ。",
+      "starter": [
+        {
+          "id": "thief_p3_s3",
+          "name": "毒刃",
+          "job": "thief",
+          "jobOnly": false
+        },
+        {
+          "id": "thief_p1_s1",
+          "name": "影縫い",
+          "job": "thief",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": [
+        {
+          "id": "apothecary_p2_s2",
+          "name": "毒薬の心得",
+          "job": "apothecary",
+          "jobOnly": false
+        }
+      ],
+      "sustain": {
+        "affixes": {
+          "weapon": [
+            "VS_STATUS:poison",
+            "DOT_POWER"
+          ],
+          "accessory1": [
+            "STATUS_RATE"
+          ]
+        },
+        "equipmentExamples": [
+          "dagger_t1",
+          "dagger_t2"
+        ]
+      },
+      "weakness": "短い戦闘では毒の継続時間を使い切れない。付与失敗とボスの継続ダメージ補正・一巡の上限が直接火力との差になる。",
+      "supportingParty": [
+        {
+          "job": "knight",
+          "weapon": "hammer"
+        },
+        {
+          "job": "bard",
+          "weapon": "instrument"
+        },
+        {
+          "job": "white_mage",
+          "weapon": "staff"
+        }
+      ],
+      "engineEvidence": [
+        "VS_STATUS:poison",
+        "DOT_POWER",
+        "STATUS_RATE"
+      ],
+      "mechanics": [
+        "poison",
+        "dot",
+        "status_finisher"
+      ],
+      "newEffects": [],
+      "verification": {
+        "controlledCoreProbe4": true,
+        "fullBuild6": "unverified"
+      }
+    },
+    {
+      "number": 2,
+      "id": "toxic_alchemist",
+      "name": "猛毒の錬金術師",
+      "origin": "existing36",
+      "status": "existing",
+      "weapon": [
+        "dagger"
+      ],
+      "action": "猛毒薬を維持し、毒が効いている間は応急手当と道具で味方を支える。",
+      "starter": [
+        {
+          "id": "apothecary_p3_s1",
+          "name": "猛毒薬",
+          "job": "apothecary",
+          "jobOnly": false
+        },
+        {
+          "id": "apothecary_p1_s1",
+          "name": "応急手当",
+          "job": "apothecary",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": [
+        {
+          "id": "apothecary_p2_s2",
+          "name": "毒薬の心得",
+          "job": "apothecary",
+          "jobOnly": false
+        }
+      ],
+      "sustain": {
+        "affixes": {
+          "weapon": [
+            "VS_STATUS:toxic",
+            "DOT_POWER"
+          ],
+          "accessory1": [
+            "STATUS_RATE"
+          ],
+          "accessory2": [
+            "HEAL_POWER"
+          ]
+        },
+        "equipmentExamples": [
+          "dagger_t1",
+          "dagger_t2"
+        ]
+      },
+      "weakness": "猛毒が伸びる前に終わる戦闘では準備の利益が小さい。ボスへの継続ダメージ補正と一巡の上限がある。",
+      "supportingParty": [
+        {
+          "job": "knight",
+          "weapon": "hammer"
+        },
+        {
+          "job": "bard",
+          "weapon": "instrument"
+        },
+        {
+          "job": "white_mage",
+          "weapon": "staff"
+        }
+      ],
+      "engineEvidence": [
+        "VS_STATUS:toxic",
+        "DOT_POWER",
+        "STATUS_RATE",
+        "HEAL_POWER"
+      ],
+      "mechanics": [
+        "toxic",
+        "dot",
+        "support"
+      ],
+      "newEffects": [],
+      "verification": {
+        "controlledCoreProbe4": true,
+        "fullBuild6": "unverified"
+      }
+    },
+    {
+      "number": 3,
+      "id": "burning_spellblade",
+      "name": "業火の魔剣士",
+      "origin": "existing36",
+      "status": "existing",
+      "weapon": [
+        "sword"
+      ],
+      "action": "灼刃で火傷を付け、敵の物理攻撃を弱めつつ火傷特効で削る。",
+      "starter": [
+        {
+          "id": "spellblade_p3_s2",
+          "name": "灼刃",
+          "job": "spellblade",
+          "jobOnly": false
+        },
+        {
+          "id": "spellblade_p2_s1",
+          "name": "魔力斬り",
+          "job": "spellblade",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": [
+        {
+          "id": "spellblade_p2_s2",
+          "name": "剣と魔の心得",
+          "job": "spellblade",
+          "jobOnly": false
+        }
+      ],
+      "sustain": {
+        "affixes": {
+          "weapon": [
+            "VS_STATUS:burn",
+            "DOT_POWER"
+          ],
+          "accessory1": [
+            "STATUS_RATE"
+          ]
+        },
+        "equipmentExamples": [
+          "sword_t1",
+          "sword_t2"
+        ]
+      },
+      "weakness": "魔法中心の敵には火傷による物理弱体が役立ちにくい。炎耐性と付与失敗にも左右される。",
+      "supportingParty": [
+        {
+          "job": "knight",
+          "weapon": "hammer"
+        },
+        {
+          "job": "bard",
+          "weapon": "instrument"
+        },
+        {
+          "job": "white_mage",
+          "weapon": "staff"
+        }
+      ],
+      "engineEvidence": [
+        "VS_STATUS:burn",
+        "DOT_POWER",
+        "STATUS_RATE"
+      ],
+      "mechanics": [
+        "burn",
+        "physical_suppression",
+        "status_finisher"
+      ],
+      "newEffects": [],
+      "verification": {
+        "controlledCoreProbe4": true,
+        "fullBuild6": "unverified"
+      }
+    },
+    {
+      "number": 4,
+      "id": "bleeding_reaper",
+      "name": "出血の死神",
+      "origin": "existing36",
+      "status": "existing",
+      "weapon": [
+        "scythe"
+      ],
+      "action": "鎌の通常攻撃と血風で出血を付け、出血中の敵を武器攻撃で追い込む。",
+      "starter": [
+        {
+          "id": "warrior_p3_s3",
+          "name": "血風",
+          "job": "warrior",
+          "jobOnly": false
+        },
+        {
+          "id": "warrior_p1_s1",
+          "name": "剛断ち",
+          "job": "warrior",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": [
+        {
+          "id": "warrior_p1_s2",
+          "name": "刃の心得",
+          "job": "warrior",
+          "jobOnly": false
+        },
+        {
+          "id": "apothecary_p2_s2",
+          "name": "毒薬の心得",
+          "job": "apothecary",
+          "jobOnly": false
+        }
+      ],
+      "sustain": {
+        "affixes": {
+          "weapon": [
+            "VS_STATUS:bleed",
+            "DOT_POWER"
+          ],
+          "accessory1": [
+            "STATUS_RATE"
+          ]
+        },
+        "equipmentExamples": [
+          "scythe_t1",
+          "scythe_t2"
+        ]
+      },
+      "weakness": "血風の自傷で回復負担が増える。出血の付与失敗とボスへの継続ダメージ補正が弱点になる。",
+      "supportingParty": [
+        {
+          "job": "knight",
+          "weapon": "hammer"
+        },
+        {
+          "job": "bard",
+          "weapon": "instrument"
+        },
+        {
+          "job": "white_mage",
+          "weapon": "staff"
+        }
+      ],
+      "engineEvidence": [
+        "VS_STATUS:bleed",
+        "DOT_POWER",
+        "STATUS_RATE"
+      ],
+      "mechanics": [
+        "bleed",
+        "weapon_trait",
+        "self_cost"
+      ],
+      "newEffects": [],
+      "verification": {
+        "controlledCoreProbe4": true,
+        "fullBuild6": "unverified"
+      }
+    },
+    {
+      "number": 5,
+      "id": "dream_executioner",
+      "name": "夢狩りの暗殺者",
+      "origin": "existing36",
+      "status": "existing",
+      "weapon": [
+        "greatsword"
+      ],
+      "action": "主役は練気と眠り薬を持ち、吟遊詩人も子守歌で睡眠を供給する。睡眠付与後、主役より先の味方は回復・支援へ回り、大剣の一撃まで解除しない。",
+      "starter": [
+        {
+          "id": "thief_p4_s2",
+          "name": "眠り薬",
+          "job": "thief",
+          "jobOnly": false
+        },
+        {
+          "id": "monk_p2_s1",
+          "name": "練気",
+          "job": "monk",
+          "jobOnly": false
+        },
+        {
+          "id": "warrior_p1_s1",
+          "name": "剛断ち",
+          "job": "warrior",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": [
+        {
+          "id": "warrior_p1_s2",
+          "name": "刃の心得",
+          "job": "warrior",
+          "jobOnly": false
+        }
+      ],
+      "sustain": {
+        "affixes": {
+          "weapon": [
+            "VS_STATUS:sleep",
+            "CRIT_DMG"
+          ],
+          "accessory1": [
+            "STATUS_RATE"
+          ]
+        },
+        "equipmentExamples": [
+          "greatsword_t1",
+          "greatsword_t2"
+        ]
+      },
+      "weakness": "ボスは行動封じが入りにくく、再付与も難しくなる。味方が先に攻撃して起こすと大剣への特効を失う。",
+      "supportingParty": [
+        {
+          "job": "knight",
+          "weapon": "hammer"
+        },
+        {
+          "job": "bard",
+          "weapon": "instrument",
+          "actions": [
+            "bard_p2_s3",
+            "bard_p1_s1"
+          ],
+          "passives": [
+            "bard_p1_s2"
+          ],
+          "crossSkills": []
+        },
+        {
+          "job": "white_mage",
+          "weapon": "staff"
+        }
+      ],
+      "engineEvidence": [
+        "VS_STATUS:sleep",
+        "CRIT_DMG",
+        "STATUS_RATE"
+      ],
+      "mechanics": [
+        "sleep",
+        "single_burst",
+        "turn_order"
+      ],
+      "newEffects": [],
+      "verification": {
+        "controlledCoreProbe4": true,
+        "fullBuild6": "unverified"
+      }
+    },
+    {
+      "number": 6,
+      "id": "thunder_brawler",
+      "name": "雷縛の拳士",
+      "origin": "existing36",
+      "status": "existing",
+      "weapon": [
+        "fist"
+      ],
+      "action": "雷掌で麻痺を狙い、拳の手数で攻める。麻痺は確率で行動を止める補助として扱う。",
+      "starter": [
+        {
+          "id": "monk_p4_s1",
+          "name": "雷掌",
+          "job": "monk",
+          "jobOnly": false
+        },
+        {
+          "id": "monk_p1_s1",
+          "name": "発勁",
+          "job": "monk",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": [
+        {
+          "id": "monk_p1_s2",
+          "name": "拳の心得",
+          "job": "monk",
+          "jobOnly": false
+        }
+      ],
+      "sustain": {
+        "affixes": {
+          "weapon": [
+            "VS_STATUS:paralysis",
+            "STATUS_RATE"
+          ],
+          "accessory1": [
+            "CRT"
+          ]
+        },
+        "equipmentExamples": [
+          "fist_t1",
+          "fist_t2"
+        ]
+      },
+      "weakness": "麻痺が行動を止めない巡もある。ボスへの行動封じの減衰と、雷・打撃耐性に左右される。",
+      "supportingParty": [
+        {
+          "job": "knight",
+          "weapon": "hammer"
+        },
+        {
+          "job": "bard",
+          "weapon": "instrument"
+        },
+        {
+          "job": "white_mage",
+          "weapon": "staff"
+        }
+      ],
+      "engineEvidence": [
+        "VS_STATUS:paralysis",
+        "STATUS_RATE",
+        "CRT"
+      ],
+      "mechanics": [
+        "paralysis",
+        "multi_hit"
+      ],
+      "newEffects": [],
+      "verification": {
+        "controlledCoreProbe4": true,
+        "fullBuild6": "unverified"
+      }
+    },
+    {
+      "number": 7,
+      "id": "frost_executioner",
+      "name": "氷結の処刑人",
+      "origin": "existing36",
+      "status": "existing",
+      "weapon": [
+        "sword"
+      ],
+      "action": "主役と吟遊詩人が霜刃を使える。先に動く味方が凍結を付与し、主役の単体攻撃へつなぐ。凍結後、主役より先の味方は回復・支援へ回り、解除を避ける。",
+      "starter": [
+        {
+          "id": "spellblade_p3_s1",
+          "name": "霜刃",
+          "job": "spellblade",
+          "jobOnly": false
+        },
+        {
+          "id": "spellblade_p2_s1",
+          "name": "魔力斬り",
+          "job": "spellblade",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": [
+        {
+          "id": "spellblade_p2_s2",
+          "name": "剣と魔の心得",
+          "job": "spellblade",
+          "jobOnly": false
+        }
+      ],
+      "sustain": {
+        "affixes": {
+          "weapon": [
+            "VS_STATUS:freeze",
+            "STATUS_RATE"
+          ],
+          "accessory1": [
+            "WEAK_DMG"
+          ]
+        },
+        "equipmentExamples": [
+          "sword_t1",
+          "sword_t2"
+        ]
+      },
+      "weakness": "付与率が控えめで、ボスへの行動封じはさらに入りにくい。別の味方が先に攻撃して凍結を解くと特効を失う。",
+      "supportingParty": [
+        {
+          "job": "knight",
+          "weapon": "hammer"
+        },
+        {
+          "job": "bard",
+          "weapon": "instrument",
+          "actions": [
+            "spellblade_p3_s1",
+            "bard_p1_s1"
+          ],
+          "passives": [
+            "bard_p1_s2"
+          ],
+          "crossSkills": [
+            "spellblade_p3_s1"
+          ]
+        },
+        {
+          "job": "white_mage",
+          "weapon": "staff"
+        }
+      ],
+      "engineEvidence": [
+        "VS_STATUS:freeze",
+        "STATUS_RATE",
+        "WEAK_DMG"
+      ],
+      "mechanics": [
+        "freeze",
+        "single_burst"
+      ],
+      "newEffects": [],
+      "verification": {
+        "controlledCoreProbe4": true,
+        "fullBuild6": "unverified"
+      }
+    },
+    {
+      "number": 8,
+      "id": "stun_breaker",
+      "name": "気絶の破壊者",
+      "origin": "existing36",
+      "status": "existing",
+      "weapon": [
+        "hammer"
+      ],
+      "action": "盾打ちと鎚の通常攻撃でスタンを狙う。次の味方が行動する前に当てると一巡の被害を減らせる。",
+      "starter": [
+        {
+          "id": "knight_p3_s1",
+          "name": "盾打ち",
+          "job": "knight",
+          "jobOnly": false
+        },
+        {
+          "id": "knight_p2_s1",
+          "name": "聖剣",
+          "job": "knight",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": [
+        {
+          "id": "knight_p3_s2",
+          "name": "盾の心得",
+          "job": "knight",
+          "jobOnly": false
+        }
+      ],
+      "sustain": {
+        "affixes": {
+          "weapon": [
+            "VS_STATUS:stun",
+            "STATUS_RATE"
+          ],
+          "accessory1": [
+            "STR"
+          ]
+        },
+        "equipmentExamples": [
+          "hammer_t1",
+          "hammer_t2"
+        ]
+      },
+      "weakness": "ボスには行動封じの減衰と再付与制限がある。敵の攻撃を確実に止める前提では動けない。",
+      "supportingParty": [
+        {
+          "job": "knight",
+          "weapon": "hammer"
+        },
+        {
+          "job": "bard",
+          "weapon": "instrument"
+        },
+        {
+          "job": "white_mage",
+          "weapon": "staff"
+        }
+      ],
+      "engineEvidence": [
+        "VS_STATUS:stun",
+        "STATUS_RATE",
+        "STR"
+      ],
+      "mechanics": [
+        "stun",
+        "weapon_trait",
+        "turn_order"
+      ],
+      "newEffects": [],
+      "verification": {
+        "controlledCoreProbe4": true,
+        "fullBuild6": "unverified"
+      }
+    },
+    {
+      "number": 9,
+      "id": "binding_hunter",
+      "name": "束縛の狩人",
+      "origin": "existing36",
+      "status": "existing",
+      "weapon": [
+        "bow"
+      ],
+      "action": "足止めの矢で束縛を付け、回避を封じた標的を狙い撃ちする。束縛特効を継続火力へ変える。",
+      "starter": [
+        {
+          "id": "hunter_p3_s1",
+          "name": "足止めの矢",
+          "job": "hunter",
+          "jobOnly": false
+        },
+        {
+          "id": "hunter_p1_s1",
+          "name": "狙い撃ち",
+          "job": "hunter",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": [
+        {
+          "id": "hunter_p1_s2",
+          "name": "射手の心得",
+          "job": "hunter",
+          "jobOnly": false
+        }
+      ],
+      "sustain": {
+        "affixes": {
+          "weapon": [
+            "VS_STATUS:bind",
+            "STATUS_RATE"
+          ],
+          "accessory1": [
+            "WEAK_DMG"
+          ]
+        },
+        "equipmentExamples": [
+          "bow_t1",
+          "bow_t2"
+        ]
+      },
+      "weakness": "束縛は敵の攻撃自体を止めない。元から回避しにくい敵では制御効果が小さく、付与にも失敗がある。",
+      "supportingParty": [
+        {
+          "job": "knight",
+          "weapon": "hammer"
+        },
+        {
+          "job": "bard",
+          "weapon": "instrument"
+        },
+        {
+          "job": "white_mage",
+          "weapon": "staff"
+        }
+      ],
+      "engineEvidence": [
+        "VS_STATUS:bind",
+        "STATUS_RATE",
+        "WEAK_DMG"
+      ],
+      "mechanics": [
+        "bind",
+        "accuracy_support",
+        "status_finisher"
+      ],
+      "newEffects": [],
+      "verification": {
+        "controlledCoreProbe4": true,
+        "fullBuild6": "unverified"
+      }
+    },
+    {
+      "number": 10,
+      "id": "silent_hexer",
+      "name": "沈黙の封魔師",
+      "origin": "existing36",
+      "status": "existing",
+      "weapon": [
+        "tome"
+      ],
+      "action": "封魔の呪で魔法を止め、衰えの呪で物理への切り替えにも備える。闇弾で攻撃を続ける。",
+      "starter": [
+        {
+          "id": "hexer_p3_s1",
+          "name": "封魔の呪",
+          "job": "hexer",
+          "jobOnly": false
+        },
+        {
+          "id": "hexer_p1_s1",
+          "name": "衰えの呪",
+          "job": "hexer",
+          "jobOnly": false
+        },
+        {
+          "id": "hexer_p2_s1",
+          "name": "闇弾",
+          "job": "hexer",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": [],
+      "sustain": {
+        "affixes": {
+          "weapon": [
+            "VS_STATUS:silence",
+            "STATUS_RATE"
+          ],
+          "body": [
+            "PHYS_CUT"
+          ],
+          "accessory1": [
+            "MP_SAVE"
+          ]
+        },
+        "equipmentExamples": [
+          "tome_t1",
+          "tome_t2"
+        ]
+      },
+      "weakness": "物理攻撃が多い敵には沈黙の利益が小さい。沈黙しても敵は物理攻撃へ切り替えてくる。",
+      "supportingParty": [
+        {
+          "job": "knight",
+          "weapon": "hammer"
+        },
+        {
+          "job": "bard",
+          "weapon": "instrument"
+        },
+        {
+          "job": "white_mage",
+          "weapon": "staff"
+        }
+      ],
+      "engineEvidence": [
+        "VS_STATUS:silence",
+        "STATUS_RATE",
+        "PHYS_CUT",
+        "MP_SAVE"
+      ],
+      "mechanics": [
+        "silence",
+        "physical_suppression"
+      ],
+      "newEffects": [],
+      "verification": {
+        "controlledCoreProbe4": true,
+        "fullBuild6": "unverified"
+      }
+    },
+    {
+      "number": 11,
+      "id": "illusion_duelist",
+      "name": "暗闇の幻影剣士",
+      "origin": "existing36",
+      "status": "existing",
+      "weapon": [
+        "katana"
+      ],
+      "action": "幻惑刃と煙玉で敵の命中を落とし、回避した攻撃へ反撃する。",
+      "starter": [
+        {
+          "id": "thief_p4_s1",
+          "name": "幻惑刃",
+          "job": "thief",
+          "jobOnly": false
+        },
+        {
+          "id": "thief_p3_s1",
+          "name": "煙玉",
+          "job": "thief",
+          "jobOnly": false
+        },
+        {
+          "id": "thief_p1_s1",
+          "name": "影縫い",
+          "job": "thief",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": [
+        {
+          "id": "thief_p3_s2",
+          "name": "身軽",
+          "job": "thief",
+          "jobOnly": false
+        }
+      ],
+      "sustain": {
+        "affixes": {
+          "weapon": [
+            "VS_STATUS:blind",
+            "STATUS_RATE"
+          ],
+          "cloak": [
+            "EVA_COUNTER",
+            "EVA"
+          ],
+          "accessory1": [
+            "EVA_COUNTER"
+          ]
+        },
+        "equipmentExamples": [
+          "katana_t1",
+          "katana_t2"
+        ]
+      },
+      "weakness": "暗闇で下げられるのは物理攻撃の命中。魔法中心の敵には効果が薄く、回避反撃の発生も安定しない。",
+      "supportingParty": [
+        {
+          "job": "knight",
+          "weapon": "hammer"
+        },
+        {
+          "job": "bard",
+          "weapon": "instrument"
+        },
+        {
+          "job": "white_mage",
+          "weapon": "staff"
+        }
+      ],
+      "engineEvidence": [
+        "VS_STATUS:blind",
+        "STATUS_RATE",
+        "EVA_COUNTER",
+        "EVA"
+      ],
+      "mechanics": [
+        "blind",
+        "evasion_counter"
+      ],
+      "newEffects": [],
+      "verification": {
+        "controlledCoreProbe4": true,
+        "fullBuild6": "unverified"
+      }
+    },
+    {
+      "number": 12,
+      "id": "weakening_tactician",
+      "name": "弱体の軍師",
+      "origin": "existing36",
+      "status": "existing",
+      "weapon": [
+        "tome"
+      ],
+      "action": "萎縮の呪と守り崩しを使い分け、弱体化した敵へ味方の攻撃を集中させる。",
+      "starter": [
+        {
+          "id": "hexer_p3_s2",
+          "name": "萎縮の呪",
+          "job": "hexer",
+          "jobOnly": false
+        },
+        {
+          "id": "hexer_p1_s2",
+          "name": "守り崩しの呪",
+          "job": "hexer",
+          "jobOnly": false
+        },
+        {
+          "id": "hexer_p2_s1",
+          "name": "闇弾",
+          "job": "hexer",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": [],
+      "sustain": {
+        "affixes": {
+          "weapon": [
+            "VS_DEBUFFED",
+            "STATUS_RATE"
+          ],
+          "accessory1": [
+            "VS_STATUS:statdown"
+          ],
+          "accessory2": [
+            "MP_SAVE"
+          ]
+        },
+        "equipmentExamples": [
+          "tome_t1",
+          "tome_t2"
+        ]
+      },
+      "weakness": "弱体化を準備する一手とMPが必要。短期戦や標的が頻繁に替わる戦闘では準備を回収しにくい。",
+      "supportingParty": [
+        {
+          "job": "knight",
+          "weapon": "hammer"
+        },
+        {
+          "job": "bard",
+          "weapon": "instrument"
+        },
+        {
+          "job": "white_mage",
+          "weapon": "staff"
+        }
+      ],
+      "engineEvidence": [
+        "VS_DEBUFFED",
+        "STATUS_RATE",
+        "VS_STATUS:statdown",
+        "MP_SAVE"
+      ],
+      "mechanics": [
+        "statdown",
+        "defense_debuff",
+        "focus_fire"
+      ],
+      "newEffects": [],
+      "verification": {
+        "controlledCoreProbe4": true,
+        "fullBuild6": "unverified"
+      }
+    },
+    {
+      "number": 13,
+      "id": "charged_giant",
+      "name": "一撃の巨人",
+      "origin": "existing36",
+      "status": "existing",
+      "weapon": [
+        "greatsword"
+      ],
+      "action": "練気のSTR強化を先に使い、大剣の武器技能補正を乗せた剛断ちを続ける。",
+      "starter": [
+        {
+          "id": "monk_p2_s1",
+          "name": "練気",
+          "job": "monk",
+          "jobOnly": false
+        },
+        {
+          "id": "warrior_p1_s1",
+          "name": "剛断ち",
+          "job": "warrior",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": [
+        {
+          "id": "warrior_p1_s2",
+          "name": "刃の心得",
+          "job": "warrior",
+          "jobOnly": false
+        }
+      ],
+      "sustain": {
+        "affixes": {
+          "weapon": [
+            "STR",
+            "CRIT_DMG"
+          ],
+          "accessory1": [
+            "MP_SAVE"
+          ]
+        },
+        "equipmentExamples": [
+          "greatsword_t1",
+          "greatsword_t2"
+        ]
+      },
+      "weakness": "強化前に倒せる雑魚や、防御と斬撃耐性の高い敵では準備が報われにくい。",
+      "supportingParty": [
+        {
+          "job": "knight",
+          "weapon": "hammer"
+        },
+        {
+          "job": "bard",
+          "weapon": "instrument"
+        },
+        {
+          "job": "white_mage",
+          "weapon": "staff"
+        }
+      ],
+      "engineEvidence": [
+        "STR",
+        "CRIT_DMG",
+        "MP_SAVE"
+      ],
+      "mechanics": [
+        "self_buff",
+        "heavy_weapon_skill"
+      ],
+      "newEffects": [],
+      "verification": {
+        "controlledCoreProbe4": true,
+        "fullBuild6": "unverified"
+      }
+    },
+    {
+      "number": 14,
+      "id": "first_strike_samurai",
+      "name": "居合の達人",
+      "origin": "existing36",
+      "status": "existing",
+      "weapon": [
+        "katana"
+      ],
+      "action": "戦闘最初の攻撃行動に会心付きの影縫いを合わせる。先制したい標的を開幕に選ぶ。",
+      "starter": [
+        {
+          "id": "thief_p1_s1",
+          "name": "影縫い",
+          "job": "thief",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": [],
+      "sustain": {
+        "affixes": {
+          "weapon": [
+            "FIRST_HIT",
+            "CRIT_DMG"
+          ],
+          "accessory1": [
+            "CRT"
+          ]
+        },
+        "equipmentExamples": [
+          "katana_t1",
+          "katana_t2"
+        ]
+      },
+      "weakness": "初撃の後は通常の会心型に戻るため、長期戦では継続火力に劣る。",
+      "supportingParty": [
+        {
+          "job": "knight",
+          "weapon": "hammer"
+        },
+        {
+          "job": "bard",
+          "weapon": "instrument"
+        },
+        {
+          "job": "white_mage",
+          "weapon": "staff"
+        }
+      ],
+      "engineEvidence": [
+        "FIRST_HIT",
+        "CRIT_DMG",
+        "CRT"
+      ],
+      "mechanics": [
+        "first_hit",
+        "critical"
+      ],
+      "newEffects": [],
+      "verification": {
+        "controlledCoreProbe4": true,
+        "fullBuild6": "unverified"
+      }
+    },
+    {
+      "number": 15,
+      "id": "shadow_chaser",
+      "name": "影の追撃者",
+      "origin": "existing36",
+      "status": "existing",
+      "weapon": [
+        "dagger"
+      ],
+      "action": "短剣二刀と追加攻撃で通常攻撃の手数を増やし、MPを温存して戦う。",
+      "starter": [
+        {
+          "id": "thief_p1_s1",
+          "name": "影縫い",
+          "job": "thief",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": [
+        {
+          "id": "thief_p1_s2",
+          "name": "刃さばき",
+          "job": "thief",
+          "jobOnly": false
+        }
+      ],
+      "sustain": {
+        "affixes": {
+          "weapon": [
+            "EXTRA_HIT",
+            "CRT"
+          ],
+          "offhand": [
+            "EXTRA_HIT"
+          ],
+          "accessory1": [
+            "CRIT_DMG"
+          ]
+        },
+        "equipmentExamples": [
+          "dagger_t1",
+          "dagger_t2"
+        ]
+      },
+      "weakness": "高い防御と単発の大火力が必要な場面に弱い。追加攻撃を前提に確殺を判断しない。",
+      "supportingParty": [
+        {
+          "job": "knight",
+          "weapon": "hammer"
+        },
+        {
+          "job": "bard",
+          "weapon": "instrument"
+        },
+        {
+          "job": "white_mage",
+          "weapon": "staff"
+        }
+      ],
+      "engineEvidence": [
+        "EXTRA_HIT",
+        "CRT",
+        "CRIT_DMG"
+      ],
+      "mechanics": [
+        "dual_wield",
+        "extra_hit",
+        "mp_conservation"
+      ],
+      "newEffects": [],
+      "verification": {
+        "controlledCoreProbe4": true,
+        "fullBuild6": "unverified"
+      }
+    },
+    {
+      "number": 16,
+      "id": "armor_breaker",
+      "name": "破甲の狂戦士",
+      "origin": "existing36",
+      "status": "existing",
+      "weapon": [
+        "axe"
+      ],
+      "action": "斧の防御無視と付与を重ね、硬い敵を単体攻撃で崩す。捨て身斬りは残HPを見て使う。",
+      "starter": [
+        {
+          "id": "warrior_p1_s1",
+          "name": "剛断ち",
+          "job": "warrior",
+          "jobOnly": false
+        },
+        {
+          "id": "warrior_p3_s1",
+          "name": "捨て身斬り",
+          "job": "warrior",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": [
+        {
+          "id": "warrior_p1_s2",
+          "name": "刃の心得",
+          "job": "warrior",
+          "jobOnly": false
+        }
+      ],
+      "sustain": {
+        "affixes": {
+          "weapon": [
+            "DEF_PIERCE",
+            "STR"
+          ],
+          "accessory1": [
+            "CRIT_DMG"
+          ]
+        },
+        "equipmentExamples": [
+          "axe_t1",
+          "axe_t2"
+        ]
+      },
+      "weakness": "低防御の敵には防御無視が過剰になり、自傷を伴う攻撃には回復が必要。",
+      "supportingParty": [
+        {
+          "job": "knight",
+          "weapon": "hammer"
+        },
+        {
+          "job": "bard",
+          "weapon": "instrument"
+        },
+        {
+          "job": "white_mage",
+          "weapon": "staff"
+        }
+      ],
+      "engineEvidence": [
+        "DEF_PIERCE",
+        "STR",
+        "CRIT_DMG"
+      ],
+      "mechanics": [
+        "defense_pierce",
+        "self_cost"
+      ],
+      "newEffects": [],
+      "verification": {
+        "controlledCoreProbe4": true,
+        "fullBuild6": "unverified"
+      }
+    },
+    {
+      "number": 17,
+      "id": "piercing_knight",
+      "name": "穿孔の槍騎士",
+      "origin": "existing36",
+      "status": "existing",
+      "weapon": [
+        "spear"
+      ],
+      "action": "槍の通常攻撃で別の敵への貫通を狙い、MPを使わず複数の敵を削る。単体には聖剣と盾打ちを使い分ける。",
+      "starter": [
+        {
+          "id": "knight_p2_s1",
+          "name": "聖剣",
+          "job": "knight",
+          "jobOnly": false
+        },
+        {
+          "id": "knight_p3_s1",
+          "name": "盾打ち",
+          "job": "knight",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": [
+        {
+          "id": "knight_p3_s2",
+          "name": "盾の心得",
+          "job": "knight",
+          "jobOnly": false
+        }
+      ],
+      "sustain": {
+        "affixes": {
+          "weapon": [
+            "DEF_PIERCE",
+            "EXTRA_HIT"
+          ],
+          "accessory1": [
+            "STR"
+          ]
+        },
+        "equipmentExamples": [
+          "spear_t1",
+          "spear_t2"
+        ]
+      },
+      "weakness": "敵が一体になると貫通先がなくなり、範囲攻撃も確率に左右される。",
+      "supportingParty": [
+        {
+          "job": "hunter",
+          "weapon": "bow"
+        },
+        {
+          "job": "black_mage",
+          "weapon": "tome"
+        },
+        {
+          "job": "white_mage",
+          "weapon": "staff"
+        }
+      ],
+      "engineEvidence": [
+        "DEF_PIERCE",
+        "EXTRA_HIT",
+        "STR"
+      ],
+      "mechanics": [
+        "weapon_splash",
+        "defense_pierce"
+      ],
+      "newEffects": [],
+      "verification": {
+        "controlledCoreProbe4": true,
+        "fullBuild6": "unverified"
+      }
+    },
+    {
+      "number": 18,
+      "id": "vital_sniper",
+      "name": "急所の狙撃手",
+      "origin": "existing36",
+      "status": "existing",
+      "weapon": [
+        "bow"
+      ],
+      "action": "敵の弱点に合う剣気または属性付与を選び、弓の弱点補正と急所狙いの会心を合わせる。",
+      "starter": [
+        {
+          "id": "hunter_p1_s1",
+          "name": "狙い撃ち",
+          "job": "hunter",
+          "jobOnly": false
+        },
+        {
+          "id": "hunter_p2_s3",
+          "name": "急所狙い",
+          "job": "hunter",
+          "jobOnly": false
+        },
+        {
+          "id": "spellblade_p1_s1",
+          "name": "炎の剣気",
+          "job": "spellblade",
+          "jobOnly": false
+        },
+        {
+          "id": "spellblade_p1_s2",
+          "name": "氷の剣気",
+          "job": "spellblade",
+          "jobOnly": false
+        },
+        {
+          "id": "spellblade_p1_s3",
+          "name": "雷の剣気",
+          "job": "spellblade",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": [
+        {
+          "id": "hunter_p1_s2",
+          "name": "射手の心得",
+          "job": "hunter",
+          "jobOnly": false
+        }
+      ],
+      "sustain": {
+        "affixes": {
+          "weapon": [
+            "WEAK_DMG",
+            "ELEMENT:$weakElement"
+          ],
+          "accessory1": [
+            "CRT"
+          ],
+          "accessory2": [
+            "CRIT_DMG"
+          ]
+        },
+        "equipmentExamples": [
+          "bow_t1",
+          "bow_t2"
+        ]
+      },
+      "weakness": "属性を誤ると火力が大きく下がる。弱点がない相手では会心に頼る。",
+      "supportingParty": [
+        {
+          "job": "knight",
+          "weapon": "hammer"
+        },
+        {
+          "job": "bard",
+          "weapon": "instrument"
+        },
+        {
+          "job": "white_mage",
+          "weapon": "staff"
+        }
+      ],
+      "engineEvidence": [
+        "WEAK_DMG",
+        "ELEMENT:$weakElement",
+        "CRT",
+        "CRIT_DMG"
+      ],
+      "mechanics": [
+        "elemental_weakness",
+        "critical",
+        "imbue"
+      ],
+      "newEffects": [],
+      "verification": {
+        "controlledCoreProbe4": true,
+        "fullBuild6": "unverified"
+      }
+    },
+    {
+      "number": 19,
+      "id": "species_gunner",
+      "name": "種族狩りの銃士",
+      "origin": "existing36",
+      "status": "existing",
+      "weapon": [
+        "gun"
+      ],
+      "action": "ボスの種族に合う付与を用意し、銃の武器攻撃力と速射を生かす。",
+      "starter": [
+        {
+          "id": "gunner_p1_s1",
+          "name": "速射",
+          "job": "gunner",
+          "jobOnly": false
+        },
+        {
+          "id": "gunner_p2_s1",
+          "name": "焼夷弾",
+          "job": "gunner",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": [
+        {
+          "id": "gunner_p1_s2",
+          "name": "早撃ち",
+          "job": "gunner",
+          "jobOnly": false
+        },
+        {
+          "id": "hunter_p1_s2",
+          "name": "射手の心得",
+          "job": "hunter",
+          "jobOnly": false
+        }
+      ],
+      "sustain": {
+        "affixes": {
+          "weapon": [
+            "TYPE_BONUS:$bossType",
+            "DEF_PIERCE"
+          ],
+          "accessory1": [
+            "CRIT_DMG"
+          ]
+        },
+        "equipmentExamples": [
+          "gun_t1",
+          "gun_t2"
+        ]
+      },
+      "weakness": "狙った種族以外には特効が働かず、同じ装備で全ての遠征に対応しにくい。",
+      "supportingParty": [
+        {
+          "job": "knight",
+          "weapon": "hammer"
+        },
+        {
+          "job": "bard",
+          "weapon": "instrument"
+        },
+        {
+          "job": "white_mage",
+          "weapon": "staff"
+        }
+      ],
+      "engineEvidence": [
+        "TYPE_BONUS:$bossType",
+        "DEF_PIERCE",
+        "CRIT_DMG"
+      ],
+      "mechanics": [
+        "species_bonus",
+        "gun_scaling"
+      ],
+      "newEffects": [],
+      "verification": {
+        "controlledCoreProbe4": true,
+        "fullBuild6": "unverified"
+      }
+    },
+    {
+      "number": 20,
+      "id": "whirling_whip",
+      "name": "旋舞の鞭使い",
+      "origin": "existing36",
+      "status": "existing",
+      "weapon": [
+        "whip"
+      ],
+      "action": "鞭の全体通常攻撃で毒矢の心得を生かし、打ち据えで守りを崩す。絡め取りは一体を足止めしたい時に使う。",
+      "starter": [
+        {
+          "id": "dancer_p2_s1",
+          "name": "絡め取り",
+          "job": "dancer",
+          "jobOnly": false
+        },
+        {
+          "id": "dancer_p2_s3",
+          "name": "打ち据え",
+          "job": "dancer",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": [
+        {
+          "id": "dancer_p2_s2",
+          "name": "鞭の心得",
+          "job": "dancer",
+          "jobOnly": false
+        },
+        {
+          "id": "hunter_p3_s2",
+          "name": "毒矢の心得",
+          "job": "hunter",
+          "jobOnly": false
+        }
+      ],
+      "sustain": {
+        "affixes": {
+          "weapon": [
+            "STATUS_RATE",
+            "VS_DEBUFFED"
+          ],
+          "accessory1": [
+            "DOT_POWER"
+          ]
+        },
+        "equipmentExamples": [
+          "whip_t1",
+          "whip_t2"
+        ]
+      },
+      "weakness": "敵が一体だと全体通常攻撃の利益が薄れる。状態異常の付与失敗と、各攻撃の小さな威力が弱点。",
+      "supportingParty": [
+        {
+          "job": "knight",
+          "weapon": "hammer"
+        },
+        {
+          "job": "bard",
+          "weapon": "instrument"
+        },
+        {
+          "job": "white_mage",
+          "weapon": "staff"
+        }
+      ],
+      "engineEvidence": [
+        "STATUS_RATE",
+        "VS_DEBUFFED",
+        "DOT_POWER"
+      ],
+      "mechanics": [
+        "normal_all",
+        "auto_poison",
+        "defense_debuff"
+      ],
+      "newEffects": [],
+      "verification": {
+        "controlledCoreProbe4": true,
+        "fullBuild6": "unverified"
+      }
+    },
+    {
+      "number": 21,
+      "id": "grand_scholar",
+      "name": "大魔法の学者",
+      "origin": "existing36",
+      "status": "existing",
+      "weapon": [
+        "tome"
+      ],
+      "action": "炎・氷・雷の全体魔法を敵の耐性で選び、魔導書のMAG補正を範囲火力へ回す。",
+      "starter": [
+        {
+          "id": "black_mage_p1_s3",
+          "name": "焔の渦",
+          "job": "black_mage",
+          "jobOnly": false
+        },
+        {
+          "id": "black_mage_p2_s3",
+          "name": "吹雪",
+          "job": "black_mage",
+          "jobOnly": false
+        },
+        {
+          "id": "black_mage_p3_s3",
+          "name": "雷雲",
+          "job": "black_mage",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": [
+        {
+          "id": "black_mage_p1_s2",
+          "name": "炎の心得",
+          "job": "black_mage",
+          "jobOnly": false
+        },
+        {
+          "id": "black_mage_p2_s2",
+          "name": "氷の心得",
+          "job": "black_mage",
+          "jobOnly": false
+        },
+        {
+          "id": "black_mage_p3_s2",
+          "name": "雷の心得",
+          "job": "black_mage",
+          "jobOnly": false
+        }
+      ],
+      "sustain": {
+        "affixes": {
+          "weapon": [
+            "MAG",
+            "MP_SAVE"
+          ],
+          "accessory1": [
+            "WEAK_DMG"
+          ],
+          "accessory2": [
+            "MP_SAVE"
+          ]
+        },
+        "equipmentExamples": [
+          "tome_t1",
+          "tome_t2"
+        ]
+      },
+      "weakness": "一体だけの敵や長い連戦ではMP効率が落ちる。属性が通らない相手には別の攻撃役が必要。",
+      "supportingParty": [
+        {
+          "job": "knight",
+          "weapon": "hammer"
+        },
+        {
+          "job": "bard",
+          "weapon": "instrument"
+        },
+        {
+          "job": "white_mage",
+          "weapon": "staff"
+        }
+      ],
+      "engineEvidence": [
+        "MAG",
+        "MP_SAVE",
+        "WEAK_DMG"
+      ],
+      "mechanics": [
+        "area_magic",
+        "elemental_coverage"
+      ],
+      "newEffects": [],
+      "verification": {
+        "controlledCoreProbe4": true,
+        "fullBuild6": "unverified"
+      }
+    },
+    {
+      "number": 22,
+      "id": "skill_cyclist",
+      "name": "剣技循環士",
+      "origin": "existing36",
+      "status": "existing",
+      "weapon": [
+        "sword"
+      ],
+      "action": "通常攻撃の正解で次の攻撃技能を強め、魔力斬りへつなぐ。通常攻撃と技能を交互に使う。",
+      "starter": [
+        {
+          "id": "spellblade_p2_s1",
+          "name": "魔力斬り",
+          "job": "spellblade",
+          "jobOnly": false
+        },
+        {
+          "id": "spellblade_p1_s1",
+          "name": "炎の剣気",
+          "job": "spellblade",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": [
+        {
+          "id": "spellblade_p2_s2",
+          "name": "剣と魔の心得",
+          "job": "spellblade",
+          "jobOnly": false
+        }
+      ],
+      "sustain": {
+        "affixes": {
+          "weapon": [
+            "NORMAL_SKILL",
+            "MP_ON_HIT"
+          ],
+          "accessory1": [
+            "MP_SAVE"
+          ]
+        },
+        "equipmentExamples": [
+          "sword_t1",
+          "sword_t2"
+        ]
+      },
+      "weakness": "通常攻撃を挟むため瞬間火力は控えめ。攻撃技能を連打すると循環の強みが出ない。",
+      "supportingParty": [
+        {
+          "job": "knight",
+          "weapon": "hammer"
+        },
+        {
+          "job": "bard",
+          "weapon": "instrument"
+        },
+        {
+          "job": "white_mage",
+          "weapon": "staff"
+        }
+      ],
+      "engineEvidence": [
+        "NORMAL_SKILL",
+        "MP_ON_HIT",
+        "MP_SAVE"
+      ],
+      "mechanics": [
+        "normal_to_skill",
+        "mp_conservation"
+      ],
+      "newEffects": [],
+      "verification": {
+        "controlledCoreProbe4": true,
+        "fullBuild6": "unverified"
+      }
+    },
+    {
+      "number": 23,
+      "id": "guarding_knight",
+      "name": "挑発の守護騎士",
+      "origin": "existing36",
+      "status": "existing",
+      "weapon": [
+        "sword"
+      ],
+      "action": "挑みの構えで攻撃を引きつけ、かばいの誓いと守りの号令で仲間を守る。",
+      "starter": [
+        {
+          "id": "warrior_p2_s1",
+          "name": "挑みの構え",
+          "job": "warrior",
+          "jobOnly": false
+        },
+        {
+          "id": "knight_p1_s1",
+          "name": "守りの号令",
+          "job": "knight",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": [
+        {
+          "id": "knight_p1_s2",
+          "name": "かばいの誓い",
+          "job": "knight",
+          "jobOnly": false
+        }
+      ],
+      "sustain": {
+        "affixes": {
+          "body": [
+            "PHYS_CUT",
+            "HP"
+          ],
+          "arm": [
+            "DEF"
+          ],
+          "accessory1": [
+            "HP"
+          ]
+        },
+        "equipmentExamples": [
+          "sword_t1",
+          "sword_t2"
+        ]
+      },
+      "weakness": "全体攻撃や魔法に対しては狙いを集めるだけでは足りない。本人のHP管理が必要。",
+      "supportingParty": [
+        {
+          "job": "hunter",
+          "weapon": "bow"
+        },
+        {
+          "job": "black_mage",
+          "weapon": "tome"
+        },
+        {
+          "job": "white_mage",
+          "weapon": "staff"
+        }
+      ],
+      "engineEvidence": [
+        "PHYS_CUT",
+        "HP",
+        "DEF"
+      ],
+      "mechanics": [
+        "taunt",
+        "cover",
+        "party_defense"
+      ],
+      "newEffects": [],
+      "verification": {
+        "controlledCoreProbe4": true,
+        "fullBuild6": "unverified"
+      }
+    },
+    {
+      "number": 24,
+      "id": "avenging_knight",
+      "name": "報復の重騎士",
+      "origin": "existing36",
+      "status": "existing",
+      "weapon": [
+        "hammer"
+      ],
+      "action": "挑発で攻撃を集め、反撃の構えを維持して受けた攻撃を火力に変える。",
+      "starter": [
+        {
+          "id": "knight_p3_s3",
+          "name": "反撃の構え",
+          "job": "knight",
+          "jobOnly": false
+        },
+        {
+          "id": "warrior_p2_s1",
+          "name": "挑みの構え",
+          "job": "warrior",
+          "jobOnly": false
+        },
+        {
+          "id": "knight_p3_s1",
+          "name": "盾打ち",
+          "job": "knight",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": [
+        {
+          "id": "knight_p3_s2",
+          "name": "盾の心得",
+          "job": "knight",
+          "jobOnly": false
+        }
+      ],
+      "sustain": {
+        "affixes": {
+          "body": [
+            "PHYS_CUT"
+          ],
+          "arm": [
+            "COUNTER"
+          ],
+          "accessory1": [
+            "COUNTER"
+          ]
+        },
+        "equipmentExamples": [
+          "hammer_t1",
+          "hammer_t2"
+        ]
+      },
+      "weakness": "敵が攻撃してこない巡や、少ない回数の大攻撃には反撃機会が少ない。",
+      "supportingParty": [
+        {
+          "job": "hunter",
+          "weapon": "bow"
+        },
+        {
+          "job": "black_mage",
+          "weapon": "tome"
+        },
+        {
+          "job": "white_mage",
+          "weapon": "staff"
+        }
+      ],
+      "engineEvidence": [
+        "PHYS_CUT",
+        "COUNTER"
+      ],
+      "mechanics": [
+        "taunt",
+        "counter",
+        "damage_mitigation"
+      ],
+      "newEffects": [],
+      "verification": {
+        "controlledCoreProbe4": true,
+        "fullBuild6": "unverified"
+      }
+    },
+    {
+      "number": 25,
+      "id": "elemental_cleric",
+      "name": "魔法耐久の聖職者",
+      "origin": "existing36",
+      "status": "existing",
+      "weapon": [
+        "staff"
+      ],
+      "action": "精霊術士のRESに魔法軽減と守りの歌を重ね、杖で回復も行う。風刃を攻撃手段として残す。",
+      "starter": [
+        {
+          "id": "elementalist_p1_s1",
+          "name": "風刃",
+          "job": "elementalist",
+          "jobOnly": false
+        },
+        {
+          "id": "white_mage_p1_s1",
+          "name": "癒しの光",
+          "job": "white_mage",
+          "jobOnly": false
+        },
+        {
+          "id": "bard_p1_s1",
+          "name": "守りの歌",
+          "job": "bard",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": [
+        {
+          "id": "knight_p2_s2",
+          "name": "光の加護",
+          "job": "knight",
+          "jobOnly": false
+        }
+      ],
+      "sustain": {
+        "affixes": {
+          "body": [
+            "MAGIC_CUT",
+            "RES"
+          ],
+          "cloak": [
+            "MAGIC_CUT"
+          ],
+          "accessory1": [
+            "RES"
+          ]
+        },
+        "equipmentExamples": [
+          "staff_t1",
+          "staff_t2"
+        ]
+      },
+      "weakness": "物理の大攻撃には魔法軽減が働かず、専任の火力役ほど敵を早く倒せない。",
+      "supportingParty": [
+        {
+          "job": "knight",
+          "weapon": "hammer"
+        },
+        {
+          "job": "hunter",
+          "weapon": "bow"
+        },
+        {
+          "job": "white_mage",
+          "weapon": "staff"
+        }
+      ],
+      "engineEvidence": [
+        "MAGIC_CUT",
+        "RES"
+      ],
+      "mechanics": [
+        "magic_mitigation",
+        "resistance",
+        "healing"
+      ],
+      "newEffects": [],
+      "verification": {
+        "controlledCoreProbe4": true,
+        "fullBuild6": "unverified"
+      }
+    },
+    {
+      "number": 26,
+      "id": "resistance_specialist",
+      "name": "耐性の専門家",
+      "origin": "existing36",
+      "status": "existing",
+      "weapon": [
+        "dagger"
+      ],
+      "action": "異常耐性と解毒の体質で自分が行動不能になる場面を減らし、応急手当と道具を使える機会を増やす。",
+      "starter": [
+        {
+          "id": "apothecary_p1_s1",
+          "name": "応急手当",
+          "job": "apothecary",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": [
+        {
+          "id": "apothecary_p2_s4",
+          "name": "解毒の体質",
+          "job": "apothecary",
+          "jobOnly": false
+        },
+        {
+          "id": "white_mage_p2_s2",
+          "name": "加護",
+          "job": "white_mage",
+          "jobOnly": false
+        }
+      ],
+      "sustain": {
+        "affixes": {
+          "head": [
+            "STATUS_RES"
+          ],
+          "body": [
+            "STATUS_RES"
+          ],
+          "cloak": [
+            "STATUS_RES"
+          ],
+          "accessory1": [
+            "STATUS_RES"
+          ]
+        },
+        "equipmentExamples": [
+          "dagger_t1",
+          "dagger_t2"
+        ]
+      },
+      "weakness": "状態異常を使わない敵には耐性枠が火力に寄与しない。耐性だけではHPダメージを防げない。",
+      "supportingParty": [
+        {
+          "job": "knight",
+          "weapon": "hammer"
+        },
+        {
+          "job": "hunter",
+          "weapon": "bow"
+        },
+        {
+          "job": "white_mage",
+          "weapon": "staff"
+        }
+      ],
+      "engineEvidence": [
+        "STATUS_RES"
+      ],
+      "mechanics": [
+        "status_resistance",
+        "poison_immunity"
+      ],
+      "newEffects": [],
+      "verification": {
+        "controlledCoreProbe4": true,
+        "fullBuild6": "unverified"
+      }
+    },
+    {
+      "number": 27,
+      "id": "undying_warrior",
+      "name": "不死身の戦士",
+      "origin": "existing36",
+      "status": "existing",
+      "weapon": [
+        "axe"
+      ],
+      "action": "逆境で低HP時の火力を上げ、不倒で一戦に一度だけ致命傷を耐える。鉄壁や道具で次の一撃へ備える。",
+      "starter": [
+        {
+          "id": "warrior_p3_s1",
+          "name": "捨て身斬り",
+          "job": "warrior",
+          "jobOnly": false
+        },
+        {
+          "id": "warrior_p2_s3",
+          "name": "鉄壁",
+          "job": "warrior",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": [
+        {
+          "id": "warrior_p3_s2",
+          "name": "逆境",
+          "job": "warrior",
+          "jobOnly": false
+        },
+        {
+          "id": "monk_p3_s4",
+          "name": "不倒",
+          "job": "monk",
+          "jobOnly": false
+        }
+      ],
+      "sustain": {
+        "affixes": {
+          "body": [
+            "PHYS_CUT"
+          ],
+          "accessory1": [
+            "HP"
+          ],
+          "accessory2": [
+            "STR"
+          ]
+        },
+        "equipmentExamples": [
+          "axe_t1",
+          "axe_t2"
+        ]
+      },
+      "weakness": "不倒は一度きり。連続攻撃、継続ダメージ、回復を遅らせる判断には大きな危険がある。",
+      "supportingParty": [
+        {
+          "job": "knight",
+          "weapon": "hammer"
+        },
+        {
+          "job": "bard",
+          "weapon": "instrument"
+        },
+        {
+          "job": "white_mage",
+          "weapon": "staff"
+        }
+      ],
+      "engineEvidence": [
+        "PHYS_CUT",
+        "HP",
+        "STR"
+      ],
+      "mechanics": [
+        "low_hp",
+        "endure_once",
+        "self_cost"
+      ],
+      "newEffects": [],
+      "verification": {
+        "controlledCoreProbe4": true,
+        "fullBuild6": "unverified"
+      }
+    },
+    {
+      "number": 28,
+      "id": "vampiric_spellblade",
+      "name": "吸血の魔剣士",
+      "origin": "existing36",
+      "status": "existing",
+      "weapon": [
+        "scythe"
+      ],
+      "action": "捨て身斬りの自傷を吸血で補い、鎌の攻撃を続ける。残HPが危険なら魔力斬りへ切り替える。",
+      "starter": [
+        {
+          "id": "warrior_p3_s1",
+          "name": "捨て身斬り",
+          "job": "warrior",
+          "jobOnly": false
+        },
+        {
+          "id": "spellblade_p2_s1",
+          "name": "魔力斬り",
+          "job": "spellblade",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": [
+        {
+          "id": "spellblade_p2_s2",
+          "name": "剣と魔の心得",
+          "job": "spellblade",
+          "jobOnly": false
+        },
+        {
+          "id": "warrior_p1_s2",
+          "name": "刃の心得",
+          "job": "warrior",
+          "jobOnly": false
+        }
+      ],
+      "sustain": {
+        "affixes": {
+          "weapon": [
+            "LIFESTEAL",
+            "STR"
+          ],
+          "accessory1": [
+            "HP"
+          ]
+        },
+        "equipmentExamples": [
+          "scythe_t1",
+          "scythe_t2"
+        ]
+      },
+      "weakness": "与えるダメージが低い相手では吸血量も減り、回復役の代わりにはならない。",
+      "supportingParty": [
+        {
+          "job": "knight",
+          "weapon": "hammer"
+        },
+        {
+          "job": "bard",
+          "weapon": "instrument"
+        },
+        {
+          "job": "white_mage",
+          "weapon": "staff"
+        }
+      ],
+      "engineEvidence": [
+        "LIFESTEAL",
+        "STR",
+        "HP"
+      ],
+      "mechanics": [
+        "lifesteal",
+        "self_cost"
+      ],
+      "newEffects": [],
+      "verification": {
+        "controlledCoreProbe4": true,
+        "fullBuild6": "unverified"
+      }
+    },
+    {
+      "number": 29,
+      "id": "critical_siphon",
+      "name": "会心の吸魔師",
+      "origin": "existing36",
+      "status": "existing",
+      "weapon": [
+        "tome"
+      ],
+      "action": "会心が出た攻撃からMPを取り戻し、低コストの属性魔法を長く使う。",
+      "starter": [
+        {
+          "id": "black_mage_p1_s1",
+          "name": "炎弾",
+          "job": "black_mage",
+          "jobOnly": false
+        },
+        {
+          "id": "black_mage_p2_s1",
+          "name": "氷槍",
+          "job": "black_mage",
+          "jobOnly": false
+        },
+        {
+          "id": "black_mage_p3_s1",
+          "name": "雷鳴",
+          "job": "black_mage",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": [],
+      "sustain": {
+        "affixes": {
+          "weapon": [
+            "CRIT_MP",
+            "CRT"
+          ],
+          "accessory1": [
+            "CRT"
+          ],
+          "accessory2": [
+            "CRIT_DMG"
+          ]
+        },
+        "equipmentExamples": [
+          "tome_t1",
+          "tome_t2"
+        ]
+      },
+      "weakness": "会心の発生は確率に左右される。高コスト魔法のMPを無制限に賄えるわけではない。",
+      "supportingParty": [
+        {
+          "job": "knight",
+          "weapon": "hammer"
+        },
+        {
+          "job": "black_mage",
+          "weapon": "tome"
+        },
+        {
+          "job": "white_mage",
+          "weapon": "staff"
+        }
+      ],
+      "engineEvidence": [
+        "CRIT_MP",
+        "CRT",
+        "CRIT_DMG"
+      ],
+      "mechanics": [
+        "critical_mp",
+        "low_cost_magic"
+      ],
+      "newEffects": [],
+      "verification": {
+        "controlledCoreProbe4": true,
+        "fullBuild6": "unverified"
+      }
+    },
+    {
+      "number": 30,
+      "id": "mana_minister",
+      "name": "魔力供給の司祭",
+      "origin": "existing36",
+      "status": "existing",
+      "weapon": [
+        "instrument"
+      ],
+      "action": "通常攻撃で自身のMPを補い、励ましで回復役や魔法役へMPを移す。守りの歌も維持する。",
+      "starter": [
+        {
+          "id": "bard_p3_s1",
+          "name": "励まし",
+          "job": "bard",
+          "jobOnly": false
+        },
+        {
+          "id": "bard_p1_s1",
+          "name": "守りの歌",
+          "job": "bard",
+          "jobOnly": false
+        },
+        {
+          "id": "bard_p2_s1",
+          "name": "不協和音",
+          "job": "bard",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": [
+        {
+          "id": "bard_p1_s2",
+          "name": "響く声",
+          "job": "bard",
+          "jobOnly": false
+        }
+      ],
+      "sustain": {
+        "affixes": {
+          "weapon": [
+            "MP_ON_HIT",
+            "MP_SAVE"
+          ],
+          "accessory1": [
+            "MP_SAVE"
+          ]
+        },
+        "equipmentExamples": [
+          "instrument_t1",
+          "instrument_t2"
+        ]
+      },
+      "weakness": "供給には自身のMPと一手を使う。全員がMP不足になると循環が止まる。",
+      "supportingParty": [
+        {
+          "job": "knight",
+          "weapon": "hammer"
+        },
+        {
+          "job": "black_mage",
+          "weapon": "tome"
+        },
+        {
+          "job": "white_mage",
+          "weapon": "staff"
+        }
+      ],
+      "engineEvidence": [
+        "MP_ON_HIT",
+        "MP_SAVE"
+      ],
+      "mechanics": [
+        "mp_transfer",
+        "normal_mp",
+        "song"
+      ],
+      "newEffects": [],
+      "verification": {
+        "controlledCoreProbe4": true,
+        "fullBuild6": "unverified"
+      }
+    },
+    {
+      "number": 31,
+      "id": "battle_cleric",
+      "name": "戦闘聖職者",
+      "origin": "existing36",
+      "status": "existing",
+      "weapon": [
+        "staff"
+      ],
+      "action": "聖弾や杖の攻撃で削りながら味方を少し回復し、大きな被害には癒しの光を使う。",
+      "starter": [
+        {
+          "id": "white_mage_p3_s1",
+          "name": "聖弾",
+          "job": "white_mage",
+          "jobOnly": false
+        },
+        {
+          "id": "white_mage_p1_s1",
+          "name": "癒しの光",
+          "job": "white_mage",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": [
+        {
+          "id": "white_mage_p3_s2",
+          "name": "光の心得",
+          "job": "white_mage",
+          "jobOnly": false
+        },
+        {
+          "id": "white_mage_p1_s2",
+          "name": "慈愛",
+          "job": "white_mage",
+          "jobOnly": false
+        }
+      ],
+      "sustain": {
+        "affixes": {
+          "weapon": [
+            "ATTACK_HEAL",
+            "MAG"
+          ],
+          "accessory1": [
+            "HEAL_POWER"
+          ]
+        },
+        "equipmentExamples": [
+          "staff_t1",
+          "staff_t2"
+        ]
+      },
+      "weakness": "攻撃に伴う回復だけでは集中攻撃を受けた仲間を支えきれない。",
+      "supportingParty": [
+        {
+          "job": "knight",
+          "weapon": "hammer"
+        },
+        {
+          "job": "warrior",
+          "weapon": "greatsword"
+        },
+        {
+          "job": "black_mage",
+          "weapon": "tome"
+        }
+      ],
+      "engineEvidence": [
+        "ATTACK_HEAL",
+        "MAG",
+        "HEAL_POWER"
+      ],
+      "mechanics": [
+        "attack_heal",
+        "holy_magic",
+        "healing"
+      ],
+      "newEffects": [],
+      "verification": {
+        "controlledCoreProbe4": true,
+        "fullBuild6": "unverified"
+      }
+    },
+    {
+      "number": 32,
+      "id": "life_barrier",
+      "name": "生命障壁の術師",
+      "origin": "existing36",
+      "status": "existing",
+      "weapon": [
+        "staff"
+      ],
+      "action": "余剰回復を障壁へ変え、敵の大きな攻撃が来る前に回復を使う。傷ついた味方の回復も同じ技能で行う。",
+      "starter": [
+        {
+          "id": "white_mage_p1_s1",
+          "name": "癒しの光",
+          "job": "white_mage",
+          "jobOnly": false
+        },
+        {
+          "id": "white_mage_p1_s3",
+          "name": "祝福の雨",
+          "job": "white_mage",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": [
+        {
+          "id": "white_mage_p1_s2",
+          "name": "慈愛",
+          "job": "white_mage",
+          "jobOnly": false
+        }
+      ],
+      "sustain": {
+        "affixes": {
+          "weapon": [
+            "OVERHEAL_SHIELD",
+            "HEAL_POWER"
+          ],
+          "accessory1": [
+            "MP_SAVE"
+          ]
+        },
+        "equipmentExamples": [
+          "staff_t1",
+          "staff_t2"
+        ]
+      },
+      "weakness": "障壁の上限を超える回復は無駄になり、MPと一手を使って準備する必要がある。",
+      "supportingParty": [
+        {
+          "job": "knight",
+          "weapon": "hammer"
+        },
+        {
+          "job": "warrior",
+          "weapon": "greatsword"
+        },
+        {
+          "job": "black_mage",
+          "weapon": "tome"
+        }
+      ],
+      "engineEvidence": [
+        "OVERHEAL_SHIELD",
+        "HEAL_POWER",
+        "MP_SAVE"
+      ],
+      "mechanics": [
+        "overheal_shield",
+        "prevention",
+        "area_heal"
+      ],
+      "newEffects": [],
+      "verification": {
+        "controlledCoreProbe4": true,
+        "fullBuild6": "unverified"
+      }
+    },
+    {
+      "number": 33,
+      "id": "cleansing_apothecary",
+      "name": "浄化の薬師",
+      "origin": "existing36",
+      "status": "existing",
+      "weapon": [
+        "dagger"
+      ],
+      "action": "清めの光と清めの舞を被害人数で使い分ける。技能で治せない異常には対応する道具を使う。",
+      "starter": [
+        {
+          "id": "white_mage_p2_s1",
+          "name": "清めの光",
+          "job": "white_mage",
+          "jobOnly": false
+        },
+        {
+          "id": "dancer_p1_s3",
+          "name": "清めの舞",
+          "job": "dancer",
+          "jobOnly": false
+        },
+        {
+          "id": "apothecary_p1_s1",
+          "name": "応急手当",
+          "job": "apothecary",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": [
+        {
+          "id": "apothecary_p1_s2",
+          "name": "薬の知識",
+          "job": "apothecary",
+          "jobOnly": false
+        },
+        {
+          "id": "white_mage_p2_s2",
+          "name": "加護",
+          "job": "white_mage",
+          "jobOnly": false
+        }
+      ],
+      "sustain": {
+        "affixes": {
+          "weapon": [
+            "HEAL_POWER",
+            "MP_SAVE"
+          ],
+          "accessory1": [
+            "STATUS_RES"
+          ]
+        },
+        "equipmentExamples": [
+          "dagger_t1",
+          "dagger_t2"
+        ]
+      },
+      "weakness": "沈黙や行動不能で治療技能を使えなくなる。道具も技能も全ての異常を一律に治すわけではない。",
+      "supportingParty": [
+        {
+          "job": "knight",
+          "weapon": "hammer"
+        },
+        {
+          "job": "warrior",
+          "weapon": "greatsword"
+        },
+        {
+          "job": "black_mage",
+          "weapon": "tome"
+        }
+      ],
+      "engineEvidence": [
+        "HEAL_POWER",
+        "MP_SAVE",
+        "STATUS_RES"
+      ],
+      "mechanics": [
+        "single_cure",
+        "area_cure",
+        "item_power"
+      ],
+      "newEffects": [],
+      "verification": {
+        "controlledCoreProbe4": true,
+        "fullBuild6": "unverified"
+      }
+    },
+    {
+      "number": 34,
+      "id": "item_alchemist",
+      "name": "道具の錬金術師",
+      "origin": "existing36",
+      "status": "existing",
+      "weapon": [
+        "dagger"
+      ],
+      "action": "薬の知識で道具の回復量を上げ、素早くポーションやエーテルを使う。応急手当で消耗品を温存する。",
+      "starter": [
+        {
+          "id": "apothecary_p1_s1",
+          "name": "応急手当",
+          "job": "apothecary",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": [
+        {
+          "id": "apothecary_p1_s2",
+          "name": "薬の知識",
+          "job": "apothecary",
+          "jobOnly": false
+        }
+      ],
+      "sustain": {
+        "affixes": {
+          "weapon": [
+            "SPD"
+          ],
+          "accessory1": [
+            "SPD"
+          ],
+          "accessory2": [
+            "HP"
+          ]
+        },
+        "equipmentExamples": [
+          "dagger_t1",
+          "dagger_t2"
+        ]
+      },
+      "weakness": "道具は有限で、毎回補充費がかかる。継戦力は持ち込んだ個数に制約される。",
+      "supportingParty": [
+        {
+          "job": "knight",
+          "weapon": "hammer"
+        },
+        {
+          "job": "warrior",
+          "weapon": "greatsword"
+        },
+        {
+          "job": "black_mage",
+          "weapon": "tome"
+        }
+      ],
+      "engineEvidence": [
+        "SPD",
+        "HP"
+      ],
+      "mechanics": [
+        "item_power",
+        "speed",
+        "finite_inventory"
+      ],
+      "newEffects": [],
+      "verification": {
+        "controlledCoreProbe4": true,
+        "fullBuild6": "unverified"
+      }
+    },
+    {
+      "number": 35,
+      "id": "battlefield_bard",
+      "name": "戦場の吟遊詩人",
+      "origin": "existing36",
+      "status": "existing",
+      "weapon": [
+        "instrument"
+      ],
+      "action": "守りの歌と疾風の歌を長く保ち、楽器による常時歌唱と合わせて四人の行動を支える。",
+      "starter": [
+        {
+          "id": "bard_p1_s1",
+          "name": "守りの歌",
+          "job": "bard",
+          "jobOnly": false
+        },
+        {
+          "id": "bard_p1_s3",
+          "name": "疾風の歌",
+          "job": "bard",
+          "jobOnly": false
+        },
+        {
+          "id": "bard_p2_s1",
+          "name": "不協和音",
+          "job": "bard",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": [
+        {
+          "id": "bard_p1_s2",
+          "name": "響く声",
+          "job": "bard",
+          "jobOnly": false
+        }
+      ],
+      "sustain": {
+        "affixes": {
+          "weapon": [
+            "PARTY_BUFF_POWER",
+            "MP_SAVE"
+          ],
+          "accessory1": [
+            "PARTY_BUFF_POWER"
+          ]
+        },
+        "equipmentExamples": [
+          "instrument_t1",
+          "instrument_t2"
+        ]
+      },
+      "weakness": "強化の準備中は自分の攻撃が減る。効果が残るうちに歌い直しても利得は小さい。",
+      "supportingParty": [
+        {
+          "job": "knight",
+          "weapon": "hammer"
+        },
+        {
+          "job": "hunter",
+          "weapon": "bow"
+        },
+        {
+          "job": "white_mage",
+          "weapon": "staff"
+        }
+      ],
+      "engineEvidence": [
+        "PARTY_BUFF_POWER",
+        "MP_SAVE"
+      ],
+      "mechanics": [
+        "party_buff",
+        "song_duration",
+        "instrument_aura"
+      ],
+      "newEffects": [],
+      "verification": {
+        "controlledCoreProbe4": true,
+        "fullBuild6": "unverified"
+      }
+    },
+    {
+      "number": 36,
+      "id": "blessing_dancer",
+      "name": "祝福の舞姫",
+      "origin": "existing36",
+      "status": "existing",
+      "weapon": [
+        "fan"
+      ],
+      "action": "自分のジョブの奥義である天女の舞を扇と舞の余韻で強め、再生と攻撃支援を長く保つ。必要なら癒しの舞を使う。",
+      "starter": [
+        {
+          "id": "dancer_p1_s4",
+          "name": "天女の舞",
+          "job": "dancer",
+          "jobOnly": true
+        },
+        {
+          "id": "dancer_p1_s1",
+          "name": "癒しの舞",
+          "job": "dancer",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": [
+        {
+          "id": "dancer_p1_s2",
+          "name": "舞の余韻",
+          "job": "dancer",
+          "jobOnly": false
+        }
+      ],
+      "sustain": {
+        "affixes": {
+          "weapon": [
+            "PARTY_BUFF_POWER",
+            "HEAL_POWER"
+          ],
+          "accessory1": [
+            "MP_SAVE"
+          ]
+        },
+        "equipmentExamples": [
+          "fan_t1",
+          "fan_t2"
+        ]
+      },
+      "weakness": "天女の舞のMPと技能枠の負担が大きい。短い戦闘や強化を必要としない相手には過剰。",
+      "supportingParty": [
+        {
+          "job": "knight",
+          "weapon": "hammer"
+        },
+        {
+          "job": "hunter",
+          "weapon": "bow"
+        },
+        {
+          "job": "white_mage",
+          "weapon": "staff"
+        }
+      ],
+      "engineEvidence": [
+        "PARTY_BUFF_POWER",
+        "HEAL_POWER",
+        "MP_SAVE"
+      ],
+      "mechanics": [
+        "party_buff",
+        "dance_duration",
+        "regeneration"
+      ],
+      "newEffects": [],
+      "verification": {
+        "controlledCoreProbe4": true,
+        "fullBuild6": "unverified"
+      }
+    },
+    {
+      "number": 37,
+      "id": "candidate_37",
+      "name": "毒の伝播者",
+      "origin": "proposed64",
+      "status": "requires_addition",
+      "weapon": [
+        "dagger"
+      ],
+      "action": "毒付与→敵を撃破",
+      "starter": {
+        "type": "design",
+        "summary": "毒付与→敵を撃破"
+      },
+      "existingParts": [
+        {
+          "id": "thief_p3_s3",
+          "name": "毒刃",
+          "job": "thief",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": {
+        "type": "design",
+        "summary": "毒状態の敵を倒すと、別の敵へ毒を付与。複数戦向け"
+      },
+      "sustain": {
+        "requirements": "付与率",
+        "equipmentExamples": [
+          "dagger_t1",
+          "dagger_t2"
+        ]
+      },
+      "weakness": "雑魚がいない",
+      "effectRefs": [
+        "E05",
+        "E06"
+      ],
+      "newEffects": [
+        "E05",
+        "E06"
+      ],
+      "verification": {
+        "fullBuild6": "unverified"
+      }
+    },
+    {
+      "number": 38,
+      "id": "candidate_38",
+      "name": "病蝕の収穫者",
+      "origin": "proposed64",
+      "status": "requires_addition",
+      "weapon": [
+        "scythe"
+      ],
+      "action": "毒＋猛毒→攻撃",
+      "starter": {
+        "type": "design",
+        "summary": "毒＋猛毒→攻撃"
+      },
+      "existingParts": [
+        {
+          "id": "thief_p3_s3",
+          "name": "毒刃",
+          "job": "thief",
+          "jobOnly": false
+        },
+        {
+          "id": "apothecary_p3_s1",
+          "name": "猛毒薬",
+          "job": "apothecary",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": {
+        "type": "design",
+        "summary": "状態異常の種類数に応じた直接ダメージ強化"
+      },
+      "sustain": {
+        "requirements": "付与役2人",
+        "equipmentExamples": [
+          "scythe_t1",
+          "scythe_t2"
+        ]
+      },
+      "weakness": "初動2手と状態耐性",
+      "effectRefs": [
+        "E02"
+      ],
+      "newEffects": [
+        "E02"
+      ],
+      "verification": {
+        "fullBuild6": "unverified"
+      }
+    },
+    {
+      "number": 39,
+      "id": "candidate_39",
+      "name": "毒眠の観察者",
+      "origin": "proposed64",
+      "status": "requires_addition",
+      "weapon": [
+        "tome"
+      ],
+      "action": "毒付与→睡眠",
+      "starter": {
+        "type": "design",
+        "summary": "毒付与→睡眠"
+      },
+      "existingParts": [
+        {
+          "id": "thief_p3_s3",
+          "name": "毒刃",
+          "job": "thief",
+          "jobOnly": false
+        },
+        {
+          "id": "bard_p2_s3",
+          "name": "子守歌",
+          "job": "bard",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": {
+        "type": "design",
+        "summary": "睡眠中も毒で削る。直接攻撃しない運用"
+      },
+      "sustain": {
+        "requirements": "付与率",
+        "equipmentExamples": [
+          "tome_t1",
+          "tome_t2"
+        ]
+      },
+      "weakness": "味方の直接攻撃で睡眠解除",
+      "effectRefs": [
+        "E05"
+      ],
+      "newEffects": [
+        "E05"
+      ],
+      "verification": {
+        "fullBuild6": "unverified"
+      }
+    },
+    {
+      "number": 40,
+      "id": "candidate_40",
+      "name": "灼痛の双剣",
+      "origin": "proposed64",
+      "status": "requires_addition",
+      "weapon": [
+        "sword"
+      ],
+      "action": "火傷＋出血を付与",
+      "starter": {
+        "type": "design",
+        "summary": "火傷＋出血を付与"
+      },
+      "existingParts": [
+        {
+          "id": "spellblade_p3_s2",
+          "name": "灼刃",
+          "job": "spellblade",
+          "jobOnly": false
+        },
+        {
+          "id": "warrior_p3_s3",
+          "name": "血風",
+          "job": "warrior",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": {
+        "type": "design",
+        "summary": "継続ダメージ状態の敵への特効。ボスの上限に注意"
+      },
+      "sustain": {
+        "requirements": "付与率",
+        "equipmentExamples": [
+          "sword_t1",
+          "sword_t2"
+        ]
+      },
+      "weakness": "継続ダメージ耐性",
+      "effectRefs": [
+        "E02",
+        "E05"
+      ],
+      "newEffects": [
+        "E02",
+        "E05"
+      ],
+      "verification": {
+        "fullBuild6": "unverified"
+      }
+    },
+    {
+      "number": 41,
+      "id": "candidate_41",
+      "name": "威圧の恐怖騎士",
+      "origin": "proposed64",
+      "status": "requires_addition",
+      "weapon": [
+        "hammer"
+      ],
+      "action": "恐怖→挑発",
+      "starter": {
+        "type": "design",
+        "summary": "恐怖→挑発"
+      },
+      "existingParts": [
+        {
+          "id": "warrior_p2_s1",
+          "name": "挑みの構え",
+          "job": "warrior",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": {
+        "type": "design",
+        "summary": "敵の危険な攻撃スキルを抑え、通常攻撃を引き受ける"
+      },
+      "sustain": {
+        "requirements": "HP・DEF",
+        "equipmentExamples": [
+          "hammer_t1",
+          "hammer_t2"
+        ]
+      },
+      "weakness": "恐怖耐性と通常攻撃主体の敵",
+      "effectRefs": [
+        "E05"
+      ],
+      "newEffects": [
+        "E05"
+      ],
+      "verification": {
+        "fullBuild6": "unverified"
+      }
+    },
+    {
+      "number": 42,
+      "id": "candidate_42",
+      "name": "武技封じの狩人",
+      "origin": "proposed64",
+      "status": "requires_addition",
+      "weapon": [
+        "bow"
+      ],
+      "action": "封印→精密射撃",
+      "starter": {
+        "type": "design",
+        "summary": "封印→精密射撃"
+      },
+      "existingParts": [
+        {
+          "id": "monk_p2_s5",
+          "name": "封じ手",
+          "job": "monk",
+          "jobOnly": false
+        },
+        {
+          "id": "hunter_p1_s1",
+          "name": "狙い撃ち",
+          "job": "hunter",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": {
+        "type": "design",
+        "summary": "封印中の敵への特効。物理スキル型の敵に強い"
+      },
+      "sustain": {
+        "requirements": "命中",
+        "equipmentExamples": [
+          "bow_t1",
+          "bow_t2"
+        ]
+      },
+      "weakness": "通常攻撃主体の敵",
+      "effectRefs": [
+        "E02"
+      ],
+      "newEffects": [
+        "E02"
+      ],
+      "verification": {
+        "fullBuild6": "unverified"
+      }
+    },
+    {
+      "number": 43,
+      "id": "candidate_43",
+      "name": "魔力枯渇の魔封師",
+      "origin": "proposed64",
+      "status": "requires_addition",
+      "weapon": [
+        "tome"
+      ],
+      "action": "魔力漏出＋MP破壊攻撃",
+      "starter": {
+        "type": "design",
+        "summary": "魔力漏出＋MP破壊攻撃"
+      },
+      "existingParts": [
+        {
+          "id": "bard_p3_s5",
+          "name": "衰えの詩",
+          "job": "bard",
+          "jobOnly": false
+        },
+        {
+          "id": "hexer_p2_s3",
+          "name": "吸魔",
+          "job": "hexer",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": {
+        "type": "design",
+        "summary": "敵のMPが少ないほど威力上昇。MP再生で維持"
+      },
+      "sustain": {
+        "requirements": "MP再生",
+        "equipmentExamples": [
+          "tome_t1",
+          "tome_t2"
+        ]
+      },
+      "weakness": "MPを使わない敵",
+      "effectRefs": [
+        "E02",
+        "E09"
+      ],
+      "newEffects": [
+        "E02",
+        "E09"
+      ],
+      "verification": {
+        "fullBuild6": "unverified"
+      },
+      "evidenceGap": "吸魔は術者のダメージ依存の吸収。敵MPの削減は別処理。"
+    },
+    {
+      "number": 44,
+      "id": "candidate_44",
+      "name": "禁呪の術士",
+      "origin": "proposed64",
+      "status": "requires_addition",
+      "weapon": [
+        "tome"
+      ],
+      "action": "呪い＋魔力漏出",
+      "starter": {
+        "type": "design",
+        "summary": "呪い＋魔力漏出"
+      },
+      "existingParts": [
+        {
+          "id": "hexer_p1_s1",
+          "name": "衰えの呪",
+          "job": "hexer",
+          "jobOnly": false
+        },
+        {
+          "id": "bard_p3_s5",
+          "name": "衰えの詩",
+          "job": "bard",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": {
+        "type": "design",
+        "summary": "HP回復とMP消費の両面から敵を追い詰める"
+      },
+      "sustain": {
+        "requirements": "付与率",
+        "equipmentExamples": [
+          "tome_t1",
+          "tome_t2"
+        ]
+      },
+      "weakness": "回復もMP消費もしない敵",
+      "effectRefs": [
+        "E05"
+      ],
+      "newEffects": [
+        "E05"
+      ],
+      "verification": {
+        "fullBuild6": "unverified"
+      },
+      "evidenceGap": "衰えの呪はSTR弱体。技能名に呪があっても状態異常 curse の付与とは扱わない。"
+    },
+    {
+      "number": 45,
+      "id": "candidate_45",
+      "name": "惑乱の道化師",
+      "origin": "proposed64",
+      "status": "requires_addition",
+      "weapon": [
+        "fan"
+      ],
+      "action": "混乱付与→防御支援",
+      "starter": {
+        "type": "design",
+        "summary": "混乱付与→防御支援"
+      },
+      "existingParts": [
+        {
+          "id": "bard_p1_s1",
+          "name": "守りの歌",
+          "job": "bard",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": {
+        "type": "design",
+        "summary": "敵の誤行動時にMP回復。敵の混乱耐性が弱点"
+      },
+      "sustain": {
+        "requirements": "MP",
+        "equipmentExamples": [
+          "fan_t1",
+          "fan_t2"
+        ]
+      },
+      "weakness": "混乱耐性",
+      "effectRefs": [
+        "E05"
+      ],
+      "newEffects": [
+        "E05"
+      ],
+      "verification": {
+        "fullBuild6": "unverified"
+      }
+    },
+    {
+      "number": 46,
+      "id": "candidate_46",
+      "name": "魅了の傀儡師",
+      "origin": "proposed64",
+      "status": "requires_addition",
+      "weapon": [
+        "instrument"
+      ],
+      "action": "魅了→味方の攻撃支援",
+      "starter": {
+        "type": "design",
+        "summary": "魅了→味方の攻撃支援"
+      },
+      "existingParts": [
+        {
+          "id": "bard_p3_s3",
+          "name": "鼓舞",
+          "job": "bard",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": {
+        "type": "design",
+        "summary": "敵の強制行動時、自分に障壁を張る"
+      },
+      "sustain": {
+        "requirements": "MP",
+        "equipmentExamples": [
+          "instrument_t1",
+          "instrument_t2"
+        ]
+      },
+      "weakness": "魅了耐性",
+      "effectRefs": [
+        "E05",
+        "E11"
+      ],
+      "newEffects": [
+        "E05",
+        "E11"
+      ],
+      "verification": {
+        "fullBuild6": "unverified"
+      }
+    },
+    {
+      "number": 47,
+      "id": "candidate_47",
+      "name": "死刻の祈祷師",
+      "origin": "proposed64",
+      "status": "existing",
+      "weapon": [
+        "tome"
+      ],
+      "action": "死の宣告→睡眠・凍結",
+      "starter": {
+        "type": "design",
+        "summary": "死の宣告→睡眠・凍結"
+      },
+      "existingParts": [
+        {
+          "id": "hexer_p1_s5",
+          "name": "死の宣告",
+          "job": "hexer",
+          "jobOnly": false
+        },
+        {
+          "id": "thief_p4_s2",
+          "name": "眠り薬",
+          "job": "thief",
+          "jobOnly": false
+        },
+        {
+          "id": "spellblade_p3_s1",
+          "name": "霜刃",
+          "job": "spellblade",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": {
+        "type": "existing_mechanics_candidate",
+        "summary": "直接攻撃せず宣告まで耐える。ボスには原則無効",
+        "implementationNote": "睡眠・凍結を待機に使う。各付与は耐性とボス制限に従う。"
+      },
+      "sustain": {
+        "requirements": "HP",
+        "equipmentExamples": [
+          "tome_t1",
+          "tome_t2"
+        ]
+      },
+      "weakness": "ボス免疫と待ち時間",
+      "effectRefs": [
+        "E05"
+      ],
+      "newEffects": [],
+      "verification": {
+        "fullBuild6": "unverified"
+      },
+      "engineEvidence": {
+        "skills": [
+          "hexer_p1_s5",
+          "thief_p4_s2",
+          "spellblade_p3_s1"
+        ],
+        "path": "inflictEnemy / status turn ticks",
+        "note": "睡眠・凍結を待機に使う。各付与は耐性とボス制限に従う。"
+      }
+    },
+    {
+      "number": 48,
+      "id": "candidate_48",
+      "name": "石化狩りの術士",
+      "origin": "proposed64",
+      "status": "existing",
+      "weapon": [
+        "gun"
+      ],
+      "action": "石化を狙う特殊弾",
+      "starter": {
+        "type": "design",
+        "summary": "石化を狙う特殊弾"
+      },
+      "existingParts": [
+        {
+          "id": "gunner_p2_s5",
+          "name": "石化弾",
+          "job": "gunner",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": {
+        "type": "existing_mechanics_candidate",
+        "summary": "低い基本付与率を補助。成功時は討伐扱い。ボスには無効",
+        "implementationNote": "石化を試行。ボス免疫。"
+      },
+      "sustain": {
+        "requirements": "付与率",
+        "equipmentExamples": [
+          "gun_t1",
+          "gun_t2"
+        ]
+      },
+      "weakness": "ボス免疫と低成功率",
+      "effectRefs": [
+        "E05"
+      ],
+      "newEffects": [],
+      "verification": {
+        "fullBuild6": "unverified"
+      },
+      "engineEvidence": {
+        "skills": [
+          "gunner_p2_s5"
+        ],
+        "affixes": [
+          "STATUS_RATE"
+        ],
+        "path": "inflictEnemy / enemyCanAct",
+        "note": "石化を試行。ボス免疫。"
+      }
+    },
+    {
+      "number": 49,
+      "id": "candidate_49",
+      "name": "無相の賢者",
+      "origin": "proposed64",
+      "status": "requires_addition",
+      "weapon": [
+        "tome"
+      ],
+      "action": "無属性の高威力魔法",
+      "starter": {
+        "type": "design",
+        "summary": "無属性の高威力魔法"
+      },
+      "existingParts": [
+        {
+          "id": "black_mage_p1_s4",
+          "name": "星墜とし",
+          "job": "black_mage",
+          "jobOnly": true
+        }
+      ],
+      "amplifier": {
+        "type": "design",
+        "summary": "無属性強化・MP節約。無属性耐性の敵が苦手"
+      },
+      "sustain": {
+        "requirements": "MP",
+        "equipmentExamples": [
+          "tome_t1",
+          "tome_t2"
+        ]
+      },
+      "weakness": "高RES",
+      "effectRefs": [
+        "E01"
+      ],
+      "newEffects": [
+        "E01"
+      ],
+      "verification": {
+        "fullBuild6": "unverified"
+      },
+      "evidenceGap": "星墜としは黒魔道士の全体奥義。候補の単体技能は別途追加。"
+    },
+    {
+      "number": 50,
+      "id": "candidate_50",
+      "name": "破邪の光術師",
+      "origin": "proposed64",
+      "status": "requires_addition",
+      "weapon": [
+        "staff"
+      ],
+      "action": "光攻撃＋回復",
+      "starter": {
+        "type": "design",
+        "summary": "光攻撃＋回復"
+      },
+      "existingParts": [
+        {
+          "id": "white_mage_p3_s1",
+          "name": "聖弾",
+          "job": "white_mage",
+          "jobOnly": false
+        },
+        {
+          "id": "white_mage_p1_s1",
+          "name": "癒しの光",
+          "job": "white_mage",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": {
+        "type": "design",
+        "summary": "光属性強化・不死系特効・回復量強化"
+      },
+      "sustain": {
+        "requirements": "MP",
+        "equipmentExamples": [
+          "staff_t1",
+          "staff_t2"
+        ]
+      },
+      "weakness": "光耐性",
+      "effectRefs": [
+        "E01",
+        "E02"
+      ],
+      "newEffects": [
+        "E01",
+        "E02"
+      ],
+      "verification": {
+        "fullBuild6": "unverified"
+      }
+    },
+    {
+      "number": 51,
+      "id": "candidate_51",
+      "name": "冥影の夜術師",
+      "origin": "proposed64",
+      "status": "requires_addition",
+      "weapon": [
+        "tome"
+      ],
+      "action": "闇攻撃＋HP吸収",
+      "starter": {
+        "type": "design",
+        "summary": "闇攻撃＋HP吸収"
+      },
+      "existingParts": [
+        {
+          "id": "hexer_p2_s1",
+          "name": "闇弾",
+          "job": "hexer",
+          "jobOnly": false
+        },
+        {
+          "id": "hexer_p2_s3",
+          "name": "吸魔",
+          "job": "hexer",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": {
+        "type": "design",
+        "summary": "闇属性強化・吸血・MP循環"
+      },
+      "sustain": {
+        "requirements": "MP",
+        "equipmentExamples": [
+          "tome_t1",
+          "tome_t2"
+        ]
+      },
+      "weakness": "闇耐性・回復過剰",
+      "effectRefs": [
+        "E01",
+        "E09"
+      ],
+      "newEffects": [
+        "E01",
+        "E09"
+      ],
+      "verification": {
+        "fullBuild6": "unverified"
+      }
+    },
+    {
+      "number": 52,
+      "id": "candidate_52",
+      "name": "炎獄の掃討者",
+      "origin": "proposed64",
+      "status": "requires_addition",
+      "weapon": [
+        "tome"
+      ],
+      "action": "炎全体攻撃＋火傷",
+      "starter": {
+        "type": "design",
+        "summary": "炎全体攻撃＋火傷"
+      },
+      "existingParts": [
+        {
+          "id": "black_mage_p1_s3",
+          "name": "焔の渦",
+          "job": "black_mage",
+          "jobOnly": false
+        },
+        {
+          "id": "spellblade_p3_s2",
+          "name": "灼刃",
+          "job": "spellblade",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": {
+        "type": "design",
+        "summary": "炎属性・全体攻撃・火傷特効"
+      },
+      "sustain": {
+        "requirements": "MP",
+        "equipmentExamples": [
+          "tome_t1",
+          "tome_t2"
+        ]
+      },
+      "weakness": "炎と火傷の耐性",
+      "effectRefs": [
+        "E01",
+        "E02"
+      ],
+      "newEffects": [
+        "E01",
+        "E02"
+      ],
+      "verification": {
+        "fullBuild6": "unverified"
+      }
+    },
+    {
+      "number": 53,
+      "id": "candidate_53",
+      "name": "氷晶の守護魔導士",
+      "origin": "proposed64",
+      "status": "requires_addition",
+      "weapon": [
+        "staff"
+      ],
+      "action": "氷魔法＋障壁付与",
+      "starter": {
+        "type": "design",
+        "summary": "氷魔法＋障壁付与"
+      },
+      "existingParts": [
+        {
+          "id": "black_mage_p2_s1",
+          "name": "氷槍",
+          "job": "black_mage",
+          "jobOnly": false
+        },
+        {
+          "id": "elementalist_p2_s2",
+          "name": "大地の壁",
+          "job": "elementalist",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": {
+        "type": "design",
+        "summary": "氷属性強化・障壁維持・MP節約"
+      },
+      "sustain": {
+        "requirements": "MP",
+        "equipmentExamples": [
+          "staff_t1",
+          "staff_t2"
+        ]
+      },
+      "weakness": "氷耐性・手数",
+      "effectRefs": [
+        "E01",
+        "E11"
+      ],
+      "newEffects": [
+        "E01",
+        "E11"
+      ],
+      "verification": {
+        "fullBuild6": "unverified"
+      }
+    },
+    {
+      "number": 54,
+      "id": "candidate_54",
+      "name": "雷迅の連撃師",
+      "origin": "proposed64",
+      "status": "requires_addition",
+      "weapon": [
+        "tome"
+      ],
+      "action": "雷属性の多段攻撃",
+      "starter": {
+        "type": "design",
+        "summary": "雷属性の多段攻撃"
+      },
+      "existingParts": [
+        {
+          "id": "black_mage_p3_s1",
+          "name": "雷鳴",
+          "job": "black_mage",
+          "jobOnly": false
+        },
+        {
+          "id": "black_mage_p3_s3",
+          "name": "雷雲",
+          "job": "black_mage",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": {
+        "type": "design",
+        "summary": "雷強化・会心率・会心時MP回復"
+      },
+      "sustain": {
+        "requirements": "会心",
+        "equipmentExamples": [
+          "tome_t1",
+          "tome_t2"
+        ]
+      },
+      "weakness": "雷耐性・会心不発",
+      "effectRefs": [
+        "E01",
+        "E03"
+      ],
+      "newEffects": [
+        "E01",
+        "E03"
+      ],
+      "verification": {
+        "fullBuild6": "unverified"
+      }
+    },
+    {
+      "number": 55,
+      "id": "candidate_55",
+      "name": "風刃の奏者",
+      "origin": "proposed64",
+      "status": "requires_addition",
+      "weapon": [
+        "fan"
+      ],
+      "action": "風属性攻撃＋SPD強化",
+      "starter": {
+        "type": "design",
+        "summary": "風属性攻撃＋SPD強化"
+      },
+      "existingParts": [
+        {
+          "id": "elementalist_p1_s1",
+          "name": "風刃",
+          "job": "elementalist",
+          "jobOnly": false
+        },
+        {
+          "id": "bard_p1_s3",
+          "name": "疾風の歌",
+          "job": "bard",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": {
+        "type": "design",
+        "summary": "風属性強化・先制・連続攻撃"
+      },
+      "sustain": {
+        "requirements": "MP",
+        "equipmentExamples": [
+          "fan_t1",
+          "fan_t2"
+        ]
+      },
+      "weakness": "風耐性",
+      "effectRefs": [
+        "E01"
+      ],
+      "newEffects": [
+        "E01"
+      ],
+      "verification": {
+        "fullBuild6": "unverified"
+      }
+    },
+    {
+      "number": 56,
+      "id": "candidate_56",
+      "name": "大地の鉄壁術師",
+      "origin": "proposed64",
+      "status": "requires_addition",
+      "weapon": [
+        "staff"
+      ],
+      "action": "土魔法＋DEF強化",
+      "starter": {
+        "type": "design",
+        "summary": "土魔法＋DEF強化"
+      },
+      "existingParts": [
+        {
+          "id": "elementalist_p1_s2",
+          "name": "石礫",
+          "job": "elementalist",
+          "jobOnly": false
+        },
+        {
+          "id": "knight_p1_s1",
+          "name": "守りの号令",
+          "job": "knight",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": {
+        "type": "design",
+        "summary": "土属性攻撃後に小障壁を得る"
+      },
+      "sustain": {
+        "requirements": "MP",
+        "equipmentExamples": [
+          "staff_t1",
+          "staff_t2"
+        ]
+      },
+      "weakness": "土耐性",
+      "effectRefs": [
+        "E01",
+        "E11"
+      ],
+      "newEffects": [
+        "E01",
+        "E11"
+      ],
+      "verification": {
+        "fullBuild6": "unverified"
+      }
+    },
+    {
+      "number": 57,
+      "id": "candidate_57",
+      "name": "潮流の導師",
+      "origin": "proposed64",
+      "status": "requires_addition",
+      "weapon": [
+        "staff"
+      ],
+      "action": "水魔法＋MP回復",
+      "starter": {
+        "type": "design",
+        "summary": "水魔法＋MP回復"
+      },
+      "existingParts": [
+        {
+          "id": "elementalist_p1_s3",
+          "name": "水撃",
+          "job": "elementalist",
+          "jobOnly": false
+        },
+        {
+          "id": "bard_p3_s1",
+          "name": "励まし",
+          "job": "bard",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": {
+        "type": "design",
+        "summary": "水属性強化・MP再生。長期戦向け"
+      },
+      "sustain": {
+        "requirements": "MP",
+        "equipmentExamples": [
+          "staff_t1",
+          "staff_t2"
+        ]
+      },
+      "weakness": "水耐性",
+      "effectRefs": [
+        "E01",
+        "E09"
+      ],
+      "newEffects": [
+        "E01",
+        "E09"
+      ],
+      "verification": {
+        "fullBuild6": "unverified"
+      }
+    },
+    {
+      "number": 58,
+      "id": "candidate_58",
+      "name": "光闇の双極術師",
+      "origin": "proposed64",
+      "status": "requires_addition",
+      "weapon": [
+        "tome"
+      ],
+      "action": "光・闇魔法を使い分ける",
+      "starter": {
+        "type": "design",
+        "summary": "光・闇魔法を使い分ける"
+      },
+      "existingParts": [
+        {
+          "id": "white_mage_p3_s1",
+          "name": "聖弾",
+          "job": "white_mage",
+          "jobOnly": false
+        },
+        {
+          "id": "hexer_p2_s1",
+          "name": "闇弾",
+          "job": "hexer",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": {
+        "type": "design",
+        "summary": "両属性強化・弱点特効。両属性に強い敵が苦手"
+      },
+      "sustain": {
+        "requirements": "MP",
+        "equipmentExamples": [
+          "tome_t1",
+          "tome_t2"
+        ]
+      },
+      "weakness": "光闇両耐性",
+      "effectRefs": [
+        "E01",
+        "E02"
+      ],
+      "newEffects": [
+        "E01",
+        "E02"
+      ],
+      "verification": {
+        "fullBuild6": "unverified"
+      }
+    },
+    {
+      "number": 59,
+      "id": "candidate_59",
+      "name": "四元素の適応師",
+      "origin": "proposed64",
+      "status": "requires_addition",
+      "weapon": [
+        "tome"
+      ],
+      "action": "炎・氷・風・土を使い分ける",
+      "starter": {
+        "type": "design",
+        "summary": "炎・氷・風・土を使い分ける"
+      },
+      "existingParts": [
+        {
+          "id": "black_mage_p1_s1",
+          "name": "炎弾",
+          "job": "black_mage",
+          "jobOnly": false
+        },
+        {
+          "id": "black_mage_p2_s1",
+          "name": "氷槍",
+          "job": "black_mage",
+          "jobOnly": false
+        },
+        {
+          "id": "elementalist_p1_s1",
+          "name": "風刃",
+          "job": "elementalist",
+          "jobOnly": false
+        },
+        {
+          "id": "elementalist_p1_s2",
+          "name": "石礫",
+          "job": "elementalist",
+          "jobOnly": false
+        },
+        {
+          "id": "hunter_p2_s1",
+          "name": "見極め",
+          "job": "hunter",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": {
+        "type": "design",
+        "summary": "弱点特効・MP節約。調査情報を活用"
+      },
+      "sustain": {
+        "requirements": "MP",
+        "equipmentExamples": [
+          "tome_t1",
+          "tome_t2"
+        ]
+      },
+      "weakness": "高RES・調査の手数",
+      "effectRefs": [
+        "E01",
+        "E02",
+        "E13"
+      ],
+      "newEffects": [
+        "E01",
+        "E02",
+        "E13"
+      ],
+      "verification": {
+        "fullBuild6": "unverified"
+      }
+    },
+    {
+      "number": 60,
+      "id": "candidate_60",
+      "name": "物魔の融合剣士",
+      "origin": "proposed64",
+      "status": "existing",
+      "weapon": [
+        "sword"
+      ],
+      "action": "物理攻撃＋魔法属性付与",
+      "starter": {
+        "type": "design",
+        "summary": "物理攻撃＋魔法属性付与"
+      },
+      "existingParts": [
+        {
+          "id": "spellblade_p1_s1",
+          "name": "炎の剣気",
+          "job": "spellblade",
+          "jobOnly": false
+        },
+        {
+          "id": "spellblade_p2_s1",
+          "name": "魔力斬り",
+          "job": "spellblade",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": {
+        "type": "existing_mechanics_candidate",
+        "summary": "MAGの一部を物理火力へ変換・属性弱点強化",
+        "implementationNote": "現行の魔力の刃によるMAG参照と、属性付与。"
+      },
+      "sustain": {
+        "requirements": "MAG",
+        "equipmentExamples": [
+          "sword_t1",
+          "sword_t2"
+        ]
+      },
+      "weakness": "付与属性耐性",
+      "effectRefs": [
+        "E01",
+        "E09"
+      ],
+      "newEffects": [],
+      "verification": {
+        "fullBuild6": "unverified"
+      },
+      "engineEvidence": {
+        "skills": [
+          "spellblade_p1_s1",
+          "spellblade_p2_s1",
+          "spellblade_p2_s5"
+        ],
+        "path": "attackDamage / mag_to_atk",
+        "note": "現行の魔力の刃によるMAG参照と、属性付与。"
+      }
+    },
+    {
+      "number": 61,
+      "id": "candidate_61",
+      "name": "盾穿ちの槍兵",
+      "origin": "proposed64",
+      "status": "requires_addition",
+      "weapon": [
+        "spear"
+      ],
+      "action": "溜め→防御貫通の刺突",
+      "starter": {
+        "type": "design",
+        "summary": "溜め→防御貫通の刺突"
+      },
+      "existingParts": [
+        {
+          "id": "hunter_p1_s1",
+          "name": "狙い撃ち",
+          "job": "hunter",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": {
+        "type": "design",
+        "summary": "単体攻撃強化・DEF貫通"
+      },
+      "sustain": {
+        "requirements": "MP",
+        "equipmentExamples": [
+          "spear_t1",
+          "spear_t2"
+        ]
+      },
+      "weakness": "行動不能・短期戦",
+      "effectRefs": [
+        "E01",
+        "E10",
+        "E12"
+      ],
+      "newEffects": [
+        "E01",
+        "E10",
+        "E12"
+      ],
+      "verification": {
+        "fullBuild6": "unverified"
+      }
+    },
+    {
+      "number": 62,
+      "id": "candidate_62",
+      "name": "連弾のガンナー",
+      "origin": "proposed64",
+      "status": "existing",
+      "weapon": [
+        "gun"
+      ],
+      "action": "速射・多段射撃",
+      "starter": {
+        "type": "design",
+        "summary": "速射・多段射撃"
+      },
+      "existingParts": [
+        {
+          "id": "gunner_p1_s1",
+          "name": "速射",
+          "job": "gunner",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": {
+        "type": "existing_mechanics_candidate",
+        "summary": "多段会心・会心時MP回復",
+        "implementationNote": "技能で支払ったMPが回収上限。"
+      },
+      "sustain": {
+        "requirements": "会心",
+        "equipmentExamples": [
+          "gun_t1",
+          "gun_t2"
+        ]
+      },
+      "weakness": "高回避",
+      "effectRefs": [
+        "E01",
+        "E03"
+      ],
+      "newEffects": [],
+      "verification": {
+        "fullBuild6": "unverified"
+      },
+      "engineEvidence": {
+        "skills": [
+          "gunner_p1_s1"
+        ],
+        "affixes": [
+          "CRIT_MP"
+        ],
+        "path": "applyAttack / criticalMpGranted",
+        "note": "技能で支払ったMPが回収上限。"
+      }
+    },
+    {
+      "number": 63,
+      "id": "candidate_63",
+      "name": "扇舞の守術士",
+      "origin": "proposed64",
+      "status": "requires_addition",
+      "weapon": [
+        "fan"
+      ],
+      "action": "回避の構え→補助舞",
+      "starter": {
+        "type": "design",
+        "summary": "回避の構え→補助舞"
+      },
+      "existingParts": [
+        {
+          "id": "dancer_p1_s5",
+          "name": "千変の舞",
+          "job": "dancer",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": {
+        "type": "design",
+        "summary": "回避時MP回復・舞の持続延長"
+      },
+      "sustain": {
+        "requirements": "回避",
+        "equipmentExamples": [
+          "fan_t1",
+          "fan_t2"
+        ]
+      },
+      "weakness": "回避機会なし",
+      "effectRefs": [
+        "E04",
+        "E10"
+      ],
+      "newEffects": [
+        "E04",
+        "E10"
+      ],
+      "verification": {
+        "fullBuild6": "unverified"
+      }
+    },
+    {
+      "number": 64,
+      "id": "candidate_64",
+      "name": "毒鞭の捕縛師",
+      "origin": "proposed64",
+      "status": "requires_addition",
+      "weapon": [
+        "whip"
+      ],
+      "action": "全体攻撃＋束縛・毒",
+      "starter": {
+        "type": "design",
+        "summary": "全体攻撃＋束縛・毒"
+      },
+      "existingParts": [
+        {
+          "id": "dancer_p2_s1",
+          "name": "絡め取り",
+          "job": "dancer",
+          "jobOnly": false
+        },
+        {
+          "id": "thief_p3_s3",
+          "name": "毒刃",
+          "job": "thief",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": {
+        "type": "design",
+        "summary": "状態異常付与率・全体攻撃強化"
+      },
+      "sustain": {
+        "requirements": "付与率",
+        "equipmentExamples": [
+          "whip_t1",
+          "whip_t2"
+        ]
+      },
+      "weakness": "毒・束縛耐性",
+      "effectRefs": [
+        "E05",
+        "E10"
+      ],
+      "newEffects": [
+        "E05",
+        "E10"
+      ],
+      "verification": {
+        "fullBuild6": "unverified"
+      }
+    },
+    {
+      "number": 65,
+      "id": "candidate_65",
+      "name": "鉄鎚の盾崩し",
+      "origin": "proposed64",
+      "status": "requires_addition",
+      "weapon": [
+        "hammer"
+      ],
+      "action": "障壁破壊→打撃",
+      "starter": {
+        "type": "design",
+        "summary": "障壁破壊→打撃"
+      },
+      "existingParts": [
+        {
+          "id": "knight_p3_s1",
+          "name": "盾打ち",
+          "job": "knight",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": {
+        "type": "design",
+        "summary": "障壁特効・スタン付与"
+      },
+      "sustain": {
+        "requirements": "MP",
+        "equipmentExamples": [
+          "hammer_t1",
+          "hammer_t2"
+        ]
+      },
+      "weakness": "障壁のない敵",
+      "effectRefs": [
+        "E01",
+        "E11"
+      ],
+      "newEffects": [
+        "E01",
+        "E11"
+      ],
+      "verification": {
+        "fullBuild6": "unverified"
+      }
+    },
+    {
+      "number": 66,
+      "id": "candidate_66",
+      "name": "返し斬りの剣豪",
+      "origin": "proposed64",
+      "status": "requires_addition",
+      "weapon": [
+        "katana"
+      ],
+      "action": "回避の構え→反撃",
+      "starter": {
+        "type": "design",
+        "summary": "回避の構え→反撃"
+      },
+      "existingParts": [
+        {
+          "id": "knight_p3_s3",
+          "name": "反撃の構え",
+          "job": "knight",
+          "jobOnly": false
+        },
+        {
+          "id": "monk_p3_s1",
+          "name": "受け流し",
+          "job": "monk",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": {
+        "type": "design",
+        "summary": "回避率・回避反撃・反撃会心"
+      },
+      "sustain": {
+        "requirements": "回避",
+        "equipmentExamples": [
+          "katana_t1",
+          "katana_t2"
+        ]
+      },
+      "weakness": "反撃対象外の攻撃",
+      "effectRefs": [
+        "E03",
+        "E04"
+      ],
+      "newEffects": [
+        "E03",
+        "E04"
+      ],
+      "verification": {
+        "fullBuild6": "unverified"
+      }
+    },
+    {
+      "number": 67,
+      "id": "candidate_67",
+      "name": "重斧の背水戦士",
+      "origin": "proposed64",
+      "status": "existing",
+      "weapon": [
+        "axe"
+      ],
+      "action": "HP消費→高威力攻撃",
+      "starter": {
+        "type": "design",
+        "summary": "HP消費→高威力攻撃"
+      },
+      "existingParts": [
+        {
+          "id": "warrior_p3_s1",
+          "name": "捨て身斬り",
+          "job": "warrior",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": {
+        "type": "existing_mechanics_candidate",
+        "summary": "低HP時火力・食いしばり・HP吸収",
+        "implementationNote": "食いしばり候補は既存36案「不死身の戦士」の装備・技能参照。"
+      },
+      "sustain": {
+        "requirements": "HP回復",
+        "equipmentExamples": [
+          "axe_t1",
+          "axe_t2"
+        ]
+      },
+      "weakness": "自傷直後の集中攻撃",
+      "effectRefs": [
+        "E02",
+        "E09"
+      ],
+      "newEffects": [],
+      "verification": {
+        "fullBuild6": "unverified"
+      },
+      "engineEvidence": {
+        "skills": [
+          "warrior_p3_s1",
+          "warrior_p3_s2"
+        ],
+        "affixes": [
+          "LIFESTEAL"
+        ],
+        "path": "attackDamage / HP cost / lifesteal",
+        "note": "食いしばり候補は既存36案「不死身の戦士」の装備・技能参照。"
+      }
+    },
+    {
+      "number": 68,
+      "id": "candidate_68",
+      "name": "狙撃の観測者",
+      "origin": "proposed64",
+      "status": "requires_addition",
+      "weapon": [
+        "bow"
+      ],
+      "action": "調査→高命中攻撃",
+      "starter": {
+        "type": "design",
+        "summary": "調査→高命中攻撃"
+      },
+      "existingParts": [
+        {
+          "id": "hunter_p2_s1",
+          "name": "見極め",
+          "job": "hunter",
+          "jobOnly": false
+        },
+        {
+          "id": "hunter_p1_s1",
+          "name": "狙い撃ち",
+          "job": "hunter",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": {
+        "type": "design",
+        "summary": "判明済み相性への特効・種族特効"
+      },
+      "sustain": {
+        "requirements": "命中",
+        "equipmentExamples": [
+          "bow_t1",
+          "bow_t2"
+        ]
+      },
+      "weakness": "調査の手数",
+      "effectRefs": [
+        "E02",
+        "E13"
+      ],
+      "newEffects": [
+        "E02",
+        "E13"
+      ],
+      "verification": {
+        "fullBuild6": "unverified"
+      }
+    },
+    {
+      "number": 69,
+      "id": "candidate_69",
+      "name": "薙ぎ払いの槍将",
+      "origin": "proposed64",
+      "status": "requires_addition",
+      "weapon": [
+        "spear"
+      ],
+      "action": "範囲刺突攻撃",
+      "starter": {
+        "type": "design",
+        "summary": "範囲刺突攻撃"
+      },
+      "existingParts": [
+        {
+          "id": "warrior_p1_s3",
+          "name": "旋風斬",
+          "job": "warrior",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": {
+        "type": "design",
+        "summary": "範囲攻撃強化・敵数に応じた威力調整"
+      },
+      "sustain": {
+        "requirements": "MP",
+        "equipmentExamples": [
+          "spear_t1",
+          "spear_t2"
+        ]
+      },
+      "weakness": "敵が1体",
+      "effectRefs": [
+        "E01",
+        "E10"
+      ],
+      "newEffects": [
+        "E01",
+        "E10"
+      ],
+      "verification": {
+        "fullBuild6": "unverified"
+      }
+    },
+    {
+      "number": 70,
+      "id": "candidate_70",
+      "name": "二刀の属性競演者",
+      "origin": "proposed64",
+      "status": "existing",
+      "weapon": [
+        "sword",
+        "dagger"
+      ],
+      "action": "異なる武器属性を使った通常攻撃",
+      "starter": {
+        "type": "basic_attack",
+        "summary": "異なる武器属性を使った通常攻撃"
+      },
+      "existingParts": [],
+      "amplifier": {
+        "type": "existing_mechanics_candidate",
+        "summary": "主手・副手それぞれの特性を活かす",
+        "implementationNote": "剣＋短剣を別の付与属性にする。追加判定は通常攻撃に限定。"
+      },
+      "sustain": {
+        "requirements": "主手剣・副手短剣",
+        "equipmentExamples": [
+          "sword_t1",
+          "sword_t2",
+          "dagger_t1",
+          "dagger_t2"
+        ]
+      },
+      "weakness": "属性の選択制約",
+      "effectRefs": [
+        "E01",
+        "E10"
+      ],
+      "newEffects": [],
+      "verification": {
+        "fullBuild6": "unverified"
+      },
+      "engineEvidence": {
+        "skills": [],
+        "affixes": [
+          "ELEMENT"
+        ],
+        "path": "attackDamage / offhand",
+        "note": "剣＋短剣を別の付与属性にする。追加判定は通常攻撃に限定。"
+      }
+    },
+    {
+      "number": 71,
+      "id": "candidate_71",
+      "name": "魔力盾の騎士",
+      "origin": "proposed64",
+      "status": "requires_addition",
+      "weapon": [
+        "hammer"
+      ],
+      "action": "MPを消費して防御",
+      "starter": {
+        "type": "design",
+        "summary": "MPを消費して防御"
+      },
+      "existingParts": [
+        {
+          "id": "warrior_p2_s3",
+          "name": "鉄壁",
+          "job": "warrior",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": {
+        "type": "design",
+        "summary": "受けるダメージの一部をMPで肩代わり。魔力漏出に弱い"
+      },
+      "sustain": {
+        "requirements": "最大MP",
+        "equipmentExamples": [
+          "hammer_t1",
+          "hammer_t2"
+        ]
+      },
+      "weakness": "MP枯渇・魔力漏出",
+      "effectRefs": [
+        "E04",
+        "E09"
+      ],
+      "newEffects": [
+        "E04",
+        "E09"
+      ],
+      "verification": {
+        "fullBuild6": "unverified"
+      }
+    },
+    {
+      "number": 72,
+      "id": "candidate_72",
+      "name": "被弾強化の重戦士",
+      "origin": "proposed64",
+      "status": "requires_addition",
+      "weapon": [
+        "axe"
+      ],
+      "action": "挑発→敵の攻撃を受ける",
+      "starter": {
+        "type": "design",
+        "summary": "挑発→敵の攻撃を受ける"
+      },
+      "existingParts": [
+        {
+          "id": "warrior_p2_s1",
+          "name": "挑みの構え",
+          "job": "warrior",
+          "jobOnly": false
+        },
+        {
+          "id": "knight_p3_s3",
+          "name": "反撃の構え",
+          "job": "knight",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": {
+        "type": "design",
+        "summary": "被弾するたびDEF上昇・反撃率上昇"
+      },
+      "sustain": {
+        "requirements": "HP",
+        "equipmentExamples": [
+          "axe_t1",
+          "axe_t2"
+        ]
+      },
+      "weakness": "準備前に戦闘不能",
+      "effectRefs": [
+        "E04",
+        "E08"
+      ],
+      "newEffects": [
+        "E04",
+        "E08"
+      ],
+      "verification": {
+        "fullBuild6": "unverified"
+      }
+    },
+    {
+      "number": 73,
+      "id": "candidate_73",
+      "name": "再生の壁役",
+      "origin": "proposed64",
+      "status": "requires_addition",
+      "weapon": [
+        "hammer"
+      ],
+      "action": "HP再生＋防御強化",
+      "starter": {
+        "type": "design",
+        "summary": "HP再生＋防御強化"
+      },
+      "existingParts": [
+        {
+          "id": "monk_p3_s3",
+          "name": "闘気",
+          "job": "monk",
+          "jobOnly": false
+        },
+        {
+          "id": "warrior_p2_s3",
+          "name": "鉄壁",
+          "job": "warrior",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": {
+        "type": "design",
+        "summary": "再生効果・HP増加・被弾反撃。呪いに弱い"
+      },
+      "sustain": {
+        "requirements": "回復",
+        "equipmentExamples": [
+          "hammer_t1",
+          "hammer_t2"
+        ]
+      },
+      "weakness": "呪い・瞬間大ダメージ",
+      "effectRefs": [
+        "E04",
+        "E08"
+      ],
+      "newEffects": [
+        "E04",
+        "E08"
+      ],
+      "verification": {
+        "fullBuild6": "unverified"
+      }
+    },
+    {
+      "number": 74,
+      "id": "candidate_74",
+      "name": "回避障壁の舞踏士",
+      "origin": "proposed64",
+      "status": "requires_addition",
+      "weapon": [
+        "fan"
+      ],
+      "action": "回避の構え",
+      "starter": {
+        "type": "design",
+        "summary": "回避の構え"
+      },
+      "existingParts": [
+        {
+          "id": "dancer_p1_s5",
+          "name": "千変の舞",
+          "job": "dancer",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": {
+        "type": "design",
+        "summary": "回避時に障壁獲得・MP回復"
+      },
+      "sustain": {
+        "requirements": "回避・MP",
+        "equipmentExamples": [
+          "fan_t1",
+          "fan_t2"
+        ]
+      },
+      "weakness": "回避機会なし",
+      "effectRefs": [
+        "E04",
+        "E09",
+        "E11"
+      ],
+      "newEffects": [
+        "E04",
+        "E09",
+        "E11"
+      ],
+      "verification": {
+        "fullBuild6": "unverified"
+      }
+    },
+    {
+      "number": 75,
+      "id": "candidate_75",
+      "name": "反射結界の術師",
+      "origin": "proposed64",
+      "status": "hold",
+      "weapon": [
+        "staff"
+      ],
+      "action": "魔法反射の構え",
+      "starter": {
+        "type": "design",
+        "summary": "魔法反射の構え"
+      },
+      "existingParts": [
+        {
+          "id": "elementalist_p2_s2",
+          "name": "大地の壁",
+          "job": "elementalist",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": {
+        "type": "design",
+        "summary": "魔法耐性・反射威力強化。反射の連鎖は禁止"
+      },
+      "sustain": {
+        "requirements": "RES",
+        "equipmentExamples": [
+          "staff_t1",
+          "staff_t2"
+        ]
+      },
+      "weakness": "物理攻撃",
+      "effectRefs": [
+        "E04",
+        "E11"
+      ],
+      "newEffects": [
+        "E04",
+        "E11"
+      ],
+      "verification": {
+        "fullBuild6": "unverified"
+      },
+      "holdReason": "反射とダメージ帰属"
+    },
+    {
+      "number": 76,
+      "id": "candidate_76",
+      "name": "属性防壁の守護者",
+      "origin": "proposed64",
+      "status": "requires_addition",
+      "weapon": [
+        "sword"
+      ],
+      "action": "属性耐性付与→かばう",
+      "starter": {
+        "type": "design",
+        "summary": "属性耐性付与→かばう"
+      },
+      "existingParts": [
+        {
+          "id": "elementalist_p2_s2",
+          "name": "大地の壁",
+          "job": "elementalist",
+          "jobOnly": false
+        },
+        {
+          "id": "knight_p1_s3",
+          "name": "不動の盾",
+          "job": "knight",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": {
+        "type": "design",
+        "summary": "属性耐性・軽減・障壁。特定属性のボスに強い"
+      },
+      "sustain": {
+        "requirements": "耐性装備",
+        "equipmentExamples": [
+          "sword_t1",
+          "sword_t2"
+        ]
+      },
+      "weakness": "属性の読み違い",
+      "effectRefs": [
+        "E02",
+        "E11"
+      ],
+      "newEffects": [
+        "E02",
+        "E11"
+      ],
+      "verification": {
+        "fullBuild6": "unverified"
+      }
+    },
+    {
+      "number": 77,
+      "id": "candidate_77",
+      "name": "断絶の清浄者",
+      "origin": "proposed64",
+      "status": "requires_addition",
+      "weapon": [
+        "staff"
+      ],
+      "action": "状態異常治療＋デバフ解除",
+      "starter": {
+        "type": "design",
+        "summary": "状態異常治療＋デバフ解除"
+      },
+      "existingParts": [
+        {
+          "id": "white_mage_p2_s1",
+          "name": "清めの光",
+          "job": "white_mage",
+          "jobOnly": false
+        },
+        {
+          "id": "white_mage_p1_s3",
+          "name": "祝福の雨",
+          "job": "white_mage",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": {
+        "type": "design",
+        "summary": "治療時に障壁・HP回復を追加"
+      },
+      "sustain": {
+        "requirements": "MP",
+        "equipmentExamples": [
+          "staff_t1",
+          "staff_t2"
+        ]
+      },
+      "weakness": "解除不能",
+      "effectRefs": [
+        "E05",
+        "E11"
+      ],
+      "newEffects": [
+        "E05",
+        "E11"
+      ],
+      "verification": {
+        "fullBuild6": "unverified"
+      }
+    },
+    {
+      "number": 78,
+      "id": "candidate_78",
+      "name": "魔力調達の祈祷師",
+      "origin": "proposed64",
+      "status": "requires_addition",
+      "weapon": [
+        "instrument"
+      ],
+      "action": "通常攻撃→MP譲渡",
+      "starter": {
+        "type": "design",
+        "summary": "通常攻撃→MP譲渡"
+      },
+      "existingParts": [
+        {
+          "id": "bard_p3_s1",
+          "name": "励まし",
+          "job": "bard",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": {
+        "type": "design",
+        "summary": "通常攻撃MP回復・MP節約"
+      },
+      "sustain": {
+        "requirements": "MP",
+        "equipmentExamples": [
+          "instrument_t1",
+          "instrument_t2"
+        ]
+      },
+      "weakness": "供給元がMP不足",
+      "effectRefs": [
+        "E01",
+        "E09"
+      ],
+      "newEffects": [
+        "E01",
+        "E09"
+      ],
+      "verification": {
+        "fullBuild6": "unverified"
+      }
+    },
+    {
+      "number": 79,
+      "id": "candidate_79",
+      "name": "消費反転の賢者",
+      "origin": "proposed64",
+      "status": "requires_addition",
+      "weapon": [
+        "tome"
+      ],
+      "action": "高消費MP魔法",
+      "starter": {
+        "type": "design",
+        "summary": "高消費MP魔法"
+      },
+      "existingParts": [
+        {
+          "id": "black_mage_p1_s3",
+          "name": "焔の渦",
+          "job": "black_mage",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": {
+        "type": "design",
+        "summary": "消費MPに応じた障壁を生成"
+      },
+      "sustain": {
+        "requirements": "最大MP",
+        "equipmentExamples": [
+          "tome_t1",
+          "tome_t2"
+        ]
+      },
+      "weakness": "障壁が間に合わない",
+      "effectRefs": [
+        "E09",
+        "E11"
+      ],
+      "newEffects": [
+        "E09",
+        "E11"
+      ],
+      "verification": {
+        "fullBuild6": "unverified"
+      }
+    },
+    {
+      "number": 80,
+      "id": "candidate_80",
+      "name": "生命交換の司祭",
+      "origin": "proposed64",
+      "status": "requires_addition",
+      "weapon": [
+        "staff"
+      ],
+      "action": "自分のHPを消費→味方回復",
+      "starter": {
+        "type": "design",
+        "summary": "自分のHPを消費→味方回復"
+      },
+      "existingParts": [
+        {
+          "id": "white_mage_p1_s1",
+          "name": "癒しの光",
+          "job": "white_mage",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": {
+        "type": "design",
+        "summary": "最大HP強化・自己回復・消費HPの管理"
+      },
+      "sustain": {
+        "requirements": "最大HP",
+        "equipmentExamples": [
+          "staff_t1",
+          "staff_t2"
+        ]
+      },
+      "weakness": "自己消費直後の集中攻撃",
+      "effectRefs": [
+        "E09"
+      ],
+      "newEffects": [
+        "E09"
+      ],
+      "verification": {
+        "fullBuild6": "unverified"
+      }
+    },
+    {
+      "number": 81,
+      "id": "candidate_81",
+      "name": "会心号令の軍師団",
+      "origin": "proposed64",
+      "status": "requires_addition",
+      "weapon": [],
+      "action": "味方全体の会心率強化",
+      "starter": {
+        "type": "design",
+        "summary": "味方全体の会心率強化"
+      },
+      "existingParts": [
+        {
+          "id": "bard_p3_s3",
+          "name": "鼓舞",
+          "job": "bard",
+          "jobOnly": false
+        },
+        {
+          "id": "gunner_p1_s1",
+          "name": "速射",
+          "job": "gunner",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": {
+        "type": "design",
+        "summary": "味方の会心をきっかけに、自分の次の攻撃を強化"
+      },
+      "sustain": {
+        "requirements": "会心装備",
+        "equipmentExamples": []
+      },
+      "weakness": "会心不発",
+      "effectRefs": [
+        "E03",
+        "E07",
+        "E12"
+      ],
+      "newEffects": [
+        "E03",
+        "E07",
+        "E12"
+      ],
+      "verification": {
+        "fullBuild6": "unverified"
+      }
+    },
+    {
+      "number": 82,
+      "id": "candidate_82",
+      "name": "連撃支援の舞踏団",
+      "origin": "proposed64",
+      "status": "requires_addition",
+      "weapon": [],
+      "action": "多段攻撃＋支援舞",
+      "starter": {
+        "type": "design",
+        "summary": "多段攻撃＋支援舞"
+      },
+      "existingParts": [
+        {
+          "id": "monk_p1_s3",
+          "name": "連打",
+          "job": "monk",
+          "jobOnly": false
+        },
+        {
+          "id": "dancer_p1_s1",
+          "name": "癒しの舞",
+          "job": "dancer",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": {
+        "type": "design",
+        "summary": "味方の多段攻撃に連動して補助効果を強化"
+      },
+      "sustain": {
+        "requirements": "扇・MP",
+        "equipmentExamples": []
+      },
+      "weakness": "連撃役の行動不能",
+      "effectRefs": [
+        "E01",
+        "E07",
+        "E10"
+      ],
+      "newEffects": [
+        "E01",
+        "E07",
+        "E10"
+      ],
+      "verification": {
+        "fullBuild6": "unverified"
+      }
+    },
+    {
+      "number": 83,
+      "id": "candidate_83",
+      "name": "双魔増幅の魔導隊",
+      "origin": "proposed64",
+      "status": "requires_addition",
+      "weapon": [],
+      "action": "異なる属性の魔法を使い分ける",
+      "starter": {
+        "type": "design",
+        "summary": "異なる属性の魔法を使い分ける"
+      },
+      "existingParts": [
+        {
+          "id": "black_mage_p1_s1",
+          "name": "炎弾",
+          "job": "black_mage",
+          "jobOnly": false
+        },
+        {
+          "id": "black_mage_p2_s1",
+          "name": "氷槍",
+          "job": "black_mage",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": {
+        "type": "design",
+        "summary": "仲間が別属性で攻撃すると次の魔法を強化"
+      },
+      "sustain": {
+        "requirements": "異属性の術者",
+        "equipmentExamples": []
+      },
+      "weakness": "属性重複・高RES",
+      "effectRefs": [
+        "E01",
+        "E07",
+        "E12"
+      ],
+      "newEffects": [
+        "E01",
+        "E07",
+        "E12"
+      ],
+      "verification": {
+        "fullBuild6": "unverified"
+      }
+    },
+    {
+      "number": 84,
+      "id": "candidate_84",
+      "name": "障壁連鎖の守護隊",
+      "origin": "proposed64",
+      "status": "requires_addition",
+      "weapon": [],
+      "action": "味方へ障壁を付与",
+      "starter": {
+        "type": "design",
+        "summary": "味方へ障壁を付与"
+      },
+      "existingParts": [
+        {
+          "id": "elementalist_p2_s2",
+          "name": "大地の壁",
+          "job": "elementalist",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": {
+        "type": "design",
+        "summary": "障壁付与時に別の仲間にも小障壁。発動回数制限あり"
+      },
+      "sustain": {
+        "requirements": "杖・MP",
+        "equipmentExamples": []
+      },
+      "weakness": "障壁を超える大ダメージ",
+      "effectRefs": [
+        "E07",
+        "E11"
+      ],
+      "newEffects": [
+        "E07",
+        "E11"
+      ],
+      "verification": {
+        "fullBuild6": "unverified"
+      }
+    },
+    {
+      "number": 85,
+      "id": "candidate_85",
+      "name": "かばう報恩の聖騎隊",
+      "origin": "proposed64",
+      "status": "requires_addition",
+      "weapon": [],
+      "action": "騎士がかばう→回復役が支援",
+      "starter": {
+        "type": "design",
+        "summary": "騎士がかばう→回復役が支援"
+      },
+      "existingParts": [
+        {
+          "id": "knight_p1_s3",
+          "name": "不動の盾",
+          "job": "knight",
+          "jobOnly": false
+        },
+        {
+          "id": "white_mage_p1_s1",
+          "name": "癒しの光",
+          "job": "white_mage",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": {
+        "type": "design",
+        "summary": "かばわれた仲間の次の攻撃を強化"
+      },
+      "sustain": {
+        "requirements": "鎚・杖・HP",
+        "equipmentExamples": []
+      },
+      "weakness": "かばえない攻撃",
+      "effectRefs": [
+        "E04",
+        "E07",
+        "E12"
+      ],
+      "newEffects": [
+        "E04",
+        "E07",
+        "E12"
+      ],
+      "verification": {
+        "fullBuild6": "unverified"
+      }
+    },
+    {
+      "number": 86,
+      "id": "candidate_86",
+      "name": "状態異常連携部隊",
+      "origin": "proposed64",
+      "status": "requires_addition",
+      "weapon": [],
+      "action": "複数人で異なる状態異常を付与",
+      "starter": {
+        "type": "design",
+        "summary": "複数人で異なる状態異常を付与"
+      },
+      "existingParts": [
+        {
+          "id": "thief_p3_s3",
+          "name": "毒刃",
+          "job": "thief",
+          "jobOnly": false
+        },
+        {
+          "id": "monk_p4_s1",
+          "name": "雷掌",
+          "job": "monk",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": {
+        "type": "design",
+        "summary": "味方の付与成功をきっかけに次の攻撃を強化"
+      },
+      "sustain": {
+        "requirements": "付与率",
+        "equipmentExamples": []
+      },
+      "weakness": "高状態耐性",
+      "effectRefs": [
+        "E05",
+        "E07",
+        "E12"
+      ],
+      "newEffects": [
+        "E05",
+        "E07",
+        "E12"
+      ],
+      "verification": {
+        "fullBuild6": "unverified"
+      }
+    },
+    {
+      "number": 87,
+      "id": "candidate_87",
+      "name": "弱点共有の狩猟隊",
+      "origin": "proposed64",
+      "status": "requires_addition",
+      "weapon": [],
+      "action": "調査→仲間が弱点攻撃",
+      "starter": {
+        "type": "design",
+        "summary": "調査→仲間が弱点攻撃"
+      },
+      "existingParts": [
+        {
+          "id": "hunter_p2_s1",
+          "name": "見極め",
+          "job": "hunter",
+          "jobOnly": false
+        },
+        {
+          "id": "black_mage_p3_s1",
+          "name": "雷鳴",
+          "job": "black_mage",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": {
+        "type": "design",
+        "summary": "味方の弱点命中時、次の攻撃を強化"
+      },
+      "sustain": {
+        "requirements": "弓・可変属性",
+        "equipmentExamples": []
+      },
+      "weakness": "弱点なし・調査の手数",
+      "effectRefs": [
+        "E02",
+        "E07",
+        "E12",
+        "E13"
+      ],
+      "newEffects": [
+        "E02",
+        "E07",
+        "E12",
+        "E13"
+      ],
+      "verification": {
+        "fullBuild6": "unverified"
+      }
+    },
+    {
+      "number": 88,
+      "id": "candidate_88",
+      "name": "回復反撃の戦僧隊",
+      "origin": "proposed64",
+      "status": "requires_addition",
+      "weapon": [],
+      "action": "回復役と反撃タンクを組ませる",
+      "starter": {
+        "type": "design",
+        "summary": "回復役と反撃タンクを組ませる"
+      },
+      "existingParts": [
+        {
+          "id": "white_mage_p1_s1",
+          "name": "癒しの光",
+          "job": "white_mage",
+          "jobOnly": false
+        },
+        {
+          "id": "knight_p3_s3",
+          "name": "反撃の構え",
+          "job": "knight",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": {
+        "type": "design",
+        "summary": "回復を受けたタンクの反撃威力を強化"
+      },
+      "sustain": {
+        "requirements": "杖・鎚・MP",
+        "equipmentExamples": []
+      },
+      "weakness": "反撃条件なし",
+      "effectRefs": [
+        "E04",
+        "E07",
+        "E12"
+      ],
+      "newEffects": [
+        "E04",
+        "E07",
+        "E12"
+      ],
+      "verification": {
+        "fullBuild6": "unverified"
+      }
+    },
+    {
+      "number": 89,
+      "id": "candidate_89",
+      "name": "MP循環楽団",
+      "origin": "proposed64",
+      "status": "requires_addition",
+      "weapon": [],
+      "action": "通常攻撃・MP譲渡・魔法攻撃",
+      "starter": {
+        "type": "design",
+        "summary": "通常攻撃・MP譲渡・魔法攻撃"
+      },
+      "existingParts": [
+        {
+          "id": "bard_p3_s1",
+          "name": "励まし",
+          "job": "bard",
+          "jobOnly": false
+        },
+        {
+          "id": "gunner_p1_s1",
+          "name": "速射",
+          "job": "gunner",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": {
+        "type": "design",
+        "summary": "味方の攻撃をきっかけにMPを回収・再分配"
+      },
+      "sustain": {
+        "requirements": "楽器・銃・MP",
+        "equipmentExamples": []
+      },
+      "weakness": "MP上限で余る",
+      "effectRefs": [
+        "E07",
+        "E09"
+      ],
+      "newEffects": [
+        "E07",
+        "E09"
+      ],
+      "verification": {
+        "fullBuild6": "unverified"
+      }
+    },
+    {
+      "number": 90,
+      "id": "candidate_90",
+      "name": "六人不屈の守備隊",
+      "origin": "proposed64",
+      "status": "requires_addition",
+      "weapon": [],
+      "action": "全体軽減＋治療＋かばう",
+      "starter": {
+        "type": "design",
+        "summary": "全体軽減＋治療＋かばう"
+      },
+      "existingParts": [
+        {
+          "id": "knight_p1_s1",
+          "name": "守りの号令",
+          "job": "knight",
+          "jobOnly": false
+        },
+        {
+          "id": "white_mage_p2_s1",
+          "name": "清めの光",
+          "job": "white_mage",
+          "jobOnly": false
+        },
+        {
+          "id": "knight_p1_s3",
+          "name": "不動の盾",
+          "job": "knight",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": {
+        "type": "design",
+        "summary": "味方が戦闘不能になった際の緊急保護・立て直し"
+      },
+      "sustain": {
+        "requirements": "HP・MP",
+        "equipmentExamples": []
+      },
+      "weakness": "同時壊滅",
+      "effectRefs": [
+        "E06",
+        "E07",
+        "E11"
+      ],
+      "newEffects": [
+        "E06",
+        "E07",
+        "E11"
+      ],
+      "verification": {
+        "fullBuild6": "unverified"
+      }
+    },
+    {
+      "number": 91,
+      "id": "candidate_91",
+      "name": "溜め斬りの巨剣士",
+      "origin": "proposed64",
+      "status": "requires_addition",
+      "weapon": [
+        "greatsword"
+      ],
+      "action": "溜め→高威力の一撃",
+      "starter": {
+        "type": "design",
+        "summary": "溜め→高威力の一撃"
+      },
+      "existingParts": [
+        {
+          "id": "warrior_p1_s1",
+          "name": "剛断ち",
+          "job": "warrior",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": {
+        "type": "design",
+        "summary": "溜め攻撃強化・次のスキルMP節約"
+      },
+      "sustain": {
+        "requirements": "MP",
+        "equipmentExamples": [
+          "greatsword_t1",
+          "greatsword_t2"
+        ]
+      },
+      "weakness": "溜めに手番を使う",
+      "effectRefs": [
+        "E10",
+        "E12"
+      ],
+      "newEffects": [
+        "E10",
+        "E12"
+      ],
+      "verification": {
+        "fullBuild6": "unverified"
+      }
+    },
+    {
+      "number": 92,
+      "id": "candidate_92",
+      "name": "遅延爆破の魔術師",
+      "origin": "proposed64",
+      "status": "existing",
+      "weapon": [
+        "tome"
+      ],
+      "action": "時間差攻撃を予約",
+      "starter": {
+        "type": "design",
+        "summary": "時間差攻撃を予約"
+      },
+      "existingParts": [
+        {
+          "id": "hexer_p1_s4",
+          "name": "終焉の刻印",
+          "job": "hexer",
+          "jobOnly": true
+        }
+      ],
+      "amplifier": {
+        "type": "existing_mechanics_candidate",
+        "summary": "時間差攻撃の威力強化・MP回復",
+        "implementationNote": "呪術師専用奥義で2巡後に解決。別職へ持ち出せない。初期案の追加MP回復は既存とみなさない。"
+      },
+      "sustain": {
+        "requirements": "MP",
+        "equipmentExamples": [
+          "tome_t1",
+          "tome_t2"
+        ]
+      },
+      "weakness": "予約後に敵が倒れる",
+      "effectRefs": [
+        "E03",
+        "E12"
+      ],
+      "newEffects": [
+        "E12",
+        "E09"
+      ],
+      "verification": {
+        "fullBuild6": "unverified"
+      },
+      "engineEvidence": {
+        "skills": [
+          "hexer_p1_s4"
+        ],
+        "path": "startRound / delayed",
+        "note": "呪術師専用奥義で2巡後に解決。別職へ持ち出せない。初期案の追加MP回復は既存とみなさない。"
+      },
+      "conceptStatus": "existing_core_only",
+      "evidenceGap": "既存は予約ダメージ。予約時の威力補正・解決時MP回復の組合せは要追加。"
+    },
+    {
+      "number": 93,
+      "id": "candidate_93",
+      "name": "捕食網の罠師",
+      "origin": "proposed64",
+      "status": "hold",
+      "weapon": [
+        "bow"
+      ],
+      "action": "敵の行動に反応する罠を設置",
+      "starter": {
+        "type": "design",
+        "summary": "敵の行動に反応する罠を設置"
+      },
+      "existingParts": [
+        {
+          "id": "hunter_p3_s1",
+          "name": "足止めの矢",
+          "job": "hunter",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": {
+        "type": "design",
+        "summary": "罠ダメージ・束縛付与率・罠の持続延長"
+      },
+      "sustain": {
+        "requirements": "付与率",
+        "equipmentExamples": [
+          "bow_t1",
+          "bow_t2"
+        ]
+      },
+      "weakness": "敵が行動しない",
+      "effectRefs": [
+        "E05",
+        "E12"
+      ],
+      "newEffects": [
+        "E05",
+        "E12"
+      ],
+      "verification": {
+        "fullBuild6": "unverified"
+      },
+      "holdReason": "設置物の寿命"
+    },
+    {
+      "number": 94,
+      "id": "candidate_94",
+      "name": "刻印の破術士",
+      "origin": "proposed64",
+      "status": "hold",
+      "weapon": [
+        "tome"
+      ],
+      "action": "刻印付与→刻印解放",
+      "starter": {
+        "type": "design",
+        "summary": "刻印付与→刻印解放"
+      },
+      "existingParts": [
+        {
+          "id": "hexer_p1_s4",
+          "name": "終焉の刻印",
+          "job": "hexer",
+          "jobOnly": true
+        }
+      ],
+      "amplifier": {
+        "type": "design",
+        "summary": "刻印数に応じて解放技を強化"
+      },
+      "sustain": {
+        "requirements": "MP",
+        "equipmentExamples": [
+          "tome_t1",
+          "tome_t2"
+        ]
+      },
+      "weakness": "対象切替・短期戦",
+      "effectRefs": [
+        "E02",
+        "E08",
+        "E12"
+      ],
+      "newEffects": [
+        "E02",
+        "E08",
+        "E12"
+      ],
+      "verification": {
+        "fullBuild6": "unverified"
+      },
+      "holdReason": "対象別刻印の消費"
+    },
+    {
+      "number": 95,
+      "id": "candidate_95",
+      "name": "属性陣の術士",
+      "origin": "proposed64",
+      "status": "hold",
+      "weapon": [
+        "fan"
+      ],
+      "action": "特定属性を強化する領域を設置",
+      "starter": {
+        "type": "design",
+        "summary": "特定属性を強化する領域を設置"
+      },
+      "existingParts": [
+        {
+          "id": "elementalist_p1_s1",
+          "name": "風刃",
+          "job": "elementalist",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": {
+        "type": "design",
+        "summary": "領域中の属性強化・MP再生"
+      },
+      "sustain": {
+        "requirements": "MP",
+        "equipmentExamples": [
+          "fan_t1",
+          "fan_t2"
+        ]
+      },
+      "weakness": "領域の上書き競合",
+      "effectRefs": [
+        "E01",
+        "E07",
+        "E08"
+      ],
+      "newEffects": [
+        "E01",
+        "E07",
+        "E08"
+      ],
+      "verification": {
+        "fullBuild6": "unverified"
+      },
+      "holdReason": "戦場共有枠"
+    },
+    {
+      "number": 96,
+      "id": "candidate_96",
+      "name": "連携奥義の司令官",
+      "origin": "proposed64",
+      "status": "hold",
+      "weapon": [
+        "sword"
+      ],
+      "action": "味方への連携準備",
+      "starter": {
+        "type": "design",
+        "summary": "味方への連携準備"
+      },
+      "existingParts": [
+        {
+          "id": "bard_p3_s3",
+          "name": "鼓舞",
+          "job": "bard",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": {
+        "type": "design",
+        "summary": "仲間の攻撃条件を満たした際に自動追撃"
+      },
+      "sustain": {
+        "requirements": "MP",
+        "equipmentExamples": [
+          "sword_t1",
+          "sword_t2"
+        ]
+      },
+      "weakness": "味方の順番・連鎖上限",
+      "effectRefs": [
+        "E07",
+        "E12"
+      ],
+      "newEffects": [
+        "E07",
+        "E12"
+      ],
+      "verification": {
+        "fullBuild6": "unverified"
+      },
+      "holdReason": "予約奥義の自動実行"
+    },
+    {
+      "number": 97,
+      "id": "candidate_97",
+      "name": "図鑑探究の狩人",
+      "origin": "proposed64",
+      "status": "requires_addition",
+      "weapon": [
+        "bow"
+      ],
+      "action": "精密調査",
+      "starter": {
+        "type": "design",
+        "summary": "精密調査"
+      },
+      "existingParts": [
+        {
+          "id": "hunter_p2_s1",
+          "name": "見極め",
+          "job": "hunter",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": {
+        "type": "design",
+        "summary": "未判明情報の開示量増加・調査支援"
+      },
+      "sustain": {
+        "requirements": "弓",
+        "equipmentExamples": [
+          "bow_t1",
+          "bow_t2"
+        ]
+      },
+      "weakness": "既知の敵",
+      "effectRefs": [
+        "E13"
+      ],
+      "newEffects": [
+        "E13"
+      ],
+      "verification": {
+        "fullBuild6": "unverified"
+      }
+    },
+    {
+      "number": 98,
+      "id": "candidate_98",
+      "name": "希少素材の盗賊",
+      "origin": "proposed64",
+      "status": "requires_addition",
+      "weapon": [
+        "dagger"
+      ],
+      "action": "盗む→特殊な盗み",
+      "starter": {
+        "type": "design",
+        "summary": "盗む→特殊な盗み"
+      },
+      "existingParts": [
+        {
+          "id": "thief_p2_s1",
+          "name": "盗む",
+          "job": "thief",
+          "jobOnly": false
+        },
+        {
+          "id": "thief_p2_s3",
+          "name": "金品強奪",
+          "job": "thief",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": {
+        "type": "design",
+        "summary": "盗み成功率・希少品獲得率の強化"
+      },
+      "sustain": {
+        "requirements": "LUK",
+        "equipmentExamples": [
+          "dagger_t1",
+          "dagger_t2"
+        ]
+      },
+      "weakness": "盗取済み・経済の偏り",
+      "effectRefs": [
+        "E13"
+      ],
+      "newEffects": [
+        "E13"
+      ],
+      "verification": {
+        "fullBuild6": "unverified"
+      }
+    },
+    {
+      "number": 99,
+      "id": "candidate_99",
+      "name": "安全撤退の斥候",
+      "origin": "proposed64",
+      "status": "requires_addition",
+      "weapon": [
+        "bow"
+      ],
+      "action": "逃走支援→逃走",
+      "starter": {
+        "type": "design",
+        "summary": "逃走支援→逃走"
+      },
+      "existingParts": [
+        {
+          "id": "thief_p3_s1",
+          "name": "煙玉",
+          "job": "thief",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": {
+        "type": "design",
+        "summary": "逃走成功率・被害軽減。逃走不可戦闘には制約"
+      },
+      "sustain": {
+        "requirements": "SPD",
+        "equipmentExamples": [
+          "bow_t1",
+          "bow_t2"
+        ]
+      },
+      "weakness": "逃走禁止",
+      "effectRefs": [
+        "E13",
+        "E14"
+      ],
+      "newEffects": [
+        "E13",
+        "E14"
+      ],
+      "verification": {
+        "fullBuild6": "unverified"
+      }
+    },
+    {
+      "number": 100,
+      "id": "candidate_100",
+      "name": "遠征の補給師",
+      "origin": "proposed64",
+      "status": "requires_addition",
+      "weapon": [
+        "dagger"
+      ],
+      "action": "戦闘間の治療・補給",
+      "starter": {
+        "type": "design",
+        "summary": "戦闘間の治療・補給"
+      },
+      "existingParts": [
+        {
+          "id": "apothecary_p1_s1",
+          "name": "応急手当",
+          "job": "apothecary",
+          "jobOnly": false
+        }
+      ],
+      "amplifier": {
+        "type": "design",
+        "summary": "消耗品節約・戦闘後HP/MP回復"
+      },
+      "sustain": {
+        "requirements": "消耗品",
+        "equipmentExamples": [
+          "dagger_t1",
+          "dagger_t2"
+        ]
+      },
+      "weakness": "単戦・回復過剰",
+      "effectRefs": [
+        "E09",
+        "E14"
+      ],
+      "newEffects": [
+        "E09",
+        "E14"
+      ],
+      "verification": {
+        "fullBuild6": "unverified"
+      }
+    }
+  ]
+}

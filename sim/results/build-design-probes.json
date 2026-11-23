@@ -1,0 +1,5781 @@
+{
+  "schemaVersion": 1,
+  "purpose": "合法編成の核効果が実戦闘APIで発動する証拠。勝率・発動頻度・攻略速度の証明ではない。",
+  "assumptions": {
+    "partySize": 4,
+    "preparation": "prepared",
+    "dungeon": "各minStarの標準ダンジョン",
+    "actorStatistics": "合法fixtureから変更なし。対照群だけ指定効果/パッシブ/強化を除去。",
+    "enemySelection": "同★以下の公開モンスターを発動条件に合わせて選ぶ。試験対象が指定ダンジョンで実際に出現するという保証ではない。",
+    "controlledStates": "負傷・MP不足・対象状態・行動順・主役のみ生存の場面を明記して準備。敵HPは長持ちする標的として10倍。",
+    "seedSelection": "各ビルドの固定seedから順に最大512候補を試し、観測できた最初の候補を保存。成功確率の推定には使わない。"
+  },
+  "sourceSha256": "8f01f115d566af6dc85426d60695a2332cf8e7e0982dc22dfde61a71c60cf787",
+  "probeSha256": "6ac6140952fa11c47a9d7d361015f953a62bc097a221d03435e94832d92686fb",
+  "total": 36,
+  "passed": 36,
+  "failed": 0,
+  "results": [
+    {
+      "id": "poison_assassin",
+      "name": "毒刃アサシン",
+      "passed": true,
+      "reason": "技能付与→対応状態への強化打撃",
+      "minStar": 6,
+      "dungeonId": "sand_tomb",
+      "level": 38,
+      "stage": 3,
+      "core": [
+        {
+          "member": 0,
+          "actions": [
+            "thief_p3_s3",
+            "thief_p1_s1"
+          ],
+          "passives": [
+            "apothecary_p2_s2"
+          ],
+          "affixes": {
+            "weapon": [
+              "VS_STATUS:poison",
+              "DOT_POWER"
+            ],
+            "accessory1": [
+              "STATUS_RATE"
+            ]
+          },
+          "effects": [
+            "VS_STATUS:poison",
+            "DOT_POWER",
+            "STATUS_RATE"
+          ]
+        },
+        {
+          "member": 1,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        },
+        {
+          "member": 2,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        },
+        {
+          "member": 3,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        }
+      ],
+      "assembly": {
+        "gold": 36324,
+        "byPurpose": {
+          "craft": 14752,
+          "enhance": 3232,
+          "enchant": 16800,
+          "items": 1540
+        },
+        "materials": {
+          "m04_006_mat": 3,
+          "m04_006_rare": 1,
+          "enhancement_stone": 28,
+          "blooming_hill_boss_mat": 28,
+          "exp_r06_amorphous_mat": 64,
+          "mine_spider_mat": 18,
+          "mine_spider_rare": 6,
+          "drill_bot_mat": 9,
+          "drill_bot_rare": 3,
+          "iron_worm_mat": 3,
+          "iron_worm_rare": 1,
+          "cursed_idol_mat": 3,
+          "cursed_idol_rare": 1
+        },
+        "ap": {
+          "m1": {
+            "thief": 112,
+            "apothecary": 20
+          },
+          "m2": {
+            "knight": 90
+          },
+          "m3": {
+            "bard": 90
+          },
+          "m4": {
+            "white_mage": 90
+          }
+        },
+        "jp": 280,
+        "jobTraining": [
+          {
+            "member": 0,
+            "from": "thief",
+            "to": "apothecary",
+            "jp": 200
+          },
+          {
+            "member": 0,
+            "from": "apothecary",
+            "to": "thief",
+            "jp": 80
+          }
+        ]
+      },
+      "checks": [
+        {
+          "name": "技能付与→対応状態への強化打撃",
+          "seed": 360001,
+          "conditions": {
+            "enemy": {
+              "monsterId": "m06_005",
+              "sourceRank": 6,
+              "count": 1,
+              "boss": false,
+              "level": 38,
+              "originalMaxHp": [
+                1824
+              ],
+              "hpMultiplier": 10
+            },
+            "startRound": 1,
+            "soleSurvivor": false,
+            "answers": "全問正解",
+            "actionOrder": "発動条件を切り出すため指定",
+            "preparedStates": []
+          },
+          "actions": [
+            {
+              "actor": 0,
+              "type": "skill",
+              "skillId": "thief_p3_s3",
+              "target": 0
+            },
+            {
+              "actor": 0,
+              "type": "skill",
+              "skillId": "thief_p1_s1",
+              "target": 0
+            },
+            {
+              "actor": "enemy",
+              "enemy": 0,
+              "then": "ally_turn_start:0"
+            }
+          ],
+          "values": {
+            "statusId": "poison",
+            "appliedBy": 0,
+            "skillId": "thief_p3_s3",
+            "potency": 1.38,
+            "damageWithStatusEffect": 547,
+            "damageWithoutStatusEffect": 449,
+            "dotDamage": 1259
+          },
+          "control": {
+            "omitted": [
+              "VS_STATUS:poison"
+            ],
+            "pairedRng": 1200090144
+          },
+          "candidatesTried": 1
+        }
+      ]
+    },
+    {
+      "id": "toxic_alchemist",
+      "name": "猛毒の錬金術師",
+      "passed": true,
+      "reason": "技能付与→対応状態への強化打撃",
+      "minStar": 3,
+      "dungeonId": "howling_canyon",
+      "level": 17,
+      "stage": 2,
+      "core": [
+        {
+          "member": 0,
+          "actions": [
+            "apothecary_p3_s1",
+            "apothecary_p1_s1"
+          ],
+          "passives": [
+            "apothecary_p2_s2"
+          ],
+          "affixes": {
+            "weapon": [
+              "VS_STATUS:toxic",
+              "DOT_POWER"
+            ],
+            "accessory1": [
+              "STATUS_RATE"
+            ],
+            "accessory2": [
+              "HEAL_POWER"
+            ]
+          },
+          "effects": [
+            "VS_STATUS:toxic",
+            "DOT_POWER",
+            "STATUS_RATE",
+            "HEAL_POWER"
+          ]
+        },
+        {
+          "member": 1,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        },
+        {
+          "member": 2,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        },
+        {
+          "member": 3,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        }
+      ],
+      "assembly": {
+        "gold": 10420,
+        "byPurpose": {
+          "craft": 3240,
+          "enchant": 6720,
+          "items": 460
+        },
+        "materials": {
+          "m02_005_mat": 3,
+          "m02_005_rare": 1,
+          "blooming_hill_boss_mat": 28,
+          "canyon_wolf_mat": 48,
+          "wisp_dragonfly_mat": 15,
+          "wisp_dragonfly_rare": 5,
+          "skeleton_mat": 9,
+          "skeleton_rare": 3,
+          "stone_statue_mat": 6,
+          "stone_statue_rare": 2,
+          "fort_bandit_mat": 15,
+          "poison_cap_rare": 4,
+          "fort_bandit_rare": 1
+        },
+        "ap": {
+          "m1": {
+            "apothecary": 50
+          },
+          "m2": {
+            "knight": 30
+          },
+          "m3": {
+            "bard": 30
+          },
+          "m4": {
+            "white_mage": 30
+          }
+        },
+        "jp": 200,
+        "jobTraining": []
+      },
+      "checks": [
+        {
+          "name": "技能付与→対応状態への強化打撃",
+          "seed": 361001,
+          "conditions": {
+            "enemy": {
+              "monsterId": "canyon_wolf",
+              "sourceRank": 3,
+              "count": 1,
+              "boss": false,
+              "level": 17,
+              "originalMaxHp": [
+                1099
+              ],
+              "hpMultiplier": 10
+            },
+            "startRound": 1,
+            "soleSurvivor": false,
+            "answers": "全問正解",
+            "actionOrder": "発動条件を切り出すため指定",
+            "preparedStates": []
+          },
+          "actions": [
+            {
+              "actor": 0,
+              "type": "skill",
+              "skillId": "apothecary_p3_s1",
+              "target": 0
+            },
+            {
+              "actor": 0,
+              "type": "attack",
+              "target": 0
+            },
+            {
+              "actor": "enemy",
+              "enemy": 0,
+              "then": "ally_turn_start:0"
+            }
+          ],
+          "values": {
+            "statusId": "toxic",
+            "appliedBy": 0,
+            "skillId": "apothecary_p3_s1",
+            "potency": 1.415,
+            "damageWithStatusEffect": 110,
+            "damageWithoutStatusEffect": 93,
+            "dotDamage": 778
+          },
+          "control": {
+            "omitted": [
+              "VS_STATUS:toxic"
+            ],
+            "pairedRng": 1831926814
+          },
+          "candidatesTried": 1
+        }
+      ]
+    },
+    {
+      "id": "burning_spellblade",
+      "name": "業火の魔剣士",
+      "passed": true,
+      "reason": "技能付与→対応状態への強化打撃",
+      "minStar": 3,
+      "dungeonId": "howling_canyon",
+      "level": 17,
+      "stage": 2,
+      "core": [
+        {
+          "member": 0,
+          "actions": [
+            "spellblade_p3_s2",
+            "spellblade_p2_s1"
+          ],
+          "passives": [
+            "spellblade_p2_s2"
+          ],
+          "affixes": {
+            "weapon": [
+              "VS_STATUS:burn",
+              "DOT_POWER"
+            ],
+            "accessory1": [
+              "STATUS_RATE"
+            ]
+          },
+          "effects": [
+            "VS_STATUS:burn",
+            "DOT_POWER",
+            "STATUS_RATE"
+          ]
+        },
+        {
+          "member": 1,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        },
+        {
+          "member": 2,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        },
+        {
+          "member": 3,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        }
+      ],
+      "assembly": {
+        "gold": 10461,
+        "byPurpose": {
+          "craft": 3281,
+          "enchant": 6720,
+          "items": 460
+        },
+        "materials": {
+          "goblin_mat": 2,
+          "cave_rat_mat": 2,
+          "fort_bandit_mat": 18,
+          "skeleton_mat": 13,
+          "fire_lizard_mat": 2,
+          "blooming_hill_boss_mat": 28,
+          "canyon_wolf_mat": 48,
+          "wisp_dragonfly_mat": 15,
+          "wisp_dragonfly_rare": 5,
+          "skeleton_rare": 4,
+          "poison_cap_rare": 4,
+          "fort_bandit_rare": 1,
+          "stone_statue_mat": 3,
+          "stone_statue_rare": 1
+        },
+        "ap": {
+          "m1": {
+            "spellblade": 62
+          },
+          "m2": {
+            "knight": 30
+          },
+          "m3": {
+            "bard": 30
+          },
+          "m4": {
+            "white_mage": 30
+          }
+        },
+        "jp": 200,
+        "jobTraining": []
+      },
+      "checks": [
+        {
+          "name": "技能付与→対応状態への強化打撃",
+          "seed": 362002,
+          "conditions": {
+            "enemy": {
+              "monsterId": "canyon_wolf",
+              "sourceRank": 3,
+              "count": 1,
+              "boss": false,
+              "level": 17,
+              "originalMaxHp": [
+                1099
+              ],
+              "hpMultiplier": 10
+            },
+            "startRound": 1,
+            "soleSurvivor": false,
+            "answers": "全問正解",
+            "actionOrder": "発動条件を切り出すため指定",
+            "preparedStates": []
+          },
+          "actions": [
+            {
+              "actor": 0,
+              "type": "skill",
+              "skillId": "spellblade_p3_s2",
+              "target": 0
+            },
+            {
+              "actor": 0,
+              "type": "skill",
+              "skillId": "spellblade_p2_s1",
+              "target": 0
+            },
+            {
+              "actor": "enemy",
+              "enemy": 0,
+              "then": "ally_turn_start:0"
+            }
+          ],
+          "values": {
+            "statusId": "burn",
+            "appliedBy": 0,
+            "skillId": "spellblade_p3_s2",
+            "potency": 1.135,
+            "damageWithStatusEffect": 420,
+            "damageWithoutStatusEffect": 356,
+            "dotDamage": 624
+          },
+          "control": {
+            "omitted": [
+              "VS_STATUS:burn"
+            ],
+            "pairedRng": 1200092145
+          },
+          "candidatesTried": 2
+        }
+      ]
+    },
+    {
+      "id": "bleeding_reaper",
+      "name": "出血の死神",
+      "passed": true,
+      "reason": "技能付与→対応状態への強化打撃",
+      "minStar": 6,
+      "dungeonId": "sand_tomb",
+      "level": 38,
+      "stage": 3,
+      "core": [
+        {
+          "member": 0,
+          "actions": [
+            "warrior_p3_s3",
+            "warrior_p1_s1"
+          ],
+          "passives": [
+            "warrior_p1_s2",
+            "apothecary_p2_s2"
+          ],
+          "affixes": {
+            "weapon": [
+              "VS_STATUS:bleed",
+              "DOT_POWER"
+            ],
+            "accessory1": [
+              "STATUS_RATE"
+            ]
+          },
+          "effects": [
+            "VS_STATUS:bleed",
+            "DOT_POWER",
+            "STATUS_RATE"
+          ]
+        },
+        {
+          "member": 1,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        },
+        {
+          "member": 2,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        },
+        {
+          "member": 3,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        }
+      ],
+      "assembly": {
+        "gold": 36718,
+        "byPurpose": {
+          "craft": 15086,
+          "enhance": 3292,
+          "enchant": 16800,
+          "items": 1540
+        },
+        "materials": {
+          "exp_r06_amorphous_mat": 68,
+          "enhancement_stone": 28,
+          "blooming_hill_boss_mat": 28,
+          "mine_spider_mat": 18,
+          "mine_spider_rare": 6,
+          "drill_bot_mat": 9,
+          "drill_bot_rare": 3,
+          "iron_worm_mat": 3,
+          "iron_worm_rare": 1,
+          "cursed_idol_mat": 3,
+          "cursed_idol_rare": 1
+        },
+        "ap": {
+          "m1": {
+            "warrior": 90,
+            "apothecary": 20
+          },
+          "m2": {
+            "knight": 90
+          },
+          "m3": {
+            "bard": 90
+          },
+          "m4": {
+            "white_mage": 90
+          }
+        },
+        "jp": 280,
+        "jobTraining": [
+          {
+            "member": 0,
+            "from": "warrior",
+            "to": "apothecary",
+            "jp": 200
+          },
+          {
+            "member": 0,
+            "from": "apothecary",
+            "to": "warrior",
+            "jp": 80
+          }
+        ]
+      },
+      "checks": [
+        {
+          "name": "技能付与→対応状態への強化打撃",
+          "seed": 363002,
+          "conditions": {
+            "enemy": {
+              "monsterId": "m06_005",
+              "sourceRank": 6,
+              "count": 1,
+              "boss": false,
+              "level": 38,
+              "originalMaxHp": [
+                1824
+              ],
+              "hpMultiplier": 10
+            },
+            "startRound": 1,
+            "soleSurvivor": false,
+            "answers": "全問正解",
+            "actionOrder": "発動条件を切り出すため指定",
+            "preparedStates": []
+          },
+          "actions": [
+            {
+              "actor": 0,
+              "type": "skill",
+              "skillId": "warrior_p3_s3",
+              "target": 0
+            },
+            {
+              "actor": 0,
+              "type": "skill",
+              "skillId": "warrior_p1_s1",
+              "target": 0
+            },
+            {
+              "actor": "enemy",
+              "enemy": 0,
+              "then": "ally_turn_start:0"
+            }
+          ],
+          "values": {
+            "statusId": "bleed",
+            "appliedBy": 0,
+            "skillId": "warrior_p3_s3",
+            "potency": 1.38,
+            "damageWithStatusEffect": 696,
+            "damageWithoutStatusEffect": 580,
+            "dotDamage": 1762
+          },
+          "control": {
+            "omitted": [
+              "VS_STATUS:bleed"
+            ],
+            "pairedRng": 1200093145
+          },
+          "candidatesTried": 2
+        }
+      ]
+    },
+    {
+      "id": "dream_executioner",
+      "name": "夢狩りの暗殺者",
+      "passed": true,
+      "reason": "技能付与→対応状態への強化打撃",
+      "minStar": 6,
+      "dungeonId": "sand_tomb",
+      "level": 38,
+      "stage": 3,
+      "core": [
+        {
+          "member": 0,
+          "actions": [
+            "thief_p4_s2",
+            "monk_p2_s1",
+            "warrior_p1_s1"
+          ],
+          "passives": [
+            "warrior_p1_s2"
+          ],
+          "affixes": {
+            "weapon": [
+              "VS_STATUS:sleep",
+              "CRIT_DMG"
+            ],
+            "accessory1": [
+              "STATUS_RATE"
+            ]
+          },
+          "effects": [
+            "VS_STATUS:sleep",
+            "CRIT_DMG",
+            "STATUS_RATE"
+          ]
+        },
+        {
+          "member": 1,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        },
+        {
+          "member": 2,
+          "actions": [
+            "bard_p2_s3",
+            "bard_p1_s1"
+          ],
+          "passives": [
+            "bard_p1_s2"
+          ],
+          "affixes": {},
+          "effects": []
+        },
+        {
+          "member": 3,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        }
+      ],
+      "assembly": {
+        "gold": 36324,
+        "byPurpose": {
+          "craft": 14752,
+          "enhance": 3232,
+          "enchant": 16800,
+          "items": 1540
+        },
+        "materials": {
+          "cursed_idol_mat": 6,
+          "cursed_idol_rare": 2,
+          "enhancement_stone": 28,
+          "blooming_hill_boss_mat": 28,
+          "exp_r06_amorphous_mat": 64,
+          "mine_spider_mat": 18,
+          "mine_spider_rare": 6,
+          "drill_bot_mat": 9,
+          "drill_bot_rare": 3,
+          "iron_worm_mat": 3,
+          "iron_worm_rare": 1
+        },
+        "ap": {
+          "m1": {
+            "warrior": 90,
+            "thief": 22
+          },
+          "m2": {
+            "knight": 90
+          },
+          "m3": {
+            "bard": 90
+          },
+          "m4": {
+            "white_mage": 90
+          }
+        },
+        "jp": 160,
+        "jobTraining": [
+          {
+            "member": 0,
+            "from": "warrior",
+            "to": "thief",
+            "jp": 80
+          },
+          {
+            "member": 0,
+            "from": "thief",
+            "to": "warrior",
+            "jp": 80
+          }
+        ]
+      },
+      "checks": [
+        {
+          "name": "技能付与→対応状態への強化打撃",
+          "seed": 364002,
+          "conditions": {
+            "enemy": {
+              "monsterId": "m06_005",
+              "sourceRank": 6,
+              "count": 1,
+              "boss": false,
+              "level": 38,
+              "originalMaxHp": [
+                1824
+              ],
+              "hpMultiplier": 10
+            },
+            "startRound": 1,
+            "soleSurvivor": false,
+            "answers": "全問正解",
+            "actionOrder": "発動条件を切り出すため指定",
+            "preparedStates": []
+          },
+          "actions": [
+            {
+              "actor": 2,
+              "type": "skill",
+              "skillId": "bard_p2_s3",
+              "target": 0
+            },
+            {
+              "actor": 0,
+              "type": "skill",
+              "skillId": "warrior_p1_s1",
+              "target": 0
+            }
+          ],
+          "values": {
+            "statusId": "sleep",
+            "appliedBy": 2,
+            "skillId": "bard_p2_s3",
+            "potency": 1,
+            "damageWithStatusEffect": 727,
+            "damageWithoutStatusEffect": 597,
+            "clearedByStrike": true
+          },
+          "control": {
+            "omitted": [
+              "VS_STATUS:sleep"
+            ],
+            "pairedRng": 1831929815
+          },
+          "candidatesTried": 2
+        }
+      ]
+    },
+    {
+      "id": "thunder_brawler",
+      "name": "雷縛の拳士",
+      "passed": true,
+      "reason": "技能付与→対応状態への強化打撃",
+      "minStar": 3,
+      "dungeonId": "howling_canyon",
+      "level": 17,
+      "stage": 2,
+      "core": [
+        {
+          "member": 0,
+          "actions": [
+            "monk_p4_s1",
+            "monk_p1_s1"
+          ],
+          "passives": [
+            "monk_p1_s2"
+          ],
+          "affixes": {
+            "weapon": [
+              "VS_STATUS:paralysis",
+              "STATUS_RATE"
+            ],
+            "accessory1": [
+              "CRT"
+            ]
+          },
+          "effects": [
+            "VS_STATUS:paralysis",
+            "STATUS_RATE",
+            "CRT"
+          ]
+        },
+        {
+          "member": 1,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        },
+        {
+          "member": 2,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        },
+        {
+          "member": 3,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        }
+      ],
+      "assembly": {
+        "gold": 10390,
+        "byPurpose": {
+          "craft": 3210,
+          "enchant": 6720,
+          "items": 460
+        },
+        "materials": {
+          "fort_bandit_mat": 21,
+          "goblin_quarry_boss_mat": 1,
+          "blooming_hill_boss_mat": 28,
+          "canyon_wolf_mat": 48,
+          "wisp_dragonfly_mat": 15,
+          "wisp_dragonfly_rare": 5,
+          "poison_cap_rare": 5,
+          "skeleton_mat": 9,
+          "skeleton_rare": 3,
+          "fort_bandit_rare": 1,
+          "stone_statue_mat": 3,
+          "stone_statue_rare": 1
+        },
+        "ap": {
+          "m1": {
+            "monk": 40
+          },
+          "m2": {
+            "knight": 30
+          },
+          "m3": {
+            "bard": 30
+          },
+          "m4": {
+            "white_mage": 30
+          }
+        },
+        "jp": 0,
+        "jobTraining": []
+      },
+      "checks": [
+        {
+          "name": "技能付与→対応状態への強化打撃",
+          "seed": 365004,
+          "conditions": {
+            "enemy": {
+              "monsterId": "canyon_wolf",
+              "sourceRank": 3,
+              "count": 1,
+              "boss": false,
+              "level": 17,
+              "originalMaxHp": [
+                1099
+              ],
+              "hpMultiplier": 10
+            },
+            "startRound": 1,
+            "soleSurvivor": false,
+            "answers": "全問正解",
+            "actionOrder": "発動条件を切り出すため指定",
+            "preparedStates": []
+          },
+          "actions": [
+            {
+              "actor": 0,
+              "type": "skill",
+              "skillId": "monk_p4_s1",
+              "target": 0
+            },
+            {
+              "actor": 0,
+              "type": "skill",
+              "skillId": "monk_p1_s1",
+              "target": 0
+            }
+          ],
+          "values": {
+            "statusId": "paralysis",
+            "appliedBy": 0,
+            "skillId": "monk_p4_s1",
+            "potency": 1,
+            "damageWithStatusEffect": 354,
+            "damageWithoutStatusEffect": 272
+          },
+          "control": {
+            "omitted": [
+              "VS_STATUS:paralysis"
+            ],
+            "pairedRng": 1200095147
+          },
+          "candidatesTried": 4
+        }
+      ]
+    },
+    {
+      "id": "frost_executioner",
+      "name": "氷結の処刑人",
+      "passed": true,
+      "reason": "技能付与→対応状態への強化打撃",
+      "minStar": 3,
+      "dungeonId": "howling_canyon",
+      "level": 17,
+      "stage": 2,
+      "core": [
+        {
+          "member": 0,
+          "actions": [
+            "spellblade_p3_s1",
+            "spellblade_p2_s1"
+          ],
+          "passives": [
+            "spellblade_p2_s2"
+          ],
+          "affixes": {
+            "weapon": [
+              "VS_STATUS:freeze",
+              "STATUS_RATE"
+            ],
+            "accessory1": [
+              "WEAK_DMG"
+            ]
+          },
+          "effects": [
+            "VS_STATUS:freeze",
+            "STATUS_RATE",
+            "WEAK_DMG"
+          ]
+        },
+        {
+          "member": 1,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        },
+        {
+          "member": 2,
+          "actions": [
+            "spellblade_p3_s1",
+            "bard_p1_s1"
+          ],
+          "passives": [
+            "bard_p1_s2"
+          ],
+          "affixes": {},
+          "effects": []
+        },
+        {
+          "member": 3,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        }
+      ],
+      "assembly": {
+        "gold": 10446,
+        "byPurpose": {
+          "craft": 3266,
+          "enchant": 6720,
+          "items": 460
+        },
+        "materials": {
+          "goblin_mat": 2,
+          "cave_rat_mat": 2,
+          "fort_bandit_mat": 21,
+          "skeleton_mat": 10,
+          "fire_lizard_mat": 2,
+          "blooming_hill_boss_mat": 28,
+          "canyon_wolf_mat": 48,
+          "wisp_dragonfly_mat": 15,
+          "wisp_dragonfly_rare": 5,
+          "poison_cap_rare": 5,
+          "skeleton_rare": 3,
+          "fort_bandit_rare": 1,
+          "stone_statue_mat": 3,
+          "stone_statue_rare": 1
+        },
+        "ap": {
+          "m1": {
+            "spellblade": 62
+          },
+          "m2": {
+            "knight": 30
+          },
+          "m3": {
+            "bard": 30,
+            "spellblade": 10
+          },
+          "m4": {
+            "white_mage": 30
+          }
+        },
+        "jp": 480,
+        "jobTraining": [
+          {
+            "member": 2,
+            "from": "bard",
+            "to": "spellblade",
+            "jp": 200
+          },
+          {
+            "member": 2,
+            "from": "spellblade",
+            "to": "bard",
+            "jp": 80
+          }
+        ]
+      },
+      "checks": [
+        {
+          "name": "技能付与→対応状態への強化打撃",
+          "seed": 366001,
+          "conditions": {
+            "enemy": {
+              "monsterId": "canyon_wolf",
+              "sourceRank": 3,
+              "count": 1,
+              "boss": false,
+              "level": 17,
+              "originalMaxHp": [
+                1099
+              ],
+              "hpMultiplier": 10
+            },
+            "startRound": 1,
+            "soleSurvivor": false,
+            "answers": "全問正解",
+            "actionOrder": "発動条件を切り出すため指定",
+            "preparedStates": []
+          },
+          "actions": [
+            {
+              "actor": 2,
+              "type": "skill",
+              "skillId": "spellblade_p3_s1",
+              "target": 0
+            },
+            {
+              "actor": 0,
+              "type": "skill",
+              "skillId": "spellblade_p2_s1",
+              "target": 0
+            }
+          ],
+          "values": {
+            "statusId": "freeze",
+            "appliedBy": 2,
+            "skillId": "spellblade_p3_s1",
+            "potency": 1,
+            "damageWithStatusEffect": 473,
+            "damageWithoutStatusEffect": 401,
+            "clearedByStrike": true
+          },
+          "control": {
+            "omitted": [
+              "VS_STATUS:freeze"
+            ],
+            "pairedRng": 1200096144
+          },
+          "candidatesTried": 1
+        }
+      ]
+    },
+    {
+      "id": "stun_breaker",
+      "name": "気絶の破壊者",
+      "passed": true,
+      "reason": "技能付与→対応状態への強化打撃",
+      "minStar": 3,
+      "dungeonId": "howling_canyon",
+      "level": 17,
+      "stage": 2,
+      "core": [
+        {
+          "member": 0,
+          "actions": [
+            "knight_p3_s1",
+            "knight_p2_s1"
+          ],
+          "passives": [
+            "knight_p3_s2"
+          ],
+          "affixes": {
+            "weapon": [
+              "VS_STATUS:stun",
+              "STATUS_RATE"
+            ],
+            "accessory1": [
+              "STR"
+            ]
+          },
+          "effects": [
+            "VS_STATUS:stun",
+            "STATUS_RATE",
+            "STR"
+          ]
+        },
+        {
+          "member": 1,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        },
+        {
+          "member": 2,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        },
+        {
+          "member": 3,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        }
+      ],
+      "assembly": {
+        "gold": 10405,
+        "byPurpose": {
+          "craft": 3225,
+          "enchant": 6720,
+          "items": 460
+        },
+        "materials": {
+          "wisp_dragonfly_mat": 18,
+          "wisp_dragonfly_rare": 6,
+          "blooming_hill_boss_mat": 28,
+          "canyon_wolf_mat": 48,
+          "fort_bandit_mat": 18,
+          "poison_cap_rare": 5,
+          "skeleton_mat": 9,
+          "skeleton_rare": 3,
+          "fort_bandit_rare": 1,
+          "stone_statue_mat": 3,
+          "stone_statue_rare": 1
+        },
+        "ap": {
+          "m1": {
+            "knight": 30
+          },
+          "m2": {
+            "knight": 30
+          },
+          "m3": {
+            "bard": 30
+          },
+          "m4": {
+            "white_mage": 30
+          }
+        },
+        "jp": 0,
+        "jobTraining": []
+      },
+      "checks": [
+        {
+          "name": "技能付与→対応状態への強化打撃",
+          "seed": 367002,
+          "conditions": {
+            "enemy": {
+              "monsterId": "canyon_wolf",
+              "sourceRank": 3,
+              "count": 1,
+              "boss": false,
+              "level": 17,
+              "originalMaxHp": [
+                1099
+              ],
+              "hpMultiplier": 10
+            },
+            "startRound": 1,
+            "soleSurvivor": false,
+            "answers": "全問正解",
+            "actionOrder": "発動条件を切り出すため指定",
+            "preparedStates": []
+          },
+          "actions": [
+            {
+              "actor": 0,
+              "type": "skill",
+              "skillId": "knight_p3_s1",
+              "target": 0
+            },
+            {
+              "actor": 0,
+              "type": "skill",
+              "skillId": "knight_p2_s1",
+              "target": 0
+            },
+            {
+              "actor": "enemy",
+              "enemy": 0,
+              "then": "ally_turn_start:0"
+            }
+          ],
+          "values": {
+            "statusId": "stun",
+            "appliedBy": 0,
+            "skillId": "knight_p3_s1",
+            "potency": 1,
+            "damageWithStatusEffect": 170,
+            "damageWithoutStatusEffect": 144,
+            "enemyTurnSkipped": true
+          },
+          "control": {
+            "omitted": [
+              "VS_STATUS:stun"
+            ],
+            "pairedRng": 1200097145
+          },
+          "candidatesTried": 2
+        }
+      ]
+    },
+    {
+      "id": "binding_hunter",
+      "name": "束縛の狩人",
+      "passed": true,
+      "reason": "技能付与→対応状態への強化打撃",
+      "minStar": 3,
+      "dungeonId": "howling_canyon",
+      "level": 17,
+      "stage": 2,
+      "core": [
+        {
+          "member": 0,
+          "actions": [
+            "hunter_p3_s1",
+            "hunter_p1_s1"
+          ],
+          "passives": [
+            "hunter_p1_s2"
+          ],
+          "affixes": {
+            "weapon": [
+              "VS_STATUS:bind",
+              "STATUS_RATE"
+            ],
+            "accessory1": [
+              "WEAK_DMG"
+            ]
+          },
+          "effects": [
+            "VS_STATUS:bind",
+            "STATUS_RATE",
+            "WEAK_DMG"
+          ]
+        },
+        {
+          "member": 1,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        },
+        {
+          "member": 2,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        },
+        {
+          "member": 3,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        }
+      ],
+      "assembly": {
+        "gold": 10390,
+        "byPurpose": {
+          "craft": 3210,
+          "enchant": 6720,
+          "items": 460
+        },
+        "materials": {
+          "skeleton_mat": 9,
+          "skeleton_rare": 3,
+          "blooming_hill_boss_mat": 28,
+          "canyon_wolf_mat": 48,
+          "wisp_dragonfly_mat": 15,
+          "wisp_dragonfly_rare": 5,
+          "fort_bandit_mat": 21,
+          "poison_cap_rare": 6,
+          "fort_bandit_rare": 1,
+          "stone_statue_mat": 3,
+          "stone_statue_rare": 1
+        },
+        "ap": {
+          "m1": {
+            "hunter": 30
+          },
+          "m2": {
+            "knight": 30
+          },
+          "m3": {
+            "bard": 30
+          },
+          "m4": {
+            "white_mage": 30
+          }
+        },
+        "jp": 0,
+        "jobTraining": []
+      },
+      "checks": [
+        {
+          "name": "技能付与→対応状態への強化打撃",
+          "seed": 368006,
+          "conditions": {
+            "enemy": {
+              "monsterId": "canyon_wolf",
+              "sourceRank": 3,
+              "count": 1,
+              "boss": false,
+              "level": 17,
+              "originalMaxHp": [
+                1099
+              ],
+              "hpMultiplier": 10
+            },
+            "startRound": 1,
+            "soleSurvivor": false,
+            "answers": "全問正解",
+            "actionOrder": "発動条件を切り出すため指定",
+            "preparedStates": []
+          },
+          "actions": [
+            {
+              "actor": 0,
+              "type": "skill",
+              "skillId": "hunter_p3_s1",
+              "target": 0
+            },
+            {
+              "actor": 0,
+              "type": "skill",
+              "skillId": "hunter_p1_s1",
+              "target": 0
+            }
+          ],
+          "values": {
+            "statusId": "bind",
+            "appliedBy": 0,
+            "skillId": "hunter_p3_s1",
+            "potency": 1.15,
+            "damageWithStatusEffect": 437,
+            "damageWithoutStatusEffect": 385
+          },
+          "control": {
+            "omitted": [
+              "VS_STATUS:bind"
+            ],
+            "pairedRng": 1200098149
+          },
+          "candidatesTried": 6
+        }
+      ]
+    },
+    {
+      "id": "silent_hexer",
+      "name": "沈黙の封魔師",
+      "passed": true,
+      "reason": "技能付与→対応状態への強化打撃",
+      "minStar": 3,
+      "dungeonId": "howling_canyon",
+      "level": 17,
+      "stage": 2,
+      "core": [
+        {
+          "member": 0,
+          "actions": [
+            "hexer_p3_s1",
+            "hexer_p1_s1",
+            "hexer_p2_s1"
+          ],
+          "passives": [],
+          "affixes": {
+            "weapon": [
+              "VS_STATUS:silence",
+              "STATUS_RATE"
+            ],
+            "body": [
+              "PHYS_CUT"
+            ],
+            "accessory1": [
+              "MP_SAVE"
+            ]
+          },
+          "effects": [
+            "VS_STATUS:silence",
+            "STATUS_RATE",
+            "PHYS_CUT",
+            "MP_SAVE"
+          ]
+        },
+        {
+          "member": 1,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        },
+        {
+          "member": 2,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        },
+        {
+          "member": 3,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        }
+      ],
+      "assembly": {
+        "gold": 10615,
+        "byPurpose": {
+          "craft": 3195,
+          "enchant": 6960,
+          "items": 460
+        },
+        "materials": {
+          "fort_bandit_mat": 24,
+          "skeleton_rare": 3,
+          "blooming_hill_boss_mat": 29,
+          "canyon_wolf_mat": 48,
+          "wisp_dragonfly_mat": 15,
+          "wisp_dragonfly_rare": 5,
+          "poison_cap_rare": 6,
+          "skeleton_mat": 6,
+          "fort_bandit_rare": 1,
+          "stone_statue_mat": 3,
+          "stone_statue_rare": 1
+        },
+        "ap": {
+          "m1": {
+            "hexer": 62
+          },
+          "m2": {
+            "knight": 30
+          },
+          "m3": {
+            "bard": 30
+          },
+          "m4": {
+            "white_mage": 30
+          }
+        },
+        "jp": 200,
+        "jobTraining": []
+      },
+      "checks": [
+        {
+          "name": "技能付与→対応状態への強化打撃",
+          "seed": 369001,
+          "conditions": {
+            "enemy": {
+              "monsterId": "canyon_wolf",
+              "sourceRank": 3,
+              "count": 1,
+              "boss": false,
+              "level": 17,
+              "originalMaxHp": [
+                1099
+              ],
+              "hpMultiplier": 10
+            },
+            "startRound": 1,
+            "soleSurvivor": false,
+            "answers": "全問正解",
+            "actionOrder": "発動条件を切り出すため指定",
+            "preparedStates": []
+          },
+          "actions": [
+            {
+              "actor": 0,
+              "type": "skill",
+              "skillId": "hexer_p3_s1",
+              "target": 0
+            },
+            {
+              "actor": 0,
+              "type": "skill",
+              "skillId": "hexer_p2_s1",
+              "target": 0
+            }
+          ],
+          "values": {
+            "statusId": "silence",
+            "appliedBy": 0,
+            "skillId": "hexer_p3_s1",
+            "potency": 1,
+            "damageWithStatusEffect": 552,
+            "damageWithoutStatusEffect": 483
+          },
+          "control": {
+            "omitted": [
+              "VS_STATUS:silence"
+            ],
+            "pairedRng": 1831934814
+          },
+          "candidatesTried": 1
+        }
+      ]
+    },
+    {
+      "id": "illusion_duelist",
+      "name": "暗闇の幻影剣士",
+      "passed": true,
+      "reason": "技能付与→対応状態への強化打撃／煙玉・回避装備から物理回避反撃",
+      "minStar": 3,
+      "dungeonId": "howling_canyon",
+      "level": 17,
+      "stage": 2,
+      "core": [
+        {
+          "member": 0,
+          "actions": [
+            "thief_p4_s1",
+            "thief_p3_s1",
+            "thief_p1_s1"
+          ],
+          "passives": [
+            "thief_p3_s2"
+          ],
+          "affixes": {
+            "weapon": [
+              "VS_STATUS:blind",
+              "STATUS_RATE"
+            ],
+            "cloak": [
+              "EVA_COUNTER",
+              "EVA"
+            ],
+            "accessory1": [
+              "EVA_COUNTER"
+            ]
+          },
+          "effects": [
+            "VS_STATUS:blind",
+            "STATUS_RATE",
+            "EVA_COUNTER",
+            "EVA"
+          ]
+        },
+        {
+          "member": 1,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        },
+        {
+          "member": 2,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        },
+        {
+          "member": 3,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        }
+      ],
+      "assembly": {
+        "gold": 10615,
+        "byPurpose": {
+          "craft": 3195,
+          "enchant": 6960,
+          "items": 460
+        },
+        "materials": {
+          "fort_bandit_mat": 24,
+          "cave_rat_rare": 1,
+          "blooming_hill_boss_mat": 29,
+          "canyon_wolf_mat": 48,
+          "cave_bat_rare": 1,
+          "poison_cap_rare": 5,
+          "skeleton_mat": 9,
+          "skeleton_rare": 3,
+          "wisp_dragonfly_mat": 12,
+          "wisp_dragonfly_rare": 4,
+          "fort_bandit_rare": 1,
+          "stone_statue_mat": 3,
+          "stone_statue_rare": 1
+        },
+        "ap": {
+          "m1": {
+            "thief": 52
+          },
+          "m2": {
+            "knight": 30
+          },
+          "m3": {
+            "bard": 30
+          },
+          "m4": {
+            "white_mage": 30
+          }
+        },
+        "jp": 0,
+        "jobTraining": []
+      },
+      "checks": [
+        {
+          "name": "技能付与→対応状態への強化打撃",
+          "seed": 370002,
+          "conditions": {
+            "enemy": {
+              "monsterId": "canyon_wolf",
+              "sourceRank": 3,
+              "count": 1,
+              "boss": false,
+              "level": 17,
+              "originalMaxHp": [
+                1099
+              ],
+              "hpMultiplier": 10
+            },
+            "startRound": 1,
+            "soleSurvivor": false,
+            "answers": "全問正解",
+            "actionOrder": "発動条件を切り出すため指定",
+            "preparedStates": []
+          },
+          "actions": [
+            {
+              "actor": 0,
+              "type": "skill",
+              "skillId": "thief_p4_s1",
+              "target": 0
+            },
+            {
+              "actor": 0,
+              "type": "skill",
+              "skillId": "thief_p1_s1",
+              "target": 0
+            }
+          ],
+          "values": {
+            "statusId": "blind",
+            "appliedBy": 0,
+            "skillId": "thief_p4_s1",
+            "potency": 1,
+            "damageWithStatusEffect": 266,
+            "damageWithoutStatusEffect": 229
+          },
+          "control": {
+            "omitted": [
+              "VS_STATUS:blind"
+            ],
+            "pairedRng": 1200100145
+          },
+          "candidatesTried": 2
+        },
+        {
+          "name": "煙玉・回避装備から物理回避反撃",
+          "seed": 370017,
+          "conditions": {
+            "enemy": {
+              "monsterId": "canyon_wolf",
+              "sourceRank": 3,
+              "count": 1,
+              "boss": false,
+              "level": 17,
+              "originalMaxHp": [
+                1099
+              ],
+              "hpMultiplier": 10
+            },
+            "startRound": 1,
+            "soleSurvivor": true,
+            "answers": "全問正解",
+            "actionOrder": "発動条件を切り出すため指定",
+            "preparedStates": []
+          },
+          "actions": [
+            {
+              "actor": 0,
+              "type": "skill",
+              "skillId": "thief_p3_s1",
+              "target": 0
+            },
+            {
+              "actor": "enemy",
+              "enemy": 0,
+              "then": "ally_turn_start:0"
+            }
+          ],
+          "values": {
+            "evasion": 0.4038688524590164,
+            "counterChanceEquipment": 34.3,
+            "counterDamage": 98,
+            "damageTaken": 0
+          },
+          "candidatesTried": 17
+        }
+      ]
+    },
+    {
+      "id": "weakening_tactician",
+      "name": "弱体の軍師",
+      "passed": true,
+      "reason": "技能付与→対応状態への強化打撃",
+      "minStar": 3,
+      "dungeonId": "howling_canyon",
+      "level": 17,
+      "stage": 2,
+      "core": [
+        {
+          "member": 0,
+          "actions": [
+            "hexer_p3_s2",
+            "hexer_p1_s2",
+            "hexer_p2_s1"
+          ],
+          "passives": [],
+          "affixes": {
+            "weapon": [
+              "VS_DEBUFFED",
+              "STATUS_RATE"
+            ],
+            "accessory1": [
+              "VS_STATUS:statdown"
+            ],
+            "accessory2": [
+              "MP_SAVE"
+            ]
+          },
+          "effects": [
+            "VS_DEBUFFED",
+            "STATUS_RATE",
+            "VS_STATUS:statdown",
+            "MP_SAVE"
+          ]
+        },
+        {
+          "member": 1,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        },
+        {
+          "member": 2,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        },
+        {
+          "member": 3,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        }
+      ],
+      "assembly": {
+        "gold": 10375,
+        "byPurpose": {
+          "craft": 3195,
+          "enchant": 6720,
+          "items": 460
+        },
+        "materials": {
+          "fort_bandit_mat": 24,
+          "skeleton_rare": 3,
+          "blooming_hill_boss_mat": 28,
+          "canyon_wolf_mat": 48,
+          "wisp_dragonfly_mat": 15,
+          "wisp_dragonfly_rare": 5,
+          "poison_cap_rare": 6,
+          "skeleton_mat": 6,
+          "fort_bandit_rare": 1,
+          "stone_statue_mat": 3,
+          "stone_statue_rare": 1
+        },
+        "ap": {
+          "m1": {
+            "hexer": 62
+          },
+          "m2": {
+            "knight": 30
+          },
+          "m3": {
+            "bard": 30
+          },
+          "m4": {
+            "white_mage": 30
+          }
+        },
+        "jp": 200,
+        "jobTraining": []
+      },
+      "checks": [
+        {
+          "name": "技能付与→対応状態への強化打撃",
+          "seed": 371002,
+          "conditions": {
+            "enemy": {
+              "monsterId": "canyon_wolf",
+              "sourceRank": 3,
+              "count": 1,
+              "boss": false,
+              "level": 17,
+              "originalMaxHp": [
+                1099
+              ],
+              "hpMultiplier": 10
+            },
+            "startRound": 1,
+            "soleSurvivor": false,
+            "answers": "全問正解",
+            "actionOrder": "発動条件を切り出すため指定",
+            "preparedStates": []
+          },
+          "actions": [
+            {
+              "actor": 0,
+              "type": "skill",
+              "skillId": "hexer_p3_s2",
+              "target": 0
+            },
+            {
+              "actor": 0,
+              "type": "skill",
+              "skillId": "hexer_p2_s1",
+              "target": 0
+            }
+          ],
+          "values": {
+            "statusId": "statdown",
+            "appliedBy": 0,
+            "skillId": "hexer_p3_s2",
+            "potency": 0.2,
+            "damageWithStatusEffect": 361,
+            "damageWithoutStatusEffect": 324
+          },
+          "control": {
+            "omitted": [
+              "VS_STATUS:statdown"
+            ],
+            "pairedRng": 1831936815
+          },
+          "candidatesTried": 2
+        }
+      ]
+    },
+    {
+      "id": "charged_giant",
+      "name": "一撃の巨人",
+      "passed": true,
+      "reason": "練気から大剣の攻撃技能",
+      "minStar": 3,
+      "dungeonId": "howling_canyon",
+      "level": 17,
+      "stage": 2,
+      "core": [
+        {
+          "member": 0,
+          "actions": [
+            "monk_p2_s1",
+            "warrior_p1_s1"
+          ],
+          "passives": [
+            "warrior_p1_s2"
+          ],
+          "affixes": {
+            "weapon": [
+              "STR",
+              "CRIT_DMG"
+            ],
+            "accessory1": [
+              "MP_SAVE"
+            ]
+          },
+          "effects": [
+            "STR",
+            "CRIT_DMG",
+            "MP_SAVE"
+          ]
+        },
+        {
+          "member": 1,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        },
+        {
+          "member": 2,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        },
+        {
+          "member": 3,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        }
+      ],
+      "assembly": {
+        "gold": 10405,
+        "byPurpose": {
+          "craft": 3225,
+          "enchant": 6720,
+          "items": 460
+        },
+        "materials": {
+          "skeleton_mat": 12,
+          "skeleton_rare": 4,
+          "blooming_hill_boss_mat": 28,
+          "canyon_wolf_mat": 48,
+          "wisp_dragonfly_mat": 15,
+          "wisp_dragonfly_rare": 5,
+          "fort_bandit_mat": 18,
+          "poison_cap_rare": 5,
+          "fort_bandit_rare": 1,
+          "stone_statue_mat": 3,
+          "stone_statue_rare": 1
+        },
+        "ap": {
+          "m1": {
+            "warrior": 30
+          },
+          "m2": {
+            "knight": 30
+          },
+          "m3": {
+            "bard": 30
+          },
+          "m4": {
+            "white_mage": 30
+          }
+        },
+        "jp": 0,
+        "jobTraining": []
+      },
+      "checks": [
+        {
+          "name": "練気から大剣の攻撃技能",
+          "seed": 372001,
+          "conditions": {
+            "enemy": {
+              "monsterId": "canyon_wolf",
+              "sourceRank": 3,
+              "count": 1,
+              "boss": false,
+              "level": 17,
+              "originalMaxHp": [
+                1099
+              ],
+              "hpMultiplier": 10
+            },
+            "startRound": 1,
+            "soleSurvivor": false,
+            "answers": "全問正解",
+            "actionOrder": "発動条件を切り出すため指定",
+            "preparedStates": []
+          },
+          "actions": [
+            {
+              "actor": 0,
+              "type": "skill",
+              "skillId": "monk_p2_s1",
+              "target": 0
+            },
+            {
+              "actor": 0,
+              "type": "skill",
+              "skillId": "warrior_p1_s1",
+              "target": 0
+            }
+          ],
+          "values": {
+            "damage": 472,
+            "withoutPreparation": 390
+          },
+          "control": {
+            "omitted": [
+              "self STR buff"
+            ],
+            "pairedRng": 372001
+          }
+        }
+      ]
+    },
+    {
+      "id": "first_strike_samurai",
+      "name": "居合の達人",
+      "passed": true,
+      "reason": "装備条件に対応した攻撃強化",
+      "minStar": 1,
+      "dungeonId": "mossy_cave",
+      "level": 3,
+      "stage": 1,
+      "core": [
+        {
+          "member": 0,
+          "actions": [
+            "thief_p1_s1"
+          ],
+          "passives": [],
+          "affixes": {
+            "weapon": [
+              "FIRST_HIT",
+              "CRIT_DMG"
+            ],
+            "accessory1": [
+              "CRT"
+            ]
+          },
+          "effects": [
+            "FIRST_HIT",
+            "CRIT_DMG",
+            "CRT"
+          ]
+        },
+        {
+          "member": 1,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        },
+        {
+          "member": 2,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        },
+        {
+          "member": 3,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        }
+      ],
+      "assembly": {
+        "gold": 4120,
+        "byPurpose": {
+          "craft": 1120,
+          "enchant": 2800,
+          "items": 200
+        },
+        "materials": {
+          "cave_bat_mat": 112,
+          "blooming_hill_boss_mat": 28
+        },
+        "ap": {
+          "m1": {
+            "thief": 10
+          },
+          "m2": {},
+          "m3": {},
+          "m4": {}
+        },
+        "jp": 0,
+        "jobTraining": []
+      },
+      "checks": [
+        {
+          "name": "装備条件に対応した攻撃強化",
+          "seed": 373001,
+          "conditions": {
+            "enemy": {
+              "monsterId": "m01_003",
+              "sourceRank": 1,
+              "count": 1,
+              "boss": false,
+              "level": 3,
+              "originalMaxHp": [
+                507
+              ],
+              "hpMultiplier": 10
+            },
+            "startRound": 1,
+            "soleSurvivor": false,
+            "answers": "全問正解",
+            "actionOrder": "発動条件を切り出すため指定",
+            "preparedStates": []
+          },
+          "actions": [
+            {
+              "actor": 0,
+              "type": "skill",
+              "skillId": "thief_p1_s1",
+              "target": 0
+            }
+          ],
+          "values": {
+            "family": "FIRST_HIT",
+            "equipmentValue": 17.5,
+            "damage": 79,
+            "withoutEffect": 68,
+            "enemyDefense": 12.012000000000002,
+            "enemyTypes": [
+              "fairy"
+            ]
+          },
+          "control": {
+            "omitted": [
+              "FIRST_HIT"
+            ],
+            "pairedRng": 373001
+          }
+        }
+      ]
+    },
+    {
+      "id": "shadow_chaser",
+      "name": "影の追撃者",
+      "passed": true,
+      "reason": "通常攻撃の手数・範囲と正解MP回復",
+      "minStar": 3,
+      "dungeonId": "howling_canyon",
+      "level": 17,
+      "stage": 2,
+      "core": [
+        {
+          "member": 0,
+          "actions": [
+            "thief_p1_s1"
+          ],
+          "passives": [
+            "thief_p1_s2"
+          ],
+          "affixes": {
+            "weapon": [
+              "EXTRA_HIT",
+              "CRT"
+            ],
+            "offhand": [
+              "EXTRA_HIT"
+            ],
+            "accessory1": [
+              "CRIT_DMG"
+            ]
+          },
+          "effects": [
+            "EXTRA_HIT",
+            "CRT",
+            "CRIT_DMG"
+          ]
+        },
+        {
+          "member": 1,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        },
+        {
+          "member": 2,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        },
+        {
+          "member": 3,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        }
+      ],
+      "assembly": {
+        "gold": 10990,
+        "byPurpose": {
+          "craft": 3330,
+          "enchant": 7200,
+          "items": 460
+        },
+        "materials": {
+          "m02_005_mat": 6,
+          "m02_005_rare": 2,
+          "blooming_hill_boss_mat": 30,
+          "canyon_wolf_mat": 48,
+          "wisp_dragonfly_mat": 15,
+          "wisp_dragonfly_rare": 5,
+          "fort_bandit_mat": 18,
+          "poison_cap_rare": 5,
+          "skeleton_mat": 9,
+          "skeleton_rare": 3,
+          "fort_bandit_rare": 1,
+          "stone_statue_mat": 3,
+          "stone_statue_rare": 1
+        },
+        "ap": {
+          "m1": {
+            "thief": 52
+          },
+          "m2": {
+            "knight": 30
+          },
+          "m3": {
+            "bard": 30
+          },
+          "m4": {
+            "white_mage": 30
+          }
+        },
+        "jp": 0,
+        "jobTraining": []
+      },
+      "checks": [
+        {
+          "name": "通常攻撃の手数・範囲と正解MP回復",
+          "seed": 374001,
+          "conditions": {
+            "enemy": {
+              "monsterId": "canyon_wolf",
+              "sourceRank": 3,
+              "count": 1,
+              "boss": false,
+              "level": 17,
+              "originalMaxHp": [
+                1099
+              ],
+              "hpMultiplier": 10
+            },
+            "startRound": 1,
+            "soleSurvivor": false,
+            "answers": "全問正解",
+            "actionOrder": "発動条件を切り出すため指定",
+            "preparedStates": [
+              {
+                "member": 0,
+                "mp": 25
+              }
+            ]
+          },
+          "actions": [
+            {
+              "actor": 0,
+              "type": "attack",
+              "target": 0
+            }
+          ],
+          "values": {
+            "targetsHit": 1,
+            "damage": [
+              318
+            ],
+            "hitCount": 3,
+            "poisonCount": 0,
+            "mpRecovered": 3,
+            "events": [
+              "追加攻撃！峡谷オオカミに 69のダメージ",
+              "二刀目！会心！峡谷オオカミに 112のダメージ"
+            ]
+          },
+          "candidatesTried": 1
+        }
+      ]
+    },
+    {
+      "id": "armor_breaker",
+      "name": "破甲の狂戦士",
+      "passed": true,
+      "reason": "装備条件に対応した攻撃強化",
+      "minStar": 3,
+      "dungeonId": "howling_canyon",
+      "level": 17,
+      "stage": 2,
+      "core": [
+        {
+          "member": 0,
+          "actions": [
+            "warrior_p1_s1",
+            "warrior_p3_s1"
+          ],
+          "passives": [
+            "warrior_p1_s2"
+          ],
+          "affixes": {
+            "weapon": [
+              "DEF_PIERCE",
+              "STR"
+            ],
+            "accessory1": [
+              "CRIT_DMG"
+            ]
+          },
+          "effects": [
+            "DEF_PIERCE",
+            "STR",
+            "CRIT_DMG"
+          ]
+        },
+        {
+          "member": 1,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        },
+        {
+          "member": 2,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        },
+        {
+          "member": 3,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        }
+      ],
+      "assembly": {
+        "gold": 10405,
+        "byPurpose": {
+          "craft": 3225,
+          "enchant": 6720,
+          "items": 460
+        },
+        "materials": {
+          "fort_bandit_mat": 21,
+          "fort_bandit_rare": 2,
+          "blooming_hill_boss_mat": 28,
+          "canyon_wolf_mat": 48,
+          "wisp_dragonfly_mat": 15,
+          "wisp_dragonfly_rare": 5,
+          "poison_cap_rare": 5,
+          "skeleton_mat": 9,
+          "skeleton_rare": 3,
+          "stone_statue_mat": 3,
+          "stone_statue_rare": 1
+        },
+        "ap": {
+          "m1": {
+            "warrior": 30
+          },
+          "m2": {
+            "knight": 30
+          },
+          "m3": {
+            "bard": 30
+          },
+          "m4": {
+            "white_mage": 30
+          }
+        },
+        "jp": 0,
+        "jobTraining": []
+      },
+      "checks": [
+        {
+          "name": "装備条件に対応した攻撃強化",
+          "seed": 375001,
+          "conditions": {
+            "enemy": {
+              "monsterId": "canyon_wolf",
+              "sourceRank": 3,
+              "count": 1,
+              "boss": false,
+              "level": 17,
+              "originalMaxHp": [
+                1099
+              ],
+              "hpMultiplier": 10
+            },
+            "startRound": 1,
+            "soleSurvivor": false,
+            "answers": "全問正解",
+            "actionOrder": "発動条件を切り出すため指定",
+            "preparedStates": []
+          },
+          "actions": [
+            {
+              "actor": 0,
+              "type": "skill",
+              "skillId": "warrior_p1_s1",
+              "target": 0
+            }
+          ],
+          "values": {
+            "family": "DEF_PIERCE",
+            "equipmentValue": 19,
+            "damage": 360,
+            "withoutEffect": 333,
+            "enemyDefense": 60.400000000000006,
+            "enemyTypes": [
+              "beast"
+            ]
+          },
+          "control": {
+            "omitted": [
+              "DEF_PIERCE"
+            ],
+            "pairedRng": 375001
+          }
+        }
+      ]
+    },
+    {
+      "id": "piercing_knight",
+      "name": "穿孔の槍騎士",
+      "passed": true,
+      "reason": "通常攻撃の手数・範囲と正解MP回復",
+      "minStar": 3,
+      "dungeonId": "howling_canyon",
+      "level": 17,
+      "stage": 2,
+      "core": [
+        {
+          "member": 0,
+          "actions": [
+            "knight_p2_s1",
+            "knight_p3_s1"
+          ],
+          "passives": [
+            "knight_p3_s2"
+          ],
+          "affixes": {
+            "weapon": [
+              "DEF_PIERCE",
+              "EXTRA_HIT"
+            ],
+            "accessory1": [
+              "STR"
+            ]
+          },
+          "effects": [
+            "DEF_PIERCE",
+            "EXTRA_HIT",
+            "STR"
+          ]
+        },
+        {
+          "member": 1,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        },
+        {
+          "member": 2,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        },
+        {
+          "member": 3,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        }
+      ],
+      "assembly": {
+        "gold": 10390,
+        "byPurpose": {
+          "craft": 3210,
+          "enchant": 6720,
+          "items": 460
+        },
+        "materials": {
+          "m02_002_mat": 6,
+          "m02_002_rare": 2,
+          "blooming_hill_boss_mat": 28,
+          "canyon_wolf_mat": 48,
+          "wisp_dragonfly_mat": 12,
+          "wisp_dragonfly_rare": 4,
+          "fort_bandit_mat": 21,
+          "poison_cap_rare": 6,
+          "skeleton_mat": 6,
+          "skeleton_rare": 2,
+          "fort_bandit_rare": 1,
+          "stone_statue_mat": 3,
+          "stone_statue_rare": 1
+        },
+        "ap": {
+          "m1": {
+            "knight": 30
+          },
+          "m2": {
+            "hunter": 30
+          },
+          "m3": {
+            "black_mage": 30
+          },
+          "m4": {
+            "white_mage": 30
+          }
+        },
+        "jp": 0,
+        "jobTraining": []
+      },
+      "checks": [
+        {
+          "name": "通常攻撃の手数・範囲と正解MP回復",
+          "seed": 376012,
+          "conditions": {
+            "enemy": {
+              "monsterId": "canyon_wolf",
+              "sourceRank": 3,
+              "count": 3,
+              "boss": false,
+              "level": 17,
+              "originalMaxHp": [
+                1099,
+                1099,
+                1099
+              ],
+              "hpMultiplier": 10
+            },
+            "startRound": 1,
+            "soleSurvivor": false,
+            "answers": "全問正解",
+            "actionOrder": "発動条件を切り出すため指定",
+            "preparedStates": [
+              {
+                "member": 0,
+                "mp": 25
+              }
+            ]
+          },
+          "actions": [
+            {
+              "actor": 0,
+              "type": "attack",
+              "target": 0
+            }
+          ],
+          "values": {
+            "targetsHit": 2,
+            "damage": [
+              87,
+              0,
+              53
+            ],
+            "hitCount": 2,
+            "poisonCount": 0,
+            "mpRecovered": 3,
+            "events": [
+              "貫通！峡谷オオカミに 53のダメージ"
+            ]
+          },
+          "candidatesTried": 12
+        }
+      ]
+    },
+    {
+      "id": "vital_sniper",
+      "name": "急所の狙撃手",
+      "passed": true,
+      "reason": "魔法剣で弱点属性を選び弓技能へつなぐ",
+      "minStar": 6,
+      "dungeonId": "sand_tomb",
+      "level": 38,
+      "stage": 3,
+      "core": [
+        {
+          "member": 0,
+          "actions": [
+            "hunter_p1_s1",
+            "hunter_p2_s3",
+            "spellblade_p1_s1",
+            "spellblade_p1_s2",
+            "spellblade_p1_s3"
+          ],
+          "passives": [
+            "hunter_p1_s2"
+          ],
+          "affixes": {
+            "weapon": [
+              "WEAK_DMG",
+              "ELEMENT:wind"
+            ],
+            "accessory1": [
+              "CRT"
+            ],
+            "accessory2": [
+              "CRIT_DMG"
+            ]
+          },
+          "effects": [
+            "WEAK_DMG",
+            "ELEMENT:wind",
+            "CRT",
+            "CRIT_DMG"
+          ]
+        },
+        {
+          "member": 1,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        },
+        {
+          "member": 2,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        },
+        {
+          "member": 3,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        }
+      ],
+      "assembly": {
+        "gold": 36324,
+        "byPurpose": {
+          "craft": 14752,
+          "enhance": 3232,
+          "enchant": 16800,
+          "items": 1540
+        },
+        "materials": {
+          "cursed_idol_mat": 6,
+          "cursed_idol_rare": 2,
+          "enhancement_stone": 28,
+          "blooming_hill_boss_mat": 28,
+          "exp_r06_amorphous_mat": 64,
+          "guardian_automaton_mat": 3,
+          "guardian_automaton_rare": 1,
+          "mine_spider_mat": 18,
+          "mine_spider_rare": 6,
+          "iron_worm_mat": 3,
+          "iron_worm_rare": 1,
+          "drill_bot_mat": 6,
+          "drill_bot_rare": 2
+        },
+        "ap": {
+          "m1": {
+            "hunter": 90,
+            "spellblade": 50
+          },
+          "m2": {
+            "knight": 90
+          },
+          "m3": {
+            "bard": 90
+          },
+          "m4": {
+            "white_mage": 90
+          }
+        },
+        "jp": 280,
+        "jobTraining": [
+          {
+            "member": 0,
+            "from": "hunter",
+            "to": "spellblade",
+            "jp": 200
+          },
+          {
+            "member": 0,
+            "from": "spellblade",
+            "to": "hunter",
+            "jp": 80
+          }
+        ]
+      },
+      "checks": [
+        {
+          "name": "魔法剣で弱点属性を選び弓技能へつなぐ",
+          "seed": 377001,
+          "conditions": {
+            "enemy": {
+              "monsterId": "exp_sand_tomb_1",
+              "sourceRank": 6,
+              "count": 1,
+              "boss": false,
+              "level": 38,
+              "originalMaxHp": [
+                1873
+              ],
+              "hpMultiplier": 10
+            },
+            "startRound": 1,
+            "soleSurvivor": false,
+            "answers": "全問正解",
+            "actionOrder": "発動条件を切り出すため指定",
+            "preparedStates": []
+          },
+          "actions": [
+            {
+              "actor": 0,
+              "type": "skill",
+              "skillId": "spellblade_p1_s1",
+              "target": 0
+            },
+            {
+              "actor": 0,
+              "type": "skill",
+              "skillId": "hunter_p1_s1",
+              "target": 0
+            }
+          ],
+          "values": {
+            "element": "fire",
+            "enemyWeak": [
+              "fire",
+              "slash"
+            ],
+            "damage": 1996,
+            "withoutWeakEquipment": 1485
+          },
+          "control": {
+            "omitted": [
+              "WEAK_DMG"
+            ],
+            "pairedRng": 377001
+          }
+        }
+      ]
+    },
+    {
+      "id": "species_gunner",
+      "name": "種族狩りの銃士",
+      "passed": true,
+      "reason": "装備条件に対応した攻撃強化",
+      "minStar": 3,
+      "dungeonId": "howling_canyon",
+      "level": 17,
+      "stage": 2,
+      "core": [
+        {
+          "member": 0,
+          "actions": [
+            "gunner_p1_s1",
+            "gunner_p2_s1"
+          ],
+          "passives": [
+            "gunner_p1_s2",
+            "hunter_p1_s2"
+          ],
+          "affixes": {
+            "weapon": [
+              "TYPE_BONUS:bird",
+              "DEF_PIERCE"
+            ],
+            "accessory1": [
+              "CRIT_DMG"
+            ]
+          },
+          "effects": [
+            "TYPE_BONUS:bird",
+            "DEF_PIERCE",
+            "CRIT_DMG"
+          ]
+        },
+        {
+          "member": 1,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        },
+        {
+          "member": 2,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        },
+        {
+          "member": 3,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        }
+      ],
+      "assembly": {
+        "gold": 10390,
+        "byPurpose": {
+          "craft": 3210,
+          "enchant": 6720,
+          "items": 460
+        },
+        "materials": {
+          "wisp_dragonfly_mat": 18,
+          "wisp_dragonfly_rare": 6,
+          "blooming_hill_boss_mat": 28,
+          "canyon_wolf_mat": 48,
+          "fort_bandit_mat": 21,
+          "poison_cap_rare": 6,
+          "skeleton_mat": 6,
+          "skeleton_rare": 2,
+          "fort_bandit_rare": 1,
+          "stone_statue_mat": 3,
+          "stone_statue_rare": 1
+        },
+        "ap": {
+          "m1": {
+            "gunner": 40,
+            "hunter": 10
+          },
+          "m2": {
+            "knight": 30
+          },
+          "m3": {
+            "bard": 30
+          },
+          "m4": {
+            "white_mage": 30
+          }
+        },
+        "jp": 480,
+        "jobTraining": [
+          {
+            "member": 0,
+            "from": "gunner",
+            "to": "hunter",
+            "jp": 80
+          },
+          {
+            "member": 0,
+            "from": "hunter",
+            "to": "gunner",
+            "jp": 200
+          }
+        ]
+      },
+      "checks": [
+        {
+          "name": "装備条件に対応した攻撃強化",
+          "seed": 378001,
+          "conditions": {
+            "enemy": {
+              "monsterId": "storm_eagle",
+              "sourceRank": 3,
+              "count": 1,
+              "boss": true,
+              "level": 17,
+              "originalMaxHp": [
+                1846
+              ],
+              "hpMultiplier": 10
+            },
+            "startRound": 1,
+            "soleSurvivor": false,
+            "answers": "全問正解",
+            "actionOrder": "発動条件を切り出すため指定",
+            "preparedStates": []
+          },
+          "actions": [
+            {
+              "actor": 0,
+              "type": "skill",
+              "skillId": "gunner_p1_s1",
+              "target": 0
+            }
+          ],
+          "values": {
+            "family": "TYPE_BONUS:bird",
+            "equipmentValue": 27,
+            "damage": 681,
+            "withoutEffect": 552,
+            "enemyDefense": 60.400000000000006,
+            "enemyTypes": [
+              "bird"
+            ]
+          },
+          "control": {
+            "omitted": [
+              "TYPE_BONUS:bird"
+            ],
+            "pairedRng": 378001
+          }
+        }
+      ]
+    },
+    {
+      "id": "whirling_whip",
+      "name": "旋舞の鞭使い",
+      "passed": true,
+      "reason": "通常攻撃の手数・範囲と正解MP回復",
+      "minStar": 6,
+      "dungeonId": "sand_tomb",
+      "level": 38,
+      "stage": 3,
+      "core": [
+        {
+          "member": 0,
+          "actions": [
+            "dancer_p2_s1",
+            "dancer_p2_s3"
+          ],
+          "passives": [
+            "dancer_p2_s2",
+            "hunter_p3_s2"
+          ],
+          "affixes": {
+            "weapon": [
+              "STATUS_RATE",
+              "VS_DEBUFFED"
+            ],
+            "accessory1": [
+              "DOT_POWER"
+            ]
+          },
+          "effects": [
+            "STATUS_RATE",
+            "VS_DEBUFFED",
+            "DOT_POWER"
+          ]
+        },
+        {
+          "member": 1,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        },
+        {
+          "member": 2,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        },
+        {
+          "member": 3,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        }
+      ],
+      "assembly": {
+        "gold": 36324,
+        "byPurpose": {
+          "craft": 14752,
+          "enhance": 3232,
+          "enchant": 16800,
+          "items": 1540
+        },
+        "materials": {
+          "m04_006_mat": 3,
+          "m04_006_rare": 1,
+          "enhancement_stone": 28,
+          "blooming_hill_boss_mat": 28,
+          "exp_r06_amorphous_mat": 64,
+          "mine_spider_mat": 21,
+          "mine_spider_rare": 7,
+          "iron_worm_mat": 3,
+          "iron_worm_rare": 1,
+          "drill_bot_mat": 6,
+          "drill_bot_rare": 2,
+          "cursed_idol_mat": 3,
+          "cursed_idol_rare": 1
+        },
+        "ap": {
+          "m1": {
+            "dancer": 100,
+            "hunter": 10
+          },
+          "m2": {
+            "knight": 90
+          },
+          "m3": {
+            "bard": 90
+          },
+          "m4": {
+            "white_mage": 90
+          }
+        },
+        "jp": 480,
+        "jobTraining": [
+          {
+            "member": 0,
+            "from": "dancer",
+            "to": "hunter",
+            "jp": 80
+          },
+          {
+            "member": 0,
+            "from": "hunter",
+            "to": "dancer",
+            "jp": 200
+          }
+        ]
+      },
+      "checks": [
+        {
+          "name": "通常攻撃の手数・範囲と正解MP回復",
+          "seed": 379001,
+          "conditions": {
+            "enemy": {
+              "monsterId": "m06_005",
+              "sourceRank": 6,
+              "count": 3,
+              "boss": false,
+              "level": 38,
+              "originalMaxHp": [
+                1824,
+                1824,
+                1824
+              ],
+              "hpMultiplier": 10
+            },
+            "startRound": 1,
+            "soleSurvivor": false,
+            "answers": "全問正解",
+            "actionOrder": "発動条件を切り出すため指定",
+            "preparedStates": [
+              {
+                "member": 0,
+                "mp": 52
+              }
+            ]
+          },
+          "actions": [
+            {
+              "actor": 0,
+              "type": "attack",
+              "target": 0
+            }
+          ],
+          "values": {
+            "targetsHit": 3,
+            "damage": [
+              122,
+              195,
+              122
+            ],
+            "hitCount": 3,
+            "poisonCount": 1,
+            "mpRecovered": 6,
+            "events": [
+              "銀の森の小人は毒になった"
+            ]
+          },
+          "candidatesTried": 1
+        }
+      ]
+    },
+    {
+      "id": "grand_scholar",
+      "name": "大魔法の学者",
+      "passed": true,
+      "reason": "対応属性の全体魔法／対応属性の全体魔法／対応属性の全体魔法",
+      "minStar": 6,
+      "dungeonId": "sand_tomb",
+      "level": 38,
+      "stage": 3,
+      "core": [
+        {
+          "member": 0,
+          "actions": [
+            "black_mage_p1_s3",
+            "black_mage_p2_s3",
+            "black_mage_p3_s3"
+          ],
+          "passives": [
+            "black_mage_p1_s2",
+            "black_mage_p2_s2",
+            "black_mage_p3_s2"
+          ],
+          "affixes": {
+            "weapon": [
+              "MAG",
+              "MP_SAVE"
+            ],
+            "accessory1": [
+              "WEAK_DMG"
+            ],
+            "accessory2": [
+              "MP_SAVE"
+            ]
+          },
+          "effects": [
+            "MAG",
+            "MP_SAVE",
+            "WEAK_DMG"
+          ]
+        },
+        {
+          "member": 1,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        },
+        {
+          "member": 2,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        },
+        {
+          "member": 3,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        }
+      ],
+      "assembly": {
+        "gold": 36324,
+        "byPurpose": {
+          "craft": 14752,
+          "enhance": 3232,
+          "enchant": 16800,
+          "items": 1540
+        },
+        "materials": {
+          "m04_003_mat": 3,
+          "m04_003_rare": 1,
+          "enhancement_stone": 28,
+          "blooming_hill_boss_mat": 28,
+          "exp_r06_amorphous_mat": 64,
+          "guardian_automaton_mat": 3,
+          "guardian_automaton_rare": 1,
+          "mine_spider_mat": 18,
+          "mine_spider_rare": 6,
+          "iron_worm_mat": 3,
+          "iron_worm_rare": 1,
+          "drill_bot_mat": 6,
+          "drill_bot_rare": 2,
+          "cursed_idol_mat": 3,
+          "cursed_idol_rare": 1
+        },
+        "ap": {
+          "m1": {
+            "black_mage": 90
+          },
+          "m2": {
+            "knight": 90
+          },
+          "m3": {
+            "bard": 90
+          },
+          "m4": {
+            "white_mage": 90
+          }
+        },
+        "jp": 0,
+        "jobTraining": []
+      },
+      "checks": [
+        {
+          "name": "対応属性の全体魔法",
+          "seed": 380001,
+          "conditions": {
+            "enemy": {
+              "monsterId": "exp_sand_tomb_1",
+              "sourceRank": 6,
+              "count": 3,
+              "boss": false,
+              "level": 38,
+              "originalMaxHp": [
+                1873,
+                1873,
+                1873
+              ],
+              "hpMultiplier": 10
+            },
+            "startRound": 1,
+            "soleSurvivor": false,
+            "answers": "全問正解",
+            "actionOrder": "発動条件を切り出すため指定",
+            "preparedStates": []
+          },
+          "actions": [
+            {
+              "actor": 0,
+              "type": "skill",
+              "skillId": "black_mage_p1_s3",
+              "target": 0
+            }
+          ],
+          "values": {
+            "skillId": "black_mage_p1_s3",
+            "elements": [
+              "fire"
+            ],
+            "targetsDamaged": 3,
+            "damage": [
+              514,
+              518,
+              516
+            ],
+            "mpSpent": 11
+          }
+        },
+        {
+          "name": "対応属性の全体魔法",
+          "seed": 380001,
+          "conditions": {
+            "enemy": {
+              "monsterId": "exp_sand_tomb_7",
+              "sourceRank": 6,
+              "count": 3,
+              "boss": false,
+              "level": 38,
+              "originalMaxHp": [
+                1873,
+                1873,
+                1873
+              ],
+              "hpMultiplier": 10
+            },
+            "startRound": 1,
+            "soleSurvivor": false,
+            "answers": "全問正解",
+            "actionOrder": "発動条件を切り出すため指定",
+            "preparedStates": []
+          },
+          "actions": [
+            {
+              "actor": 0,
+              "type": "skill",
+              "skillId": "black_mage_p2_s3",
+              "target": 0
+            }
+          ],
+          "values": {
+            "skillId": "black_mage_p2_s3",
+            "elements": [
+              "ice"
+            ],
+            "targetsDamaged": 3,
+            "damage": [
+              486,
+              489,
+              488
+            ],
+            "mpSpent": 11
+          }
+        },
+        {
+          "name": "対応属性の全体魔法",
+          "seed": 380001,
+          "conditions": {
+            "enemy": {
+              "monsterId": "exp_sand_tomb_2",
+              "sourceRank": 6,
+              "count": 3,
+              "boss": false,
+              "level": 38,
+              "originalMaxHp": [
+                2104,
+                2104,
+                2104
+              ],
+              "hpMultiplier": 10
+            },
+            "startRound": 1,
+            "soleSurvivor": false,
+            "answers": "全問正解",
+            "actionOrder": "発動条件を切り出すため指定",
+            "preparedStates": []
+          },
+          "actions": [
+            {
+              "actor": 0,
+              "type": "skill",
+              "skillId": "black_mage_p3_s3",
+              "target": 0
+            }
+          ],
+          "values": {
+            "skillId": "black_mage_p3_s3",
+            "elements": [
+              "thunder"
+            ],
+            "targetsDamaged": 3,
+            "damage": [
+              486,
+              489,
+              488
+            ],
+            "mpSpent": 11
+          }
+        }
+      ]
+    },
+    {
+      "id": "skill_cyclist",
+      "name": "剣技循環士",
+      "passed": true,
+      "reason": "正解通常攻撃から技能を強化",
+      "minStar": 3,
+      "dungeonId": "howling_canyon",
+      "level": 17,
+      "stage": 2,
+      "core": [
+        {
+          "member": 0,
+          "actions": [
+            "spellblade_p2_s1",
+            "spellblade_p1_s1"
+          ],
+          "passives": [
+            "spellblade_p2_s2"
+          ],
+          "affixes": {
+            "weapon": [
+              "NORMAL_SKILL",
+              "MP_ON_HIT"
+            ],
+            "accessory1": [
+              "MP_SAVE"
+            ]
+          },
+          "effects": [
+            "NORMAL_SKILL",
+            "MP_ON_HIT",
+            "MP_SAVE"
+          ]
+        },
+        {
+          "member": 1,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        },
+        {
+          "member": 2,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        },
+        {
+          "member": 3,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        }
+      ],
+      "assembly": {
+        "gold": 10446,
+        "byPurpose": {
+          "craft": 3266,
+          "enchant": 6720,
+          "items": 460
+        },
+        "materials": {
+          "goblin_mat": 2,
+          "cave_rat_mat": 2,
+          "fort_bandit_mat": 21,
+          "skeleton_mat": 10,
+          "fire_lizard_mat": 2,
+          "blooming_hill_boss_mat": 28,
+          "canyon_wolf_mat": 48,
+          "wisp_dragonfly_mat": 15,
+          "wisp_dragonfly_rare": 5,
+          "poison_cap_rare": 5,
+          "skeleton_rare": 3,
+          "fort_bandit_rare": 1,
+          "stone_statue_mat": 3,
+          "stone_statue_rare": 1
+        },
+        "ap": {
+          "m1": {
+            "spellblade": 62
+          },
+          "m2": {
+            "knight": 30
+          },
+          "m3": {
+            "bard": 30
+          },
+          "m4": {
+            "white_mage": 30
+          }
+        },
+        "jp": 200,
+        "jobTraining": []
+      },
+      "checks": [
+        {
+          "name": "正解通常攻撃から技能を強化",
+          "seed": 381001,
+          "conditions": {
+            "enemy": {
+              "monsterId": "canyon_wolf",
+              "sourceRank": 3,
+              "count": 1,
+              "boss": false,
+              "level": 17,
+              "originalMaxHp": [
+                1099
+              ],
+              "hpMultiplier": 10
+            },
+            "startRound": 1,
+            "soleSurvivor": false,
+            "answers": "全問正解",
+            "actionOrder": "発動条件を切り出すため指定",
+            "preparedStates": [
+              {
+                "member": 0,
+                "mp": 31
+              }
+            ]
+          },
+          "actions": [
+            {
+              "actor": 0,
+              "type": "attack",
+              "target": 0
+            },
+            {
+              "actor": 0,
+              "type": "skill",
+              "skillId": "spellblade_p2_s1",
+              "target": 0
+            }
+          ],
+          "values": {
+            "normalMpRecovered": 6,
+            "skillDamage": 663,
+            "withoutCycleEffect": 571,
+            "readinessConsumed": true
+          },
+          "control": {
+            "omitted": [
+              "NORMAL_SKILL"
+            ],
+            "pairedRng": 3031676957
+          }
+        }
+      ]
+    },
+    {
+      "id": "guarding_knight",
+      "name": "挑発の守護騎士",
+      "passed": true,
+      "reason": "挑発・守りの号令とかばう",
+      "minStar": 3,
+      "dungeonId": "howling_canyon",
+      "level": 17,
+      "stage": 2,
+      "core": [
+        {
+          "member": 0,
+          "actions": [
+            "warrior_p2_s1",
+            "knight_p1_s1"
+          ],
+          "passives": [
+            "knight_p1_s2"
+          ],
+          "affixes": {
+            "body": [
+              "PHYS_CUT",
+              "HP"
+            ],
+            "arm": [
+              "DEF"
+            ],
+            "accessory1": [
+              "HP"
+            ]
+          },
+          "effects": [
+            "PHYS_CUT",
+            "HP",
+            "DEF"
+          ]
+        },
+        {
+          "member": 1,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        },
+        {
+          "member": 2,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        },
+        {
+          "member": 3,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        }
+      ],
+      "assembly": {
+        "gold": 10926,
+        "byPurpose": {
+          "craft": 3266,
+          "enchant": 7200,
+          "items": 460
+        },
+        "materials": {
+          "goblin_mat": 2,
+          "cave_rat_mat": 2,
+          "fort_bandit_mat": 21,
+          "skeleton_mat": 10,
+          "fire_lizard_mat": 2,
+          "blooming_hill_boss_mat": 30,
+          "canyon_wolf_mat": 48,
+          "wisp_dragonfly_mat": 12,
+          "wisp_dragonfly_rare": 4,
+          "skeleton_rare": 3,
+          "poison_cap_rare": 5,
+          "m02_002_mat": 3,
+          "m02_002_rare": 1,
+          "fort_bandit_rare": 1,
+          "stone_statue_mat": 3,
+          "stone_statue_rare": 1
+        },
+        "ap": {
+          "m1": {
+            "knight": 30
+          },
+          "m2": {
+            "hunter": 30
+          },
+          "m3": {
+            "black_mage": 30
+          },
+          "m4": {
+            "white_mage": 30
+          }
+        },
+        "jp": 0,
+        "jobTraining": []
+      },
+      "checks": [
+        {
+          "name": "挑発・守りの号令とかばう",
+          "seed": 382001,
+          "conditions": {
+            "enemy": {
+              "monsterId": "canyon_wolf",
+              "sourceRank": 3,
+              "count": 1,
+              "boss": false,
+              "level": 17,
+              "originalMaxHp": [
+                1099
+              ],
+              "hpMultiplier": 10
+            },
+            "startRound": 1,
+            "soleSurvivor": false,
+            "answers": "全問正解",
+            "actionOrder": "発動条件を切り出すため指定",
+            "preparedStates": []
+          },
+          "actions": [
+            {
+              "actor": 0,
+              "type": "skill",
+              "skillId": "warrior_p2_s1",
+              "target": 0
+            },
+            {
+              "actor": 0,
+              "type": "skill",
+              "skillId": "knight_p1_s1",
+              "target": 0
+            },
+            {
+              "actor": "enemy",
+              "enemy": 0,
+              "then": "ally_turn_start:0"
+            }
+          ],
+          "values": {
+            "taunt": 0.5,
+            "partyDef": 0.2,
+            "damageTakenByGuardian": 39,
+            "counterDamage": 0,
+            "events": [
+              "1:knightがかばった！",
+              "峡谷オオカミの攻撃！ 1:knightに 39のダメージ"
+            ]
+          },
+          "candidatesTried": 1
+        }
+      ]
+    },
+    {
+      "id": "avenging_knight",
+      "name": "報復の重騎士",
+      "passed": true,
+      "reason": "挑発・反撃の構えから物理反撃",
+      "minStar": 6,
+      "dungeonId": "sand_tomb",
+      "level": 38,
+      "stage": 3,
+      "core": [
+        {
+          "member": 0,
+          "actions": [
+            "knight_p3_s3",
+            "warrior_p2_s1",
+            "knight_p3_s1"
+          ],
+          "passives": [
+            "knight_p3_s2"
+          ],
+          "affixes": {
+            "body": [
+              "PHYS_CUT"
+            ],
+            "arm": [
+              "COUNTER"
+            ],
+            "accessory1": [
+              "COUNTER"
+            ]
+          },
+          "effects": [
+            "PHYS_CUT",
+            "COUNTER"
+          ]
+        },
+        {
+          "member": 1,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        },
+        {
+          "member": 2,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        },
+        {
+          "member": 3,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        }
+      ],
+      "assembly": {
+        "gold": 37524,
+        "byPurpose": {
+          "craft": 14752,
+          "enhance": 3232,
+          "enchant": 18000,
+          "items": 1540
+        },
+        "materials": {
+          "iron_worm_mat": 3,
+          "iron_worm_rare": 1,
+          "enhancement_stone": 28,
+          "blooming_hill_boss_mat": 30,
+          "exp_r06_amorphous_mat": 64,
+          "mine_spider_mat": 15,
+          "mine_spider_rare": 5,
+          "drill_bot_mat": 6,
+          "drill_bot_rare": 2,
+          "cursed_idol_mat": 3,
+          "cursed_idol_rare": 1,
+          "guardian_automaton_mat": 6,
+          "guardian_automaton_rare": 2,
+          "m04_003_mat": 3,
+          "m04_003_rare": 1
+        },
+        "ap": {
+          "m1": {
+            "knight": 90
+          },
+          "m2": {
+            "hunter": 90
+          },
+          "m3": {
+            "black_mage": 90
+          },
+          "m4": {
+            "white_mage": 90
+          }
+        },
+        "jp": 0,
+        "jobTraining": []
+      },
+      "checks": [
+        {
+          "name": "挑発・反撃の構えから物理反撃",
+          "seed": 383001,
+          "conditions": {
+            "enemy": {
+              "monsterId": "m06_011",
+              "sourceRank": 6,
+              "count": 1,
+              "boss": false,
+              "level": 38,
+              "originalMaxHp": [
+                2335
+              ],
+              "hpMultiplier": 10
+            },
+            "startRound": 1,
+            "soleSurvivor": true,
+            "answers": "全問正解",
+            "actionOrder": "発動条件を切り出すため指定",
+            "preparedStates": []
+          },
+          "actions": [
+            {
+              "actor": 0,
+              "type": "skill",
+              "skillId": "warrior_p2_s1",
+              "target": 0
+            },
+            {
+              "actor": 0,
+              "type": "skill",
+              "skillId": "knight_p3_s3",
+              "target": 0
+            },
+            {
+              "actor": "enemy",
+              "enemy": 0,
+              "then": "ally_turn_start:0"
+            }
+          ],
+          "values": {
+            "taunt": 0.5,
+            "partyDef": 0,
+            "damageTakenByGuardian": 95,
+            "counterDamage": 156,
+            "events": [
+              "青い腐れ人の攻撃！ 1:knightに 95のダメージ",
+              "1:knightの反撃！弱点！青い腐れ人に 156のダメージ"
+            ]
+          },
+          "candidatesTried": 1
+        }
+      ]
+    },
+    {
+      "id": "elemental_cleric",
+      "name": "魔法耐久の聖職者",
+      "passed": true,
+      "reason": "魔法軽減装備とRES支援から回復を維持",
+      "minStar": 3,
+      "dungeonId": "howling_canyon",
+      "level": 17,
+      "stage": 2,
+      "core": [
+        {
+          "member": 0,
+          "actions": [
+            "elementalist_p1_s1",
+            "white_mage_p1_s1",
+            "bard_p1_s1"
+          ],
+          "passives": [
+            "knight_p2_s2"
+          ],
+          "affixes": {
+            "body": [
+              "MAGIC_CUT",
+              "RES"
+            ],
+            "cloak": [
+              "MAGIC_CUT"
+            ],
+            "accessory1": [
+              "RES"
+            ]
+          },
+          "effects": [
+            "MAGIC_CUT",
+            "RES"
+          ]
+        },
+        {
+          "member": 1,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        },
+        {
+          "member": 2,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        },
+        {
+          "member": 3,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        }
+      ],
+      "assembly": {
+        "gold": 10870,
+        "byPurpose": {
+          "craft": 3210,
+          "enchant": 7200,
+          "items": 460
+        },
+        "materials": {
+          "fort_bandit_mat": 21,
+          "poison_cap_rare": 6,
+          "blooming_hill_boss_mat": 30,
+          "canyon_wolf_mat": 48,
+          "m02_001_mat": 3,
+          "m02_001_rare": 1,
+          "stone_statue_mat": 6,
+          "stone_statue_rare": 2,
+          "wisp_dragonfly_mat": 12,
+          "wisp_dragonfly_rare": 4,
+          "skeleton_mat": 6,
+          "skeleton_rare": 2,
+          "fort_bandit_rare": 1
+        },
+        "ap": {
+          "m1": {
+            "elementalist": 40,
+            "knight": 10
+          },
+          "m2": {
+            "knight": 30
+          },
+          "m3": {
+            "hunter": 30
+          },
+          "m4": {
+            "white_mage": 30
+          }
+        },
+        "jp": 480,
+        "jobTraining": [
+          {
+            "member": 0,
+            "from": "elementalist",
+            "to": "knight",
+            "jp": 80
+          },
+          {
+            "member": 0,
+            "from": "knight",
+            "to": "elementalist",
+            "jp": 200
+          }
+        ]
+      },
+      "checks": [
+        {
+          "name": "魔法軽減装備とRES支援から回復を維持",
+          "seed": 384001,
+          "conditions": {
+            "enemy": {
+              "monsterId": "m03_003",
+              "sourceRank": 3,
+              "count": 1,
+              "boss": false,
+              "level": 17,
+              "originalMaxHp": [
+                1266
+              ],
+              "hpMultiplier": 10
+            },
+            "startRound": 1,
+            "soleSurvivor": true,
+            "answers": "全問正解",
+            "actionOrder": "発動条件を切り出すため指定",
+            "preparedStates": []
+          },
+          "actions": [
+            {
+              "actor": 0,
+              "type": "skill",
+              "skillId": "bard_p1_s1",
+              "target": 0
+            },
+            {
+              "actor": "enemy",
+              "enemy": 0,
+              "then": "ally_turn_start:0"
+            },
+            {
+              "actor": 0,
+              "type": "skill",
+              "skillId": "white_mage_p1_s1",
+              "target": 0
+            }
+          ],
+          "values": {
+            "damageTaken": 72,
+            "withoutMagicCut": 87,
+            "healedHp": 72
+          },
+          "control": {
+            "omitted": [
+              "MAGIC_CUT"
+            ]
+          },
+          "candidatesTried": 1
+        }
+      ]
+    },
+    {
+      "id": "resistance_specialist",
+      "name": "耐性の専門家",
+      "passed": true,
+      "reason": "解毒の体質で敵の毒付与を阻止",
+      "minStar": 9,
+      "dungeonId": "demon_gate",
+      "level": 59,
+      "stage": 4,
+      "core": [
+        {
+          "member": 0,
+          "actions": [
+            "apothecary_p1_s1"
+          ],
+          "passives": [
+            "apothecary_p2_s4",
+            "white_mage_p2_s2"
+          ],
+          "affixes": {
+            "head": [
+              "STATUS_RES"
+            ],
+            "body": [
+              "STATUS_RES"
+            ],
+            "cloak": [
+              "STATUS_RES"
+            ],
+            "accessory1": [
+              "STATUS_RES"
+            ]
+          },
+          "effects": [
+            "STATUS_RES"
+          ]
+        },
+        {
+          "member": 1,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        },
+        {
+          "member": 2,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        },
+        {
+          "member": 3,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        }
+      ],
+      "assembly": {
+        "gold": 107240,
+        "byPurpose": {
+          "craft": 54400,
+          "enhance": 14320,
+          "enchant": 35340,
+          "items": 3180
+        },
+        "materials": {
+          "m06_015_mat": 3,
+          "m06_015_rare": 1,
+          "m08_001_mat": 3,
+          "m08_001_rare": 2,
+          "enhancement_stone": 56,
+          "blooming_hill_boss_mat": 31,
+          "m07_005_mat": 9,
+          "m07_005_rare": 3,
+          "m07_008_mat": 6,
+          "m07_008_rare": 2,
+          "m07_011_mat": 9,
+          "m07_011_rare": 3,
+          "exp_r09_aberration_mat": 16,
+          "m08_012_mat": 24,
+          "m08_012_rare": 16,
+          "m06_009_mat": 3,
+          "m06_009_rare": 1,
+          "m08_010_mat": 3,
+          "m08_010_rare": 2,
+          "m07_014_mat": 6,
+          "m07_014_rare": 2,
+          "m07_002_mat": 6,
+          "m07_002_rare": 2,
+          "m06_003_mat": 3,
+          "m06_003_rare": 1,
+          "m08_004_mat": 3,
+          "m08_004_rare": 2,
+          "m06_006_mat": 3,
+          "m06_006_rare": 1,
+          "m08_007_mat": 3,
+          "m08_007_rare": 2
+        },
+        "ap": {
+          "m1": {
+            "apothecary": 190,
+            "white_mage": 10
+          },
+          "m2": {
+            "knight": 180
+          },
+          "m3": {
+            "hunter": 180
+          },
+          "m4": {
+            "white_mage": 180
+          }
+        },
+        "jp": 480,
+        "jobTraining": [
+          {
+            "member": 0,
+            "from": "apothecary",
+            "to": "white_mage",
+            "jp": 80
+          },
+          {
+            "member": 0,
+            "from": "white_mage",
+            "to": "apothecary",
+            "jp": 200
+          }
+        ]
+      },
+      "checks": [
+        {
+          "name": "解毒の体質で敵の毒付与を阻止",
+          "seed": 385041,
+          "conditions": {
+            "enemy": {
+              "monsterId": "exp_bog_kingdom_1",
+              "sourceRank": 8,
+              "count": 1,
+              "boss": false,
+              "level": 59,
+              "originalMaxHp": [
+                2491
+              ],
+              "hpMultiplier": 10
+            },
+            "startRound": 1,
+            "soleSurvivor": true,
+            "answers": "全問正解",
+            "actionOrder": "発動条件を切り出すため指定",
+            "preparedStates": []
+          },
+          "actions": [
+            {
+              "actor": "enemy",
+              "enemy": 0,
+              "then": "ally_turn_start:0"
+            }
+          ],
+          "values": {
+            "enemyStatusRate": 0.16,
+            "statusResistance": 0.9,
+            "protected": true,
+            "controlPoisoned": true,
+            "events": [
+              "沼王毒泡スライムの攻撃！ 1:apothecaryに 482のダメージ"
+            ],
+            "controlEvents": [
+              "沼王毒泡スライムの攻撃！ 1:apothecaryに 482のダメージ",
+              "1:apothecaryは毒になった",
+              "1:apothecaryは毒で 115のダメージ"
+            ]
+          },
+          "control": {
+            "omittedPassive": "apothecary_p2_s4"
+          },
+          "candidatesTried": 41
+        }
+      ]
+    },
+    {
+      "id": "undying_warrior",
+      "name": "不死身の戦士",
+      "passed": true,
+      "reason": "低HP時に逆境で打撃を強化／致死打撃を不倒で耐える",
+      "minStar": 9,
+      "dungeonId": "demon_gate",
+      "level": 59,
+      "stage": 4,
+      "core": [
+        {
+          "member": 0,
+          "actions": [
+            "warrior_p3_s1",
+            "warrior_p2_s3"
+          ],
+          "passives": [
+            "warrior_p3_s2",
+            "monk_p3_s4"
+          ],
+          "affixes": {
+            "body": [
+              "PHYS_CUT"
+            ],
+            "accessory1": [
+              "HP"
+            ],
+            "accessory2": [
+              "STR"
+            ]
+          },
+          "effects": [
+            "PHYS_CUT",
+            "HP",
+            "STR"
+          ]
+        },
+        {
+          "member": 1,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        },
+        {
+          "member": 2,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        },
+        {
+          "member": 3,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        }
+      ],
+      "assembly": {
+        "gold": 104960,
+        "byPurpose": {
+          "craft": 54400,
+          "enhance": 14320,
+          "enchant": 33060,
+          "items": 3180
+        },
+        "materials": {
+          "m06_006_mat": 6,
+          "m06_006_rare": 2,
+          "m08_007_mat": 6,
+          "m08_007_rare": 4,
+          "enhancement_stone": 56,
+          "blooming_hill_boss_mat": 29,
+          "m07_011_mat": 6,
+          "m07_011_rare": 2,
+          "m07_014_mat": 12,
+          "m07_014_rare": 4,
+          "m07_002_mat": 12,
+          "m07_002_rare": 4,
+          "exp_r09_aberration_mat": 16,
+          "m08_012_mat": 24,
+          "m08_012_rare": 16,
+          "m06_009_mat": 3,
+          "m06_009_rare": 1,
+          "m08_010_mat": 3,
+          "m08_010_rare": 2,
+          "m06_003_mat": 3,
+          "m06_003_rare": 1,
+          "m08_004_mat": 3,
+          "m08_004_rare": 2,
+          "m07_005_mat": 6,
+          "m07_005_rare": 2
+        },
+        "ap": {
+          "m1": {
+            "warrior": 180,
+            "monk": 60
+          },
+          "m2": {
+            "knight": 180
+          },
+          "m3": {
+            "bard": 180
+          },
+          "m4": {
+            "white_mage": 180
+          }
+        },
+        "jp": 160,
+        "jobTraining": [
+          {
+            "member": 0,
+            "from": "warrior",
+            "to": "monk",
+            "jp": 80
+          },
+          {
+            "member": 0,
+            "from": "monk",
+            "to": "warrior",
+            "jp": 80
+          }
+        ]
+      },
+      "checks": [
+        {
+          "name": "低HP時に逆境で打撃を強化",
+          "seed": 386001,
+          "conditions": {
+            "enemy": {
+              "monsterId": "exp_demon_gate_1",
+              "sourceRank": 9,
+              "count": 1,
+              "boss": false,
+              "level": 59,
+              "originalMaxHp": [
+                2491
+              ],
+              "hpMultiplier": 10
+            },
+            "startRound": 1,
+            "soleSurvivor": false,
+            "answers": "全問正解",
+            "actionOrder": "発動条件を切り出すため指定",
+            "preparedStates": [
+              {
+                "member": 0,
+                "hp": 838
+              }
+            ]
+          },
+          "actions": [
+            {
+              "actor": 0,
+              "type": "skill",
+              "skillId": "warrior_p3_s1",
+              "target": 0
+            }
+          ],
+          "values": {
+            "damage": 1866,
+            "withoutLowHpPassive": 1579
+          },
+          "control": {
+            "omittedPassive": "warrior_p3_s2"
+          }
+        },
+        {
+          "name": "致死打撃を不倒で耐える",
+          "seed": 386001,
+          "conditions": {
+            "enemy": {
+              "monsterId": "m09_014",
+              "sourceRank": 9,
+              "count": 1,
+              "boss": false,
+              "level": 59,
+              "originalMaxHp": [
+                3849
+              ],
+              "hpMultiplier": 10
+            },
+            "startRound": 1,
+            "soleSurvivor": true,
+            "answers": "全問正解",
+            "actionOrder": "発動条件を切り出すため指定",
+            "preparedStates": [
+              {
+                "member": 0,
+                "hp": 1
+              }
+            ]
+          },
+          "actions": [
+            {
+              "actor": "enemy",
+              "enemy": 0,
+              "then": "ally_turn_start:0"
+            }
+          ],
+          "values": {
+            "incomingDamage": 287,
+            "remainingHp": 1,
+            "endured": true,
+            "events": [
+              "機械兵の攻撃！ 1:warriorに 287のダメージ",
+              "1:warriorは踏みとどまった！"
+            ]
+          },
+          "candidatesTried": 1
+        }
+      ]
+    },
+    {
+      "id": "vampiric_spellblade",
+      "name": "吸血の魔剣士",
+      "passed": true,
+      "reason": "HP消費技の反動を吸収で一部補う",
+      "minStar": 3,
+      "dungeonId": "howling_canyon",
+      "level": 17,
+      "stage": 2,
+      "core": [
+        {
+          "member": 0,
+          "actions": [
+            "warrior_p3_s1",
+            "spellblade_p2_s1"
+          ],
+          "passives": [
+            "spellblade_p2_s2",
+            "warrior_p1_s2"
+          ],
+          "affixes": {
+            "weapon": [
+              "LIFESTEAL",
+              "STR"
+            ],
+            "accessory1": [
+              "HP"
+            ]
+          },
+          "effects": [
+            "LIFESTEAL",
+            "STR",
+            "HP"
+          ]
+        },
+        {
+          "member": 1,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        },
+        {
+          "member": 2,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        },
+        {
+          "member": 3,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        }
+      ],
+      "assembly": {
+        "gold": 10405,
+        "byPurpose": {
+          "craft": 3225,
+          "enchant": 6720,
+          "items": 460
+        },
+        "materials": {
+          "fort_bandit_mat": 18,
+          "wolf_pup_rare": 1,
+          "blooming_hill_boss_mat": 28,
+          "canyon_wolf_mat": 48,
+          "wisp_dragonfly_mat": 15,
+          "wisp_dragonfly_rare": 5,
+          "skeleton_mat": 12,
+          "skeleton_rare": 4,
+          "poison_cap_rare": 4,
+          "fort_bandit_rare": 1,
+          "stone_statue_mat": 3,
+          "stone_statue_rare": 1
+        },
+        "ap": {
+          "m1": {
+            "spellblade": 62,
+            "warrior": 10
+          },
+          "m2": {
+            "knight": 30
+          },
+          "m3": {
+            "bard": 30
+          },
+          "m4": {
+            "white_mage": 30
+          }
+        },
+        "jp": 480,
+        "jobTraining": [
+          {
+            "member": 0,
+            "from": "spellblade",
+            "to": "warrior",
+            "jp": 80
+          },
+          {
+            "member": 0,
+            "from": "warrior",
+            "to": "spellblade",
+            "jp": 200
+          }
+        ]
+      },
+      "checks": [
+        {
+          "name": "HP消費技の反動を吸収で一部補う",
+          "seed": 387001,
+          "conditions": {
+            "enemy": {
+              "monsterId": "canyon_wolf",
+              "sourceRank": 3,
+              "count": 1,
+              "boss": false,
+              "level": 17,
+              "originalMaxHp": [
+                1099
+              ],
+              "hpMultiplier": 10
+            },
+            "startRound": 1,
+            "soleSurvivor": false,
+            "answers": "全問正解",
+            "actionOrder": "発動条件を切り出すため指定",
+            "preparedStates": [
+              {
+                "member": 0,
+                "hp": 368
+              }
+            ]
+          },
+          "actions": [
+            {
+              "actor": 0,
+              "type": "skill",
+              "skillId": "warrior_p3_s1",
+              "target": 0
+            }
+          ],
+          "values": {
+            "hpChange": -48,
+            "withoutLifestealHpChange": -82,
+            "hpRecoveredByLifesteal": 34
+          },
+          "control": {
+            "omitted": [
+              "LIFESTEAL"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "critical_siphon",
+      "name": "会心の吸魔師",
+      "passed": true,
+      "reason": "正解した魔法会心からMPを回収",
+      "minStar": 1,
+      "dungeonId": "mossy_cave",
+      "level": 3,
+      "stage": 1,
+      "core": [
+        {
+          "member": 0,
+          "actions": [
+            "black_mage_p1_s1",
+            "black_mage_p2_s1",
+            "black_mage_p3_s1"
+          ],
+          "passives": [],
+          "affixes": {
+            "weapon": [
+              "CRIT_MP",
+              "CRT"
+            ],
+            "accessory1": [
+              "CRT"
+            ],
+            "accessory2": [
+              "CRIT_DMG"
+            ]
+          },
+          "effects": [
+            "CRIT_MP",
+            "CRT",
+            "CRIT_DMG"
+          ]
+        },
+        {
+          "member": 1,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        },
+        {
+          "member": 2,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        },
+        {
+          "member": 3,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        }
+      ],
+      "assembly": {
+        "gold": 4120,
+        "byPurpose": {
+          "craft": 1120,
+          "enchant": 2800,
+          "items": 200
+        },
+        "materials": {
+          "cave_bat_mat": 112,
+          "blooming_hill_boss_mat": 28
+        },
+        "ap": {
+          "m1": {},
+          "m2": {},
+          "m3": {},
+          "m4": {}
+        },
+        "jp": 0,
+        "jobTraining": []
+      },
+      "checks": [
+        {
+          "name": "正解した魔法会心からMPを回収",
+          "seed": 388001,
+          "conditions": {
+            "enemy": {
+              "monsterId": "m01_003",
+              "sourceRank": 1,
+              "count": 1,
+              "boss": false,
+              "level": 3,
+              "originalMaxHp": [
+                507
+              ],
+              "hpMultiplier": 10
+            },
+            "startRound": 1,
+            "soleSurvivor": false,
+            "answers": "全問正解",
+            "actionOrder": "発動条件を切り出すため指定",
+            "preparedStates": [
+              {
+                "member": 0,
+                "mp": 20
+              }
+            ]
+          },
+          "actions": [
+            {
+              "actor": 0,
+              "type": "skill",
+              "skillId": "black_mage_p1_s1",
+              "target": 0
+            }
+          ],
+          "values": {
+            "mpChange": -4,
+            "withoutCriticalMpChange": -5,
+            "recoveredMp": 1,
+            "damage": 156
+          },
+          "control": {
+            "omitted": [
+              "CRIT_MP"
+            ]
+          },
+          "candidatesTried": 1
+        }
+      ]
+    },
+    {
+      "id": "mana_minister",
+      "name": "魔力供給の司祭",
+      "passed": true,
+      "reason": "MPを仲間へ移譲し正解通常攻撃で再補給",
+      "minStar": 3,
+      "dungeonId": "howling_canyon",
+      "level": 17,
+      "stage": 2,
+      "core": [
+        {
+          "member": 0,
+          "actions": [
+            "bard_p3_s1",
+            "bard_p1_s1",
+            "bard_p2_s1"
+          ],
+          "passives": [
+            "bard_p1_s2"
+          ],
+          "affixes": {
+            "weapon": [
+              "MP_ON_HIT",
+              "MP_SAVE"
+            ],
+            "accessory1": [
+              "MP_SAVE"
+            ]
+          },
+          "effects": [
+            "MP_ON_HIT",
+            "MP_SAVE"
+          ]
+        },
+        {
+          "member": 1,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        },
+        {
+          "member": 2,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        },
+        {
+          "member": 3,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        }
+      ],
+      "assembly": {
+        "gold": 10390,
+        "byPurpose": {
+          "craft": 3210,
+          "enchant": 6720,
+          "items": 460
+        },
+        "materials": {
+          "skeleton_mat": 6,
+          "skeleton_rare": 2,
+          "blooming_hill_boss_mat": 28,
+          "canyon_wolf_mat": 48,
+          "wisp_dragonfly_mat": 15,
+          "wisp_dragonfly_rare": 5,
+          "fort_bandit_mat": 21,
+          "poison_cap_rare": 6,
+          "m02_002_mat": 3,
+          "m02_002_rare": 1,
+          "fort_bandit_rare": 1,
+          "stone_statue_mat": 3,
+          "stone_statue_rare": 1
+        },
+        "ap": {
+          "m1": {
+            "bard": 30
+          },
+          "m2": {
+            "knight": 30
+          },
+          "m3": {
+            "black_mage": 30
+          },
+          "m4": {
+            "white_mage": 30
+          }
+        },
+        "jp": 0,
+        "jobTraining": []
+      },
+      "checks": [
+        {
+          "name": "MPを仲間へ移譲し正解通常攻撃で再補給",
+          "seed": 389001,
+          "conditions": {
+            "enemy": {
+              "monsterId": "canyon_wolf",
+              "sourceRank": 3,
+              "count": 1,
+              "boss": false,
+              "level": 17,
+              "originalMaxHp": [
+                1099
+              ],
+              "hpMultiplier": 10
+            },
+            "startRound": 1,
+            "soleSurvivor": false,
+            "answers": "全問正解",
+            "actionOrder": "発動条件を切り出すため指定",
+            "preparedStates": [
+              {
+                "member": 0,
+                "mp": 43
+              },
+              {
+                "member": 2,
+                "mp": 0
+              }
+            ]
+          },
+          "actions": [
+            {
+              "actor": 0,
+              "type": "skill",
+              "skillId": "bard_p3_s1",
+              "target": 2
+            },
+            {
+              "actor": 0,
+              "type": "attack",
+              "target": 0
+            }
+          ],
+          "values": {
+            "transferredMp": 10,
+            "casterMpChange": -14,
+            "partyMpCost": 4,
+            "normalMpRecovered": 6
+          }
+        }
+      ]
+    },
+    {
+      "id": "battle_cleric",
+      "name": "戦闘聖職者",
+      "passed": true,
+      "reason": "聖弾を当てて傷ついた仲間を回復",
+      "minStar": 3,
+      "dungeonId": "howling_canyon",
+      "level": 17,
+      "stage": 2,
+      "core": [
+        {
+          "member": 0,
+          "actions": [
+            "white_mage_p3_s1",
+            "white_mage_p1_s1"
+          ],
+          "passives": [
+            "white_mage_p3_s2",
+            "white_mage_p1_s2"
+          ],
+          "affixes": {
+            "weapon": [
+              "ATTACK_HEAL",
+              "MAG"
+            ],
+            "accessory1": [
+              "HEAL_POWER"
+            ]
+          },
+          "effects": [
+            "ATTACK_HEAL",
+            "MAG",
+            "HEAL_POWER"
+          ]
+        },
+        {
+          "member": 1,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        },
+        {
+          "member": 2,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        },
+        {
+          "member": 3,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        }
+      ],
+      "assembly": {
+        "gold": 10390,
+        "byPurpose": {
+          "craft": 3210,
+          "enchant": 6720,
+          "items": 460
+        },
+        "materials": {
+          "fort_bandit_mat": 18,
+          "poison_cap_rare": 5,
+          "blooming_hill_boss_mat": 28,
+          "canyon_wolf_mat": 48,
+          "wisp_dragonfly_mat": 15,
+          "wisp_dragonfly_rare": 5,
+          "stone_statue_mat": 6,
+          "stone_statue_rare": 2,
+          "skeleton_mat": 6,
+          "skeleton_rare": 2,
+          "m01_001_rare": 1,
+          "m02_002_mat": 3,
+          "m02_002_rare": 1
+        },
+        "ap": {
+          "m1": {
+            "white_mage": 30
+          },
+          "m2": {
+            "knight": 30
+          },
+          "m3": {
+            "warrior": 30
+          },
+          "m4": {
+            "black_mage": 30
+          }
+        },
+        "jp": 0,
+        "jobTraining": []
+      },
+      "checks": [
+        {
+          "name": "聖弾を当てて傷ついた仲間を回復",
+          "seed": 390001,
+          "conditions": {
+            "enemy": {
+              "monsterId": "canyon_wolf",
+              "sourceRank": 3,
+              "count": 1,
+              "boss": false,
+              "level": 17,
+              "originalMaxHp": [
+                1099
+              ],
+              "hpMultiplier": 10
+            },
+            "startRound": 1,
+            "soleSurvivor": false,
+            "answers": "全問正解",
+            "actionOrder": "発動条件を切り出すため指定",
+            "preparedStates": [
+              {
+                "member": 1,
+                "hp": 235
+              }
+            ]
+          },
+          "actions": [
+            {
+              "actor": 0,
+              "type": "skill",
+              "skillId": "white_mage_p3_s1",
+              "target": 0
+            }
+          ],
+          "values": {
+            "damage": 156,
+            "healedAlly": 1,
+            "healedHp": 30,
+            "withoutAttackHealing": 0
+          },
+          "control": {
+            "omitted": [
+              "ATTACK_HEAL"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "life_barrier",
+      "name": "生命障壁の術師",
+      "passed": true,
+      "reason": "全体回復の余剰で障壁を張り打撃を吸収",
+      "minStar": 6,
+      "dungeonId": "sand_tomb",
+      "level": 38,
+      "stage": 3,
+      "core": [
+        {
+          "member": 0,
+          "actions": [
+            "white_mage_p1_s1",
+            "white_mage_p1_s3"
+          ],
+          "passives": [
+            "white_mage_p1_s2"
+          ],
+          "affixes": {
+            "weapon": [
+              "OVERHEAL_SHIELD",
+              "HEAL_POWER"
+            ],
+            "accessory1": [
+              "MP_SAVE"
+            ]
+          },
+          "effects": [
+            "OVERHEAL_SHIELD",
+            "HEAL_POWER",
+            "MP_SAVE"
+          ]
+        },
+        {
+          "member": 1,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        },
+        {
+          "member": 2,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        },
+        {
+          "member": 3,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        }
+      ],
+      "assembly": {
+        "gold": 36324,
+        "byPurpose": {
+          "craft": 14752,
+          "enhance": 3232,
+          "enchant": 16800,
+          "items": 1540
+        },
+        "materials": {
+          "drill_bot_mat": 9,
+          "drill_bot_rare": 3,
+          "enhancement_stone": 28,
+          "blooming_hill_boss_mat": 28,
+          "exp_r06_amorphous_mat": 64,
+          "mine_spider_mat": 12,
+          "mine_spider_rare": 4,
+          "iron_worm_mat": 3,
+          "iron_worm_rare": 1,
+          "cursed_idol_mat": 3,
+          "cursed_idol_rare": 1,
+          "guardian_automaton_mat": 6,
+          "guardian_automaton_rare": 2,
+          "m04_003_mat": 3,
+          "m04_003_rare": 1
+        },
+        "ap": {
+          "m1": {
+            "white_mage": 90
+          },
+          "m2": {
+            "knight": 90
+          },
+          "m3": {
+            "warrior": 90
+          },
+          "m4": {
+            "black_mage": 90
+          }
+        },
+        "jp": 0,
+        "jobTraining": []
+      },
+      "checks": [
+        {
+          "name": "全体回復の余剰で障壁を張り打撃を吸収",
+          "seed": 391001,
+          "conditions": {
+            "enemy": {
+              "monsterId": "m06_011",
+              "sourceRank": 6,
+              "count": 1,
+              "boss": false,
+              "level": 38,
+              "originalMaxHp": [
+                2335
+              ],
+              "hpMultiplier": 10
+            },
+            "startRound": 1,
+            "soleSurvivor": true,
+            "answers": "全問正解",
+            "actionOrder": "発動条件を切り出すため指定",
+            "preparedStates": []
+          },
+          "actions": [
+            {
+              "actor": 0,
+              "type": "skill",
+              "skillId": "white_mage_p1_s3",
+              "target": 0
+            },
+            {
+              "actor": "enemy",
+              "enemy": 0,
+              "then": "ally_turn_start:0"
+            }
+          ],
+          "values": {
+            "createdShieldHp": 183,
+            "absorbedHp": 183,
+            "remainingShieldHp": 0,
+            "hpDamageAfterShield": 46
+          },
+          "candidatesTried": 1
+        }
+      ]
+    },
+    {
+      "id": "cleansing_apothecary",
+      "name": "浄化の薬師",
+      "passed": true,
+      "reason": "持ち出した清めの舞で複数味方を治療",
+      "minStar": 6,
+      "dungeonId": "sand_tomb",
+      "level": 38,
+      "stage": 3,
+      "core": [
+        {
+          "member": 0,
+          "actions": [
+            "white_mage_p2_s1",
+            "dancer_p1_s3",
+            "apothecary_p1_s1"
+          ],
+          "passives": [
+            "apothecary_p1_s2",
+            "white_mage_p2_s2"
+          ],
+          "affixes": {
+            "weapon": [
+              "HEAL_POWER",
+              "MP_SAVE"
+            ],
+            "accessory1": [
+              "STATUS_RES"
+            ]
+          },
+          "effects": [
+            "HEAL_POWER",
+            "MP_SAVE",
+            "STATUS_RES"
+          ]
+        },
+        {
+          "member": 1,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        },
+        {
+          "member": 2,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        },
+        {
+          "member": 3,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        }
+      ],
+      "assembly": {
+        "gold": 36324,
+        "byPurpose": {
+          "craft": 14752,
+          "enhance": 3232,
+          "enchant": 16800,
+          "items": 1540
+        },
+        "materials": {
+          "m04_006_mat": 3,
+          "m04_006_rare": 1,
+          "enhancement_stone": 28,
+          "blooming_hill_boss_mat": 28,
+          "exp_r06_amorphous_mat": 64,
+          "mine_spider_mat": 9,
+          "mine_spider_rare": 3,
+          "drill_bot_mat": 9,
+          "drill_bot_rare": 3,
+          "iron_worm_mat": 3,
+          "iron_worm_rare": 1,
+          "cursed_idol_mat": 3,
+          "cursed_idol_rare": 1,
+          "guardian_automaton_mat": 6,
+          "guardian_automaton_rare": 2,
+          "m04_003_mat": 3,
+          "m04_003_rare": 1
+        },
+        "ap": {
+          "m1": {
+            "apothecary": 110,
+            "dancer": 50,
+            "white_mage": 10
+          },
+          "m2": {
+            "knight": 90
+          },
+          "m3": {
+            "warrior": 90
+          },
+          "m4": {
+            "black_mage": 90
+          }
+        },
+        "jp": 680,
+        "jobTraining": [
+          {
+            "member": 0,
+            "from": "apothecary",
+            "to": "dancer",
+            "jp": 200
+          },
+          {
+            "member": 0,
+            "from": "dancer",
+            "to": "white_mage",
+            "jp": 80
+          },
+          {
+            "member": 0,
+            "from": "white_mage",
+            "to": "apothecary",
+            "jp": 200
+          }
+        ]
+      },
+      "checks": [
+        {
+          "name": "持ち出した清めの舞で複数味方を治療",
+          "seed": 392001,
+          "conditions": {
+            "enemy": {
+              "monsterId": "m06_005",
+              "sourceRank": 6,
+              "count": 1,
+              "boss": false,
+              "level": 38,
+              "originalMaxHp": [
+                1824
+              ],
+              "hpMultiplier": 10
+            },
+            "startRound": 1,
+            "soleSurvivor": false,
+            "answers": "全問正解",
+            "actionOrder": "発動条件を切り出すため指定",
+            "preparedStates": [
+              {
+                "member": 1,
+                "statuses": [
+                  "poison",
+                  "blind"
+                ]
+              },
+              {
+                "member": 2,
+                "statuses": [
+                  "silence",
+                  "paralysis"
+                ]
+              }
+            ]
+          },
+          "actions": [
+            {
+              "actor": 0,
+              "type": "skill",
+              "skillId": "dancer_p1_s3",
+              "target": 0
+            }
+          ],
+          "values": {
+            "alliesCured": [
+              1,
+              2
+            ],
+            "statusesCured": [
+              "poison",
+              "blind",
+              "silence",
+              "paralysis"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "item_alchemist",
+      "name": "道具の錬金術師",
+      "passed": true,
+      "reason": "薬の知識で有限の回復道具を強化",
+      "minStar": 3,
+      "dungeonId": "howling_canyon",
+      "level": 17,
+      "stage": 2,
+      "core": [
+        {
+          "member": 0,
+          "actions": [
+            "apothecary_p1_s1"
+          ],
+          "passives": [
+            "apothecary_p1_s2"
+          ],
+          "affixes": {
+            "weapon": [
+              "SPD"
+            ],
+            "accessory1": [
+              "SPD"
+            ],
+            "accessory2": [
+              "HP"
+            ]
+          },
+          "effects": [
+            "SPD",
+            "HP"
+          ]
+        },
+        {
+          "member": 1,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        },
+        {
+          "member": 2,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        },
+        {
+          "member": 3,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        }
+      ],
+      "assembly": {
+        "gold": 10390,
+        "byPurpose": {
+          "craft": 3210,
+          "enchant": 6720,
+          "items": 460
+        },
+        "materials": {
+          "m02_005_mat": 3,
+          "m02_005_rare": 1,
+          "blooming_hill_boss_mat": 28,
+          "canyon_wolf_mat": 48,
+          "wisp_dragonfly_mat": 15,
+          "wisp_dragonfly_rare": 5,
+          "fort_bandit_mat": 18,
+          "poison_cap_rare": 5,
+          "skeleton_mat": 9,
+          "skeleton_rare": 3,
+          "m01_001_rare": 1,
+          "m02_002_mat": 3,
+          "m02_002_rare": 1
+        },
+        "ap": {
+          "m1": {
+            "apothecary": 50
+          },
+          "m2": {
+            "knight": 30
+          },
+          "m3": {
+            "warrior": 30
+          },
+          "m4": {
+            "black_mage": 30
+          }
+        },
+        "jp": 200,
+        "jobTraining": []
+      },
+      "checks": [
+        {
+          "name": "薬の知識で有限の回復道具を強化",
+          "seed": 393001,
+          "conditions": {
+            "enemy": {
+              "monsterId": "canyon_wolf",
+              "sourceRank": 3,
+              "count": 1,
+              "boss": false,
+              "level": 17,
+              "originalMaxHp": [
+                1099
+              ],
+              "hpMultiplier": 10
+            },
+            "startRound": 1,
+            "soleSurvivor": false,
+            "answers": "全問正解",
+            "actionOrder": "発動条件を切り出すため指定",
+            "preparedStates": [
+              {
+                "member": 1,
+                "hp": 1
+              }
+            ]
+          },
+          "actions": [
+            {
+              "actor": 0,
+              "type": "item",
+              "itemId": "hi_potion",
+              "target": 1
+            }
+          ],
+          "values": {
+            "itemId": "hi_potion",
+            "healedHp": 520,
+            "withoutKnowledge": 400,
+            "inventoryBefore": 3,
+            "inventoryAfter": 2
+          },
+          "control": {
+            "omittedPassive": "apothecary_p1_s2"
+          }
+        }
+      ]
+    },
+    {
+      "id": "battlefield_bard",
+      "name": "戦場の吟遊詩人",
+      "passed": true,
+      "reason": "装備・持続パッシブ・全体支援を組み合わせる",
+      "minStar": 6,
+      "dungeonId": "sand_tomb",
+      "level": 38,
+      "stage": 3,
+      "core": [
+        {
+          "member": 0,
+          "actions": [
+            "bard_p1_s1",
+            "bard_p1_s3",
+            "bard_p2_s1"
+          ],
+          "passives": [
+            "bard_p1_s2"
+          ],
+          "affixes": {
+            "weapon": [
+              "PARTY_BUFF_POWER",
+              "MP_SAVE"
+            ],
+            "accessory1": [
+              "PARTY_BUFF_POWER"
+            ]
+          },
+          "effects": [
+            "PARTY_BUFF_POWER",
+            "MP_SAVE"
+          ]
+        },
+        {
+          "member": 1,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        },
+        {
+          "member": 2,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        },
+        {
+          "member": 3,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        }
+      ],
+      "assembly": {
+        "gold": 36324,
+        "byPurpose": {
+          "craft": 14752,
+          "enhance": 3232,
+          "enchant": 16800,
+          "items": 1540
+        },
+        "materials": {
+          "cursed_idol_mat": 6,
+          "cursed_idol_rare": 2,
+          "enhancement_stone": 28,
+          "blooming_hill_boss_mat": 28,
+          "exp_r06_amorphous_mat": 64,
+          "mine_spider_mat": 18,
+          "mine_spider_rare": 6,
+          "iron_worm_mat": 3,
+          "iron_worm_rare": 1,
+          "drill_bot_mat": 6,
+          "drill_bot_rare": 2,
+          "guardian_automaton_mat": 3,
+          "guardian_automaton_rare": 1
+        },
+        "ap": {
+          "m1": {
+            "bard": 90
+          },
+          "m2": {
+            "knight": 90
+          },
+          "m3": {
+            "hunter": 90
+          },
+          "m4": {
+            "white_mage": 90
+          }
+        },
+        "jp": 0,
+        "jobTraining": []
+      },
+      "checks": [
+        {
+          "name": "装備・持続パッシブ・全体支援を組み合わせる",
+          "seed": 394001,
+          "conditions": {
+            "enemy": {
+              "monsterId": "sand_tomb_boss",
+              "sourceRank": 6,
+              "count": 1,
+              "boss": true,
+              "level": 38,
+              "originalMaxHp": [
+                3267
+              ],
+              "hpMultiplier": 10
+            },
+            "startRound": 1,
+            "soleSurvivor": false,
+            "answers": "全問正解",
+            "actionOrder": "発動条件を切り出すため指定",
+            "preparedStates": []
+          },
+          "actions": [
+            {
+              "actor": 0,
+              "type": "skill",
+              "skillId": "bard_p1_s3",
+              "target": 0
+            },
+            {
+              "actor": 2,
+              "type": "attack",
+              "target": 0
+            }
+          ],
+          "values": {
+            "skillId": "bard_p1_s3",
+            "partyDamageBonus": 0.27199999999999996,
+            "withoutBuffEquipmentBonus": 0.2,
+            "durationIncludingCastRound": 5,
+            "supportedAllyDamage": 661,
+            "withoutPartyDamageBuff": 543
+          },
+          "control": {
+            "omitted": [
+              "PARTY_BUFF_POWER"
+            ],
+            "damageControl": "party dmg buff only removed"
+          }
+        }
+      ]
+    },
+    {
+      "id": "blessing_dancer",
+      "name": "祝福の舞姫",
+      "passed": true,
+      "reason": "装備・持続パッシブ・全体支援を組み合わせる",
+      "minStar": 9,
+      "dungeonId": "demon_gate",
+      "level": 59,
+      "stage": 4,
+      "core": [
+        {
+          "member": 0,
+          "actions": [
+            "dancer_p1_s4",
+            "dancer_p1_s1"
+          ],
+          "passives": [
+            "dancer_p1_s2"
+          ],
+          "affixes": {
+            "weapon": [
+              "PARTY_BUFF_POWER",
+              "HEAL_POWER"
+            ],
+            "accessory1": [
+              "MP_SAVE"
+            ]
+          },
+          "effects": [
+            "PARTY_BUFF_POWER",
+            "HEAL_POWER",
+            "MP_SAVE"
+          ]
+        },
+        {
+          "member": 1,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        },
+        {
+          "member": 2,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        },
+        {
+          "member": 3,
+          "actions": [],
+          "passives": [],
+          "affixes": {},
+          "effects": []
+        }
+      ],
+      "assembly": {
+        "gold": 103178,
+        "byPurpose": {
+          "craft": 53702,
+          "enhance": 14376,
+          "enchant": 31920,
+          "items": 3180
+        },
+        "materials": {
+          "exp_r09_aberration_mat": 20,
+          "enhancement_stone": 56,
+          "blooming_hill_boss_mat": 28,
+          "m07_014_mat": 9,
+          "m07_014_rare": 3,
+          "m07_002_mat": 9,
+          "m07_002_rare": 3,
+          "m07_005_mat": 9,
+          "m07_005_rare": 3,
+          "m08_012_mat": 24,
+          "m08_012_rare": 16,
+          "m06_009_mat": 3,
+          "m06_009_rare": 1,
+          "m08_010_mat": 3,
+          "m08_010_rare": 2,
+          "m07_011_mat": 6,
+          "m07_011_rare": 2,
+          "m06_003_mat": 3,
+          "m06_003_rare": 1,
+          "m08_004_mat": 3,
+          "m08_004_rare": 2,
+          "m07_008_mat": 3,
+          "m07_008_rare": 1,
+          "m06_006_mat": 3,
+          "m06_006_rare": 1,
+          "m08_007_mat": 3,
+          "m08_007_rare": 2
+        },
+        "ap": {
+          "m1": {
+            "dancer": 180
+          },
+          "m2": {
+            "knight": 180
+          },
+          "m3": {
+            "hunter": 180
+          },
+          "m4": {
+            "white_mage": 180
+          }
+        },
+        "jp": 200,
+        "jobTraining": []
+      },
+      "checks": [
+        {
+          "name": "装備・持続パッシブ・全体支援を組み合わせる",
+          "seed": 395001,
+          "conditions": {
+            "enemy": {
+              "monsterId": "demon_gate_boss",
+              "sourceRank": 9,
+              "count": 1,
+              "boss": true,
+              "level": 59,
+              "originalMaxHp": [
+                3289
+              ],
+              "hpMultiplier": 10
+            },
+            "startRound": 1,
+            "soleSurvivor": false,
+            "answers": "全問正解",
+            "actionOrder": "発動条件を切り出すため指定",
+            "preparedStates": [
+              {
+                "member": 1,
+                "hp": 1750
+              }
+            ]
+          },
+          "actions": [
+            {
+              "actor": 0,
+              "type": "skill",
+              "skillId": "dancer_p1_s4",
+              "target": 0
+            },
+            {
+              "actor": 1,
+              "type": "turn_start"
+            }
+          ],
+          "values": {
+            "skillId": "dancer_p1_s4",
+            "partyDamageBonus": 0.3014000000000001,
+            "withoutBuffEquipmentBonus": 0.22000000000000003,
+            "durationIncludingCastRound": 5,
+            "regeneratedAlly": 1,
+            "regeneratedHp": 528
+          },
+          "control": {
+            "omitted": [
+              "PARTY_BUFF_POWER"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

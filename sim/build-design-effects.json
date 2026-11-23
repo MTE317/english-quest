@@ -1,0 +1,299 @@
+{
+  "schemaVersion": 1,
+  "status": "proposed",
+  "limitsStatus": "provisional",
+  "invariants": {
+    "partySize": 6,
+    "statusCount": 20,
+    "elementCount": 12,
+    "weaponCount": 16,
+    "affinityLevels": [
+      "strong_weak",
+      "weak",
+      "normal",
+      "resist",
+      "immune"
+    ],
+    "formation": false,
+    "range": false,
+    "quizOrigins": [
+      "player_manual_normal"
+    ]
+  },
+  "tags": {
+    "source": "derive_from_csv_and_action_snapshot",
+    "axes": {
+      "origin": [
+        "player_manual_normal",
+        "enemy",
+        "forced",
+        "status_tick",
+        "scheduled",
+        "reaction",
+        "intermission"
+      ],
+      "family": [
+        "attack",
+        "status",
+        "stat_change",
+        "heal",
+        "protection",
+        "resource",
+        "tactic",
+        "exploration"
+      ],
+      "scope": [
+        "self",
+        "ally_one",
+        "ally_all",
+        "enemy_one",
+        "enemy_all",
+        "enemy_random"
+      ],
+      "base": [
+        "weapon",
+        "phys",
+        "mag",
+        "fixed",
+        "ratio"
+      ],
+      "hitShape": [
+        "single",
+        "multi"
+      ],
+      "timing": [
+        "immediate",
+        "preemptive",
+        "delayed",
+        "reactive"
+      ],
+      "cost": [
+        "mp",
+        "hp",
+        "item",
+        "free"
+      ],
+      "referenceAxes": [
+        "element_ids",
+        "weapon_type_ids",
+        "status_ids"
+      ]
+    }
+  },
+  "budget": {
+    "reactionDepth": 1,
+    "derivedPerRoot": 2,
+    "derivedPerPartyRound": 6,
+    "reactionEvaluationPerRoot": 64,
+    "statusTickCanEnqueueReaction": false
+  },
+  "effects": [
+    {
+      "id": "E01",
+      "name": "スキルタグ参照",
+      "status": "proposed",
+      "events": [
+        "action_prepare"
+      ],
+      "limits": {
+        "action": 1
+      },
+      "operation": "タグ集合を照合し、修正値を計算コンテキストへ登録",
+      "edge": "武器値は装備スロットから解決、動的属性は確定後に再参照。命中単位で再登録しない"
+    },
+    {
+      "id": "E02",
+      "name": "対象状態参照",
+      "status": "proposed",
+      "events": [
+        "hit_prepare"
+      ],
+      "limits": {
+        "hit": 1
+      },
+      "operation": "現在HP/最大HP、MP、異常の種類、弱体、障壁、敵種族を参照",
+      "edge": "各ヒット直前のスナップショット。弱体と持続傷を別集合にし、能力ダウンの旧名を正規化"
+    },
+    {
+      "id": "E03",
+      "name": "会心・命中連動",
+      "status": "proposed",
+      "events": [
+        "hit_resolved"
+      ],
+      "limits": {
+        "hit": 1,
+        "action": 1
+      },
+      "operation": "直接命中・会心・弱点を選び資源回復または次手を準備",
+      "edge": "ミスは会心なし、会心MP回復は複数段・複数敵を通じ1行動1回"
+    },
+    {
+      "id": "E04",
+      "name": "回避・被弾連動",
+      "status": "proposed",
+      "events": [
+        "hit_resolved"
+      ],
+      "limits": {
+        "hit": 1,
+        "action": 1,
+        "round": 2
+      },
+      "operation": "回避、実HP被弾、かばう成立を区別し軽減・反撃・MPなどを処理",
+      "edge": "障壁全吸収はHP被弾と別、無効と命中失敗は回避と別。反撃は単一対象"
+    },
+    {
+      "id": "E05",
+      "name": "状態異常連動",
+      "status": "proposed",
+      "events": [
+        "status_applied",
+        "status_tick",
+        "status_removed",
+        "forced_action"
+      ],
+      "limits": {
+        "hit": 1,
+        "action": 1,
+        "round": 2
+      },
+      "operation": "付与成功・実tick・解除・強制行動を条件に付随効果",
+      "edge": "失敗・免疫・無変更更新は不発。20種の既存耐性・ボス免疫を通る。異常同士の自動反応はなし"
+    },
+    {
+      "id": "E06",
+      "name": "撃破時連動",
+      "status": "proposed",
+      "events": [
+        "unit_defeated"
+      ],
+      "limits": {
+        "action": 1,
+        "round": 2
+      },
+      "operation": "確定撃破の帰属を使い回復・伝播・次手準備",
+      "edge": "撃破遷移は1体1回、最後の敵の後に伝播なし。毒伝播は生存中の別敵1体へ通常判定"
+    },
+    {
+      "id": "E07",
+      "name": "味方行動連動",
+      "status": "proposed",
+      "events": [
+        "action_resolved"
+      ],
+      "limits": {
+        "action": 1,
+        "round": 1
+      },
+      "operation": "別の味方の手番の要約から命中・会心・回復・付与・かばうを照合",
+      "edge": "受け手ごとに1巡1回、同じ起点のパーティー予算を共有。自己・派生行動は対象外"
+    },
+    {
+      "id": "E08",
+      "name": "累積強化",
+      "status": "proposed",
+      "events": [
+        "action_resolved",
+        "hit_resolved"
+      ],
+      "limits": {
+        "action": 1,
+        "round": 1
+      },
+      "operation": "戦闘内カウンタを加算し上限・消費・失効を持つ",
+      "edge": "初期3段、1段5%。同系列は同一枠、戦闘終了時に消去"
+    },
+    {
+      "id": "E09",
+      "name": "能力・資源変換",
+      "status": "proposed",
+      "events": [
+        "action_prepare",
+        "cost_paid",
+        "damage_prepare"
+      ],
+      "limits": {
+        "hit": 1,
+        "action": 1
+      },
+      "operation": "凍結した元能力を参照し、消費確定額から変換",
+      "edge": "変換後の値を再入力しない。肩代わりは使用可能MPで制限、HPコストで自滅不可"
+    },
+    {
+      "id": "E10",
+      "name": "スキル性能変更",
+      "status": "proposed",
+      "events": [
+        "action_prepare"
+      ],
+      "limits": {
+        "action": 1
+      },
+      "operation": "威力・費用・命中・対象・ヒット数の許可済みフィールドを変更",
+      "edge": "対象とヒット数の変更は各1枠。競合は優先順位。MP確定後の再計算なし"
+    },
+    {
+      "id": "E11",
+      "name": "障壁連動",
+      "status": "proposed",
+      "events": [
+        "barrier_granted",
+        "barrier_absorbed",
+        "barrier_broken"
+      ],
+      "limits": {
+        "hit": 1,
+        "action": 1,
+        "round": 1
+      },
+      "operation": "発生・吸収・破壊の差分から小障壁や特効を処理",
+      "edge": "吸収は残量まで、初期上限は最大HPの25%。派生障壁は配布を誘発しない"
+    },
+    {
+      "id": "E12",
+      "name": "溜め・次行動強化",
+      "status": "proposed",
+      "events": [
+        "action_resolved",
+        "action_prepare",
+        "round_started"
+      ],
+      "limits": {
+        "action": 1,
+        "round": 1
+      },
+      "operation": "術者に1個の予約を持ち、適格な行動確定時に消費",
+      "edge": "持続2巡、同系列は更新のみ。誤答・行動不能時は消費せず期限は進む"
+    },
+    {
+      "id": "E13",
+      "name": "調査・盗み拡張",
+      "status": "proposed",
+      "events": [
+        "investigate_resolved",
+        "steal_resolved"
+      ],
+      "limits": {
+        "action": 1,
+        "battle": 2
+      },
+      "operation": "開示済み差分と戦闘内の盗取済みIDを参照",
+      "edge": "調査は敵種ごとの新情報だけ。盗みは対象1体1枠、希少枠は戦闘1回。台帳へ一度反映"
+    },
+    {
+      "id": "E14",
+      "name": "戦闘間・勝利時処理",
+      "status": "proposed",
+      "events": [
+        "battle_won",
+        "intermission_entered"
+      ],
+      "limits": {
+        "battle": 1
+      },
+      "operation": "勝利確定後に回復・節約・補給を計算",
+      "edge": "戦闘IDと報酬IDで冪等化。未確定勝利、敗北、逃走で勝利報酬なし"
+    }
+  ]
+}

@@ -1,0 +1,1622 @@
+{
+  "sourceSha256": "8f01f115d566af6dc85426d60695a2332cf8e7e0982dc22dfde61a71c60cf787",
+  "engineScenarios": {
+    "seed": 1217071,
+    "runs": 24,
+    "accuracy": 0.8,
+    "preparation": "prepared",
+    "dungeonId": "ancient_library",
+    "cases": [
+      {
+        "id": "short",
+        "monsters": [
+          "goblin"
+        ]
+      },
+      {
+        "id": "multi",
+        "monsters": [
+          "goblin",
+          "goblin",
+          "goblin"
+        ]
+      },
+      {
+        "id": "boss",
+        "monsters": [
+          "forbidden_keeper"
+        ],
+        "boss": true
+      },
+      {
+        "id": "high_resistance",
+        "monsters": [
+          "forbidden_keeper"
+        ],
+        "boss": true,
+        "syntheticAffinity": true
+      }
+    ],
+    "scenarios": [
+      {
+        "scenario": "short",
+        "profile": "balanced6",
+        "level": 18,
+        "wins": 24,
+        "questions": 4.75,
+        "rounds": 1.0416666666666667,
+        "samples": [
+          {
+            "win": true,
+            "questions": 5,
+            "rounds": 1
+          },
+          {
+            "win": true,
+            "questions": 7,
+            "rounds": 2
+          },
+          {
+            "win": true,
+            "questions": 5,
+            "rounds": 1
+          },
+          {
+            "win": true,
+            "questions": 6,
+            "rounds": 1
+          },
+          {
+            "win": true,
+            "questions": 5,
+            "rounds": 1
+          },
+          {
+            "win": true,
+            "questions": 6,
+            "rounds": 1
+          },
+          {
+            "win": true,
+            "questions": 4,
+            "rounds": 1
+          },
+          {
+            "win": true,
+            "questions": 4,
+            "rounds": 1
+          },
+          {
+            "win": true,
+            "questions": 4,
+            "rounds": 1
+          },
+          {
+            "win": true,
+            "questions": 4,
+            "rounds": 1
+          },
+          {
+            "win": true,
+            "questions": 4,
+            "rounds": 1
+          },
+          {
+            "win": true,
+            "questions": 4,
+            "rounds": 1
+          },
+          {
+            "win": true,
+            "questions": 5,
+            "rounds": 1
+          },
+          {
+            "win": true,
+            "questions": 6,
+            "rounds": 1
+          },
+          {
+            "win": true,
+            "questions": 4,
+            "rounds": 1
+          },
+          {
+            "win": true,
+            "questions": 4,
+            "rounds": 1
+          },
+          {
+            "win": true,
+            "questions": 4,
+            "rounds": 1
+          },
+          {
+            "win": true,
+            "questions": 4,
+            "rounds": 1
+          },
+          {
+            "win": true,
+            "questions": 4,
+            "rounds": 1
+          },
+          {
+            "win": true,
+            "questions": 6,
+            "rounds": 1
+          },
+          {
+            "win": true,
+            "questions": 6,
+            "rounds": 1
+          },
+          {
+            "win": true,
+            "questions": 4,
+            "rounds": 1
+          },
+          {
+            "win": true,
+            "questions": 4,
+            "rounds": 1
+          },
+          {
+            "win": true,
+            "questions": 5,
+            "rounds": 1
+          }
+        ]
+      },
+      {
+        "scenario": "short",
+        "profile": "critical6",
+        "level": 18,
+        "wins": 24,
+        "questions": 6,
+        "rounds": 1.2916666666666667,
+        "samples": [
+          {
+            "win": true,
+            "questions": 7,
+            "rounds": 2
+          },
+          {
+            "win": true,
+            "questions": 9,
+            "rounds": 2
+          },
+          {
+            "win": true,
+            "questions": 7,
+            "rounds": 2
+          },
+          {
+            "win": true,
+            "questions": 9,
+            "rounds": 2
+          },
+          {
+            "win": true,
+            "questions": 6,
+            "rounds": 1
+          },
+          {
+            "win": true,
+            "questions": 6,
+            "rounds": 1
+          },
+          {
+            "win": true,
+            "questions": 6,
+            "rounds": 1
+          },
+          {
+            "win": true,
+            "questions": 5,
+            "rounds": 1
+          },
+          {
+            "win": true,
+            "questions": 6,
+            "rounds": 1
+          },
+          {
+            "win": true,
+            "questions": 5,
+            "rounds": 1
+          },
+          {
+            "win": true,
+            "questions": 6,
+            "rounds": 1
+          },
+          {
+            "win": true,
+            "questions": 6,
+            "rounds": 1
+          },
+          {
+            "win": true,
+            "questions": 6,
+            "rounds": 1
+          },
+          {
+            "win": true,
+            "questions": 5,
+            "rounds": 1
+          },
+          {
+            "win": true,
+            "questions": 6,
+            "rounds": 1
+          },
+          {
+            "win": true,
+            "questions": 5,
+            "rounds": 1
+          },
+          {
+            "win": true,
+            "questions": 4,
+            "rounds": 1
+          },
+          {
+            "win": true,
+            "questions": 5,
+            "rounds": 1
+          },
+          {
+            "win": true,
+            "questions": 4,
+            "rounds": 1
+          },
+          {
+            "win": true,
+            "questions": 5,
+            "rounds": 1
+          },
+          {
+            "win": true,
+            "questions": 7,
+            "rounds": 2
+          },
+          {
+            "win": true,
+            "questions": 5,
+            "rounds": 1
+          },
+          {
+            "win": true,
+            "questions": 7,
+            "rounds": 2
+          },
+          {
+            "win": true,
+            "questions": 7,
+            "rounds": 2
+          }
+        ]
+      },
+      {
+        "scenario": "short",
+        "profile": "weakness6",
+        "level": 18,
+        "wins": 24,
+        "questions": 5.291666666666667,
+        "rounds": 1.25,
+        "samples": [
+          {
+            "win": true,
+            "questions": 8,
+            "rounds": 2
+          },
+          {
+            "win": true,
+            "questions": 9,
+            "rounds": 2
+          },
+          {
+            "win": true,
+            "questions": 6,
+            "rounds": 1
+          },
+          {
+            "win": true,
+            "questions": 7,
+            "rounds": 2
+          },
+          {
+            "win": true,
+            "questions": 3,
+            "rounds": 1
+          },
+          {
+            "win": true,
+            "questions": 5,
+            "rounds": 1
+          },
+          {
+            "win": true,
+            "questions": 7,
+            "rounds": 2
+          },
+          {
+            "win": true,
+            "questions": 5,
+            "rounds": 1
+          },
+          {
+            "win": true,
+            "questions": 4,
+            "rounds": 1
+          },
+          {
+            "win": true,
+            "questions": 5,
+            "rounds": 1
+          },
+          {
+            "win": true,
+            "questions": 5,
+            "rounds": 1
+          },
+          {
+            "win": true,
+            "questions": 4,
+            "rounds": 1
+          },
+          {
+            "win": true,
+            "questions": 7,
+            "rounds": 2
+          },
+          {
+            "win": true,
+            "questions": 7,
+            "rounds": 2
+          },
+          {
+            "win": true,
+            "questions": 4,
+            "rounds": 1
+          },
+          {
+            "win": true,
+            "questions": 4,
+            "rounds": 1
+          },
+          {
+            "win": true,
+            "questions": 5,
+            "rounds": 1
+          },
+          {
+            "win": true,
+            "questions": 5,
+            "rounds": 1
+          },
+          {
+            "win": true,
+            "questions": 3,
+            "rounds": 1
+          },
+          {
+            "win": true,
+            "questions": 5,
+            "rounds": 1
+          },
+          {
+            "win": true,
+            "questions": 5,
+            "rounds": 1
+          },
+          {
+            "win": true,
+            "questions": 4,
+            "rounds": 1
+          },
+          {
+            "win": true,
+            "questions": 5,
+            "rounds": 1
+          },
+          {
+            "win": true,
+            "questions": 5,
+            "rounds": 1
+          }
+        ]
+      },
+      {
+        "scenario": "multi",
+        "profile": "balanced6",
+        "level": 18,
+        "wins": 24,
+        "questions": 14.291666666666666,
+        "rounds": 2.8333333333333335,
+        "samples": [
+          {
+            "win": true,
+            "questions": 11,
+            "rounds": 2
+          },
+          {
+            "win": true,
+            "questions": 16,
+            "rounds": 3
+          },
+          {
+            "win": true,
+            "questions": 17,
+            "rounds": 3
+          },
+          {
+            "win": true,
+            "questions": 16,
+            "rounds": 3
+          },
+          {
+            "win": true,
+            "questions": 15,
+            "rounds": 3
+          },
+          {
+            "win": true,
+            "questions": 15,
+            "rounds": 3
+          },
+          {
+            "win": true,
+            "questions": 12,
+            "rounds": 2
+          },
+          {
+            "win": true,
+            "questions": 11,
+            "rounds": 2
+          },
+          {
+            "win": true,
+            "questions": 12,
+            "rounds": 2
+          },
+          {
+            "win": true,
+            "questions": 13,
+            "rounds": 3
+          },
+          {
+            "win": true,
+            "questions": 14,
+            "rounds": 3
+          },
+          {
+            "win": true,
+            "questions": 15,
+            "rounds": 3
+          },
+          {
+            "win": true,
+            "questions": 13,
+            "rounds": 3
+          },
+          {
+            "win": true,
+            "questions": 19,
+            "rounds": 4
+          },
+          {
+            "win": true,
+            "questions": 14,
+            "rounds": 3
+          },
+          {
+            "win": true,
+            "questions": 13,
+            "rounds": 3
+          },
+          {
+            "win": true,
+            "questions": 17,
+            "rounds": 3
+          },
+          {
+            "win": true,
+            "questions": 16,
+            "rounds": 3
+          },
+          {
+            "win": true,
+            "questions": 13,
+            "rounds": 3
+          },
+          {
+            "win": true,
+            "questions": 12,
+            "rounds": 2
+          },
+          {
+            "win": true,
+            "questions": 17,
+            "rounds": 3
+          },
+          {
+            "win": true,
+            "questions": 14,
+            "rounds": 3
+          },
+          {
+            "win": true,
+            "questions": 13,
+            "rounds": 3
+          },
+          {
+            "win": true,
+            "questions": 15,
+            "rounds": 3
+          }
+        ]
+      },
+      {
+        "scenario": "multi",
+        "profile": "critical6",
+        "level": 18,
+        "wins": 24,
+        "questions": 17.458333333333332,
+        "rounds": 3.2916666666666665,
+        "samples": [
+          {
+            "win": true,
+            "questions": 17,
+            "rounds": 3
+          },
+          {
+            "win": true,
+            "questions": 19,
+            "rounds": 4
+          },
+          {
+            "win": true,
+            "questions": 18,
+            "rounds": 3
+          },
+          {
+            "win": true,
+            "questions": 20,
+            "rounds": 4
+          },
+          {
+            "win": true,
+            "questions": 19,
+            "rounds": 4
+          },
+          {
+            "win": true,
+            "questions": 17,
+            "rounds": 3
+          },
+          {
+            "win": true,
+            "questions": 17,
+            "rounds": 3
+          },
+          {
+            "win": true,
+            "questions": 17,
+            "rounds": 3
+          },
+          {
+            "win": true,
+            "questions": 16,
+            "rounds": 3
+          },
+          {
+            "win": true,
+            "questions": 16,
+            "rounds": 3
+          },
+          {
+            "win": true,
+            "questions": 22,
+            "rounds": 4
+          },
+          {
+            "win": true,
+            "questions": 18,
+            "rounds": 3
+          },
+          {
+            "win": true,
+            "questions": 18,
+            "rounds": 3
+          },
+          {
+            "win": true,
+            "questions": 19,
+            "rounds": 4
+          },
+          {
+            "win": true,
+            "questions": 18,
+            "rounds": 3
+          },
+          {
+            "win": true,
+            "questions": 15,
+            "rounds": 3
+          },
+          {
+            "win": true,
+            "questions": 14,
+            "rounds": 3
+          },
+          {
+            "win": true,
+            "questions": 18,
+            "rounds": 3
+          },
+          {
+            "win": true,
+            "questions": 14,
+            "rounds": 3
+          },
+          {
+            "win": true,
+            "questions": 16,
+            "rounds": 3
+          },
+          {
+            "win": true,
+            "questions": 19,
+            "rounds": 4
+          },
+          {
+            "win": true,
+            "questions": 16,
+            "rounds": 3
+          },
+          {
+            "win": true,
+            "questions": 19,
+            "rounds": 4
+          },
+          {
+            "win": true,
+            "questions": 17,
+            "rounds": 3
+          }
+        ]
+      },
+      {
+        "scenario": "multi",
+        "profile": "weakness6",
+        "level": 18,
+        "wins": 24,
+        "questions": 15.916666666666666,
+        "rounds": 3.0833333333333335,
+        "samples": [
+          {
+            "win": true,
+            "questions": 17,
+            "rounds": 3
+          },
+          {
+            "win": true,
+            "questions": 17,
+            "rounds": 3
+          },
+          {
+            "win": true,
+            "questions": 16,
+            "rounds": 3
+          },
+          {
+            "win": true,
+            "questions": 16,
+            "rounds": 3
+          },
+          {
+            "win": true,
+            "questions": 14,
+            "rounds": 3
+          },
+          {
+            "win": true,
+            "questions": 16,
+            "rounds": 3
+          },
+          {
+            "win": true,
+            "questions": 16,
+            "rounds": 3
+          },
+          {
+            "win": true,
+            "questions": 16,
+            "rounds": 3
+          },
+          {
+            "win": true,
+            "questions": 13,
+            "rounds": 3
+          },
+          {
+            "win": true,
+            "questions": 15,
+            "rounds": 3
+          },
+          {
+            "win": true,
+            "questions": 21,
+            "rounds": 4
+          },
+          {
+            "win": true,
+            "questions": 16,
+            "rounds": 3
+          },
+          {
+            "win": true,
+            "questions": 14,
+            "rounds": 3
+          },
+          {
+            "win": true,
+            "questions": 20,
+            "rounds": 4
+          },
+          {
+            "win": true,
+            "questions": 15,
+            "rounds": 3
+          },
+          {
+            "win": true,
+            "questions": 13,
+            "rounds": 3
+          },
+          {
+            "win": true,
+            "questions": 18,
+            "rounds": 3
+          },
+          {
+            "win": true,
+            "questions": 16,
+            "rounds": 3
+          },
+          {
+            "win": true,
+            "questions": 15,
+            "rounds": 3
+          },
+          {
+            "win": true,
+            "questions": 15,
+            "rounds": 3
+          },
+          {
+            "win": true,
+            "questions": 17,
+            "rounds": 3
+          },
+          {
+            "win": true,
+            "questions": 15,
+            "rounds": 3
+          },
+          {
+            "win": true,
+            "questions": 15,
+            "rounds": 3
+          },
+          {
+            "win": true,
+            "questions": 16,
+            "rounds": 3
+          }
+        ]
+      },
+      {
+        "scenario": "boss",
+        "profile": "balanced6",
+        "level": 18,
+        "wins": 24,
+        "questions": 9.75,
+        "rounds": 2,
+        "samples": [
+          {
+            "win": true,
+            "questions": 10,
+            "rounds": 2
+          },
+          {
+            "win": true,
+            "questions": 12,
+            "rounds": 2
+          },
+          {
+            "win": true,
+            "questions": 11,
+            "rounds": 2
+          },
+          {
+            "win": true,
+            "questions": 10,
+            "rounds": 2
+          },
+          {
+            "win": true,
+            "questions": 10,
+            "rounds": 2
+          },
+          {
+            "win": true,
+            "questions": 10,
+            "rounds": 2
+          },
+          {
+            "win": true,
+            "questions": 9,
+            "rounds": 2
+          },
+          {
+            "win": true,
+            "questions": 9,
+            "rounds": 2
+          },
+          {
+            "win": true,
+            "questions": 9,
+            "rounds": 2
+          },
+          {
+            "win": true,
+            "questions": 10,
+            "rounds": 2
+          },
+          {
+            "win": true,
+            "questions": 9,
+            "rounds": 2
+          },
+          {
+            "win": true,
+            "questions": 9,
+            "rounds": 2
+          },
+          {
+            "win": true,
+            "questions": 9,
+            "rounds": 2
+          },
+          {
+            "win": true,
+            "questions": 10,
+            "rounds": 2
+          },
+          {
+            "win": true,
+            "questions": 10,
+            "rounds": 2
+          },
+          {
+            "win": true,
+            "questions": 10,
+            "rounds": 2
+          },
+          {
+            "win": true,
+            "questions": 9,
+            "rounds": 2
+          },
+          {
+            "win": true,
+            "questions": 10,
+            "rounds": 2
+          },
+          {
+            "win": true,
+            "questions": 8,
+            "rounds": 2
+          },
+          {
+            "win": true,
+            "questions": 10,
+            "rounds": 2
+          },
+          {
+            "win": true,
+            "questions": 10,
+            "rounds": 2
+          },
+          {
+            "win": true,
+            "questions": 10,
+            "rounds": 2
+          },
+          {
+            "win": true,
+            "questions": 10,
+            "rounds": 2
+          },
+          {
+            "win": true,
+            "questions": 10,
+            "rounds": 2
+          }
+        ]
+      },
+      {
+        "scenario": "boss",
+        "profile": "critical6",
+        "level": 18,
+        "wins": 24,
+        "questions": 8.791666666666666,
+        "rounds": 1.9166666666666667,
+        "samples": [
+          {
+            "win": true,
+            "questions": 9,
+            "rounds": 2
+          },
+          {
+            "win": true,
+            "questions": 11,
+            "rounds": 2
+          },
+          {
+            "win": true,
+            "questions": 10,
+            "rounds": 2
+          },
+          {
+            "win": true,
+            "questions": 9,
+            "rounds": 2
+          },
+          {
+            "win": true,
+            "questions": 9,
+            "rounds": 2
+          },
+          {
+            "win": true,
+            "questions": 8,
+            "rounds": 2
+          },
+          {
+            "win": true,
+            "questions": 9,
+            "rounds": 2
+          },
+          {
+            "win": true,
+            "questions": 8,
+            "rounds": 2
+          },
+          {
+            "win": true,
+            "questions": 8,
+            "rounds": 2
+          },
+          {
+            "win": true,
+            "questions": 9,
+            "rounds": 2
+          },
+          {
+            "win": true,
+            "questions": 6,
+            "rounds": 1
+          },
+          {
+            "win": true,
+            "questions": 7,
+            "rounds": 2
+          },
+          {
+            "win": true,
+            "questions": 10,
+            "rounds": 2
+          },
+          {
+            "win": true,
+            "questions": 10,
+            "rounds": 2
+          },
+          {
+            "win": true,
+            "questions": 10,
+            "rounds": 2
+          },
+          {
+            "win": true,
+            "questions": 9,
+            "rounds": 2
+          },
+          {
+            "win": true,
+            "questions": 8,
+            "rounds": 2
+          },
+          {
+            "win": true,
+            "questions": 8,
+            "rounds": 2
+          },
+          {
+            "win": true,
+            "questions": 6,
+            "rounds": 1
+          },
+          {
+            "win": true,
+            "questions": 8,
+            "rounds": 2
+          },
+          {
+            "win": true,
+            "questions": 11,
+            "rounds": 2
+          },
+          {
+            "win": true,
+            "questions": 8,
+            "rounds": 2
+          },
+          {
+            "win": true,
+            "questions": 10,
+            "rounds": 2
+          },
+          {
+            "win": true,
+            "questions": 10,
+            "rounds": 2
+          }
+        ]
+      },
+      {
+        "scenario": "boss",
+        "profile": "weakness6",
+        "level": 18,
+        "wins": 24,
+        "questions": 7.291666666666667,
+        "rounds": 1.625,
+        "samples": [
+          {
+            "win": true,
+            "questions": 9,
+            "rounds": 2
+          },
+          {
+            "win": true,
+            "questions": 11,
+            "rounds": 2
+          },
+          {
+            "win": true,
+            "questions": 11,
+            "rounds": 2
+          },
+          {
+            "win": true,
+            "questions": 9,
+            "rounds": 2
+          },
+          {
+            "win": true,
+            "questions": 8,
+            "rounds": 2
+          },
+          {
+            "win": true,
+            "questions": 6,
+            "rounds": 1
+          },
+          {
+            "win": true,
+            "questions": 9,
+            "rounds": 2
+          },
+          {
+            "win": true,
+            "questions": 6,
+            "rounds": 1
+          },
+          {
+            "win": true,
+            "questions": 4,
+            "rounds": 1
+          },
+          {
+            "win": true,
+            "questions": 6,
+            "rounds": 1
+          },
+          {
+            "win": true,
+            "questions": 7,
+            "rounds": 2
+          },
+          {
+            "win": true,
+            "questions": 4,
+            "rounds": 1
+          },
+          {
+            "win": true,
+            "questions": 9,
+            "rounds": 2
+          },
+          {
+            "win": true,
+            "questions": 9,
+            "rounds": 2
+          },
+          {
+            "win": true,
+            "questions": 7,
+            "rounds": 2
+          },
+          {
+            "win": true,
+            "questions": 5,
+            "rounds": 1
+          },
+          {
+            "win": true,
+            "questions": 6,
+            "rounds": 1
+          },
+          {
+            "win": true,
+            "questions": 7,
+            "rounds": 2
+          },
+          {
+            "win": true,
+            "questions": 5,
+            "rounds": 1
+          },
+          {
+            "win": true,
+            "questions": 7,
+            "rounds": 2
+          },
+          {
+            "win": true,
+            "questions": 10,
+            "rounds": 2
+          },
+          {
+            "win": true,
+            "questions": 5,
+            "rounds": 1
+          },
+          {
+            "win": true,
+            "questions": 8,
+            "rounds": 2
+          },
+          {
+            "win": true,
+            "questions": 7,
+            "rounds": 2
+          }
+        ]
+      },
+      {
+        "scenario": "high_resistance",
+        "profile": "balanced6",
+        "level": 18,
+        "wins": 24,
+        "questions": 26.5,
+        "rounds": 4.958333333333333,
+        "samples": [
+          {
+            "win": true,
+            "questions": 27,
+            "rounds": 5
+          },
+          {
+            "win": true,
+            "questions": 23,
+            "rounds": 4
+          },
+          {
+            "win": true,
+            "questions": 27,
+            "rounds": 5
+          },
+          {
+            "win": true,
+            "questions": 32,
+            "rounds": 6
+          },
+          {
+            "win": true,
+            "questions": 26,
+            "rounds": 5
+          },
+          {
+            "win": true,
+            "questions": 28,
+            "rounds": 5
+          },
+          {
+            "win": true,
+            "questions": 26,
+            "rounds": 5
+          },
+          {
+            "win": true,
+            "questions": 25,
+            "rounds": 5
+          },
+          {
+            "win": true,
+            "questions": 28,
+            "rounds": 5
+          },
+          {
+            "win": true,
+            "questions": 25,
+            "rounds": 5
+          },
+          {
+            "win": true,
+            "questions": 30,
+            "rounds": 5
+          },
+          {
+            "win": true,
+            "questions": 25,
+            "rounds": 5
+          },
+          {
+            "win": true,
+            "questions": 26,
+            "rounds": 5
+          },
+          {
+            "win": true,
+            "questions": 27,
+            "rounds": 5
+          },
+          {
+            "win": true,
+            "questions": 25,
+            "rounds": 5
+          },
+          {
+            "win": true,
+            "questions": 25,
+            "rounds": 5
+          },
+          {
+            "win": true,
+            "questions": 27,
+            "rounds": 5
+          },
+          {
+            "win": true,
+            "questions": 28,
+            "rounds": 5
+          },
+          {
+            "win": true,
+            "questions": 24,
+            "rounds": 4
+          },
+          {
+            "win": true,
+            "questions": 26,
+            "rounds": 5
+          },
+          {
+            "win": true,
+            "questions": 28,
+            "rounds": 5
+          },
+          {
+            "win": true,
+            "questions": 25,
+            "rounds": 5
+          },
+          {
+            "win": true,
+            "questions": 27,
+            "rounds": 5
+          },
+          {
+            "win": true,
+            "questions": 26,
+            "rounds": 5
+          }
+        ]
+      },
+      {
+        "scenario": "high_resistance",
+        "profile": "critical6",
+        "level": 18,
+        "wins": 24,
+        "questions": 31.625,
+        "rounds": 5.708333333333333,
+        "samples": [
+          {
+            "win": true,
+            "questions": 32,
+            "rounds": 6
+          },
+          {
+            "win": true,
+            "questions": 28,
+            "rounds": 5
+          },
+          {
+            "win": true,
+            "questions": 33,
+            "rounds": 6
+          },
+          {
+            "win": true,
+            "questions": 37,
+            "rounds": 7
+          },
+          {
+            "win": true,
+            "questions": 28,
+            "rounds": 5
+          },
+          {
+            "win": true,
+            "questions": 29,
+            "rounds": 5
+          },
+          {
+            "win": true,
+            "questions": 29,
+            "rounds": 5
+          },
+          {
+            "win": true,
+            "questions": 31,
+            "rounds": 6
+          },
+          {
+            "win": true,
+            "questions": 37,
+            "rounds": 7
+          },
+          {
+            "win": true,
+            "questions": 28,
+            "rounds": 5
+          },
+          {
+            "win": true,
+            "questions": 37,
+            "rounds": 7
+          },
+          {
+            "win": true,
+            "questions": 29,
+            "rounds": 5
+          },
+          {
+            "win": true,
+            "questions": 31,
+            "rounds": 6
+          },
+          {
+            "win": true,
+            "questions": 32,
+            "rounds": 6
+          },
+          {
+            "win": true,
+            "questions": 35,
+            "rounds": 6
+          },
+          {
+            "win": true,
+            "questions": 29,
+            "rounds": 5
+          },
+          {
+            "win": true,
+            "questions": 33,
+            "rounds": 6
+          },
+          {
+            "win": true,
+            "questions": 39,
+            "rounds": 7
+          },
+          {
+            "win": true,
+            "questions": 24,
+            "rounds": 4
+          },
+          {
+            "win": true,
+            "questions": 33,
+            "rounds": 6
+          },
+          {
+            "win": true,
+            "questions": 34,
+            "rounds": 6
+          },
+          {
+            "win": true,
+            "questions": 28,
+            "rounds": 5
+          },
+          {
+            "win": true,
+            "questions": 30,
+            "rounds": 5
+          },
+          {
+            "win": true,
+            "questions": 33,
+            "rounds": 6
+          }
+        ]
+      },
+      {
+        "scenario": "high_resistance",
+        "profile": "weakness6",
+        "level": 18,
+        "wins": 24,
+        "questions": 23.541666666666668,
+        "rounds": 4.416666666666667,
+        "samples": [
+          {
+            "win": true,
+            "questions": 27,
+            "rounds": 5
+          },
+          {
+            "win": true,
+            "questions": 26,
+            "rounds": 5
+          },
+          {
+            "win": true,
+            "questions": 26,
+            "rounds": 5
+          },
+          {
+            "win": true,
+            "questions": 26,
+            "rounds": 5
+          },
+          {
+            "win": true,
+            "questions": 21,
+            "rounds": 4
+          },
+          {
+            "win": true,
+            "questions": 22,
+            "rounds": 4
+          },
+          {
+            "win": true,
+            "questions": 22,
+            "rounds": 4
+          },
+          {
+            "win": true,
+            "questions": 21,
+            "rounds": 4
+          },
+          {
+            "win": true,
+            "questions": 20,
+            "rounds": 4
+          },
+          {
+            "win": true,
+            "questions": 21,
+            "rounds": 4
+          },
+          {
+            "win": true,
+            "questions": 30,
+            "rounds": 5
+          },
+          {
+            "win": true,
+            "questions": 20,
+            "rounds": 4
+          },
+          {
+            "win": true,
+            "questions": 26,
+            "rounds": 5
+          },
+          {
+            "win": true,
+            "questions": 26,
+            "rounds": 5
+          },
+          {
+            "win": true,
+            "questions": 23,
+            "rounds": 4
+          },
+          {
+            "win": true,
+            "questions": 20,
+            "rounds": 4
+          },
+          {
+            "win": true,
+            "questions": 26,
+            "rounds": 5
+          },
+          {
+            "win": true,
+            "questions": 24,
+            "rounds": 4
+          },
+          {
+            "win": true,
+            "questions": 21,
+            "rounds": 4
+          },
+          {
+            "win": true,
+            "questions": 22,
+            "rounds": 4
+          },
+          {
+            "win": true,
+            "questions": 26,
+            "rounds": 5
+          },
+          {
+            "win": true,
+            "questions": 22,
+            "rounds": 4
+          },
+          {
+            "win": true,
+            "questions": 21,
+            "rounds": 4
+          },
+          {
+            "win": true,
+            "questions": 26,
+            "rounds": 5
+          }
+        ]
+      }
+    ]
+  },
+  "independentModel": {
+    "purpose": "E07 evaluation counts, no runtime or balance claim",
+    "latency": [
+      {
+        "targets": 1,
+        "hits": 1,
+        "candidateDeliveries": 30,
+        "actionSummaries": 30,
+        "derived": 6
+      },
+      {
+        "targets": 3,
+        "hits": 4,
+        "candidateDeliveries": 360,
+        "actionSummaries": 30,
+        "derived": 6
+      }
+    ]
+  }
+}

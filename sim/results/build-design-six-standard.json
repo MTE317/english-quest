@@ -1,0 +1,3651 @@
+{
+  "schema": 1,
+  "engine": "game/js/battle.js",
+  "sourceSha256": "8f01f115d566af6dc85426d60695a2332cf8e7e0982dc22dfde61a71c60cf787",
+  "override": {},
+  "assumptions": {
+    "policy": "fixed heuristics; no future RNG inspection; known weaknesses; finite items incl. intermission; natural bounty encounters; no retreat",
+    "gear": "legal craft/enchant/skill APIs; same base item level, quality 1.15, enhancement +0 to +3 between preparation variants; fixture assembly budget recorded separately",
+    "rewards": "battle loot only; XP learning multiplier 1.0; quests and monthly fees excluded; counts are drops before backpack selection; wipes rollback rewards and consumable costs",
+    "timing": "6 seconds per answer including operation/animation plus 30 seconds; not a browser timing measurement"
+  },
+  "scenarios": [
+    {
+      "dungeonId": "mossy_cave",
+      "star": 1,
+      "profile": "balanced6",
+      "preparation": "standard",
+      "accuracy": 0.8,
+      "season": "spring",
+      "seed": 1217071,
+      "runs": 24,
+      "wins": 24,
+      "fixture": {
+        "level": 3,
+        "stage": 1,
+        "itemCap": 4,
+        "enhancement": 0,
+        "assembly": {
+          "gold": 3080,
+          "byPurpose": {
+            "craft": 1680,
+            "enchant": 1200,
+            "items": 200
+          },
+          "materials": {
+            "cave_bat_mat": 168,
+            "blooming_hill_boss_mat": 12
+          },
+          "ap": {
+            "m1": {},
+            "m2": {},
+            "m3": {},
+            "m4": {},
+            "m5": {
+              "thief": 10
+            },
+            "m6": {}
+          },
+          "jp": 0
+        },
+        "initialItems": {
+          "potion": 3,
+          "ether": 2,
+          "revive_salts": 1,
+          "antidote": 2
+        }
+      },
+      "skillChoices": {
+        "thief_p3_s1": {
+          "available": 189,
+          "selected": 28
+        },
+        "thief_p4_s1": {
+          "available": 178,
+          "selected": 80
+        },
+        "thief_p1_s1": {
+          "available": 181,
+          "selected": 8
+        },
+        "thief_p2_s1": {
+          "available": 196,
+          "selected": 0
+        },
+        "bard_p1_s1": {
+          "available": 206,
+          "selected": 72
+        },
+        "bard_p2_s1": {
+          "available": 206,
+          "selected": 49
+        },
+        "bard_p3_s1": {
+          "available": 206,
+          "selected": 0
+        },
+        "black_mage_p1_s1": {
+          "available": 191,
+          "selected": 118
+        },
+        "black_mage_p2_s1": {
+          "available": 191,
+          "selected": 46
+        },
+        "black_mage_p3_s1": {
+          "available": 191,
+          "selected": 10
+        },
+        "warrior_p3_s1": {
+          "available": 176,
+          "selected": 142
+        },
+        "warrior_p1_s1": {
+          "available": 176,
+          "selected": 3
+        },
+        "warrior_p2_s1": {
+          "available": 176,
+          "selected": 0
+        },
+        "white_mage_p1_s1": {
+          "available": 159,
+          "selected": 55
+        },
+        "white_mage_p2_s1": {
+          "available": 159,
+          "selected": 3
+        },
+        "white_mage_p3_s1": {
+          "available": 159,
+          "selected": 76
+        },
+        "knight_p1_s1": {
+          "available": 143,
+          "selected": 0
+        },
+        "knight_p3_s1": {
+          "available": 145,
+          "selected": 100
+        },
+        "knight_p2_s1": {
+          "available": 145,
+          "selected": 18
+        }
+      },
+      "clearRate": 1,
+      "normalWinRate": 1,
+      "bossWinRate": 1,
+      "normalBattles": 46,
+      "normalWins": 46,
+      "bossAttempts": 24,
+      "failedBeforeBoss": 0,
+      "failedInNormalBattle": 0,
+      "failedAtBoss": 0,
+      "failedAtBounty": 0,
+      "bountyEncounters": 2,
+      "bountyWinRate": 1,
+      "normalQuestions": 14.26086956521739,
+      "bossQuestions": 16.041666666666668,
+      "normalQuestionsAll": 14.26086956521739,
+      "bossQuestionsAll": 16.041666666666668,
+      "bossLossQuestions": null,
+      "clearQuestions": 45.416666666666664,
+      "clearQuestionsP90": 51,
+      "estimatedClearMinutes": 5.041666666666667,
+      "hpRemaining": 0.8466254340277776,
+      "mpRemaining": 0.5098566308243727,
+      "consumables": 1.4166666666666667,
+      "goldPerClear": 154.16666666666666,
+      "netGoldBeforeFees": 116.25,
+      "xpPerMemberPerClear": 198.16666666666666,
+      "apPerMemberPerClear": 8.166666666666666,
+      "materialsPerClear": 6.333333333333333,
+      "gearPerClear": 1.75
+    },
+    {
+      "dungeonId": "mossy_cave",
+      "star": 1,
+      "profile": "balanced6",
+      "preparation": "prepared",
+      "accuracy": 0.8,
+      "season": "spring",
+      "seed": 1217071,
+      "runs": 24,
+      "wins": 24,
+      "fixture": {
+        "level": 3,
+        "stage": 1,
+        "itemCap": 4,
+        "enhancement": 0,
+        "assembly": {
+          "gold": 5480,
+          "byPurpose": {
+            "craft": 1680,
+            "enchant": 3600,
+            "items": 200
+          },
+          "materials": {
+            "cave_bat_mat": 168,
+            "blooming_hill_boss_mat": 36
+          },
+          "ap": {
+            "m1": {},
+            "m2": {},
+            "m3": {},
+            "m4": {},
+            "m5": {
+              "thief": 10
+            },
+            "m6": {}
+          },
+          "jp": 0
+        },
+        "initialItems": {
+          "potion": 3,
+          "ether": 2,
+          "revive_salts": 1,
+          "antidote": 2
+        }
+      },
+      "skillChoices": {
+        "thief_p3_s1": {
+          "available": 187,
+          "selected": 28
+        },
+        "thief_p4_s1": {
+          "available": 172,
+          "selected": 78
+        },
+        "thief_p1_s1": {
+          "available": 176,
+          "selected": 11
+        },
+        "thief_p2_s1": {
+          "available": 196,
+          "selected": 0
+        },
+        "bard_p1_s1": {
+          "available": 202,
+          "selected": 72
+        },
+        "bard_p2_s1": {
+          "available": 202,
+          "selected": 46
+        },
+        "bard_p3_s1": {
+          "available": 202,
+          "selected": 0
+        },
+        "black_mage_p1_s1": {
+          "available": 183,
+          "selected": 109
+        },
+        "black_mage_p2_s1": {
+          "available": 183,
+          "selected": 45
+        },
+        "black_mage_p3_s1": {
+          "available": 183,
+          "selected": 9
+        },
+        "warrior_p3_s1": {
+          "available": 171,
+          "selected": 142
+        },
+        "warrior_p1_s1": {
+          "available": 171,
+          "selected": 1
+        },
+        "warrior_p2_s1": {
+          "available": 171,
+          "selected": 0
+        },
+        "white_mage_p1_s1": {
+          "available": 156,
+          "selected": 58
+        },
+        "white_mage_p2_s1": {
+          "available": 156,
+          "selected": 3
+        },
+        "white_mage_p3_s1": {
+          "available": 156,
+          "selected": 60
+        },
+        "knight_p1_s1": {
+          "available": 146,
+          "selected": 0
+        },
+        "knight_p3_s1": {
+          "available": 148,
+          "selected": 82
+        },
+        "knight_p2_s1": {
+          "available": 148,
+          "selected": 17
+        }
+      },
+      "clearRate": 1,
+      "normalWinRate": 1,
+      "bossWinRate": 1,
+      "normalBattles": 46,
+      "normalWins": 46,
+      "bossAttempts": 24,
+      "failedBeforeBoss": 0,
+      "failedInNormalBattle": 0,
+      "failedAtBoss": 0,
+      "failedAtBounty": 0,
+      "bountyEncounters": 2,
+      "bountyWinRate": 1,
+      "normalQuestions": 14.130434782608695,
+      "bossQuestions": 15.583333333333334,
+      "normalQuestionsAll": 14.130434782608695,
+      "bossQuestionsAll": 15.583333333333334,
+      "bossLossQuestions": null,
+      "clearQuestions": 44.583333333333336,
+      "clearQuestionsP90": 49,
+      "estimatedClearMinutes": 4.958333333333333,
+      "hpRemaining": 0.824734157986111,
+      "mpRemaining": 0.5512992831541219,
+      "consumables": 0.75,
+      "goldPerClear": 154.16666666666666,
+      "netGoldBeforeFees": 129.58333333333334,
+      "xpPerMemberPerClear": 198.16666666666666,
+      "apPerMemberPerClear": 8.166666666666666,
+      "materialsPerClear": 6.333333333333333,
+      "gearPerClear": 1.75
+    },
+    {
+      "dungeonId": "mossy_cave",
+      "star": 1,
+      "profile": "critical6",
+      "preparation": "standard",
+      "accuracy": 0.8,
+      "season": "spring",
+      "seed": 1217071,
+      "runs": 24,
+      "wins": 24,
+      "fixture": {
+        "level": 3,
+        "stage": 1,
+        "itemCap": 4,
+        "enhancement": 0,
+        "assembly": {
+          "gold": 3220,
+          "byPurpose": {
+            "craft": 1720,
+            "enchant": 1300,
+            "items": 200
+          },
+          "materials": {
+            "cave_bat_mat": 172,
+            "blooming_hill_boss_mat": 13
+          },
+          "ap": {
+            "m1": {
+              "thief": 10
+            },
+            "m2": {},
+            "m3": {},
+            "m4": {},
+            "m5": {},
+            "m6": {}
+          },
+          "jp": 0
+        },
+        "initialItems": {
+          "potion": 3,
+          "ether": 2,
+          "revive_salts": 1,
+          "antidote": 2
+        }
+      },
+      "skillChoices": {
+        "thief_p3_s1": {
+          "available": 181,
+          "selected": 28
+        },
+        "thief_p4_s1": {
+          "available": 167,
+          "selected": 71
+        },
+        "thief_p1_s1": {
+          "available": 174,
+          "selected": 15
+        },
+        "thief_p2_s1": {
+          "available": 192,
+          "selected": 0
+        },
+        "bard_p1_s1": {
+          "available": 200,
+          "selected": 73
+        },
+        "bard_p2_s1": {
+          "available": 201,
+          "selected": 49
+        },
+        "bard_p3_s1": {
+          "available": 201,
+          "selected": 0
+        },
+        "black_mage_p1_s1": {
+          "available": 190,
+          "selected": 127
+        },
+        "black_mage_p2_s1": {
+          "available": 190,
+          "selected": 32
+        },
+        "black_mage_p3_s1": {
+          "available": 190,
+          "selected": 9
+        },
+        "white_mage_p1_s1": {
+          "available": 160,
+          "selected": 42
+        },
+        "white_mage_p2_s1": {
+          "available": 160,
+          "selected": 5
+        },
+        "white_mage_p3_s1": {
+          "available": 160,
+          "selected": 88
+        },
+        "hunter_p1_s1": {
+          "available": 113,
+          "selected": 100
+        },
+        "hunter_p3_s1": {
+          "available": 116,
+          "selected": 2
+        },
+        "hunter_p2_s1": {
+          "available": 135,
+          "selected": 0
+        },
+        "knight_p1_s1": {
+          "available": 135,
+          "selected": 0
+        },
+        "knight_p3_s1": {
+          "available": 136,
+          "selected": 104
+        },
+        "knight_p2_s1": {
+          "available": 136,
+          "selected": 13
+        }
+      },
+      "clearRate": 1,
+      "normalWinRate": 1,
+      "bossWinRate": 1,
+      "normalBattles": 46,
+      "normalWins": 46,
+      "bossAttempts": 24,
+      "failedBeforeBoss": 0,
+      "failedInNormalBattle": 0,
+      "failedAtBoss": 0,
+      "failedAtBounty": 0,
+      "bountyEncounters": 2,
+      "bountyWinRate": 1,
+      "normalQuestions": 13.26086956521739,
+      "bossQuestions": 16.291666666666668,
+      "normalQuestionsAll": 13.26086956521739,
+      "bossQuestionsAll": 16.291666666666668,
+      "bossLossQuestions": null,
+      "clearQuestions": 43.75,
+      "clearQuestionsP90": 52,
+      "estimatedClearMinutes": 4.875,
+      "hpRemaining": 0.863009982638889,
+      "mpRemaining": 0.5170250896057348,
+      "consumables": 0.7916666666666666,
+      "goldPerClear": 154.16666666666666,
+      "netGoldBeforeFees": 127.95833333333333,
+      "xpPerMemberPerClear": 198.16666666666666,
+      "apPerMemberPerClear": 8.166666666666666,
+      "materialsPerClear": 6.333333333333333,
+      "gearPerClear": 1.75
+    },
+    {
+      "dungeonId": "mossy_cave",
+      "star": 1,
+      "profile": "critical6",
+      "preparation": "prepared",
+      "accuracy": 0.8,
+      "season": "spring",
+      "seed": 1217071,
+      "runs": 24,
+      "wins": 24,
+      "fixture": {
+        "level": 3,
+        "stage": 1,
+        "itemCap": 4,
+        "enhancement": 0,
+        "assembly": {
+          "gold": 6320,
+          "byPurpose": {
+            "craft": 1720,
+            "enchant": 4400,
+            "items": 200
+          },
+          "materials": {
+            "cave_bat_mat": 172,
+            "blooming_hill_boss_mat": 44
+          },
+          "ap": {
+            "m1": {
+              "thief": 10
+            },
+            "m2": {},
+            "m3": {},
+            "m4": {},
+            "m5": {},
+            "m6": {}
+          },
+          "jp": 0
+        },
+        "initialItems": {
+          "potion": 3,
+          "ether": 2,
+          "revive_salts": 1,
+          "antidote": 2
+        }
+      },
+      "skillChoices": {
+        "thief_p1_s1": {
+          "available": 175,
+          "selected": 8
+        },
+        "thief_p3_s1": {
+          "available": 184,
+          "selected": 29
+        },
+        "thief_p4_s1": {
+          "available": 171,
+          "selected": 75
+        },
+        "thief_p2_s1": {
+          "available": 187,
+          "selected": 0
+        },
+        "bard_p1_s1": {
+          "available": 192,
+          "selected": 72
+        },
+        "bard_p2_s1": {
+          "available": 192,
+          "selected": 50
+        },
+        "bard_p3_s1": {
+          "available": 192,
+          "selected": 0
+        },
+        "black_mage_p1_s1": {
+          "available": 179,
+          "selected": 116
+        },
+        "black_mage_p2_s1": {
+          "available": 179,
+          "selected": 35
+        },
+        "black_mage_p3_s1": {
+          "available": 179,
+          "selected": 10
+        },
+        "white_mage_p1_s1": {
+          "available": 147,
+          "selected": 31
+        },
+        "white_mage_p2_s1": {
+          "available": 147,
+          "selected": 3
+        },
+        "white_mage_p3_s1": {
+          "available": 147,
+          "selected": 78
+        },
+        "hunter_p1_s1": {
+          "available": 130,
+          "selected": 119
+        },
+        "hunter_p3_s1": {
+          "available": 135,
+          "selected": 0
+        },
+        "hunter_p2_s1": {
+          "available": 140,
+          "selected": 0
+        },
+        "knight_p1_s1": {
+          "available": 129,
+          "selected": 0
+        },
+        "knight_p3_s1": {
+          "available": 130,
+          "selected": 83
+        },
+        "knight_p2_s1": {
+          "available": 130,
+          "selected": 10
+        }
+      },
+      "clearRate": 1,
+      "normalWinRate": 1,
+      "bossWinRate": 1,
+      "normalBattles": 46,
+      "normalWins": 46,
+      "bossAttempts": 24,
+      "failedBeforeBoss": 0,
+      "failedInNormalBattle": 0,
+      "failedAtBoss": 0,
+      "failedAtBounty": 0,
+      "bountyEncounters": 2,
+      "bountyWinRate": 1,
+      "normalQuestions": 13.23913043478261,
+      "bossQuestions": 14.25,
+      "normalQuestionsAll": 13.23913043478261,
+      "bossQuestionsAll": 14.25,
+      "bossLossQuestions": null,
+      "clearQuestions": 41.5,
+      "clearQuestionsP90": 49,
+      "estimatedClearMinutes": 4.65,
+      "hpRemaining": 0.857025568848229,
+      "mpRemaining": 0.6471774193548389,
+      "consumables": 0.7083333333333334,
+      "goldPerClear": 154.16666666666666,
+      "netGoldBeforeFees": 131.66666666666666,
+      "xpPerMemberPerClear": 198.16666666666666,
+      "apPerMemberPerClear": 8.166666666666666,
+      "materialsPerClear": 6.333333333333333,
+      "gearPerClear": 1.75
+    },
+    {
+      "dungeonId": "mossy_cave",
+      "star": 1,
+      "profile": "weakness6",
+      "preparation": "standard",
+      "accuracy": 0.8,
+      "season": "spring",
+      "seed": 1217071,
+      "runs": 24,
+      "wins": 24,
+      "fixture": {
+        "level": 3,
+        "stage": 1,
+        "itemCap": 4,
+        "enhancement": 0,
+        "assembly": {
+          "gold": 3080,
+          "byPurpose": {
+            "craft": 1680,
+            "enchant": 1200,
+            "items": 200
+          },
+          "materials": {
+            "cave_bat_mat": 168,
+            "blooming_hill_boss_mat": 12
+          },
+          "ap": {
+            "m1": {},
+            "m2": {},
+            "m3": {},
+            "m4": {},
+            "m5": {},
+            "m6": {}
+          },
+          "jp": 0
+        },
+        "initialItems": {
+          "potion": 3,
+          "ether": 2,
+          "revive_salts": 1,
+          "antidote": 2
+        }
+      },
+      "skillChoices": {
+        "bard_p1_s1": {
+          "available": 187,
+          "selected": 72
+        },
+        "bard_p2_s1": {
+          "available": 187,
+          "selected": 47
+        },
+        "bard_p3_s1": {
+          "available": 187,
+          "selected": 0
+        },
+        "black_mage_p1_s1": {
+          "available": 176,
+          "selected": 110
+        },
+        "black_mage_p2_s1": {
+          "available": 176,
+          "selected": 35
+        },
+        "black_mage_p3_s1": {
+          "available": 176,
+          "selected": 11
+        },
+        "warrior_p3_s1": {
+          "available": 157,
+          "selected": 131
+        },
+        "warrior_p1_s1": {
+          "available": 157,
+          "selected": 0
+        },
+        "warrior_p2_s1": {
+          "available": 157,
+          "selected": 0
+        },
+        "white_mage_p1_s1": {
+          "available": 135,
+          "selected": 47
+        },
+        "white_mage_p2_s1": {
+          "available": 135,
+          "selected": 1
+        },
+        "white_mage_p3_s1": {
+          "available": 135,
+          "selected": 76
+        },
+        "hunter_p1_s1": {
+          "available": 111,
+          "selected": 96
+        },
+        "hunter_p3_s1": {
+          "available": 111,
+          "selected": 0
+        },
+        "hunter_p2_s1": {
+          "available": 125,
+          "selected": 0
+        },
+        "knight_p1_s1": {
+          "available": 118,
+          "selected": 0
+        },
+        "knight_p3_s1": {
+          "available": 119,
+          "selected": 98
+        },
+        "knight_p2_s1": {
+          "available": 119,
+          "selected": 10
+        }
+      },
+      "clearRate": 1,
+      "normalWinRate": 1,
+      "bossWinRate": 1,
+      "normalBattles": 46,
+      "normalWins": 46,
+      "bossAttempts": 24,
+      "failedBeforeBoss": 0,
+      "failedInNormalBattle": 0,
+      "failedAtBoss": 0,
+      "failedAtBounty": 0,
+      "bountyEncounters": 2,
+      "bountyWinRate": 1,
+      "normalQuestions": 12.152173913043478,
+      "bossQuestions": 13.416666666666666,
+      "normalQuestionsAll": 12.152173913043478,
+      "bossQuestionsAll": 13.416666666666666,
+      "bossLossQuestions": null,
+      "clearQuestions": 38.041666666666664,
+      "clearQuestionsP90": 41,
+      "estimatedClearMinutes": 4.304166666666666,
+      "hpRemaining": 0.8156328320802005,
+      "mpRemaining": 0.5380824372759855,
+      "consumables": 0.75,
+      "goldPerClear": 154.16666666666666,
+      "netGoldBeforeFees": 129.16666666666666,
+      "xpPerMemberPerClear": 198.16666666666666,
+      "apPerMemberPerClear": 8.166666666666666,
+      "materialsPerClear": 6.291666666666667,
+      "gearPerClear": 1.75
+    },
+    {
+      "dungeonId": "mossy_cave",
+      "star": 1,
+      "profile": "weakness6",
+      "preparation": "prepared",
+      "accuracy": 0.8,
+      "season": "spring",
+      "seed": 1217071,
+      "runs": 24,
+      "wins": 24,
+      "fixture": {
+        "level": 3,
+        "stage": 1,
+        "itemCap": 4,
+        "enhancement": 0,
+        "assembly": {
+          "gold": 6080,
+          "byPurpose": {
+            "craft": 1680,
+            "enchant": 4200,
+            "items": 200
+          },
+          "materials": {
+            "cave_bat_mat": 168,
+            "blooming_hill_boss_mat": 42
+          },
+          "ap": {
+            "m1": {},
+            "m2": {},
+            "m3": {},
+            "m4": {},
+            "m5": {},
+            "m6": {}
+          },
+          "jp": 0
+        },
+        "initialItems": {
+          "potion": 3,
+          "ether": 2,
+          "revive_salts": 1,
+          "antidote": 2
+        }
+      },
+      "skillChoices": {
+        "bard_p1_s1": {
+          "available": 174,
+          "selected": 72
+        },
+        "bard_p2_s1": {
+          "available": 174,
+          "selected": 49
+        },
+        "bard_p3_s1": {
+          "available": 174,
+          "selected": 0
+        },
+        "black_mage_p1_s1": {
+          "available": 167,
+          "selected": 107
+        },
+        "black_mage_p2_s1": {
+          "available": 167,
+          "selected": 36
+        },
+        "black_mage_p3_s1": {
+          "available": 167,
+          "selected": 12
+        },
+        "warrior_p3_s1": {
+          "available": 148,
+          "selected": 129
+        },
+        "warrior_p1_s1": {
+          "available": 148,
+          "selected": 3
+        },
+        "warrior_p2_s1": {
+          "available": 148,
+          "selected": 0
+        },
+        "white_mage_p1_s1": {
+          "available": 125,
+          "selected": 31
+        },
+        "white_mage_p2_s1": {
+          "available": 125,
+          "selected": 2
+        },
+        "white_mage_p3_s1": {
+          "available": 125,
+          "selected": 65
+        },
+        "hunter_p1_s1": {
+          "available": 122,
+          "selected": 107
+        },
+        "hunter_p3_s1": {
+          "available": 122,
+          "selected": 1
+        },
+        "hunter_p2_s1": {
+          "available": 122,
+          "selected": 0
+        },
+        "knight_p1_s1": {
+          "available": 112,
+          "selected": 0
+        },
+        "knight_p3_s1": {
+          "available": 112,
+          "selected": 71
+        },
+        "knight_p2_s1": {
+          "available": 112,
+          "selected": 10
+        }
+      },
+      "clearRate": 1,
+      "normalWinRate": 1,
+      "bossWinRate": 1,
+      "normalBattles": 46,
+      "normalWins": 46,
+      "bossAttempts": 24,
+      "failedBeforeBoss": 0,
+      "failedInNormalBattle": 0,
+      "failedAtBoss": 0,
+      "failedAtBounty": 0,
+      "bountyEncounters": 2,
+      "bountyWinRate": 1,
+      "normalQuestions": 11.804347826086957,
+      "bossQuestions": 11.791666666666666,
+      "normalQuestionsAll": 11.804347826086957,
+      "bossQuestionsAll": 11.791666666666666,
+      "bossLossQuestions": null,
+      "clearQuestions": 35.75,
+      "clearQuestionsP90": 42,
+      "estimatedClearMinutes": 4.075,
+      "hpRemaining": 0.8279033687943264,
+      "mpRemaining": 0.6563620071684588,
+      "consumables": 0.875,
+      "goldPerClear": 154.16666666666666,
+      "netGoldBeforeFees": 125.04166666666667,
+      "xpPerMemberPerClear": 198.16666666666666,
+      "apPerMemberPerClear": 8.166666666666666,
+      "materialsPerClear": 6.291666666666667,
+      "gearPerClear": 1.75
+    },
+    {
+      "dungeonId": "sand_tomb",
+      "star": 6,
+      "profile": "balanced6",
+      "preparation": "standard",
+      "accuracy": 0.8,
+      "season": "spring",
+      "seed": 1217071,
+      "runs": 24,
+      "wins": 24,
+      "fixture": {
+        "level": 38,
+        "stage": 3,
+        "itemCap": 54,
+        "enhancement": 1,
+        "assembly": {
+          "gold": 42448,
+          "byPurpose": {
+            "craft": 28140,
+            "enhance": 5568,
+            "enchant": 7200,
+            "items": 1540
+          },
+          "materials": {
+            "exp_r06_amorphous_mat": 168,
+            "enhancement_stone": 42,
+            "blooming_hill_boss_mat": 12
+          },
+          "ap": {
+            "m1": {
+              "warrior": 90
+            },
+            "m2": {
+              "knight": 90
+            },
+            "m3": {
+              "black_mage": 90
+            },
+            "m4": {
+              "white_mage": 90
+            },
+            "m5": {
+              "thief": 112
+            },
+            "m6": {
+              "bard": 90
+            }
+          },
+          "jp": 0
+        },
+        "initialItems": {
+          "x_potion": 3,
+          "hi_ether": 2,
+          "revive_salts": 1,
+          "antidote": 2,
+          "panacea": 1
+        }
+      },
+      "skillChoices": {
+        "thief_p3_s1": {
+          "available": 228,
+          "selected": 43
+        },
+        "thief_p4_s1": {
+          "available": 228,
+          "selected": 0
+        },
+        "thief_p3_s3": {
+          "available": 228,
+          "selected": 0
+        },
+        "thief_p1_s3": {
+          "available": 228,
+          "selected": 123
+        },
+        "thief_p1_s1": {
+          "available": 228,
+          "selected": 0
+        },
+        "thief_p2_s3": {
+          "available": 228,
+          "selected": 0
+        },
+        "thief_p4_s2": {
+          "available": 228,
+          "selected": 44
+        },
+        "thief_p2_s1": {
+          "available": 228,
+          "selected": 0
+        },
+        "bard_p1_s3": {
+          "available": 225,
+          "selected": 72
+        },
+        "bard_p2_s1": {
+          "available": 225,
+          "selected": 101
+        },
+        "bard_p2_s3": {
+          "available": 225,
+          "selected": 35
+        },
+        "bard_p3_s1": {
+          "available": 225,
+          "selected": 0
+        },
+        "bard_p3_s3": {
+          "available": 225,
+          "selected": 0
+        },
+        "warrior_p3_s3": {
+          "available": 207,
+          "selected": 138
+        },
+        "warrior_p1_s3": {
+          "available": 207,
+          "selected": 3
+        },
+        "warrior_p3_s1": {
+          "available": 207,
+          "selected": 51
+        },
+        "warrior_p1_s1": {
+          "available": 207,
+          "selected": 3
+        },
+        "warrior_p2_s1": {
+          "available": 207,
+          "selected": 0
+        },
+        "warrior_p2_s3": {
+          "available": 207,
+          "selected": 0
+        },
+        "black_mage_p1_s3": {
+          "available": 208,
+          "selected": 132
+        },
+        "black_mage_p2_s3": {
+          "available": 208,
+          "selected": 3
+        },
+        "black_mage_p3_s3": {
+          "available": 208,
+          "selected": 20
+        },
+        "black_mage_p1_s1": {
+          "available": 208,
+          "selected": 37
+        },
+        "black_mage_p2_s1": {
+          "available": 208,
+          "selected": 0
+        },
+        "black_mage_p3_s1": {
+          "available": 208,
+          "selected": 9
+        },
+        "white_mage_p1_s3": {
+          "available": 176,
+          "selected": 61
+        },
+        "white_mage_p1_s1": {
+          "available": 176,
+          "selected": 21
+        },
+        "white_mage_p2_s3": {
+          "available": 176,
+          "selected": 0
+        },
+        "white_mage_p2_s1": {
+          "available": 176,
+          "selected": 0
+        },
+        "white_mage_p3_s3": {
+          "available": 176,
+          "selected": 0
+        },
+        "white_mage_p3_s1": {
+          "available": 176,
+          "selected": 88
+        },
+        "knight_p2_s3": {
+          "available": 156,
+          "selected": 44
+        },
+        "knight_p1_s3": {
+          "available": 156,
+          "selected": 25
+        },
+        "knight_p3_s3": {
+          "available": 156,
+          "selected": 9
+        },
+        "knight_p3_s1": {
+          "available": 156,
+          "selected": 65
+        },
+        "knight_p2_s1": {
+          "available": 156,
+          "selected": 1
+        }
+      },
+      "clearRate": 1,
+      "normalWinRate": 1,
+      "bossWinRate": 1,
+      "normalBattles": 46,
+      "normalWins": 46,
+      "bossAttempts": 24,
+      "failedBeforeBoss": 0,
+      "failedInNormalBattle": 0,
+      "failedAtBoss": 0,
+      "failedAtBounty": 0,
+      "bountyEncounters": 2,
+      "bountyWinRate": 1,
+      "normalQuestions": 13.391304347826088,
+      "bossQuestions": 22.833333333333332,
+      "normalQuestionsAll": 13.391304347826088,
+      "bossQuestionsAll": 22.833333333333332,
+      "bossLossQuestions": null,
+      "clearQuestions": 50,
+      "clearQuestionsP90": 57,
+      "estimatedClearMinutes": 5.5,
+      "hpRemaining": 0.7502624282036047,
+      "mpRemaining": 0.79412177328844,
+      "consumables": 1.8333333333333333,
+      "goldPerClear": 2599.9583333333335,
+      "netGoldBeforeFees": 2156.125,
+      "xpPerMemberPerClear": 1448.6041666666663,
+      "apPerMemberPerClear": 8.166666666666666,
+      "materialsPerClear": 7.541666666666667,
+      "gearPerClear": 1.9583333333333333
+    },
+    {
+      "dungeonId": "sand_tomb",
+      "star": 6,
+      "profile": "balanced6",
+      "preparation": "prepared",
+      "accuracy": 0.8,
+      "season": "spring",
+      "seed": 1217071,
+      "runs": 24,
+      "wins": 24,
+      "fixture": {
+        "level": 38,
+        "stage": 3,
+        "itemCap": 54,
+        "enhancement": 1,
+        "assembly": {
+          "gold": 56848,
+          "byPurpose": {
+            "craft": 28140,
+            "enhance": 5568,
+            "enchant": 21600,
+            "items": 1540
+          },
+          "materials": {
+            "exp_r06_amorphous_mat": 168,
+            "enhancement_stone": 42,
+            "blooming_hill_boss_mat": 36
+          },
+          "ap": {
+            "m1": {
+              "warrior": 90
+            },
+            "m2": {
+              "knight": 90
+            },
+            "m3": {
+              "black_mage": 90
+            },
+            "m4": {
+              "white_mage": 90
+            },
+            "m5": {
+              "thief": 112
+            },
+            "m6": {
+              "bard": 90
+            }
+          },
+          "jp": 0
+        },
+        "initialItems": {
+          "x_potion": 3,
+          "hi_ether": 2,
+          "revive_salts": 1,
+          "antidote": 2,
+          "panacea": 1
+        }
+      },
+      "skillChoices": {
+        "thief_p3_s1": {
+          "available": 187,
+          "selected": 27
+        },
+        "thief_p4_s1": {
+          "available": 187,
+          "selected": 3
+        },
+        "thief_p3_s3": {
+          "available": 187,
+          "selected": 0
+        },
+        "thief_p1_s3": {
+          "available": 187,
+          "selected": 151
+        },
+        "thief_p1_s1": {
+          "available": 187,
+          "selected": 1
+        },
+        "thief_p2_s3": {
+          "available": 187,
+          "selected": 0
+        },
+        "thief_p4_s2": {
+          "available": 187,
+          "selected": 0
+        },
+        "thief_p2_s1": {
+          "available": 187,
+          "selected": 0
+        },
+        "bard_p1_s3": {
+          "available": 190,
+          "selected": 72
+        },
+        "bard_p2_s1": {
+          "available": 190,
+          "selected": 34
+        },
+        "bard_p2_s3": {
+          "available": 190,
+          "selected": 2
+        },
+        "bard_p3_s1": {
+          "available": 190,
+          "selected": 0
+        },
+        "bard_p3_s3": {
+          "available": 190,
+          "selected": 0
+        },
+        "warrior_p3_s3": {
+          "available": 160,
+          "selected": 124
+        },
+        "warrior_p1_s3": {
+          "available": 160,
+          "selected": 1
+        },
+        "warrior_p3_s1": {
+          "available": 160,
+          "selected": 25
+        },
+        "warrior_p1_s1": {
+          "available": 160,
+          "selected": 0
+        },
+        "warrior_p2_s1": {
+          "available": 160,
+          "selected": 0
+        },
+        "warrior_p2_s3": {
+          "available": 160,
+          "selected": 0
+        },
+        "black_mage_p1_s3": {
+          "available": 161,
+          "selected": 105
+        },
+        "black_mage_p2_s3": {
+          "available": 161,
+          "selected": 3
+        },
+        "black_mage_p3_s3": {
+          "available": 161,
+          "selected": 14
+        },
+        "black_mage_p1_s1": {
+          "available": 161,
+          "selected": 20
+        },
+        "black_mage_p2_s1": {
+          "available": 161,
+          "selected": 0
+        },
+        "black_mage_p3_s1": {
+          "available": 161,
+          "selected": 11
+        },
+        "white_mage_p1_s3": {
+          "available": 127,
+          "selected": 13
+        },
+        "white_mage_p1_s1": {
+          "available": 127,
+          "selected": 28
+        },
+        "white_mage_p2_s3": {
+          "available": 127,
+          "selected": 0
+        },
+        "white_mage_p2_s1": {
+          "available": 127,
+          "selected": 0
+        },
+        "white_mage_p3_s3": {
+          "available": 127,
+          "selected": 0
+        },
+        "white_mage_p3_s1": {
+          "available": 127,
+          "selected": 13
+        },
+        "knight_p2_s3": {
+          "available": 123,
+          "selected": 15
+        },
+        "knight_p1_s3": {
+          "available": 123,
+          "selected": 26
+        },
+        "knight_p3_s3": {
+          "available": 123,
+          "selected": 13
+        },
+        "knight_p3_s1": {
+          "available": 123,
+          "selected": 64
+        },
+        "knight_p2_s1": {
+          "available": 123,
+          "selected": 1
+        }
+      },
+      "clearRate": 1,
+      "normalWinRate": 1,
+      "bossWinRate": 1,
+      "normalBattles": 46,
+      "normalWins": 46,
+      "bossAttempts": 24,
+      "failedBeforeBoss": 0,
+      "failedInNormalBattle": 0,
+      "failedAtBoss": 0,
+      "failedAtBounty": 0,
+      "bountyEncounters": 2,
+      "bountyWinRate": 1,
+      "normalQuestions": 11.847826086956522,
+      "bossQuestions": 15.541666666666666,
+      "normalQuestionsAll": 11.847826086956522,
+      "bossQuestionsAll": 15.541666666666666,
+      "bossLossQuestions": null,
+      "clearQuestions": 39.5,
+      "clearQuestionsP90": 43,
+      "estimatedClearMinutes": 4.45,
+      "hpRemaining": 0.8298425430778371,
+      "mpRemaining": 0.9150533108866442,
+      "consumables": 0.375,
+      "goldPerClear": 2599.9583333333335,
+      "netGoldBeforeFees": 2530.9166666666665,
+      "xpPerMemberPerClear": 1448.6041666666663,
+      "apPerMemberPerClear": 8.166666666666666,
+      "materialsPerClear": 7.541666666666667,
+      "gearPerClear": 1.9583333333333333
+    },
+    {
+      "dungeonId": "sand_tomb",
+      "star": 6,
+      "profile": "critical6",
+      "preparation": "standard",
+      "accuracy": 0.8,
+      "season": "spring",
+      "seed": 1217071,
+      "runs": 24,
+      "wins": 24,
+      "fixture": {
+        "level": 38,
+        "stage": 3,
+        "itemCap": 54,
+        "enhancement": 1,
+        "assembly": {
+          "gold": 35000,
+          "byPurpose": {
+            "craft": 20640,
+            "enhance": 5020,
+            "enchant": 7800,
+            "items": 1540
+          },
+          "materials": {
+            "abyss_jelly_mat": 76,
+            "enhancement_stone": 43,
+            "blooming_hill_boss_mat": 13,
+            "exp_r06_amorphous_mat": 96
+          },
+          "ap": {
+            "m1": {
+              "thief": 112
+            },
+            "m2": {
+              "hunter": 90
+            },
+            "m3": {
+              "bard": 90
+            },
+            "m4": {
+              "white_mage": 90
+            },
+            "m5": {
+              "knight": 90
+            },
+            "m6": {
+              "black_mage": 90
+            }
+          },
+          "jp": 0
+        },
+        "initialItems": {
+          "x_potion": 3,
+          "hi_ether": 2,
+          "revive_salts": 1,
+          "antidote": 2,
+          "panacea": 1
+        }
+      },
+      "skillChoices": {
+        "thief_p3_s1": {
+          "available": 256,
+          "selected": 47
+        },
+        "thief_p4_s1": {
+          "available": 256,
+          "selected": 2
+        },
+        "thief_p3_s3": {
+          "available": 256,
+          "selected": 0
+        },
+        "thief_p1_s3": {
+          "available": 256,
+          "selected": 136
+        },
+        "thief_p1_s1": {
+          "available": 256,
+          "selected": 2
+        },
+        "thief_p2_s3": {
+          "available": 256,
+          "selected": 0
+        },
+        "thief_p4_s2": {
+          "available": 256,
+          "selected": 56
+        },
+        "thief_p2_s1": {
+          "available": 256,
+          "selected": 0
+        },
+        "bard_p1_s3": {
+          "available": 259,
+          "selected": 72
+        },
+        "bard_p1_s1": {
+          "available": 259,
+          "selected": 72
+        },
+        "bard_p2_s1": {
+          "available": 259,
+          "selected": 65
+        },
+        "bard_p2_s3": {
+          "available": 259,
+          "selected": 25
+        },
+        "bard_p3_s1": {
+          "available": 259,
+          "selected": 0
+        },
+        "bard_p3_s3": {
+          "available": 259,
+          "selected": 0
+        },
+        "black_mage_p1_s3": {
+          "available": 241,
+          "selected": 156
+        },
+        "black_mage_p2_s3": {
+          "available": 241,
+          "selected": 5
+        },
+        "black_mage_p3_s3": {
+          "available": 241,
+          "selected": 27
+        },
+        "black_mage_p1_s1": {
+          "available": 241,
+          "selected": 32
+        },
+        "black_mage_p2_s1": {
+          "available": 241,
+          "selected": 0
+        },
+        "black_mage_p3_s1": {
+          "available": 241,
+          "selected": 9
+        },
+        "white_mage_p1_s3": {
+          "available": 215,
+          "selected": 44
+        },
+        "white_mage_p1_s1": {
+          "available": 215,
+          "selected": 28
+        },
+        "white_mage_p2_s3": {
+          "available": 215,
+          "selected": 1
+        },
+        "white_mage_p2_s1": {
+          "available": 215,
+          "selected": 0
+        },
+        "white_mage_p3_s3": {
+          "available": 215,
+          "selected": 0
+        },
+        "white_mage_p3_s1": {
+          "available": 215,
+          "selected": 134
+        },
+        "hunter_p1_s1": {
+          "available": 218,
+          "selected": 18
+        },
+        "hunter_p3_s1": {
+          "available": 218,
+          "selected": 0
+        },
+        "hunter_p3_s3": {
+          "available": 218,
+          "selected": 0
+        },
+        "hunter_p2_s3": {
+          "available": 218,
+          "selected": 0
+        },
+        "hunter_p1_s3": {
+          "available": 218,
+          "selected": 189
+        },
+        "hunter_p2_s1": {
+          "available": 218,
+          "selected": 0
+        },
+        "knight_p2_s3": {
+          "available": 175,
+          "selected": 55
+        },
+        "knight_p1_s3": {
+          "available": 175,
+          "selected": 28
+        },
+        "knight_p1_s1": {
+          "available": 175,
+          "selected": 0
+        },
+        "knight_p3_s3": {
+          "available": 175,
+          "selected": 11
+        },
+        "knight_p3_s1": {
+          "available": 175,
+          "selected": 72
+        },
+        "knight_p2_s1": {
+          "available": 175,
+          "selected": 4
+        }
+      },
+      "clearRate": 1,
+      "normalWinRate": 1,
+      "bossWinRate": 1,
+      "normalBattles": 46,
+      "normalWins": 46,
+      "bossAttempts": 24,
+      "failedBeforeBoss": 0,
+      "failedInNormalBattle": 0,
+      "failedAtBoss": 0,
+      "failedAtBounty": 0,
+      "bountyEncounters": 2,
+      "bountyWinRate": 1,
+      "normalQuestions": 15.695652173913043,
+      "bossQuestions": 25,
+      "normalQuestionsAll": 15.695652173913043,
+      "bossQuestionsAll": 25,
+      "bossLossQuestions": null,
+      "clearQuestions": 56.833333333333336,
+      "clearQuestionsP90": 63,
+      "estimatedClearMinutes": 6.183333333333334,
+      "hpRemaining": 0.8223104880581515,
+      "mpRemaining": 0.7300785634118968,
+      "consumables": 2.625,
+      "goldPerClear": 2599.9583333333335,
+      "netGoldBeforeFees": 1962.875,
+      "xpPerMemberPerClear": 1427.9305555555554,
+      "apPerMemberPerClear": 8.055555555555555,
+      "materialsPerClear": 7.541666666666667,
+      "gearPerClear": 1.9583333333333333
+    },
+    {
+      "dungeonId": "sand_tomb",
+      "star": 6,
+      "profile": "critical6",
+      "preparation": "prepared",
+      "accuracy": 0.8,
+      "season": "spring",
+      "seed": 1217071,
+      "runs": 24,
+      "wins": 24,
+      "fixture": {
+        "level": 38,
+        "stage": 3,
+        "itemCap": 54,
+        "enhancement": 1,
+        "assembly": {
+          "gold": 55424,
+          "byPurpose": {
+            "craft": 22464,
+            "enhance": 5020,
+            "enchant": 26400,
+            "items": 1540
+          },
+          "materials": {
+            "iron_worm_mat": 6,
+            "iron_worm_rare": 2,
+            "enhancement_stone": 43,
+            "blooming_hill_boss_mat": 44,
+            "m04_006_mat": 3,
+            "m04_006_rare": 1,
+            "exp_r06_amorphous_mat": 96,
+            "guardian_automaton_mat": 9,
+            "guardian_automaton_rare": 3,
+            "mine_spider_mat": 24,
+            "mine_spider_rare": 8,
+            "cursed_idol_mat": 6,
+            "cursed_idol_rare": 2,
+            "drill_bot_mat": 6,
+            "drill_bot_rare": 2,
+            "m04_003_mat": 3,
+            "m04_003_rare": 1
+          },
+          "ap": {
+            "m1": {
+              "thief": 112
+            },
+            "m2": {
+              "hunter": 90
+            },
+            "m3": {
+              "bard": 90
+            },
+            "m4": {
+              "white_mage": 90
+            },
+            "m5": {
+              "knight": 90
+            },
+            "m6": {
+              "black_mage": 90
+            }
+          },
+          "jp": 0
+        },
+        "initialItems": {
+          "x_potion": 3,
+          "hi_ether": 2,
+          "revive_salts": 1,
+          "antidote": 2,
+          "panacea": 1
+        }
+      },
+      "skillChoices": {
+        "thief_p1_s3": {
+          "available": 173,
+          "selected": 121
+        },
+        "thief_p1_s1": {
+          "available": 173,
+          "selected": 1
+        },
+        "thief_p3_s1": {
+          "available": 173,
+          "selected": 26
+        },
+        "thief_p4_s1": {
+          "available": 173,
+          "selected": 1
+        },
+        "thief_p3_s3": {
+          "available": 173,
+          "selected": 1
+        },
+        "thief_p2_s3": {
+          "available": 173,
+          "selected": 0
+        },
+        "thief_p4_s2": {
+          "available": 173,
+          "selected": 19
+        },
+        "thief_p2_s1": {
+          "available": 173,
+          "selected": 0
+        },
+        "bard_p1_s3": {
+          "available": 171,
+          "selected": 72
+        },
+        "bard_p1_s1": {
+          "available": 171,
+          "selected": 65
+        },
+        "bard_p2_s1": {
+          "available": 171,
+          "selected": 17
+        },
+        "bard_p2_s3": {
+          "available": 171,
+          "selected": 0
+        },
+        "bard_p3_s1": {
+          "available": 171,
+          "selected": 0
+        },
+        "bard_p3_s3": {
+          "available": 171,
+          "selected": 0
+        },
+        "elementalist_p1_s1": {
+          "available": 161,
+          "selected": 80
+        },
+        "black_mage_p1_s3": {
+          "available": 161,
+          "selected": 36
+        },
+        "black_mage_p2_s3": {
+          "available": 161,
+          "selected": 2
+        },
+        "black_mage_p3_s3": {
+          "available": 161,
+          "selected": 12
+        },
+        "black_mage_p1_s1": {
+          "available": 161,
+          "selected": 16
+        },
+        "black_mage_p2_s1": {
+          "available": 161,
+          "selected": 0
+        },
+        "black_mage_p3_s1": {
+          "available": 161,
+          "selected": 8
+        },
+        "white_mage_p1_s3": {
+          "available": 130,
+          "selected": 3
+        },
+        "white_mage_p1_s1": {
+          "available": 130,
+          "selected": 6
+        },
+        "white_mage_p2_s3": {
+          "available": 130,
+          "selected": 0
+        },
+        "white_mage_p2_s1": {
+          "available": 130,
+          "selected": 0
+        },
+        "white_mage_p3_s3": {
+          "available": 130,
+          "selected": 0
+        },
+        "white_mage_p3_s1": {
+          "available": 130,
+          "selected": 23
+        },
+        "hunter_p1_s1": {
+          "available": 140,
+          "selected": 23
+        },
+        "hunter_p3_s1": {
+          "available": 140,
+          "selected": 0
+        },
+        "hunter_p3_s3": {
+          "available": 140,
+          "selected": 0
+        },
+        "hunter_p2_s3": {
+          "available": 140,
+          "selected": 0
+        },
+        "hunter_p1_s3": {
+          "available": 140,
+          "selected": 116
+        },
+        "hunter_p2_s1": {
+          "available": 140,
+          "selected": 0
+        },
+        "knight_p2_s3": {
+          "available": 103,
+          "selected": 9
+        },
+        "knight_p1_s3": {
+          "available": 103,
+          "selected": 18
+        },
+        "knight_p1_s1": {
+          "available": 103,
+          "selected": 0
+        },
+        "knight_p3_s3": {
+          "available": 103,
+          "selected": 4
+        },
+        "knight_p3_s1": {
+          "available": 103,
+          "selected": 65
+        },
+        "knight_p2_s1": {
+          "available": 103,
+          "selected": 2
+        }
+      },
+      "clearRate": 1,
+      "normalWinRate": 1,
+      "bossWinRate": 1,
+      "normalBattles": 46,
+      "normalWins": 46,
+      "bossAttempts": 24,
+      "failedBeforeBoss": 0,
+      "failedInNormalBattle": 0,
+      "failedAtBoss": 0,
+      "failedAtBounty": 0,
+      "bountyEncounters": 2,
+      "bountyWinRate": 1,
+      "normalQuestions": 11.456521739130435,
+      "bossQuestions": 13.583333333333334,
+      "normalQuestionsAll": 11.456521739130435,
+      "bossQuestionsAll": 13.583333333333334,
+      "bossLossQuestions": null,
+      "clearQuestions": 36.583333333333336,
+      "clearQuestionsP90": 42,
+      "estimatedClearMinutes": 4.158333333333333,
+      "hpRemaining": 0.8784689157937695,
+      "mpRemaining": 0.9809203142536473,
+      "consumables": 0.25,
+      "goldPerClear": 2599.9583333333335,
+      "netGoldBeforeFees": 2523.9583333333335,
+      "xpPerMemberPerClear": 1448.6041666666667,
+      "apPerMemberPerClear": 8.166666666666666,
+      "materialsPerClear": 7.541666666666667,
+      "gearPerClear": 1.9583333333333333
+    },
+    {
+      "dungeonId": "sand_tomb",
+      "star": 6,
+      "profile": "weakness6",
+      "preparation": "standard",
+      "accuracy": 0.8,
+      "season": "spring",
+      "seed": 1217071,
+      "runs": 24,
+      "wins": 24,
+      "fixture": {
+        "level": 38,
+        "stage": 3,
+        "itemCap": 54,
+        "enhancement": 1,
+        "assembly": {
+          "gold": 34218,
+          "byPurpose": {
+            "craft": 20590,
+            "enhance": 4888,
+            "enchant": 7200,
+            "items": 1540
+          },
+          "materials": {
+            "abyss_jelly_mat": 68,
+            "enhancement_stone": 42,
+            "blooming_hill_boss_mat": 12,
+            "exp_r06_amorphous_mat": 96,
+            "crystal_golem_mat": 4
+          },
+          "ap": {
+            "m1": {
+              "hunter": 90
+            },
+            "m2": {
+              "black_mage": 90
+            },
+            "m3": {
+              "knight": 90
+            },
+            "m4": {
+              "white_mage": 90
+            },
+            "m5": {
+              "warrior": 90
+            },
+            "m6": {
+              "bard": 90
+            }
+          },
+          "jp": 0
+        },
+        "initialItems": {
+          "x_potion": 3,
+          "hi_ether": 2,
+          "revive_salts": 1,
+          "antidote": 2,
+          "panacea": 1
+        }
+      },
+      "skillChoices": {
+        "bard_p1_s3": {
+          "available": 211,
+          "selected": 72
+        },
+        "bard_p1_s1": {
+          "available": 211,
+          "selected": 71
+        },
+        "bard_p2_s1": {
+          "available": 211,
+          "selected": 38
+        },
+        "bard_p2_s3": {
+          "available": 211,
+          "selected": 17
+        },
+        "bard_p3_s1": {
+          "available": 211,
+          "selected": 0
+        },
+        "bard_p3_s3": {
+          "available": 211,
+          "selected": 0
+        },
+        "black_mage_p1_s3": {
+          "available": 204,
+          "selected": 136
+        },
+        "black_mage_p2_s3": {
+          "available": 204,
+          "selected": 4
+        },
+        "black_mage_p3_s3": {
+          "available": 204,
+          "selected": 20
+        },
+        "black_mage_p1_s1": {
+          "available": 204,
+          "selected": 25
+        },
+        "black_mage_p2_s1": {
+          "available": 204,
+          "selected": 0
+        },
+        "black_mage_p3_s1": {
+          "available": 204,
+          "selected": 9
+        },
+        "warrior_p3_s3": {
+          "available": 195,
+          "selected": 146
+        },
+        "warrior_p1_s3": {
+          "available": 196,
+          "selected": 1
+        },
+        "warrior_p3_s1": {
+          "available": 196,
+          "selected": 39
+        },
+        "warrior_p1_s1": {
+          "available": 196,
+          "selected": 1
+        },
+        "warrior_p2_s1": {
+          "available": 196,
+          "selected": 0
+        },
+        "warrior_p2_s3": {
+          "available": 196,
+          "selected": 0
+        },
+        "white_mage_p1_s3": {
+          "available": 171,
+          "selected": 42
+        },
+        "white_mage_p1_s1": {
+          "available": 171,
+          "selected": 31
+        },
+        "white_mage_p2_s3": {
+          "available": 171,
+          "selected": 1
+        },
+        "white_mage_p2_s1": {
+          "available": 171,
+          "selected": 0
+        },
+        "white_mage_p3_s3": {
+          "available": 171,
+          "selected": 0
+        },
+        "white_mage_p3_s1": {
+          "available": 171,
+          "selected": 88
+        },
+        "hunter_p1_s1": {
+          "available": 176,
+          "selected": 19
+        },
+        "hunter_p3_s1": {
+          "available": 176,
+          "selected": 0
+        },
+        "hunter_p3_s3": {
+          "available": 176,
+          "selected": 0
+        },
+        "hunter_p2_s3": {
+          "available": 176,
+          "selected": 0
+        },
+        "hunter_p1_s3": {
+          "available": 176,
+          "selected": 152
+        },
+        "hunter_p2_s1": {
+          "available": 176,
+          "selected": 0
+        },
+        "knight_p2_s3": {
+          "available": 129,
+          "selected": 35
+        },
+        "knight_p1_s3": {
+          "available": 129,
+          "selected": 18
+        },
+        "knight_p1_s1": {
+          "available": 129,
+          "selected": 0
+        },
+        "knight_p3_s3": {
+          "available": 129,
+          "selected": 4
+        },
+        "knight_p3_s1": {
+          "available": 129,
+          "selected": 61
+        },
+        "knight_p2_s1": {
+          "available": 129,
+          "selected": 2
+        }
+      },
+      "clearRate": 1,
+      "normalWinRate": 1,
+      "bossWinRate": 1,
+      "normalBattles": 46,
+      "normalWins": 46,
+      "bossAttempts": 24,
+      "failedBeforeBoss": 0,
+      "failedInNormalBattle": 0,
+      "failedAtBoss": 0,
+      "failedAtBounty": 0,
+      "bountyEncounters": 2,
+      "bountyWinRate": 1,
+      "normalQuestions": 13.630434782608695,
+      "bossQuestions": 17.791666666666668,
+      "normalQuestionsAll": 13.630434782608695,
+      "bossQuestionsAll": 17.791666666666668,
+      "bossLossQuestions": null,
+      "clearQuestions": 45.291666666666664,
+      "clearQuestionsP90": 51,
+      "estimatedClearMinutes": 5.029166666666667,
+      "hpRemaining": 0.7684634231711587,
+      "mpRemaining": 0.8609708193041526,
+      "consumables": 1.7916666666666667,
+      "goldPerClear": 2599.9583333333335,
+      "netGoldBeforeFees": 2192.4166666666665,
+      "xpPerMemberPerClear": 1448.6041666666663,
+      "apPerMemberPerClear": 8.166666666666666,
+      "materialsPerClear": 6.833333333333333,
+      "gearPerClear": 1.9583333333333333
+    },
+    {
+      "dungeonId": "sand_tomb",
+      "star": 6,
+      "profile": "weakness6",
+      "preparation": "prepared",
+      "accuracy": 0.8,
+      "season": "spring",
+      "seed": 1217071,
+      "runs": 24,
+      "wins": 24,
+      "fixture": {
+        "level": 38,
+        "stage": 3,
+        "itemCap": 54,
+        "enhancement": 1,
+        "assembly": {
+          "gold": 54077,
+          "byPurpose": {
+            "craft": 22449,
+            "enhance": 4888,
+            "enchant": 25200,
+            "items": 1540
+          },
+          "materials": {
+            "cursed_idol_mat": 6,
+            "cursed_idol_rare": 2,
+            "enhancement_stone": 42,
+            "blooming_hill_boss_mat": 42,
+            "exp_r06_amorphous_mat": 96,
+            "guardian_automaton_mat": 11,
+            "guardian_automaton_rare": 3,
+            "mine_spider_mat": 21,
+            "mine_spider_rare": 7,
+            "m04_003_mat": 3,
+            "m04_003_rare": 1,
+            "iron_worm_mat": 3,
+            "iron_worm_rare": 1,
+            "drill_bot_mat": 9,
+            "drill_bot_rare": 3,
+            "goblin_mat": 2,
+            "cave_rat_mat": 2,
+            "fort_bandit_mat": 3,
+            "skeleton_mat": 1,
+            "canyon_wolf_mat": 3,
+            "rock_troll_mat": 2,
+            "fishman_mat": 3,
+            "obsidian_dragoon_mat": 3,
+            "lava_golem_mat": 2
+          },
+          "ap": {
+            "m1": {
+              "hunter": 90,
+              "spellblade": 50
+            },
+            "m2": {
+              "black_mage": 90
+            },
+            "m3": {
+              "knight": 90
+            },
+            "m4": {
+              "white_mage": 90
+            },
+            "m5": {
+              "warrior": 90
+            },
+            "m6": {
+              "bard": 90
+            }
+          },
+          "jp": 0
+        },
+        "initialItems": {
+          "x_potion": 3,
+          "hi_ether": 2,
+          "revive_salts": 1,
+          "antidote": 2,
+          "panacea": 1
+        }
+      },
+      "skillChoices": {
+        "bard_p1_s3": {
+          "available": 161,
+          "selected": 72
+        },
+        "bard_p1_s1": {
+          "available": 161,
+          "selected": 65
+        },
+        "bard_p2_s1": {
+          "available": 161,
+          "selected": 8
+        },
+        "bard_p2_s3": {
+          "available": 161,
+          "selected": 1
+        },
+        "bard_p3_s1": {
+          "available": 161,
+          "selected": 0
+        },
+        "bard_p3_s3": {
+          "available": 161,
+          "selected": 0
+        },
+        "elementalist_p1_s1": {
+          "available": 156,
+          "selected": 73
+        },
+        "black_mage_p1_s3": {
+          "available": 156,
+          "selected": 43
+        },
+        "black_mage_p2_s3": {
+          "available": 156,
+          "selected": 2
+        },
+        "black_mage_p3_s3": {
+          "available": 156,
+          "selected": 13
+        },
+        "black_mage_p1_s1": {
+          "available": 156,
+          "selected": 9
+        },
+        "black_mage_p2_s1": {
+          "available": 156,
+          "selected": 1
+        },
+        "black_mage_p3_s1": {
+          "available": 156,
+          "selected": 3
+        },
+        "warrior_p3_s3": {
+          "available": 142,
+          "selected": 110
+        },
+        "warrior_p1_s3": {
+          "available": 142,
+          "selected": 1
+        },
+        "warrior_p3_s1": {
+          "available": 142,
+          "selected": 26
+        },
+        "warrior_p1_s1": {
+          "available": 142,
+          "selected": 0
+        },
+        "warrior_p2_s1": {
+          "available": 142,
+          "selected": 0
+        },
+        "warrior_p2_s3": {
+          "available": 142,
+          "selected": 0
+        },
+        "white_mage_p1_s3": {
+          "available": 109,
+          "selected": 7
+        },
+        "white_mage_p1_s1": {
+          "available": 109,
+          "selected": 21
+        },
+        "white_mage_p2_s3": {
+          "available": 109,
+          "selected": 0
+        },
+        "white_mage_p2_s1": {
+          "available": 109,
+          "selected": 1
+        },
+        "white_mage_p3_s3": {
+          "available": 109,
+          "selected": 0
+        },
+        "white_mage_p3_s1": {
+          "available": 109,
+          "selected": 18
+        },
+        "hunter_p1_s1": {
+          "available": 115,
+          "selected": 15
+        },
+        "spellblade_p1_s1": {
+          "available": 115,
+          "selected": 3
+        },
+        "spellblade_p1_s2": {
+          "available": 115,
+          "selected": 1
+        },
+        "spellblade_p1_s3": {
+          "available": 115,
+          "selected": 8
+        },
+        "hunter_p3_s1": {
+          "available": 115,
+          "selected": 0
+        },
+        "hunter_p3_s3": {
+          "available": 115,
+          "selected": 0
+        },
+        "hunter_p2_s3": {
+          "available": 115,
+          "selected": 0
+        },
+        "hunter_p1_s3": {
+          "available": 115,
+          "selected": 88
+        },
+        "knight_p2_s3": {
+          "available": 90,
+          "selected": 7
+        },
+        "knight_p1_s3": {
+          "available": 90,
+          "selected": 14
+        },
+        "knight_p1_s1": {
+          "available": 90,
+          "selected": 0
+        },
+        "knight_p3_s3": {
+          "available": 90,
+          "selected": 3
+        },
+        "knight_p3_s1": {
+          "available": 90,
+          "selected": 58
+        },
+        "knight_p2_s1": {
+          "available": 90,
+          "selected": 2
+        }
+      },
+      "clearRate": 1,
+      "normalWinRate": 1,
+      "bossWinRate": 1,
+      "normalBattles": 46,
+      "normalWins": 46,
+      "bossAttempts": 24,
+      "failedBeforeBoss": 0,
+      "failedInNormalBattle": 0,
+      "failedAtBoss": 0,
+      "failedAtBounty": 0,
+      "bountyEncounters": 2,
+      "bountyWinRate": 1,
+      "normalQuestions": 10.521739130434783,
+      "bossQuestions": 11.041666666666666,
+      "normalQuestionsAll": 10.521739130434783,
+      "bossQuestionsAll": 11.041666666666666,
+      "bossLossQuestions": null,
+      "clearQuestions": 32.208333333333336,
+      "clearQuestionsP90": 36,
+      "estimatedClearMinutes": 3.720833333333333,
+      "hpRemaining": 0.8499361430395914,
+      "mpRemaining": 0.9837261503928167,
+      "consumables": 0.625,
+      "goldPerClear": 2599.9583333333335,
+      "netGoldBeforeFees": 2456.8333333333335,
+      "xpPerMemberPerClear": 1448.6041666666663,
+      "apPerMemberPerClear": 8.166666666666666,
+      "materialsPerClear": 6.833333333333333,
+      "gearPerClear": 1.9583333333333333
+    },
+    {
+      "dungeonId": "world_tree_top",
+      "star": 12,
+      "profile": "balanced6",
+      "preparation": "standard",
+      "accuracy": 0.8,
+      "season": "spring",
+      "seed": 1217071,
+      "runs": 24,
+      "wins": 24,
+      "fixture": {
+        "level": 80,
+        "stage": 5,
+        "itemCap": 114,
+        "enhancement": 3,
+        "assembly": {
+          "gold": 482028,
+          "byPurpose": {
+            "craft": 388080,
+            "enhance": 68448,
+            "enchant": 22320,
+            "items": 3180
+          },
+          "materials": {
+            "exp_r12_amorphous_mat": 168,
+            "enhancement_stone": 126,
+            "blooming_hill_boss_mat": 12
+          },
+          "ap": {
+            "m1": {
+              "warrior": 315
+            },
+            "m2": {
+              "knight": 315
+            },
+            "m3": {
+              "black_mage": 315
+            },
+            "m4": {
+              "white_mage": 315
+            },
+            "m5": {
+              "thief": 337
+            },
+            "m6": {
+              "bard": 315
+            }
+          },
+          "jp": 0
+        },
+        "initialItems": {
+          "x_potion": 3,
+          "x_ether": 2,
+          "revive_salts": 1,
+          "antidote": 2,
+          "panacea": 1
+        }
+      },
+      "skillChoices": {
+        "thief_p3_s1": {
+          "available": 213,
+          "selected": 30
+        },
+        "thief_p4_s1": {
+          "available": 213,
+          "selected": 6
+        },
+        "thief_p3_s3": {
+          "available": 213,
+          "selected": 1
+        },
+        "thief_p1_s3": {
+          "available": 213,
+          "selected": 2
+        },
+        "thief_p1_s1": {
+          "available": 213,
+          "selected": 1
+        },
+        "thief_p2_s3": {
+          "available": 213,
+          "selected": 0
+        },
+        "thief_p4_s2": {
+          "available": 213,
+          "selected": 164
+        },
+        "thief_p2_s1": {
+          "available": 213,
+          "selected": 0
+        },
+        "bard_p2_s5": {
+          "available": 213,
+          "selected": 14
+        },
+        "bard_p1_s4": {
+          "available": 213,
+          "selected": 72
+        },
+        "bard_p2_s1": {
+          "available": 213,
+          "selected": 120
+        },
+        "bard_p3_s1": {
+          "available": 213,
+          "selected": 0
+        },
+        "warrior_p3_s3": {
+          "available": 192,
+          "selected": 48
+        },
+        "warrior_p1_s3": {
+          "available": 192,
+          "selected": 0
+        },
+        "warrior_p1_s4": {
+          "available": 191,
+          "selected": 132
+        },
+        "warrior_p3_s1": {
+          "available": 199,
+          "selected": 13
+        },
+        "black_mage_p2_s5": {
+          "available": 148,
+          "selected": 6
+        },
+        "black_mage_p1_s4": {
+          "available": 148,
+          "selected": 138
+        },
+        "black_mage_p1_s3": {
+          "available": 176,
+          "selected": 20
+        },
+        "white_mage_p1_s4": {
+          "available": 169,
+          "selected": 12
+        },
+        "white_mage_p1_s1": {
+          "available": 169,
+          "selected": 26
+        },
+        "white_mage_p2_s3": {
+          "available": 169,
+          "selected": 6
+        },
+        "white_mage_p2_s1": {
+          "available": 169,
+          "selected": 2
+        },
+        "white_mage_p3_s1": {
+          "available": 169,
+          "selected": 101
+        },
+        "knight_p2_s3": {
+          "available": 155,
+          "selected": 13
+        },
+        "knight_p1_s4": {
+          "available": 155,
+          "selected": 26
+        },
+        "knight_p3_s3": {
+          "available": 155,
+          "selected": 17
+        },
+        "knight_p3_s1": {
+          "available": 155,
+          "selected": 90
+        },
+        "knight_p2_s1": {
+          "available": 155,
+          "selected": 0
+        }
+      },
+      "clearRate": 1,
+      "normalWinRate": 1,
+      "bossWinRate": 1,
+      "normalBattles": 46,
+      "normalWins": 46,
+      "bossAttempts": 24,
+      "failedBeforeBoss": 0,
+      "failedInNormalBattle": 0,
+      "failedAtBoss": 0,
+      "failedAtBounty": 0,
+      "bountyEncounters": 2,
+      "bountyWinRate": 1,
+      "normalQuestions": 15.065217391304348,
+      "bossQuestions": 17.541666666666668,
+      "normalQuestionsAll": 15.065217391304348,
+      "bossQuestionsAll": 17.541666666666668,
+      "bossLossQuestions": null,
+      "clearQuestions": 47.916666666666664,
+      "clearQuestionsP90": 56,
+      "estimatedClearMinutes": 5.291666666666667,
+      "hpRemaining": 0.8719147794552987,
+      "mpRemaining": 0.7184959349593497,
+      "consumables": 1.0833333333333333,
+      "goldPerClear": 35862.666666666664,
+      "netGoldBeforeFees": 35667.666666666664,
+      "xpPerMemberPerClear": 2942.9930555555566,
+      "apPerMemberPerClear": 8.166666666666666,
+      "materialsPerClear": 7.666666666666667,
+      "gearPerClear": 1.7916666666666667
+    },
+    {
+      "dungeonId": "world_tree_top",
+      "star": 12,
+      "profile": "balanced6",
+      "preparation": "prepared",
+      "accuracy": 0.8,
+      "season": "spring",
+      "seed": 1217071,
+      "runs": 24,
+      "wins": 24,
+      "fixture": {
+        "level": 80,
+        "stage": 5,
+        "itemCap": 114,
+        "enhancement": 3,
+        "assembly": {
+          "gold": 526668,
+          "byPurpose": {
+            "craft": 388080,
+            "enhance": 68448,
+            "enchant": 66960,
+            "items": 3180
+          },
+          "materials": {
+            "exp_r12_amorphous_mat": 168,
+            "enhancement_stone": 126,
+            "blooming_hill_boss_mat": 36
+          },
+          "ap": {
+            "m1": {
+              "warrior": 315
+            },
+            "m2": {
+              "knight": 315
+            },
+            "m3": {
+              "black_mage": 315
+            },
+            "m4": {
+              "white_mage": 315
+            },
+            "m5": {
+              "thief": 337
+            },
+            "m6": {
+              "bard": 315
+            }
+          },
+          "jp": 0
+        },
+        "initialItems": {
+          "x_potion": 3,
+          "x_ether": 2,
+          "revive_salts": 1,
+          "antidote": 2,
+          "panacea": 1
+        }
+      },
+      "skillChoices": {
+        "thief_p3_s1": {
+          "available": 190,
+          "selected": 26
+        },
+        "thief_p4_s1": {
+          "available": 190,
+          "selected": 7
+        },
+        "thief_p3_s3": {
+          "available": 190,
+          "selected": 1
+        },
+        "thief_p1_s3": {
+          "available": 190,
+          "selected": 38
+        },
+        "thief_p1_s1": {
+          "available": 190,
+          "selected": 0
+        },
+        "thief_p2_s3": {
+          "available": 190,
+          "selected": 0
+        },
+        "thief_p4_s2": {
+          "available": 190,
+          "selected": 116
+        },
+        "thief_p2_s1": {
+          "available": 190,
+          "selected": 0
+        },
+        "bard_p2_s5": {
+          "available": 186,
+          "selected": 2
+        },
+        "bard_p1_s4": {
+          "available": 186,
+          "selected": 72
+        },
+        "bard_p2_s1": {
+          "available": 186,
+          "selected": 76
+        },
+        "bard_p3_s1": {
+          "available": 186,
+          "selected": 0
+        },
+        "warrior_p3_s3": {
+          "available": 171,
+          "selected": 30
+        },
+        "warrior_p1_s3": {
+          "available": 171,
+          "selected": 0
+        },
+        "warrior_p1_s4": {
+          "available": 168,
+          "selected": 130
+        },
+        "warrior_p3_s1": {
+          "available": 174,
+          "selected": 8
+        },
+        "black_mage_p2_s5": {
+          "available": 147,
+          "selected": 8
+        },
+        "black_mage_p1_s4": {
+          "available": 147,
+          "selected": 129
+        },
+        "black_mage_p1_s3": {
+          "available": 164,
+          "selected": 7
+        },
+        "white_mage_p1_s4": {
+          "available": 145,
+          "selected": 4
+        },
+        "white_mage_p1_s1": {
+          "available": 145,
+          "selected": 6
+        },
+        "white_mage_p2_s3": {
+          "available": 145,
+          "selected": 0
+        },
+        "white_mage_p2_s1": {
+          "available": 145,
+          "selected": 0
+        },
+        "white_mage_p3_s1": {
+          "available": 145,
+          "selected": 42
+        },
+        "knight_p2_s3": {
+          "available": 132,
+          "selected": 0
+        },
+        "knight_p1_s4": {
+          "available": 132,
+          "selected": 23
+        },
+        "knight_p3_s3": {
+          "available": 132,
+          "selected": 8
+        },
+        "knight_p3_s1": {
+          "available": 132,
+          "selected": 96
+        },
+        "knight_p2_s1": {
+          "available": 132,
+          "selected": 0
+        }
+      },
+      "clearRate": 1,
+      "normalWinRate": 1,
+      "bossWinRate": 1,
+      "normalBattles": 46,
+      "normalWins": 46,
+      "bossAttempts": 24,
+      "failedBeforeBoss": 0,
+      "failedInNormalBattle": 0,
+      "failedAtBoss": 0,
+      "failedAtBounty": 0,
+      "bountyEncounters": 2,
+      "bountyWinRate": 1,
+      "normalQuestions": 13.869565217391305,
+      "bossQuestions": 13.458333333333334,
+      "normalQuestionsAll": 13.869565217391305,
+      "bossQuestionsAll": 13.458333333333334,
+      "bossLossQuestions": null,
+      "clearQuestions": 41.5,
+      "clearQuestionsP90": 49,
+      "estimatedClearMinutes": 4.65,
+      "hpRemaining": 0.8940247557726465,
+      "mpRemaining": 0.8074375188196327,
+      "consumables": 0.2916666666666667,
+      "goldPerClear": 35862.666666666664,
+      "netGoldBeforeFees": 35781,
+      "xpPerMemberPerClear": 2942.9930555555566,
+      "apPerMemberPerClear": 8.166666666666666,
+      "materialsPerClear": 7.666666666666667,
+      "gearPerClear": 1.7916666666666667
+    },
+    {
+      "dungeonId": "world_tree_top",
+      "star": 12,
+      "profile": "critical6",
+      "preparation": "standard",
+      "accuracy": 0.8,
+      "season": "spring",
+      "seed": 1217071,
+      "runs": 24,
+      "wins": 23,
+      "fixture": {
+        "level": 80,
+        "stage": 5,
+        "itemCap": 114,
+        "enhancement": 3,
+        "assembly": {
+          "gold": 295311,
+          "byPurpose": {
+            "craft": 203530,
+            "enhance": 64421,
+            "enchant": 24180,
+            "items": 3180
+          },
+          "materials": {
+            "exp_r10_amorphous_mat": 100,
+            "enhancement_stone": 129,
+            "blooming_hill_boss_mat": 13,
+            "exp_r11_amorphous_mat": 72
+          },
+          "ap": {
+            "m1": {
+              "thief": 337
+            },
+            "m2": {
+              "hunter": 315
+            },
+            "m3": {
+              "bard": 315
+            },
+            "m4": {
+              "white_mage": 315
+            },
+            "m5": {
+              "knight": 315
+            },
+            "m6": {
+              "black_mage": 315
+            }
+          },
+          "jp": 0
+        },
+        "initialItems": {
+          "x_potion": 3,
+          "x_ether": 2,
+          "revive_salts": 1,
+          "antidote": 2,
+          "panacea": 1
+        }
+      },
+      "skillChoices": {
+        "thief_p3_s1": {
+          "available": 265,
+          "selected": 47
+        },
+        "thief_p4_s1": {
+          "available": 265,
+          "selected": 5
+        },
+        "thief_p3_s3": {
+          "available": 265,
+          "selected": 0
+        },
+        "thief_p1_s3": {
+          "available": 265,
+          "selected": 6
+        },
+        "thief_p1_s1": {
+          "available": 265,
+          "selected": 0
+        },
+        "thief_p2_s3": {
+          "available": 265,
+          "selected": 0
+        },
+        "thief_p4_s2": {
+          "available": 265,
+          "selected": 186
+        },
+        "thief_p2_s1": {
+          "available": 265,
+          "selected": 0
+        },
+        "bard_p2_s5": {
+          "available": 257,
+          "selected": 23
+        },
+        "bard_p1_s4": {
+          "available": 257,
+          "selected": 79
+        },
+        "bard_p1_s3": {
+          "available": 257,
+          "selected": 72
+        },
+        "black_mage_p2_s5": {
+          "available": 145,
+          "selected": 8
+        },
+        "black_mage_p1_s4": {
+          "available": 145,
+          "selected": 136
+        },
+        "black_mage_p1_s3": {
+          "available": 185,
+          "selected": 33
+        },
+        "white_mage_p1_s4": {
+          "available": 223,
+          "selected": 28
+        },
+        "white_mage_p1_s1": {
+          "available": 223,
+          "selected": 37
+        },
+        "white_mage_p2_s3": {
+          "available": 223,
+          "selected": 4
+        },
+        "white_mage_p2_s1": {
+          "available": 223,
+          "selected": 0
+        },
+        "white_mage_p3_s1": {
+          "available": 223,
+          "selected": 132
+        },
+        "hunter_p1_s4": {
+          "available": 147,
+          "selected": 144
+        },
+        "hunter_p1_s1": {
+          "available": 208,
+          "selected": 51
+        },
+        "hunter_p3_s1": {
+          "available": 212,
+          "selected": 0
+        },
+        "hunter_p3_s3": {
+          "available": 177,
+          "selected": 0
+        },
+        "hunter_p2_s3": {
+          "available": 177,
+          "selected": 0
+        },
+        "knight_p2_s3": {
+          "available": 204,
+          "selected": 33
+        },
+        "knight_p1_s4": {
+          "available": 204,
+          "selected": 28
+        },
+        "knight_p1_s3": {
+          "available": 204,
+          "selected": 0
+        },
+        "knight_p1_s1": {
+          "available": 204,
+          "selected": 24
+        }
+      },
+      "clearRate": 0.9583333333333334,
+      "normalWinRate": 1,
+      "bossWinRate": 0.9583333333333334,
+      "normalBattles": 46,
+      "normalWins": 46,
+      "bossAttempts": 24,
+      "failedBeforeBoss": 0,
+      "failedInNormalBattle": 0,
+      "failedAtBoss": 1,
+      "failedAtBounty": 0,
+      "bountyEncounters": 2,
+      "bountyWinRate": 1,
+      "normalQuestions": 16.891304347826086,
+      "bossQuestions": 25.47826086956522,
+      "normalQuestionsAll": 16.891304347826086,
+      "bossQuestionsAll": 25.416666666666668,
+      "bossLossQuestions": 24,
+      "clearQuestions": 59.78260869565217,
+      "clearQuestionsP90": 68,
+      "estimatedClearMinutes": 6.478260869565217,
+      "hpRemaining": 0.9046085115803559,
+      "mpRemaining": 0.6577903460194022,
+      "consumables": 1.6521739130434783,
+      "goldPerClear": 35982.65217391304,
+      "netGoldBeforeFees": 35653,
+      "xpPerMemberPerClear": 2925.7753623188414,
+      "apPerMemberPerClear": 8.115942028985508,
+      "materialsPerClear": 7.608695652173913,
+      "gearPerClear": 1.7826086956521738
+    },
+    {
+      "dungeonId": "world_tree_top",
+      "star": 12,
+      "profile": "critical6",
+      "preparation": "prepared",
+      "accuracy": 0.8,
+      "season": "spring",
+      "seed": 1217071,
+      "runs": 24,
+      "wins": 24,
+      "fixture": {
+        "level": 80,
+        "stage": 5,
+        "itemCap": 114,
+        "enhancement": 3,
+        "assembly": {
+          "gold": 404341,
+          "byPurpose": {
+            "craft": 254900,
+            "enhance": 64421,
+            "enchant": 81840,
+            "items": 3180
+          },
+          "materials": {
+            "m10_011_mat": 8,
+            "m10_011_rare": 4,
+            "enhancement_stone": 129,
+            "blooming_hill_boss_mat": 44,
+            "m10_002_mat": 4,
+            "m10_002_rare": 2,
+            "m11_006_mat": 20,
+            "m11_006_rare": 10,
+            "m11_009_mat": 8,
+            "m11_009_rare": 4,
+            "m11_012_mat": 12,
+            "m11_012_rare": 6,
+            "m10_013_mat": 28,
+            "m10_013_rare": 14,
+            "m10_015_mat": 40,
+            "m10_015_rare": 20,
+            "m10_005_mat": 8,
+            "m10_005_rare": 4,
+            "m11_015_mat": 16,
+            "m11_015_rare": 8,
+            "m11_003_mat": 16,
+            "m11_003_rare": 8,
+            "m10_014_mat": 8,
+            "m10_014_rare": 4,
+            "m10_008_mat": 4,
+            "m10_008_rare": 2
+          },
+          "ap": {
+            "m1": {
+              "thief": 337,
+              "monk": 60
+            },
+            "m2": {
+              "hunter": 315
+            },
+            "m3": {
+              "bard": 315
+            },
+            "m4": {
+              "white_mage": 315
+            },
+            "m5": {
+              "knight": 315
+            },
+            "m6": {
+              "black_mage": 315,
+              "elementalist": 20
+            }
+          },
+          "jp": 0
+        },
+        "initialItems": {
+          "x_potion": 3,
+          "x_ether": 2,
+          "revive_salts": 1,
+          "antidote": 2,
+          "panacea": 1
+        }
+      },
+      "skillChoices": {
+        "thief_p1_s3": {
+          "available": 187,
+          "selected": 4
+        },
+        "thief_p1_s1": {
+          "available": 187,
+          "selected": 2
+        },
+        "thief_p3_s1": {
+          "available": 187,
+          "selected": 26
+        },
+        "thief_p4_s1": {
+          "available": 187,
+          "selected": 2
+        },
+        "thief_p3_s3": {
+          "available": 187,
+          "selected": 0
+        },
+        "thief_p2_s3": {
+          "available": 187,
+          "selected": 0
+        },
+        "thief_p4_s2": {
+          "available": 187,
+          "selected": 135
+        },
+        "monk_p2_s1": {
+          "available": 187,
+          "selected": 17
+        },
+        "bard_p2_s5": {
+          "available": 184,
+          "selected": 1
+        },
+        "bard_p1_s4": {
+          "available": 184,
+          "selected": 72
+        },
+        "bard_p1_s3": {
+          "available": 184,
+          "selected": 71
+        },
+        "elementalist_p1_s2": {
+          "available": 178,
+          "selected": 16
+        },
+        "black_mage_p2_s5": {
+          "available": 178,
+          "selected": 9
+        },
+        "black_mage_p1_s4": {
+          "available": 178,
+          "selected": 110
+        },
+        "black_mage_p1_s1": {
+          "available": 178,
+          "selected": 42
+        },
+        "hunter_p1_s4": {
+          "available": 159,
+          "selected": 148
+        },
+        "hunter_p1_s1": {
+          "available": 159,
+          "selected": 5
+        },
+        "hunter_p3_s1": {
+          "available": 159,
+          "selected": 0
+        },
+        "hunter_p3_s3": {
+          "available": 159,
+          "selected": 0
+        },
+        "hunter_p2_s3": {
+          "available": 159,
+          "selected": 0
+        },
+        "white_mage_p1_s4": {
+          "available": 141,
+          "selected": 0
+        },
+        "white_mage_p1_s1": {
+          "available": 141,
+          "selected": 0
+        },
+        "white_mage_p2_s3": {
+          "available": 141,
+          "selected": 0
+        },
+        "white_mage_p2_s1": {
+          "available": 141,
+          "selected": 3
+        },
+        "white_mage_p3_s1": {
+          "available": 141,
+          "selected": 55
+        },
+        "knight_p2_s3": {
+          "available": 120,
+          "selected": 3
+        },
+        "knight_p1_s4": {
+          "available": 122,
+          "selected": 16
+        },
+        "knight_p1_s3": {
+          "available": 122,
+          "selected": 0
+        },
+        "knight_p1_s1": {
+          "available": 122,
+          "selected": 2
+        }
+      },
+      "clearRate": 1,
+      "normalWinRate": 1,
+      "bossWinRate": 1,
+      "normalBattles": 46,
+      "normalWins": 46,
+      "bossAttempts": 24,
+      "failedBeforeBoss": 0,
+      "failedInNormalBattle": 0,
+      "failedAtBoss": 0,
+      "failedAtBounty": 0,
+      "bountyEncounters": 2,
+      "bountyWinRate": 1,
+      "normalQuestions": 14.391304347826088,
+      "bossQuestions": 11.5,
+      "normalQuestionsAll": 14.391304347826088,
+      "bossQuestionsAll": 11.5,
+      "bossLossQuestions": null,
+      "clearQuestions": 40.458333333333336,
+      "clearQuestionsP90": 47,
+      "estimatedClearMinutes": 4.545833333333333,
+      "hpRemaining": 0.9112073869852523,
+      "mpRemaining": 0.8981105088828666,
+      "consumables": 0.125,
+      "goldPerClear": 35862.666666666664,
+      "netGoldBeforeFees": 35817.666666666664,
+      "xpPerMemberPerClear": 2942.9930555555566,
+      "apPerMemberPerClear": 8.166666666666666,
+      "materialsPerClear": 7.666666666666667,
+      "gearPerClear": 1.7916666666666667
+    },
+    {
+      "dungeonId": "world_tree_top",
+      "star": 12,
+      "profile": "weakness6",
+      "preparation": "standard",
+      "accuracy": 0.8,
+      "season": "spring",
+      "seed": 1217071,
+      "runs": 24,
+      "wins": 24,
+      "fixture": {
+        "level": 80,
+        "stage": 5,
+        "itemCap": 114,
+        "enhancement": 3,
+        "assembly": {
+          "gold": 292865,
+          "byPurpose": {
+            "craft": 205070,
+            "enhance": 62295,
+            "enchant": 22320,
+            "items": 3180
+          },
+          "materials": {
+            "exp_r10_amorphous_mat": 92,
+            "enhancement_stone": 126,
+            "blooming_hill_boss_mat": 12,
+            "exp_r11_amorphous_mat": 72,
+            "exp_r12_amorphous_mat": 4
+          },
+          "ap": {
+            "m1": {
+              "hunter": 315
+            },
+            "m2": {
+              "black_mage": 315
+            },
+            "m3": {
+              "knight": 315
+            },
+            "m4": {
+              "white_mage": 315
+            },
+            "m5": {
+              "warrior": 315
+            },
+            "m6": {
+              "bard": 315
+            }
+          },
+          "jp": 0
+        },
+        "initialItems": {
+          "x_potion": 3,
+          "x_ether": 2,
+          "revive_salts": 1,
+          "antidote": 2,
+          "panacea": 1
+        }
+      },
+      "skillChoices": {
+        "bard_p2_s5": {
+          "available": 173,
+          "selected": 4
+        },
+        "bard_p1_s4": {
+          "available": 173,
+          "selected": 72
+        },
+        "bard_p1_s3": {
+          "available": 173,
+          "selected": 72
+        },
+        "black_mage_p2_s5": {
+          "available": 148,
+          "selected": 7
+        },
+        "black_mage_p1_s4": {
+          "available": 148,
+          "selected": 136
+        },
+        "black_mage_p1_s3": {
+          "available": 158,
+          "selected": 6
+        },
+        "warrior_p3_s3": {
+          "available": 166,
+          "selected": 41
+        },
+        "warrior_p1_s3": {
+          "available": 166,
+          "selected": 0
+        },
+        "warrior_p1_s4": {
+          "available": 166,
+          "selected": 114
+        },
+        "warrior_p3_s1": {
+          "available": 166,
+          "selected": 4
+        },
+        "white_mage_p1_s4": {
+          "available": 127,
+          "selected": 11
+        },
+        "white_mage_p1_s1": {
+          "available": 127,
+          "selected": 16
+        },
+        "white_mage_p2_s3": {
+          "available": 127,
+          "selected": 2
+        },
+        "white_mage_p2_s1": {
+          "available": 127,
+          "selected": 3
+        },
+        "white_mage_p3_s1": {
+          "available": 127,
+          "selected": 75
+        },
+        "hunter_p1_s4": {
+          "available": 133,
+          "selected": 118
+        },
+        "hunter_p1_s1": {
+          "available": 133,
+          "selected": 4
+        },
+        "hunter_p3_s1": {
+          "available": 133,
+          "selected": 1
+        },
+        "hunter_p3_s3": {
+          "available": 133,
+          "selected": 0
+        },
+        "hunter_p2_s3": {
+          "available": 133,
+          "selected": 0
+        },
+        "knight_p2_s3": {
+          "available": 102,
+          "selected": 5
+        },
+        "knight_p1_s4": {
+          "available": 104,
+          "selected": 25
+        },
+        "knight_p1_s3": {
+          "available": 104,
+          "selected": 0
+        },
+        "knight_p1_s1": {
+          "available": 104,
+          "selected": 3
+        }
+      },
+      "clearRate": 1,
+      "normalWinRate": 1,
+      "bossWinRate": 1,
+      "normalBattles": 46,
+      "normalWins": 46,
+      "bossAttempts": 24,
+      "failedBeforeBoss": 0,
+      "failedInNormalBattle": 0,
+      "failedAtBoss": 0,
+      "failedAtBounty": 0,
+      "bountyEncounters": 2,
+      "bountyWinRate": 1,
+      "normalQuestions": 11.978260869565217,
+      "bossQuestions": 11.875,
+      "normalQuestionsAll": 11.978260869565217,
+      "bossQuestionsAll": 11.875,
+      "bossLossQuestions": null,
+      "clearQuestions": 36,
+      "clearQuestionsP90": 42,
+      "estimatedClearMinutes": 4.1,
+      "hpRemaining": 0.909412736232198,
+      "mpRemaining": 0.7252333634447455,
+      "consumables": 0.8333333333333334,
+      "goldPerClear": 35862.666666666664,
+      "netGoldBeforeFees": 35718.333333333336,
+      "xpPerMemberPerClear": 2942.9930555555566,
+      "apPerMemberPerClear": 8.166666666666666,
+      "materialsPerClear": 7.25,
+      "gearPerClear": 1.7916666666666667
+    },
+    {
+      "dungeonId": "world_tree_top",
+      "star": 12,
+      "profile": "weakness6",
+      "preparation": "prepared",
+      "accuracy": 0.8,
+      "season": "spring",
+      "seed": 1217071,
+      "runs": 24,
+      "wins": 24,
+      "fixture": {
+        "level": 80,
+        "stage": 5,
+        "itemCap": 114,
+        "enhancement": 3,
+        "assembly": {
+          "gold": 396955,
+          "byPurpose": {
+            "craft": 253360,
+            "enhance": 62295,
+            "enchant": 78120,
+            "items": 3180
+          },
+          "materials": {
+            "m10_005_mat": 8,
+            "m10_005_rare": 4,
+            "enhancement_stone": 126,
+            "blooming_hill_boss_mat": 42,
+            "m11_006_mat": 16,
+            "m11_006_rare": 8,
+            "m11_009_mat": 4,
+            "m11_009_rare": 2,
+            "m11_012_mat": 12,
+            "m11_012_rare": 6,
+            "m10_013_mat": 28,
+            "m10_013_rare": 14,
+            "m10_015_mat": 40,
+            "m10_015_rare": 20,
+            "m10_014_mat": 8,
+            "m10_014_rare": 4,
+            "m11_015_mat": 20,
+            "m11_015_rare": 10,
+            "m11_003_mat": 20,
+            "m11_003_rare": 10,
+            "m10_011_mat": 4,
+            "m10_011_rare": 2,
+            "m10_008_mat": 4,
+            "m10_008_rare": 2,
+            "exp_r12_amorphous_mat": 4
+          },
+          "ap": {
+            "m1": {
+              "hunter": 315,
+              "spellblade": 50
+            },
+            "m2": {
+              "black_mage": 315,
+              "elementalist": 20
+            },
+            "m3": {
+              "knight": 315
+            },
+            "m4": {
+              "white_mage": 315
+            },
+            "m5": {
+              "warrior": 315
+            },
+            "m6": {
+              "bard": 315
+            }
+          },
+          "jp": 0
+        },
+        "initialItems": {
+          "x_potion": 3,
+          "x_ether": 2,
+          "revive_salts": 1,
+          "antidote": 2,
+          "panacea": 1
+        }
+      },
+      "skillChoices": {
+        "bard_p2_s5": {
+          "available": 149,
+          "selected": 2
+        },
+        "bard_p1_s4": {
+          "available": 149,
+          "selected": 72
+        },
+        "bard_p1_s3": {
+          "available": 149,
+          "selected": 63
+        },
+        "elementalist_p1_s2": {
+          "available": 138,
+          "selected": 7
+        },
+        "black_mage_p2_s5": {
+          "available": 138,
+          "selected": 8
+        },
+        "black_mage_p1_s4": {
+          "available": 138,
+          "selected": 91
+        },
+        "black_mage_p1_s1": {
+          "available": 138,
+          "selected": 25
+        },
+        "warrior_p3_s3": {
+          "available": 137,
+          "selected": 24
+        },
+        "warrior_p1_s3": {
+          "available": 137,
+          "selected": 0
+        },
+        "warrior_p1_s4": {
+          "available": 137,
+          "selected": 109
+        },
+        "warrior_p3_s1": {
+          "available": 137,
+          "selected": 2
+        },
+        "hunter_p1_s1": {
+          "available": 105,
+          "selected": 2
+        },
+        "spellblade_p1_s1": {
+          "available": 105,
+          "selected": 1
+        },
+        "spellblade_p1_s2": {
+          "available": 105,
+          "selected": 2
+        },
+        "spellblade_p1_s3": {
+          "available": 105,
+          "selected": 9
+        },
+        "hunter_p1_s4": {
+          "available": 105,
+          "selected": 87
+        },
+        "hunter_p3_s1": {
+          "available": 105,
+          "selected": 4
+        },
+        "hunter_p2_s1": {
+          "available": 105,
+          "selected": 0
+        },
+        "white_mage_p1_s4": {
+          "available": 94,
+          "selected": 0
+        },
+        "white_mage_p1_s1": {
+          "available": 94,
+          "selected": 3
+        },
+        "white_mage_p2_s3": {
+          "available": 94,
+          "selected": 0
+        },
+        "white_mage_p2_s1": {
+          "available": 94,
+          "selected": 1
+        },
+        "white_mage_p3_s1": {
+          "available": 94,
+          "selected": 26
+        },
+        "knight_p2_s3": {
+          "available": 79,
+          "selected": 4
+        },
+        "knight_p1_s4": {
+          "available": 79,
+          "selected": 7
+        },
+        "knight_p1_s3": {
+          "available": 79,
+          "selected": 0
+        },
+        "knight_p1_s1": {
+          "available": 79,
+          "selected": 0
+        }
+      },
+      "clearRate": 1,
+      "normalWinRate": 1,
+      "bossWinRate": 1,
+      "normalBattles": 46,
+      "normalWins": 46,
+      "bossAttempts": 24,
+      "failedBeforeBoss": 0,
+      "failedInNormalBattle": 0,
+      "failedAtBoss": 0,
+      "failedAtBounty": 0,
+      "bountyEncounters": 2,
+      "bountyWinRate": 1,
+      "normalQuestions": 10.456521739130435,
+      "bossQuestions": 8.083333333333334,
+      "normalQuestionsAll": 10.456521739130435,
+      "bossQuestionsAll": 8.083333333333334,
+      "bossLossQuestions": null,
+      "clearQuestions": 29.25,
+      "clearQuestionsP90": 34,
+      "estimatedClearMinutes": 3.425,
+      "hpRemaining": 0.9061551960026174,
+      "mpRemaining": 0.9334537789822343,
+      "consumables": 0.16666666666666666,
+      "goldPerClear": 35862.666666666664,
+      "netGoldBeforeFees": 35816,
+      "xpPerMemberPerClear": 2942.9930555555566,
+      "apPerMemberPerClear": 8.166666666666666,
+      "materialsPerClear": 7.25,
+      "gearPerClear": 1.7916666666666667
+    }
+  ]
+}
