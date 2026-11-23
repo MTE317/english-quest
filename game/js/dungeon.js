@@ -265,6 +265,7 @@ export function useItemOutsideBattle(data, game, itemId, index) {
     m.hp = Math.max(1, Math.round(maxHp(data, m) * it.value / 100));
   } else if (it.effect === 'cure_status') {
     m.persist = (m.persist ?? []).filter((id) => !curedBy(data.statusEffects.get(id), it.name));
+    for (const id of Object.keys(m.persistState ?? {})) if (!m.persist.includes(id)) delete m.persistState[id];
   } else {
     if (!all && m.hp <= 0) throw new Error('倒れている');
     for (const t of targets) {

@@ -51,5 +51,6 @@ export function cureAtTemple(data, game, member) {
   if (game.gold < cost) throw new Error(`治療には ${cost} G が必要です。`);
   game.gold -= cost;
   member.persist = [];
+  delete member.persistState;
   return `状態異常を治療した（${cost} G）。`;
 }
