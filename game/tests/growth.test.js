@@ -32,7 +32,7 @@ test('AP で2段目を覚える（前の段が必要・AP が減る・パッシ�
   assert.ok(w.loadout.passives.includes(s2.id));
   assert.equal(maxHp(data, w), Math.round(hp0 * 1.1));
   const s3 = jobSkills(data, 'warrior').find((s) => s.path === s2.path && s.stage === 4);
-  assert.match(learnBlock(data, w, s3), /先に/);
+  assert.equal(learnBlock(data, w, s3), '「鉄壁」を覚える');
 });
 
 test('枠：cost の合計が上限まで。ほかのジョブのスキルも持ち出せるが奥義はだめ', () => {
