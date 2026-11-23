@@ -719,7 +719,8 @@ function attackDamage(data, game, b, i, e, skill, cm, { offhand = false, actionB
   // 睡眠・凍結は hitEnemy で解ける前に判定する。異常の種類を重ねても上限は共有。
   const legacyDownBonus = enemy.debuffs.abilityDown ? Math.max(0, affixSum(m, 'VS_STATUS:statdown') / 100) : 0;
   let statusDamage = Object.keys(enemy.statuses).reduce((sum, id) => sum + Math.max(0, affixSum(m, `VS_STATUS:${id}`) / 100), legacyDownBonus);
-  for (const [ids, rate] of mods.status_count_damage ?? []) {
+  for (const [ids, rate, weaponType] of mods.status_count_damage ?? []) {
+    if (weaponType && (base !== 'weapon' || wt?.id !== weaponType)) continue;
     statusDamage += [...new Set(ids)].filter(id => enemy.statuses[id]).length * rate;
   }
   pm += Math.min(f(data, 'status_damage_cap'), statusDamage) + actionBonus;
@@ -882,7 +883,7 @@ function doAttack(data, game, b, i, skill, target, cm, { normalSkillReady = fals
       const r = attackDamage(data, game, b, i, e, skill, cm, { actionBonus });
       const before = b.enemies[e].hp;
       hitEnemy(data, game, b, i, e, r.damage, { ...r, prefix: describeHit(r) });
-      if (skill.effect.st && r.landed && b.enemies[e].hp > 0) inflictByActor(data, game, b, i, e, skill.effect.st, cm);
+      if (r.landed) applyAttackStatuses(data, game, b, i, e, skill.effect, cm);
       weaponHitBonus(Math.max(0, before - b.enemies[e].hp), r);
     }
     finishAttack();
@@ -925,7 +926,7 @@ function doAttack(data, game, b, i, skill, target, cm, { normalSkillReady = fals
         }
       }
     }
-    if (skill?.effect.st && r.landed && b.enemies[e].hp > 0) inflictByActor(data, game, b, i, e, skill.effect.st, cm);
+    if (skill && r.landed) applyAttackStatuses(data, game, b, i, e, skill.effect, cm);
     const ap = memberMods(data, m).auto_poison;
     if (!skill && ap && r.landed && b.enemies[e].hp > 0) inflictByActor(data, game, b, i, e, [data.statusEffects.get('poison').name, ap], cm);
     // 通常攻撃で発動する武器固有の状態異常（鎚・鎌）
@@ -960,6 +961,12 @@ function doAttack(data, game, b, i, skill, target, cm, { normalSkillReady = fals
 }
 
 const CONTROL_KINDS = new Set(['skip_until_hit', 'skip_once', 'skip_chance', 'petrify', 'random_target', 'charm']);
+
+function applyAttackStatuses(data, game, b, actor, target, effect, cm) {
+  if (b.enemies[target].hp <= 0) return;
+  if (effect.st) inflictByActor(data, game, b, actor, target, effect.st, cm);
+  for (const status of effect.extra_st ?? []) inflictByActor(data, game, b, actor, target, status, cm);
+}
 
 function inflictByActor(data, game, b, actor, target, status, cm) {
   const member = game.party[actor];

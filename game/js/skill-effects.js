@@ -14,7 +14,11 @@ function passiveText(data, key, value) {
   if (key === 'wdmg') return `${names(value[0])}の武器攻撃ダメージ +${pct(value[1])}`;
   if (key === 'edmg') return `${names(value[0])}属性ダメージ +${pct(value[1])}`;
   if (key === 'tdmg') return `${names(value[0])}へのダメージ +${pct(value[1])}`;
-  if (key === 'status_count_damage') return `${names(value[0].map(id => data.statusEffects.get(id)?.name ?? id))}のうち、対象に付いている1種類ごとに直接ダメージ +${pct(value[1])}`;
+  if (key === 'status_count_damage') {
+    const [ids, rate, weaponType] = value;
+    const weapon = weaponType ? `${data.weaponTypes.get(weaponType)?.name ?? weaponType}の武器攻撃で、` : '';
+    return `${weapon}${names(ids.map(id => data.statusEffects.get(id)?.name ?? id))}のうち、対象に付いている1種類ごとに直接ダメージ +${pct(rate)}`;
+  }
   const special = {
     bounty_chance: () => `賞金首の遭遇率 +${pct(value)}（パーティーで1人分）`,
     poison_spread: () => `毒・猛毒の敵を倒すと、別の敵1体に同じ状態を付与（基礎確率${pct(value)}、1巡1回）`,
@@ -137,8 +141,7 @@ export function describeSkillEffect(data, skill) {
         : '敵一体から通常素材を盗む（基礎成功率50%・一体につき一度）');
       break;
   }
-  if (effect.st) {
-    const [name, rate] = effect.st;
+  for (const [name, rate] of [effect.st, ...(skill.kind === 'attack' ? effect.extra_st ?? [] : [])].filter(Boolean)) {
     const label = data.statusEffects.get(name)?.name ?? name;
     parts.push(`${skill.kind === 'attack' ? 'ダメージを与えた相手に' : ''}${label}を付与（基礎付与率${pct(rate)}・補正や耐性で変化）`);
   }

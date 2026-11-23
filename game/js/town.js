@@ -6,6 +6,7 @@ import { addItem } from './loot.js?v=build36-1';
 import { currentRank, allowedDungeons } from './dungeon.js?v=systems-v1';
 import { monsterPool } from './encounter.js?v=systems-v1';
 import { buildWorldMap } from './world-map.js';
+import { unlockReportedHuntJobs } from './temple.js?v=systems-v1';
 
 export const TOWN_FORMULAS = Object.freeze({
   days_per_month: 30, // balance.json の calendar.days_per_month があればそちらを使う
@@ -297,11 +298,15 @@ export function acceptQuest(dataOrGame, gameOrUid, uid, rng = Math.random) {
 export function countKills(game, enemies, dungeonId = null) {
   for (const q of game.quests ?? []) {
     if (!['hunt', 'boss', 'bounty'].includes(q.type)) continue;
-    const killed = q.targetMode === 'dungeon'
-      ? (q.dungeonId === dungeonId ? enemies.filter((e) => q.targetIds?.includes(e.monsterId)).length : 0)
-      : enemies.filter((e) => e.monsterId === q.target).length;
-    q.progress = Math.min(q.count, (q.progress ?? 0) + killed);
-    if (q.special && killed > 0 && q.progress >= q.count) q.completedDay ??= game.day;
+    const defeated = q.targetMode === 'dungeon'
+      ? (q.dungeonId === dungeonId ? enemies.filter(e => q.targetIds?.includes(e.monsterId)) : [])
+      : enemies.filter(e => e.monsterId === q.target);
+    if ((q.type === 'hunt' || q.type === 'bounty') && (q.progress ?? 0) < q.count) {
+      const statuses = defeated.map(e => e.status).filter(Boolean);
+      if (statuses.length) q.defeatedStatusIds = [...new Set([...(q.defeatedStatusIds ?? []), ...statuses])];
+    }
+    q.progress = Math.min(q.count, (q.progress ?? 0) + defeated.length);
+    if (q.special && defeated.length && q.progress >= q.count) q.completedDay ??= game.day;
   }
 }
 
@@ -375,6 +380,7 @@ export function reportQuest(data, game, uid, rng = Math.random) {
   const pts = questRankPoints(data, game, q);
   game.rankPoints = (game.rankPoints ?? 0) + pts;
   lines.push(`ランクのポイント +${pts}`);
+  lines.push(...unlockReportedHuntJobs(data, game, q));
   game.quests.splice(i, 1);
   game.questBoardUsed ??= [];
   if (!game.questBoardUsed.includes(questKey(q))) game.questBoardUsed.push(questKey(q));

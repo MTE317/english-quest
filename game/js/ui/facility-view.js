@@ -163,6 +163,7 @@ export function templeExtras(data, g, act) {
     const name = job.name;
     const opened = (g.unlockedJobs ?? []).includes(rule.job_id);
     if (opened) return el('p', {}, `${name} ・ 解放済み`);
+    if (rule.method === '討伐報告') return null;
     if (rule.method === '発見') {
       const progress = jobDiscoveryProgress(data, g, rule.job_id);
       const dungeon = data.dungeons.get(progress.dungeonId);
