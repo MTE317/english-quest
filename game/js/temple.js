@@ -36,6 +36,20 @@ export function unlockJob(data, game, jobId) {
   return `${data.jobsById.get(jobId).name}を解放した！`;
 }
 
+export function unlockReportedHuntJobs(data, game, quest) {
+  if (!['hunt', 'bounty'].includes(quest.type) || !quest.defeatedStatusIds?.length) return [];
+  const messages = [];
+  game.unlockedJobs ??= [];
+  for (const rule of data.jobUnlocks.values()) {
+    if (rule.method !== '討伐報告' || !quest.defeatedStatusIds.includes(rule.report_enemy_status)) continue;
+    const job = data.jobsById.get(rule.job_id);
+    if (!job?.publicRelease || game.unlockedJobs.includes(job.id)) continue;
+    game.unlockedJobs.push(job.id);
+    messages.push(`${job.name}を解放した！`);
+  }
+  return messages;
+}
+
 /** 発見回数は既存の踏破記録から読む。保証は公開中級職の指定行だけに適用する。 */
 export function jobDiscoveryProgress(data, game, jobId) {
   const rule = data.jobUnlocks.get(jobId);

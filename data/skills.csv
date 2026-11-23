@@ -195,3 +195,7 @@ venomist_venom,venomist,毒術,1,毒の継承,attack,2,6,0,0,,"{""base"":""weapo
 venomist_spread,venomist,伝播,1,病蝕の刃,passive,2,0,18,0,,"{""mod"":{""poison_spread"":0.6}}"
 venomist_ring,venomist,奥義,1,毒環の宴,status,4,16,45,1,,"{""tgt"":""all"",""st"":[""毒"",0.65],""once"":true}"
 venomist_harvest,venomist,毒術,2,重毒追い,passive,2,0,20,0,,"{""mod"":{""status_count_damage"":[[""poison"",""toxic""],0.18]}}"
+bloodblade_scorch,bloodblade,灼刃,1,灼刃,attack,2,7,0,0,fire,"{""base"":""weapon"",""element"":""fire"",""m"":1.15,""st"":[""火傷"",0.6]}"
+bloodblade_rend,bloodblade,血風,1,血風斬,attack,2,7,15,0,,"{""base"":""weapon"",""m"":1.25,""st"":[""出血"",0.55]}"
+bloodblade_wounds,bloodblade,心得,1,継続傷の心得,passive,2,0,20,0,,"{""mod"":{""status_count_damage"":[[""burn"",""bleed""],0.12,""scythe""]}}"
+bloodblade_reaping,bloodblade,奥義,1,緋の刈り取り,attack,4,16,45,1,,"{""base"":""weapon"",""m"":1.85,""st"":[""火傷"",0.65],""extra_st"":[[""出血"",0.55]],""once"":true}"
