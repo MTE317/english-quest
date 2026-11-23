@@ -166,7 +166,7 @@ function showHome(g) {
   }
   render(view, sceneHeader('冒険者の町', 'town', {
     detail: '行き先とルーンストーンを選んで遠征へ。',
-    action: heroAction('dungeon.html', 'ダンジョンへ'), status: statusBar(g),
+    action: heroAction('dungeon.html', '世界地図へ'), status: statusBar(g),
   }), townActions(g), townNotices(g), stopCards(), facilityDirectory());
 }
 

@@ -40,12 +40,6 @@ export function canTrainIn(dungeon) {
   return ['近場', '素材の宝庫'].includes(dungeon.kind);
 }
 
-/** 地図の地域は★3段階ずつ。季節遠征は別枠に置く。 */
-export function dungeonRegion(dungeon) {
-  if (dungeon.kind.includes('季節')) return '季節の遠征';
-  return ['周辺の街道', '外縁の領域', '遠方の領域', '最果ての領域'][Math.floor((dungeon.rank - 1) / 3)];
-}
-
 /**
  * 持っていけるルーンストーン：石の★がダンジョンの★以上（srs.json の stone_star_must_be_gte_dungeon_star）
  */
