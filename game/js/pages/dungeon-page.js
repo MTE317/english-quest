@@ -126,7 +126,7 @@ function debugTools() {
       },
     }, '道具を3つずつ足す'),
     el('button', {
-      onclick: () => { session.update((game) => { for (const m of game.party) { m.hp = maxHp(data, m); m.mp = maxMp(data, m); m.persist = []; } }); showDeparture('全員を全回復した'); },
+      onclick: () => { session.update((game) => { for (const m of game.party) { m.hp = maxHp(data, m); m.mp = maxMp(data, m); m.persist = []; delete m.persistState; } }); showDeparture('全員を全回復した'); },
     }, '全員を全回復（宿屋のかわり）'),
     el('button', {
       onclick: () => { session.update((game) => { const i = data.ranks.findIndex((r) => r.id === game.rank); game.rank = data.ranks[Math.min(i + 1, data.ranks.length - 1)].id; }); showDeparture('ランクを1つ上げた'); },

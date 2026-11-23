@@ -3,7 +3,7 @@ import { now } from '../storage.js?v=rune-study-1';
 import { QuestionPicker, REASON_LABEL } from '../picker.js';
 import { makePracticeQuestion, questionDirection, questionSpeech, DIRECTION } from '../quiz.js?v=question-speech-1';
 import { speak, canSpeak, stopSpeech } from '../speech.js?v=music-suite-1';
-import { nextTurn, actionOptions, setPending, resolvePending, targetKind, canAct, skillMp, collectBattleHits, enemyIntent } from '../battle.js?v=build36-1';
+import { nextTurn, actionOptions, setPending, prepareQuizAction, resolvePending, targetKind, canAct, skillMp, collectBattleHits, enemyIntent } from '../battle.js?v=build36-1';
 import { maxHp, maxMp } from '../character.js?v=build36-1';
 import { el, render } from '../dom.js';
 import { expeditionScene } from './scenery.js';
@@ -68,11 +68,12 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
     finishBattle(result);
   }
 
-  async function loop() {
+  async function loop(previousHits = []) {
     stopSpeech();
-    const hits = !b.pending && !b.turn && !b.result
+    const nextHits = !b.pending && !b.turn && !b.result
       ? collectBattleHits(b, () => nextTurn(data, g, b))
       : [];
+    const hits = Array.isArray(previousHits) ? [...previousHits, ...nextHits] : nextHits;
     session.save();
     if (b.result) {
       if (hits.length) {
@@ -310,6 +311,9 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
   }
 
   function ask(action) {
+    let ready;
+    const hits = collectBattleHits(b, () => { ready = prepareQuizAction(data, g, b); });
+    if (!ready) return loop(hits);
     const review = run.questionPool?.length ? run.questionPool : null;
     const next = review?.length
       ? { word: lex.wordsById.get(review[(run.challengeQuestions ?? 0) % review.length]), reason: 'practice' }
@@ -323,6 +327,7 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
     run.quiz = picker.toState();
     session.save();
     showQuestion();
+    playHits(hits);
   }
 
   function actionLabel(action) {
