@@ -222,7 +222,8 @@ export function prepareParty(data, dungeon, profileId = 'balanced', preparation 
   const prepared = preparation === 'prepared';
   const specialized = profileId !== 'balanced';
   const idx = index(data);
-  const game = createNewGame(data, profile.jobs.map((job, i) => ({ name: `${i + 1}:${job}`, job, icon: 'x' })));
+  // 過去の4人比較は人数を明示して保ち、新規プレイの6人設定から切り離す。
+  const game = createNewGame(data, profile.jobs.map((job, i) => ({ name: `${i + 1}:${job}`, job, icon: 'x' })), { partySize: profile.jobs.length });
   const initialGold = game.gold;
   game.rank = data.ranks.find((r) => r.maxDungeonRank === dungeon.rank)?.id ?? game.rank;
   game.facilities = Object.fromEntries(data.facilities.map((f) => [f.id, Math.min(dungeon.rank, 12)]));

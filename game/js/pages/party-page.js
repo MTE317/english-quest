@@ -1,7 +1,7 @@
-// パーティの画面：キャラメイク（仮）・4人の一覧・能力値・装備8枠
+// パーティの画面：キャラメイク・6人の一覧・能力値・装備8枠
 import { loadGameData } from '../gamedata.js?v=rune-study-1';
 import { GameSession } from '../save.js?v=rune-study-1';
-import { createNewGame, PARTY_SIZE, normalizeGame } from '../game-state.js?v=build36-1';
+import { createNewGame, defaultPartySpecs, normalizeGame } from '../game-state.js?v=party6-1';
 import {
   computeStats, SLOTS, SLOT_LABEL, STAT_LABEL, canEquip, equipFromStorage, unequip, gearDef,
   aptitudeGrade, xpToNext, levelCap, gainXp, makeGear,
@@ -35,19 +35,14 @@ const jobName = (id) => data.jobsById.get(id)?.name ?? id;
 // ---------------- キャラメイク（仮） ----------------
 function showCreate() {
   const baseJobs = data.jobs.filter((j) => j.tier === 'base');
-  const names = ['アレン', 'リゼ', 'ノア', 'ミラ'];
-  const specs = Array.from({ length: PARTY_SIZE }, (_, i) => ({
-    name: names[i] ?? `${i + 1}人目`,
-    job: baseJobs.find(job => job.id === data.balance.new_game?.party_jobs?.[i])?.id ?? baseJobs[i % baseJobs.length].id,
-    icon: data.icons[i % data.icons.length].id,
-  }));
+  const specs = defaultPartySpecs(data);
   const roster = el('div', { class: 'recruit-roster', role: 'group', 'aria-label': '編集する仲間' });
   const editor = el('div', { class: 'recruit-editor panel', id: 'recruit-editor' });
   const members = specs.map((spec, i) => {
     const face = el('span', { class: 'recruit-icon', 'aria-hidden': 'true' });
     const name = el('strong');
     const job = el('small');
-    const button = el('button', { 'aria-controls': editor.id, onclick: () => edit(i) }, face, name, job);
+    const button = el('button', { type: 'button', 'aria-controls': editor.id, onclick: () => edit(i) }, face, name, job);
     roster.append(button);
     return { button, face, name, job };
   });
@@ -98,7 +93,7 @@ function showCreate() {
   edit(0);
   render(view,
     el('section', { class: 'recruit-screen' },
-      el('h2', { class: 'chapter-title' }, 'パーティを作る'),
+      el('h2', { class: 'chapter-title' }, `${specs.length}人のパーティを作る`),
       el('p', { class: 'muted' }, '仲間を選ぶと、名前・ジョブ・見た目を変更できます。この編成のまま出発もできます。'),
       el('p', { class: 'small muted' }, `初期装備と支度金 ${data.balance.new_game?.gold ?? 0} G を持って出発します。回復役を1人入れると、長く戦いやすくなります。`),
       roster, editor,
@@ -114,7 +109,7 @@ function showCreate() {
   window.scrollTo(0, 0);
 }
 
-// ---------------- 4人の一覧 ----------------
+// ---------------- 仲間の一覧 ----------------
 function bar(cur, max, cls) {
   return el('div', { class: `meter ${cls}` }, el('span', { style: `width:${Math.max(0, Math.min(100, (cur / max) * 100))}%` }));
 }
@@ -124,13 +119,14 @@ function showParty() {
   render(view,
     session.inDungeon ? el('div', { class: 'panel small error' }, 'ダンジョンの中では装備を変えられません。') : null,
     el('div', { class: 'muted small' }, `${g.day}日目・お金 ${g.gold}・倉庫の装備 ${g.storage.gear.length}個`),
-    el('h2', { class: 'chapter-title' }, '冒険中の仲間'),
+    el('h2', { class: 'chapter-title' }, `冒険中の仲間（${g.party.length}人）`),
+    el('p', { class: 'muted small' }, '仲間を選ぶと、装備・能力・スキルを確認できます。'),
     el('ul', { class: 'choice-list party-roster' },
       g.party.map((m, i) => {
         const st = computeStats(data, m);
         return el('li', {},
           el('button', { class: 'roster-card', onclick: () => showMember(i) },
-            memberBanner(m),
+            memberBanner(m, { compact: true }),
             el('div', { class: 'roster-resources' },
               el('div', {}, el('span', {}, `HP　${m.hp} / ${st.hp}`), bar(m.hp, st.hp, 'hp')),
               el('div', {}, el('span', {}, `MP　${m.mp} / ${st.mp}`), bar(m.mp, st.mp, 'mp')))));
@@ -160,11 +156,25 @@ function gearNameWithIcon(gear, jobId, tag = 'span') {
 
 const slotIcons = { weapon: '⚔', offhand: '†', accessory1: '✦', accessory2: '✧' };
 
-function memberBanner(member) {
-  return el('div', { class: 'equipment-banner' },
-    el('span', { class: 'equipment-portrait', 'aria-hidden': 'true' }, portraitIcon(member.icon)),
+function memberBanner(member, { compact = false } = {}) {
+  return el('div', { class: `equipment-banner${compact ? ' equipment-banner-compact' : ''}` },
+    el('span', { class: 'equipment-portrait', 'aria-hidden': 'true' }, portraitIcon(member.icon, { small: compact })),
     el('div', {}, el('strong', {}, member.name),
-      el('span', { class: 'muted small' }, `${jobName(member.job)}　Lv ${member.lv}`)));
+      el('span', { class: 'muted small' }, jobName(member.job)),
+      el('span', { class: 'member-level small' }, `Lv ${member.lv}`)));
+}
+
+/** 詳細画面からも、一覧と同じ並びのまま全員を選べる。 */
+function memberSwitcher(index, select = showMember) {
+  return el('div', { class: 'party-member-switch', role: 'group', 'aria-label': '確認する仲間' },
+    session.game.party.map((member, i) => el('button', {
+      type: 'button', 'aria-pressed': String(i === index),
+      'aria-label': `${i + 1}人目・${member.name}・${jobName(member.job)}`,
+      onclick: () => {
+        select(i);
+        view.querySelector('.party-member-switch [aria-pressed="true"]')?.focus({ preventScroll: true });
+      },
+    }, portraitIcon(member.icon, { small: true }), el('span', {}, member.name))));
 }
 
 function showMember(index) {
@@ -180,6 +190,7 @@ function showMember(index) {
   ];
   render(view,
     el('button', { class: 'ghost', onclick: showParty }, '← パーティの一覧へ'),
+    memberSwitcher(index),
     memberBanner(m),
     el('div', { class: 'row' },
       el('button', { onclick: () => showSkills(index) }, 'スキルツリー'),
@@ -251,6 +262,7 @@ function showSkills(index, jobId, skillId, message = '') {
 
   render(view,
     el('button', { class: 'ghost', onclick: () => showMember(index) }, `← ${member.name}へ`),
+    memberSwitcher(index, (next) => showSkills(next)),
     memberBanner(member),
     el('h2', {}, 'スキルツリー'),
     el('p', { class: 'panel small' }, `残りAP ${member.ap[job] ?? 0}・通常枠 ${used.actions}/${cap.actions}・パッシブ枠 ${used.passives}/${cap.passives}`),
@@ -289,6 +301,8 @@ function showCommon(index, msg = null) {
   const weaponTypes = Object.keys(m.mastery ?? {});
   render(view,
     el('button', { class: 'ghost', onclick: () => showMember(index) }, `← ${m.name}へ`),
+    memberSwitcher(index, (next) => showCommon(next)),
+    memberBanner(m),
     msg ? el('div', { class: 'panel small error' }, msg) : null,
     el('h2', {}, `共通ツリー（ポイント ${pts.left}）`),
     el('p', { class: 'muted small' }, 'レベルが上がるとポイントが入る。どのジョブでも効く。'),
@@ -357,6 +371,7 @@ function showSlot(index, slot) {
   }
   render(view,
     el('button', { class: 'ghost', onclick: () => showMember(index) }, `← ${m.name}へ`),
+    memberSwitcher(index, (next) => showSlot(next, slot)),
     memberBanner(m),
     el('h2', {}, SLOT_LABEL[slot]),
     el('div', { class: 'panel small' }, el('span', { class: 'equipment-slot-label' }, '装備中'),

@@ -27,7 +27,7 @@ test('追加8技能の状態異常・基礎付与率と攻撃の属性・倍率�
 });
 
 test('新しい2段目の前提は習得判定と同じ技能を参照する', () => {
-  const game = createNewGame(data, ['spellblade', 'knight', 'black_mage', 'white_mage']
+  const game = createNewGame(data, ['spellblade', 'knight', 'black_mage', 'white_mage', 'thief', 'bard']
     .map((job) => ({ job, name: job, icon: 'x' })));
   const member = game.party[0];
   member.ap.spellblade = 100;

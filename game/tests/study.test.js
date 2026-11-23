@@ -15,7 +15,7 @@ import { realGameData, realLexicon, readJson, readCsv, MemoryStorage, T0, DAY } 
 const data = realGameData();
 const lex = realLexicon();
 const sch = new Scheduler(readJson('srs.json'));
-const party = ['warrior', 'knight', 'black_mage', 'white_mage'].map((job) => ({ name: job, job, icon: 'x' }));
+const party = ['warrior', 'knight', 'black_mage', 'white_mage', 'thief', 'bard'].map((job) => ({ name: job, job, icon: 'x' }));
 const today = sch.dayOf(T0);
 
 test('資料室：読み解くと進み具合に入る。報酬はない（お金・経験値は変わらない）', () => {

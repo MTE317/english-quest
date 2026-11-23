@@ -18,7 +18,7 @@ import { MemoryStorage, T0, readCsv, readJson, realLexicon } from './helpers.js'
 
 const data = buildGameData(Object.fromEntries(Object.entries(GAME_FILES).map(([key, name]) =>
   [key, name.endsWith('.json') ? readJson(name) : readCsv(name).rows])));
-const specs = ['warrior', 'knight', 'black_mage', 'white_mage'].map((job) => ({ name: job, job, icon: 'x' }));
+const specs = ['warrior', 'knight', 'black_mage', 'white_mage', 'thief', 'bard'].map((job) => ({ name: job, job, icon: 'x' }));
 const game = () => createNewGame(data, specs);
 
 test('通常攻撃のMP回復は正解のみ。スキルの消費はレベルで変わる', () => {

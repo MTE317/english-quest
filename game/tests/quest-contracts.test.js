@@ -10,7 +10,7 @@ import { GameSession } from '../js/save.js';
 import { realGameData, seededRng, MemoryStorage } from './helpers.js';
 
 const data = realGameData();
-const party = ['warrior', 'knight', 'black_mage', 'white_mage'].map((job) => ({ name: job, job, icon: 'x' }));
+const party = ['warrior', 'knight', 'black_mage', 'white_mage', 'thief', 'bard'].map((job) => ({ name: job, job, icon: 'x' }));
 const fresh = () => createNewGame(data, party);
 const board = (g, seed = 17) => fillBoard(data, g, seededRng(seed));
 

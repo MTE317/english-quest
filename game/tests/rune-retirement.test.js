@@ -11,7 +11,7 @@ import { MemoryStorage, readCsv, readJson } from './helpers.js';
 
 const data = buildGameData(Object.fromEntries(Object.entries(GAME_FILES).map(([key, name]) =>
   [key, name.endsWith('.json') ? readJson(name) : readCsv(name).rows])));
-const specs = ['warrior', 'knight', 'black_mage', 'white_mage'].map((job) => ({ name: job, job, icon: 'x' }));
+const specs = ['warrior', 'knight', 'black_mage', 'white_mage', 'thief', 'bard'].map((job) => ({ name: job, job, icon: 'x' }));
 const fresh = () => createNewGame(data, specs);
 
 function legacy() {

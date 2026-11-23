@@ -14,6 +14,7 @@ const data = realGameData();
 const party = [
   { name: 'A', job: 'warrior', icon: 'x' }, { name: 'B', job: 'knight', icon: 'x' },
   { name: 'C', job: 'black_mage', icon: 'x' }, { name: 'D', job: 'white_mage', icon: 'x' },
+  { name: 'E', job: 'thief', icon: 'x' }, { name: 'F', job: 'bard', icon: 'x' },
 ];
 const Q = { wordId: 'lx_r1_001' }; // 問題の中身は戦闘には関係しない
 
@@ -195,7 +196,7 @@ test('全問不正解で強い敵と戦うと全滅する（負けがある）',
 
 test('すべてのジョブの1段目のスキルが使える（エラーにならない）', () => {
   for (const job of data.jobs) {
-    const game = createNewGame(data, [{ name: 'X', job: job.id, icon: 'x' }, party[1], party[2], party[3]]);
+    const game = createNewGame(data, [{ name: 'X', job: job.id, icon: 'x' }, ...party.slice(1)]);
     for (const s of knownSkills(data, game.party[0])) {
       const e = makeEnemy(data, 'slime', { lv: 1 }); e.spd = 0; e.hp = e.maxHp = 99999;
       const b = createBattle(data, game, { enemies: [e], seed: 1 });

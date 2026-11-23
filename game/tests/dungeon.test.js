@@ -13,7 +13,7 @@ import { realGameData, realLexicon, readJson, readCsv, MemoryStorage } from './h
 
 const data = realGameData();
 const lex = realLexicon();
-const party = ['warrior', 'knight', 'black_mage', 'white_mage'].map((job) => ({ name: job, job, icon: 'x' }));
+const party = ['warrior', 'knight', 'black_mage', 'white_mage', 'thief', 'bard'].map((job) => ({ name: job, job, icon: 'x' }));
 
 function newSession() {
   const s = new GameSession({ storage: new MemoryStorage() });

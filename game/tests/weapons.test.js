@@ -13,7 +13,7 @@ import { readCsv, readJson } from './helpers.js';
 const data = buildGameData(Object.fromEntries(Object.entries(GAME_FILES).map(([key, name]) =>
   [key, name.endsWith('.json') ? readJson(name) : readCsv(name).rows])));
 const member = (job) => ({ name: job, job, icon: 'x' });
-const fresh = (job = 'warrior') => createNewGame(data, [member(job), member('knight'), member('black_mage'), member('white_mage')]);
+const fresh = (job = 'warrior') => createNewGame(data, [member(job), member('knight'), member('black_mage'), member('white_mage'), member('thief'), member('bard')]);
 
 function prepare(weapon, job, seed = 1, count = 1, weak = []) {
   const game = fresh(job);
@@ -134,6 +134,11 @@ test('弓は弱点攻撃の倍率が高く、短剣はSPDと素材の入手確�
   thief.party[0].equip.weapon = null;
   assert.equal(speedWith - computeStats(data, thief.party[0]).spd, 2);
   thief.party[0].equip.weapon = oldDagger;
+  // 追加された仲間の短剣補正が混ざらないよう、先頭の1本だけで比較する。
+  for (const member of thief.party.slice(1)) {
+    member.equip.weapon = null;
+    member.equip.offhand = null;
+  }
   const enemy = { monsterId: 'slime', boss: false, bounty: false };
   // 基礎ドロップ率が調整されても、短剣あり/なしの境目を検証する。
   const chance = data.dropTables.get('mossy_cave').materialRate;

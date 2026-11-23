@@ -1,17 +1,29 @@
 // 新しいゲームの進み具合（セーブの game の中身）
-import { createMember, maxHp, maxMp } from './character.js?v=build36-1';
+import { createMember, maxHp, maxMp, levelCap } from './character.js?v=build36-1';
 import { ensureLoadout, jobSkills, isLearned } from './growth.js?v=build36-1';
 import { parseAmounts } from './csv.js';
 
-export const PARTY_SIZE = 4;
+export const PARTY_SIZE = 6;
+
+/** 新規作成と旧セーブへの加入で使う、データに沿った初期メンバー。 */
+export function defaultPartySpecs(data) {
+  const names = ['アレン', 'リゼ', 'ノア', 'ミラ', 'カイ', 'エマ'];
+  const jobs = data.jobs.filter((job) => job.tier === 'base');
+  return Array.from({ length: PARTY_SIZE }, (_, i) => ({
+    name: names[i],
+    job: jobs.find((job) => job.id === data.balance.new_game?.party_jobs?.[i])?.id ?? jobs[i % jobs.length].id,
+    icon: data.icons[i % data.icons.length]?.id ?? '',
+  }));
+}
 
 /**
  * はじめから始めるときの進み具合
- * @param partySpecs 4人ぶんの { name, job, icon }
+ * @param partySpecs 6人ぶんの { name, job, icon }
+ * @param options partySize は過去の比較用編成を読み込む場合だけ明示する。画面は常に PARTY_SIZE を使う。
  * 最初のお金と日付は data にまだないので、balance.json の new_game があればそれを使う（docs/requests.md で依頼中）
  */
-export function createNewGame(data, partySpecs) {
-  if (partySpecs.length !== PARTY_SIZE) throw new Error(`パーティは${PARTY_SIZE}人`);
+export function createNewGame(data, partySpecs, { partySize = PARTY_SIZE } = {}) {
+  if (!Array.isArray(partySpecs) || partySpecs.length !== partySize) throw new Error(`パーティは${partySize}人`);
   const start = data.balance.new_game ?? {};
   const game = {
     day: start.day ?? 1,
@@ -25,7 +37,7 @@ export function createNewGame(data, partySpecs) {
     backpackTier: data.backpackTiers?.[0]?.tier ?? 1,
   };
   game.party = partySpecs.map((spec, i) => createMember(data, game, spec, i));
-  return normalizeGame(data, game);
+  return normalizeGame(data, game, null, { expandParty: partySize === PARTY_SIZE });
 }
 
 /**
@@ -33,7 +45,7 @@ export function createNewGame(data, partySpecs) {
  * 専用制作の固定効果は現行マスタへそろえる。廃止したルーン能力と枠を移行する。
  * 遠征中は全滅時の復元元にも適用する。
  */
-export function normalizeGame(data, game, run = null) {
+export function normalizeGame(data, game, run = null, { expandParty = true } = {}) {
   if (!game) return game;
   game.storage = game.storage ?? { gear: [], materials: {} };
   game.storage.materials ??= {};
@@ -67,10 +79,41 @@ export function normalizeGame(data, game, run = null) {
     }
   }
   for (const gear of game.storage.gear ?? []) alignCraftedEffects(data, gear);
+  // 旧4人の遠征は最後まで同じ人数で続ける。戦闘の配列や行動順、全滅前の写しを変えない。
+  if (expandParty && !run) expandLegacyParty(data, game);
   // 入場時の写しも返還済みにし、全滅で旧能力が復活したり二重返還されたりしないようにする。
   // 戦闘中の能力値は毎回 game.party から算出されるため、行動順や進行の記録は変えない。
-  if (run?.snapshot && run.snapshot !== game) normalizeGame(data, run.snapshot);
+  if (run?.snapshot && run.snapshot !== game) normalizeGame(data, run.snapshot, null, { expandParty: false });
   return game;
+}
+
+/** 町にいる旧4〜5人のセーブだけに仲間を補い、既存キャラと所持品を維持する。 */
+function expandLegacyParty(data, game) {
+  if (!Array.isArray(game.party) || game.party.length < 4 || game.party.length >= PARTY_SIZE) return;
+  const levels = game.party.map((member) => member.lv).filter((lv) => Number.isInteger(lv) && lv > 0);
+  const level = Math.min(levelCap(data), levels.length ? Math.min(...levels) : 1);
+  const gear = [...(game.storage.gear ?? []), ...game.party.flatMap((member) => Object.values(member.equip ?? {}))];
+  game.nextUid = Math.max(1, Number(game.nextUid) || 1,
+    ...gear.map((item) => Number.isSafeInteger(item?.uid) ? item.uid + 1 : 1));
+  const specs = defaultPartySpecs(data);
+  const ids = new Set(game.party.map((member) => member.id));
+  const added = [];
+  while (game.party.length < PARTY_SIZE) {
+    const index = game.party.length;
+    const member = createMember(data, game, specs[index], index);
+    let idIndex = index + 1;
+    while (ids.has(`m${idIndex}`)) idIndex += 1;
+    member.id = `m${idIndex}`;
+    ids.add(member.id);
+    member.lv = level;
+    member.room = null;
+    member.hp = maxHp(data, member);
+    member.mp = maxMp(data, member);
+    member.masteredJobs = [];
+    game.party.push(member);
+    added.push(member.name);
+  }
+  game.notices.push(`${added.join('・')}が加入し、パーティが${PARTY_SIZE}人になりました。加入時のレベルは仲間の最低レベル（Lv${level}）です。`);
 }
 
 /** 新技能の追加前に極めていたジョブのボーナスを、一度だけ既得として記録する。 */

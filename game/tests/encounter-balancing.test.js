@@ -9,7 +9,7 @@ import { calendarOf } from '../js/town.js';
 import { goldForEnemy } from '../js/loot.js';
 
 const data = realGameData();
-const party = ['warrior', 'knight', 'black_mage', 'white_mage'].map((job) => ({ name: job, job, icon: 'x' }));
+const party = ['warrior', 'knight', 'black_mage', 'white_mage', 'thief', 'bard'].map((job) => ({ name: job, job, icon: 'x' }));
 
 function newSession(gameData = data) {
   const storage = new MemoryStorage();

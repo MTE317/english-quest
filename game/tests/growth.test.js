@@ -10,7 +10,7 @@ import { computeStats, maxHp, canEquip, makeGear, equipFromStorage, gainXp, weap
 import { realGameData } from './helpers.js';
 
 const data = realGameData();
-const party = ['warrior', 'knight', 'black_mage', 'white_mage'].map((job) => ({ name: job, job, icon: 'x' }));
+const party = ['warrior', 'knight', 'black_mage', 'white_mage', 'thief', 'bard'].map((job) => ({ name: job, job, icon: 'x' }));
 const fresh = () => createNewGame(data, party);
 
 test('最初は1段目のスキルを覚えていて、枠についている', () => {
