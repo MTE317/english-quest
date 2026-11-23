@@ -208,3 +208,7 @@ seal_archer_ultimate,seal_archer,静寂の一射,1,静寂の一射,attack,4,16,4
 neutralist_art,neutralist,無相弾,1,無相弾,attack,2,6,0,0,none,"{""base"":""mag"",""m"":1.7}"
 neutralist_passive,neutralist,無相の節約,1,無相の節約,passive,2,0,20,0,,"{""mod"":{""neutral_magic_mp_save"":0.1}}"
 neutralist_ultimate,neutralist,白紙の星,1,白紙の星,attack,4,18,45,1,none,"{""base"":""mag"",""m"":3,""once"":true}"
+petrifier_shot,petrifier,硬化弾,1,硬化弾,attack,2,7,0,0,earth,"{""base"":""weapon"",""element"":""earth"",""m"":1.1,""st"":[""石化"",0.18],""require_weapon"":""gun""}"
+petrifier_pierce,petrifier,穿岩弾,1,穿岩弾,attack,2,7,15,0,earth,"{""base"":""weapon"",""element"":""earth"",""m"":1.35,""defign"":0.25,""require_weapon"":""gun""}"
+petrifier_aim,petrifier,石化の狙い,1,石化の狙い,passive,2,0,18,0,,"{""mod"":{""gun_petrify_rate"":0.2}}"
+petrifier_volley,petrifier,石化の斉射,1,石化の斉射,attack,4,17,45,1,earth,"{""base"":""weapon"",""element"":""earth"",""m"":0.7,""tgt"":""all"",""st"":[""石化"",0.12],""once"":true,""require_weapon"":""gun""}"

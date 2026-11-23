@@ -1,0 +1,67 @@
+{
+  "fingerprint": "846f2b8a97a8cda4cb49d104e88260bd302a6358b308f6f4c043ccc34eb1e63c",
+  "sourceUnchangedAtCompletion": true,
+  "seed": 1217071,
+  "step": 7919,
+  "rows": [
+    {
+      "name": "single",
+      "runs": 2000,
+      "successes": 404,
+      "rate": 0.202,
+      "passives": [
+        "petrifier_aim"
+      ]
+    },
+    {
+      "name": "mixed",
+      "runs": 2000,
+      "successes": 404,
+      "rate": 0.202,
+      "passives": [
+        "petrifier_aim"
+      ]
+    },
+    {
+      "name": "synergy",
+      "runs": 2000,
+      "successes": 515,
+      "rate": 0.2575,
+      "passives": [
+        "petrifier_aim",
+        "hexer_p2_s4",
+        "apothecary_p2_s2"
+      ]
+    },
+    {
+      "name": "duplicate",
+      "runs": 2000,
+      "successes": 515,
+      "rate": 0.2575,
+      "passives": [
+        "petrifier_aim",
+        "hexer_p2_s4",
+        "apothecary_p2_s2"
+      ]
+    }
+  ],
+  "costs": {
+    "ap": {
+      "hexer": 90,
+      "apothecary": 20
+    },
+    "jp": 640,
+    "materials": {
+      "hexer": {
+        "skeleton_rare": 2,
+        "wandering_armor_mat": 5,
+        "harpy_mat": 3
+      },
+      "apothecary": {
+        "poison_spider_mat": 4,
+        "skeleton_mat": 3
+      }
+    }
+  },
+  "limits": "合法な他職経由で既存パッシブ2個を装着。HP100000の単発制御プローブ。味方のDパッシブは重ならず、既存状態付与+25%は既存計算通り加算。装備付与の最大化・全員D・状態専用の石化弾は含めない。"
+}
