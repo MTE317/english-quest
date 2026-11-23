@@ -1,42 +1,45 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { allowedDungeons } from '../js/dungeon.js';
-import { buildWorldMap, meetsDiscoveryRule, newDiscoveries } from '../js/world-map.js';
+import { buildWorldMap, isTrialDungeonUnlocked, meetsDiscoveryRule, newDiscoveries } from '../js/world-map.js';
 import { realGameData } from './helpers.js';
 
 const data = realGameData();
 const atlas = (game) => buildWorldMap(data.dungeons, allowedDungeons(data, game), game);
+const ids = (game) => allowedDungeons(data, game).map(({ id }) => id).sort();
 
-test('an older starting save shows three regions and no locked destinations or lines', () => {
+test('新規開始は接続ノードを使わず3ダンジョンだけ選べる', () => {
   const game = { rank: 'R01' };
-  const { regions, routes } = atlas(game);
-  assert.deepEqual(regions.map(({ id }) => id), ['01', '02', '03']);
-  assert.equal(regions.flatMap(({ dungeons }) => dungeons).length, 5);
-  assert.ok(regions.every(({ state }) => state === 'accessible'));
-  assert.ok(routes.flat().every((id) => regions.some((region) => region.id === id)));
-  assert.deepEqual(newDiscoveries(regions, []), []);
+  const world = atlas(game);
+  assert.deepEqual(world.dungeons.map(({ id }) => id),
+    ['mossy_cave', 'sunlit_forest', 'goblin_quarry']);
+  assert.equal(Object.hasOwn(world, 'regions'), false);
+  assert.equal(Object.hasOwn(world, 'routes'), false);
+  assert.ok(world.dungeons.every(({ state }) => state === 'accessible'));
+  assert.deepEqual(newDiscoveries(world.dungeons, []), []);
 });
 
-test('a clear discovers a remote region without exposing its destinations or adding a route', () => {
-  const game = { rank: 'R01', cleared: { mossy_cave: 1, twisted_tunnel: 1 } };
-  const { regions, routes } = atlas(game);
-  assert.equal(regions[0].state, 'cleared');
-  const remote = regions.find(({ id }) => id === '04');
-  assert.equal(remote.state, 'discovered');
-  assert.deepEqual(remote.dungeons, []);
-  assert.ok(!routes.flat().includes(remote.id));
-  assert.deepEqual(newDiscoveries(regions, []), [remote]);
-  assert.deepEqual(newDiscoveries(regions, [remote.id]), []);
-  assert.equal(atlas({ ...game, rank: 'R02' }).regions.find(({ id }) => id === '04').state, 'accessible');
+test('苔むした洞窟から崩れた砦、木漏れ日の森から霧の湿原を別々に発見する', () => {
+  const game = { rank: 'R01', cleared: { mossy_cave: 1 } };
+  assert.ok(isTrialDungeonUnlocked(game, 'ruined_fort'));
+  assert.ok(!isTrialDungeonUnlocked(game, 'misty_marsh'));
+  const world = atlas(game);
+  assert.deepEqual(world.dungeons.map(({ id }) => id),
+    ['mossy_cave', 'sunlit_forest', 'goblin_quarry', 'ruined_fort']);
+  assert.equal(world.dungeons[0].state, 'cleared');
+  assert.deepEqual(newDiscoveries(world.dungeons, []).map(({ id }) => id), ['ruined_fort']);
+  assert.deepEqual(newDiscoveries(world.dungeons, ['ruined_fort']), []);
+  game.cleared.sunlit_forest = 1;
+  assert.deepEqual(atlas(game).dungeons.map(({ id }) => id),
+    ['mossy_cave', 'sunlit_forest', 'goblin_quarry', 'ruined_fort', 'misty_marsh']);
 });
 
-test('all existing ranks, route exceptions and seasonal destinations keep their existing entry rules', () => {
-  for (const { id } of data.ranks) {
-    const game = { rank: id, quests: [{ dungeonId: 'silent_corridor' }] };
-    const { regions } = atlas(game);
-    const mapIds = regions.flatMap(({ dungeons }) => dungeons.map((dungeon) => dungeon.id)).sort();
-    assert.deepEqual(mapIds, allowedDungeons(data, game).map((dungeon) => dungeon.id).sort());
-  }
+test('冒険者ランクを上げても他の55か所は公開されず、旧セーブの踏破履歴は利用する', () => {
+  assert.deepEqual(ids({ rank: 'S' }), ids({ rank: 'R01' }));
+  assert.ok(!isTrialDungeonUnlocked({ rank: 'S' }, 'old_catacomb'));
+  const legacy = { rank: 'S', cleared: { sunlit_forest: 2, mossy_cave: 7, old_catacomb: 3 } };
+  assert.deepEqual(ids(legacy),
+    ['mossy_cave', 'sunlit_forest', 'goblin_quarry', 'ruined_fort', 'misty_marsh'].sort());
   const rule = { clears: ['any-site'], flags: ['quest-reward'] };
   assert.equal(meetsDiscoveryRule({ cleared: { 'any-site': 1 } }, rule), false);
   assert.equal(meetsDiscoveryRule({ cleared: { 'any-site': 1 }, worldFlags: { 'quest-reward': true } }, rule), true);

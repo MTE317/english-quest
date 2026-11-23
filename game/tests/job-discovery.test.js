@@ -98,6 +98,7 @@ test('実遠征のボス撃破時は未加算の踏破数を使い、帰還で�
   const session = new GameSession({ storage: new MemoryStorage() });
   const game = fresh();
   game.rank = 'R02';
+  game.cleared.mossy_cave = 1; // 砦の発見条件
   game.cleared.ruined_fort = 2;
   session.startNew(game);
   startRun(data, session, { dungeonId: 'ruined_fort', stoneId: 'rs_2_001', quizState: null, seed: 1 });
@@ -120,6 +121,7 @@ test('全滅や途中帰還を繰り返しても発見の踏破回数を増や�
   const session = new GameSession({ storage: new MemoryStorage() });
   const game = fresh();
   game.rank = 'R02';
+  game.cleared.mossy_cave = 1;
   game.cleared.ruined_fort = 1;
   session.startNew(game);
   startRun(data, session, { dungeonId: 'ruined_fort', stoneId: 'rs_2_001', quizState: null, seed: 3 });

@@ -7,7 +7,6 @@ import {
   calendarOf, fillBoard, boardSize, questAcceptLimit, acceptQuest, canAcceptQuest, abandonQuest, canReport, reportQuest, questText, questProgress, questDestination, questRewardGold, questRankPoints, questDepositTotal, questAbandonRefund, nextRankStatus, stayInn, revive, reviveCost, checkRankUp,
   canExpandBackpack, expandBackpack, feeTier,
   nextBackpackTier,
-  questBoardAreas, selectQuestBoardArea,
 } from '../town.js?v=systems-v1';
 import { backpackSlots } from '../loot.js?v=build36-1';
 import { maxHp, maxMp, gearDef } from '../character.js?v=build36-1';
@@ -219,17 +218,11 @@ function guild() {
       view.querySelector('.district-switch [aria-pressed="true"]')?.focus({ preventScroll: true });
     } }, title)));
   if (guildTab === 'board') {
-    const areas = questBoardAreas(data, g);
-    const listed = g.questBoardArea ?? '';
-    const stories = explorationStories(data, g, areas.find(area => area.id === listed)).filter(story => !story.accepted);
+    const stories = explorationStories(data, g).filter(story => !story.accepted);
     return [switcher, el('section', { class: 'guild-board', 'aria-labelledby': 'guild-board-title' },
     el('header', {}, el('h2', { id: 'guild-board-title' }, '依頼掲示板'),
       el('span', {}, `掲示 ${g.board.length}件・受注 ${g.quests.length} / ${questAcceptLimit(data, g)}件`)),
-    el('label', {}, '地域と難度', el('select', { class: 'select', onchange: e => {
-      session.update(game => selectQuestBoardArea(data, game, e.target.value, rng()));
-      draw();
-    } }, el('option', { value: '', selected: !areas.some(area => area.id === listed) }, '現在のランク'),
-    areas.map(area => el('option', { value: area.id, selected: area.id === listed }, `地域 ${area.region}・★${area.star}`)))),
+    el('p', { class: 'small muted' }, '発見済みの冒険先に関する依頼だけを掲示しています。'),
     el('p', { class: 'small muted' }, `所持金 ${g.gold} G・預けている保証金 ${questDepositTotal(g)} G。`),
     g.specialQuest ? el('ul', { class: 'guild-contracts' }, card(g.specialQuest, false)) : null,
     stories.length ? el('ul', { class: 'guild-contracts' }, stories.map(storyCard)) : null,
@@ -352,7 +345,7 @@ function draw() {
     return;
   }
   // 最初に町を開いたときや、昇格で枠が増えたときに依頼を補充する。
-  if (!session.inDungeon && (g.questBoardVersion !== 2 || (g.board?.length ?? 0) < boardSize(data, g))) {
+  if (!session.inDungeon && (g.questBoardVersion !== 3 || (g.board?.length ?? 0) < boardSize(data, g))) {
     fillBoard(data, g, rng());
     session.save();
   }

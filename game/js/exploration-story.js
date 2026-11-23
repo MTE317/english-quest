@@ -3,7 +3,7 @@ import { allowedDungeons } from './dungeon.js?v=systems-v1';
 function availableStories(data, game) {
   const reachable = new Set(allowedDungeons(data, game).map(d => d.id));
   return (data.balance.exploration_stories ?? []).filter(story =>
-    reachable.has(story.dungeon) &&
+    (reachable.has(story.dungeon) || Boolean(game.explorationStories?.[story.id])) &&
     (!story.flag || game.worldFlags?.[story.flag] === true) &&
     (!story.discovery || game.exploration?.discoveries?.[story.discovery] === true) &&
     (!story.after || game.explorationStories?.[story.after]?.claimed === true));
