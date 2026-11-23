@@ -41,6 +41,9 @@ export function allowedDungeons(data, game) {
 export function dungeonRegion(dungeon) {
   if (dungeon.kind.includes('季節')) return '季節の遠征';
   return ['周辺の街道', '外縁の領域', '遠方の領域', '最果ての領域'][Math.floor((dungeon.rank - 1) / 3)];
+/** 同じ★で複数の育成経路を選べる。季節遠征は固有の攻略経路を持つ。 */
+export function canTrainIn(dungeon) {
+  return ['近場', '素材の宝庫'].includes(dungeon.kind);
 }
 
 /**
