@@ -9,7 +9,7 @@ import { GameSession } from '../save.js?v=rune-study-1';
 import { normalizeGame } from '../game-state.js?v=party6-1';
 import {
   allowedDungeons, startRun, startNextBattle, afterBattle, returnToTown, continueRun, resolveLoot,
-  canTrainIn, dungeonRegion, isBossBattle, runFloorRow, runFloorCount, returnItems, currentRank, useItemOutsideBattle, FIELD_ITEM_EFFECTS,
+  canTrainIn, isBossBattle, runFloorRow, runFloorCount, returnItems, currentRank, useItemOutsideBattle, FIELD_ITEM_EFFECTS,
 } from '../dungeon.js?v=build36-1';
 import { backpackSlots, backpackUsed, addItem } from '../loot.js?v=build36-1';
 import { maxHp, maxMp } from '../character.js?v=build36-1';
@@ -17,6 +17,8 @@ import { createBattleView } from '../ui/battle-view.js?v=music-suite-1';
 import { createVictoryView } from '../ui/victory-view.js?v=pixel-town-1';
 import { stoneAllowed } from '../study.js?v=build36-1';
 import { el, render, stars } from '../dom.js';
+import { buildWorldMap, newDiscoveries } from '../world-map.js?v=world-map-1';
+import { createWorldMapView } from '../ui/world-map-view.js?v=world-map-1';
 import { setSceneMusic } from '../battle-music.js?v=music-suite-1';
 
 import { expeditionScene } from '../ui/scenery.js';
@@ -71,18 +73,17 @@ function showDeparture(message = null) {
   const st = { dungeonId: suggested.id, stoneId: null, training: false };
   const training = el('input', { type: 'checkbox', onchange: (e) => { st.training = e.target.checked; } });
   const trainingOption = el('label', {}, training, ' 育成探索（ボスなし）');
-  const regions = new Map();
-  for (const dungeon of dungeons) {
-    const region = dungeonRegion(dungeon);
-    if (!regions.has(region)) regions.set(region, []);
-    regions.get(region).push(el('option', { value: dungeon.id, selected: dungeon.id === st.dungeonId },
-      stars(dungeon.rank) + ' ' + dungeon.name + (g.cleared?.[dungeon.id] ? '（踏破済み）' : '')));
-  }
-  const destinations = [...regions].map(([label, options]) => el('optgroup', { label }, options));
+  const dungeonLabel = (dungeon) => stars(dungeon.rank) + ' ' + dungeon.name
+    + (g.cleared?.[dungeon.id] ? '（踏破済み）' : '');
+  const world = buildWorldMap(data.dungeons, dungeons, g);
+  const seen = Array.isArray(g.worldMapSeen) ? g.worldMapSeen : [];
+  const discoveries = newDiscoveries(world.regions, seen);
+  const destinationHeading = el('h3', { tabindex: '-1' });
   const stoneSel = el('select', { class: 'select', onchange: (e) => { st.stoneId = e.target.value; } });
   const info = el('div', { class: 'route-info', 'aria-live': 'polite' });
   const fill = () => {
     const dg = data.dungeons.get(st.dungeonId);
+    destinationHeading.textContent = dungeonLabel(dg);
     trainingOption.hidden = !canTrainIn(dg);
     training.checked = st.training = canTrainIn(dg) && st.training;
     document.querySelector('.page-heading').className = `bar page-heading scene-${expeditionScene(dg.id)}`;
@@ -107,16 +108,24 @@ function showDeparture(message = null) {
       showRun();
     },
   }, '出発する');
+  const atlas = createWorldMapView({
+    world, discoveries, selectedDungeon: st.dungeonId, dungeonLabel,
+    onDungeon: (id) => {
+      st.dungeonId = id;
+      fill();
+      destinationHeading.focus();
+      destinationHeading.scrollIntoView({ block: 'nearest' });
+    },
+  });
   fill();
   render(view,
     el('section', { class: 'departure' },
       el('h2', { class: 'chapter-title' }, '遠征の準備'),
       beginner ? el('p', { class: 'panel small' }, `はじめは近場の「${nearby.name}」がおすすめ。短い冒険を2〜3回重ねて仲間を育て、回復やスキルを準備してから標準ダンジョンへ挑もう。行き先は自由に選べます。`) : null,
       message ? el('p', { class: 'panel error', role: 'alert' }, message, '　', el('a', { href: 'index.html?facility=temple' }, '神殿へ')) : null,
+      atlas,
       el('div', { class: 'panel departure-plan' },
-        el('label', {}, '世界地図から行き先を選ぶ',
-          el('select', { class: 'select', onchange: (e) => { st.dungeonId = e.target.value; fill(); } },
-            destinations)),
+        destinationHeading,
         trainingOption,
         info,
         el('label', {}, '持っていくルーンストーン', stoneSel),
@@ -126,6 +135,9 @@ function showDeparture(message = null) {
       el('details', { class: 'panel' }, el('summary', {}, `仲間の状態（${g.party.length}人）`), partyPanel()),
       new URLSearchParams(location.search).has('debug') ? debugTools() : null)
   );
+  if (!session.readOnly && discoveries.length) {
+    session.update((game) => { game.worldMapSeen = [...new Set([...seen, ...discoveries.map(({ id }) => id)])]; });
+  }
 }
 
 function debugTools() {
@@ -218,7 +230,9 @@ function showReturned(pack) {
       el('div', {}, `持ち帰った装備：${pack.gear.join('、') || 'なし'}`),
       el('div', {}, `持ち帰った素材：${pack.materials.join('、') || 'なし'}`),
       el('div', { class: 'muted' }, '拾った物は町の倉庫に入った。')),
-    el('a', { class: 'btn primary', href: 'index.html' }, '町へ'));
+    el('div', { class: 'row' },
+      el('a', { class: 'btn primary', href: 'index.html' }, '町へ'),
+      el('button', { type: 'button', onclick: () => { showDeparture(); window.scrollTo(0, 0); } }, '世界地図へ')));
 }
 
 function lootActions(result) {
