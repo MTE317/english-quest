@@ -61,7 +61,7 @@ export function skillPrerequisite(data, skill) {
 export function learnBlock(data, member, skill) {
   if (isLearned(member, skill)) return '覚えている';
   const prev = skillPrerequisite(data, skill);
-  if (prev && !isLearned(member, prev)) return `先に「${prev.name}」を覚える`;
+  if (prev && !isLearned(member, prev)) return `「${prev.name}」を覚える`;
   const ap = member.ap?.[skill.job] ?? 0;
   if (ap < skill.apToLearn) return `${data.jobsById.get(skill.job).name}の AP が ${ap} / ${skill.apToLearn}`;
   return '';
