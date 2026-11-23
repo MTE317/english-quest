@@ -262,7 +262,6 @@ function showLoadout(index, kind = 'actions', message = '', skillId = '') {
     const meta = [
       jobName(skill.job),
       skill.path,
-      `${skill.stage}段目`,
       `必要枠 ${skill.cost}`,
       isPassiveKind ? 'パッシブ' : `MP ${skillMp(data, member, skill)}`,
       skill.isFinal ? '奥義' : null,
