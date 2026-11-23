@@ -9,6 +9,8 @@ import { GameSession } from '../save.js?v=rune-study-1';
 import { normalizeGame } from '../game-state.js?v=party6-1';
 import {
   allowedDungeons, startRun, startNextBattle, afterBattle, returnToTown, continueRun, resolveLoot,
+  dungeonRegion, isBossBattle, runFloorRow, runFloorCount, returnItems, currentRank, useItemOutsideBattle, FIELD_ITEM_EFFECTS,
+} from '../dungeon.js?v=exploration-1';
   canTrainIn, isBossBattle, runFloorRow, runFloorCount, returnItems, currentRank, useItemOutsideBattle, FIELD_ITEM_EFFECTS,
 } from '../dungeon.js?v=build36-1';
 import { backpackSlots, backpackUsed, addItem } from '../loot.js?v=build36-1';
@@ -70,6 +72,15 @@ function showDeparture(message = null) {
   const averageLevel = g.party.reduce((sum, member) => sum + member.lv, 0) / g.party.length;
   const beginner = rank.maxDungeonRank === 1 && nearby && (g.cleared?.[nearby.id] ?? 0) < 3 && averageLevel < 5;
   const suggested = beginner ? nearby : dungeons.find(d => d.rank === rank.maxDungeonRank && d.kind === '標準') ?? dungeons[0];
+  const st = { dungeonId: suggested.id, stoneId: null };
+  const regions = new Map();
+  for (const dungeon of dungeons) {
+    const region = dungeonRegion(dungeon);
+    if (!regions.has(region)) regions.set(region, []);
+    regions.get(region).push(el('option', { value: dungeon.id, selected: dungeon.id === st.dungeonId },
+      stars(dungeon.rank) + ' ' + dungeon.name + (g.cleared?.[dungeon.id] ? '（踏破済み）' : '')));
+  }
+  const destinations = [...regions].map(([label, options]) => el('optgroup', { label }, options));
   const st = { dungeonId: suggested.id, stoneId: null, training: false };
   const training = el('input', { type: 'checkbox', onchange: (e) => { st.training = e.target.checked; } });
   const trainingOption = el('label', {}, training, ' 育成探索（ボスなし）');
@@ -104,7 +115,7 @@ function showDeparture(message = null) {
       if (!st.stoneId) return;
       if (session.game.party.every((m) => m.hp <= 0)) { showDeparture('全員倒れている。宿屋や神殿で回復してから出発しよう。'); return; }
       const picker = new QuestionPicker({ lex, store, scheduler, stoneId: st.stoneId, nowMs: now() });
-      startRun(data, session, { dungeonId: st.dungeonId, stoneId: st.stoneId, quizState: picker.toState(), training: st.training, seed: (Date.now() ^ (Math.random() * 2 ** 32)) >>> 0 });
+      startRun(data, session, { dungeonId: st.dungeonId, stoneId: st.stoneId, quizState: picker.toState(), seed: (Date.now() ^ (Math.random() * 2 ** 32)) >>> 0 });
       showRun();
     },
   }, '出発する');
@@ -125,6 +136,9 @@ function showDeparture(message = null) {
       message ? el('p', { class: 'panel error', role: 'alert' }, message, '　', el('a', { href: 'index.html?facility=temple' }, '神殿へ')) : null,
       atlas,
       el('div', { class: 'panel departure-plan' },
+        el('label', {}, '世界地図から行き先を選ぶ',
+          el('select', { class: 'select', onchange: (e) => { st.dungeonId = e.target.value; fill(); } },
+            destinations)),
         destinationHeading,
         trainingOption,
         info,
@@ -160,6 +174,30 @@ function debugTools() {
 }
 
 // ---------------- ダンジョンの中 ----------------
+function explorationNotices(run) {
+  const notices = run.explorationNotices ?? [];
+  if (!notices.length) return null;
+  const labels = { chest: '宝箱', gather: '採集', rest: '休憩', discover: '隠し通路の発見', investigate: '調査地点' };
+  return el('div', { class: 'panel small', role: 'status' }, notices.map((notice) => {
+    const destinationId = notice.discovery?.startsWith('dungeon:') ? notice.discovery.slice('dungeon:'.length) : null;
+    const destinationName = data.dungeons.get(destinationId)?.name;
+    const rewards = [
+      notice.gold ? `${notice.gold} G` : null,
+      ...(notice.materials ?? []).map(({ id, count }) => `${data.materials.get(id)?.name ?? id}×${count}`),
+      ...(notice.gear ?? []).map(gearName),
+      notice.item ? data.items.get(notice.item)?.name : null,
+    ].filter(Boolean);
+    const message = {
+      chest: rewards.join(' ／ '),
+      gather: rewards.join(' ／ ') || '持ち帰れる素材はなかった。',
+      rest: `HP +${notice.hp} ／ MP +${notice.mp}`,
+      discover: destinationName ? `「${destinationName}」への手がかりを見つけた。` : '新しい場所への手がかりを見つけた。',
+      investigate: '調査の手がかりを記録した。',
+    }[notice.type];
+    return el('div', {}, el('b', {}, notice.first ? '初回の宝箱' : labels[notice.type]), '　', message);
+  }));
+}
+
 function showRun(result = null) {
   const run = session.run;
   if (!run) return showDeparture();
@@ -167,7 +205,7 @@ function showRun(result = null) {
   if (run.state === 'ready' && run.battlesDone === 0) return beginBattle();
   setSceneMusic('dungeon');
   if (run.state === 'loot') {
-    render(view, lootActions(result));
+    render(view, explorationNotices(run), lootActions(result));
     return;
   }
   const dg = data.dungeons.get(run.dungeonId);
@@ -202,15 +240,16 @@ function showRun(result = null) {
       el('button', { class: 'primary', onclick: () => { const pack = summary(run); returnToTown(data, session); showReturned(pack); } }, '町に帰る'),
     ];
   }
+  const notices = explorationNotices(run);
   if (result?.result === 'win') {
     render(view, createVictoryView({
       data, dungeon: dg, party: g.party, result, backpack,
-      totalGold: run.earned.gold, gearName, actions,
+      totalGold: run.earned.gold, gearName, actions: [notices, ...actions],
     }));
     view.querySelector('h2').focus({ preventScroll: true });
   } else {
     const escaped = result?.result === 'fled' ? el('div', { class: 'panel small' }, '逃げ切った') : null;
-    render(view, head, escaped, partyPanel(), actions);
+    render(view, head, escaped, notices, partyPanel(), actions);
   }
   window.scrollTo(0, 0);
 }
@@ -291,7 +330,7 @@ function battleView() {
         render(view,
           el('h2', {}, '全滅…'),
           el('p', {}, 'ダンジョンに入る前の状態に戻った（お金・素材・拾った装備・経験値・日数）。'),
-          el('p', { class: 'muted small' }, '学習記録と、出会った魔物・判明した弱点や耐性は図鑑に残っています。受注中の依頼と保証金も維持されます。'),
+          el('p', { class: 'muted small' }, '図鑑と依頼の進捗も入場時に戻ります。学習記録・詠唱の記録・JPは残ります。'),
           el('div', { class: 'panel small' }, `ヒント：図鑑を見て属性耐性や状態異常対策を準備しよう。育成が必要なら、${dg.rank > 1 ? '★を1つ下げたダンジョン' : '近場のダンジョン'}がおすすめ。`),
           el('a', { class: 'btn', href: 'party.html' }, '編成を見直す'),
           el('a', { class: 'btn primary', href: 'index.html' }, '町へ'));

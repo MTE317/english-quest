@@ -10,13 +10,14 @@ import { backpackSlots, backpackUsed, addToBackpack, rollBattleLoot, rollGearDro
 import { makeEnemy } from '../js/battle.js';
 import { maxHp, maxMp, gainXp, computeStats } from '../js/character.js';
 import { realGameData, realLexicon, readJson, readCsv, MemoryStorage } from './helpers.js';
+import { planExploration } from '../js/exploration.js';
 
 const data = realGameData();
 const lex = realLexicon();
 const party = ['warrior', 'knight', 'black_mage', 'white_mage', 'thief', 'bard'].map((job) => ({ name: job, job, icon: 'x' }));
 
-function newSession() {
-  const s = new GameSession({ storage: new MemoryStorage() });
+function newSession(storage = new MemoryStorage()) {
+  const s = new GameSession({ storage });
   s.startNew(createNewGame(data, party));
   return s;
 }
@@ -175,15 +176,22 @@ test('石化だけの勝利でも討伐依頼・経験値・ドロップを精�
   assert.ok(result.loot.gold > 0);
 });
 
-test('ボスなしの育成探索は通常の討伐と報酬を受け取り、ボス踏破数を加算しない', () => {
-  const session = newSession();
-  startRun(data, session, { dungeonId: 'sunlit_forest', stoneId: 'rs_1_001', seed: 1, training: true });
+test('旧育成遠征を保存から再開して完走できる。新規遠征は同じ行き先でボスと戦う', () => {
+  const storage = new MemoryStorage();
+  const old = newSession(storage);
+  startRun(data, old, { dungeonId: 'sunlit_forest', stoneId: 'rs_1_001', seed: 1 });
+  assert.ok(old.run.route.at(-1).lastBattleIsBoss);
+  old.run.training = true;
+  delete old.run.explorationPlan;
+  for (const row of old.run.route) row.lastBattleIsBoss = false;
+  startNextBattle(data, old);
+  const session = new GameSession({ storage });
   const gold = session.game.gold;
   while (session.run.state !== 'cleared') {
     if (session.run.state === 'return_point') { continueRun(session); continue; }
     if (session.run.state === 'loot') { resolveLoot(data, session, null); continue; }
     assert.equal(isBossBattle(data, session.run), false);
-    startNextBattle(data, session);
+    if (!session.run.battle) startNextBattle(data, session);
     assert.ok(session.run.battle.enemies.every((enemy) => !enemy.boss));
     for (const enemy of session.run.battle.enemies) enemy.hp = 0;
     nextTurn(data, session.game, session.run.battle);
@@ -192,4 +200,193 @@ test('ボスなしの育成探索は通常の討伐と報酬を受け取り、�
   returnToTown(data, session);
   assert.equal(session.game.cleared.sunlit_forest, undefined);
   assert.ok(session.game.gold > gold);
+});
+
+function finishWithoutTurns(local, session, result = 'win') {
+  if (!session.run.battle) startNextBattle(local, session);
+  const battle = session.run.battle;
+  battle.result = result;
+  if (result === 'win') battle.enemies.forEach((enemy) => { enemy.hp = 0; });
+  return afterBattle(local, session);
+}
+
+function discardOverflow(local, session) {
+  while (session.run.state === 'loot') resolveLoot(local, session, null);
+}
+
+const expedition = { dungeonId: 'mossy_cave', stoneId: 'rs_1_001', quizState: { asked: 3 }, seed: 12345 };
+
+test('全60経路は2・3・6戦で最奥だけがボス。前半に帰還地点がある', () => {
+  assert.equal(data.dungeons.size, 60);
+  for (const dungeon of data.dungeons.values()) {
+    const route = data.dungeonFloors.filter(({ dungeonId }) => dungeonId === dungeon.id);
+    const length = dungeon.kind === '近場' ? 2 : dungeon.kind === '深層' ? 6 : 3;
+    assert.equal(route.length, length, dungeon.id);
+    assert.ok(route.every(({ battles, lastBattleIsBoss }, i) => battles === 1 && lastBattleIsBoss === (i === length - 1)), dungeon.id);
+    assert.ok(route.slice(0, -1).some(({ returnPointAfter }) => returnPointAfter), dungeon.id);
+    assert.equal(data.monsters.get(dungeon.bossId)?.role, 'boss', dungeon.id);
+  }
+});
+
+test('探索抽選はseedで再現し、固定枠と独立。抽選の発生数と内訳は設定値に収束する', () => {
+  const config = data.balance.dungeon.exploration;
+  const configWithFixed = { ...config, fixed: { test: [{ id: 'fixed', floor: 1, type: 'investigate' }] } };
+  const rng = seededRng({ rng: 8017 });
+  for (const [length, expected] of [[2, 0.5], [3, 0.8], [6, 1.6]]) {
+    const route = Array.from({ length }, (_, i) => ({ floor: i + 1, battles: 1 }));
+    const fromSeed = () => planExploration(configWithFixed, 'test', route, seededRng({ rng: 135 }));
+    assert.deepEqual(fromSeed(), fromSeed());
+    const totals = { chest: 0, gather: 0, rest: 0 };
+    const runs = 10000;
+    for (let i = 0; i < runs; i++) {
+      const [fixed, ...random] = planExploration(configWithFixed, 'test', route, rng);
+      assert.equal(fixed.id, 'fixed');
+      assert.equal(new Set(random.map(({ floor }) => floor)).size, random.length);
+      for (const event of random) {
+        assert.ok(event.floor < length);
+        totals[event.type]++;
+      }
+    }
+    const count = Object.values(totals).reduce((a, b) => a + b);
+    assert.ok(Math.abs(count / runs - expected) < 0.035);
+    for (const [type, weight] of Object.entries(config.weights)) assert.ok(Math.abs(totals[type] / count - weight / 100) < 0.025);
+  }
+});
+
+test('最奥のボス報酬は周回ごとに出る。逃走・途中帰還は踏破に数えない', () => {
+  const session = newSession();
+  for (let i = 0; i < 3; i++) {
+    startRun(data, session, { ...expedition, seed: i });
+    finishWithoutTurns(data, session);
+    discardOverflow(data, session);
+    finishWithoutTurns(data, session);
+    discardOverflow(data, session);
+    assert.equal(session.run.state, 'return_point');
+    continueRun(session);
+    assert.ok(isBossBattle(data, session.run));
+    const result = finishWithoutTurns(data, session, i === 0 ? 'fled' : 'win');
+    discardOverflow(data, session);
+    if (i > 0) {
+      assert.equal(session.run.state, 'cleared');
+      assert.ok(result.loot.gold > 0 && result.loot.gear.length > 0 && result.loot.materials.length > 0);
+    }
+    assert.equal(session.game.cleared.mossy_cave ?? 0, Math.max(0, i - 1));
+    returnToTown(data, session);
+    assert.equal(session.game.cleared.mossy_cave ?? 0, i);
+  }
+});
+
+test('固定箱は全滅で再試行でき、途中帰還で確定。調査・発見・入場条件は独立する', () => {
+  const local = structuredClone(data);
+  const config = local.balance.dungeon.exploration;
+  config.slots = {};
+  config.fixed.mossy_cave.push({ id: 'hidden', floor: 1, type: 'discover', discovery: 'test-location' });
+  config.entry.sunlit_forest = { discovery: 'test-location', flags: ['SQ-1'], cleared: ['mossy_cave'] };
+  const storage = new MemoryStorage();
+  let session = newSession(storage);
+  const before = structuredClone(session.game);
+  startRun(local, session, expedition);
+  finishWithoutTurns(local, session);
+  assert.deepEqual(session.run.explorationNotices.map(({ type }) => type), ['chest', 'discover']);
+  const savedPlan = structuredClone(session.run.explorationPlan);
+  const savedPack = structuredClone(session.run.backpack);
+  session = new GameSession({ storage });
+  assert.deepEqual(session.run.explorationPlan, savedPlan);
+  assert.deepEqual(session.run.backpack, savedPack);
+  assert.equal(session.run.stoneId, expedition.stoneId);
+  assert.deepEqual(session.run.quiz, expedition.quizState);
+  assert.equal(session.game.exploration, undefined);
+  finishWithoutTurns(local, session, 'lose');
+  assert.deepEqual(session.game, before);
+  startRun(local, session, expedition);
+  finishWithoutTurns(local, session);
+  assert.equal(session.run.explorationNotices[0].first, true);
+  finishWithoutTurns(local, session);
+  discardOverflow(local, session);
+  returnToTown(local, session);
+  assert.equal(session.game.exploration.events['mossy_cave:first-cache'], true);
+  assert.equal(session.game.exploration.discoveries['test-location'], true);
+  assert.equal(session.game.worldFlags['SQ-1'], true);
+  assert.equal(session.game.cleared.mossy_cave, undefined);
+  assert.ok(!allowedDungeons(local, session.game).some(({ id }) => id === 'sunlit_forest'));
+  startRun(local, session, expedition);
+  finishWithoutTurns(local, session);
+  assert.deepEqual(session.run.explorationNotices, []);
+  finishWithoutTurns(local, session);
+  assert.deepEqual(session.run.explorationNotices, []);
+  discardOverflow(local, session);
+  continueRun(session);
+  finishWithoutTurns(local, session);
+  discardOverflow(local, session);
+  returnToTown(local, session);
+  assert.ok(allowedDungeons(local, session.game).some(({ id }) => id === 'sunlit_forest'));
+});
+
+test('周回の箱と採集は再発生し、満杯時は再開後に既存の入れ替えで受け取れる', () => {
+  const local = structuredClone(data);
+  local.balance.dungeon.exploration = {
+    ...local.balance.dungeon.exploration, slots: {}, fixed: { mossy_cave: [
+      { id: 'chest', floor: 1, type: 'chest' },
+      { id: 'gather', floor: 1, type: 'gather' },
+    ] },
+  };
+  local.balance.dungeon.exploration.chest.weights = { gear: 100 };
+  const storage = new MemoryStorage();
+  let session = newSession(storage);
+  for (let i = 0; i < 2; i++) {
+    session.game.items.return_feather = 1;
+    startRun(local, session, expedition);
+    const filler = rollGearDrop(local, session.game, expedition.dungeonId, 1, () => 0.5);
+    session.run.backpack.gear = Array.from({ length: backpackSlots(local, session.game) }, (_, uid) => ({ ...filler, uid: -1 - uid }));
+    finishWithoutTurns(local, session, 'fled');
+    assert.equal(session.run.state, 'loot');
+    assert.deepEqual(session.run.explorationNotices.map(({ type }) => type), ['chest', 'gather']);
+    assert.equal(session.run.pendingLoot[0].gear.rarity, 'common');
+    assert.equal(session.run.pendingLoot[1].type, 'material');
+    assert.equal(session.run.pendingLoot.length, 2);
+    session = new GameSession({ storage });
+    for (const uid of [-1, -2]) resolveLoot(local, session, { type: 'gear', uid });
+    const [[id, count]] = Object.entries(session.run.backpack.materials);
+    assert.equal(count, 1);
+    returnToTown(local, session, 'return_feather');
+    assert.ok(session.game.storage.materials[id] >= 1);
+    assert.equal(session.game.exploration, undefined);
+  }
+});
+
+test('現行の固定発見で行き先を記録し、入場は既存ランク規則に従う', () => {
+  const session = newSession();
+  const options = { ...expedition, dungeonId: 'sunlit_forest' };
+  const event = data.balance.dungeon.exploration.fixed[options.dungeonId].find(({ type }) => type === 'discover');
+  const target = event.discovery.slice('dungeon:'.length);
+  startRun(data, session, options);
+  finishWithoutTurns(data, session);
+  discardOverflow(data, session);
+  assert.equal(session.run.explorationNotices.find(({ type }) => type === 'discover').discovery, event.discovery);
+  returnToTown(data, session);
+  assert.equal(session.game.exploration.discoveries[event.discovery], true);
+  assert.ok(!allowedDungeons(data, session.game).some(({ id }) => id === target));
+  session.game.rank = 'R02';
+  assert.ok(allowedDungeons(data, session.game).some(({ id }) => id === target));
+});
+
+test('休憩は生存者だけを部分回復し、上限を超えない', () => {
+  const local = structuredClone(data);
+  local.balance.dungeon.exploration = {
+    ...local.balance.dungeon.exploration, slots: {}, fixed: { mossy_cave: [{ id: 'rest', floor: 1, type: 'rest' }] },
+  };
+  const session = newSession();
+  startRun(local, session, expedition);
+  startNextBattle(local, session);
+  const [fallen, survivor] = session.game.party;
+  fallen.hp = 0;
+  survivor.hp = 1;
+  survivor.mp = 0;
+  finishWithoutTurns(local, session, 'fled');
+  const [notice] = session.run.explorationNotices;
+  assert.equal(notice.type, 'rest');
+  assert.equal(session.game.party[0].hp, 0);
+  const member = session.game.party[1];
+  assert.equal(member.hp, 1 + Math.floor(maxHp(local, member) * 0.10));
+  assert.equal(member.mp, Math.floor(maxMp(local, member) * 0.05));
 });

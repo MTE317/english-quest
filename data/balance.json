@@ -112,6 +112,28 @@
     "other_floor_enemies": 3,
     "boss_battle": "boss + 1",
     "layout_version": 2,
+    "exploration": {
+      "slots": { "2": [0.5], "3": [0.8], "6": [0.8, 0.8] },
+      "weights": { "chest": 45, "gather": 40, "rest": 15 },
+      "chest": {
+        "weights": { "gear": 15, "material": 35, "gold": 35, "item": 15 },
+        "gold": 0.04,
+        "item": "potion",
+        "first_gold": 0.15,
+        "first_materials": 2
+      },
+      "rest": { "hp": 0.10, "mp": 0.05 },
+      "fixed": {
+        "mossy_cave": [
+          { "id": "first-cache", "floor": 1, "type": "chest", "first": true, "material": "slime_mat" },
+          { "id": "survey", "floor": 2, "type": "investigate", "flag": "SQ-1" }
+        ],
+        "sunlit_forest": [
+          { "id": "side-entrance", "floor": 1, "type": "discover", "discovery": "dungeon:old_catacomb" }
+        ]
+      },
+      "entry": {}
+    },
     "elite_rate": 0.06,
     "elite_min_star": 2,
     "elite_max_per_battle": 1,

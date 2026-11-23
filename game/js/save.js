@@ -147,7 +147,7 @@ export class GameSession {
   }
 
   /** ダンジョンに入る。入る直前の game を写しておく */
-  enterDungeon({ dungeonId, stoneId, ...rest } = {}) {
+  enterDungeon({ dungeonId, stoneId, ...rest } = {}, initialize) {
     this.#need();
     if (this.state.run) throw new Error('すでにダンジョンの中にいる');
     this.state.run = {
@@ -160,6 +160,7 @@ export class GameSession {
       snapshot: clone(this.state.game),
       battle: null,
     };
+    initialize?.(this.state.run, this.state.game);
     this.save();
   }
 

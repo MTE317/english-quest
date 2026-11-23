@@ -15,6 +15,7 @@ import { advanceDays, calendarOf, countKills, refreshBoard } from './town.js?v=b
 import { updateChains } from './quest-chain.js?v=features-2';
 import { discoverJobs } from './temple.js?v=rune-study-1';
 import { memberMods } from './growth.js?v=build36-1';
+import { planExploration, resolveExploration, commitExploration, explorationEntryAllowed } from './exploration.js';
 
 /** 乱数の種から 0〜1 の乱数を返す関数（状態は obj[key] に入れて保存できる） */
 export function seededRng(obj, key = 'rng') {
@@ -31,10 +32,15 @@ export function currentRank(data, game) {
 /** 今の冒険者ランクで行けるダンジョン */
 export function allowedDungeons(data, game) {
   const max = currentRank(data, game).maxDungeonRank;
-  return [...data.dungeons.values()].filter((dungeon) => dungeon.rank <= max && dungeonRouteUnlocked(data, game, dungeon))
+  return [...data.dungeons.values()].filter((dungeon) => dungeon.rank <= max && dungeonRouteUnlocked(data, game, dungeon)
+    && explorationEntryAllowed(data.balance.dungeon?.exploration, game, dungeon.id))
     .sort((a, b) => a.rank - b.rank);
 }
 
+/** 地図の地域は★3段階ずつ。季節遠征は別枠に置く。 */
+export function dungeonRegion(dungeon) {
+  if (dungeon.kind.includes('季節')) return '季節の遠征';
+  return ['周辺の街道', '外縁の領域', '遠方の領域', '最果ての領域'][Math.floor((dungeon.rank - 1) / 3)];
 /** 同じ★で複数の育成経路を選べる。季節遠征は固有の攻略経路を持つ。 */
 export function canTrainIn(dungeon) {
   return ['近場', '素材の宝庫'].includes(dungeon.kind);
@@ -52,20 +58,17 @@ export function allowedStones(srs, lex, dungeon) {
  * 遠征を始める：入る前の状態を写してから、日数を使う
  * @param quizState QuestionPicker の toState()（出題の状態）
  */
-export function startRun(data, session, { dungeonId, stoneId, quizState, seed, training = false }) {
+export function startRun(data, session, { dungeonId, stoneId, quizState, seed }) {
   const dg = data.dungeons.get(dungeonId);
   if (!dg) throw new Error(`ダンジョン ${dungeonId} がない`);
   if (!allowedDungeons(data, session.game).includes(dg)) throw new Error('今のランクでは入れない');
-  if (training && !canTrainIn(dg)) throw new Error('この場所には育成探索ルートがない');
-  session.enterDungeon({ dungeonId, stoneId });
-  session.updateRun((run, game) => {
+  session.enterDungeon({ dungeonId, stoneId }, (run, game) => {
     run.layoutVersion = data.balance.dungeon?.layout_version ?? 2;
     run.route = data.dungeonFloors.filter((row) => row.dungeonId === dungeonId)
       .sort((a, b) => a.floor - b.floor).map((row) => ({ ...row }));
-    if (training) {
-      run.training = true;
-      for (const row of run.route) row.lastBattleIsBoss = false;
-    }
+    // Keep exploration draws independent of battle, bounty and battle-loot draws.
+    const explorationRng = seededRng({ rng: Math.imul(seed ^ (seed >>> 16), 0x45d9f3b) });
+    run.explorationPlan = planExploration(data.balance.dungeon?.exploration, dungeonId, run.route, explorationRng);
     run.battleIndex = 0;
     run.elitesSeen = 0;
     run.state = 'ready';
@@ -96,6 +99,7 @@ export function runRoute(data, run) {
       .sort((a, b) => a.floor - b.floor).map((row) => ({ ...row }));
     run.layoutVersion ??= data.balance.dungeon?.layout_version ?? 2;
   }
+  if (run.training) for (const row of run.route) row.lastBattleIsBoss = false;
   return run.route;
 }
 
@@ -107,7 +111,7 @@ export function runFloorRow(data, run) {
 
 export function isBossBattle(data, run) {
   const row = runFloorRow(data, run);
-  return row.lastBattleIsBoss && run.battleIndex === row.battles - 1;
+  return !run.training && row.lastBattleIsBoss && run.battleIndex === row.battles - 1;
 }
 
 /** 次の戦闘を始める（敵を決めて保存） */
@@ -115,6 +119,7 @@ export function startNextBattle(data, session) {
   const run = session.run;
   if (run.state !== 'ready') throw new Error('今は戦闘を始められない');
   const rng = seededRng(run);
+  run.explorationNotices = [];
   const bounty = run.bounty?.floor === run.floor && run.bounty?.battle === run.battleIndex ? run.bounty.monsterId : null;
   const season = calendarOf(data, session.game.day).season?.id;
   const maxElites = Math.max(0, (data.balance.dungeon?.elite_max_per_run ?? Infinity) - (run.elitesSeen ?? 0));
@@ -137,6 +142,17 @@ export function recoverAfterBattle(data, game) {
     if (mods.mp_regen) m.mp = Math.min(maxMp(data, m), Math.round(m.mp + maxMp(data, m) * mods.mp_regen));
     if (mods.hp_regen) m.hp = Math.min(maxHp(data, m), Math.round(m.hp + maxHp(data, m) * mods.hp_regen));
   }
+}
+
+function receiveLoot(data, game, run, loot) {
+  game.gold += loot.gold;
+  run.earned.gold += loot.gold;
+  run.pendingLoot.push(...addToBackpack(data, game, run.backpack, [
+    ...loot.gear.map((gear) => ({ type: 'gear', gear })),
+    ...loot.materials.map(({ id, count }) => ({ type: 'material', id, count })),
+  ]));
+  game.catalog ??= { gear: [], monsters: [] };
+  game.catalog.gear = [...new Set([...game.catalog.gear, ...loot.gear.map((item) => item.id)])];
 }
 
 export function afterBattle(data, session) {
@@ -179,32 +195,29 @@ export function afterBattle(data, session) {
       }
       loot.gold = Math.round(loot.gold * (1 + goldBonus));
       if (b.enemies.some((e) => e.boss && !e.bounty)) discoverJobs(data, g, run.dungeonId, seededRng(run));
-      g.gold += loot.gold;
-      run.earned.gold += loot.gold;
-      const left = addToBackpack(data, g, run.backpack, [
-        ...loot.gear.map((gear) => ({ type: 'gear', gear })),
-        ...loot.materials.map((m) => ({ type: 'material', id: m.id, count: m.count })),
-      ]);
-      g.catalog ??= { gear: [], monsters: [] };
-      g.catalog.gear = [...new Set([...g.catalog.gear, ...loot.gear.map((item) => item.id)])];
-      run.pendingLoot = left;
+      run.pendingLoot ??= [];
+      receiveLoot(data, g, run, loot);
+      if (b.enemies.some((enemy) => enemy.boss && !enemy.bounty && enemy.monsterId === data.dungeons.get(run.dungeonId).bossId)) {
+        run.bossDefeated = true;
+      }
     }
     if (b.result === 'fled' && b.enemies.some((enemy) => enemy.boss && !enemy.bounty)) {
       // ボスを倒さず逃げた場合は、帰還するか同じボスへ再挑戦する。踏破扱いにはしない。
       run.state = 'return_point';
       run.cleared = false;
-    } else advance(data, run);
+    } else advance(data, g, run);
     if (run.cleared) delete run.bounty;
   });
   return { result: b.result, growth, loot };
 }
 
 /** 次の戦闘へ進める（階の終わり・帰還ポイント・いちばん奥） */
-function advance(data, run) {
+function advance(data, game, run) {
   const row = runFloorRow(data, run);
   run.battleIndex += 1;
   if (run.battleIndex >= row.battles) {
     if (run.floor >= runFloorCount(data, run)) { run.state = 'cleared'; run.cleared = true; } else {
+      resolveExploration(data, game, run, row.floor, calendarOf(data, game.day).season?.id, seededRng, receiveLoot);
       run.floor += 1;
       run.battleIndex = 0;
       run.state = row.returnPointAfter ? 'return_point' : 'ready';
@@ -233,6 +246,8 @@ export function continueRun(session) {
  */
 export function returnToTown(data, session, useItem = null) {
   const run = session.run;
+  if (run.state === 'loot') throw new Error('拾った物を先に整理してください');
+  if (useItem && !returnItems(data, session.game).includes(useItem)) throw new Error('帰還の道具を持っていない');
   if (!useItem && !['return_point', 'cleared'].includes(run.state)) throw new Error('ここからは帰れない（帰還ポイントか帰還の道具が必要）');
   session.leaveDungeon((game) => {
     if (useItem) {
@@ -240,10 +255,12 @@ export function returnToTown(data, session, useItem = null) {
       if (game.items[useItem] <= 0) delete game.items[useItem];
     }
     unloadBackpack(game, run.backpack);
+    commitExploration(game, run.explorationRecords);
     for (const m of game.party) m.room = null; // 宿屋の良い部屋の効果は1回の遠征だけ
     const asked = run.quiz?.asked ?? 0;
     if (asked > 0 && run.earned.xp > 0) game.xpPerQuestion = run.earned.xp / asked; // 鍛錬の経験値の目安（sim と同じ考え方）
-    if (run.cleared && !run.training) {
+    // Completed saves from before bossDefeated was introduced already used the boss route.
+    if (run.state === 'cleared' && !run.training && (run.bossDefeated || (!run.explorationPlan && run.cleared))) {
       game.cleared = game.cleared ?? {};
       game.cleared[run.dungeonId] = (game.cleared[run.dungeonId] ?? 0) + 1;
     }
