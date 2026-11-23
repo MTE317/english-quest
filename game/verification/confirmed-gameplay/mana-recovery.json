@@ -1,0 +1,155 @@
+{
+  "sourceSha256": "4f243654308a013e38b2784cb1e50b978bdf847258f364b59135c3f7de92ec3e",
+  "sourceUnchangedAtCompletion": true,
+  "partySize": 6,
+  "initialMp": 0,
+  "recoveries": 3,
+  "randomness": "none",
+  "limitations": "戦闘後回復APIのみ。勝率・実戦でのMP収支・長期バランスは評価しない。",
+  "results": [
+    {
+      "level": 3,
+      "upper": false,
+      "name": "none",
+      "maxMp": 22,
+      "rate": 0,
+      "mpAfterEachRecovery": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "level": 3,
+      "upper": false,
+      "name": "tree",
+      "maxMp": 22,
+      "rate": 0.1,
+      "mpAfterEachRecovery": [
+        2,
+        4,
+        6
+      ]
+    },
+    {
+      "level": 3,
+      "upper": false,
+      "name": "passive",
+      "maxMp": 22,
+      "rate": 0.1,
+      "mpAfterEachRecovery": [
+        2,
+        4,
+        6
+      ]
+    },
+    {
+      "level": 3,
+      "upper": false,
+      "name": "both",
+      "maxMp": 22,
+      "rate": 0.1,
+      "mpAfterEachRecovery": [
+        2,
+        4,
+        6
+      ]
+    },
+    {
+      "level": 30,
+      "upper": false,
+      "name": "none",
+      "maxMp": 76,
+      "rate": 0,
+      "mpAfterEachRecovery": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "level": 30,
+      "upper": false,
+      "name": "tree",
+      "maxMp": 76,
+      "rate": 0.1,
+      "mpAfterEachRecovery": [
+        8,
+        16,
+        24
+      ]
+    },
+    {
+      "level": 30,
+      "upper": false,
+      "name": "passive",
+      "maxMp": 76,
+      "rate": 0.1,
+      "mpAfterEachRecovery": [
+        8,
+        16,
+        24
+      ]
+    },
+    {
+      "level": 30,
+      "upper": false,
+      "name": "both",
+      "maxMp": 76,
+      "rate": 0.1,
+      "mpAfterEachRecovery": [
+        8,
+        16,
+        24
+      ]
+    },
+    {
+      "level": 30,
+      "upper": true,
+      "name": "none",
+      "maxMp": 76,
+      "rate": 0.15,
+      "mpAfterEachRecovery": [
+        11,
+        22,
+        33
+      ]
+    },
+    {
+      "level": 30,
+      "upper": true,
+      "name": "tree",
+      "maxMp": 76,
+      "rate": 0.25,
+      "mpAfterEachRecovery": [
+        19,
+        38,
+        57
+      ]
+    },
+    {
+      "level": 30,
+      "upper": true,
+      "name": "passive",
+      "maxMp": 76,
+      "rate": 0.25,
+      "mpAfterEachRecovery": [
+        19,
+        38,
+        57
+      ]
+    },
+    {
+      "level": 30,
+      "upper": true,
+      "name": "both",
+      "maxMp": 76,
+      "rate": 0.25,
+      "mpAfterEachRecovery": [
+        19,
+        38,
+        57
+      ]
+    }
+  ]
+}
