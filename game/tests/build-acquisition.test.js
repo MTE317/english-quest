@@ -82,7 +82,7 @@ test('ランダム効果の状態特効と属性耐性は対象IDを持ち、未
     assert.ok(!Object.hasOwn(effects, 'VS_STATUS'));
     assert.ok(!Object.hasOwn(effects, 'ELEM_RES'));
     for (const key of Object.keys(effects)) {
-      if (key.startsWith('VS_STATUS:')) assert.ok(data.statusEffects.has(key.slice(10)));
+      if (key.startsWith('VS_STATUS:')) assert.ok(data.statusEffects.has(key.slice(10)) || key === 'VS_STATUS:statdown');
       if (key.startsWith('ELEM_RES:')) assert.ok(data.elements.has(key.slice(9)));
     }
     if (slot === 'weapon' || slot === 'accessory') assert.ok(Object.keys(effects).some((key) => key.startsWith('VS_STATUS:')));
@@ -107,6 +107,8 @@ test('追加8技能は前提とAPを払い、枠へ装備して実際の対象�
     member.loadout = { actions: [], passives: [] };
     equipSkill(data, member, id);
     const status = data.statusByName.get(skill.effect.st[0]);
+    const abilityDown = skill.effect.st[0] === '能力ダウン';
+    assert.ok(status || abilityDown);
     let applied = false;
     for (let seed = 1; seed <= 80 && !applied; seed++) {
       member.hp = maxHp(data, member); member.mp = maxMp(data, member);
@@ -116,8 +118,8 @@ test('追加8技能は前提とAPを払い、枠へ装備して実際の対象�
       battle.round = 1; battle.turn = { side: 'ally', i: 0 };
       setPending(battle, { type: 'skill', skillId: id, target: 0 }, {});
       resolvePending(data, game, battle, true);
-      applied ||= Boolean(enemy.statuses[status.id]);
+      applied ||= abilityDown ? enemy.debuffs.str?.[0] === 0.2 : Boolean(enemy.statuses[status.id]);
     }
-    assert.ok(applied, `${skill.name}: ${status.name}`);
+    assert.ok(applied, `${skill.name}: ${status?.name ?? '能力ダウン'}`);
   }
 });

@@ -4,7 +4,7 @@ import { evaluate } from './expr.js';
 import { makeGear, maxHp, maxMp, gearDef } from './character.js?v=build36-1';
 import { addItem } from './loot.js?v=build36-1';
 import { currentRank } from './dungeon.js?v=build36-1';
-import { monsterPool } from './encounter.js?v=build36-1';
+import { monsterPool, dungeonRouteUnlocked } from './encounter.js?v=build36-1';
 
 export const TOWN_FORMULAS = Object.freeze({
   days_per_month: 30, // balance.json の calendar.days_per_month があればそちらを使う
@@ -139,7 +139,7 @@ function questCandidates(data, game) {
   const star = currentRank(data, game).maxDungeonRank;
   const season = calendarOf(data, game.day).season?.id;
   const definitions = data.quests.filter((q) => q.rank === star && data.questTypes.some((t) => t.id === q.type));
-  const dungeons = [...data.dungeons.values()].filter((d) => d.rank === star);
+  const dungeons = [...data.dungeons.values()].filter((d) => d.rank === star && dungeonRouteUnlocked(data, game, d));
   const places = dungeons.map((dungeon) => {
     const available = monsterPool(data, dungeon.id, season);
     const residents = [...data.monsters.values()].filter((m) => ['normal', 'season'].includes(m.role) && m.dungeons.includes(dungeon.id));

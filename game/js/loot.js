@@ -82,11 +82,11 @@ function rollRarity(data, dungeonId, floor, rng) {
 export function affixVariants(data, family) {
   if (family === 'TYPE_BONUS') return [...data.monsterTypes.keys()].map((id) => `TYPE_BONUS:${id}`);
   if (family === 'ELEMENT' || family === 'ELEM_RES') {
-    return [...data.elements.values()].filter((e) => e.kind === '魔法' && e.id !== 'none').map((e) => `${family}:${e.id}`);
+    return [...data.elements.values()].filter((e) => e.kind === '魔法' && (family === 'ELEM_RES' || e.id !== 'none')).map((e) => `${family}:${e.id}`);
   }
   if (family === 'VS_STATUS') {
     return [...new Set((data.enchantSources ?? []).flatMap((row) => splitList(row.families))
-      .filter((key) => key.startsWith('VS_STATUS:') && data.statusEffects.has(key.slice(10))))];
+      .filter((key) => key.startsWith('VS_STATUS:') && (data.statusEffects.has(key.slice(10)) || key === 'VS_STATUS:statdown')))];
   }
   return [family];
 }

@@ -9,7 +9,7 @@ import { buildGameData, GAME_FILES } from '../game/js/gamedata.js';
 import { parseCsv } from '../game/js/csv.js';
 import { maxHp, maxMp, gainXp, gearDef, gearEffects, affixSum } from '../game/js/character.js';
 import { memberMods } from '../game/js/growth.js';
-import { createBattle, nextTurn, actionOptions, setPending, resolvePending, finishBattle, battleRewards, skillMp, battleStats, curedBy, enemyIntent, elementMul } from '../game/js/battle.js';
+import { createBattle, nextTurn, actionOptions, setPending, prepareQuizAction, resolvePending, finishBattle, battleRewards, skillMp, battleStats, curedBy, enemyIntent, elementMul } from '../game/js/battle.js';
 import { makeEncounter, planBounty } from '../game/js/encounter.js';
 import { rollBattleLoot } from '../game/js/loot.js';
 import { recoverAfterBattle, useItemOutsideBattle } from '../game/js/dungeon.js';
@@ -282,7 +282,9 @@ export function fight(data, game, enemies, seed, accuracy = .8, firstBattle = fa
   const b = createBattle(data, game, { enemies, seed, firstBattle, canFlee: false });
   const answers = rngFor(seed ^ 0x5f3759df); let questions = 0;
   while (nextTurn(data, game, b) && questions < 400) {
-    setPending(b, chooseAction(data, game, b), { wordId: 'simulation' });
+    const action = chooseAction(data, game, b);
+    if (!prepareQuizAction(data, game, b)) continue;
+    setPending(b, action, { wordId: 'simulation' });
     resolvePending(data, game, b, answers() < accuracy); questions++;
   }
   if (b.result === 'win') finishBattle(data, game, b);

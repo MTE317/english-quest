@@ -9,7 +9,7 @@ import { GameSession } from '../save.js?v=rune-study-1';
 import { normalizeGame } from '../game-state.js?v=party6-1';
 import {
   allowedDungeons, startRun, startNextBattle, afterBattle, returnToTown, continueRun, resolveLoot,
-  isBossBattle, runFloorRow, runFloorCount, returnItems, currentRank, useItemOutsideBattle, FIELD_ITEM_EFFECTS,
+  canTrainIn, dungeonRegion, isBossBattle, runFloorRow, runFloorCount, returnItems, currentRank, useItemOutsideBattle, FIELD_ITEM_EFFECTS,
 } from '../dungeon.js?v=build36-1';
 import { backpackSlots, backpackUsed, addItem } from '../loot.js?v=build36-1';
 import { maxHp, maxMp } from '../character.js?v=build36-1';
@@ -68,11 +68,23 @@ function showDeparture(message = null) {
   const averageLevel = g.party.reduce((sum, member) => sum + member.lv, 0) / g.party.length;
   const beginner = rank.maxDungeonRank === 1 && nearby && (g.cleared?.[nearby.id] ?? 0) < 3 && averageLevel < 5;
   const suggested = beginner ? nearby : dungeons.find(d => d.rank === rank.maxDungeonRank && d.kind === '標準') ?? dungeons[0];
-  const st = { dungeonId: suggested.id, stoneId: null };
+  const st = { dungeonId: suggested.id, stoneId: null, training: false };
+  const training = el('input', { type: 'checkbox', onchange: (e) => { st.training = e.target.checked; } });
+  const trainingOption = el('label', {}, training, ' 育成探索（ボスなし）');
+  const regions = new Map();
+  for (const dungeon of dungeons) {
+    const region = dungeonRegion(dungeon);
+    if (!regions.has(region)) regions.set(region, []);
+    regions.get(region).push(el('option', { value: dungeon.id, selected: dungeon.id === st.dungeonId },
+      stars(dungeon.rank) + ' ' + dungeon.name + (g.cleared?.[dungeon.id] ? '（踏破済み）' : '')));
+  }
+  const destinations = [...regions].map(([label, options]) => el('optgroup', { label }, options));
   const stoneSel = el('select', { class: 'select', onchange: (e) => { st.stoneId = e.target.value; } });
   const info = el('div', { class: 'route-info', 'aria-live': 'polite' });
   const fill = () => {
     const dg = data.dungeons.get(st.dungeonId);
+    trainingOption.hidden = !canTrainIn(dg);
+    training.checked = st.training = canTrainIn(dg) && st.training;
     document.querySelector('.page-heading').className = `bar page-heading scene-${expeditionScene(dg.id)}`;
     // ★がダンジョン以上で、今のランクの★まで（1つ下の★の石をすべて読み解けば1つ上まで）
     const stones = lex.stones.filter((s) => stoneAllowed(lex, store, scheduler, s, dg.rank, rank.maxDungeonRank, scheduler.dayOf(now())));
@@ -91,7 +103,7 @@ function showDeparture(message = null) {
       if (!st.stoneId) return;
       if (session.game.party.every((m) => m.hp <= 0)) { showDeparture('全員倒れている。宿屋や神殿で回復してから出発しよう。'); return; }
       const picker = new QuestionPicker({ lex, store, scheduler, stoneId: st.stoneId, nowMs: now() });
-      startRun(data, session, { dungeonId: st.dungeonId, stoneId: st.stoneId, quizState: picker.toState(), seed: (Date.now() ^ (Math.random() * 2 ** 32)) >>> 0 });
+      startRun(data, session, { dungeonId: st.dungeonId, stoneId: st.stoneId, quizState: picker.toState(), training: st.training, seed: (Date.now() ^ (Math.random() * 2 ** 32)) >>> 0 });
       showRun();
     },
   }, '出発する');
@@ -102,9 +114,10 @@ function showDeparture(message = null) {
       beginner ? el('p', { class: 'panel small' }, `はじめは近場の「${nearby.name}」がおすすめ。短い冒険を2〜3回重ねて仲間を育て、回復やスキルを準備してから標準ダンジョンへ挑もう。行き先は自由に選べます。`) : null,
       message ? el('p', { class: 'panel error', role: 'alert' }, message, '　', el('a', { href: 'index.html?facility=temple' }, '神殿へ')) : null,
       el('div', { class: 'panel departure-plan' },
-        el('label', {}, '行き先',
+        el('label', {}, '世界地図から行き先を選ぶ',
           el('select', { class: 'select', onchange: (e) => { st.dungeonId = e.target.value; fill(); } },
-            dungeons.map((d) => el('option', { value: d.id, selected: d.id === st.dungeonId }, `${stars(d.rank)} ${d.name}${g.cleared?.[d.id] ? '（踏破済み）' : ''}`)))),
+            destinations)),
+        trainingOption,
         info,
         el('label', {}, '持っていくルーンストーン', stoneSel),
         el('details', { class: 'stone-help' }, el('summary', {}, '教材を選ぶ条件'),
@@ -173,7 +186,7 @@ function showRun(result = null) {
     ];
   } else if (run.state === 'cleared') {
     actions = [
-      el('div', { class: 'panel small' }, 'いちばん奥のボスを倒した！'),
+      el('div', { class: 'panel small' }, run.training ? '育成探索を完了した！' : 'いちばん奥のボスを倒した！'),
       el('button', { class: 'primary', onclick: () => { const pack = summary(run); returnToTown(data, session); showReturned(pack); } }, '町に帰る'),
     ];
   }

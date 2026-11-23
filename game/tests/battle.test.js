@@ -250,3 +250,32 @@ test('無属性を含む5段階の相性と、0ダメージの命中による相
   assert.deepEqual(game.catalog.affinities.lava_golem.elements, ['slash']);
   assert.deepEqual(monsterKnowledge(data, game, target).resist, ['×斬撃']);
 });
+
+test('魔力漏出で敵のMPが減り、MP不足時は魔法攻撃を通常攻撃に切り替える', () => {
+  const game = createNewGame(data, party);
+  const enemy = makeEnemy(data, 'goblin', { lv: 3 });
+  enemy.magicRate = 1;
+  enemy.mp = 2;
+  enemy.statuses.weaken = { turns: 3, n: 1 };
+  const b = createBattle(data, game, { enemies: [enemy], seed: 5 });
+  b.round = 1;
+  b.queue = [{ side: 'enemy', i: 0 }, { side: 'ally', i: 0 }];
+  assert.equal(nextTurn(data, game, b)?.side, 'ally');
+  assert.equal(enemy.mp, 1);
+  assert.ok(b.log.some((line) => line.includes(enemy.name + 'の攻撃')));
+});
+
+test('複合属性は免疫と弱点のうち有利な倍率を採用する', () => {
+  function damage(dual) {
+    const game = createNewGame(data, party);
+    const target = { ...makeEnemy(data, 'lava_golem', { lv: 5 }), immune: ['slash'], strongWeak: ['fire'] };
+    const b = createBattle(data, game, { enemies: [target], seed: 5 });
+    if (dual) game.party[0].equip.weapon.effects = { 'ELEMENT:fire': 1 };
+    b.turn = { side: 'ally', i: 0 };
+    setPending(b, { type: 'attack', target: 0 }, Q);
+    resolvePending(data, game, b, true);
+    return target.maxHp - target.hp;
+  }
+  assert.equal(damage(false), 0);
+  assert.ok(damage(true) > 0);
+});

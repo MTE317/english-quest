@@ -38,6 +38,10 @@ export const BUILD_CATALOG = freezeTree(JSON.parse(readFileSync(new URL('./build
 export const BUILD_DEFINITIONS = Object.freeze(Object.fromEntries(BUILD_CATALOG.builds.map((build) => [build.id, build])));
 export const PROFILES = Object.freeze({
   ...LEGACY_PROFILES,
+  critical6: { ...LEGACY_PROFILES.critical, name: '会心6人編成',
+    jobs: [...LEGACY_PROFILES.critical.jobs, 'knight', 'black_mage'] },
+  weakness6: { ...LEGACY_PROFILES.weakness, name: '弱点6人編成',
+    jobs: [...LEGACY_PROFILES.weakness.jobs, 'warrior', 'bard'] },
   ...Object.fromEntries(BUILD_CATALOG.builds.map((build) => [build.id, {
     name: build.name, jobs: [build.job, ...build.allies.map((ally) => ally.job)],
     weapons: [build.weapon, ...build.allies.map((ally) => ally.weapon)],
@@ -204,6 +208,7 @@ function recipeScore(def, weights, normal) {
 
 export function prepareParty(data, dungeon, profileId = 'balanced', preparation = 'standard', options = {}) {
   const profile = PROFILES[profileId];
+  const strategy = ['critical6', 'weakness6'].includes(profileId) ? profileId.slice(0, -1) : profileId;
   if (!profile) throw new Error(`比較用編成がありません: ${profileId}`);
   if (!['standard', 'prepared'].includes(preparation)) throw new Error(`準備条件が不正です: ${preparation}`);
   const requiredRank = Math.max(profile.minStar, ...profile.jobs.map((id) => publicJobRank(data, id)));
@@ -301,7 +306,7 @@ export function prepareParty(data, dungeon, profileId = 'balanced', preparation 
     const wanted = new Set(own.map((s) => s.id));
     const cross = prepared && definition ? [...new Set([...(definition.crossSkills ?? []),
       ...coreSkills.filter((id) => data.skills.get(id).job !== m.job)])]
-      : prepared && specialized && i === 0 ? [...(CROSS_SKILLS[profileId] ?? [])] : [];
+      : prepared && specialized && i === 0 ? [...(CROSS_SKILLS[strategy] ?? [])] : [];
     if (prepared && specialized && ['black_mage', 'elementalist', 'hexer'].includes(m.job)) {
       const elemental = idx.skills.filter((s) => s.kind === 'attack' && s.effect.base === 'mag' && s.stage <= stage && !s.isFinal
         && s.elements.some((el) => boss.weak.includes(el)) && publicJobRank(data, s.job) <= dungeon.rank)
@@ -345,7 +350,7 @@ export function prepareParty(data, dungeon, profileId = 'balanced', preparation 
     trainAs(originalJob);
     m.loadout = { actions: [], passives: [] };
     const preferred = prepared && definition ? [...coreSkills, ...(definition.upgrades ?? [])]
-      : prepared && specialized && i === 0 ? PRIMARY_PRIORITY[profileId] ?? [] : [];
+      : prepared && specialized && i === 0 ? PRIMARY_PRIORITY[strategy] ?? [] : [];
     const priority = (s) => genericPriority(s, m.job) + (preferred.includes(s.id) ? 100 : 0)
       + (prepared && specialized && s.kind === 'imbue' && s.elements.some((el) => boss.weak.includes(el)) ? 120 : 0)
       + (prepared && specialized && s.kind === 'attack' && s.effect.base === 'mag' && s.elements.some((el) => boss.weak.includes(el)) ? 45 : 0);
@@ -368,7 +373,7 @@ export function prepareParty(data, dungeon, profileId = 'balanced', preparation 
     const weaponKind = profile.weapons?.[i] ?? job.startWeapon;
     const armorWeight = preferredArmor(data, job);
     const requiredAffixes = buildAffixes(data, boss, definition);
-    const wants = { ...affixWants(m.job, profileId, i === 0), ...requiredAffixes };
+    const wants = { ...affixWants(m.job, strategy, i === 0), ...requiredAffixes };
     for (const slot of ['weapon', ...(profile.offhands?.[i] ? ['offhand'] : []), 'head', 'body', 'arm', 'cloak', 'accessory1', 'accessory2']) {
       const actual = slot.startsWith('accessory') ? 'accessory' : slot === 'offhand' ? 'weapon' : slot;
       const kind = slot === 'offhand' ? profile.offhands[i] : weaponKind;

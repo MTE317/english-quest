@@ -22,7 +22,7 @@ for (const rank of [1, 3, 6, 9, 12]) for (const [profile, def] of Object.entries
 test('比較用編成は設定人数・公開職・合法装備・Lv上限・強化上限と熟練を守る', () => {
   for (const sample of samples) for (const mode of ['standard', 'prepared']) {
     const game = sample[mode]; const meta = game.simulationFixture;
-    assert.equal(game.party.length, sample.profile === 'balanced6' ? 6 : 4);
+    assert.equal(game.party.length, PROFILES[sample.profile].jobs.length);
     assert.equal(meta.level, Math.round(data.dungeonFloors.filter((r) => r.dungeonId === sample.dungeon.id)
       .reduce((sum, r, _i, rows) => sum + r.enemyLevel / rows.length, 0)));
     assert.equal(meta.stage, Math.min(5, 1 + Math.floor(sample.rank / 3)));

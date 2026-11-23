@@ -174,3 +174,22 @@ test('石化だけの勝利でも討伐依頼・経験値・ドロップを精�
   assert.ok(result.growth.every(({ xp }) => xp > 0));
   assert.ok(result.loot.gold > 0);
 });
+
+test('ボスなしの育成探索は通常の討伐と報酬を受け取り、ボス踏破数を加算しない', () => {
+  const session = newSession();
+  startRun(data, session, { dungeonId: 'sunlit_forest', stoneId: 'rs_1_001', seed: 1, training: true });
+  const gold = session.game.gold;
+  while (session.run.state !== 'cleared') {
+    if (session.run.state === 'return_point') { continueRun(session); continue; }
+    if (session.run.state === 'loot') { resolveLoot(data, session, null); continue; }
+    assert.equal(isBossBattle(data, session.run), false);
+    startNextBattle(data, session);
+    assert.ok(session.run.battle.enemies.every((enemy) => !enemy.boss));
+    for (const enemy of session.run.battle.enemies) enemy.hp = 0;
+    nextTurn(data, session.game, session.run.battle);
+    assert.equal(afterBattle(data, session).result, 'win');
+  }
+  returnToTown(data, session);
+  assert.equal(session.game.cleared.sunlit_forest, undefined);
+  assert.ok(session.game.gold > gold);
+});

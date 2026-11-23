@@ -177,7 +177,8 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
     render(enemies, b.enemies.map((enemy, index) => {
       const targetable = kind === 'enemy' && indices.includes(index);
       const chosen = selectedKind === 'enemy' && action.target === index;
-      const label = `${enemy.name}、HP ${enemy.hp}/${enemy.maxHp}`;
+      const label = enemy.name + '、HP ' + enemy.hp + '/' + enemy.maxHp +
+        (enemy.maxMp == null ? '' : '、MP ' + enemy.mp + '/' + enemy.maxMp);
       const known = monsterKnowledge(data, g, enemy);
       const intent = enemyIntent(data, enemy, b.round);
       const pendingEnemyTurn = b.queue?.some(turn => turn.side === 'enemy' && turn.i === index)
@@ -194,6 +195,8 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
         targetable ? null : el('span', { class: 'battle-inspect', 'aria-hidden': 'true' }, '図鑑'),
         el('span', { class: 'battle-unit-name' }, enemy.name, enemy.boss ? ' 👑' : '', enemy.eliteId ? ' ⚠' : ''),
         resource('HP', enemy.hp, enemy.maxHp, 'hp'),
+        enemy.maxMp == null ? null : resource('MP', enemy.mp, enemy.maxMp, 'mp'),
+        enemy.tactics ? el('span', { class: 'battle-intent' }, { heal: '回復術', ward: '自己強化', disrupt: '弱体化' }[enemy.tactics]) : null,
         intentLabel ? el('span', { class: `battle-intent${imminent ? ' imminent' : ''}` }, intentLabel) : null,
         conditions(battleConditionLabels(data, enemy)),
         known.weak.length ? el('span', { class: 'battle-known-weak' }, '弱点 ' + known.weak.join('・')) : null);
