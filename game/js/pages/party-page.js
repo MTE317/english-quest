@@ -15,7 +15,7 @@ import { el, render, stars } from '../dom.js';
 import { describeFixedEffects } from '../equipment-effects.js?v=build36-1';
 import { describeSkillEffect } from '../skill-effects.js?v=build36-1';
 
-import { setSceneMusic } from '../battle-music.js?v=rune-study-1';
+import { setSceneMusic } from '../battle-music.js?v=music-suite-1';
 
 import { installGameShell } from '../ui/game-shell.js?v=pixel-town-1';
 import { weaponIcon } from '../ui/weapon-icons.js';

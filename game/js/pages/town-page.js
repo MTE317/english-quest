@@ -19,7 +19,7 @@ import { weaponIcon } from '../ui/weapon-icons.js';
 import { equipmentIcon } from '../ui/equipment-icons.js';
 import { uiIcon } from '../ui/pixel-icons.js';
 import { el, render } from '../dom.js';
-import { setSceneMusic } from '../battle-music.js?v=rune-study-1';
+import { setSceneMusic } from '../battle-music.js?v=music-suite-1';
 
 import { installGameShell, sceneHeader } from '../ui/game-shell.js?v=pixel-town-1';
 

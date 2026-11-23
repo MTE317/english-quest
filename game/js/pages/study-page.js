@@ -13,11 +13,11 @@ import {
   stoneProgress, nextUnread, trialBlock, trialPlan, finishExam, promotionBlock, promotionPlan, starLearnedRatio,
   trainingReward, applyTraining,
 } from '../study.js?v=build36-1';
-import { runQuiz } from '../ui/quiz-runner.js?v=rune-study-1';
-import { speak, canSpeak } from '../speech.js?v=rune-study-1';
+import { runQuiz } from '../ui/quiz-runner.js?v=music-suite-1';
+import { speak, canSpeak } from '../speech.js?v=music-suite-1';
 import { el, render, stars } from '../dom.js';
 
-import { setSceneMusic } from '../battle-music.js?v=rune-study-1';
+import { setSceneMusic } from '../battle-music.js?v=music-suite-1';
 
 import { installGameShell } from '../ui/game-shell.js?v=pixel-town-1';
 
