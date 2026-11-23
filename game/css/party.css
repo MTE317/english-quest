@@ -257,16 +257,12 @@
 
 
 /* ---------------- スキル装備 ----------------
-   アクティブ / パッシブを大きなタブで切り替え、下の暗い盤面で一覧管理する。 */
-.skill-loadout-shell {
-  margin-top: 14px;
-}
-
+   ショップと同じタイル一覧 + 詳細ペイン。 */
 .skill-loadout-tabs {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 8px;
-  margin: 0 0 12px;
+  margin: 14px 0 12px;
 }
 
 .skill-loadout-tab {
@@ -281,167 +277,94 @@
   box-shadow: inset 0 0 0 1px #07101f, 0 2px 0 #050b14;
   font-size: 1.02rem;
   font-weight: 800;
-  letter-spacing: .02em;
 }
 
 .skill-loadout-tab.active {
   border-color: #e5c276;
   background: linear-gradient(180deg, #f4d58f 0%, #e7bd69 100%);
   color: #2a1c08;
-  box-shadow:
-    inset 0 0 0 2px rgba(255, 247, 214, .42),
-    inset 0 -3px rgba(118, 78, 25, .24),
-    0 2px 0 #6e552d;
+  box-shadow: inset 0 0 0 2px rgba(255,247,214,.42), inset 0 -3px rgba(118,78,25,.24), 0 2px 0 #6e552d;
 }
 
-.skill-loadout-tab:focus-visible {
-  outline: 2px solid #fff1b8;
-  outline-offset: 2px;
-}
-
-.skill-loadout-board {
-  min-height: clamp(340px, 52vh, 600px);
-  border: 1px solid #1b2b48;
-  padding: 14px;
-  background:
-    linear-gradient(rgba(255,255,255,.015), rgba(255,255,255,0)),
-    #020407;
-  box-shadow:
-    inset 0 0 0 1px #000,
-    inset 0 14px 28px rgba(0,0,0,.45);
-}
-
-.skill-loadout-list {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.skill-loadout-card {
-  display: flex;
+.skill-shop-layout {
   align-items: stretch;
-  gap: 10px;
-  min-width: 0;
-  border: 1px solid #3d5275;
-  padding: 10px;
-  background: linear-gradient(180deg, #172a4b, #11213d);
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,.025);
 }
 
-.skill-loadout-card.equipped {
-  border-color: #d7b86f;
-  background: linear-gradient(180deg, #263a58, #172942);
-  box-shadow:
-    inset 3px 0 #d7b86f,
-    inset 0 0 0 1px rgba(255, 223, 156, .12);
+.skill-shop-grid {
+  max-height: 36rem;
 }
 
-.skill-loadout-card-main {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  min-width: 0;
-  flex: 1 1 auto;
+.quest-ui .skill-shop-slot {
+  min-height: 96px;
 }
 
-.skill-loadout-icon {
-  display: grid;
-  place-items: center;
-  flex: 0 0 44px;
-  width: 44px;
-  height: 44px;
-  border: 1px solid #657da5;
-  background: #09152a;
+.skill-shop-icon {
   color: #f1cf82;
-  box-shadow: inset 0 0 0 2px #0d203d;
-  font-size: 1.15rem;
-  line-height: 1;
+  font-size: 1.35rem;
 }
 
-.skill-loadout-info {
+.quest-ui .skill-shop-slot[aria-pressed='true'] {
+  border-color: #e4c16f;
+  background: #22334f;
+  box-shadow: inset 0 0 0 1px #e4c16f;
+}
+
+.skill-shop-detail {
+  min-height: 100%;
+}
+
+.skill-shop-detail header > div {
   min-width: 0;
-  flex: 1 1 auto;
 }
 
-.skill-loadout-title-row {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  flex-wrap: wrap;
-  min-width: 0;
+.skill-shop-detail h2 {
+  color: var(--accent);
 }
 
-.skill-loadout-name {
-  color: #fff;
-  font-size: .95rem;
-  overflow-wrap: anywhere;
-}
-
-.skill-loadout-badge {
+.skill-shop-equipped {
+  display: inline-block;
+  margin-top: 3px;
   border: 1px solid #d7b86f;
-  padding: 2px 6px;
+  padding: 2px 7px;
   background: #4c3b1d;
   color: #ffe2a0;
-  font-size: .68rem;
+  font-size: .7rem;
   font-weight: 700;
-  white-space: nowrap;
 }
 
-.skill-loadout-info p {
-  margin: 4px 0 0;
-  line-height: 1.45;
+.skill-shop-effect {
+  margin: 14px 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  padding: 10px 0;
 }
 
-.skill-loadout-description {
-  color: #d9e1ee;
+.skill-shop-effect h3 {
+  margin: 0 0 6px;
+  font-size: .95rem;
 }
 
-.skill-loadout-actions {
-  display: flex;
-  align-items: center;
-  flex: 0 0 auto;
-}
-
-.skill-loadout-actions button {
-  min-width: 92px;
+.skill-shop-effect p {
   margin: 0;
-  padding-inline: 10px;
+  line-height: 1.65;
 }
 
-.skill-loadout-empty {
+.skill-shop-empty {
+  min-height: 18rem;
   display: grid;
   place-items: center;
   align-content: center;
-  min-height: clamp(300px, 46vh, 540px);
+  gap: 8px;
   text-align: center;
-}
-
-.skill-loadout-empty p {
-  margin: 4px 0;
-}
-
-.skill-loadout-empty-icon {
-  display: grid;
-  place-items: center;
-  width: 54px;
-  height: 54px;
-  margin-bottom: 8px;
-  border: 1px solid #3d5275;
-  background: #09152a;
-  color: #d7b86f;
-  font-size: 1.3rem;
 }
 
 .skill-loadout-tree-link {
   margin-top: 12px;
 }
 
-@media (max-width: 720px) {
-  .skill-loadout-list {
-    grid-template-columns: minmax(0, 1fr);
+@media (max-width: 650px) {
+  .skill-shop-grid {
+    max-height: 18rem;
   }
 }
 
@@ -457,29 +380,7 @@
     font-size: .9rem;
   }
 
-  .skill-loadout-board {
-    min-height: 420px;
-    padding: 8px;
-  }
-
-  .skill-loadout-card {
-    gap: 7px;
-    padding: 8px;
-  }
-
-  .skill-loadout-card-main {
-    gap: 8px;
-  }
-
-  .skill-loadout-icon {
-    flex-basis: 38px;
-    width: 38px;
-    height: 38px;
-  }
-
-  .skill-loadout-actions button {
-    min-width: 76px;
-    padding-inline: 7px;
-    font-size: .78rem;
+  .quest-ui .skill-shop-slot {
+    min-height: 88px;
   }
 }
