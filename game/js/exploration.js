@@ -64,6 +64,7 @@ export function resolveExploration(data, game, run, floor, season, rngForEvent, 
   const dungeon = data.dungeons.get(run.dungeonId);
   const materials = localMaterials(data, dungeon, season);
   for (const event of events) {
+    if (event.requiredStory && !game.explorationStories?.[event.requiredStory]) continue;
     const key = `${run.dungeonId}:${event.id}`;
     const once = event.first || event.type === 'discover' || event.type === 'investigate';
     if (once && (game.exploration?.events[key] || run.explorationRecords?.some((record) => record.key === key))) continue;

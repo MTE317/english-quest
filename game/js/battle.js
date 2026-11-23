@@ -718,7 +718,10 @@ function attackDamage(data, game, b, i, e, skill, cm, { offhand = false, actionB
   }
   // 睡眠・凍結は hitEnemy で解ける前に判定する。異常の種類を重ねても上限は共有。
   const legacyDownBonus = enemy.debuffs.abilityDown ? Math.max(0, affixSum(m, 'VS_STATUS:statdown') / 100) : 0;
-  const statusDamage = Object.keys(enemy.statuses).reduce((sum, id) => sum + Math.max(0, affixSum(m, `VS_STATUS:${id}`) / 100), legacyDownBonus);
+  let statusDamage = Object.keys(enemy.statuses).reduce((sum, id) => sum + Math.max(0, affixSum(m, `VS_STATUS:${id}`) / 100), legacyDownBonus);
+  for (const [ids, rate] of mods.status_count_damage ?? []) {
+    statusDamage += [...new Set(ids)].filter(id => enemy.statuses[id]).length * rate;
+  }
   pm += Math.min(f(data, 'status_damage_cap'), statusDamage) + actionBonus;
   if (base === 'weapon' && traits.vs_status && enemy.statuses[traits.vs_status.id]) pm += (traits.vs_status.mul ?? 1) - 1;
   if (!skill) pm += mods.normal_damage ?? 0;

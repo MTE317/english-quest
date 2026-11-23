@@ -39,3 +39,26 @@ test('毒の伝播は倒した敵の状態を引き継ぎ、無効な対象を�
   kill(1);
   assert.equal(enemies[4].statuses.toxic, undefined);
 });
+
+test('状態条件の補正は対象に付いた毒と猛毒の種類数に応じて段階的に増える', () => {
+  const data = loadData();
+  const game = createNewGame(data, defaultPartySpecs(data));
+  // 条件判定だけを比較するため、同じ武器・能力・乱数でパッシブの有無を変える。
+  game.party[0].loadout.passives = ['venomist_harvest'];
+  const damage = ids => {
+    const copy = structuredClone(game);
+    const enemy = makeEnemy(data, 'slime', { lv: 1 });
+    enemy.hp = enemy.maxHp = 10000;
+    for (const id of ids) enemy.statuses[id] = { turns: 2, n: 1 };
+    const battle = createBattle(data, copy, { enemies: [enemy], seed: 1 });
+    battle.turn = { side: 'ally', i: 0 };
+    setPending(battle, { type: 'attack', target: 0 }, {});
+    resolvePending(data, copy, battle, true);
+    return 10000 - enemy.hp;
+  };
+  const baseline = damage([]);
+  assert.ok(baseline > 0);
+  assert.ok(Math.abs(damage(['poison']) - baseline * 1.18) <= 2);
+  assert.ok(Math.abs(damage(['poison', 'toxic']) - baseline * 1.36) <= 2);
+  assert.equal(damage(['burn']), baseline);
+});
