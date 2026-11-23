@@ -1,4 +1,4 @@
-import { allowedDungeons } from './dungeon.js?v=systems-v1';
+import { allowedDungeons } from './dungeon.js?v=trial-five-1';
 
 function availableStories(data, game) {
   const reachable = new Set(allowedDungeons(data, game).map(d => d.id));

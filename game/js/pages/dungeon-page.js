@@ -10,14 +10,14 @@ import { normalizeGame } from '../game-state.js?v=party6-1';
 import {
   allowedDungeons, allowedStones, expeditionFee, startRun, startNextBattle, afterBattle, returnToTown, continueRun, resolveLoot,
   isBossBattle, runFloorRow, runFloorCount, returnItems, currentRank, useItemOutsideBattle, FIELD_ITEM_EFFECTS,
-} from '../dungeon.js?v=expedition-study-1';
+} from '../dungeon.js?v=trial-five-1';
 import { backpackSlots, backpackUsed, addItem } from '../loot.js?v=build36-1';
 import { maxHp, maxMp } from '../character.js?v=build36-1';
 import { createBattleView } from '../ui/battle-view.js?v=systems-v1';
 import { createVictoryView } from '../ui/victory-view.js?v=pixel-town-1';
 import { el, render, stars } from '../dom.js';
-import { buildWorldMap, newDiscoveries } from '../world-map.js?v=world-map-1';
-import { createWorldMapView } from '../ui/world-map-view.js?v=world-map-1';
+import { buildWorldMap, newDiscoveries } from '../world-map.js?v=trial-five-1';
+import { createWorldMapView } from '../ui/world-map-view.js?v=trial-five-1';
 import { setSceneMusic } from '../battle-music.js?v=music-suite-1';
 
 import { expeditionScene } from '../ui/scenery.js';
@@ -256,7 +256,7 @@ function showReturned(pack) {
       el('div', { class: 'muted' }, '拾った物は町の倉庫に入った。')),
     el('div', { class: 'row' },
       el('a', { class: 'btn primary', href: 'index.html' }, '町へ'),
-      el('button', { type: 'button', onclick: () => { showDeparture(); window.scrollTo(0, 0); } }, '世界地図へ')));
+      el('button', { type: 'button', onclick: () => { showDeparture(); window.scrollTo(0, 0); } }, '冒険先一覧へ')));
 }
 
 function lootActions(result) {

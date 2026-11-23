@@ -3,7 +3,7 @@
 import { evaluate } from './expr.js';
 import { makeGear, maxHp, maxMp, gearDef } from './character.js?v=build36-1';
 import { addItem } from './loot.js?v=build36-1';
-import { currentRank, allowedDungeons } from './dungeon.js?v=systems-v1';
+import { currentRank, allowedDungeons } from './dungeon.js?v=trial-five-1';
 import { monsterPool } from './encounter.js?v=systems-v1';
 import { unlockReportedHuntJobs } from './temple.js?v=systems-v1';
 

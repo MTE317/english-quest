@@ -10,7 +10,7 @@ import { createBattle, finishBattle, battleRewards, curedBy } from './battle.js?
 import { makeEncounter, floorRow, planBounty } from './encounter.js?v=systems-v1';
 import { rollBattleLoot, addToBackpack, swapIntoBackpack, unloadBackpack } from './loot.js?v=build36-1';
 import { gainXp, maxHp, maxMp, affixSum } from './character.js?v=build36-1';
-import { advanceDays, calendarOf, countKills, refreshBoard } from './town.js?v=systems-v1';
+import { advanceDays, calendarOf, countKills, refreshBoard } from './town.js?v=trial-five-1';
 import { discoverJobs, recordStoredMaterials } from './temple.js?v=systems-v1';
 import { memberMods } from './growth.js?v=build36-1';
 import { planExploration, resolveExploration, commitExploration, explorationEntryAllowed } from './exploration.js';

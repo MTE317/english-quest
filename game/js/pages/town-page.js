@@ -2,16 +2,16 @@
 import { loadGameData } from '../gamedata.js?v=rune-study-1';
 import { GameSession } from '../save.js?v=rune-study-1';
 import { normalizeGame } from '../game-state.js?v=party6-1';
-import { currentRank, seededRng } from '../dungeon.js?v=systems-v1';
+import { currentRank, seededRng } from '../dungeon.js?v=trial-five-1';
 import {
   calendarOf, fillBoard, boardSize, questAcceptLimit, acceptQuest, canAcceptQuest, abandonQuest, canReport, reportQuest, questText, questProgress, questDestination, questRewardGold, questRankPoints, questDepositTotal, questAbandonRefund, nextRankStatus, stayInn, revive, reviveCost, checkRankUp,
   canExpandBackpack, expandBackpack, feeTier,
   nextBackpackTier,
-} from '../town.js?v=systems-v1';
+} from '../town.js?v=trial-five-1';
 import { backpackSlots } from '../loot.js?v=build36-1';
 import { maxHp, maxMp, gearDef } from '../character.js?v=build36-1';
 import { availableJobs, changeJob } from '../growth.js?v=build36-1';
-import { explorationStories, acceptExplorationStory, reportExplorationStory } from '../exploration-story.js';
+import { explorationStories, acceptExplorationStory, reportExplorationStory } from '../exploration-story.js?v=trial-five-1';
 import { cureAtTemple, recordStoredMaterials } from '../temple.js?v=systems-v1';
 import { workshopView, managementView, templeExtras } from '../ui/facility-view.js?v=systems-v1';
 import { itemShopView, gearShopView } from '../ui/town-shops.js?v=pixel-town-1';
@@ -165,7 +165,7 @@ function showHome(g) {
   }
   render(view, sceneHeader('冒険者の町', 'town', {
     detail: '行き先とルーンストーンを選んで遠征へ。',
-    action: heroAction('dungeon.html', '世界地図へ'), status: statusBar(g),
+    action: heroAction('dungeon.html', '冒険先を選ぶ'), status: statusBar(g),
   }), townActions(g), townNotices(g), stopCards(), facilityDirectory());
 }
 
