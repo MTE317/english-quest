@@ -45,9 +45,9 @@ test('60ダンジョンの短い経路・帰還地点・ボス到達レベルが
     assert.equal(rows[0].enemyLevel, old.first_level, dungeon.id);
     assert.equal(rows.at(-1).enemyLevel, old.first_level + old.floors - 1, dungeon.id);
   }
-  for (const chain of readCsv('quest_chains.csv').rows) for (const step of chain.steps.split('|')) {
-    const [kind, id, goal] = step.split(':');
-    if (kind === 'explore') assert.ok(parseInt(goal, 10) <= data.dungeons.get(id).floors, chain.id);
+  // 旧連続クエストの代わりに、単独の特殊探索が実在ダンジョンを指すことを検証。
+  for (const story of data.balance.exploration_stories ?? []) {
+    assert.ok(data.dungeons.has(story.dungeon), story.id);
   }
 });
 
