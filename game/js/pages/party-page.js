@@ -371,7 +371,7 @@ function showSkills(index, jobId, skillId, message = '') {
     const prerequisite = skillPrerequisite(data, skill);
     const prerequisiteText = prerequisite ? `${prerequisite.name}（${isLearned(member, prerequisite) ? '習得済' : '未習得'}）` : 'なし';
     render(detail, el('h2', {}, skill.name),
-      el('p', { class: 'muted small' }, [skill.path, `${skill.stage}段目`, skill.kind === 'passive' ? 'パッシブ' : `MP ${skillMp(data, member, skill)}`,
+      el('p', { class: 'muted small' }, [skill.path, skill.kind === 'passive' ? 'パッシブ' : `MP ${skillMp(data, member, skill)}`,
         `必要枠 ${skill.cost}`, skill.isFinal && '奥義'].filter(Boolean).join('・')),
       el('p', { class: 'small' }, describeSkillEffect(data, skill)),
       el('p', { class: 'small muted' }, `習得AP ${skill.apToLearn}${skill.apToLearn === 0 ? '（最初から習得）' : ''}・前提：${prerequisiteText}`),
