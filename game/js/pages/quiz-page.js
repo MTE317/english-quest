@@ -5,7 +5,7 @@ import { Scheduler, STAGE_LABEL, dayToString } from '../srs.js?v=features-2';
 import { LearningStore, now, getDebugDayOffset, setDebugDayOffset } from '../storage.js?v=rune-study-1';
 import { QuestionPicker, REASON_LABEL } from '../picker.js';
 import { makeQuestion, questionSpeech, DIRECTION, DIRECTION_LABEL } from '../quiz.js?v=question-speech-1';
-import { speak, canSpeak, stopSpeech } from '../speech.js?v=rune-study-1';
+import { speak, canSpeak, stopSpeech } from '../speech.js?v=music-suite-1';
 import { el, render, stars } from '../dom.js';
 
 // この画面は動作確認用なので、問題数はユーザーの指定（10問）で固定

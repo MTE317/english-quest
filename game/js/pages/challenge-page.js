@@ -11,10 +11,10 @@ import { currentRank, useItemOutsideBattle, FIELD_ITEM_EFFECTS } from '../dungeo
 import { nextRankStatus, checkRankUp } from '../town.js?v=build36-1';
 import { makeGear } from '../character.js?v=build36-1';
 import { examWords, starLearnedRatio, arenaReviewWords } from '../study.js?v=build36-1';
-import { createBattleView } from '../ui/battle-view.js?v=party6-1';
-import { runQuiz } from '../ui/quiz-runner.js?v=rune-study-1';
+import { createBattleView } from '../ui/battle-view.js?v=music-suite-1';
+import { runQuiz } from '../ui/quiz-runner.js?v=music-suite-1';
 import { el, render } from '../dom.js';
-import { setSceneMusic } from '../battle-music.js?v=rune-study-1';
+import { setSceneMusic } from '../battle-music.js?v=music-suite-1';
 
 import { installGameShell } from '../ui/game-shell.js?v=pixel-town-1';
 

@@ -1,0 +1,252 @@
+{
+  "version": "music-suite-1",
+  "sample_rate": 44100,
+  "bit_rate_kbps": 128,
+  "tracks": {
+    "town-square": {
+      "file": "town-square.mp3",
+      "title": "旅立ちの広場",
+      "duration_seconds": 180.0,
+      "bpm": 96,
+      "beats_per_bar": 4,
+      "bars": 72,
+      "sections": [
+        {
+          "name": "朝の広場",
+          "start_bar": 0,
+          "bars": 4
+        },
+        {
+          "name": "旅立ちの主題",
+          "start_bar": 4,
+          "bars": 16
+        },
+        {
+          "name": "石畳の向こう",
+          "start_bar": 20,
+          "bars": 16
+        },
+        {
+          "name": "木陰の休息",
+          "start_bar": 36,
+          "bars": 12
+        },
+        {
+          "name": "仲間と歩く",
+          "start_bar": 48,
+          "bars": 16
+        },
+        {
+          "name": "広場への帰路",
+          "start_bar": 64,
+          "bars": 8
+        }
+      ],
+      "loop": true,
+      "bytes": 2881203,
+      "sha256": "4d567fbe63839495a827729ba8e20cd41a29885d7f7866ae9c485370e19ec948",
+      "master_lufs": -18.0,
+      "master_peak_dbfs": -8.799
+    },
+    "guild-tavern": {
+      "file": "guild-tavern.mp3",
+      "title": "灯火亭のワルツ",
+      "duration_seconds": 180.0,
+      "bpm": 96,
+      "beats_per_bar": 3,
+      "bars": 96,
+      "sections": [
+        {
+          "name": "扉を開けて",
+          "start_bar": 0,
+          "bars": 8
+        },
+        {
+          "name": "冒険者のワルツ",
+          "start_bar": 8,
+          "bars": 16
+        },
+        {
+          "name": "隣の卓の返事",
+          "start_bar": 24,
+          "bars": 16
+        },
+        {
+          "name": "旅の語り部",
+          "start_bar": 40,
+          "bars": 16
+        },
+        {
+          "name": "暖炉のそば",
+          "start_bar": 56,
+          "bars": 8
+        },
+        {
+          "name": "笑い声が戻る",
+          "start_bar": 64,
+          "bars": 8
+        },
+        {
+          "name": "仲間の乾杯",
+          "start_bar": 72,
+          "bars": 16
+        },
+        {
+          "name": "灯火の輪",
+          "start_bar": 88,
+          "bars": 8
+        }
+      ],
+      "loop": true,
+      "bytes": 2881206,
+      "sha256": "5dcdcf26652180fa02a5bd00cafee090a09a590eb2f980606ca780d3e27b4821",
+      "master_lufs": -18.0,
+      "master_peak_dbfs": -7.75
+    },
+    "town-facility": {
+      "file": "town-facility.mp3",
+      "title": "小さな工房の午後",
+      "duration_seconds": 180.0,
+      "bpm": 80,
+      "beats_per_bar": 4,
+      "bars": 60,
+      "sections": [
+        {
+          "name": "窓から差す光",
+          "start_bar": 0,
+          "bars": 4
+        },
+        {
+          "name": "穏やかな手仕事",
+          "start_bar": 4,
+          "bars": 16
+        },
+        {
+          "name": "棚に眠る物語",
+          "start_bar": 20,
+          "bars": 12
+        },
+        {
+          "name": "ひと息のお茶",
+          "start_bar": 32,
+          "bars": 8
+        },
+        {
+          "name": "仕上げのひと針",
+          "start_bar": 40,
+          "bars": 16
+        },
+        {
+          "name": "また明日へ",
+          "start_bar": 56,
+          "bars": 4
+        }
+      ],
+      "loop": true,
+      "bytes": 2881209,
+      "sha256": "47b767d056cb267336f198fc5f375623309c0a0206955dc6a1b47821c022074d",
+      "master_lufs": -18.0,
+      "master_peak_dbfs": -8.633
+    },
+    "dungeon-depths": {
+      "file": "dungeon-depths.mp3",
+      "title": "石の回廊と地下の光",
+      "duration_seconds": 180.0,
+      "bpm": 80,
+      "beats_per_bar": 4,
+      "bars": 60,
+      "sections": [
+        {
+          "name": "石の回廊・序奏",
+          "start_bar": 0,
+          "bars": 4
+        },
+        {
+          "name": "探索の主題",
+          "start_bar": 4,
+          "bars": 16
+        },
+        {
+          "name": "地下の光・副主題",
+          "start_bar": 20,
+          "bars": 12
+        },
+        {
+          "name": "遠い足音・間奏",
+          "start_bar": 32,
+          "bars": 8
+        },
+        {
+          "name": "探索の主題・再現",
+          "start_bar": 40,
+          "bars": 16
+        },
+        {
+          "name": "回廊へ戻る",
+          "start_bar": 56,
+          "bars": 4
+        }
+      ],
+      "loop": true,
+      "bytes": 2881212,
+      "sha256": "03df321cfaabb2dcf44821f5939663629c4c9a663e1c21a7b6c3b5075f235788",
+      "master_lufs": -18.0,
+      "master_peak_dbfs": -7.668
+    },
+    "english-quest-battle": {
+      "file": "english-quest-battle.mp3",
+      "title": "遺跡を駆ける刃",
+      "duration_seconds": 180.0,
+      "bpm": 128,
+      "beats_per_bar": 4,
+      "bars": 96,
+      "sections": [
+        {
+          "name": "刃を構える・序奏",
+          "start_bar": 0,
+          "bars": 4
+        },
+        {
+          "name": "戦いの主題",
+          "start_bar": 4,
+          "bars": 16
+        },
+        {
+          "name": "突破の副主題",
+          "start_bar": 20,
+          "bars": 16
+        },
+        {
+          "name": "駆け引き・間奏",
+          "start_bar": 36,
+          "bars": 8
+        },
+        {
+          "name": "戦いの主題・再現",
+          "start_bar": 44,
+          "bars": 16
+        },
+        {
+          "name": "静かな決意・展開部",
+          "start_bar": 60,
+          "bars": 12
+        },
+        {
+          "name": "突破の副主題・再現",
+          "start_bar": 72,
+          "bars": 16
+        },
+        {
+          "name": "次の一手へ",
+          "start_bar": 88,
+          "bars": 8
+        }
+      ],
+      "loop": true,
+      "bytes": 2881206,
+      "sha256": "bef692f51abb9abe7a83442ad79027ff452a28579d3bdf9ebb03c14b17fb144f",
+      "master_lufs": -18.0,
+      "master_peak_dbfs": -4.87
+    }
+  }
+}

@@ -13,11 +13,11 @@ import {
 } from '../dungeon.js?v=build36-1';
 import { backpackSlots, backpackUsed, addItem } from '../loot.js?v=build36-1';
 import { maxHp, maxMp } from '../character.js?v=build36-1';
-import { createBattleView } from '../ui/battle-view.js?v=party6-1';
+import { createBattleView } from '../ui/battle-view.js?v=music-suite-1';
 import { createVictoryView } from '../ui/victory-view.js?v=pixel-town-1';
 import { stoneAllowed } from '../study.js?v=build36-1';
 import { el, render, stars } from '../dom.js';
-import { setSceneMusic } from '../battle-music.js?v=rune-study-1';
+import { setSceneMusic } from '../battle-music.js?v=music-suite-1';
 
 import { expeditionScene } from '../ui/scenery.js';
 import { installGameShell } from '../ui/game-shell.js?v=pixel-town-1';

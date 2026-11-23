@@ -5,7 +5,7 @@ import { dayToString } from '../srs.js?v=features-2';
 import { DIRECTION } from '../quiz.js?v=features-2';
 import { el, render } from '../dom.js';
 import { monsterKnowledge } from '../monster-knowledge.js';
-import { setSceneMusic } from '../battle-music.js?v=rune-study-1';
+import { setSceneMusic } from '../battle-music.js?v=music-suite-1';
 
 import { installGameShell } from '../ui/game-shell.js?v=pixel-town-1';
 import { equipmentIcon } from '../ui/equipment-icons.js';
