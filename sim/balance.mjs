@@ -101,9 +101,8 @@ function attackEstimate(data, game, b, i, skill, target) {
 }
 
 /** 未来の乱数を読まない固定ルールの方策。人間の最適操作を表すものではない。 */
-export function chooseAction(data, game, b) {
+export function chooseAction(data, game, b, options = actionOptions(data, game, b, b.turn.i)) {
   const i = b.turn.i, member = game.party[i];
-  const options = actionOptions(data, game, b, i);
   const skills = options.skills.filter(x => !x.reason).map(x => x.skill);
   const alive = game.party.map((m, j) => ({ j, m, missing: maxHp(data, m) - m.hp, ratio: m.hp / maxHp(data, m) })).filter(x => x.m.hp > 0).sort((a, z) => a.ratio - z.ratio);
   const dead = game.party.findIndex(m => m.hp <= 0);
@@ -281,14 +280,21 @@ export function prepareNextBattle(data, game) {
 export function fight(data, game, enemies, seed, accuracy = .8, firstBattle = false) {
   const b = createBattle(data, game, { enemies, seed, firstBattle, canFlee: false });
   const answers = rngFor(seed ^ 0x5f3759df); let questions = 0;
+  const skillChoices = {};
   while (nextTurn(data, game, b) && questions < 400) {
-    const action = chooseAction(data, game, b);
+    const options = actionOptions(data, game, b, b.turn.i);
+    const action = chooseAction(data, game, b, options);
     if (!prepareQuizAction(data, game, b)) continue;
+    for (const { skill, reason } of options.skills) {
+      const entry = (skillChoices[skill.id] ??= { available: 0, selected: 0 });
+      if (!reason) entry.available += 1;
+      if (action.skillId === skill.id) entry.selected += 1;
+    }
     setPending(b, action, { wordId: 'simulation' });
     resolvePending(data, game, b, answers() < accuracy); questions++;
   }
   if (b.result === 'win') finishBattle(data, game, b);
-  return { b, questions, rounds: b.round, win: b.result === 'win' };
+  return { b, questions, skillChoices, rounds: b.round, win: b.result === 'win' };
 }
 
 const partyTemplates = new WeakMap();
@@ -309,12 +315,12 @@ export function runExpedition(data, dungeonId, { seed = 1, accuracy = .8, profil
     const enemies = makeEncounter(data, dg.id, row.floor, rng, { boss, season, elites, maxElites, bountyId });
     elitesSeen += enemies.filter(e => e.eliteId).length;
     const result = fight(data, game, enemies, seed * 1009 + row.floor * 37 + bi, accuracy, results.length === 0);
-    results.push({ boss, bounty: Boolean(bountyId), questions: result.questions, rounds: result.rounds, win: result.win });
+    results.push({ boss, bounty: Boolean(bountyId), questions: result.questions, skillChoices: result.skillChoices, rounds: result.rounds, win: result.win });
     if (!result.win) return summarize(false);
     const rewards = battleRewards(data, game, result.b);
     for (const [i, m] of game.party.entries()) {
       gainXp(data, m, rewards.xp[i]); m.ap[m.job] = (m.ap[m.job] ?? 0) + rewards.ap[i];
-      totalXp += rewards.xp[i] / 4; totalAp += rewards.ap[i] / 4;
+      totalXp += rewards.xp[i] / game.party.length; totalAp += rewards.ap[i] / game.party.length;
     }
     recoverAfterBattle(data, game);
     const survivors = game.party.filter(m => m.hp > 0);
@@ -352,10 +358,16 @@ export function evaluateScenario(data, dungeonId, options = {}, runs = 80) {
   const normal = battles.filter(x => !x.boss && !x.bounty), bosses = battles.filter(x => x.boss);
   const bountyBattles = battles.filter(x => x.bounty);
   const q = average(wins.map(x => x.questions));
+  const skillChoices = {};
+  for (const battle of battles) for (const [id, entry] of Object.entries(battle.skillChoices)) {
+    const total = (skillChoices[id] ??= { available: 0, selected: 0 });
+    total.available += entry.available;
+    total.selected += entry.selected;
+  }
   return { dungeonId, star: data.dungeons.get(dungeonId).rank, ...options, runs, wins: wins.length,
     fixture: { level: setup.level, stage: setup.stage, itemCap: setup.itemCap, enhancement: setup.enhancement,
       assembly: setup.assembly, initialItems: { ...preparedGame.items } },
-    clearRate: wins.length / runs, normalWinRate: average(normal.map(x => Number(x.win))), bossWinRate: average(bosses.map(x => Number(x.win))),
+    skillChoices, clearRate: wins.length / runs, normalWinRate: average(normal.map(x => Number(x.win))), bossWinRate: average(bosses.map(x => Number(x.win))),
     normalBattles: normal.length, normalWins: normal.filter(x => x.win).length, bossAttempts: bosses.length,
     failedBeforeBoss: samples.filter(x => !x.win && !x.battles.some(battle => battle.boss)).length,
     failedInNormalBattle: normal.filter(x => !x.win).length, failedAtBoss: bosses.filter(x => !x.win).length,
