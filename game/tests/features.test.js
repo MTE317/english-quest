@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { buildGameData, GAME_FILES } from '../js/gamedata.js';
-import { createNewGame } from '../js/game-state.js';
+import { createNewGame, normalizeGame } from '../js/game-state.js';
 import { GameSession } from '../js/save.js';
 import { makeEnemy, createBattle, setPending, resolvePending, skillMp } from '../js/battle.js';
 import { makeGear } from '../js/character.js';
@@ -12,7 +12,6 @@ import { craft, enhance, brew, dismantle, facilityUpgrade } from '../js/workshop
 import { borrow, repayLoan } from '../js/town.js';
 import { unlockJob } from '../js/temple.js';
 import { makeEncounter, monsterPool } from '../js/encounter.js';
-import { acceptChain, acceptChainPart, chainStep, nextChainOffer, claimChain, talkChain, updateChains } from '../js/quest-chain.js';
 import { makePracticeQuestion, DIRECTION } from '../js/quiz.js';
 import { MemoryStorage, T0, readCsv, readJson, realLexicon } from './helpers.js';
 
@@ -100,32 +99,37 @@ test('素材で中級ジョブを解放できる', () => {
   assert.ok(g.unlockedJobs.includes('apothecary'));
 });
 
-test('季節の敵、賞金首、連続クエストの進行と報告', () => {
-  assert.ok(monsterPool(data, 'blooming_hill', 'spring').some((m) => m.season === 'spring'));
+test('季節の敵と賞金首は連続クエスト廃止後も出現する', () => {
+  assert.ok(monsterPool(data, 'blooming_hill', 'spring').some(m => m.season === 'spring'));
   const enemies = makeEncounter(data, 'mossy_cave', 1, () => 0, { bountyId: 'bounty_01_1', elites: true });
   assert.equal(enemies[0].bounty, true);
-  assert.ok(enemies.every((e) => !e.eliteId), '賞金首に冠付きの敵を重ねない');
+  assert.ok(enemies.every(e => !e.eliteId));
   const eligible = [...data.dungeons.values()].find(d => d.rank === data.balance.dungeon.elite_min_star);
   const eliteEnemies = makeEncounter(data, eligible.id, 1, () => 0, { elites: true });
   assert.equal(eliteEnemies.filter(e => e.eliteId).length, 1);
-  const g = game();
-  const chain = data.questChains[0];
-  acceptChain(g, chain);
-  talkChain(g, chain);
-  assert.equal(chainStep(chain, g), null);
-  assert.equal(nextChainOffer(chain, g).kind, 'explore');
-  acceptChainPart(g, chain);
-  let step = chainStep(chain, g);
-  updateChains(data, g, step.target, step.goal, []);
-  assert.equal(chainStep(chain, g), null);
-  acceptChainPart(g, chain);
-  step = chainStep(chain, g);
-  updateChains(data, g, step.target, 1, Array.from({ length: step.goal }, () => ({ hp: 0 })));
-  assert.equal(chainStep(chain, g).kind, 'reward');
-  const before = g.gold;
-  claimChain(data, g, chain, () => 0);
-  assert.ok(g.gold > before);
-  assert.throws(() => claimChain(data, g, chain, () => 0), /まだ報告/);
+  assert.equal(data.questChains, undefined);
+});
+
+test('旧連続クエストの達成履歴と未受領の進行分は一度だけ精算する', () => {
+  const g = game(), gold = g.gold, points = g.rankPoints;
+  g.chains = {
+    chain_01_1: { step: 3, progress: 0 },
+    chain_02_1: { step: 2, progress: 0, awaitingAcceptance: true },
+    chain_03_1: { step: 3, claimed: true },
+    chain_04_1: { step: 1 },
+  };
+  normalizeGame(data, g);
+  assert.equal(g.chains, undefined);
+  assert.equal(Object.keys(g.retiredQuestChains).length, 4);
+  assert.equal(g.retiredQuestChains.chain_03_1.settlement.gold, 0);
+  assert.equal(g.retiredQuestChains.chain_04_1.settlement.gold, 0);
+  assert.equal(g.gold, gold + data.economy.get(1).run_income * 2 + data.economy.get(2).run_income);
+  assert.equal(g.rankPoints, points + 5 + 3);
+  const materialCount = Object.values(g.storage.materials).reduce((sum, amount) => sum + amount, 0);
+  assert.ok(materialCount >= 4);
+  const snapshot = structuredClone({ gold: g.gold, rankPoints: g.rankPoints, materials: g.storage.materials, retired: g.retiredQuestChains });
+  normalizeGame(data, g);
+  assert.deepEqual({ gold: g.gold, rankPoints: g.rankPoints, materials: g.storage.materials, retired: g.retiredQuestChains }, snapshot);
 });
 
 test('場面の4択と空欄の4択は正解を一つだけ含む', () => {

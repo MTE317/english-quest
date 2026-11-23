@@ -50,7 +50,6 @@ const FILES = {
   kokuinSlots: 'kokuin_slots.csv', // 旧セーブの刻印枠費用を返還するためだけに読む。
   sets: 'sets.csv',
   setItems: 'set_items.csv',
-  questChains: 'quest_chains.csv',
 };
 
 const byId = (rows, key = 'id') => new Map(rows.map((r) => [r[key], r]));
@@ -152,7 +151,6 @@ export function buildGameData(raw) {
     facilityEffects: raw.facilityEffects ?? [],
     kokuinSlots: raw.kokuinSlots ?? [],
     sets: byId(raw.sets ?? []),
-    questChains: raw.questChains ?? [],
     ...buildBattleData(raw),
   };
 }

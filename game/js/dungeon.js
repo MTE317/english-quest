@@ -11,7 +11,6 @@ import { makeEncounter, floorRow, planBounty, dungeonRouteUnlocked } from './enc
 import { rollBattleLoot, addToBackpack, swapIntoBackpack, unloadBackpack } from './loot.js?v=build36-1';
 import { gainXp, maxHp, maxMp, affixSum } from './character.js?v=build36-1';
 import { advanceDays, calendarOf, countKills, refreshBoard } from './town.js?v=systems-v1';
-import { updateChains } from './quest-chain.js?v=systems-v1';
 import { discoverJobs, recordStoredMaterials } from './temple.js?v=systems-v1';
 import { memberMods } from './growth.js?v=build36-1';
 import { planExploration, resolveExploration, commitExploration, explorationEntryAllowed } from './exploration.js';
@@ -181,7 +180,6 @@ export function afterBattle(data, session) {
   session.endBattle((g, run) => {
     if (b.result === 'win') {
       countKills(g, b.enemies, run.dungeonId);
-      updateChains(data, g, run.dungeonId, run.floor, b.enemies);
       const r = battleRewards(data, g, b);
       const practice = b.learningRewards;
       if (practice?.answers) {

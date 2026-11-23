@@ -3,6 +3,7 @@ import { createMember, maxHp, maxMp, levelCap } from './character.js?v=skill-loa
 import { ensureLoadout, jobSkills, isLearned } from './growth.js?v=skill-loadout-3';
 import { parseAmounts } from './csv.js';
 import { recordStoredMaterials } from './temple.js';
+import { retireLegacyQuestChains } from './retired-quests.js';
 
 export const PARTY_SIZE = 6;
 
@@ -63,6 +64,7 @@ export function normalizeGame(data, game, run = null, { expandParty = true } = {
   // 旧会費の滞納だけを清算する。銀行からの融資残高は保持する。
   delete game.overdue;
   game.notices = game.notices ?? [];
+  retireLegacyQuestChains(data, game);
   game.jp ??= 0;
   game.titles ??= [];
   game.unlockedJobs = game.unlockedJobs ?? [];

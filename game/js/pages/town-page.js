@@ -12,7 +12,6 @@ import {
 import { backpackSlots } from '../loot.js?v=build36-1';
 import { maxHp, maxMp, gearDef } from '../character.js?v=build36-1';
 import { availableJobs, changeJob } from '../growth.js?v=build36-1';
-import { chainStep, stepLabel, nextChainOffer, acceptChainPart, talkChain, deliverChain, claimChain } from '../quest-chain.js?v=systems-v1';
 import { explorationStories, acceptExplorationStory, reportExplorationStory } from '../exploration-story.js';
 import { cureAtTemple, recordStoredMaterials } from '../temple.js?v=systems-v1';
 import { workshopView, managementView, templeExtras } from '../ui/facility-view.js?v=systems-v1';
@@ -206,8 +205,7 @@ function guild() {
         el('p', { class: 'muted small' }, '同じ内容の依頼は、次の遠征から戻るまで再掲されません。'),
         el('button', { onclick: () => act((gg) => abandonQuest(data, gg, q.uid, rng())) }, 'この依頼を取り下げる')) : null);
   };
-  const tabs = [['board', '掲示板'], ['active', `受注中 ${g.quests.length}`], ['rank', '昇格・連続依頼']];
-  const chains = data.questChains.filter(chain => Number(chain.star) <= currentRank(data, g).maxDungeonRank);
+  const tabs = [['board', '掲示板'], ['active', `受注中 ${g.quests.length}`], ['rank', '昇格']];
   const storyCard = story => el('li', { class: 'panel small' },
     el('h3', {}, story.title), el('p', {}, story.brief),
     el('p', {}, `報酬　${story.reward.gold} G・ポイント ${story.reward.points}`),
@@ -235,12 +233,6 @@ function guild() {
     el('p', { class: 'small muted' }, `所持金 ${g.gold} G・預けている保証金 ${questDepositTotal(g)} G。`),
     g.specialQuest ? el('ul', { class: 'guild-contracts' }, card(g.specialQuest, false)) : null,
     stories.length ? el('ul', { class: 'guild-contracts' }, stories.map(storyCard)) : null,
-    chains.filter(chain => Number(chain.star) === (areas.find(area => area.id === listed)?.star ?? currentRank(data, g).maxDungeonRank))
-      .map(chain => {
-        const offer = nextChainOffer(chain, g);
-        return offer ? el('div', { class: 'panel small' }, el('strong', {}, chain.title),
-          el('button', { onclick: () => act(game => { acceptChainPart(game, chain); guildTab = 'rank'; return '連続依頼を受けた。'; }) }, '連続依頼を受ける')) : null;
-      }),
     g.board.length ? el('ul', { class: 'guild-contracts' }, g.board.map((q) => card(q, false)))
       : el('p', {}, 'この掲示分の依頼は出そろいました。遠征から戻ると新しい依頼が届きます。'))];
   }
@@ -253,18 +245,6 @@ function guild() {
       [...g.quests].sort((a,b) => Number(canReport(data, g, b)) - Number(canReport(data, g, a))).map((q) => card(q, true)))
       : el('p', {}, '掲示板で依頼を受けると、ここで進み具合を確認できます。'))];
   return [switcher,
-    el('details', { class: 'panel small' }, el('summary', {}, '連続クエスト'),
-      chains.filter(chain => g.chains?.[chain.id]).map((chain) => {
-        const state = g.chains?.[chain.id];
-        const step = chainStep(chain, g);
-        return el('div', { class: 'panel small' }, chain.title,
-          state?.claimed ? el('div', {}, '達成済み') : null,
-          state.awaitingAcceptance ? el('p', {}, '続きの依頼が掲示板にあります。') : null,
-          step ? el('p', {}, stepLabel(data, step)) : null,
-          step?.kind === 'talk' ? el('button', { onclick: () => act((game) => talkChain(game, chain)) }, '話す') : null,
-          step?.kind === 'gather' ? el('button', { onclick: () => act((game) => deliverChain(data, game, chain)) }, '納品する') : null,
-          step?.kind === 'reward' ? el('button', { onclick: () => act((game) => [claimChain(data, game, chain, rng()), ...checkRankUp(data, game)]) }, '報告する') : null);
-      })),
     el('h2', {}, '冒険者ランク'),
     el('div', { class: 'panel small' },
       el('div', {}, `${currentRank(data, g).title}（ポイント ${g.rankPoints}）　特典：${currentRank(data, g).perk || 'なし'}`),
