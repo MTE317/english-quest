@@ -15,11 +15,12 @@ function passiveText(data, key, value) {
   if (key === 'edmg') return `${names(value[0])}属性ダメージ +${pct(value[1])}`;
   if (key === 'tdmg') return `${names(value[0])}へのダメージ +${pct(value[1])}`;
   if (key === 'status_count_damage') {
-    const [ids, rate, weaponType] = value;
+    const [ids, rate, weaponType, element] = value;
     const weapon = weaponType ? `${data.weaponTypes.get(weaponType)?.name ?? weaponType}の武器攻撃で、` : '';
-    return `${weapon}${names(ids.map(id => data.statusEffects.get(id)?.name ?? id))}のうち、対象に付いている1種類ごとに直接ダメージ +${pct(rate)}`;
+    return `${weapon}${names(ids.map(id => data.statusEffects.get(id)?.name ?? id))}のうち、対象に付いている1種類ごとに${element ? `${data.elements.get(element)?.name ?? element}属性の` : ''}直接ダメージ +${pct(rate)}`;
   }
   const special = {
+    neutral_magic_mp_save: () => `無属性の直接魔法技能のMP軽減率 +${pct(value)}（装備と合計で最大50%）`,
     bounty_chance: () => `賞金首の遭遇率 +${pct(value)}（パーティーで1人分）`,
     poison_spread: () => `毒・猛毒の敵を倒すと、別の敵1体に同じ状態を付与（基礎確率${pct(value)}、1巡1回）`,
     thunder_crit_mp: () => `正解した雷属性攻撃で会心ダメージを与えると、最大MPの${pct(value)}を回復（装備効果と合わせて1行動1回・技能は支払MPまで）`,
