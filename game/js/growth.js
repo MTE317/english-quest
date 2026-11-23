@@ -52,6 +52,8 @@ export function jobPaths(data, jobId) {
 /** 覚えているか（ap_to_learn が0のものは最初から） */
 export function isLearned(member, skill) {
   if ((member.learned ?? []).includes(skill.id)) return true;
+  // 共通の魔力の余韻だけは職経験を必要としない初期パッシブ。
+  if (skill.id === 'common_mana_afterglow' && skill.job === 'common' && skill.apToLearn === 0) return true;
   // AP 0 は「そのジョブに初めて就いた時点で覚える初期スキル」。
   // 未経験ジョブの初期スキルまで全員共通で使える状態にはしない。
   return skill.apToLearn === 0 && Object.hasOwn(member.ap ?? {}, skill.job);
@@ -238,7 +240,15 @@ export function memberMods(data, member) {
       else if (typeof v === 'number') out[k] = (out[k] ?? 0) + v;
     }
   }
-  add(out, commonMods(data, member));
+  const common = commonMods(data, member);
+  if ((member.common ?? []).includes('mana_afterglow')
+    && (member.loadout?.passives ?? []).includes('common_mana_afterglow')) {
+    // 基本版2経路の重複だけを除く。上位ノード・他の回復効果は加算のまま。
+    const treeRate = parseBonusText(data.commonTree.find(n => n.id === 'mana_afterglow')?.effect).mp_regen ?? 0;
+    const passiveRate = data.skills.get('common_mana_afterglow')?.effect.mod?.mp_regen ?? 0;
+    common.mp_regen -= Math.min(treeRate, passiveRate);
+  }
+  add(out, common);
   add(out, equipmentSetMods(data, member));
   for (const j of data.jobMastery ?? []) if (isJobMastered(data, member, j.job)) add(out, parseBonusText(j.bonus));
   return out;

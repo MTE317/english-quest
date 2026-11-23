@@ -1,0 +1,151 @@
+{
+  "beforeSourceSha256": "5208f5ad4ab9a4888159d107366357a0cf65e2ba39495189928a35c3aa18a9cf",
+  "afterSourceSha256": "5af11509e5d3504985b9c5d8a393324240c672e07a64390a179025b3fed290b1",
+  "fixtureIdentical": true,
+  "results": [
+    {
+      "condition": "mossy_cave/balanced6/standard/0.8/spring/1217071/80",
+      "beforeWins": 80,
+      "afterWins": 80,
+      "beforeQuestions": 45.3625,
+      "afterQuestions": 45.3625,
+      "delta": 0
+    },
+    {
+      "condition": "mossy_cave/balanced6/prepared/0.8/spring/1217071/80",
+      "beforeWins": 80,
+      "afterWins": 80,
+      "beforeQuestions": 43.35,
+      "afterQuestions": 43.35,
+      "delta": 0
+    },
+    {
+      "condition": "mossy_cave/critical6/standard/0.8/spring/1217071/80",
+      "beforeWins": 80,
+      "afterWins": 80,
+      "beforeQuestions": 43.5875,
+      "afterQuestions": 43.5875,
+      "delta": 0
+    },
+    {
+      "condition": "mossy_cave/critical6/prepared/0.8/spring/1217071/80",
+      "beforeWins": 80,
+      "afterWins": 80,
+      "beforeQuestions": 40.325,
+      "afterQuestions": 40.325,
+      "delta": 0
+    },
+    {
+      "condition": "mossy_cave/weakness6/standard/0.8/spring/1217071/80",
+      "beforeWins": 80,
+      "afterWins": 80,
+      "beforeQuestions": 37.7125,
+      "afterQuestions": 37.7125,
+      "delta": 0
+    },
+    {
+      "condition": "mossy_cave/weakness6/prepared/0.8/spring/1217071/80",
+      "beforeWins": 80,
+      "afterWins": 80,
+      "beforeQuestions": 35.2,
+      "afterQuestions": 35.2,
+      "delta": 0
+    },
+    {
+      "condition": "sand_tomb/balanced6/standard/0.8/spring/1217071/80",
+      "beforeWins": 80,
+      "afterWins": 80,
+      "beforeQuestions": 46.675,
+      "afterQuestions": 46.675,
+      "delta": 0
+    },
+    {
+      "condition": "sand_tomb/balanced6/prepared/0.8/spring/1217071/80",
+      "beforeWins": 80,
+      "afterWins": 80,
+      "beforeQuestions": 39.7625,
+      "afterQuestions": 39.6875,
+      "delta": -0.07500000000000284
+    },
+    {
+      "condition": "sand_tomb/critical6/standard/0.8/spring/1217071/80",
+      "beforeWins": 80,
+      "afterWins": 80,
+      "beforeQuestions": 53.925,
+      "afterQuestions": 53.9625,
+      "delta": 0.03750000000000142
+    },
+    {
+      "condition": "sand_tomb/critical6/prepared/0.8/spring/1217071/80",
+      "beforeWins": 80,
+      "afterWins": 80,
+      "beforeQuestions": 37.2625,
+      "afterQuestions": 37.325,
+      "delta": 0.0625
+    },
+    {
+      "condition": "sand_tomb/weakness6/standard/0.8/spring/1217071/80",
+      "beforeWins": 80,
+      "afterWins": 80,
+      "beforeQuestions": 45.7125,
+      "afterQuestions": 45.625,
+      "delta": -0.08749999999999858
+    },
+    {
+      "condition": "sand_tomb/weakness6/prepared/0.8/spring/1217071/80",
+      "beforeWins": 80,
+      "afterWins": 80,
+      "beforeQuestions": 33.1875,
+      "afterQuestions": 33.15,
+      "delta": -0.03750000000000142
+    },
+    {
+      "condition": "world_tree_top/balanced6/standard/0.8/spring/1217071/80",
+      "beforeWins": 80,
+      "afterWins": 80,
+      "beforeQuestions": 41.5875,
+      "afterQuestions": 41.6375,
+      "delta": 0.05000000000000426
+    },
+    {
+      "condition": "world_tree_top/balanced6/prepared/0.8/spring/1217071/80",
+      "beforeWins": 80,
+      "afterWins": 80,
+      "beforeQuestions": 37.375,
+      "afterQuestions": 37.45,
+      "delta": 0.07500000000000284
+    },
+    {
+      "condition": "world_tree_top/critical6/standard/0.8/spring/1217071/80",
+      "beforeWins": 80,
+      "afterWins": 80,
+      "beforeQuestions": 48.45,
+      "afterQuestions": 48.525,
+      "delta": 0.07499999999999574
+    },
+    {
+      "condition": "world_tree_top/critical6/prepared/0.8/spring/1217071/80",
+      "beforeWins": 80,
+      "afterWins": 80,
+      "beforeQuestions": 31.9375,
+      "afterQuestions": 31.95,
+      "delta": 0.01249999999999929
+    },
+    {
+      "condition": "world_tree_top/weakness6/standard/0.8/spring/1217071/80",
+      "beforeWins": 80,
+      "afterWins": 80,
+      "beforeQuestions": 36.775,
+      "afterQuestions": 36.775,
+      "delta": 0
+    },
+    {
+      "condition": "world_tree_top/weakness6/prepared/0.8/spring/1217071/80",
+      "beforeWins": 80,
+      "afterWins": 80,
+      "beforeQuestions": 29.7125,
+      "afterQuestions": 29.7125,
+      "delta": 0
+    }
+  ]
+}

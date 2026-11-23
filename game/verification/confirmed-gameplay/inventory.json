@@ -1,0 +1,22 @@
+{
+  "base": "cbfa67032439bddccd521d88a41ccf02aa69c557",
+  "skills": 200,
+  "monsters": 1024,
+  "dungeons": 60,
+  "weaponTypes": 16,
+  "elements": 12,
+  "statusEffects": 20,
+  "monsterTypes": 18,
+  "jobTiers": {
+    "base": 8,
+    "mid": 6,
+    "advanced": 3
+  },
+  "monsterRoles": {
+    "normal": 663,
+    "season": 240,
+    "boss": 60,
+    "bounty": 48,
+    "arena": 13
+  }
+}
