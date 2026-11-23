@@ -1,6 +1,6 @@
 // 成長：スキルツリーと AP・スキルの枠・共通ツリー・ジョブを極めたボーナス・武器の熟練度・ジョブチェンジ。
 // data に数として書かれていないものは GROWTH_FORMULAS に置く（docs/requests.md で依頼済み）。
-import { gearDef, aptitudeMul, unequip, maxHp, maxMp } from './character.js?v=build36-1';
+import { gearDef, aptitudeMul, unequip, maxHp, maxMp } from './character.js?v=skill-loadout-3';
 
 export const GROWTH_FORMULAS = Object.freeze({
   action_capacity: 10, // 通常スキルの枠（スキルの cost の合計。sim の cap_a）
