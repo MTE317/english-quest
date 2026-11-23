@@ -1,6 +1,6 @@
 // 新しいゲームの進み具合（セーブの game の中身）
-import { createMember, maxHp, maxMp, levelCap } from './character.js?v=build36-1';
-import { ensureLoadout, jobSkills, isLearned } from './growth.js?v=build36-1';
+import { createMember, maxHp, maxMp, levelCap } from './character.js?v=skill-loadout-3';
+import { ensureLoadout, jobSkills, isLearned } from './growth.js?v=skill-loadout-3';
 import { parseAmounts } from './csv.js';
 import { recordStoredMaterials } from './temple.js';
 
