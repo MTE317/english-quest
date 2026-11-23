@@ -85,7 +85,7 @@ function showDeparture(message = null) {
   const discoveries = newDiscoveries(world.regions, seen);
   const destinationHeading = el('h3', { tabindex: '-1' });
   const lure = el('input', { type: 'checkbox' });
-  const stoneSel = el('select', { class: 'select', onchange: (e) => { st.stoneId = e.target.value; } });
+  const stoneSel = el('select', { class: 'select', 'aria-describedby': 'expedition-study-help', onchange: (e) => { st.stoneId = e.target.value; } });
   const info = el('div', { class: 'route-info', 'aria-live': 'polite' });
   const fill = () => {
     const dg = data.dungeons.get(st.dungeonId);
@@ -139,8 +139,7 @@ function showDeparture(message = null) {
         info,
         g.items.bounty_lure > 0 ? el('label', {}, lure, ` おびき寄せ香を1個使う（所持 ${g.items.bounty_lure}）`) : null,
         el('label', {}, '持っていくルーンストーン', stoneSel),
-        el('details', { class: 'stone-help' }, el('summary', {}, '教材を選ぶ条件'),
-          el('p', {}, '行き先の★に関係なく、復習したい教材を選べます。')),
+        el('p', { id: 'expedition-study-help', class: 'muted small' }, '行き先の★に関係なく、復習したい教材を選べます。'),
         departure),
       el('details', { class: 'panel' }, el('summary', {}, `仲間の状態（${g.party.length}人）`), partyPanel()),
       new URLSearchParams(location.search).has('debug') ? debugTools() : null)
