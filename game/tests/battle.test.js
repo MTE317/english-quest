@@ -270,7 +270,7 @@ test('複合属性は免疫と弱点のうち有利な倍率を採用する', ()
     const game = createNewGame(data, party);
     const target = { ...makeEnemy(data, 'lava_golem', { lv: 5 }), immune: ['slash'], strongWeak: ['fire'] };
     const b = createBattle(data, game, { enemies: [target], seed: 5 });
-    if (dual) game.party[0].equip.weapon.effects = { 'ELEMENT:fire': 1 };
+    if (dual) game.party[0].equip.weapon.affixes = { 'ELEMENT:fire': 1 };
     b.turn = { side: 'ally', i: 0 };
     setPending(b, { type: 'attack', target: 0 }, Q);
     resolvePending(data, game, b, true);
