@@ -130,6 +130,9 @@
         ],
         "sunlit_forest": [
           { "id": "side-entrance", "floor": 1, "type": "discover", "discovery": "dungeon:old_catacomb" }
+        ],
+        "old_catacomb": [
+          { "id": "story-tablet", "floor": 3, "type": "investigate", "flag": "SQ-2-tablet", "requiredStory": "SQ-2" }
         ]
       },
       "entry": {}
@@ -653,6 +656,28 @@
     "_note": "遠征中のゲーム報酬を巻戻す。消費道具/保証金契約も入場時に復元。学習記録・詠唱JP・モンスターと判明相性の知識は保持。",
     "_retry_note": "耐性・状態対策・スキル/装備の組合せを見直す。必要なら低い★で育成する。"
   },
+  "exploration_stories": [
+    {
+      "id": "SQ-1",
+      "dungeon": "mossy_cave",
+      "flag": "SQ-1",
+      "title": "調査隊の目印",
+      "brief": "持ち帰った調査記録には、以前の調査隊が残した目印が写っていた。記録を確かめるため、もう一度最奥まで進んで無事に帰還する。",
+      "conclusion": "目印の位置を記録に追記した。これで次の調査隊は迷わず進める。",
+      "reward": { "gold": 60, "points": 1, "materials": { "slime_mat": 3 } }
+    },
+    {
+      "id": "SQ-2",
+      "dungeon": "old_catacomb",
+      "discovery": "dungeon:old_catacomb",
+      "after": "SQ-1",
+      "objectiveFlag": "SQ-2-tablet",
+      "title": "石板の照合",
+      "brief": "調査隊の帳簿に、発見した入口と同じ紋様があった。奥に残る石板を調べ、踏破を報告する。",
+      "conclusion": "石板と帳簿の紋様が一致した。調べた道筋を調査隊の記録に残した。",
+      "reward": { "gold": 120, "points": 2, "materials": { "skeleton_mat": 4 } }
+    }
+  ],
   "guild_points": {
     "same_rank": 1.0,
     "one_rank_lower": 0.5,

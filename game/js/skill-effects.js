@@ -14,6 +14,7 @@ function passiveText(data, key, value) {
   if (key === 'wdmg') return `${names(value[0])}の武器攻撃ダメージ +${pct(value[1])}`;
   if (key === 'edmg') return `${names(value[0])}属性ダメージ +${pct(value[1])}`;
   if (key === 'tdmg') return `${names(value[0])}へのダメージ +${pct(value[1])}`;
+  if (key === 'status_count_damage') return `${names(value[0].map(id => data.statusEffects.get(id)?.name ?? id))}のうち、対象に付いている1種類ごとに直接ダメージ +${pct(value[1])}`;
   const special = {
     bounty_chance: () => `賞金首の遭遇率 +${pct(value)}（パーティーで1人分）`,
     poison_spread: () => `毒・猛毒の敵を倒すと、別の敵1体に同じ状態を付与（基礎確率${pct(value)}、1巡1回）`,

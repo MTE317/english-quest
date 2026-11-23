@@ -13,6 +13,7 @@ import { backpackSlots } from '../loot.js?v=build36-1';
 import { maxHp, maxMp, gearDef } from '../character.js?v=build36-1';
 import { availableJobs, changeJob } from '../growth.js?v=build36-1';
 import { chainStep, stepLabel, nextChainOffer, acceptChainPart, talkChain, deliverChain, claimChain } from '../quest-chain.js?v=systems-v1';
+import { explorationStories, acceptExplorationStory, reportExplorationStory } from '../exploration-story.js';
 import { cureAtTemple, recordStoredMaterials } from '../temple.js?v=systems-v1';
 import { workshopView, managementView, templeExtras } from '../ui/facility-view.js?v=systems-v1';
 import { itemShopView, gearShopView } from '../ui/town-shops.js?v=pixel-town-1';
@@ -207,6 +208,13 @@ function guild() {
   };
   const tabs = [['board', '掲示板'], ['active', `受注中 ${g.quests.length}`], ['rank', '昇格・連続依頼']];
   const chains = data.questChains.filter(chain => Number(chain.star) <= currentRank(data, g).maxDungeonRank);
+  const storyCard = story => el('li', { class: 'panel small' },
+    el('h3', {}, story.title), el('p', {}, story.brief),
+    el('p', {}, `報酬　${story.reward.gold} G・ポイント ${story.reward.points}`),
+    story.ready ? el('button', { onclick: () => act(game => [
+      reportExplorationStory(data, game, story.id), ...checkRankUp(data, game),
+    ]) }, '探索を報告する') : story.accepted ? el('p', {}, '受注中') :
+      el('button', { onclick: () => act(game => acceptExplorationStory(data, game, story.id)) }, '探索依頼を受ける'));
   const switcher = el('div', { class: 'district-switch', role: 'group', 'aria-label': '酒場の窓口' },
     tabs.map(([id, title]) => el('button', { 'aria-pressed': String(guildTab === id), onclick: () => {
       guildTab = id; flash = null; draw();
@@ -215,6 +223,7 @@ function guild() {
   if (guildTab === 'board') {
     const areas = questBoardAreas(data, g);
     const listed = g.questBoardArea ?? '';
+    const stories = explorationStories(data, g, areas.find(area => area.id === listed)).filter(story => !story.accepted);
     return [switcher, el('section', { class: 'guild-board', 'aria-labelledby': 'guild-board-title' },
     el('header', {}, el('h2', { id: 'guild-board-title' }, '依頼掲示板'),
       el('span', {}, `掲示 ${g.board.length}件・受注 ${g.quests.length} / ${questAcceptLimit(data, g)}件`)),
@@ -225,6 +234,7 @@ function guild() {
     areas.map(area => el('option', { value: area.id, selected: area.id === listed }, `地域 ${area.region}・★${area.star}`)))),
     el('p', { class: 'small muted' }, `所持金 ${g.gold} G・預けている保証金 ${questDepositTotal(g)} G。`),
     g.specialQuest ? el('ul', { class: 'guild-contracts' }, card(g.specialQuest, false)) : null,
+    stories.length ? el('ul', { class: 'guild-contracts' }, stories.map(storyCard)) : null,
     chains.filter(chain => Number(chain.star) === (areas.find(area => area.id === listed)?.star ?? currentRank(data, g).maxDungeonRank))
       .map(chain => {
         const offer = nextChainOffer(chain, g);
@@ -237,6 +247,8 @@ function guild() {
   if (guildTab === 'active') return [switcher, el('section', { class: 'guild-board', id: 'guild-active' },
     el('header', {}, el('h2', {}, '受けている依頼'), el('span', {}, `報告可 ${pending}件・受注 ${g.quests.length} / ${questAcceptLimit(data, g)}件`)),
     el('p', { class: 'small muted' }, `預かり保証金 ${questDepositTotal(g)} G。`),
+    explorationStories(data, g).some(story => story.accepted)
+      ? el('ul', { class: 'guild-contracts' }, explorationStories(data, g).filter(story => story.accepted).map(storyCard)) : null,
     g.quests.length ? el('ul', { class: 'guild-contracts' },
       [...g.quests].sort((a,b) => Number(canReport(data, g, b)) - Number(canReport(data, g, a))).map((q) => card(q, true)))
       : el('p', {}, '掲示板で依頼を受けると、ここで進み具合を確認できます。'))];

@@ -214,7 +214,7 @@ export function memberMods(data, member) {
   for (const id of member.loadout?.passives ?? []) {
     const mod = data.skills.get(id)?.effect.mod ?? {};
     for (const [k, v] of Object.entries(mod)) {
-      if (['wdmg', 'edmg', 'tdmg'].includes(k)) out[k] = [...(out[k] ?? []), v];
+      if (['wdmg', 'edmg', 'tdmg', 'status_count_damage'].includes(k)) out[k] = [...(out[k] ?? []), v];
       else if (typeof v === 'number') out[k] = (out[k] ?? 0) + v;
     }
   }
