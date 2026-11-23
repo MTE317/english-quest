@@ -2,10 +2,12 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { buildGameData, GAME_FILES } from '../js/gamedata.js';
+import { createBattle, makeEnemy } from '../js/battle.js';
 import { maxHp, maxMp, canEquip } from '../js/character.js';
 import { capacity, usedCapacity, commonPoints, isLearned, equipBlock } from '../js/growth.js';
 import { enchantFamilies } from '../js/workshop.js';
 import { PROFILES, prepareParty } from '../../sim/party-fixtures.mjs';
+import { chooseAction } from '../../sim/balance.mjs';
 import { readCsv, readJson } from './helpers.js';
 
 const data = buildGameData(Object.fromEntries(Object.entries(GAME_FILES).map(([key, name]) =>
@@ -18,6 +20,30 @@ for (const rank of [1, 3, 6, 9, 12]) for (const [profile, def] of Object.entries
   samples.push({ rank, profile, dungeon, standard: prepareParty(data, dungeon, profile, 'standard'),
     prepared: prepareParty(data, dungeon, profile, 'prepared') });
 }
+
+test('比較用方策は敵の手番を止められる時に眠り薬を使い、直後に起こす場合と無効時は攻撃する', () => {
+  const sample = samples.find(x => x.profile === 'poison_assassin' && x.rank === 12);
+  const game = structuredClone(sample.prepared);
+  const target = makeEnemy(data, sample.dungeon.bossId, { lv: game.party[0].lv, dungeonId: sample.dungeon.id });
+  target.hp = target.maxHp = 20000;
+  target.str = 5000;
+  target.def = 10000;
+  target.statusAffinity = {};
+  const battle = createBattle(data, game, { enemies: [target], seed: 12345 });
+  battle.round = 1;
+  battle.turn = { side: 'ally', i: 0 };
+  const options = { skills: [{ skill: data.skills.get('thief_p4_s2'), reason: '' }], items: [] };
+  const enemyTurn = { side: 'enemy', i: 0 };
+  battle.queue = [enemyTurn, { side: 'ally', i: 1 }];
+  assert.equal(chooseAction(data, game, battle, options).skillId, 'thief_p4_s2');
+
+  battle.queue.reverse();
+  assert.equal(chooseAction(data, game, battle, options).type, 'attack');
+
+  battle.queue.reverse();
+  target.statusAffinity.sleep = '×';
+  assert.equal(chooseAction(data, game, battle, options).type, 'attack');
+});
 
 test('比較用編成は設定人数・公開職・合法装備・Lv上限・強化上限と熟練を守る', () => {
   for (const sample of samples) for (const mode of ['standard', 'prepared']) {
