@@ -217,8 +217,8 @@ function showMember(index) {
 }
 
 // ---------------- スキル装備・取り外し ----------------
-// 転職前のジョブで習得したスキルもまとめて管理する。
-function showLoadout(index, kind = 'actions', message = '') {
+// ショップと同じ「一覧グリッド + 選択したスキルの詳細」構成で管理する。
+function showLoadout(index, kind = 'actions', message = '', skillId = '') {
   const member = session.game.party[index];
   const cap = capacity(data, member);
   const used = usedCapacity(data, member);
@@ -229,6 +229,7 @@ function showLoadout(index, kind = 'actions', message = '') {
     .sort((a, b) => Number(equippedIds.includes(b.id)) - Number(equippedIds.includes(a.id))
       || Number(a.job !== member.job) - Number(b.job !== member.job)
       || a.job.localeCompare(b.job) || a.path.localeCompare(b.path) || a.stage - b.stage);
+  let selected = skills.find((skill) => skill.id === skillId) ?? skills[0];
 
   function changeSkill(skill, equipped) {
     try {
@@ -237,64 +238,105 @@ function showLoadout(index, kind = 'actions', message = '') {
         if (equipped) unequipSkill(target, skill.id);
         else equipSkill(data, target, skill.id);
       });
-      showLoadout(index, kind);
+      showLoadout(index, kind, '', skill.id);
     } catch (error) {
-      showLoadout(index, kind, error.message);
+      showLoadout(index, kind, error.message, skill.id);
     }
   }
 
-  function skillCard(skill) {
+  const detail = el('section', { class: 'shop-detail skill-shop-detail', 'aria-label': 'スキル詳細' });
+  const grid = el('div', { class: 'shop-grid skill-shop-grid', role: 'group', 'aria-label': '習得済みスキル一覧', tabindex: '0' });
+  const nodes = new Map();
+
+  function skillIcon(skill) {
+    const mark = skill.kind === 'passive' ? '◆' : skill.isFinal ? '★' : '✦';
+    return el('span', { class: 'shop-item-icon skill-shop-icon', 'aria-hidden': 'true' }, mark);
+  }
+
+  function selectSkill(skill) {
+    selected = skill;
+    for (const [id, node] of nodes) node.setAttribute('aria-pressed', String(id === skill.id));
+
     const equipped = equippedIds.includes(skill.id);
     const blocked = !equipped ? equipBlock(data, member, skill) : '';
-    const icon = isPassiveKind ? '◆' : '✦';
-    return el('li', { class: `skill-loadout-card${equipped ? ' equipped' : ''}` },
-      el('div', { class: 'skill-loadout-card-main' },
-        el('div', { class: 'skill-loadout-icon', 'aria-hidden': 'true' }, icon),
-        el('div', { class: 'skill-loadout-info' },
-          el('div', { class: 'skill-loadout-title-row' },
-            el('strong', { class: 'skill-loadout-name' }, skill.name),
-            equipped ? el('span', { class: 'skill-loadout-badge' }, '装着中') : null),
-          el('p', { class: 'muted small' }, `${jobName(skill.job)}・${skill.path}・必要枠 ${skill.cost}${isPassiveKind ? '' : `・MP ${skillMp(data, member, skill)}`}`),
-          el('p', { class: 'small skill-loadout-description' }, describeSkillEffect(data, skill)))),
-      el('div', { class: 'skill-loadout-actions' },
+    const meta = [
+      jobName(skill.job),
+      skill.path,
+      `${skill.stage}段目`,
+      `必要枠 ${skill.cost}`,
+      isPassiveKind ? 'パッシブ' : `MP ${skillMp(data, member, skill)}`,
+      skill.isFinal ? '奥義' : null,
+    ].filter(Boolean).join(' ／ ');
+
+    render(detail,
+      el('header', {}, skillIcon(skill),
+        el('div', {},
+          el('h2', {}, skill.name),
+          equipped ? el('span', { class: 'skill-shop-equipped' }, '装着中') : null)),
+      el('p', { class: 'shop-description' }, meta),
+      el('div', { class: 'skill-shop-effect' },
+        el('h3', {}, 'スキル効果'),
+        el('p', {}, describeSkillEffect(data, skill))),
+      el('dl', { class: 'shop-facts' },
+        el('div', {}, el('dt', {}, '必要枠'), el('dd', {}, String(skill.cost))),
+        !isPassiveKind ? el('div', {}, el('dt', {}, '消費MP'), el('dd', {}, String(skillMp(data, member, skill)))) : null),
+      blocked ? el('p', { class: 'small muted' }, blocked) : null,
+      el('div', { class: 'shop-actions' },
         el('button', {
+          type: 'button',
           class: equipped ? 'ghost' : 'primary',
           disabled: !!blocked,
-          title: blocked || '',
           onclick: () => changeSkill(skill, equipped),
-        }, equipped ? '取り外す' : blocked || '装着する')));
+        }, equipped ? '取り外す' : '装着する')));
   }
+
+  render(grid, skills.map((skill) => {
+    const equipped = equippedIds.includes(skill.id);
+    const button = el('button', {
+      type: 'button',
+      class: 'shop-slot skill-shop-slot',
+      'data-item': skill.id,
+      'aria-pressed': 'false',
+      'aria-label': `${skill.name}、必要枠${skill.cost}${equipped ? '、装着中' : ''}`,
+      onclick: () => selectSkill(skill),
+    },
+    skillIcon(skill),
+    el('span', { class: 'shop-slot-name' }, skill.name),
+    el('span', { class: 'shop-slot-count', 'aria-hidden': 'true' },
+      `枠${skill.cost}${equipped ? ' ・ 装着中' : ''}`));
+    nodes.set(skill.id, button);
+    return button;
+  }));
 
   render(view,
     el('button', { class: 'ghost', onclick: () => showMember(index) }, `← ${member.name}へ`),
     memberSwitcher(index, (next) => showLoadout(next, kind)),
     memberBanner(member),
     el('h2', {}, 'スキル装備'),
-    el('p', { class: 'muted small' }, '習得済みのスキルは、転職前のジョブのものもここで装着・取り外しできます。ほかのジョブの奥義は装着できません。'),
+    el('p', { class: 'muted small' }, '習得済みスキルを選び、詳細を確認して装着・取り外しできます。転職前に覚えたスキルも使用できます。'),
     message ? el('p', { class: 'error', role: 'status' }, message) : null,
-    el('div', { class: 'skill-loadout-shell' },
-      el('div', { class: 'skill-loadout-tabs', role: 'tablist', 'aria-label': 'スキルの種類' },
-        el('button', {
-          class: `skill-loadout-tab${isPassiveKind ? '' : ' active'}`,
-          role: 'tab',
-          'aria-selected': String(!isPassiveKind),
-          onclick: () => showLoadout(index, 'actions'),
-        }, `アクティブ（${used.actions}/${cap.actions}）`),
-        el('button', {
-          class: `skill-loadout-tab${isPassiveKind ? ' active' : ''}`,
-          role: 'tab',
-          'aria-selected': String(isPassiveKind),
-          onclick: () => showLoadout(index, 'passives'),
-        }, `パッシブ（${used.passives}/${cap.passives}）`)),
-      el('section', { class: 'skill-loadout-board', 'aria-live': 'polite' },
-        skills.length
-          ? el('ul', { class: 'skill-loadout-list' }, skills.map(skillCard))
-          : el('div', { class: 'skill-loadout-empty' },
-            el('span', { class: 'skill-loadout-empty-icon', 'aria-hidden': 'true' }, isPassiveKind ? '◆' : '✦'),
-            el('p', { class: 'muted' }, '習得済みのスキルはありません。'),
-            el('p', { class: 'small muted' }, 'スキルツリーで習得すると、ここから装着できます。')))),
+    el('div', { class: 'skill-loadout-tabs', role: 'tablist', 'aria-label': 'スキルの種類' },
+      el('button', {
+        class: `skill-loadout-tab${isPassiveKind ? '' : ' active'}`,
+        role: 'tab',
+        'aria-selected': String(!isPassiveKind),
+        onclick: () => showLoadout(index, 'actions'),
+      }, `アクティブ（${used.actions}/${cap.actions}）`),
+      el('button', {
+        class: `skill-loadout-tab${isPassiveKind ? ' active' : ''}`,
+        role: 'tab',
+        'aria-selected': String(isPassiveKind),
+        onclick: () => showLoadout(index, 'passives'),
+      }, `パッシブ（${used.passives}/${cap.passives}）`)),
+    skills.length
+      ? el('div', { class: 'shop-layout skill-shop-layout' }, grid, detail)
+      : el('section', { class: 'shop-detail skill-shop-empty' },
+        el('p', { class: 'muted' }, '習得済みのスキルはありません。'),
+        el('button', { class: 'ghost', onclick: () => showSkills(index) }, 'スキルツリーを見る')),
     el('button', { class: 'ghost skill-loadout-tree-link', onclick: () => showSkills(index) }, 'スキルツリーを見る'),
   );
+
+  if (selected) selectSkill(selected);
   window.scrollTo(0, 0);
 }
 
