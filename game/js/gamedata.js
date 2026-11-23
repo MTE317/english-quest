@@ -6,6 +6,7 @@ const FILES = {
   balance: 'balance.json',
   jobs: 'jobs.csv',
   jobsMid: 'jobs_mid.csv',
+  jobsPublicAdvanced: 'jobs_advanced.csv',
   aptitude: 'aptitude.csv',
   jobWeaponApt: 'job_weapon_aptitude.csv',
   jobArmorApt: 'job_armor_aptitude.csv',
@@ -70,7 +71,12 @@ export function buildGameData(raw) {
     unlock: r.unlock ?? '',
     changeJp: toNumber(r.change_jp, 0),
   });
-  const jobs = [...raw.jobs.map((r) => job(r, 'base')), ...raw.jobsMid.map((r) => job(r, 'mid')), ...(raw.jobsAdvanced ?? []).map((r) => job(r, 'advanced'))];
+  const jobs = [
+    ...raw.jobs.map((r) => job(r, 'base')),
+    ...raw.jobsMid.map((r) => job(r, 'mid')),
+    ...(raw.jobsPublicAdvanced ?? []).map((r) => ({ ...job(r, 'advanced'), publicRelease: true })),
+    ...(raw.jobsAdvanced ?? []).map((r) => job(r, 'advanced')),
+  ];
 
   const aptitude = new Map(raw.aptitude.map((r) => [r.grade, toNumber(r.multiplier, null)])); // × は null（装備不可）
   const weaponTypes = byId(raw.weaponTypes.map((r) => ({

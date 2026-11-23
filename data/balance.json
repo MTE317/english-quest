@@ -139,6 +139,9 @@
     "elite_max_per_battle": 1,
     "elite_max_per_run": 1,
     "bounty_quest_chance": 0.4,
+    "bounty_chance_cap": 0.8,
+    "expedition_fee_rate": 0.08,
+    "free_expeditions": ["mossy_cave"],
     "legacy_layout": {
       "mossy_cave": {
         "floors": 5,

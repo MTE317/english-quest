@@ -38,7 +38,6 @@ export function facilityUpgrade(data, game, id) {
   const rank = (game.facilities[id] ?? 1) + 1;
   const row = data.facilityRanks.find((r) => Number(r.rank) === rank);
   if (!row || !data.facilities.some((f) => f.id === id)) throw new Error('施設をこれ以上強化できません。');
-  if (game.overdue) throw new Error('ギルド会費の滞納を払ってください。');
   if (rank > currentRank(data, game).maxDungeonRank) throw new Error('冒険者ランクが足りません。');
   const cost = Number(row.invest_cost);
   const materialRule = row.materials ? parseMaterialNeed(data, row.materials) : [];

@@ -3,13 +3,25 @@ import assert from 'node:assert/strict';
 import { realGameData, readCsv, MemoryStorage, seededRng } from './helpers.js';
 import { createNewGame } from '../js/game-state.js';
 import { GameSession } from '../js/save.js';
-import { encounterWeights, monsterPool, makeEncounter, planBounty, floorRow, bossEscorts } from '../js/encounter.js';
+import { encounterWeights, monsterPool, makeEncounter, planBounty, bountyProbability, floorRow, bossEscorts } from '../js/encounter.js';
 import { startRun, startNextBattle, afterBattle, returnToTown, runRoute, runFloorRow, runFloorCount, isBossBattle } from '../js/dungeon.js';
 import { calendarOf } from '../js/town.js';
 import { goldForEnemy } from '../js/loot.js';
 
 const data = realGameData();
 const party = ['warrior', 'knight', 'black_mage', 'white_mage', 'thief', 'bard'].map((job) => ({ name: job, job, icon: 'x' }));
+
+test('賞金首の補正は道具・パッシブ・装備から各1つを採用し上限を守る', () => {
+  const game = createNewGame(data, party);
+  assert.equal(bountyProbability(data, game, 'mossy_cave', true), .4);
+  for (const member of game.party.slice(0, 2)) {
+    member.loadout.passives = ['hunter_p2_s5'];
+    member.equip.accessory1 = { affixes: { BOUNTY_CHANCE: 5 } };
+  }
+  assert.ok(Math.abs(bountyProbability(data, game, 'mossy_cave', true, true) - .7) < 1e-9);
+  const limited = { ...data, balance: { ...data.balance, dungeon: { ...data.balance.dungeon, bounty_quest_chance: .65 } } };
+  assert.equal(bountyProbability(limited, game, 'mossy_cave', true, true), .8);
+});
 
 function newSession(gameData = data) {
   const storage = new MemoryStorage();

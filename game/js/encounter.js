@@ -1,5 +1,7 @@
 // 出てくる敵を決める（ダンジョンと階から）。
-import { makeEnemy } from './battle.js?v=build36-1';
+import { makeEnemy } from './battle.js?v=systems-v1';
+import { affixSum } from './character.js?v=build36-1';
+import { memberMods } from './growth.js?v=build36-1';
 
 /** そのダンジョンにふだん出るモンスター */
 export function monsterPool(data, dungeonId, season) {
@@ -52,14 +54,22 @@ function eliteFor(data, rank, rng) {
   return allowed.find((p) => (draw -= p.appearRate) < 0)?.id ?? null;
 }
 
-export function planBounty(data, game, dungeonId, rng) {
+export function bountyProbability(data, game, dungeonId, accepted, lure = false) {
+  const rules = data.balance.dungeon ?? {};
+  const base = data.dropTables.get(dungeonId)?.bountyChance ?? 0;
+  const passive = Math.min(.10, Math.max(0, ...(game.party ?? []).map(member => memberMods(data, member).bounty_chance ?? 0)));
+  const gear = (game.party ?? []).some(member => affixSum(member, 'BOUNTY_CHANCE') > 0) ? .05 : 0;
+  const item = lure ? (data.items.get('bounty_lure')?.value ?? 0) / 100 : 0;
+  return Math.min(rules.bounty_chance_cap ?? .8,
+    Math.max(0, (accepted ? rules.bounty_quest_chance ?? .4 : base) + passive + gear + item));
+}
+
+export function planBounty(data, game, dungeonId, rng, { lure = false } = {}) {
   const pool = [...data.monsters.values()].filter((m) => m.role === 'bounty' && m.dungeons.includes(dungeonId));
   if (!pool.length) return null;
   const active = pool.filter((m) => game.quests.some((q) => q.type === 'bounty' && q.target === m.id && q.progress < q.count));
   const options = active.length ? active : pool;
-  const chance = data.dropTables.get(dungeonId)?.bountyChance ?? 0;
-  const adjusted = active.length ? (data.balance.dungeon?.bounty_quest_chance ?? chance * 2) : chance;
-  if (rng() >= Math.min(1, Math.max(0, adjusted))) return null;
+  if (rng() >= bountyProbability(data, game, dungeonId, active.length > 0, lure)) return null;
   const floors = data.dungeonFloors.filter((row) => row.dungeonId === dungeonId && row.battles > Number(row.lastBattleIsBoss));
   if (!floors.length) return null;
   const row = floors[Math.floor(rng() * floors.length)];

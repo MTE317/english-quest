@@ -2,7 +2,11 @@ import { splitList } from './csv.js';
 
 export function chainStep(chain, game) {
   const record = game.chains?.[chain.id];
-  if (!record || record.claimed) return null;
+  if (!record || record.claimed || record.awaitingAcceptance) return null;
+  return stepAt(chain, record);
+}
+
+function stepAt(chain, record) {
   const text = splitList(chain.steps)[record.step];
   if (!text) return { kind: 'reward' };
   const [kind, target, goal] = text.split(':');
@@ -12,7 +16,29 @@ export function chainStep(chain, game) {
 export function acceptChain(game, chain) {
   game.chains ??= {};
   if (game.chains[chain.id]) throw new Error('受注済みです。');
-  game.chains[chain.id] = { step: 0, progress: 0 };
+  game.chains[chain.id] = { step: 0, progress: 0, sequential: true };
+}
+
+export function nextChainOffer(chain, game) {
+  const record = game.chains?.[chain.id];
+  if (record && !record.awaitingAcceptance) return null;
+  return stepAt(chain, record ?? { step: 0, progress: 0 });
+}
+
+export function acceptChainPart(game, chain) {
+  const record = game.chains?.[chain.id];
+  if (!record) return acceptChain(game, chain);
+  if (!record.awaitingAcceptance || record.claimed) throw new Error('受注できる依頼はありません。');
+  delete record.awaitingAcceptance;
+  const step = stepAt(chain, record);
+  if (step.kind === 'explore' && game.cleared?.[step.target] > 0) completeChainPart(chain, game);
+}
+
+function completeChainPart(chain, game) {
+  const record = game.chains[chain.id];
+  record.step += 1;
+  record.progress = 0;
+  if (record.sequential && stepAt(chain, record).kind !== 'reward') record.awaitingAcceptance = true;
 }
 
 export function stepLabel(data, step) {
@@ -29,20 +55,20 @@ export function updateChains(data, game, dungeonId, floor, enemies) {
   for (const chain of data.questChains) {
     const step = chainStep(chain, game);
     if (!step) continue;
-    if (step.kind === 'boss' && enemies.some((e) => e.monsterId === step.target && e.hp <= 0)) game.chains[chain.id].step += 1;
+    if (step.kind === 'boss' && enemies.some((e) => e.monsterId === step.target && e.hp <= 0)) completeChainPart(chain, game);
     if (step.target !== dungeonId) continue;
     const r = game.chains[chain.id];
-    if (step.kind === 'explore' && floor >= step.goal) { r.step += 1; r.progress = 0; }
+    if (step.kind === 'explore' && floor >= step.goal) completeChainPart(chain, game);
     if (step.kind === 'hunt') {
       r.progress += enemies.filter((e) => e.hp <= 0).length;
-      if (r.progress >= step.goal) { r.step += 1; r.progress = 0; }
+      if (r.progress >= step.goal) completeChainPart(chain, game);
     }
   }
 }
 
 export function talkChain(game, chain) {
   if (chainStep(chain, game)?.kind !== 'talk') throw new Error('今は会話できません。');
-  game.chains[chain.id].step += 1;
+  completeChainPart(chain, game);
   return '依頼の内容を聞いた。';
 }
 
@@ -61,7 +87,7 @@ export function deliverChain(data, game, chain) {
     if (!stock[id]) delete stock[id];
     left -= take;
   }
-  game.chains[chain.id].step += 1;
+  completeChainPart(chain, game);
   return '素材を納品した。';
 }
 

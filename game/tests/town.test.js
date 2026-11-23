@@ -2,9 +2,9 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createNewGame, normalizeGame } from '../js/game-state.js';
 import {
-  advanceDays, calendarOf, guildFee, makeBoard, fillBoard, refreshBoard, acceptQuest, countKills, canReport, reportQuest, boardSize, nextRankStatus,
+  advanceDays, calendarOf, makeBoard, fillBoard, refreshBoard, acceptQuest, countKills, canReport, reportQuest, boardSize, nextRankStatus,
   stayInn, revive, reviveCost, itemShopStock, buyItem, gearShopStock, buyGear, sellGear, sellPrice, canExpandBackpack, expandBackpack,
-  parseMaterialNeed, payOverdue, TOWN_FORMULAS,
+  parseMaterialNeed, questRankPoints, questBoardAreas, selectQuestBoardArea, TOWN_FORMULAS,
 } from '../js/town.js';
 import { makeEnemy } from '../js/battle.js';
 import { seededRng } from '../js/dungeon.js';
@@ -16,23 +16,48 @@ const party = ['warrior', 'knight', 'black_mage', 'white_mage', 'thief', 'bard']
 const fresh = () => createNewGame(data, party);
 const rng = () => seededRng({ rng: 9 });
 
-test('月末に会費を払う。足りなければ滞納になり、次の月末に利息がつく', () => {
+test('旧会費の滞納だけを清算し、月末は銀行融資の利息だけが増える', () => {
   const g = fresh();
-  const fee = guildFee(data, g);
-  assert.equal(fee, Number(readCsv('economy_by_rank.csv').rows[0].guild_fee));
-  g.gold = fee + 5;
+  g.gold = 5;
+  g.overdue = 300;
+  g.loan = 111;
+  normalizeGame(data, g);
+  assert.equal(g.overdue, undefined);
+  assert.equal(g.loan, 111);
   const notes = advanceDays(data, g, TOWN_FORMULAS.days_per_month);
   assert.equal(g.gold, 5);
-  assert.ok(notes.some((n) => n.includes('会費')));
-  advanceDays(data, g, TOWN_FORMULAS.days_per_month);
-  assert.equal(g.overdue, fee - 5);
-  advanceDays(data, g, TOWN_FORMULAS.days_per_month);
-  const rate = readJson('balance.json').bank.overdue_interest_monthly;
-  assert.equal(g.overdue, (fee - 5) + Math.ceil((fee - 5) * rate) + fee);
-  g.gold = 100000; payOverdue(g, 1e9);
-  assert.equal(g.overdue, 0);
+  assert.equal(g.loan, 111 + Math.ceil(111 * readJson('balance.json').bank.loan_interest_monthly));
+  assert.ok(notes.some(n => n.includes('融資')));
   assert.equal(calendarOf(data, 31).month, 2);
   assert.equal(calendarOf(data, 1).season.id, 'spring');
+});
+
+test('地域を切り替えても掲示を引き直せず、同等以上の依頼は満額のポイントになる', () => {
+  const g = fresh();
+  makeBoard(data, g, rng());
+  const first = g.board.map(q => q.uid);
+  const [area] = questBoardAreas(data, g);
+  selectQuestBoardArea(data, g, area.id, rng());
+  assert.ok(g.board.length);
+  assert.ok(g.board.every(q => area.dungeons.some(dungeon => dungeon.id === q.dungeonId)));
+  selectQuestBoardArea(data, g, '', rng());
+  assert.deepEqual(g.board.map(q => q.uid), first);
+  const q = g.board[0];
+  assert.equal(questRankPoints(data, g, { ...q, rank: q.rank + 1 }), questRankPoints(data, g, q));
+});
+
+test('特別依頼は報告日ではなく討伐日で期限の返金と報酬を決める', () => {
+  for (const late of [false, true]) {
+    const g = fresh();
+    makeBoard(data, g, rng());
+    const q = acceptQuest(data, g, g.specialQuest.uid, rng());
+    g.day = q.deadlineDay + Number(late);
+    countKills(g, [{ monsterId: q.target }], q.dungeonId);
+    g.day += 3;
+    const before = g.gold;
+    reportQuest(data, g, q.uid, rng());
+    assert.equal(g.gold - before, late ? q.rewardGold : Math.round(q.rewardGold * 1.3) + q.depositPaid);
+  }
 });
 
 test('クエスト：掲示6件から地域討伐を受け、指定場所で倒すと報告できる', () => {

@@ -1,10 +1,11 @@
-// 町の基本：暦と月末の会費・ギルドのクエストと冒険者ランク・宿屋・道具屋・武器防具屋・神殿の復活。
+// 町の基本：暦と銀行融資・ギルドのクエストと冒険者ランク・各施設。
 // data に数や式として書かれていないものは、シミュレーター（sim/world.py）と同じ値を TOWN_FORMULAS に置く（docs/requests.md で依頼済み）。
 import { evaluate } from './expr.js';
 import { makeGear, maxHp, maxMp, gearDef } from './character.js?v=build36-1';
 import { addItem } from './loot.js?v=build36-1';
-import { currentRank } from './dungeon.js?v=build36-1';
-import { monsterPool, dungeonRouteUnlocked } from './encounter.js?v=build36-1';
+import { currentRank, allowedDungeons } from './dungeon.js?v=systems-v1';
+import { monsterPool } from './encounter.js?v=systems-v1';
+import { buildWorldMap } from './world-map.js';
 
 export const TOWN_FORMULAS = Object.freeze({
   days_per_month: 30, // balance.json の calendar.days_per_month があればそちらを使う
@@ -35,12 +36,8 @@ export function feeTier(data, game) {
   const ranks = Object.keys(game.cleared ?? {}).map((id) => data.dungeons.get(id)?.rank ?? 1);
   return Math.max(1, ...ranks);
 }
-export function guildFee(data, game) {
-  return data.economy.get(feeTier(data, game)).guild_fee;
-}
-
 /**
- * 日数を進める。月の終わりをまたいだら会費を払う（足りなければ滞納になり、利息がつく）
+ * 日数を進め、月末に銀行融資の利息を加える。
  * @returns 月末の知らせ（文の配列）
  */
 export function advanceDays(data, game, n) {
@@ -55,30 +52,11 @@ export function advanceDays(data, game, n) {
 }
 
 function monthEnd(data, game) {
-  const notes = [];
   const bank = data.balance.bank ?? {};
-  if (game.loan > 0) game.loan += Math.ceil(game.loan * (bank.loan_interest_monthly ?? 0));
-  if (game.overdue > 0) {
-    const interest = Math.ceil(game.overdue * (bank.overdue_interest_monthly ?? 0));
-    game.overdue += interest;
-    notes.push(`滞納の利息 ${interest}`);
-  }
-  const fee = guildFee(data, game);
-  if (game.gold >= fee) { game.gold -= fee; notes.push(`月末：ギルドの会費 ${fee} を払った`); } else {
-    const short = fee - game.gold;
-    game.gold = 0;
-    game.overdue = (game.overdue ?? 0) + short;
-    notes.push(`月末：会費 ${fee} が払えず、${short} を滞納した`);
-  }
-  return notes;
-}
-
-/** 滞納を払う */
-export function payOverdue(game, amount) {
-  const pay = Math.min(amount, game.overdue ?? 0, game.gold);
-  game.gold -= pay;
-  game.overdue -= pay;
-  return pay;
+  const interest = game.loan > 0 ? Math.ceil(game.loan * (bank.loan_interest_monthly ?? 0)) : 0;
+  if (!interest) return [];
+  game.loan += interest;
+  return [`月末：銀行融資の利息 ${interest} G`];
 }
 
 // ---------------- ギルド：クエスト ----------------
@@ -110,6 +88,7 @@ export function questAcceptLimit(data, game) {
 
 /** 数量違いでも同じ依頼として扱い、同じ討伐の重複報酬を避ける。 */
 export function questKey(q) {
+  if (q.special) return `special:${q.rank}:${q.dungeonId}`;
   if (q.type === 'gather' && q.materialIds?.length) return `gather:${q.rank}:${[...q.materialIds].sort().join('|')}`;
   return `${q.type}:${q.rank}:${q.targetMode === 'dungeon' ? `place:${q.dungeonId}` : q.target ?? '*'}`;
 }
@@ -124,7 +103,8 @@ export function questDepositTotal(game) {
   return (game.quests ?? []).reduce((sum, q) => sum + finiteMoney(q.depositPaid), 0);
 }
 
-export function questAbandonRefund(data, q) {
+export function questAbandonRefund(data, q, day) {
+  if (q.special && day > q.deadlineDay && !onTime(q)) return 0;
   const rate = Math.min(1, Math.max(0, Number(questRules(data).abandon_refund_rate ?? 0.8)));
   return Math.floor(finiteMoney(q.depositPaid) * rate);
 }
@@ -136,10 +116,11 @@ export function questDestination(data, q) {
 
 /** 今の季節・行ける場所で取り組める依頼を候補にする。 */
 function questCandidates(data, game) {
-  const star = currentRank(data, game).maxDungeonRank;
+  const scope = questBoardAreas(data, game).find(area => area.id === game.questBoardArea);
+  const star = scope?.star ?? currentRank(data, game).maxDungeonRank;
   const season = calendarOf(data, game.day).season?.id;
   const definitions = data.quests.filter((q) => q.rank === star && data.questTypes.some((t) => t.id === q.type));
-  const dungeons = [...data.dungeons.values()].filter((d) => d.rank === star && dungeonRouteUnlocked(data, game, d));
+  const dungeons = scope?.dungeons ?? allowedDungeons(data, game).filter(d => d.rank === star);
   const places = dungeons.map((dungeon) => {
     const available = monsterPool(data, dungeon.id, season);
     const residents = [...data.monsters.values()].filter((m) => ['normal', 'season'].includes(m.role) && m.dungeons.includes(dungeon.id));
@@ -168,6 +149,26 @@ function questCandidates(data, game) {
     }
   }
   return candidates;
+}
+
+export function questBoardAreas(data, game) {
+  const world = buildWorldMap(data.dungeons, allowedDungeons(data, game), game);
+  return world.regions.flatMap(region => [...new Set(region.dungeons.map(d => d.rank))].map(star => ({
+    id: `${region.id}:${star}`, region: region.id, star, dungeons: region.dungeons.filter(d => d.rank === star),
+  })));
+}
+
+export function selectQuestBoardArea(data, game, areaId, rng = Math.random) {
+  if (areaId && !questBoardAreas(data, game).some(area => area.id === areaId)) throw new Error('この地域の依頼はまだ受けられません。');
+  const previous = game.questBoardArea ?? '';
+  if (previous !== areaId) {
+    game.questBoardByArea ??= {};
+    game.questBoardByArea[previous] = game.board;
+    game.board = game.questBoardByArea[areaId] ?? [];
+    game.questBoardArea = areaId;
+    delete game.specialQuest;
+  }
+  return fillBoard(data, game, rng);
 }
 
 function candidateKey(candidate) {
@@ -219,12 +220,23 @@ export function fillBoard(data, game, rng = Math.random) {
     const q = createQuestOffer(data, game, candidate, rng);
     game.board.push(q); taken.add(questKey(q));
   }
+  const special = candidates.find(candidate => candidate.def.type === 'boss' && !taken.has(questKey({ ...candidate, rank: candidate.def.rank, special: true })));
+  if (!special) delete game.specialQuest;
+  else if (game.specialQuest?.dungeonId !== special.dungeonId) {
+    const offer = createQuestOffer(data, game, special, () => 0);
+    const days = data.dungeons.get(offer.dungeonId).days;
+    Object.assign(offer, { special: true, daysToComplete: days >= 3 ? 12 : days === 2 ? 10 : 8,
+      depositGold: Math.ceil(offer.rewardGold * .10) });
+    game.specialQuest = offer;
+  }
   return game.board;
 }
 
 /** 遠征から戻ると未受注の掲示が更新され、同じ依頼にも再挑戦できる。 */
 export function refreshBoard(data, game, rng = Math.random) {
   game.board = [];
+  game.questBoardByArea = {};
+  delete game.specialQuest;
   game.questBoardUsed = [];
   return fillBoard(data, game, rng);
 }
@@ -238,7 +250,7 @@ export function questText(data, q) {
   if (q.type === 'hunt' && q.targetMode === 'dungeon') return `${data.dungeons.get(q.dungeonId)?.name ?? q.dungeonId}の魔物を${q.count}体たおす`;
   if (q.type === 'hunt') return `${name(q.target)}を${q.count}体たおす`;
   if (q.type === 'bounty') return `賞金首「${name(q.target)}」を倒す`;
-  if (q.type === 'boss') return `${name(q.target)}をたおす`;
+  if (q.type === 'boss') return `${q.special ? '特別依頼：' : ''}${name(q.target)}をたおす`;
   if (q.type === 'gather' && q.materialIds?.length) return `${data.dungeons.get(q.dungeonId)?.name ?? q.dungeonId}の通常素材を${q.count}個納品する`;
   if (q.type === 'gather') return `★${q.rank}の通常素材を${q.count}個納品する`;
   return q.questId;
@@ -259,8 +271,9 @@ export function acceptQuest(dataOrGame, gameOrUid, uid, rng = Math.random) {
   const game = withData ? gameOrUid : dataOrGame;
   const offerUid = withData ? uid : gameOrUid;
   const i = (game.board ?? []).findIndex((q) => q.uid === offerUid);
-  if (i < 0) throw new Error('そのクエストはない');
-  const q = game.board[i];
+  const special = game.specialQuest?.uid === offerUid;
+  if (i < 0 && !special) throw new Error('そのクエストはない');
+  const q = special ? game.specialQuest : game.board[i];
   game.quests ??= [];
   const limit = data ? questAcceptLimit(data, game) : game.questBoardPolicy?.acceptedLimit ?? TOWN_FORMULAS.board_size;
   if (game.quests.length >= limit) throw new Error(`同時受注は${limit}件までです。`);
@@ -269,7 +282,11 @@ export function acceptQuest(dataOrGame, gameOrUid, uid, rng = Math.random) {
   if (game.gold < deposit) throw new Error(`保証金 ${deposit} G が必要です。`);
   game.gold -= deposit;
   q.depositPaid = deposit;
-  game.quests.push(game.board.splice(i, 1)[0]);
+  if (special) {
+    q.deadlineDay = game.day + q.daysToComplete;
+    delete game.specialQuest;
+  } else game.board.splice(i, 1);
+  game.quests.push(q);
   game.questBoardUsed ??= [];
   if (!game.questBoardUsed.includes(questKey(q))) game.questBoardUsed.push(questKey(q));
   if (data) fillBoard(data, game, rng);
@@ -284,6 +301,7 @@ export function countKills(game, enemies, dungeonId = null) {
       ? (q.dungeonId === dungeonId ? enemies.filter((e) => q.targetIds?.includes(e.monsterId)).length : 0)
       : enemies.filter((e) => e.monsterId === q.target).length;
     q.progress = Math.min(q.count, (q.progress ?? 0) + killed);
+    if (q.special && killed > 0 && q.progress >= q.count) q.completedDay ??= game.day;
   }
 }
 
@@ -300,12 +318,21 @@ export function canReport(data, game, q) {
   return questProgress(data, game, q) >= q.count;
 }
 
+const onTime = q => q.completedDay != null && q.completedDay <= q.deadlineDay;
+
+export function questRankPoints(data, game, q) {
+  const points = data.quests.find(def => def.id === q.questId)?.rankPoints ?? 0;
+  const gap = currentRank(data, game).maxDungeonRank - q.rank;
+  const rules = data.balance.guild_points ?? {};
+  return points * (gap <= 0 ? rules.same_rank ?? 1 : gap === 1 ? rules.one_rank_lower ?? 0.5 : 0);
+}
+
 /** 自主放棄。旧契約は預かり金0として扱う。 */
 export function abandonQuest(data, game, uid, rng = Math.random) {
   const i = (game.quests ?? []).findIndex((q) => q.uid === uid);
   if (i < 0) throw new Error('その依頼は受注していません。');
   const q = game.quests[i];
-  const refund = questAbandonRefund(data, q);
+  const refund = questAbandonRefund(data, q, game.day);
   const fee = finiteMoney(q.depositPaid) - refund;
   game.gold += refund;
   game.quests.splice(i, 1);
@@ -322,8 +349,8 @@ export function reportQuest(data, game, uid, rng = Math.random) {
   if (!q || !canReport(data, game, q)) throw new Error('まだ報告できない');
   const def = data.quests.find((x) => x.id === q.questId);
   if (!def) throw new Error('依頼の報酬データが見つかりません。');
-  const rank = currentRank(data, game);
-  const gold = questRewardGold(data, game, q);
+  const baseGold = questRewardGold(data, game, q);
+  const gold = q.special && onTime(q) ? Math.round(baseGold * 1.3) : baseGold;
   const lines = [];
   if (q.type === 'gather') {
     let need = q.count;
@@ -336,7 +363,8 @@ export function reportQuest(data, game, uid, rng = Math.random) {
     }
   }
   if (gold) { game.gold += gold; lines.push(`報酬 +${gold} G`); }
-  const refund = finiteMoney(q.depositPaid);
+  const refund = !q.special || onTime(q) ? finiteMoney(q.depositPaid) : 0;
+  if (q.special && !onTime(q) && q.depositPaid > 0) lines.push('期限超過のため保証金を没収');
   if (refund) { game.gold += refund; lines.push(`保証金 ${refund} G を返還`); }
   if (def.rewardItem.startsWith('まれな素材')) {
     const n = Number(/(\d+)/.exec(def.rewardItem)?.[1] ?? 1);
@@ -344,10 +372,7 @@ export function reportQuest(data, game, uid, rng = Math.random) {
     const m = rares[Math.min(rares.length - 1, Math.floor(rng() * rares.length))];
     if (m) { game.storage.materials[m.id] = (game.storage.materials[m.id] ?? 0) + n; lines.push(`${m.name} ×${n}`); }
   }
-  const gp = data.balance.guild_points ?? {};
-  const diff = rank.maxDungeonRank - q.rank;
-  const mul = diff === 0 ? (gp.same_rank ?? 1) : diff === 1 ? (gp.one_rank_lower ?? 0.5) : 0;
-  const pts = def.rankPoints * mul;
+  const pts = questRankPoints(data, game, q);
   game.rankPoints = (game.rankPoints ?? 0) + pts;
   lines.push(`ランクのポイント +${pts}`);
   game.quests.splice(i, 1);

@@ -43,7 +43,7 @@ function damage(weapon, job, weak = [], seed = 5, statuses = {}) {
   return 100000 - ctx.enemies[0].hp;
 }
 
-test('16武器種・通常装備384本・★1〜★12の各24段階・適性14職が揃う', () => {
+test('16武器種・通常装備384本・★1〜★12の各24段階・全公開職の適性が揃う', () => {
   assert.equal(data.weaponTypes.size, 16);
   const basic = [...data.equipment.values()].filter((e) => e.slot === 'weapon' && /^.+_t\d+$/.test(e.id));
   assert.equal(basic.length, 384);
@@ -54,7 +54,7 @@ test('16武器種・通常装備384本・★1〜★12の各24段階・適性14�
     assert.equal(entries[23].star, 12);
     for (let t = 1; t <= 24; t++) assert.equal(entries.some((e) => e.id === `${type}_t${t}`), true);
   }
-  assert.equal(data.jobWeaponApt.size, 14);
+  assert.deepEqual([...data.jobWeaponApt.keys()].sort(), [...data.jobsById.keys()].sort());
   for (const row of data.jobWeaponApt.values()) {
     for (const type of data.weaponTypes.keys()) assert.ok(row[type], `${row.job_id} / ${type}`);
   }

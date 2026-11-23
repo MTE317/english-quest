@@ -4,7 +4,7 @@ import { GameSession } from '../js/save.js';
 import { createNewGame } from '../js/game-state.js';
 import { nextTurn, setPending, resolvePending } from '../js/battle.js';
 import {
-  startRun, startNextBattle, afterBattle, returnToTown, continueRun, resolveLoot, allowedDungeons, allowedStones, isBossBattle, seededRng,
+  startRun, expeditionFee, startNextBattle, afterBattle, returnToTown, continueRun, resolveLoot, allowedDungeons, allowedStones, isBossBattle, seededRng,
 } from '../js/dungeon.js';
 import { backpackSlots, backpackUsed, addToBackpack, rollBattleLoot, rollGearDrop, addItem } from '../js/loot.js';
 import { makeEnemy } from '../js/battle.js';
@@ -21,6 +21,32 @@ function newSession(storage = new MemoryStorage()) {
   s.startNew(createNewGame(data, party));
   return s;
 }
+
+test('遠征費は出発時に払い、途中帰還で確定し、全滅時は香とともに戻る', () => {
+  const storage = new MemoryStorage();
+  const session = newSession(storage);
+  const options = { dungeonId: 'sunlit_forest', stoneId: 'rs_1_001', seed: 1 };
+  const fee = expeditionFee(data, data.dungeons.get(options.dungeonId));
+  assert.equal(fee, 8);
+  const gold = session.game.gold;
+  session.game.items.bounty_lure = 1;
+  startRun(data, session, { ...options, bountyLure: true });
+  assert.equal(session.game.gold, gold - fee);
+  assert.equal(session.game.items.bounty_lure, undefined);
+  const resumed = new GameSession({ storage });
+  resumed.wipe();
+  assert.equal(resumed.game.gold, gold);
+  assert.equal(resumed.game.items.bounty_lure, 1);
+  startRun(data, resumed, options);
+  resumed.updateRun(run => { run.state = 'return_point'; });
+  returnToTown(data, resumed);
+  assert.equal(resumed.game.gold, gold - fee);
+  resumed.game.gold = 0;
+  assert.throws(() => startRun(data, resumed, options), /遠征費/);
+  assert.equal(resumed.run, null);
+  startRun(data, resumed, { ...options, dungeonId: 'mossy_cave' });
+  assert.equal(resumed.game.gold, 0);
+});
 /** 戦闘を最後まで（正解の割合 acc） */
 function fightOut(session, acc = 1, seed = 1) {
   const b = session.run.battle; const r = seededRng({ rng: seed });

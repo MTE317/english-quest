@@ -6,14 +6,13 @@
 //   'loot'         … 拾ったものがバックパックに入りきらない（入れ替えるかあきらめるかを選ぶ）
 //   'return_point' … 帰還ポイント（帰るか先へ進むかを選ぶ）
 //   'cleared'      … いちばん奥のボスを倒した（町に帰るだけ）
-import { createBattle, finishBattle, battleRewards } from './battle.js?v=build36-1';
-import { makeEncounter, floorRow, planBounty, dungeonRouteUnlocked } from './encounter.js?v=build36-1';
+import { createBattle, finishBattle, battleRewards, curedBy } from './battle.js?v=systems-v1';
+import { makeEncounter, floorRow, planBounty, dungeonRouteUnlocked } from './encounter.js?v=systems-v1';
 import { rollBattleLoot, addToBackpack, swapIntoBackpack, unloadBackpack } from './loot.js?v=build36-1';
 import { gainXp, maxHp, maxMp, affixSum } from './character.js?v=build36-1';
-import { curedBy } from './battle.js?v=build36-1';
-import { advanceDays, calendarOf, countKills, refreshBoard } from './town.js?v=build36-1';
-import { updateChains } from './quest-chain.js?v=features-2';
-import { discoverJobs } from './temple.js?v=rune-study-1';
+import { advanceDays, calendarOf, countKills, refreshBoard } from './town.js?v=systems-v1';
+import { updateChains } from './quest-chain.js?v=systems-v1';
+import { discoverJobs, recordStoredMaterials } from './temple.js?v=systems-v1';
 import { memberMods } from './growth.js?v=build36-1';
 import { planExploration, resolveExploration, commitExploration, explorationEntryAllowed } from './exploration.js';
 
@@ -48,6 +47,12 @@ export function canTrainIn(dungeon) {
   return ['近場', '素材の宝庫'].includes(dungeon.kind);
 }
 
+export function expeditionFee(data, dungeon) {
+  const config = data.balance.dungeon ?? {};
+  if ((config.free_expeditions ?? []).includes(dungeon.id)) return 0;
+  return Math.round(data.economy.get(dungeon.rank).run_income * dungeon.incomeMul * (config.expedition_fee_rate ?? 0));
+}
+
 /**
  * 持っていけるルーンストーン：石の★がダンジョンの★以上（srs.json の stone_star_must_be_gte_dungeon_star）
  */
@@ -60,11 +65,20 @@ export function allowedStones(srs, lex, dungeon) {
  * 遠征を始める：入る前の状態を写してから、日数を使う
  * @param quizState QuestionPicker の toState()（出題の状態）
  */
-export function startRun(data, session, { dungeonId, stoneId, quizState, seed }) {
+export function startRun(data, session, { dungeonId, stoneId, quizState, seed, bountyLure = false }) {
   const dg = data.dungeons.get(dungeonId);
   if (!dg) throw new Error(`ダンジョン ${dungeonId} がない`);
   if (!allowedDungeons(data, session.game).includes(dg)) throw new Error('今のランクでは入れない');
+  const fee = expeditionFee(data, dg);
+  if (session.game.gold < fee) throw new Error(`遠征費 ${fee} G が必要です。`);
+  if (bountyLure && !(session.game.items.bounty_lure > 0)) throw new Error('おびき寄せ香を持っていません。');
   session.enterDungeon({ dungeonId, stoneId }, (run, game) => {
+    game.gold -= fee; // 全滅時は支払い前のスナップショットに戻る。
+    run.expeditionFee = fee;
+    if (bountyLure) {
+      game.items.bounty_lure -= 1;
+      if (!game.items.bounty_lure) delete game.items.bounty_lure;
+    }
     run.layoutVersion = data.balance.dungeon?.layout_version ?? 2;
     run.route = data.dungeonFloors.filter((row) => row.dungeonId === dungeonId)
       .sort((a, b) => a.floor - b.floor).map((row) => ({ ...row }));
@@ -80,7 +94,7 @@ export function startRun(data, session, { dungeonId, stoneId, quizState, seed })
     run.quiz = quizState;
     run.rng = seed >>> 0;
     run.notices = advanceDays(data, game, dg.days);
-    run.bounty = planBounty(data, game, dungeonId, seededRng(run));
+    run.bounty = planBounty(data, game, dungeonId, seededRng(run), { lure: bountyLure });
   });
 }
 
@@ -257,6 +271,7 @@ export function returnToTown(data, session, useItem = null) {
       if (game.items[useItem] <= 0) delete game.items[useItem];
     }
     unloadBackpack(game, run.backpack);
+    recordStoredMaterials(game);
     commitExploration(game, run.explorationRecords);
     for (const m of game.party) m.room = null; // 宿屋の良い部屋の効果は1回の遠征だけ
     const asked = run.quiz?.asked ?? 0;

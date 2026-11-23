@@ -1,5 +1,19 @@
 import { parseAmounts } from './csv.js';
 
+export function recordStoredMaterials(game) {
+  game.discoveredMaterials ??= {};
+  for (const [id, quantity] of Object.entries(game.storage?.materials ?? {})) {
+    if (quantity > 0) game.discoveredMaterials[id] = true;
+  }
+}
+
+export function offeringRevealed(data, game, rule) {
+  if (data.jobsById.get(rule.job_id)?.tier !== 'advanced' || rule.method !== '素材') return true;
+  const [first] = parseAmounts(rule.materials);
+  const key = rule.discovery_material || first?.id;
+  return Boolean(key && (game.discoveredMaterials?.[key] || game.storage?.materials?.[key] > 0));
+}
+
 export function consumeMaterials(game, requirements) {
   const stock = game.storage.materials;
   for (const [id, count] of Object.entries(requirements)) {
@@ -15,6 +29,8 @@ export function unlockJob(data, game, jobId) {
   const rule = data.jobUnlocks.get(jobId);
   game.unlockedJobs ??= [];
   if (rule?.method !== '素材' || game.unlockedJobs.includes(jobId)) throw new Error('このジョブは解放できません。');
+  if (!offeringRevealed(data, game, rule)) throw new Error('この儀式はまだ発見されていません。');
+  recordStoredMaterials(game);
   consumeMaterials(game, Object.fromEntries(parseAmounts(rule.materials).map(({ id, count }) => [id, count])));
   game.unlockedJobs.push(jobId);
   return `${data.jobsById.get(jobId).name}を解放した！`;

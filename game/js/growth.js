@@ -242,7 +242,7 @@ export function addMasteryKill(data, member) {
 }
 
 // ---------------- ジョブチェンジ（神殿） ----------------
-/** 選べるジョブ：基本ジョブと、解放した中級ジョブ */
+/** 選べるジョブ：基本ジョブと、解放したジョブ */
 export function availableJobs(data, game) {
   const unlocked = new Set(game.unlockedJobs ?? []);
   return data.jobs.filter((j) => j.tier === 'base' || unlocked.has(j.id));
