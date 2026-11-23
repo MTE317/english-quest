@@ -344,7 +344,8 @@ export function prepareParty(data, dungeon, profileId = 'balanced', preparation 
       if (isLearned(m, s)) continue;
       trainAs(s.job);
       m.ap[s.job] = (m.ap[s.job] ?? 0) + s.apToLearn;
-      learnSkill(data, m, s.id);
+      // AP台帳を初期化すると、その職のAP 0技能は習得済みになる。
+      if (!isLearned(m, s)) learnSkill(data, m, s.id);
       fixture.assembly.ap[m.id][s.job] = (fixture.assembly.ap[m.id][s.job] ?? 0) + s.apToLearn;
     }
     trainAs(originalJob);

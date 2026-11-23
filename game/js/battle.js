@@ -751,7 +751,7 @@ function attackDamage(data, game, b, i, e, skill, cm, { offhand = false, actionB
   let misses = 0;
   for (const h of hits) {
     const hit = !(kind === 'phys' && blind && chance(b, data.statusEffects.get(blind).value * (traits.blind_miss_mul ?? 1)))
-      && !(kind === 'phys' && !enemy.statuses.bind && enemy.evasion > 0 && chance(b, enemy.evasion));
+      && !(!enemy.statuses.bind && enemy.evasion > 0 && chance(b, enemy.evasion));
     if (!hit) { misses += 1; continue; }
     const crit = chance(b, pc);
     if (crit) crits += 1;
