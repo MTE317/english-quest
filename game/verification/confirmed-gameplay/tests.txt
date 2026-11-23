@@ -1,0 +1,24 @@
+Command: node --test game/tests/*.test.js
+Node: v24.22.3
+ℹ tests 283
+ℹ suites 0
+ℹ pass 282
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 26731.755979
+
+✖ failing tests:
+
+test at game/tests/build-mechanics.test.js:393:1
+✖ 魔力の余韻はパッシブ枠へ装備した生存者だけの戦闘後MPを10%回復する (9.513128ms)
+  Error: 覚えていない
+      at equipSkill (file:///workspace/english-quest-confirmed/game/js/growth.js:141:20)
+      at TestContext.<anonymous> (file:///workspace/english-quest-confirmed/game/tests/build-mechanics.test.js:399:3)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)

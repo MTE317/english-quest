@@ -1,0 +1,42 @@
+{
+  "sourceSha256": "5af11509e5d3504985b9c5d8a393324240c672e07a64390a179025b3fed290b1",
+  "sourceUnchangedAtCompletion": true,
+  "seed": 1217071,
+  "step": 7919,
+  "accuracy": 1,
+  "partySize": 6,
+  "level": 20,
+  "skill": "black_mage_p1_s1",
+  "monster": "goblin",
+  "limitations": "単一入力の制御プローブ。出現頻度・周回・勝率の計測ではない。束縛のみ開始状態として付与。",
+  "results": [
+    {
+      "bound": false,
+      "eliteId": null,
+      "runs": 1000,
+      "evaded": 0,
+      "meanDamage": 240.208
+    },
+    {
+      "bound": false,
+      "eliteId": "shadow",
+      "runs": 1000,
+      "evaded": 143,
+      "meanDamage": 206.676
+    },
+    {
+      "bound": true,
+      "eliteId": null,
+      "runs": 1000,
+      "evaded": 0,
+      "meanDamage": 240.208
+    },
+    {
+      "bound": true,
+      "eliteId": "shadow",
+      "runs": 1000,
+      "evaded": 0,
+      "meanDamage": 240.208
+    }
+  ]
+}

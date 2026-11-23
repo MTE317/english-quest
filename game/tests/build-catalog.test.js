@@ -112,7 +112,9 @@ test('最低進度と★12の全36編成で、必須技能と付与が実際に�
         const skill = data.skills.get(id);
         paid[skill.job] = (paid[skill.job] ?? 0) + skill.apToLearn;
       }
-      assert.deepEqual(fixture.assembly.ap[m.id], paid, `${build.id}: APを通常費用で支払う`);
+      // 初期技能はAP台帳で習得済みになるため、learnedには入らない。
+      const positiveCosts = costs => Object.fromEntries(Object.entries(costs).filter(([, cost]) => cost > 0));
+      assert.deepEqual(positiveCosts(fixture.assembly.ap[m.id]), positiveCosts(paid), `${build.id}: APを通常費用で支払う`);
     }
     const trainingJp = fixture.assembly.jobTraining.reduce((sum, entry) => {
       assert.equal(entry.jp, data.jobsById.get(entry.to).changeJp);
