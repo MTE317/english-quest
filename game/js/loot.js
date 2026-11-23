@@ -115,7 +115,7 @@ export function rollAffixes(data, slot, n, itemLv, rarityIndex, rng) {
 }
 
 /** 落ちた装備を1つ作る（装備Lvはダンジョンの範囲で、奥の階ほど高い） */
-export function rollGearDrop(data, game, dungeonId, floor, rng) {
+export function rollGearDrop(data, game, dungeonId, floor, rng, { commonOnly = false } = {}) {
   const dg = data.dungeons.get(dungeonId);
   const top = dg.itemLvMin + (dg.itemLvMax - dg.itemLvMin) * Math.min(1, floor / dg.floors);
   const share = LOOT_FORMULAS.slot_share;
@@ -126,10 +126,11 @@ export function rollGearDrop(data, game, dungeonId, floor, rng) {
   // 専用制作装備をランダムドロップに混ぜない。候補不足時もドロップ対象だけを探す。
   const pool = cands.length ? cands : [...data.equipment.values()].filter((e) =>
     !e.unique && !e.setId && e.source.includes('ドロップ') && slots.includes(e.slot) && e.itemLv <= dg.itemLvMax);
+  if (commonOnly && !pool.length) return null;
   // いちばん高い装備Lvのものを多めに
   const maxLv = Math.max(...pool.map((e) => e.itemLv));
   const def = weighted(rng, pool, (e) => (e.itemLv === maxLv ? 2 : 1));
-  const rar = rollRarity(data, dungeonId, floor, rng);
+  const rar = commonOnly ? { id: 'common', effects: 0, i: 0 } : rollRarity(data, dungeonId, floor, rng);
   return makeGear(game, def.id, { rarity: rar.id, affixes: rollAffixes(data, def.slot, rar.effects, def.itemLv, rar.i, rng) });
 }
 
