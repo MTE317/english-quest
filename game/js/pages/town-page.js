@@ -17,6 +17,7 @@ import { workshopView, managementView, templeExtras } from '../ui/facility-view.
 import { itemShopView, gearShopView } from '../ui/town-shops.js?v=basic-skill-levels-1';
 import { weaponIcon } from '../ui/weapon-icons.js';
 import { equipmentIcon } from '../ui/equipment-icons.js';
+import { storageView } from '../ui/storage-view.js?v=storage-tabs-1';
 import { uiIcon } from '../ui/pixel-icons.js';
 import { portraitIcon } from '../ui/portrait.js';
 import { el, render } from '../dom.js';
@@ -32,6 +33,7 @@ let data;
 const workshopSelection = {};
 const itemShopSelection = {};
 const gearShopSelection = {};
+const storageSelection = {};
 let flash = null;
 let templeTab = 'recovery';
 let templeMember = 0;
@@ -398,20 +400,7 @@ function temple() {
 }
 
 function storage() {
-  const g = session.game;
-  const mats = Object.entries(g.storage.materials);
-  return [
-    el('h2', {}, `素材（${mats.length}種類）`),
-    mats.length ? el('div', { class: 'panel small' }, mats.map(([id, n]) => el('div', {}, `★${data.materials.get(id)?.rank} ${data.materials.get(id)?.name ?? id} ×${n}`))) : el('p', { class: 'muted small' }, 'なし'),
-    el('h2', {}, `装備（${g.storage.gear.length}個）`),
-    g.storage.gear.length ? el('div', { class: 'panel small' }, g.storage.gear.map((x) => {
-      const def = gearDef(data, x);
-      return el('div', { class: 'gear-with-icon' },
-        equipmentIcon(def), el('span', {}, def.name));
-    })) : el('p', { class: 'muted small' }, 'なし'),
-    el('h2', {}, '道具'),
-    el('div', { class: 'panel small' }, Object.entries(g.items).map(([id, n]) => el('div', {}, `${data.items.get(id)?.name ?? id} ×${n}`))),
-  ];
+  return storageView(data, session.game, storageSelection);
 }
 
 function draw() {
