@@ -1,7 +1,7 @@
 // データ確認画面：data/ のファイルごとの行数と、中身の表
 import { loadFiles, loadJson } from '../data.js?v=features-2';
 import { splitList, parseAmounts } from '../csv.js';
-import { buildLexicon } from '../lexicon.js';
+import { buildLearningCatalog, FEATURED_SET_ID } from '../learning-catalog.js?v=learning-v1-1';
 import { Scheduler } from '../srs.js?v=features-2';
 import { el, render } from '../dom.js';
 
@@ -17,17 +17,22 @@ function summaryOf(file) {
 
 function checks(files) {
   const notes = [];
-  const stones = files['rune_stones.csv'];
-  const lexicon = files['lexicon.csv'];
-  if (stones && lexicon) {
-    const lex = buildLexicon(stones.rows, lexicon.rows);
-    notes.push(`ルーンストーン ${lex.stones.length}個・ルーン ${lex.words.length}語`);
-    for (const s of lex.stones) {
-      const n = lex.wordsByStone.get(s.id)?.length ?? 0;
-      const warn = s.size && n !== s.size ? `（size は ${s.size}）` : '';
-      notes.push(`　${s.id}：${n}語${warn}`);
-    }
-    notes.push(...lex.problems);
+  const keys = {
+    words: 'learning/v1/words.csv',
+    phrases: 'learning/v1/phrases.csv',
+    chunks: 'learning/v1/chunks.csv',
+    categories: 'learning/v1/categories.csv',
+    wordCategories: 'learning/v1/word_categories.csv',
+    phraseCategories: 'learning/v1/phrase_categories.csv',
+  };
+  if (Object.values(keys).every((key) => files[key])) {
+    try {
+      const catalog = buildLearningCatalog(Object.fromEntries(
+        Object.entries(keys).map(([key, filename]) => [key, files[filename].rows]),
+      ));
+      notes.push(`教材v${catalog.version}：単語 ${catalog.words.length}語・瞬間英作文 ${catalog.phrases.length}文・チャンク ${catalog.chunks.length}型`);
+      notes.push(`7メイン・${catalog.subcategories.length}サブ、00の最優先 ${catalog.wordsByStone.get(FEATURED_SET_ID).length}語・${catalog.phrasesByStone.get(FEATURED_SET_ID).length}文`);
+    } catch (error) { notes.push(`学習教材エラー：${error.message}`); }
   }
   const srs = files['srs.json'];
   if (srs) {
@@ -51,7 +56,7 @@ function showList() {
       Object.keys(failures).length ? el('div', { class: 'error' }, `読めなかったファイル：${Object.keys(failures).length}`) : null,
     ),
     notes.length ? el('details', { class: 'panel' },
-      el('summary', {}, 'ルーンと設定の確認'),
+      el('summary', {}, '教材と設定の確認'),
       el('div', { class: 'small' }, notes.map((t) => el('div', {}, t))),
     ) : null,
     el('ul', { class: 'choice-list' },
