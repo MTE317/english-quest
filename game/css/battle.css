@@ -527,27 +527,3 @@ body:has(.battle-screen) { background: #10171e; }
 }
 .battle-encyclopedia dd { margin: 0; }
 .battle-encyclopedia dt { color: var(--battle-dim); }
-
-/* 苔むした洞窟での試験表示。絵は既存の敵ボタン内に収める。 */
-.battle-enemy-sprite {
-  display: block;
-  width: 32px;
-  height: 32px;
-  max-width: 100%;
-  object-fit: contain;
-  image-rendering: pixelated;
-  pointer-events: none;
-}
-.battle-enemy-sprite[width="48"] { width: 48px; height: 48px; }
-.battle-screen.answering .battle-enemy-sprite { height: 32px; }
-.battle-encyclopedia .battle-enemy-sprite { width: 64px; height: 64px; }
-.battle-encyclopedia .battle-enemy-sprite[width="48"] { width: 96px; height: 96px; }
-@media (max-width: 540px) {
-  .battle-screen .mossy-sprite-pilot:is([data-count="7"], [data-count="8"]) { gap: 4px; padding-inline: 5px; align-items: stretch; }
-  .battle-screen .mossy-sprite-pilot:is([data-count="7"], [data-count="8"]) .battle-enemy { flex-basis: calc(25% - 4px); }
-  .mossy-sprite-pilot:is([data-count="7"], [data-count="8"]) .battle-enemy-icon { min-height: 49px; font-size: 2rem; }
-  .battle-screen.answering .mossy-sprite-pilot:is([data-count="7"], [data-count="8"]) .battle-enemy-icon { min-height: 34px; }
-  .mossy-sprite-pilot:is([data-count="7"], [data-count="8"]) .battle-enemy-sprite { width: 32px; height: 32px; }
-  .mossy-sprite-pilot:is([data-count="7"], [data-count="8"]) .battle-enemy-sprite[width="48"] { width: 48px; height: 48px; }
-  .battle-screen.answering .mossy-sprite-pilot:is([data-count="7"], [data-count="8"]) .battle-enemy-sprite { height: 32px; }
-}
