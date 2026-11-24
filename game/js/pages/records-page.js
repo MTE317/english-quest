@@ -24,7 +24,7 @@ function section(title, ...body) {
 }
 
 async function show() {
-  const [data, catalog, srs] = await Promise.all([loadGameData(), loadLearningCatalog(), loadJson('srs.json')]);
+  const [data, learningCatalog, srs] = await Promise.all([loadGameData(), loadLearningCatalog(), loadJson('srs.json')]);
   const game = session.game;
   const equipped = (game?.party ?? []).flatMap((member) => Object.values(member.equip).filter(Boolean));
   const owned = new Set([...(game?.catalog?.gear ?? []), ...(game?.storage?.gear ?? []).map((x) => x.id), ...equipped.map((x) => x.id)]);
@@ -68,7 +68,7 @@ async function show() {
   }
   function log() {
     const scheduler = new Scheduler(srs.data);
-    const stats = learningStatistics(catalog, store, game, scheduler, scheduler.dayOf(now()));
+    const stats = learningStatistics(learningCatalog, store, game, scheduler, scheduler.dayOf(now()));
     const wordsAnswered = stats.days.reduce((sum, row) => sum + row.words, 0);
     const phrasesAnswered = stats.days.reduce((sum, row) => sum + row.phrases, 0);
     const recent = stats.days.slice(0, 14);
