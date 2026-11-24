@@ -1,5 +1,5 @@
 import { makeQuestion } from '../quiz.js?v=question-speech-1';
-import { makeTrainingPicker, applyTrainingAnswer } from '../training.js?v=basic-skill-levels-1';
+import { makeTrainingPicker, applyTrainingAnswer, shouldShowChunkHint } from '../training.js?v=basic-skill-levels-1';
 import { recordChant } from '../chant.js?v=stability-1';
 import { now } from '../storage.js?v=stability-1';
 import { speak, canSpeak, stopSpeech } from '../speech.js?v=music-suite-1';
@@ -130,7 +130,7 @@ export function runTrainingSession({ view, catalog, store, session, scheduler, d
     } }, '答えを見る');
     render(view, header(entry),
       el('div', { class: 'panel chant-card' },
-        entry.item.chunkId ? el('p', { class: 'muted small' },
+        shouldShowChunkHint(options.mode, phrase) ? el('p', { class: 'muted small' },
           'チャンク：' + (catalog.chunksById.get(entry.item.chunkId)?.pattern ?? entry.item.chunkId)) : null,
         el('p', { class: 'chant-japanese', lang: 'ja' }, phrase.ja),
         reveal, answer));
