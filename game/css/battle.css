@@ -300,26 +300,40 @@ body:has(.battle-screen) { background: #10171e; }
   .battle-attack-hit::after { content: none; }
 }
 
-.battle-log { color: var(--battle-dim); font-size: .78rem; }
-.battle-log summary {
-  min-height: 36px;
-  gap: 8px;
-  padding: 4px 8px;
-  border-block: 1px solid #2a3c44;
+.battle-screen .battle-log {
+  display: block;
+  flex: 0 0 68px;
+  height: 68px;
+  min-height: 68px;
+  width: 100%;
+  padding: 6px 8px;
+  text-align: left;
+  color: var(--battle-dim);
+  font-size: .72rem;
 }
-.battle-log summary::after {
-  content: "⌄";
-  margin-left: auto;
-  color: var(--battle-gold);
-  font-size: 1.1rem;
+.battle-log-latest { display: block; min-width: 0; }
+.battle-log-line {
+  display: block;
+  height: 18px;
+  line-height: 18px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
-.battle-log[open] summary::after { content: "⌃"; }
-.battle-log-latest { overflow-wrap: anywhere; }
 .battle-history {
-  margin: 0;
+  margin: 0 0 12px;
   padding: 6px 8px 6px 24px;
   background: var(--battle-bg);
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+  font-size: .82rem;
 }
+.battle-history li + li { margin-top: 6px; }
+
+/* 戦闘の上部だけ帰還リンクを隠す。非戦闘の帰還操作は従来どおり。 */
+.app:has(.battle-screen) > .bar .back { display: none; }
+/* カードはアイコンとバー中心。情報はタップする既存詳細に残す。 */
+.battle-enemies .battle-enemy :is(.battle-unit-name, .battle-resource-name, .battle-resource-value, .battle-known-weak, .battle-inspect) { display: none; }
 
 .battle-controls {
   display: flex;
@@ -527,3 +541,5 @@ body:has(.battle-screen) { background: #10171e; }
 }
 .battle-encyclopedia dd { margin: 0; }
 .battle-encyclopedia dt { color: var(--battle-dim); }
+
+.battle-enemy-marks { font-size: .8rem; line-height: 1.2; }
