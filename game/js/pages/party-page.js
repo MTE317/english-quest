@@ -383,9 +383,7 @@ function showSkills(index, jobId, skillId, message = '') {
     selected = skill;
     for (const [id, node] of nodes) node.setAttribute('aria-pressed', String(id === skill.id));
     const learned = isLearned(member, skill);
-    const equipped = member.loadout.actions.includes(skill.id) || member.loadout.passives.includes(skill.id);
     const learnReason = learnBlock(data, member, skill);
-    const equipReason = equipBlock(data, member, skill);
     const prerequisite = skillPrerequisite(data, skill);
     const upgradeReason = upgradeSkillBlock(data, member, skill);
     const level = learnedSkillLevel(member, skill);
@@ -404,10 +402,7 @@ function showSkills(index, jobId, skillId, message = '') {
       !learned
         ? el('button', { class: 'primary', disabled: !!learnReason,
           onclick: () => updateSkill((m) => learnSkill(data, m, skill.id)) }, learnReason || `覚える（AP ${skill.apToLearn}）`)
-        : equipped
-          ? el('button', { onclick: () => updateSkill((m) => unequipSkill(m, skill.id)) }, 'スキル枠から外す')
-          : el('button', { class: 'primary', disabled: !!equipReason,
-            onclick: () => updateSkill((m) => equipSkill(data, m, skill.id)) }, equipReason || 'スキル枠につける'));
+        : el('p', { class: 'small muted' }, '習得済み。装着・取り外しはスキル装備画面で行えます。'));
   }
 
   render(view,

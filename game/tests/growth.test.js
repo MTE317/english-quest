@@ -45,6 +45,8 @@ test('同じジョブの仲間同士でも習得・装着状態は共有しな�
   learnSkill(data, first, passive.id);
   assert.equal(isLearned(first, passive), true);
   assert.equal(isLearned(second, passive), false);
+  assert.ok(!first.loadout.passives.includes(passive.id));
+  equipSkill(data, first, passive.id);
   assert.ok(first.loadout.passives.includes(passive.id));
   assert.ok(!second.loadout.passives.includes(passive.id));
 });
@@ -55,8 +57,12 @@ test('基本職は独立習得（AP が減る・パッシブは能力値に入�
   assert.match(learnBlock(data, w, s2), /AP/);
   w.ap.warrior = s2.apToLearn + 3;
   const hp0 = maxHp(data, w);
+  const loadoutBefore = structuredClone(w.loadout);
   learnSkill(data, w, s2.id);
   assert.equal(w.ap.warrior, 3);
+  assert.deepEqual(w.loadout, loadoutBefore);
+  assert.equal(maxHp(data, w), hp0);
+  equipSkill(data, w, s2.id);
   assert.ok(w.loadout.passives.includes(s2.id));
   assert.equal(maxHp(data, w), Math.round(hp0 * 1.1));
   const s3 = jobSkills(data, 'warrior').find((s) => s.path === s2.path && s.stage === 4);
