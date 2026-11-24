@@ -10,8 +10,9 @@ import { currentRank } from '../dungeon.js?v=build36-1';
 import { nextRankStatus, checkRankUp } from '../town.js?v=build36-1';
 import { promotionProgress, promotionExamState } from '../promotion.js?v=training-v2-1';
 import { learningStatistics } from '../learning-stats.js?v=training-v2-1';
-import { TRAINING_COUNTS } from '../training.js?v=training-v2-1';
-import { runTrainingSession } from '../ui/training-runner.js?v=training-v2-1';
+import { TRAINING_COUNTS, trainingChunksForSet, trainingWordsForSet,
+  trainingPhrasesForSet } from '../training.js?v=training-category-v3-1';
+import { runTrainingSession } from '../ui/training-runner.js?v=training-category-v3-1';
 import { runDualPromotionExam } from '../ui/learning-exams.js?v=training-v2-1';
 import { el, render } from '../dom.js';
 import { setSceneMusic } from '../battle-music.js?v=music-suite-1';
@@ -27,9 +28,14 @@ let data; let catalog; let store; let scheduler; let chantConfig;
 const TABS = [['training', '訓練場'], ['exam', '試験の間']];
 const query = new URLSearchParams(location.search);
 let tab = query.get('tab') === 'exam' ? 'exam' : 'training';
+const initialMode = query.get('mode');
 const state = {
-  mode: ['words','phrases','chunks','review','mixed'].includes(query.get('mode')) ? query.get('mode') : 'mixed',
-  setId: FEATURED_SET_ID, chunkId: 'C001', count: 10,
+  mode: ['phrases', 'chunks'].includes(initialMode) ? 'phrases'
+    : initialMode === 'review' ? 'review' : 'words',
+  phraseMode: initialMode === 'chunks' ? 'chunks' : 'normal',
+  mainId: '00', setId: FEATURED_SET_ID, chunkId: '',
+  chunkSearch: '', chunkLimit: 10, showSubcategories: false,
+  reviewType: 'both', reviewScope: 'due', count: 10,
 };
 let message = '';
 
@@ -47,82 +53,212 @@ function menu() {
     }, label)));
 }
 
-function chosenText(set) {
-  const count = (catalog.wordsByStone.get(set.id) ?? []).length;
-  const phrases = (catalog.phrasesByStone.get(set.id) ?? []).length;
-  return set.name + '（単語' + count + '・英作文' + phrases + '）';
+// モードの選択肢と教材の階層を分け、操作中に不要な選択欄を表示しない。
+const MODES = [
+  ['words', '単語・熟語', '4択で新規学習・復習'],
+  ['phrases', '瞬間英作文', '通常・チャンク集中'],
+  ['review', '復習', '期限到来・苦手克服'],
+];
+
+function choiceButtons(options, selected, onSelect, label) {
+  return el('div', { class: 'training-choice-row', role: 'group', 'aria-label': label },
+    options.map(([id, title]) => el('button', {
+      class: 'training-choice', 'aria-pressed': String(selected === id),
+      onclick: () => onSelect(id),
+    }, title)));
+}
+
+function chooseSet(setId, mainId = state.mainId) {
+  state.mainId = mainId;
+  state.setId = setId;
+  state.chunkId = '';
+  state.chunkSearch = '';
+  state.chunkLimit = 10;
+  state.showSubcategories = false;
+  draw();
+}
+
+function categorySummary(setId) {
+  if (state.mode === 'words') {
+    return trainingWordsForSet(catalog, setId).length + '語';
+  }
+  return trainingPhrasesForSet(catalog, setId).length + '文';
+}
+
+function categoryPicker() {
+  const main = catalog.mainCategories.find((category) => category.id === state.mainId);
+  const sub = catalog.subcategoryById.get(state.setId);
+  const selectedSub = sub?.mainId === state.mainId ? sub : null;
+  const currentName = state.setId === 'all' ? '全カテゴリー'
+    : state.setId === FEATURED_SET_ID ? '最優先S（00）'
+      : selectedSub?.name ?? main?.name ?? '';
+  const mainButtons = catalog.mainCategories.map((category) => el('button', {
+    class: 'training-main-category',
+    'aria-pressed': String(category.id === state.mainId),
+    onclick: () => chooseSet(category.id === '00' ? FEATURED_SET_ID : category.id, category.id),
+  }, el('strong', {}, category.id + ' ' + category.name),
+  el('small', {}, categorySummary(category.id))));
+  const subcategories = catalog.subcategories.filter((category) => category.mainId === state.mainId);
+  const scopes = main?.id === '00'
+    ? [[FEATURED_SET_ID, '最優先S'], ['00', '00全体']]
+    : main ? [[main.id, 'カテゴリー全体']] : [];
+  return [
+    el('h3', {}, '教材を選ぶ'),
+    el('p', { class: 'muted small' }, 'まずカテゴリーを選択。必要な場合だけサブカテゴリーへ絞り込めます。'),
+    el('div', { class: 'training-category-grid', role: 'group', 'aria-label': 'メインカテゴリー' },
+      mainButtons),
+    el('button', { class: 'training-all-category', 'aria-pressed': String(state.setId === 'all'),
+      onclick: () => chooseSet('all', 'all'),
+    }, 'すべてのカテゴリーから学ぶ（' + categorySummary('all') + '）'),
+    el('div', { class: 'training-selected-category' },
+      el('div', {},
+        el('strong', {}, '選択中：' + currentName),
+        el('small', {}, '　' + categorySummary(state.setId))),
+      scopes.length ? choiceButtons(scopes, state.setId, (id) => chooseSet(id), '教材の範囲') : null,
+      subcategories.length ? el('button', {
+        class: 'ghost training-sub-toggle',
+        'aria-expanded': String(state.showSubcategories),
+        onclick: () => {
+          state.showSubcategories = !state.showSubcategories;
+          draw();
+        },
+      }, state.showSubcategories ? 'サブカテゴリーを閉じる'
+        : selectedSub ? 'サブカテゴリーを変更' : 'サブカテゴリーで絞る') : null,
+      state.showSubcategories ? el('div', {
+        class: 'training-subcategory-grid', role: 'group', 'aria-label': 'サブカテゴリー',
+      }, subcategories.map((category) => el('button', {
+        class: 'training-subcategory', 'aria-pressed': String(state.setId === category.id),
+        onclick: () => chooseSet(category.id, state.mainId),
+      }, el('strong', {}, category.name),
+      el('small', {}, categorySummary(category.id))))) : null),
+  ];
+}
+
+function chunkPicker() {
+  const available = trainingChunksForSet(catalog, state.setId);
+  if (!available.some((chunk) => chunk.id === state.chunkId)) {
+    state.chunkId = available[0]?.id ?? '';
+  }
+  const selected = available.find((chunk) => chunk.id === state.chunkId);
+  const list = el('div', { class: 'training-chunk-list', role: 'group', 'aria-label': '練習するチャンク' });
+  const search = el('input', {
+    type: 'search', class: 'select', value: state.chunkSearch,
+    placeholder: '表現・意味・IDでチャンクを検索',
+    'aria-label': 'チャンクを検索',
+    oninput: (event) => {
+      state.chunkSearch = event.target.value;
+      state.chunkLimit = 10;
+      paint();
+    },
+  });
+  function paint() {
+    const query = state.chunkSearch.trim().toLowerCase();
+    const matched = available.filter((chunk) =>
+      !query || [chunk.id, chunk.pattern, chunk.meaning]
+        .some((value) => String(value ?? '').toLowerCase().includes(query)));
+    render(list,
+      el('p', { class: 'muted small' }, matched.length + 'チャンクが該当'),
+      matched.slice(0, state.chunkLimit).map((chunk) => el('button', {
+        class: 'training-chunk-choice', 'aria-pressed': String(state.chunkId === chunk.id),
+        onclick: () => {
+          state.chunkId = chunk.id;
+          draw();
+        },
+      }, el('strong', {}, chunk.id + '　' + chunk.pattern),
+      el('small', {}, chunk.exampleCount + '文・' + (chunk.meaning ?? '')))),
+      matched.length > state.chunkLimit ? el('button', {
+        class: 'ghost', onclick: () => {
+          state.chunkLimit += 10;
+          paint();
+        },
+      }, 'さらに10件表示') : null);
+  }
+  paint();
+  return [
+    el('h3', {}, 'チャンクを選ぶ'),
+    el('p', { class: 'muted small' },
+      '選択した教材に含まれる例文があるチャンクだけ表示します。'),
+    available.length ? el('div', { class: 'panel small' },
+      '練習中：' + selected.id + '　' + selected.pattern +
+      '（この教材に含まれる例文 ' + selected.exampleCount + '件）') :
+      el('p', { class: 'muted small' }, 'この教材にはチャンク付きの例文がありません。'),
+    available.length ? el('label', { class: 'small training-chunk-search' },
+      'チャンクを検索', search) : null,
+    available.length ? list : null,
+  ];
+}
+
+function reviewPicker() {
+  return [
+    el('p', { class: 'muted small' },
+      '全カテゴリーの学習済み項目から探します。教材選択は不要です。'),
+    el('h3', {}, '復習する内容'),
+    choiceButtons([
+      ['both', '単語・英作文'], ['words', '単語のみ'], ['phrases', '英作文のみ'],
+    ], state.reviewType, (value) => { state.reviewType = value; draw(); }, '復習する内容'),
+    el('h3', {}, '復習の種類'),
+    choiceButtons([
+      ['due', '期限が来た問題'], ['wrong', '間違えた問題'],
+    ], state.reviewScope, (value) => { state.reviewScope = value; draw(); }, '復習の種類'),
+  ];
 }
 
 function training() {
-  const today = scheduler.dayOf(now());
-  const progress = learningStatistics(catalog, store, session.game, scheduler, today);
-  const modes = [
-    ['mixed', 'おまかせ', '単語と英作文を混ぜて学習'],
-    ['words', '単語・熟語', '4択で新規学習と復習'],
-    ['phrases', '瞬間英作文', '日本語から英文を声に出す'],
-    ['chunks', 'チャンク集中', '同じ型の英文を続けて反復'],
-    ['review', '復習・苦手', '期限到来と間違えた問題'],
-  ];
-  const allSets = [catalog.stonesById.get(FEATURED_SET_ID),
-    ...catalog.mainCategories.map((main) => catalog.stonesById.get(main.id))].filter(Boolean);
-  const subSets = catalog.subcategories;
+  const progress = learningStatistics(catalog, store, session.game,
+    scheduler, scheduler.dayOf(now()));
+  const learningMode = state.mode !== 'review';
   return [
     el('p', { class: 'muted small' },
-      '時間がなくても5問から。育成対象は選ばず、6人全員へ冒険の約10分の1を目安とした少量のXP・APを付与します。'),
-    el('div', { class: 'route-facts' },
-      [['単語の復習待ち', progress.words.due],
-        ['英作文の復習待ち', progress.phrases.due],
-        ['習得した単語', progress.words.masteredEver],
-        ['言えるようになった英文', progress.phrases.masteredEver]]
-        .map(([title, value]) => el('div', {}, el('small', {}, title), el('strong', {}, String(value))))),
+      '5問から気軽に学習できます。訓練報酬は育成対象を選ばず、6人全員へ少量のXP・APを付与します。'),
+    el('div', { class: 'route-facts' }, [
+      ['単語の復習待ち', progress.words.due],
+      ['英作文の復習待ち', progress.phrases.due],
+    ].map(([title, value]) =>
+      el('div', {}, el('small', {}, title), el('strong', {}, String(value))))),
     el('h3', {}, '学習モード'),
     el('div', { class: 'training-mode-grid', role: 'group', 'aria-label': '学習モード' },
-      modes.map(([id, title, note]) => el('button', {
+      MODES.map(([id, title, note]) => el('button', {
         class: 'training-mode', 'aria-pressed': String(state.mode === id),
         onclick: () => { state.mode = id; message = ''; draw(); },
       }, el('strong', {}, title), el('small', {}, note)))),
-    el('h3', {}, '教材を選ぶ'),
-    el('div', { class: 'training-set-grid', role: 'group', 'aria-label': '教材コレクション' },
-      allSets.map((set) => el('button', {
-        class: 'training-set', 'aria-pressed': String(state.setId === set.id),
-        onclick: () => { state.setId = set.id; draw(); },
-      }, el('span', { class: 'training-set-gem', 'aria-hidden': 'true' }, '◆'),
-      el('strong', {}, set.name),
-      el('small', {}, state.mode === 'words'
-        ? String((catalog.wordsByStone.get(set.id) ?? []).length) + '項目'
-        : String((catalog.phrasesByStone.get(set.id) ?? []).length) + 'フレーズ')))),
-    el('label', { class: 'small' }, 'さらに細かく選ぶ（任意）',
-      el('select', { class: 'select', value: state.setId, onchange: (e) => {
-        state.setId = e.target.value; draw();
-      } }, [
-        ...allSets.map((set) => el('option', { value: set.id, selected: state.setId === set.id }, chosenText(set))),
-        ...catalog.mainCategories.map((main) => el('optgroup', { label: main.name },
-          subSets.filter((sub) => sub.mainId === main.id).map((sub) =>
-            el('option', { value: sub.id, selected: state.setId === sub.id }, chosenText(sub))))),
-        el('option', { value: 'all', selected: state.setId === 'all' }, '全カテゴリー'),
-      ])),
-    state.mode === 'chunks'
-      ? el('label', { class: 'small' }, '練習するチャンク',
-        el('select', { class: 'select', onchange: (e) => { state.chunkId = e.target.value; draw(); } },
-          catalog.chunks.map((chunk) => el('option', {
-            value: chunk.id, selected: chunk.id === state.chunkId,
-          }, chunk.id + ' ' + chunk.pattern + '（例文' +
-            (catalog.phrasesByChunk.get(chunk.id) ?? []).length + '件）'))),
-        el('p', { class: 'muted small' }, '例文が1件のチャンクも学習できますが、複数文での反復には例文追加が必要です。')) : null,
+    state.mode === 'phrases' ? [
+      el('h3', {}, '瞬間英作文の練習方法'),
+      choiceButtons([['normal', '通常の英作文'], ['chunks', 'チャンク集中']],
+        state.phraseMode, (value) => {
+          state.phraseMode = value;
+          draw();
+        }, '英作文の練習方法'),
+    ] : null,
+    learningMode ? categoryPicker() : reviewPicker(),
+    state.mode === 'phrases' && state.phraseMode === 'chunks' ? chunkPicker() : null,
     el('label', { class: 'small' }, '問題数',
-      el('select', { class: 'select', onchange: (e) => { state.count = Number(e.target.value); draw(); } },
-        TRAINING_COUNTS.map((n) => el('option', { value: n, selected: state.count === n }, n + '問')))),
-    el('p', { class: 'muted small' }, '間違えた項目は再出題・苦手記録に反映。期限に正解したときは訓練報酬が1.2倍（1項目1日1回）。'),
-    el('button', { class: 'primary', onclick: startTraining }, state.count + '問の訓練を始める'),
+      el('select', { class: 'select', onchange: (event) => {
+        state.count = Number(event.target.value);
+        draw();
+      } }, TRAINING_COUNTS.map((n) =>
+        el('option', { value: n, selected: state.count === n }, n + '問')))),
+    el('p', { class: 'muted small' },
+      '復習期限に正解すると報酬1.2倍。1項目の報酬は1日1回で、間違えた問題も再挑戦できます。'),
+    el('button', {
+      class: 'primary',
+      disabled: state.mode === 'phrases' && state.phraseMode === 'chunks' && !state.chunkId,
+      onclick: startTraining,
+    }, state.count + '問の訓練を始める'),
     el('a', { class: 'btn', href: 'records.html?tab=log' }, '学習統計を見る'),
   ];
 }
 
 function startTraining() {
   message = '';
+  const mode = state.mode === 'phrases' && state.phraseMode === 'chunks'
+    ? 'chunks' : state.mode;
   runTrainingSession({
     view, catalog, store, session, scheduler, data, chantConfig,
-    options: { ...state },
+    options: {
+      mode, setId: state.mode === 'review' ? 'all' : state.setId,
+      chunkId: state.chunkId, reviewType: state.reviewType,
+      reviewScope: state.reviewScope, count: state.count,
+    },
     onFinish: (result) => {
       message = result.answered
         ? result.answered + '問完了（単語' + result.words + '・英作文' + result.phrases +

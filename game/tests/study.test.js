@@ -4,7 +4,7 @@ import { createNewGame } from '../js/game-state.js';
 import { LearningStore } from '../js/storage.js';
 import { Scheduler } from '../js/srs.js';
 import { recordChant } from '../js/chant.js';
-import { makeTrainingPicker, applyTrainingAnswer } from '../js/training.js';
+import { makeTrainingPicker, trainingChunksForSet, applyTrainingAnswer } from '../js/training.js';
 import { learningStatistics } from '../js/learning-stats.js';
 import { promotionProgress, promotionExamState, makePromotionExam,
   recordPromotionPart, scorePhraseGrades } from '../js/promotion.js';
@@ -27,29 +27,86 @@ function learnedRec() {
   return rec;
 }
 
-test('共通教材IDで単語・瞬間英作文・チャンクが選べ、00の重複を数えない', () => {
+test('訓練場の通常モードは単語と瞬間英作文を明確に分け、共通IDの重複を出題しない', () => {
   const store = new LearningStore(new MemoryStorage());
-  const game = fresh();
-  const picker = makeTrainingPicker(catalog, store, game, sch, d0, { mode: 'mixed', setId: '00:S' });
-  assert.equal(picker.size, 420);
-  const first = picker.next();
-  assert.ok(first && ['word', 'phrase'].includes(first.kind));
-  const chunk = makeTrainingPicker(catalog, store, game, sch, d0, { mode: 'chunks', chunkId: 'C001' });
-  assert.equal(chunk.size, 54);
-  for (let n = 0; n < 8; n++) assert.equal(chunk.next().kind, 'phrase');
-  const all = makeTrainingPicker(catalog, store, game, sch, d0, { mode: 'mixed', setId: 'all' });
-  assert.equal(all.size, 2783);
+  const g = fresh();
+  const words = makeTrainingPicker(catalog, store, g, sch, d0, { mode: 'words', setId: '00:S' });
+  const phrases = makeTrainingPicker(catalog, store, g, sch, d0, { mode: 'phrases', setId: '00:S' });
+  assert.equal(words.size, 300);
+  assert.equal(phrases.size, 120);
+  assert.equal(words.next().kind, 'word');
+  assert.equal(phrases.next().kind, 'phrase');
+  assert.equal(makeTrainingPicker(catalog, store, g, sch, d0,
+    { mode: 'words', setId: 'all' }).size, 1600);
+  assert.equal(makeTrainingPicker(catalog, store, g, sch, d0,
+    { mode: 'phrases', setId: 'all' }).size, 1183);
+  assert.equal(makeTrainingPicker(catalog, store, g, sch, d0,
+    { mode: 'words', setId: '00' }).size, 807);
 });
 
-test('訓練場は苦手問題と期限到来問題を出せる', () => {
+test('チャンクは教材に含まれる例文を持つものだけ表示し、出題もカテゴリーとチャンクの積集合になる', () => {
+  const store = new LearningStore(new MemoryStorage());
+  const g = fresh();
+  const shown = trainingChunksForSet(catalog, '00:S');
+  const allowed = new Set(catalog.phrasesByStone.get('00:S').map((p) => p.id));
+  assert.ok(shown.length > 0 && shown.length < catalog.chunks.length);
+  for (const chunk of shown) {
+    const expected = catalog.phrasesByChunk.get(chunk.id).filter((p) => allowed.has(p.id));
+    assert.equal(chunk.exampleCount, expected.length, chunk.id);
+    assert.ok(chunk.exampleCount > 0);
+  }
+  const sub = catalog.subcategories.find((s) =>
+    trainingChunksForSet(catalog, s.id).length > 0
+    && (catalog.phrasesByStone.get(s.id) ?? []).length < 100);
+  assert.ok(sub, '少数の例文を持つサブカテゴリーがあること');
+  const chunk = trainingChunksForSet(catalog, sub.id)[0];
+  const subIds = new Set(catalog.phrasesByStone.get(sub.id).map((p) => p.id));
+  const expected = catalog.phrasesByChunk.get(chunk.id).filter((p) => subIds.has(p.id));
+  const picker = makeTrainingPicker(catalog, store, g, sch, d0,
+    { mode: 'chunks', setId: sub.id, chunkId: chunk.id });
+  assert.equal(picker.size, expected.length);
+  const expectedIds = new Set(expected.map((p) => p.id));
+  for (let i = 0; i < expected.length; i++) {
+    const answer = picker.next();
+    assert.equal(answer.kind, 'phrase');
+    assert.ok(expectedIds.has(answer.item.id), '別カテゴリーの例文が混ざってはいけない');
+    expectedIds.delete(answer.item.id);
+  }
+  assert.equal(picker.next(), null);
+  assert.equal(expectedIds.size, 0);
+  const outside = catalog.chunks.find((entry) =>
+    !catalog.phrasesByChunk.get(entry.id).some((p) => subIds.has(p.id)));
+  assert.ok(outside, '対象カテゴリーに属さないチャンクがあること');
+  assert.equal(makeTrainingPicker(catalog, store, g, sch, d0,
+    { mode: 'chunks', setId: sub.id, chunkId: outside.id }).size, 0);
+  assert.ok(!trainingChunksForSet(catalog, sub.id).some((entry) => entry.id === outside.id));
+});
+
+test('復習はカテゴリーに関係なく全教材から期限到来・誤答と単語/英作文を選べる', () => {
   const store = new LearningStore(new MemoryStorage());
   const g = fresh();
   const word = catalog.wordsByStone.get('00:S')[0];
+  const featured = new Set(catalog.phrasesByStone.get('00:S').map((p) => p.id));
+  const phrase = catalog.phrases.find((p) => !featured.has(p.id));
   store.recordAnswer(word.id, sch.review(null, false, T0), d0, false);
-  const picker = makeTrainingPicker(catalog, store, g, sch, d0 + 1, { mode: 'review', setId: '00:S' });
-  assert.equal(picker.next().item.id, word.id);
-  const noReview = makeTrainingPicker(catalog, store, g, sch, d0 - 1, { mode: 'review', setId: '00:S' });
-  assert.equal(noReview.next().item.id, word.id); // 過去の誤答は任意の苦手復習に残る
+  recordChant(g, config, sch, T0, phrase.id, 'x');
+
+  const params = { mode: 'review', setId: '00:S', reviewType: 'both', reviewScope: 'due' };
+  assert.equal(makeTrainingPicker(catalog, store, g, sch, d0, params).size, 0);
+  const due = makeTrainingPicker(catalog, store, g, sch, d0 + 1, params);
+  assert.equal(due.size, 2, 'セット外の英作文も期限到来なら含む');
+  const answered = [due.next(), due.next()];
+  assert.deepEqual(new Set(answered.map((entry) => entry.item.id)),
+    new Set([word.id, phrase.id]));
+  assert.ok(answered.every((entry) => entry.reason === 'due'));
+  assert.equal(makeTrainingPicker(catalog, store, g, sch, d0 + 1,
+    { ...params, reviewType: 'words' }).size, 1);
+  assert.equal(makeTrainingPicker(catalog, store, g, sch, d0 + 1,
+    { ...params, reviewType: 'phrases' }).size, 1);
+  assert.equal(makeTrainingPicker(catalog, store, g, sch, d0,
+    { ...params, reviewScope: 'wrong' }).size, 2);
+  assert.equal(makeTrainingPicker(catalog, new LearningStore(new MemoryStorage()), fresh(),
+    sch, d0, { mode: 'review', reviewScope: 'wrong' }).next(), null);
 });
 
 test('訓練報酬は6人全員、1項目1日1回、小数繰越で低額XP/APに変わる', () => {

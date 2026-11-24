@@ -1,41 +1,93 @@
-/* 訓練場・英語学習統計：モバイル優先の教材選択 */
-.training-mode-grid, .training-set-grid, .learning-category-grid {
+/* 訓練場：3モード・階層的な教材選択・検索付きチャンク選択 */
+.study-room h3 { margin: 16px 0 8px; }
+.study-room > label { display: grid; gap: 5px; margin: 12px 0; }
+.training-mode-grid, .training-category-grid, .training-subcategory-grid,
+.learning-category-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 165px), 1fr));
-  gap: 10px;
+  gap: 9px;
 }
-.study-room h3 { margin: 16px 0 8px; }
-.study-room > label { display: grid; gap: 5px; margin-bottom: 12px; }
-.training-mode-grid button, .training-set-grid button {
+.training-mode-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.training-mode-grid button, .training-category-grid button,
+.training-subcategory-grid button, .training-chunk-choice,
+.training-all-category {
   display: grid;
   gap: 6px;
+  align-content: center;
   width: 100%;
   margin: 0;
-  padding: 12px;
-  min-height: 72px;
+  padding: 10px;
+  border: 1px solid #69778b;
+  background: #1c2c41;
+  color: #fff0d9;
   text-align: left;
-  align-content: center;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  cursor: pointer;
+}
+.training-mode-grid button { min-height: 78px; }
+.training-category-grid button { min-height: 66px; }
+.training-subcategory-grid button { min-height: 61px; }
+.training-mode-grid small, .training-category-grid small,
+.training-subcategory-grid small, .training-chunk-choice small {
+  color: #cdd9e6;
+  font-size: .77rem;
+  font-weight: 400;
+}
+.training-mode-grid button[aria-pressed="true"],
+.training-category-grid button[aria-pressed="true"],
+.training-subcategory-grid button[aria-pressed="true"],
+.training-chunk-choice[aria-pressed="true"],
+.training-choice[aria-pressed="true"],
+.training-all-category[aria-pressed="true"] {
+  outline: 1px solid #f9ce71;
+  border-color: #ffe0a0;
+  background: #30415d;
+}
+.training-all-category { min-height: 42px; margin: 9px 0; text-align: center; }
+.training-selected-category {
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+  margin-top: 10px;
+  border: 1px solid #5a6980;
+  background: #111f32;
+}
+.training-selected-category > div:first-child { display: flex; flex-wrap: wrap; align-items: center; }
+.training-selected-category small { color: #cdd9e6; font-variant-numeric: tabular-nums; }
+.training-sub-toggle { justify-self: start; max-width: 100%; }
+.training-choice-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0 12px; }
+.training-choice-row button {
+  margin: 0;
+  padding: 9px 12px;
+  min-width: 95px;
+  flex: 1 1 auto;
   border: 1px solid #69778b;
   background: #1c2c41;
   color: #fff0d9;
   cursor: pointer;
   white-space: normal;
-  overflow-wrap: anywhere;
 }
-.training-mode-grid button[aria-pressed="true"], .training-set-grid button[aria-pressed="true"] {
-  border-color: #ffe0a0;
-  outline: 1px solid #f9ce71;
-  background: #30415d;
+.training-chunk-search { display: grid; gap: 5px; margin: 12px 0; }
+.training-chunk-search input { width: 100%; }
+.training-chunk-list { display: grid; gap: 8px; margin-bottom: 12px; }
+.training-chunk-list .training-chunk-choice {
+  min-height: 54px;
+  padding: 10px 12px;
 }
-.training-mode-grid small, .training-set-grid small { color: #d4dee9; font-size: .77rem; }
-.training-set-gem { color: #eac178; font-size: 1.25rem; }
-.training-set-grid button { min-height: 96px; }
+.training-chunk-list .ghost { justify-self: stretch; }
 .learning-category-grid .panel { margin: 0; display: grid; gap: 8px; }
 .learning-meter { display: grid; gap: 4px; margin: 8px 0; }
-.learning-meter-caption { display: flex; justify-content: space-between; gap: 6px; align-items: center; font-size: .85rem; }
+.learning-meter-caption {
+  display: flex; justify-content: space-between; gap: 6px;
+  align-items: center; font-size: .85rem;
+}
 .learning-meter-caption span { white-space: nowrap; font-variant-numeric: tabular-nums; }
 .learning-meter progress { width: 100%; height: 10px; }
-@media (max-width: 420px) {
-  .training-mode-grid, .training-set-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+@media (max-width: 520px) {
+  .training-mode-grid, .training-category-grid, .training-subcategory-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .training-mode-grid button:last-child { grid-column: span 2; min-height: 54px; }
   .learning-category-grid { grid-template-columns: 1fr; }
 }
