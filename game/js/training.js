@@ -2,6 +2,11 @@ import { gainXp } from './character.js?v=basic-skill-levels-1';
 
 // 短時間で学べる訓練場。問題の種類と教材カテゴリーの選択はUIと共通で扱う。
 export const TRAINING_COUNTS = Object.freeze([5, 10, 15]);
+
+/** 訓練場の画面選択を、実際の出題モードに一元的に変換する。 */
+export function resolveTrainingMode(mode, phraseMode) {
+  return mode === 'phrases' && phraseMode === 'chunks' ? 'chunks' : mode;
+}
 export const TRAINING_XP_RATIO = 0.10;
 export const TRAINING_AP_RATIO = 0.10;
 export const DUE_BONUS = 1.20;

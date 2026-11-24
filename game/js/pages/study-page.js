@@ -11,8 +11,8 @@ import { nextRankStatus, checkRankUp } from '../town.js?v=basic-skill-levels-1';
 import { promotionProgress, promotionExamState } from '../promotion.js?v=training-v2-1';
 import { learningStatistics } from '../learning-stats.js?v=stability-1';
 import { TRAINING_COUNTS, trainingChunksForSet, trainingWordsForSet,
-  trainingPhrasesForSet } from '../training.js?v=basic-skill-levels-1';
-import { runTrainingSession } from '../ui/training-runner.js?v=basic-skill-levels-1';
+  trainingPhrasesForSet, resolveTrainingMode } from '../training.js?v=training-start-top-1';
+import { runTrainingSession } from '../ui/training-runner.js?v=training-start-top-1';
 import { runDualPromotionExam } from '../ui/learning-exams.js?v=training-v2-1';
 import { el, render } from '../dom.js';
 import { setSceneMusic } from '../battle-music.js?v=music-suite-1';
@@ -202,14 +202,12 @@ function training() {
   const progress = learningStatistics(catalog, store, session.game,
     scheduler, scheduler.dayOf(now()));
   const learningMode = state.mode !== 'review';
+  // チャンク一覧は表示より先に生成する。初期チャンクIDを確定させたうえで、
+  // 上部の開始ボタンの disabled 状態を正しく判断する。
+  const chunks = state.mode === 'phrases' && state.phraseMode === 'chunks' ? chunkPicker() : null;
   return [
     el('p', { class: 'muted small' },
       '5問から気軽に学習できます。訓練報酬は育成対象を選ばず、6人全員へ少量のXP・APを付与します。'),
-    el('div', { class: 'route-facts' }, [
-      ['単語の復習待ち', progress.words.due],
-      ['英作文の復習待ち', progress.phrases.due],
-    ].map(([title, value]) =>
-      el('div', {}, el('small', {}, title), el('strong', {}, String(value))))),
     el('h3', {}, '学習モード'),
     el('div', { class: 'training-mode-grid', role: 'group', 'aria-label': '学習モード' },
       MODES.map(([id, title, note]) => el('button', {
@@ -224,29 +222,35 @@ function training() {
           draw();
         }, '英作文の練習方法'),
     ] : null,
+    // 長い教材・チャンク一覧をスクロールする前に訓練を開始できるようにする。
+    el('div', { class: 'training-start-bar' },
+      el('label', { class: 'small training-count-select' }, '問題数',
+        el('select', { class: 'select', onchange: (event) => {
+          state.count = Number(event.target.value);
+          draw();
+        } }, TRAINING_COUNTS.map((n) =>
+          el('option', { value: n, selected: state.count === n }, n + '問')))),
+      el('button', {
+        class: 'primary training-start-button',
+        disabled: state.mode === 'phrases' && state.phraseMode === 'chunks' && !state.chunkId,
+        onclick: startTraining,
+      }, state.count + '問の訓練を始める')),
+    el('div', { class: 'route-facts' }, [
+      ['単語の復習待ち', progress.words.due],
+      ['英作文の復習待ち', progress.phrases.due],
+    ].map(([title, value]) =>
+      el('div', {}, el('small', {}, title), el('strong', {}, String(value))))),
     learningMode ? categoryPicker() : reviewPicker(),
-    state.mode === 'phrases' && state.phraseMode === 'chunks' ? chunkPicker() : null,
-    el('label', { class: 'small' }, '問題数',
-      el('select', { class: 'select', onchange: (event) => {
-        state.count = Number(event.target.value);
-        draw();
-      } }, TRAINING_COUNTS.map((n) =>
-        el('option', { value: n, selected: state.count === n }, n + '問')))),
+    chunks,
     el('p', { class: 'muted small' },
       '復習期限に正解すると報酬1.2倍。1項目の報酬は1日1回です。間違えた問題は復習の「苦手克服」から練習できます。'),
-    el('button', {
-      class: 'primary',
-      disabled: state.mode === 'phrases' && state.phraseMode === 'chunks' && !state.chunkId,
-      onclick: startTraining,
-    }, state.count + '問の訓練を始める'),
     el('a', { class: 'btn', href: 'records.html?tab=log' }, '学習統計を見る'),
   ];
 }
 
 function startTraining() {
   message = '';
-  const mode = state.mode === 'phrases' && state.phraseMode === 'chunks'
-    ? 'chunks' : state.mode;
+  const mode = resolveTrainingMode(state.mode, state.phraseMode);
   runTrainingSession({
     view, catalog, store, session, scheduler, data, chantConfig,
     options: {
