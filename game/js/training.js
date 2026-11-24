@@ -43,7 +43,7 @@ export function trainingChunksForSet(catalog, setId) {
  * チャンク集中はチャンクIDとsetIdの積集合の英文だけ出題する。
  */
 export function makeTrainingPicker(catalog, store, game, scheduler, today,
-  { mode = 'words', setId = '00:S', chunkId = '',
+  { mode = 'words', setId = '00', chunkId = '',
     reviewType = 'both', reviewScope = 'due' } = {}) {
   const reviewing = mode === 'review';
   const wantWords = mode === 'words' || (reviewing && reviewType !== 'phrases');

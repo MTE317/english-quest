@@ -70,7 +70,7 @@ test('慣れたら、つづりの似た単語が選ばれやすい', () => {
 
 test('初回：新しい単語は上限まで、そのあとは練習', () => {
   const store = new LearningStore(new MemoryStorage());
-  const p = new QuestionPicker({ lex, store, scheduler: sch, stoneId: '00:S', nowMs: T0 });
+  const p = new QuestionPicker({ lex, store, scheduler: sch, stoneId: '00', nowMs: T0 });
   const reasons = [];
   for (let i = 0; i < 20; i++) {
     const { word, reason } = p.next();
@@ -89,28 +89,28 @@ test('復習優先：かすれたルーン（ほかの石も）を先に出す',
   const dueIds = ['EQ00-S-W151', 'EQ00-S-W260', 'EQ00-S-W005'];
   for (const id of dueIds) store.set(id, sch.review(null, true, T0));
   store.set('EQ00-S-W006', sch.review(null, true, T0 + 30 * DAY)); // まだ時期ではない
-  const p = new QuestionPicker({ lex, store, scheduler: sch, stoneId: '00:S', nowMs: T0 + 30 * DAY });
+  const p = new QuestionPicker({ lex, store, scheduler: sch, stoneId: '00', nowMs: T0 + 30 * DAY });
   const first = [p.next(), p.next(), p.next()];
   assert.deepEqual(new Set(first.map((x) => x.word.id)), new Set(dueIds));
   assert.ok(first.every((x) => x.reason === REASON.DUE));
   const fourth = p.next();
   assert.equal(fourth.reason, REASON.NEW);
-  assert.ok(lex.wordsByStone.get('00:S').includes(fourth.word));
+  assert.ok(lex.wordsByStone.get('00').includes(fourth.word));
 });
 
 test('かすれたルーンが多いときは新出を減らす', () => {
   const store = new LearningStore(new MemoryStorage());
   const n = srs.reduce_new_when_due_over + 1;
-  for (const w of lex.words.filter((x) => !lex.wordsByStone.get('00:S').includes(x)).slice(0, n)) {
+  for (const w of lex.words.filter((x) => !lex.wordsByStone.get('00').includes(x)).slice(0, n)) {
     store.words.set(w.id, sch.review(null, true, T0));
   }
-  const p = new QuestionPicker({ lex, store, scheduler: sch, stoneId: '00:S', nowMs: T0 + 60 * DAY });
+  const p = new QuestionPicker({ lex, store, scheduler: sch, stoneId: '00', nowMs: T0 + 60 * DAY });
   assert.equal(p.newLimit, srs.reduced_new_per_run);
 });
 
 test('間違えた単語はあとでもう一度出る', () => {
   const store = new LearningStore(new MemoryStorage());
-  const p = new QuestionPicker({ lex, store, scheduler: sch, stoneId: '00:S', nowMs: T0 });
+  const p = new QuestionPicker({ lex, store, scheduler: sch, stoneId: '00', nowMs: T0 });
   const first = p.next();
   store.set(first.word.id, sch.review(null, false, T0));
   p.report(first.word.id, false);
@@ -128,10 +128,10 @@ test('間違えた単語はあとでもう一度出る', () => {
 
 test('出題の状態を保存して戻すと、続きから同じ順で出る', () => {
   const store = new LearningStore(new MemoryStorage());
-  const p = new QuestionPicker({ lex, store, scheduler: sch, stoneId: '00:S', nowMs: T0 });
+  const p = new QuestionPicker({ lex, store, scheduler: sch, stoneId: '00', nowMs: T0 });
   for (let i = 0; i < 4; i++) { const x = p.next(); store.set(x.word.id, sch.review(null, i % 2 === 0, T0)); p.report(x.word.id, i % 2 === 0); }
   const saved = JSON.parse(JSON.stringify(p.toState()));
-  const q = new QuestionPicker({ lex, store, scheduler: sch, stoneId: '00:S', nowMs: T0, state: saved });
+  const q = new QuestionPicker({ lex, store, scheduler: sch, stoneId: '00', nowMs: T0, state: saved });
   for (let i = 0; i < 6; i++) {
     const a = p.next(); const b = q.next();
     assert.equal(a.word.id, b.word.id); assert.equal(a.reason, b.reason);

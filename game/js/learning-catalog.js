@@ -11,7 +11,6 @@ export const LEARNING_V1_FILES = Object.freeze({
   phraseCategories: 'learning/v1/phrase_categories.csv',
 });
 
-export const FEATURED_SET_ID = '00:S';
 export const LEARNING_V1_COUNTS = Object.freeze({
   words: 1600, phrases: 1183, chunks: 215, categories: 60,
 });
@@ -137,19 +136,18 @@ export function buildLearningCatalog(raw) {
     }
   }
 
-  // 教材の表示セットはCSVから自動生成。00:S は最重要300語・120文の優先セット。
+  // 教材の表示セットは7メイン・60サブから自動生成。
+  // 00は単一の重要コレクション。priority=S はCSVの属性として保持し、教材セットを分割しない。
   const mainCategories = [...mainById.values()].sort((a, b) => a.id.localeCompare(b.id));
   const subcategories = [...subcategoryById.values()].sort((a, b) => a.id.localeCompare(b.id));
-  const featured = { id: FEATURED_SET_ID, name: '最優先・実用英語（S）', mainId: '00', kind: 'featured', star: 0 };
   const mainSets = mainCategories.map((c) => ({ ...c, mainId: c.id, kind: 'main', star: 0 }));
   const subSets = subcategories.map((c) => ({ ...c, kind: 'sub', star: 0 }));
-  const stones = [featured, ...mainSets];
+  const stones = mainSets;
   const allStones = [...stones, ...subSets];
   const wordsByStone = new Map(allStones.map((s) => [s.id, []]));
   const phrasesByStone = new Map(allStones.map((s) => [s.id, []]));
   for (const word of words) {
     for (const id of word.categoryIds) wordsByStone.get(id)?.push(word);
-    if (word.mainId === '00' && word.priority === 'S') wordsByStone.get(FEATURED_SET_ID).push(word);
   }
   for (const phrase of phrases) {
     const groups = new Set([phrase.subcategoryId]);
@@ -158,14 +156,16 @@ export function buildLearningCatalog(raw) {
       groups.add(mainIdOf(subId));
     }
     for (const id of groups) phrasesByStone.get(id)?.push(phrase);
-    if (phrase.mainId === '00' && phrase.priority === 'S') phrasesByStone.get(FEATURED_SET_ID).push(phrase);
   }
   const phrasesByChunk = new Map(chunks.map((c) => [c.id, []]));
   for (const phrase of phrases) if (phrase.chunkId) phrasesByChunk.get(phrase.chunkId).push(phrase);
 
-  // v1.0の最優先セットに属する項目数を、収録範囲の破損検知に使う。
-  if (wordsByStone.get(FEATURED_SET_ID).length !== 300 || phrasesByStone.get(FEATURED_SET_ID).length !== 120) {
-    throw new Error('00優先学習セットが300語／120文ではありません。');
+  // v1.0の元データに含まれる優先度S（単語300件・英作文120件）は保持する。
+  // ただし独立セットは生成せず、00からすべての教材を自由に学習する。
+  const sWords = words.filter((word) => word.mainId === '00' && word.priority === 'S').length;
+  const sPhrases = phrases.filter((phrase) => phrase.mainId === '00' && phrase.priority === 'S').length;
+  if (sWords !== 300 || sPhrases !== 120) {
+    throw new Error('教材v1.0の優先度Sメタデータが300語／120文と一致しません。');
   }
   return {
     version: '1.0', words, wordsById, phrases, phrasesById, chunks, chunksById,

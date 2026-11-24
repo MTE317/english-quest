@@ -1,7 +1,7 @@
 // ダンジョンの画面：行き先とルーンストーンを選ぶ → 階を進む → 戦闘 → 帰還ポイント・ボス → 町へ
 import { loadGameData } from '../gamedata.js?v=rune-study-1';
 import { loadJson } from '../data.js?v=features-2';
-import { loadLearningCatalog, FEATURED_SET_ID } from '../learning-catalog.js?v=learning-v1-1';
+import { loadLearningCatalog } from '../learning-catalog.js?v=learning-00-v1';
 import { Scheduler } from '../srs.js?v=features-2';
 import { LearningStore, now, loadSettings } from '../storage.js?v=rune-study-1';
 import { QuestionPicker } from '../picker.js';
@@ -86,14 +86,12 @@ function showDeparture(message = null) {
     document.querySelector('.page-heading').className = `bar page-heading scene-${expeditionScene(dg.id)}`;
     const stones = allowedStones(lex);
     st.stoneId = stones.find((s) => s.id === st.stoneId)?.id
-      ?? stones.find((s) => s.id === FEATURED_SET_ID)?.id ?? stones[0]?.id ?? null;
+      ?? stones.find((s) => s.id === '00')?.id ?? stones[0]?.id ?? null;
     // 教材セットはマスターCSVから自動生成。主カテゴリーと60サブカテゴリーに対応。
     const choose = (set, label = set.name) => el('option', {
       value: set.id, selected: set.id === st.stoneId,
     }, label + `（${lex.wordsByStone.get(set.id)?.length ?? 0}語）`);
-    const featured = stones.find((s) => s.id === FEATURED_SET_ID);
     const groups = [
-      featured ? choose(featured) : null,
       ...lex.stones.filter((s) => s.kind === 'main').map((main) => el('optgroup', { label: main.name },
         choose(main, 'すべて'),
         stones.filter((s) => s.kind === 'sub' && s.mainId === main.id).map((sub) => choose(sub)),
@@ -141,7 +139,7 @@ function showDeparture(message = null) {
         info,
         g.items.bounty_lure > 0 ? el('label', {}, lure, ` おびき寄せ香を1個使う（所持 ${g.items.bounty_lure}）`) : null,
         el('label', {}, '学習する教材', stoneSel),
-        el('p', { id: 'expedition-study-help', class: 'muted small' }, '最優先300語・7メイン・60サブから選べます。出題記録は教材をまたいで共有されます。'),
+        el('p', { id: 'expedition-study-help', class: 'muted small' }, '00 最重要・実用英語を初期選択。7メイン・60サブから自由に選べます。出題記録は教材をまたいで共有されます。'),
         departure),
       el('details', { class: 'panel' }, el('summary', {}, `仲間の状態（${g.party.length}人）`), partyPanel()),
       new URLSearchParams(location.search).has('debug') ? debugTools() : null)

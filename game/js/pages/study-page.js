@@ -1,7 +1,7 @@
 // 英語学習は訓練場（単語・瞬間英作文・チャンク）と試験の間へ集約する。
 import { loadGameData } from '../gamedata.js?v=rune-study-1';
 import { loadJson } from '../data.js?v=features-2';
-import { loadLearningCatalog, FEATURED_SET_ID } from '../learning-catalog.js?v=learning-v1-1';
+import { loadLearningCatalog } from '../learning-catalog.js?v=learning-00-v1';
 import { Scheduler } from '../srs.js?v=features-2';
 import { LearningStore, now } from '../storage.js?v=rune-study-1';
 import { GameSession } from '../save.js?v=rune-study-1';
@@ -11,8 +11,8 @@ import { nextRankStatus, checkRankUp } from '../town.js?v=build36-1';
 import { promotionProgress, promotionExamState } from '../promotion.js?v=training-v2-1';
 import { learningStatistics } from '../learning-stats.js?v=training-v2-1';
 import { TRAINING_COUNTS, trainingChunksForSet, trainingWordsForSet,
-  trainingPhrasesForSet } from '../training.js?v=training-category-v3-1';
-import { runTrainingSession } from '../ui/training-runner.js?v=training-category-v3-1';
+  trainingPhrasesForSet } from '../training.js?v=learning-00-v1';
+import { runTrainingSession } from '../ui/training-runner.js?v=learning-00-v1';
 import { runDualPromotionExam } from '../ui/learning-exams.js?v=training-v2-1';
 import { el, render } from '../dom.js';
 import { setSceneMusic } from '../battle-music.js?v=music-suite-1';
@@ -33,7 +33,7 @@ const state = {
   mode: ['phrases', 'chunks'].includes(initialMode) ? 'phrases'
     : initialMode === 'review' ? 'review' : 'words',
   phraseMode: initialMode === 'chunks' ? 'chunks' : 'normal',
-  mainId: '00', setId: FEATURED_SET_ID, chunkId: '',
+  mainId: '00', setId: '00', chunkId: '',
   chunkSearch: '', chunkLimit: 10, showSubcategories: false,
   reviewType: 'both', reviewScope: 'due', count: 10,
 };
@@ -90,18 +90,14 @@ function categoryPicker() {
   const sub = catalog.subcategoryById.get(state.setId);
   const selectedSub = sub?.mainId === state.mainId ? sub : null;
   const currentName = state.setId === 'all' ? '全カテゴリー'
-    : state.setId === FEATURED_SET_ID ? '最優先S（00）'
-      : selectedSub?.name ?? main?.name ?? '';
+    : selectedSub?.name ?? main?.name ?? '';
   const mainButtons = catalog.mainCategories.map((category) => el('button', {
     class: 'training-main-category',
     'aria-pressed': String(category.id === state.mainId),
-    onclick: () => chooseSet(category.id === '00' ? FEATURED_SET_ID : category.id, category.id),
+    onclick: () => chooseSet(category.id, category.id),
   }, el('strong', {}, category.id + ' ' + category.name),
   el('small', {}, categorySummary(category.id))));
   const subcategories = catalog.subcategories.filter((category) => category.mainId === state.mainId);
-  const scopes = main?.id === '00'
-    ? [[FEATURED_SET_ID, '最優先S'], ['00', '00全体']]
-    : main ? [[main.id, 'カテゴリー全体']] : [];
   return [
     el('h3', {}, '教材を選ぶ'),
     el('p', { class: 'muted small' }, 'まずカテゴリーを選択。必要な場合だけサブカテゴリーへ絞り込めます。'),
@@ -114,7 +110,6 @@ function categoryPicker() {
       el('div', {},
         el('strong', {}, '選択中：' + currentName),
         el('small', {}, '　' + categorySummary(state.setId))),
-      scopes.length ? choiceButtons(scopes, state.setId, (id) => chooseSet(id), '教材の範囲') : null,
       subcategories.length ? el('button', {
         class: 'ghost training-sub-toggle',
         'aria-expanded': String(state.showSubcategories),

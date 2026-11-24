@@ -1,7 +1,7 @@
 import { loadGameData } from '../gamedata.js?v=rune-study-1';
 import { loadJson, loadOptional } from '../data.js?v=features-2';
 import { splitList } from '../csv.js';
-import { loadLearningCatalog } from '../learning-catalog.js?v=learning-v1-1';
+import { loadLearningCatalog } from '../learning-catalog.js?v=learning-00-v1';
 import { Scheduler } from '../srs.js?v=features-2';
 import { LearningStore, now } from '../storage.js?v=rune-study-1';
 import { GameSession } from '../save.js?v=rune-study-1';
