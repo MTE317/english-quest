@@ -1,5 +1,6 @@
 import { gainXp } from './character.js?v=build36-1';
-// 短時間で学べる訓練場。教材選択とRPG報酬は学習記録から分離する。
+
+// 短時間で学べる訓練場。問題の種類と教材カテゴリーの選択はUIと共通で扱う。
 export const TRAINING_COUNTS = Object.freeze([5, 10, 15]);
 export const TRAINING_XP_RATIO = 0.10;
 export const TRAINING_AP_RATIO = 0.10;
@@ -11,20 +12,52 @@ const recFor = (entry, store, game) => entry.kind === 'word'
 const keyOf = (entry) => `${entry.kind}:${entry.item.id}`;
 const unique = (values) => [...new Map(values.map((item) => [item.id, item])).values()];
 
+export function trainingWordsForSet(catalog, setId) {
+  return unique(setId === 'all' ? catalog.words : catalog.wordsByStone.get(setId) ?? []);
+}
+
+export function trainingPhrasesForSet(catalog, setId) {
+  return unique(setId === 'all' ? catalog.phrases : catalog.phrasesByStone.get(setId) ?? []);
+}
+
 /**
- * 選択セットの新規・期限到来・誤答履歴から出題。
- * 複数カテゴリーに所属しても同じIDは一度だけ候補にする。
- * mode: mixed | words | phrases | chunks | review
+ * カテゴリーに実際に属する英文から、練習できるチャンクのみを抽出する。
+ * チャンク自身の主所属だけでなく、関連英文の複数カテゴリー所属も参照する。
+ * 同じチャンクでもカテゴリーによって練習できる例文数が変わる。
+ */
+export function trainingChunksForSet(catalog, setId) {
+  const allowedIds = new Set(trainingPhrasesForSet(catalog, setId).map((p) => p.id));
+  return catalog.chunks.map((chunk) => ({
+    ...chunk,
+    exampleCount: (catalog.phrasesByChunk.get(chunk.id) ?? [])
+      .filter((phrase) => allowedIds.has(phrase.id)).length,
+  })).filter((chunk) => chunk.exampleCount > 0)
+    .sort((a, b) => a.order - b.order || a.id.localeCompare(b.id));
+}
+
+/**
+ * mode: words | phrases | chunks | review
+ * reviewType: both | words | phrases
+ * reviewScope: due（期限到来のみ） | wrong（過去の誤答）
+ * 復習はカテゴリー指定を受けず、全教材IDから抽出する。
+ * チャンク集中はチャンクIDとsetIdの積集合の英文だけ出題する。
  */
 export function makeTrainingPicker(catalog, store, game, scheduler, today,
-  { mode = 'mixed', setId = '00:S', chunkId = '' } = {}) {
-  const words = ['mixed', 'words', 'review'].includes(mode)
-    ? unique(setId === 'all' ? catalog.words : catalog.wordsByStone.get(setId) ?? []) : [];
-  const phrases = mode === 'chunks'
-    ? unique(catalog.phrasesByChunk.get(chunkId) ?? [])
-    : ['mixed', 'phrases', 'review'].includes(mode)
-      ? unique(setId === 'all' ? catalog.phrases : catalog.phrasesByStone.get(setId) ?? []) : [];
-  // 新規学習が単語1600件だけに偏らないよう、単語と英作文を交互に並べる。
+  { mode = 'words', setId = '00:S', chunkId = '',
+    reviewType = 'both', reviewScope = 'due' } = {}) {
+  const reviewing = mode === 'review';
+  const wantWords = mode === 'words' || (reviewing && reviewType !== 'phrases');
+  const wantPhrases = ['phrases', 'chunks'].includes(mode)
+    || (reviewing && reviewType !== 'words');
+  const words = wantWords ? trainingWordsForSet(catalog, reviewing ? 'all' : setId) : [];
+  let phrases = wantPhrases
+    ? trainingPhrasesForSet(catalog, reviewing ? 'all' : setId) : [];
+  if (mode === 'chunks') {
+    const allowedIds = new Set(phrases.map((p) => p.id));
+    phrases = unique((catalog.phrasesByChunk.get(chunkId) ?? [])
+      .filter((p) => allowedIds.has(p.id)));
+  }
+  // 復習で両方を選んだ際、同じ期限の単語だけに偏らないよう交互に候補化。
   const entries = [];
   for (let i = 0; i < Math.max(words.length, phrases.length); i++) {
     if (words[i]) entries.push({ kind: 'word', item: words[i] });
@@ -35,10 +68,12 @@ export function makeTrainingPicker(catalog, store, game, scheduler, today,
     return { ...entry, record, due: scheduler.isDue(record, today),
       wrong: (record?.wrong ?? 0) > 0, fresh: !record };
   });
+  const eligible = reviewing ? candidates.filter((candidate) =>
+    reviewScope === 'wrong' ? candidate.wrong : candidate.due) : candidates;
   const seen = new Set();
   const retries = [];
   let asked = 0;
-  const taken = new Set();
+  const queuedForRetry = new Set();
   const pick = (pool, reason) => {
     const entry = pool.find((candidate) => !seen.has(keyOf(candidate)));
     if (!entry) return null;
@@ -48,17 +83,22 @@ export function makeTrainingPicker(catalog, store, game, scheduler, today,
     return { kind: entry.kind, item: entry.item, reason, wasDue: entry.due, key };
   };
   return {
-    size: candidates.length,
+    size: eligible.length,
     next() {
       const ri = retries.findIndex((retry) => retry.after <= asked);
-      if (ri >= 0) { const entry = retries.splice(ri, 1)[0].entry;
-        asked++; return { ...entry, reason: 'retry' }; }
-      const sortedDue = candidates.filter((e) => e.due)
-        .sort((a, b) => a.record.due - b.record.due);
-      let result = pick(sortedDue, 'due');
-      if (!result) result = pick(candidates.filter((e) => e.wrong), 'retry');
-      if (!result && mode !== 'review') result = pick(candidates.filter((e) => e.fresh), 'new');
-      if (!result && mode !== 'review') result = pick(candidates, 'practice');
+      if (ri >= 0) {
+        const entry = retries.splice(ri, 1)[0].entry;
+        asked += 1;
+        return { ...entry, reason: 'retry' };
+      }
+      const due = eligible.filter((e) => e.due).sort((a, b) =>
+        a.record.due - b.record.due);
+      let result = reviewing
+        ? reviewScope === 'wrong' ? pick(eligible, 'retry') : pick(due, 'due')
+        : pick(due, 'due');
+      if (!result && !reviewing) result = pick(eligible.filter((e) => e.wrong), 'retry');
+      if (!result && !reviewing) result = pick(eligible.filter((e) => e.fresh), 'new');
+      if (!result && !reviewing) result = pick(eligible, 'practice');
       if (!result && retries.length) {
         asked++;
         return { ...retries.shift().entry, reason: 'retry' };
@@ -66,8 +106,8 @@ export function makeTrainingPicker(catalog, store, game, scheduler, today,
       return result;
     },
     report(entry, passed) {
-      if (passed || taken.has(entry.key)) return;
-      taken.add(entry.key);
+      if (passed || queuedForRetry.has(entry.key)) return;
+      queuedForRetry.add(entry.key);
       retries.push({ entry, after: asked + 3 });
     },
   };
