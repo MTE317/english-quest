@@ -324,7 +324,7 @@ function templeJobIcon(job) {
 function temple() {
   const g = session.game;
   const switcher = el('div', { class: 'district-switch temple-tabs', role: 'group', 'aria-label': '神殿の窓口' },
-    [['recovery', '回復'], ['jobs', 'ジョブチェンジ']].map(([id, title]) => el('button', {
+    [['recovery', '回復'], ['jobs', 'ジョブチェンジ'], ['unlock', 'ジョブ解放']].map(([id, title]) => el('button', {
       type: 'button', 'aria-pressed': String(templeTab === id), onclick: () => {
         templeTab = id; flash = null; draw();
         view.querySelector('.temple-tabs [aria-pressed="true"]')?.focus({ preventScroll: true });
@@ -348,6 +348,11 @@ function temple() {
       el('a', { class: 'btn ghost', href: facilityLink('inn') }, '宿屋へ'),
     ];
   }
+
+  if (templeTab === 'unlock') return [switcher,
+    el('h2', {}, 'ジョブ解放'),
+    templeExtras(data, g, act),
+  ];
 
   templeMember = Math.max(0, Math.min(templeMember, g.party.length - 1));
   const member = g.party[templeMember];
@@ -395,7 +400,6 @@ function temple() {
     chooseMember,
     el('p', { class: 'muted small' }, '転職は何度でも無料。装備できなくなる物は倉庫へ戻り、習得スキルとAPは残ります。'),
     el('div', { class: 'shop-layout temple-job-layout' }, grid, detail),
-    templeExtras(data, g, act),
   ];
 }
 
