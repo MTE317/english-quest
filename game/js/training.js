@@ -24,8 +24,12 @@ export function makeTrainingPicker(catalog, store, game, scheduler, today,
     ? unique(catalog.phrasesByChunk.get(chunkId) ?? [])
     : ['mixed', 'phrases', 'review'].includes(mode)
       ? unique(setId === 'all' ? catalog.phrases : catalog.phrasesByStone.get(setId) ?? []) : [];
-  const entries = [...words.map((item) => ({ kind: 'word', item })),
-    ...phrases.map((item) => ({ kind: 'phrase', item }))];
+  // 新規学習が単語1600件だけに偏らないよう、単語と英作文を交互に並べる。
+  const entries = [];
+  for (let i = 0; i < Math.max(words.length, phrases.length); i++) {
+    if (words[i]) entries.push({ kind: 'word', item: words[i] });
+    if (phrases[i]) entries.push({ kind: 'phrase', item: phrases[i] });
+  }
   const candidates = entries.map((entry) => {
     const record = recFor(entry, store, game);
     return { ...entry, record, due: scheduler.isDue(record, today),

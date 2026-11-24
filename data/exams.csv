@@ -1,3 +1,3 @@
-id,kind,questions,pass_rate,retry_after_days,unlock,note
+﻿id,kind,questions,pass_rate,retry_after_days,unlock,note
 promotion,昇格試験,30,0.8,1,単語・英作文の累積習得条件,単語20問・英作文10問を分野別に80%以上で合格。英作文は自己判定
 final,最終試験（Sランク）,50,0.8,1,累積習得と冒険実績,最終ボス＋単語30問・英作文20問。分野別合格

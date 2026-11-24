@@ -64,10 +64,10 @@ test('ボス素材の安全帰還で儀式を発見。全滅では未発見、�
   assert.ok(s.game.unlockedJobs.includes('petrifier'));
 });
 
-test('JP240・AP78、保存再読込・持出し・重複装着禁止・現職限定奥義', () => {
-  const game = fresh(); game.jp = 10;
+test('無料転職・AP78、保存再読込・持出し・重複装着禁止・現職限定奥義', () => {
+  const game = fresh();
   const m = unlockAndTrain(data, game, 0);
-  assert.equal(game.jp, 10);
+  assert.equal(game.jp, undefined);
   assert.equal(m.ap.petrifier, 0);
   assert.throws(() => equipSkill(data, m, 'petrifier_aim'), /つけている/);
   m.loadout.passives.push('petrifier_aim');
@@ -76,7 +76,7 @@ test('JP240・AP78、保存再読込・持出し・重複装着禁止・現職�
   const copy = loaded.game.party[0];
   assert.deepEqual(copy.loadout.passives, ['petrifier_aim']);
   assert.equal(memberMods(data, copy).gun_petrify_rate, .2);
-  loaded.game.jp = 1000; loaded.game.unlockedJobs.push('gunner'); changeJob(data, loaded.game, 0, 'gunner');
+  loaded.game.unlockedJobs.push('gunner'); changeJob(data, loaded.game, 0, 'gunner');
   assert.ok(copy.loadout.actions.includes('petrifier_shot'));
   assert.ok(copy.loadout.actions.includes('petrifier_pierce'));
   assert.ok(!copy.loadout.actions.includes('petrifier_volley'));
