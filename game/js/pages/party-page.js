@@ -217,6 +217,11 @@ function showMember(index) {
   window.scrollTo(0, 0);
 }
 
+function skillIcon(skill) {
+  const mark = skill.kind === 'passive' ? '◆' : skill.isFinal ? '★' : '✦';
+  return el('span', { class: 'shop-item-icon skill-shop-icon', 'aria-hidden': 'true' }, mark);
+}
+
 // ---------------- スキル装備・取り外し ----------------
 // ショップと同じ「一覧グリッド + 選択したスキルの詳細」構成で管理する。
 function showLoadout(index, kind = 'actions', message = '', skillId = '') {
@@ -248,11 +253,6 @@ function showLoadout(index, kind = 'actions', message = '', skillId = '') {
   const detail = el('section', { class: 'shop-detail skill-shop-detail', 'aria-label': 'スキル詳細' });
   const grid = el('div', { class: 'shop-grid skill-shop-grid', role: 'group', 'aria-label': '習得済みスキル一覧', tabindex: '0' });
   const nodes = new Map();
-
-  function skillIcon(skill) {
-    const mark = skill.kind === 'passive' ? '◆' : skill.isFinal ? '★' : '✦';
-    return el('span', { class: 'shop-item-icon skill-shop-icon', 'aria-hidden': 'true' }, mark);
-  }
 
   function selectSkill(skill) {
     skill = effectiveSkill(data, member, skill);
@@ -367,7 +367,7 @@ function showSkills(index, jobId, skillId, message = '') {
 
   const skills = paths.flatMap(([, branch]) => branch);
   let selected = skills.find((skill) => skill.id === skillId) ?? skills[0];
-  const detail = el('section', { class: 'skill-detail', 'aria-label': '選んだスキル' });
+  const detail = el('section', { class: 'shop-detail skill-shop-detail', 'aria-label': '選んだスキル' });
   const nodes = new Map();
 
   function updateSkill(fn) {
@@ -389,7 +389,7 @@ function showSkills(index, jobId, skillId, message = '') {
     const level = learnedSkillLevel(member, skill);
     const next = skill.effect.levels?.[level - 1];
     const prerequisiteText = prerequisite ? `${prerequisite.name}（${isLearned(member, prerequisite) ? '習得済' : '未習得'}）` : 'なし';
-    render(detail, el('h2', {}, skill.name),
+    render(detail, el('header', {}, skillIcon(skill), el('h2', {}, skill.name)),
       el('p', { class: 'muted small' }, [skill.path, skill.kind === 'passive' ? 'パッシブ' : `MP ${skillMp(data, member, skill)}`,
         `必要枠 ${skill.cost}`, skill.isFinal && '奥義'].filter(Boolean).join('・')),
       el('p', { class: 'small' }, describeSkillEffect(data, effectiveSkill(data, member, skill))),
@@ -410,29 +410,34 @@ function showSkills(index, jobId, skillId, message = '') {
     memberSwitcher(index, (next) => showSkills(next)),
     memberBanner(member),
     el('h2', {}, 'スキル習得・強化'),
+    el('button', { class: 'ghost', onclick: () => showLoadout(index, selected?.kind === 'passive' ? 'passives' : 'actions', '', selected?.id) }, 'スキル装備・取り外しへ'),
     el('p', { class: 'panel small' }, `残りAP ${member.ap[job] ?? 0}・通常枠 ${used.actions}/${cap.actions}・パッシブ枠 ${used.passives}/${cap.passives}`),
     message ? el('p', { class: 'error', role: 'status' }, message) : null,
     jobs.length > 1 ? el('label', { class: 'small' }, 'ジョブ',
       el('select', { class: 'select', onchange: (event) => showSkills(index, event.target.value) },
         jobs.map((id) => el('option', { value: id, selected: id === job }, jobName(id))))) : null,
-    paths.length ? el('div', { class: basic ? 'skill-tree skill-independent' : 'skill-tree' },
+    paths.length ? el('div', { class: 'shop-layout skill-shop-layout skill-learning-layout' },
+      el('div', { class: basic ? 'skill-tree skill-independent skill-learning-catalog' : 'skill-tree skill-learning-catalog' },
       el('div', { class: 'skill-tree-root' }, jobName(job), isJobMastered(data, member, job) ? '・極めた！' : ''),
       el('div', { class: 'skill-branches', style: `--branches:${paths.length}` },
         paths.map(([path, branch]) => el('section', { class: 'skill-branch' },
           el('h3', {}, path),
-          el('ol', {}, branch.map((skill, i) => {
+          el('ol', { class: 'shop-grid skill-learning-grid' }, branch.map((skill, i) => {
             const learned = isLearned(member, skill);
             const equipped = member.loadout.actions.includes(skill.id) || member.loadout.passives.includes(skill.id);
             const available = !learned && !learnBlock(data, member, skill);
-            const node = el('button', { class: 'skill-node', 'aria-pressed': 'false',
+            const node = el('button', { type: 'button', class: 'shop-slot skill-shop-slot', 'aria-pressed': 'false',
+              'aria-label': `${skill.name}、${equipped ? '装着中' : learned ? '習得済' : available ? '習得可' : '未習得'}、必要枠${skill.cost}`,
               onclick: () => selectSkill(skill) },
-              el('strong', {}, skill.name),
+              skillIcon(skill),
+              el('span', { class: 'shop-slot-name' }, skill.name),
+              el('span', { class: 'shop-slot-count' }, `枠${skill.cost}`),
               el('span', { class: `skill-node-state${equipped ? ' equipped' : ''}` },
                 equipped ? '装着中' : learned ? '習得済' : available ? '習得可' : '未習得'));
             nodes.set(skill.id, node);
             const linked = !basic && i > 0 && branch[i - 1].stage === skill.stage - 1;
             return el('li', { class: linked ? 'linked' : '' }, node);
-          }))))),
+          })))))),
       detail) : el('p', { class: 'muted' }, 'このジョブのスキルはありません。'),
   );
   if (selected) selectSkill(selected);
