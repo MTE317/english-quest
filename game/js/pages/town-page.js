@@ -92,12 +92,10 @@ function statusBar(g) {
     el('div', {}, el('dt', {}, '日付'), el('dd', {}, `${cal.season?.name ?? ''} ${cal.dayOfMonth}日`)));
 }
 
-function townCard({ href, id, name, icon, detail }) {
+function townCard({ href, id, name, icon }) {
   return el('a', { class: 'town-card', href: href ?? facilityLink(id) },
     el('span', { class: 'town-card-icon', 'aria-hidden': 'true' }, uiIcon(icon)),
-    el('span', {},
-      el('strong', {}, name),
-      el('span', { class: 'town-card-detail' }, detail)));
+    el('span', {}, el('strong', {}, name)));
 }
 
 function townActions(g) {
