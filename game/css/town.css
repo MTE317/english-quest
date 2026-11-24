@@ -140,3 +140,35 @@ body:has(.guild-view) {
   font-weight: 700;
 }
 .guild-contract progress { width: 100%; accent-color: #8a3b28; }
+
+/* 神殿：窓口を横並びにし、仲間とジョブを画像から選ぶ。 */
+.quest-ui .temple-tabs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.temple-members {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 7px;
+  margin: 10px 0;
+}
+.quest-ui .temple-members button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  margin: 0;
+  padding: 8px 4px;
+  font-size: .85rem;
+}
+.temple-members strong, .temple-members small { max-width: 100%; overflow-wrap: anywhere; }
+.temple-members small { color: var(--muted); font-size: .7rem; }
+.quest-ui .temple-members button[aria-pressed="true"] {
+  border-color: var(--accent);
+  box-shadow: inset 0 0 0 1px var(--accent);
+  background: #314159;
+}
+.temple-treatment > strong { display: block; }
+.temple-job-grid { max-height: 30rem; }
+.temple-job-detail p { overflow-wrap: anywhere; }
+@media (max-width: 650px) {
+  .temple-job-grid { max-height: 20rem; }
+}
