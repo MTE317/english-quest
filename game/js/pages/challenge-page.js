@@ -13,7 +13,7 @@ import { makeGear } from '../character.js?v=basic-skill-levels-1';
 import { arenaReviewWords } from '../study.js?v=build36-1';
 import { promotionProgress } from '../promotion.js?v=training-v2-1';
 import { runDualPromotionExam } from '../ui/learning-exams.js?v=training-v2-1';
-import { createBattleView } from '../ui/battle-view.js?v=enemy-icons-2';
+import { createBattleView } from '../ui/battle-view.js?v=battle-compact-1';
 import { runQuiz } from '../ui/quiz-runner.js?v=music-suite-1';
 import { el, render } from '../dom.js';
 import { setSceneMusic } from '../battle-music.js?v=music-suite-1';

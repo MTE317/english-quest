@@ -49,8 +49,14 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
     } }, partyToggleLabel);
   const latest = el('span', { class: 'battle-log-latest' });
   const history = el('ul', { class: 'battle-history' });
-  const log = el('details', { class: 'battle-log' },
-    el('summary', { 'aria-label': '戦闘ログ' }, latest), history);
+  const logDialog = el('dialog', { class: 'battle-encyclopedia battle-log-dialog', 'aria-labelledby': 'battle-log-title' },
+    el('div', { class: 'battle-encyclopedia-body' },
+      el('h3', { id: 'battle-log-title' }, '戦闘ログ'),
+      history,
+      el('button', { onclick: () => logDialog.close(), autofocus: true }, '閉じる')));
+  logDialog.addEventListener('click', (event) => { if (event.target === logDialog) logDialog.close(); });
+  const log = el('button', { class: 'battle-log', 'aria-label': '戦闘ログの履歴を開く',
+    'aria-haspopup': 'dialog', onclick: () => logDialog.showModal() }, latest);
   const panel = el('section', { class: 'battle-controls', 'aria-labelledby': 'battle-controls-title' });
   const encyclopedia = el('dialog', { class: 'battle-encyclopedia', 'aria-labelledby': 'battle-monster-name' });
   encyclopedia.addEventListener('click', (event) => { if (event.target === encyclopedia) encyclopedia.close(); });
@@ -61,7 +67,7 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
     enemies,
     partyToggle, party,
     log,
-    panel, encyclopedia);
+    panel, encyclopedia, logDialog);
   screen.addEventListener('click', unlockBattleSound, { capture: true });
 
   function onEnd(result) {
@@ -161,6 +167,7 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
       el('span', { class: 'battle-enemy-icon', 'aria-hidden': 'true' }, enemy.icon),
       el('h3', { id: 'battle-monster-name' }, enemy.name),
       resource('HP', enemy.hp, enemy.maxHp, 'hp'),
+      enemy.maxMp == null ? null : resource('MP', enemy.mp, enemy.maxMp, 'mp'),
       el('p', {}, enemy.types.map((id) => data.monsterTypes.get(id)?.name ?? id).join('・')),
       el('dl', {},
         el('dt', {}, '判明した弱点'), el('dd', {}, weak.join('・') || (scanned ? 'なし' : '未判明')),
@@ -178,7 +185,7 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
     render(enemies, b.enemies.map((enemy, index) => {
       const targetable = kind === 'enemy' && indices.includes(index);
       const chosen = selectedKind === 'enemy' && action.target === index;
-      const label = enemy.name + '、HP ' + enemy.hp + '/' + enemy.maxHp +
+      const label = enemy.name + (enemy.boss ? '、ボス' : '') + (enemy.eliteId ? '、エリート' : '') + '、HP ' + enemy.hp + '/' + enemy.maxHp +
         (enemy.maxMp == null ? '' : '、MP ' + enemy.mp + '/' + enemy.maxMp);
       const known = monsterKnowledge(data, g, enemy);
       const intent = enemyIntent(data, enemy, b.round);
@@ -194,7 +201,8 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
       },
         el('span', { class: 'battle-enemy-icon', 'aria-hidden': 'true' }, enemy.icon),
         targetable ? null : el('span', { class: 'battle-inspect', 'aria-hidden': 'true' }, '図鑑'),
-        el('span', { class: 'battle-unit-name' }, enemy.name, enemy.boss ? ' 👑' : '', enemy.eliteId ? ' ⚠' : ''),
+        el('span', { class: 'battle-unit-name' }, enemy.name),
+        enemy.boss || enemy.eliteId ? el('span', { class: 'battle-enemy-marks', 'aria-hidden': 'true' }, [enemy.boss ? '👑' : '', enemy.eliteId ? '⚠' : ''].filter(Boolean).join(' ')) : null,
         resource('HP', enemy.hp, enemy.maxHp, 'hp'),
         enemy.maxMp == null ? null : resource('MP', enemy.mp, enemy.maxMp, 'mp'),
         enemy.tactics ? el('span', { class: 'battle-intent' }, { heal: '回復術', ward: '自己強化', disrupt: '弱体化' }[enemy.tactics]) : null,
@@ -220,12 +228,11 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
           resource('MP', member.mp, mp, 'mp'),
           conditions(conditionNames)));
     }));
-    latest.textContent = b.log.at(-1) ?? '';
-    render(history, b.log.slice(-6).map((line) => el('li', {}, line)));
+    render(latest, b.log.slice(-3).map((line) => el('span', { class: 'battle-log-line' }, line)));
+    render(history, b.log.map((line) => el('li', {}, line)));
   }
 
   function showPanel(title, content, { back, detail, question = false, focus = true } = {}) {
-    log.hidden = question;
     screen.classList.toggle('answering', question);
     partyToggle.setAttribute('aria-expanded', 'false');
     partyToggle.textContent = partyToggleLabel;
