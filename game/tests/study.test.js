@@ -4,7 +4,7 @@ import { createNewGame } from '../js/game-state.js';
 import { LearningStore } from '../js/storage.js';
 import { Scheduler } from '../js/srs.js';
 import { recordChant } from '../js/chant.js';
-import { makeTrainingPicker, trainingChunksForSet, applyTrainingAnswer } from '../js/training.js';
+import { makeTrainingPicker, trainingChunksForSet, applyTrainingAnswer, shouldShowChunkHint } from '../js/training.js';
 import { learningStatistics } from '../js/learning-stats.js';
 import { promotionProgress, promotionExamState, makePromotionExam,
   recordPromotionPart, scorePhraseGrades } from '../js/promotion.js';
@@ -24,6 +24,53 @@ const d0 = sch.dayOf(T0);
 function learnedRec() {
   return sch.reviewGrade(sch.reviewGrade(null, 4, T0), 4, T0 + 16 * DAY);
 }
+
+test('通常の瞬間英作文はチャンク表示をせず、同じチャンクが続かないよう未学習文を出題する', () => {
+  const store = new LearningStore(new MemoryStorage());
+  const game = fresh();
+  const normal = makeTrainingPicker(catalog, store, game, sch, d0, {
+    mode: 'phrases', setId: '00', rng: seededRng(817),
+  });
+  const pool = catalog.phrasesByStone.get('00');
+  assert.equal(normal.size, pool.length);
+  const result = [];
+  for (let entry = normal.next(); entry; entry = normal.next()) {
+    assert.equal(entry.reason, 'new');
+    assert.equal(entry.kind, 'phrase');
+    result.push(entry.item);
+  }
+  assert.equal(result.length, pool.length);
+  assert.equal(new Set(result.map((phrase) => phrase.id)).size, pool.length);
+  assert.deepEqual(new Set(result.map((phrase) => phrase.id)), new Set(pool.map((phrase) => phrase.id)));
+  assert.notDeepEqual(result.slice(0, 10).map((p) => p.id), pool.slice(0, 10).map((p) => p.id),
+    '教材CSVの連続順にならない');
+  for (let i = 1; i < 20; i++) {
+    assert.ok(!result[i].chunkId || result[i].chunkId !== result[i - 1].chunkId,
+      '通常学習で同じチャンクが連続しない（別のチャンクに例文がある場合）');
+  }
+  const withChunk = result.find((p) => p.chunkId);
+  assert.ok(withChunk, '通常学習でもチャンク付きフレーズ自体は出題対象');
+  assert.equal(shouldShowChunkHint('phrases', withChunk), false);
+  assert.equal(shouldShowChunkHint('review', withChunk), false);
+  assert.equal(shouldShowChunkHint('chunks', withChunk), true);
+  assert.equal(shouldShowChunkHint('chunks', { chunkId: null }), false);
+});
+
+test('チャンク集中はシャッフルせず、選択チャンクの例文だけを反復する', () => {
+  const store = new LearningStore(new MemoryStorage());
+  const game = fresh();
+  const chunk = trainingChunksForSet(catalog, '00').find((c) => c.exampleCount >= 3);
+  assert.ok(chunk, '複数の例文を持つチャンクが存在する');
+  const allowed = new Set(catalog.phrasesByStone.get('00').map((p) => p.id));
+  const examples = catalog.phrasesByChunk.get(chunk.id).filter((p) => allowed.has(p.id));
+  const picker = makeTrainingPicker(catalog, store, game, sch, d0, {
+    mode: 'chunks', setId: '00', chunkId: chunk.id, rng: seededRng(22),
+  });
+  assert.equal(picker.size, examples.length);
+  const first = [picker.next(), picker.next(), picker.next()];
+  assert.deepEqual(first.map((entry) => entry.item.id), examples.slice(0, 3).map((p) => p.id));
+  assert.ok(first.every((entry) => shouldShowChunkHint('chunks', entry.item)));
+});
 
 test('訓練場の通常モードは単語と瞬間英作文を明確に分け、共通IDの重複を出題しない', () => {
   const store = new LearningStore(new MemoryStorage());
