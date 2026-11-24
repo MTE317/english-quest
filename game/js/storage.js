@@ -3,8 +3,8 @@
 //   学習記録   … LEARNING_KEY（単語ごとの状態・次の復習日・連続正解数・正誤の数、日ごとの合計）
 //   進み具合   … SAVE_KEY（save.js が扱う。自動保存は1つだけ）
 
-export const LEARNING_KEY = 'englishQuest.learning.v1';
-export const SAVE_KEY = 'englishQuest.save.v1';
+export const LEARNING_KEY = 'englishQuest.learning.v2';
+export const SAVE_KEY = 'englishQuest.save.v2';
 /** @deprecated SAVE_KEY と同じ */
 export const PROGRESS_KEY = SAVE_KEY;
 const DEBUG_DAY_OFFSET_KEY = 'englishQuest.debug.dayOffset';

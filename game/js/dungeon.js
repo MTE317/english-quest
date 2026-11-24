@@ -55,7 +55,7 @@ export function expeditionFee(data, dungeon) {
 
 /** 遠征の行き先にかかわらず、出題できる教材を選べる。 */
 export function allowedStones(lex) {
-  return lex.stones.filter((stone) => lex.wordsByStone.get(stone.id)?.length > 0);
+  return (lex.allStones ?? lex.stones).filter((stone) => lex.wordsByStone.get(stone.id)?.length > 0);
 }
 
 /**

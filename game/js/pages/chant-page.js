@@ -1,4 +1,5 @@
-import { loadCsv, loadJson } from '../data.js?v=features-2';
+import { loadJson } from '../data.js?v=features-2';
+import { loadLearningCatalog, FEATURED_SET_ID } from '../learning-catalog.js?v=learning-v1-1';
 import { splitList } from '../csv.js';
 import { GameSession } from '../save.js?v=rune-study-1';
 import { Scheduler } from '../srs.js?v=features-2';
@@ -22,14 +23,15 @@ async function start() {
       el('a', { class: 'btn', href: session.inDungeon ? 'dungeon.html' : 'party.html' }, session.inDungeon ? 'ダンジョンへ戻る' : 'パーティを作る'));
     return;
   }
-  const [configFile, srsFile, bookFile, chantFile] = await Promise.all([
-    loadJson('chant.json'), loadJson('srs.json'), loadCsv('grimoires.csv'), loadCsv('chants.csv'),
+  const [configFile, srsFile, catalog] = await Promise.all([
+    loadJson('chant.json'), loadJson('srs.json'), loadLearningCatalog(),
   ]);
   const config = configFile.data;
   const scheduler = new Scheduler({ ...srsFile.data, desired_retention: config.desired_retention, day_boundary_hour: config.day_boundary_hour });
-  const books = bookFile.rows;
-  const all = chantFile.rows.filter((c) => c.en && c.ja);
-  let bookId = books[0]?.id;
+  const books = [{ id: FEATURED_SET_ID, name: 'まず覚える120フレーズ' }, ...catalog.mainCategories];
+  const all = catalog.phrases;
+  const phrasesForBook = (id) => catalog.phrasesByStone.get(id) ?? [];
+  let bookId = FEATURED_SET_ID;
   let chapter = '';
   if (!books.length || !all.length) {
     render(view, el('p', {}, '魔導書の教材が登録されていません。'));
@@ -39,7 +41,7 @@ async function start() {
   function showMenu(message) {
     stopSpeech();
     const { daily, limit, choice } = chantDay(session.game, config, scheduler.dayOf(now()));
-    const chapters = [...new Set(all.filter((c) => c.book === bookId).map((c) => c.chapter))];
+    const chapters = [...new Set(phrasesForBook(bookId).map((c) => c.chapter))];
     const bookName = (b) => b.name_ja || b.name || b.title || b.id;
     render(view, message ? el('p', { role: 'status' }, message) : null,
       el('h2', { class: 'chapter-title' }, '瞬間英作文'),
@@ -49,7 +51,7 @@ async function start() {
       el('label', {}, '魔導書', el('select', { class: 'select', onchange: (e) => { bookId = e.target.value; chapter = ''; showMenu(); } },
         books.map((b) => el('option', { value: b.id, selected: b.id === bookId }, bookName(b))))),
       el('label', {}, '章', el('select', { class: 'select', onchange: (e) => { chapter = e.target.value; } },
-        el('option', { value: '' }, 'すべて'), chapters.map((c) => el('option', { value: c, selected: c === chapter }, `第${c}章`)))),
+        el('option', { value: '' }, 'すべて'), chapters.map((c) => el('option', { value: c, selected: c === chapter }, catalog.subcategoryById.get(c)?.name ?? c)))),
       el('label', {}, '1日の目安', el('select', { class: 'select', onchange: (e) => {
         const option = Number(e.target.value);
         session.update((g) => { g.chants = { ...g.chants, option }; });
@@ -60,7 +62,7 @@ async function start() {
 
   function practice(seen, totalJp) {
     stopSpeech();
-    const selected = all.filter((c) => c.book === bookId && (!chapter || c.chapter === chapter));
+    const selected = phrasesForBook(bookId).filter((c) => !chapter || c.chapter === chapter);
     const c = nextChant(session.game, config, scheduler, scheduler.dayOf(now()), all, selected, seen);
     if (!c) return showMenu(`今回の詠唱は終了。獲得JP ${totalJp}`);
     const answer = el('div');
