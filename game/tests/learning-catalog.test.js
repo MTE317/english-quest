@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { buildLearningCatalog, FEATURED_SET_ID, LEARNING_V1_COUNTS } from '../js/learning-catalog.js';
+import { buildLearningCatalog, LEARNING_V1_COUNTS } from '../js/learning-catalog.js';
 import { readCsv } from './helpers.js';
 
 const raw = {
@@ -22,16 +22,21 @@ test('基本教材v1.0は収録範囲・主キー・外部参照を検証して�
   assert.equal(catalog.wordsById.size, 1600);
   assert.equal(catalog.phrasesById.size, 1183);
   assert.equal(catalog.chunksById.size, 215);
-  assert.equal(catalog.stones.length, 8);
-  assert.equal(catalog.allStones.length, 68);
+  assert.equal(catalog.stones.length, 7);
+  assert.equal(catalog.allStones.length, 67);
+  assert.equal(catalog.stones[0].id, '00');
+  assert.equal(catalog.lexicon.stones[0].id, '00');
+  assert.equal(catalog.stonesById.has('00:S'), false);
+  assert.equal(catalog.wordsByStone.has('00:S'), false);
+  assert.equal(catalog.phrasesByStone.has('00:S'), false);
   assert.deepEqual(catalog.lexicon.problems, []);
 });
 
-test('00はコレクション、Sは最優先：共有IDを重複して増やさない', () => {
+test('00を単一コレクションとして扱い、優先度情報は教材属性のまま保存する', () => {
   assert.equal(catalog.wordsByStone.get('00').length, 807);
   assert.equal(catalog.phrasesByStone.get('00').length, 328);
-  assert.equal(catalog.wordsByStone.get(FEATURED_SET_ID).length, 300);
-  assert.equal(catalog.phrasesByStone.get(FEATURED_SET_ID).length, 120);
+  assert.equal(catalog.words.filter((w) => w.mainId === '00' && w.priority === 'S').length, 300);
+  assert.equal(catalog.phrases.filter((p) => p.mainId === '00' && p.priority === 'S').length, 120);
   const id = catalog.wordsByStone.get('00')[0].id;
   const word = catalog.wordsById.get(id);
   assert.ok(catalog.wordsByStone.get(word.subcategoryId).some((w) => w.id === id));

@@ -1,9 +1,8 @@
 import { GameSession } from '../save.js?v=rune-study-1';
 import { loadGameData } from '../gamedata.js?v=rune-study-1';
 import { LearningStore, loadSettings, saveSettings, now } from '../storage.js?v=rune-study-1';
-import { loadLearningCatalog, FEATURED_SET_ID } from '../learning-catalog.js?v=learning-v1-1';
+import { loadLearningCatalog } from '../learning-catalog.js?v=learning-00-v1';
 import { learningStatistics } from '../learning-stats.js?v=training-v2-1';
-import { masteredWordIds, masteredPhraseIds } from '../promotion.js?v=training-v2-1';
 import { loadJson } from '../data.js?v=features-2';
 import { Scheduler } from '../srs.js?v=features-2';
 import { dayToString } from '../srs.js?v=features-2';
@@ -70,10 +69,6 @@ async function show() {
   function log() {
     const scheduler = new Scheduler(srs.data);
     const stats = learningStatistics(catalog, store, game, scheduler, scheduler.dayOf(now()));
-    const learnedWords = masteredWordIds(store);
-    const learnedPhrases = masteredPhraseIds(game);
-    const featuredWords = catalog.wordsByStone.get(FEATURED_SET_ID) ?? [];
-    const featuredPhrases = catalog.phrasesByStone.get(FEATURED_SET_ID) ?? [];
     const wordsAnswered = stats.days.reduce((sum, row) => sum + row.words, 0);
     const phrasesAnswered = stats.days.reduce((sum, row) => sum + row.phrases, 0);
     const recent = stats.days.slice(0, 14);
@@ -101,9 +96,6 @@ async function show() {
         ['英作文：現在習得', stats.phrases.masteredNow],
         ['英作文：一度でも習得', stats.phrases.masteredEver],
       ].map(([label, value]) => fact(label, value))),
-      el('h3', {}, '00 最優先学習コレクション'),
-      meter('S優先単語', featuredWords.filter((w) => learnedWords.has(w.id)).length, featuredWords.length),
-      meter('S優先フレーズ', featuredPhrases.filter((p) => learnedPhrases.has(p.id)).length, featuredPhrases.length),
       el('h3', {}, 'カテゴリー別進捗'),
       el('div', { class: 'learning-category-grid' }, stats.main.map((category) =>
         el('div', { class: 'panel small' },

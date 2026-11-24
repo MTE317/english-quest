@@ -30,10 +30,11 @@ function learnedRec() {
 test('訓練場の通常モードは単語と瞬間英作文を明確に分け、共通IDの重複を出題しない', () => {
   const store = new LearningStore(new MemoryStorage());
   const g = fresh();
-  const words = makeTrainingPicker(catalog, store, g, sch, d0, { mode: 'words', setId: '00:S' });
-  const phrases = makeTrainingPicker(catalog, store, g, sch, d0, { mode: 'phrases', setId: '00:S' });
-  assert.equal(words.size, 300);
-  assert.equal(phrases.size, 120);
+  const words = makeTrainingPicker(catalog, store, g, sch, d0, { mode: 'words', setId: '00' });
+  const phrases = makeTrainingPicker(catalog, store, g, sch, d0, { mode: 'phrases', setId: '00' });
+  assert.equal(words.size, 807);
+  assert.equal(phrases.size, 328);
+  assert.equal(makeTrainingPicker(catalog, store, g, sch, d0).size, 807, '訓練場は初期状態で00全体を使う');
   assert.equal(words.next().kind, 'word');
   assert.equal(phrases.next().kind, 'phrase');
   assert.equal(makeTrainingPicker(catalog, store, g, sch, d0,
@@ -47,8 +48,8 @@ test('訓練場の通常モードは単語と瞬間英作文を明確に分け�
 test('チャンクは教材に含まれる例文を持つものだけ表示し、出題もカテゴリーとチャンクの積集合になる', () => {
   const store = new LearningStore(new MemoryStorage());
   const g = fresh();
-  const shown = trainingChunksForSet(catalog, '00:S');
-  const allowed = new Set(catalog.phrasesByStone.get('00:S').map((p) => p.id));
+  const shown = trainingChunksForSet(catalog, '00');
+  const allowed = new Set(catalog.phrasesByStone.get('00').map((p) => p.id));
   assert.ok(shown.length > 0 && shown.length < catalog.chunks.length);
   for (const chunk of shown) {
     const expected = catalog.phrasesByChunk.get(chunk.id).filter((p) => allowed.has(p.id));
@@ -85,13 +86,13 @@ test('チャンクは教材に含まれる例文を持つものだけ表示し�
 test('復習はカテゴリーに関係なく全教材から期限到来・誤答と単語/英作文を選べる', () => {
   const store = new LearningStore(new MemoryStorage());
   const g = fresh();
-  const word = catalog.wordsByStone.get('00:S')[0];
-  const featured = new Set(catalog.phrasesByStone.get('00:S').map((p) => p.id));
-  const phrase = catalog.phrases.find((p) => !featured.has(p.id));
+  const word = catalog.wordsByStone.get('00')[0];
+  const zeroCollection = new Set(catalog.phrasesByStone.get('00').map((p) => p.id));
+  const phrase = catalog.phrases.find((p) => !zeroCollection.has(p.id));
   store.recordAnswer(word.id, sch.review(null, false, T0), d0, false);
   recordChant(g, config, sch, T0, phrase.id, 'x');
 
-  const params = { mode: 'review', setId: '00:S', reviewType: 'both', reviewScope: 'due' };
+  const params = { mode: 'review', setId: '00', reviewType: 'both', reviewScope: 'due' };
   assert.equal(makeTrainingPicker(catalog, store, g, sch, d0, params).size, 0);
   const due = makeTrainingPicker(catalog, store, g, sch, d0 + 1, params);
   assert.equal(due.size, 2, 'セット外の英作文も期限到来なら含む');
