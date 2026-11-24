@@ -13,7 +13,7 @@ import { maxHp, maxMp, gearDef } from '../character.js?v=basic-skill-levels-1';
 import { availableJobs, changeJob } from '../growth.js?v=basic-skill-levels-1';
 import { explorationStories, acceptExplorationStory, reportExplorationStory } from '../exploration-story.js?v=basic-skill-levels-1';
 import { cureAtTemple, recordStoredMaterials } from '../temple.js?v=systems-v1';
-import { workshopView, managementView, templeExtras } from '../ui/facility-view.js?v=workshop-tabs-1';
+import { workshopView, managementView, templeExtras } from '../ui/facility-view.js?v=mid-unlock-icons-1';
 import { itemShopView, gearShopView } from '../ui/town-shops.js?v=basic-skill-levels-1';
 import { weaponIcon } from '../ui/weapon-icons.js';
 import { equipmentIcon } from '../ui/equipment-icons.js';
@@ -34,6 +34,7 @@ const workshopSelection = {};
 const itemShopSelection = {};
 const gearShopSelection = {};
 const storageSelection = {};
+const templeUnlockSelection = {};
 let flash = null;
 let templeTab = 'recovery';
 let templeMember = 0;
@@ -343,7 +344,7 @@ function temple() {
 
   if (templeTab === 'unlock') return [switcher,
     el('h2', {}, 'ジョブ解放'),
-    templeExtras(data, g, act),
+    templeExtras(data, g, act, templeUnlockSelection, templeJobIcon),
   ];
 
   templeMember = Math.max(0, Math.min(templeMember, g.party.length - 1));
