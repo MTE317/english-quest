@@ -4,7 +4,7 @@ import { uiIcon } from './pixel-icons.js';
 const destinations = [
   ['town', '町', 'temple', 'index.html'],
   ['party', '仲間', 'party', 'party.html'],
-  ['study', '学び舎', 'catalog', 'study.html'],
+  ['study', '訓練場', 'catalog', 'study.html?tab=training'],
   ['records', '手帳', 'catalog', 'records.html'],
 ];
 

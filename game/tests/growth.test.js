@@ -128,12 +128,12 @@ test('ジョブチェンジ：基本ジョブは選べる。装備できない�
   const g = fresh();
   assert.ok(availableJobs(data, g).every((j) => j.tier === 'base'));
   assert.throws(() => changeJob(data, g, 0, 'gunner'));
-  assert.throws(() => changeJob(data, g, 0, 'black_mage'), /JPが足りない/);
-  g.jp = data.jobsById.get('black_mage').changeJp;
+  const originalGold = g.gold;
   changeJob(data, g, 0, 'black_mage'); // 剣と重装は黒魔道士は×
   const w = g.party[0];
   assert.equal(w.job, 'black_mage');
-  assert.equal(g.jp, 0);
+  assert.equal(g.jp, undefined);
+  assert.equal(g.gold, originalGold);
   assert.equal(w.equip.weapon, null);
   assert.equal(w.equip.body, null);
   assert.ok(g.storage.gear.length >= 4);

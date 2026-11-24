@@ -36,33 +36,34 @@ test('通常攻撃のMP回復は正解のみ。スキルの消費はレベルで
   assert.ok(skillMp(data, { ...m, lv: 99 }, skill) > skill.mp);
 });
 
-test('詠唱は三段階評価と日ごとのJP上限を使い、全滅後も残る', () => {
+test('英作文の○△×はSRSを更新し、転職JPは発生せず、全滅後も学習履歴が残る', () => {
   const config = readJson('chant.json');
-  config.daily_options = [{ questions: 1, new: 2 }];
-  config.daily_default = 0;
   const sch = new Scheduler(config);
   const mem = new MemoryStorage();
   const session = new GameSession({ storage: mem });
   session.startNew(game());
   const sentences = [{ id: 'a' }, { id: 'b' }];
   assert.equal(nextChant(session.game, config, sch, sch.dayOf(T0), sentences, sentences, new Set()).id, 'a');
-  assert.equal(recordChant(session.game, config, sch, T0, 'a', 't'), config.grades.t.jp);
-  assert.equal(recordChant(session.game, config, sch, T0, 'b', 'x'), 0);
+  assert.ok(recordChant(session.game, config, sch, T0, 'a', 't').s > 0);
+  assert.ok(recordChant(session.game, config, sch, T0, 'b', 'x').s > 0);
   assert.notEqual(session.game.chants.records.a.s, session.game.chants.records.b.s);
+  assert.equal(session.game.jp, undefined);
+  session.save();
   session.enterDungeon();
   session.wipe();
   const loaded = new GameSession({ storage: mem }).game;
-  assert.equal(loaded.jp, config.grades.t.jp);
   assert.ok(loaded.chants.records.a);
+  assert.equal(loaded.jp, undefined);
   session.deleteSave();
   const newSession = new GameSession({ storage: mem });
   newSession.startNew(game());
-  assert.equal(newSession.game.jp, 0);
   assert.ok(newSession.game.chants.records.a);
   newSession.deleteSave({ includeLearning: true });
   newSession.startNew(game());
   assert.equal(newSession.game.chants, undefined);
-  assert.throws(() => changeJob(data, loaded, 0, 'black_mage'), /JPが足りない/);
+  const gold = loaded.gold;
+  changeJob(data, loaded, 0, 'black_mage');
+  assert.equal(loaded.gold, gold);
 });
 
 test('制作、分解、強化、調合と施設投資が在庫や資金に反映される', () => {

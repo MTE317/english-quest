@@ -286,9 +286,6 @@ export function changeJob(data, game, index, jobId) {
   const m = game.party[index];
   if (!availableJobs(data, game).some((j) => j.id === jobId)) throw new Error('そのジョブはまだ選べない');
   if (m.job === jobId) throw new Error('今のジョブと同じ');
-  const cost = data.jobsById.get(jobId).changeJp;
-  if ((game.jp ?? 0) < cost) throw new Error(`JPが足りない（必要 ${cost}）`);
-  game.jp = (game.jp ?? 0) - cost;
   m.job = jobId;
   m.ap[jobId] = m.ap[jobId] ?? 0;
   for (const slot of ['offhand', 'weapon', 'head', 'body', 'arm']) {

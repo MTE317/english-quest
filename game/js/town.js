@@ -385,13 +385,13 @@ export function nextRankStatus(data, game) {
   const idx = data.ranks.findIndex((r) => r.id === game.rank);
   const next = data.ranks[idx + 1];
   if (!next) return null;
-  const cur = data.ranks[idx];
   const needs = [];
   if ((game.rankPoints ?? 0) < next.pointsRequired) needs.push(`ポイント ${game.rankPoints ?? 0} / ${next.pointsRequired}`);
-  if (next.needsBossClear && !Object.keys(game.cleared ?? {}).some((id) => data.dungeons.get(id)?.rank === cur.maxDungeonRank)) {
-    needs.push(`★${cur.maxDungeonRank}のダンジョンを踏破する`);
+  // 現行5ダンジョンでは★3以上を公開していない。ランク試験は任意の冒険実績で判定する。
+  if (next.needsBossClear && !Object.keys(game.cleared ?? {}).some((id) => (game.cleared[id] ?? 0) > 0 && data.dungeons.has(id))) {
+    needs.push('いずれかのダンジョンを踏破する');
   }
-  if (next.needsExam && !(game.examsPassed ?? []).includes(next.id)) needs.push('昇格試験に合格する（ギルドの資料室のとなり）');
+  if (next.needsExam && !(game.examsPassed ?? []).includes(next.id)) needs.push('昇格試験で単語・英作文の両方に合格する');
   return { next, needs, examOnly: needs.length === 1 && next.needsExam && !(game.examsPassed ?? []).includes(next.id) };
 }
 

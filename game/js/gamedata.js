@@ -68,7 +68,6 @@ export function buildGameData(raw) {
     startWeapon: r.start_weapon || null,
     startArmorWeight: r.start_armor_weight || null,
     unlock: r.unlock ?? '',
-    changeJp: toNumber(r.change_jp, 0),
   });
   const jobs = [
     ...raw.jobs.map((r) => job(r, 'base')),

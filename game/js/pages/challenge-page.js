@@ -10,7 +10,9 @@ import { createBattle, makeEnemy, finishBattle } from '../battle.js?v=build36-1'
 import { currentRank, useItemOutsideBattle, FIELD_ITEM_EFFECTS } from '../dungeon.js?v=build36-1';
 import { nextRankStatus, checkRankUp } from '../town.js?v=build36-1';
 import { makeGear } from '../character.js?v=build36-1';
-import { examWords, starLearnedRatio, arenaReviewWords } from '../study.js?v=build36-1';
+import { arenaReviewWords } from '../study.js?v=build36-1';
+import { promotionProgress } from '../promotion.js?v=training-v2-1';
+import { runDualPromotionExam } from '../ui/learning-exams.js?v=training-v2-1';
 import { createBattleView } from '../ui/battle-view.js?v=music-suite-1';
 import { runQuiz } from '../ui/quiz-runner.js?v=music-suite-1';
 import { el, render } from '../dom.js';
@@ -23,6 +25,7 @@ const session = new GameSession();
 installGameShell('challenge', session);
 const store = new LearningStore();
 let data; let lex; let scheduler; let config; let tiers; let matches; let shop;
+let catalog; let chantConfig;
 let message;
 const button = (label, fn, disabled) => el('button', { disabled, onclick: () => {
   try { fn(); } catch (error) { message = error.message; draw(); }
@@ -38,7 +41,7 @@ function shuffled(values) {
 }
 
 function start(kind, label, battles, pool, extra = {}) {
-  if (!pool.length) throw new Error('まずルーンストーンを読み解いてください。');
+  if (!pool.length) throw new Error('教材を学習してから挑戦してください。');
   if (!battles.length || battles.some((row) => !row.length || row.some((e) => !data.monsters.has(e.id) || !Number.isFinite(e.lv)))) throw new Error('対戦相手のデータを確認してください。');
   if (session.game.party.every((member) => member.hp <= 0)) throw new Error('先にパーティを回復してください。');
   const stoneId = lex.wordsById.get(pool[0]).stoneId;
@@ -48,7 +51,9 @@ function start(kind, label, battles, pool, extra = {}) {
 
 function rankCanAttemptFinal() {
   const st = nextRankStatus(data, session.game);
-  return st?.next.id === 'S' && st.examOnly && starLearnedRatio(lex, store, scheduler, 12).ratio >= 0.8;
+  if (st?.next.id !== 'S' || !st.examOnly) return false;
+  const p = promotionProgress(catalog, store, session.game, 'S');
+  return p.wordMet && p.phraseMet;
 }
 
 function finalExam() {
@@ -125,24 +130,26 @@ function endBattle(result) {
 }
 
 function finalReview() {
-  const spec = data.exams.find((e) => e.id === 'final');
-  const words = examWords(lex.words, spec.questions, Math.random);
-  let index = 0;
-  runQuiz({ view, lex, store, scheduler, total: words.length, title: '全範囲の総復習',
-    next: () => ({ word: words[index++] }),
-    onDone: (correct, total) => {
-      const passed = total > 0 && correct >= Math.ceil(spec.passRate * total - 1e-9);
+  runDualPromotionExam({
+    view, catalog, store, session, scheduler, chantConfig, rankId: 'S',
+    onFinish: ({ complete }) => {
       session.wipe();
       session.update((game) => {
-        if (passed) {
-          game.examsPassed.push('S');
+        if (complete) {
+          if (!game.examsPassed.includes('S')) game.examsPassed.push('S');
           checkRankUp(data, game);
           addTitle(game, '伝説');
-        } else game.finalRetryDay = scheduler.dayOf(now()) + spec.retryAfterDays;
+        } else {
+          const spec = data.exams.find((e) => e.id === 'final');
+          game.finalRetryDay = scheduler.dayOf(now()) + spec.retryAfterDays;
+        }
       });
-      message = `${passed ? '最終試験合格！ Sランクに到達しました。' : '最終試験は不合格でした。'}（${correct} / ${total}問正解）`;
+      message = complete
+        ? '最終試験合格！ 単語と瞬間英作文の二分野を達成し、Sランクに到達しました。'
+        : '最終試験は未合格です。合格済みの分野は記録されています。';
       draw();
-    } });
+    },
+  });
 }
 
 function showItems() {
@@ -188,10 +195,10 @@ function draw() {
   render(view, banner,
     el('h2', {}, 'Sランク最終試験'),
     button(retry ? '次の日に再挑戦' : '最終試験に挑む', finalExam, retry || !rankCanAttemptFinal()),
-    !rankCanAttemptFinal() && game.rank !== 'S' ? el('p', { class: 'muted small' }, '★12のルーンを80%習得し、Sランクに必要なギルドポイントと踏破条件を満たすと挑めます。') : null,
+    !rankCanAttemptFinal() && game.rank !== 'S' ? el('p', { class: 'muted small' }, '単語と瞬間英作文の累積習得条件、ギルドポイント、踏破条件を満たすと挑めます。') : null,
     el('h2', {}, '闘技場'),
     el('p', { class: 'muted small' }, '同じ階級の5連戦です。HP・MPは持ち越し、戦闘の合間に道具を使えます。回復薬とエーテルを用意し、最後のチャンピオンに合わせて装備を整えましょう。'),
-    el('p', { class: 'muted small' }, '問題は読み解いたルーンから総復習。確認テストを受けていなくても挑戦できます。'),
+    el('p', { class: 'muted small' }, '問題はこれまで学んだ単語を総復習。確認テストを受けていなくても挑戦できます。'),
     tiers.length ? [mode, tiers.map((tier) => {
       const required = Number(tier.rank);
       const locked = required > config.tiers - 1 ? game.rank !== 'S' : currentRank(data, game).maxDungeonRank < required;
@@ -214,11 +221,11 @@ function draw() {
 }
 
 (async () => {
-  const [gd, catalog, srs, arenaFile, t, m, s] = await Promise.all([
-    loadGameData(), loadLearningCatalog(), loadJson('srs.json'), loadJson('arena.json'),
+  const [gd, learning, srs, arenaFile, chantFile, t, m, s] = await Promise.all([
+    loadGameData(), loadLearningCatalog(), loadJson('srs.json'), loadJson('arena.json'), loadJson('chant.json'),
     loadOptional('arena_tiers.csv'), loadOptional('arena_battles.csv'), loadOptional('arena_shop.csv'),
   ]);
-  data = gd; lex = catalog.lexicon; scheduler = new Scheduler(srs.data); config = arenaFile.data;
+  data = gd; catalog = learning; lex = catalog.lexicon; scheduler = new Scheduler(srs.data); config = arenaFile.data; chantConfig = chantFile.data;
   tiers = t?.rows ?? []; matches = m?.rows ?? []; shop = s?.rows ?? [];
   if (session.game && !session.readOnly) {
     normalizeGame(data, session.game, session.run);

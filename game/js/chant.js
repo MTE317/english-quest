@@ -1,37 +1,41 @@
+// 瞬間英作文・チャンク反復は自己判定。転職JPは廃止し、SRSと学習実績だけを記録する。
 const GRADES = { good: 3, hard: 2, again: 1 };
 
 export function chantDay(game, config, today) {
   const state = game.chants;
-  const choice = state?.option ?? config.daily_default;
-  const limit = config.daily_options[choice] ?? config.daily_options[0];
+  const choice = state?.option ?? config.daily_default ?? 0;
+  const limit = config.daily_options?.[choice] ?? { questions: 10, new: 10 };
   const daily = state?.daily?.day === today ? state.daily : { day: today, count: 0, introduced: 0 };
   return { records: state?.records ?? {}, daily, limit, choice };
 }
 
 export function nextChant(game, config, scheduler, today, all, selected, seen) {
-  const { records, daily, limit } = chantDay(game, config, today);
+  const { records } = chantDay(game, config, today);
   const due = all.filter((c) => !seen.has(c.id) && scheduler.isDue(records[c.id], today));
   if (due.length) return due.sort((a, b) => records[a.id].due - records[b.id].due)[0];
-  if (daily.introduced < limit.new) {
-    const next = selected.find((c) => !seen.has(c.id) && !records[c.id]);
-    if (next) return next;
-  }
-  return selected.filter((c) => !seen.has(c.id) && records[c.id])
-    .sort((a, b) => records[a.id].due - records[b.id].due)[0] ?? null;
+  return selected.find((c) => !seen.has(c.id) && !records[c.id])
+    ?? selected.find((c) => !seen.has(c.id) && records[c.id]) ?? null;
 }
 
 export function recordChant(game, config, scheduler, ms, id, gradeId) {
   const grade = config.grades[gradeId];
   if (!grade || !GRADES[grade.fsrs]) throw new Error('評価が正しくありません。');
-  const { records, daily, limit, choice } = chantDay(game, config, scheduler.dayOf(ms));
-  const first = !records[id];
-  if (first && daily.introduced >= limit.new) throw new Error('今日の新しい文の上限に達しました。');
-  const award = !config.jp_only_within_daily || daily.count < limit.questions ? grade.jp : 0;
+  const today = scheduler.dayOf(ms);
+  const { records, daily, choice } = chantDay(game, config, today);
+  const previous = records[id] ?? null;
+  const updated = scheduler.reviewGrade(previous, GRADES[grade.fsrs], ms);
+  const mastered = new Set(game.chants?.masteredIds ?? []);
+  if (updated.stage === 'learned') mastered.add(id);
+  const dayHistory = { ...(game.chants?.dailyHistory ?? {}) };
+  const history = dayHistory[today] ?? { answered: 0, good: 0, hard: 0, again: 0 };
+  dayHistory[today] = { ...history, answered: history.answered + 1,
+    [grade.fsrs]: (history[grade.fsrs] ?? 0) + 1 };
   game.chants = {
     option: choice,
-    daily: { day: daily.day, count: daily.count + 1, introduced: daily.introduced + Number(first) },
-    records: { ...records, [id]: scheduler.reviewGrade(records[id], GRADES[grade.fsrs], ms) },
+    daily: { day: today, count: daily.count + 1, introduced: daily.introduced + Number(!previous) },
+    records: { ...records, [id]: updated },
+    masteredIds: [...mastered],
+    dailyHistory: dayHistory,
   };
-  game.jp = (game.jp ?? 0) + award;
-  return award;
+  return updated;
 }

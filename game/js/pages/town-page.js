@@ -41,7 +41,7 @@ const facilityGroups = [
   { title: '冒険の準備', cards: [
     { id: 'guild', name: 'ギルド酒場', icon: 'guild', detail: '依頼の受注・報告、昇格', show: guild },
     { id: 'inn', name: '宿屋', icon: 'inn', detail: 'HP・MPを回復', show: inn },
-    { id: 'temple', name: '神殿', icon: 'temple', detail: '復活・治療、転職・ジョブ解放', show: temple },
+    { id: 'temple', name: '神殿', icon: 'temple', detail: '復活・治療、無料転職・ジョブ解放', show: temple },
     { href: 'party.html', name: 'パーティ', icon: 'party', detail: '仲間の装備・スキル' },
   ] },
   { title: '買い物・強化', cards: [
@@ -118,10 +118,10 @@ function townNotices(g) {
 const townStops = [
   { scene: 'tavern', title: 'ギルド酒場', task: '依頼を受ける', href: facilityLink('guild'),
     guide: '掲示板から依頼を受けよう。討伐や採集の条件を満たして酒場で報告すると、お金とランクポイントを獲得できる。' },
-  { scene: 'wilds', title: '訓練場', task: '単語を復習', href: 'study.html?tab=training',
-    guide: '鍛えたい仲間と問題数を選んで、英単語の4択に挑戦。復習が必要な単語から出題され、正解すると仲間が成長する。' },
-  { scene: 'library', title: '詠唱の間', task: '瞬間英作文', href: 'chant.html',
-    guide: '日本語を見て、英語で声に出そう。答えと発音を確かめて、自分がどこまで言えたかを選ぶ。' },
+  { scene: 'wilds', title: '訓練場', task: '単語・英作文・チャンク', href: 'study.html?tab=training',
+    guide: '単語の4択、瞬間英作文、チャンク集中、復習を5問から。6人全員に少量のXP・APが入ります。' },
+  { scene: 'library', title: '試験の間', task: '昇格試験に挑む', href: 'study.html?tab=exam',
+    guide: '単語と瞬間英作文の2分野を試験し、両方合格するとランク昇格の資格になります。' },
 ];
 
 function stopCards(intro = false) {
@@ -297,16 +297,15 @@ function temple() {
       el('div', { style: 'flex:2' }, `${m.name}　${m.hp > 0 ? '元気' : '倒れている'}`),
       m.hp <= 0 ? el('button', { onclick: () => act((gg) => `${m.name}が復活した（-${revive(data, gg, i)}）`) }, `復活 ${reviveCost(data, m)}`) : null)),
     g.party.filter((m) => m.persist?.length).map((m) => el('button', { onclick: () => act((gg) => cureAtTemple(data, gg, m)) }, `${m.name}の状態異常を治療`)),
-    el('a', { class: 'btn primary', href: 'chant.html' }, '詠唱の間（瞬間英作文）'),
     templeExtras(data, g, act),
     el('h2', {}, 'ジョブチェンジ'),
-    el('div', { class: 'panel small' }, `共有JP ${g.jp}`),
+    el('p', { class: 'muted small' }, '転職は何度でも無料。ジョブの解放条件は従来どおりです。'),
     el('p', { class: 'muted small' }, '装備できなくなる物は倉庫に入ります。覚えたスキルと AP はジョブごとに残ります。'),
     g.party.map((m, i) => el('label', { class: 'small' }, `${m.name}（今：${data.jobsById.get(m.job).name}）`,
       el('select', {
         class: 'select',
-        onchange: (e) => { if (e.target.value && confirm(`${m.name}を${data.jobsById.get(e.target.value).name}に転職しますか？（${data.jobsById.get(e.target.value).changeJp} JP）`)) act((gg) => { changeJob(data, gg, i, e.target.value); return `${m.name}は${data.jobsById.get(e.target.value).name}になった`; }); else draw(); },
-      }, el('option', { value: '' }, '変えない'), availableJobs(data, g).filter((j) => j.id !== m.job).map((j) => el('option', { value: j.id, disabled: g.jp < j.changeJp }, `${j.name}（${j.changeJp} JP）`))))),
+        onchange: (e) => { if (e.target.value && confirm(`${m.name}を${data.jobsById.get(e.target.value).name}に無料転職しますか？`)) act((gg) => { changeJob(data, gg, i, e.target.value); return `${m.name}は${data.jobsById.get(e.target.value).name}になった`; }); else draw(); },
+      }, el('option', { value: '' }, '変えない'), availableJobs(data, g).filter((j) => j.id !== m.job).map((j) => el('option', { value: j.id }, j.name))))),
   ];
 }
 
