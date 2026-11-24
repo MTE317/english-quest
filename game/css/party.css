@@ -389,3 +389,22 @@
 .skill-independent .skill-branches { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; background: none; }
 .skill-independent .skill-branch, .skill-independent .skill-branch li { background: none; }
 .skill-independent .skill-branch::before { display: none; }
+
+/* 習得一覧も装備画面と共通のアイコンタイルを使用する。 */
+.skill-learning-catalog { min-width: 0; }
+.skill-learning-catalog .skill-branches {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 12px;
+}
+.skill-learning-catalog .skill-learning-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 76px), 1fr));
+  gap: 7px;
+  margin: 8px 0 0;
+  padding: 8px;
+  max-height: none;
+  overflow: visible;
+}
+.skill-learning-grid > li { min-width: 0; padding-top: 0; background: none; }
+.skill-learning-grid .shop-slot { height: 100%; }
+.skill-learning-layout > .skill-shop-detail { align-self: start; }
