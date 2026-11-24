@@ -1,0 +1,2518 @@
+{
+  "fingerprint": "af80ff3dffd2eb604bbfbae7ad2c202d31a5ec446f9adca6a224592e63c6df15",
+  "stock": {
+    "R01": [
+      {
+        "id": "sword_t1",
+        "itemLv": 3,
+        "price": 57,
+        "slot": "weapon",
+        "kind": "sword"
+      },
+      {
+        "id": "greatsword_t1",
+        "itemLv": 3,
+        "price": 57,
+        "slot": "weapon",
+        "kind": "greatsword"
+      },
+      {
+        "id": "katana_t1",
+        "itemLv": 3,
+        "price": 57,
+        "slot": "weapon",
+        "kind": "katana"
+      },
+      {
+        "id": "dagger_t1",
+        "itemLv": 3,
+        "price": 57,
+        "slot": "weapon",
+        "kind": "dagger"
+      },
+      {
+        "id": "axe_t1",
+        "itemLv": 3,
+        "price": 57,
+        "slot": "weapon",
+        "kind": "axe"
+      },
+      {
+        "id": "spear_t1",
+        "itemLv": 3,
+        "price": 57,
+        "slot": "weapon",
+        "kind": "spear"
+      },
+      {
+        "id": "bow_t1",
+        "itemLv": 3,
+        "price": 57,
+        "slot": "weapon",
+        "kind": "bow"
+      },
+      {
+        "id": "hammer_t1",
+        "itemLv": 3,
+        "price": 57,
+        "slot": "weapon",
+        "kind": "hammer"
+      },
+      {
+        "id": "fist_t1",
+        "itemLv": 3,
+        "price": 57,
+        "slot": "weapon",
+        "kind": "fist"
+      },
+      {
+        "id": "staff_t1",
+        "itemLv": 3,
+        "price": 57,
+        "slot": "weapon",
+        "kind": "staff"
+      },
+      {
+        "id": "tome_t1",
+        "itemLv": 3,
+        "price": 57,
+        "slot": "weapon",
+        "kind": "tome"
+      },
+      {
+        "id": "instrument_t1",
+        "itemLv": 3,
+        "price": 57,
+        "slot": "weapon",
+        "kind": "instrument"
+      },
+      {
+        "id": "gun_t1",
+        "itemLv": 3,
+        "price": 57,
+        "slot": "weapon",
+        "kind": "gun"
+      },
+      {
+        "id": "whip_t1",
+        "itemLv": 3,
+        "price": 57,
+        "slot": "weapon",
+        "kind": "whip"
+      },
+      {
+        "id": "heavy_head_t1",
+        "itemLv": 3,
+        "price": 44,
+        "slot": "head",
+        "kind": null
+      },
+      {
+        "id": "heavy_body_t1",
+        "itemLv": 3,
+        "price": 44,
+        "slot": "body",
+        "kind": null
+      },
+      {
+        "id": "heavy_arm_t1",
+        "itemLv": 3,
+        "price": 44,
+        "slot": "arm",
+        "kind": null
+      },
+      {
+        "id": "medium_head_t1",
+        "itemLv": 3,
+        "price": 44,
+        "slot": "head",
+        "kind": null
+      },
+      {
+        "id": "medium_body_t1",
+        "itemLv": 3,
+        "price": 44,
+        "slot": "body",
+        "kind": null
+      },
+      {
+        "id": "medium_arm_t1",
+        "itemLv": 3,
+        "price": 44,
+        "slot": "arm",
+        "kind": null
+      },
+      {
+        "id": "light_head_t1",
+        "itemLv": 3,
+        "price": 44,
+        "slot": "head",
+        "kind": null
+      },
+      {
+        "id": "light_body_t1",
+        "itemLv": 3,
+        "price": 44,
+        "slot": "body",
+        "kind": null
+      },
+      {
+        "id": "light_arm_t1",
+        "itemLv": 3,
+        "price": 44,
+        "slot": "arm",
+        "kind": null
+      },
+      {
+        "id": "scythe_t1",
+        "itemLv": 3,
+        "price": 57,
+        "slot": "weapon",
+        "kind": "scythe"
+      },
+      {
+        "id": "fan_t1",
+        "itemLv": 3,
+        "price": 57,
+        "slot": "weapon",
+        "kind": "fan"
+      }
+    ],
+    "R02": [
+      {
+        "id": "sword_t1",
+        "itemLv": 3,
+        "price": 56,
+        "slot": "weapon",
+        "kind": "sword"
+      },
+      {
+        "id": "greatsword_t1",
+        "itemLv": 3,
+        "price": 56,
+        "slot": "weapon",
+        "kind": "greatsword"
+      },
+      {
+        "id": "katana_t1",
+        "itemLv": 3,
+        "price": 56,
+        "slot": "weapon",
+        "kind": "katana"
+      },
+      {
+        "id": "dagger_t1",
+        "itemLv": 3,
+        "price": 56,
+        "slot": "weapon",
+        "kind": "dagger"
+      },
+      {
+        "id": "axe_t1",
+        "itemLv": 3,
+        "price": 56,
+        "slot": "weapon",
+        "kind": "axe"
+      },
+      {
+        "id": "spear_t1",
+        "itemLv": 3,
+        "price": 56,
+        "slot": "weapon",
+        "kind": "spear"
+      },
+      {
+        "id": "bow_t1",
+        "itemLv": 3,
+        "price": 56,
+        "slot": "weapon",
+        "kind": "bow"
+      },
+      {
+        "id": "hammer_t1",
+        "itemLv": 3,
+        "price": 56,
+        "slot": "weapon",
+        "kind": "hammer"
+      },
+      {
+        "id": "fist_t1",
+        "itemLv": 3,
+        "price": 56,
+        "slot": "weapon",
+        "kind": "fist"
+      },
+      {
+        "id": "staff_t1",
+        "itemLv": 3,
+        "price": 56,
+        "slot": "weapon",
+        "kind": "staff"
+      },
+      {
+        "id": "tome_t1",
+        "itemLv": 3,
+        "price": 56,
+        "slot": "weapon",
+        "kind": "tome"
+      },
+      {
+        "id": "instrument_t1",
+        "itemLv": 3,
+        "price": 56,
+        "slot": "weapon",
+        "kind": "instrument"
+      },
+      {
+        "id": "gun_t1",
+        "itemLv": 3,
+        "price": 56,
+        "slot": "weapon",
+        "kind": "gun"
+      },
+      {
+        "id": "whip_t1",
+        "itemLv": 3,
+        "price": 56,
+        "slot": "weapon",
+        "kind": "whip"
+      },
+      {
+        "id": "heavy_head_t1",
+        "itemLv": 3,
+        "price": 43,
+        "slot": "head",
+        "kind": null
+      },
+      {
+        "id": "heavy_body_t1",
+        "itemLv": 3,
+        "price": 43,
+        "slot": "body",
+        "kind": null
+      },
+      {
+        "id": "heavy_arm_t1",
+        "itemLv": 3,
+        "price": 43,
+        "slot": "arm",
+        "kind": null
+      },
+      {
+        "id": "medium_head_t1",
+        "itemLv": 3,
+        "price": 43,
+        "slot": "head",
+        "kind": null
+      },
+      {
+        "id": "medium_body_t1",
+        "itemLv": 3,
+        "price": 43,
+        "slot": "body",
+        "kind": null
+      },
+      {
+        "id": "medium_arm_t1",
+        "itemLv": 3,
+        "price": 43,
+        "slot": "arm",
+        "kind": null
+      },
+      {
+        "id": "light_head_t1",
+        "itemLv": 3,
+        "price": 43,
+        "slot": "head",
+        "kind": null
+      },
+      {
+        "id": "light_body_t1",
+        "itemLv": 3,
+        "price": 43,
+        "slot": "body",
+        "kind": null
+      },
+      {
+        "id": "light_arm_t1",
+        "itemLv": 3,
+        "price": 43,
+        "slot": "arm",
+        "kind": null
+      },
+      {
+        "id": "scythe_t1",
+        "itemLv": 3,
+        "price": 56,
+        "slot": "weapon",
+        "kind": "scythe"
+      },
+      {
+        "id": "fan_t1",
+        "itemLv": 3,
+        "price": 56,
+        "slot": "weapon",
+        "kind": "fan"
+      },
+      {
+        "id": "sword_t3",
+        "itemLv": 13,
+        "price": 125,
+        "slot": "weapon",
+        "kind": "sword"
+      },
+      {
+        "id": "greatsword_t3",
+        "itemLv": 13,
+        "price": 125,
+        "slot": "weapon",
+        "kind": "greatsword"
+      },
+      {
+        "id": "katana_t3",
+        "itemLv": 13,
+        "price": 125,
+        "slot": "weapon",
+        "kind": "katana"
+      },
+      {
+        "id": "dagger_t3",
+        "itemLv": 13,
+        "price": 125,
+        "slot": "weapon",
+        "kind": "dagger"
+      },
+      {
+        "id": "axe_t3",
+        "itemLv": 13,
+        "price": 125,
+        "slot": "weapon",
+        "kind": "axe"
+      },
+      {
+        "id": "spear_t3",
+        "itemLv": 13,
+        "price": 125,
+        "slot": "weapon",
+        "kind": "spear"
+      },
+      {
+        "id": "bow_t3",
+        "itemLv": 13,
+        "price": 125,
+        "slot": "weapon",
+        "kind": "bow"
+      },
+      {
+        "id": "hammer_t3",
+        "itemLv": 13,
+        "price": 125,
+        "slot": "weapon",
+        "kind": "hammer"
+      },
+      {
+        "id": "fist_t3",
+        "itemLv": 13,
+        "price": 125,
+        "slot": "weapon",
+        "kind": "fist"
+      },
+      {
+        "id": "staff_t3",
+        "itemLv": 13,
+        "price": 125,
+        "slot": "weapon",
+        "kind": "staff"
+      },
+      {
+        "id": "tome_t3",
+        "itemLv": 13,
+        "price": 125,
+        "slot": "weapon",
+        "kind": "tome"
+      },
+      {
+        "id": "instrument_t3",
+        "itemLv": 13,
+        "price": 125,
+        "slot": "weapon",
+        "kind": "instrument"
+      },
+      {
+        "id": "gun_t3",
+        "itemLv": 13,
+        "price": 125,
+        "slot": "weapon",
+        "kind": "gun"
+      },
+      {
+        "id": "whip_t3",
+        "itemLv": 13,
+        "price": 125,
+        "slot": "weapon",
+        "kind": "whip"
+      },
+      {
+        "id": "heavy_head_t3",
+        "itemLv": 13,
+        "price": 99,
+        "slot": "head",
+        "kind": null
+      },
+      {
+        "id": "heavy_body_t3",
+        "itemLv": 13,
+        "price": 99,
+        "slot": "body",
+        "kind": null
+      },
+      {
+        "id": "heavy_arm_t3",
+        "itemLv": 13,
+        "price": 99,
+        "slot": "arm",
+        "kind": null
+      },
+      {
+        "id": "medium_head_t3",
+        "itemLv": 13,
+        "price": 99,
+        "slot": "head",
+        "kind": null
+      },
+      {
+        "id": "medium_body_t3",
+        "itemLv": 13,
+        "price": 99,
+        "slot": "body",
+        "kind": null
+      },
+      {
+        "id": "medium_arm_t3",
+        "itemLv": 13,
+        "price": 99,
+        "slot": "arm",
+        "kind": null
+      },
+      {
+        "id": "light_head_t3",
+        "itemLv": 13,
+        "price": 99,
+        "slot": "head",
+        "kind": null
+      },
+      {
+        "id": "light_body_t3",
+        "itemLv": 13,
+        "price": 99,
+        "slot": "body",
+        "kind": null
+      },
+      {
+        "id": "light_arm_t3",
+        "itemLv": 13,
+        "price": 99,
+        "slot": "arm",
+        "kind": null
+      },
+      {
+        "id": "scythe_t3",
+        "itemLv": 13,
+        "price": 125,
+        "slot": "weapon",
+        "kind": "scythe"
+      },
+      {
+        "id": "fan_t3",
+        "itemLv": 13,
+        "price": 125,
+        "slot": "weapon",
+        "kind": "fan"
+      }
+    ]
+  },
+  "priorToRank2": {
+    "dungeons": [
+      "mossy_cave",
+      "sunlit_forest",
+      "goblin_quarry"
+    ],
+    "materialSources": {
+      "cave_rat_mat": "cave_rat",
+      "cave_rat_rare": "cave_rat",
+      "goblin_mat": "goblin",
+      "goblin_rare": "goblin",
+      "cave_bat_mat": "exp_mossy_cave_8",
+      "cave_bat_rare": "cave_bat",
+      "nut_squirrel_mat": "exp_season_01_spring_2",
+      "nut_squirrel_rare": "exp_season_01_spring_2",
+      "m01_005_mat": "exp_goblin_quarry_7",
+      "m01_005_rare": "exp_goblin_quarry_7",
+      "m01_007_mat": "exp_goblin_quarry_2",
+      "m01_007_rare": "exp_goblin_quarry_2",
+      "glowmoss_sprite_mat": "exp_mossy_cave_5",
+      "glowmoss_sprite_rare": "exp_mossy_cave_5",
+      "m01_004_mat": "exp_sunlit_forest_8",
+      "m01_004_rare": "exp_sunlit_forest_3",
+      "exp_r01_golem_mat": "exp_goblin_quarry_6",
+      "exp_r01_golem_rare": "exp_goblin_quarry_6",
+      "exp_mossy_cave_rare": "exp_mossy_cave_8",
+      "pollen_bug_mat": "pollen_bug",
+      "pollen_bug_rare": "pollen_bug",
+      "m01_006_mat": "m01_006",
+      "m01_006_rare": "m01_006",
+      "goblin_boss_mat": "goblin_boss",
+      "goblin_boss_rare": "goblin_boss",
+      "wolf_pup_mat": "wolf_pup",
+      "wolf_pup_rare": "wolf_pup",
+      "poison_cap_mat": "poison_cap",
+      "poison_cap_rare": "poison_cap",
+      "prank_pixie_mat": "prank_pixie",
+      "prank_pixie_rare": "prank_pixie",
+      "exp_r01_giant_mat": "exp_sunlit_forest_5",
+      "exp_r01_giant_rare": "exp_sunlit_forest_5",
+      "exp_sunlit_forest_rare": "exp_sunlit_forest_8",
+      "grove_guardian_mat": "grove_guardian",
+      "grove_guardian_rare": "grove_guardian",
+      "exp_r01_ghost_mat": "exp_goblin_quarry_4",
+      "exp_r01_ghost_rare": "exp_goblin_quarry_4",
+      "exp_r01_machine_mat": "exp_goblin_quarry_8",
+      "exp_goblin_quarry_rare": "exp_goblin_quarry_8",
+      "goblin_quarry_boss_mat": "goblin_quarry_boss",
+      "goblin_quarry_boss_rare": "goblin_quarry_boss"
+    },
+    "recipes": [
+      {
+        "id": "iron_sword",
+        "name": "鉄の剣",
+        "rank": 1,
+        "base": "sword_t2",
+        "from": "",
+        "gold": 40,
+        "fixedEffects": {
+          "STR": 2
+        },
+        "materials": [
+          {
+            "id": "goblin_mat",
+            "count": 2,
+            "source": "goblin"
+          },
+          {
+            "id": "cave_rat_mat",
+            "count": 2,
+            "source": "cave_rat"
+          }
+        ],
+        "sourceReachable": true
+      },
+      {
+        "id": "steel_sword",
+        "name": "鋼の剣",
+        "rank": 2,
+        "base": "sword_t4",
+        "from": "iron_sword",
+        "gold": 53,
+        "fixedEffects": {
+          "STR": 4
+        },
+        "materials": [
+          {
+            "id": "fort_bandit_mat",
+            "count": 3,
+            "source": null
+          },
+          {
+            "id": "skeleton_mat",
+            "count": 1,
+            "source": null
+          }
+        ],
+        "sourceReachable": false
+      },
+      {
+        "id": "flame_sword",
+        "name": "炎の剣",
+        "rank": 2,
+        "base": "sword_t4",
+        "from": "steel_sword",
+        "gold": 53,
+        "fixedEffects": {
+          "STATUS_ON_HIT:burn": 12
+        },
+        "materials": [
+          {
+            "id": "fire_lizard_mat",
+            "count": 2,
+            "source": null
+          }
+        ],
+        "sourceReachable": false
+      },
+      {
+        "id": "iron_scythe",
+        "name": "鉄の鎌",
+        "rank": 1,
+        "base": "scythe_t2",
+        "from": "",
+        "gold": 40,
+        "fixedEffects": {
+          "STATUS_ON_HIT:bleed": 6,
+          "DOT_POWER": 6
+        },
+        "materials": [
+          {
+            "id": "goblin_mat",
+            "count": 2,
+            "source": "goblin"
+          },
+          {
+            "id": "cave_rat_mat",
+            "count": 2,
+            "source": "cave_rat"
+          }
+        ],
+        "sourceReachable": true
+      },
+      {
+        "id": "steel_scythe",
+        "name": "鋼の大鎌",
+        "rank": 2,
+        "base": "scythe_t4",
+        "from": "iron_scythe",
+        "gold": 53,
+        "fixedEffects": {
+          "STATUS_ON_HIT:bleed": 9,
+          "STR": 3,
+          "DOT_POWER": 9
+        },
+        "materials": [
+          {
+            "id": "fort_bandit_mat",
+            "count": 3,
+            "source": null
+          },
+          {
+            "id": "skeleton_mat",
+            "count": 1,
+            "source": null
+          }
+        ],
+        "sourceReachable": false
+      },
+      {
+        "id": "iron_fan",
+        "name": "鉄扇",
+        "rank": 1,
+        "base": "fan_t2",
+        "from": "",
+        "gold": 40,
+        "fixedEffects": {
+          "PARTY_BUFF_POWER": 4
+        },
+        "materials": [
+          {
+            "id": "goblin_mat",
+            "count": 2,
+            "source": "goblin"
+          },
+          {
+            "id": "cave_rat_mat",
+            "count": 2,
+            "source": "cave_rat"
+          }
+        ],
+        "sourceReachable": true
+      },
+      {
+        "id": "silver_fan",
+        "name": "銀扇",
+        "rank": 2,
+        "base": "fan_t4",
+        "from": "iron_fan",
+        "gold": 53,
+        "fixedEffects": {
+          "PARTY_BUFF_POWER": 7,
+          "MAG": 5
+        },
+        "materials": [
+          {
+            "id": "fort_bandit_mat",
+            "count": 3,
+            "source": null
+          },
+          {
+            "id": "skeleton_mat",
+            "count": 1,
+            "source": null
+          }
+        ],
+        "sourceReachable": false
+      },
+      {
+        "id": "craft_greatsword_s2",
+        "name": "破岩の大剣",
+        "rank": 2,
+        "base": "greatsword_t4",
+        "from": "",
+        "gold": 105,
+        "fixedEffects": {
+          "DEF_PIERCE": 8,
+          "STR": 5
+        },
+        "materials": [
+          {
+            "id": "skeleton_mat",
+            "count": 3,
+            "source": null
+          },
+          {
+            "id": "skeleton_rare",
+            "count": 1,
+            "source": null
+          }
+        ],
+        "sourceReachable": false
+      },
+      {
+        "id": "craft_katana_s2",
+        "name": "霞斬り",
+        "rank": 2,
+        "base": "katana_t4",
+        "from": "",
+        "gold": 105,
+        "fixedEffects": {
+          "CRT": 3,
+          "SPD": 3
+        },
+        "materials": [
+          {
+            "id": "wisp_dragonfly_mat",
+            "count": 3,
+            "source": null
+          },
+          {
+            "id": "wisp_dragonfly_rare",
+            "count": 1,
+            "source": null
+          }
+        ],
+        "sourceReachable": false
+      },
+      {
+        "id": "craft_dagger_s2",
+        "name": "毒牙の短剣",
+        "rank": 2,
+        "base": "dagger_t4",
+        "from": "",
+        "gold": 105,
+        "fixedEffects": {
+          "STATUS_ON_HIT:poison": 20,
+          "SPD": 3,
+          "DOT_POWER": 8
+        },
+        "materials": [
+          {
+            "id": "m02_005_mat",
+            "count": 3,
+            "source": null
+          },
+          {
+            "id": "m02_005_rare",
+            "count": 1,
+            "source": null
+          }
+        ],
+        "sourceReachable": false
+      },
+      {
+        "id": "craft_axe_s2",
+        "name": "裂地の斧",
+        "rank": 2,
+        "base": "axe_t4",
+        "from": "",
+        "gold": 105,
+        "fixedEffects": {
+          "DEF_PIERCE": 10,
+          "STR": 5
+        },
+        "materials": [
+          {
+            "id": "fort_bandit_mat",
+            "count": 3,
+            "source": null
+          },
+          {
+            "id": "fort_bandit_rare",
+            "count": 1,
+            "source": null
+          }
+        ],
+        "sourceReachable": false
+      },
+      {
+        "id": "craft_spear_s2",
+        "name": "突風の槍",
+        "rank": 2,
+        "base": "spear_t4",
+        "from": "",
+        "gold": 105,
+        "fixedEffects": {
+          "SPD": 4,
+          "WEAK_DMG": 6
+        },
+        "materials": [
+          {
+            "id": "m02_002_mat",
+            "count": 3,
+            "source": null
+          },
+          {
+            "id": "m02_002_rare",
+            "count": 1,
+            "source": null
+          }
+        ],
+        "sourceReachable": false
+      },
+      {
+        "id": "craft_bow_s2",
+        "name": "狩人の長弓",
+        "rank": 2,
+        "base": "bow_t4",
+        "from": "",
+        "gold": 105,
+        "fixedEffects": {
+          "WEAK_DMG": 9,
+          "LUK": 4
+        },
+        "materials": [
+          {
+            "id": "skeleton_mat",
+            "count": 3,
+            "source": null
+          },
+          {
+            "id": "skeleton_rare",
+            "count": 1,
+            "source": null
+          }
+        ],
+        "sourceReachable": false
+      },
+      {
+        "id": "craft_hammer_s2",
+        "name": "震撃の鎚",
+        "rank": 2,
+        "base": "hammer_t4",
+        "from": "",
+        "gold": 105,
+        "fixedEffects": {
+          "STATUS_ON_HIT:stun": 7,
+          "HP": 15
+        },
+        "materials": [
+          {
+            "id": "wisp_dragonfly_mat",
+            "count": 3,
+            "source": null
+          },
+          {
+            "id": "wisp_dragonfly_rare",
+            "count": 1,
+            "source": null
+          }
+        ],
+        "sourceReachable": false
+      },
+      {
+        "id": "craft_fist_s2",
+        "name": "連環の拳",
+        "rank": 2,
+        "base": "fist_t4",
+        "from": "",
+        "gold": 105,
+        "fixedEffects": {
+          "EXTRA_HIT": 10,
+          "SPD": 4
+        },
+        "materials": [
+          {
+            "id": "m02_005_mat",
+            "count": 3,
+            "source": null
+          },
+          {
+            "id": "m02_005_rare",
+            "count": 1,
+            "source": null
+          }
+        ],
+        "sourceReachable": false
+      },
+      {
+        "id": "craft_staff_s2",
+        "name": "癒芽の杖",
+        "rank": 2,
+        "base": "staff_t4",
+        "from": "",
+        "gold": 105,
+        "fixedEffects": {
+          "HEAL_POWER": 10,
+          "MAG": 5
+        },
+        "materials": [
+          {
+            "id": "fort_bandit_mat",
+            "count": 3,
+            "source": null
+          },
+          {
+            "id": "fort_bandit_rare",
+            "count": 1,
+            "source": null
+          }
+        ],
+        "sourceReachable": false
+      },
+      {
+        "id": "craft_tome_s2",
+        "name": "火術の魔導書",
+        "rank": 2,
+        "base": "tome_t4",
+        "from": "",
+        "gold": 105,
+        "fixedEffects": {
+          "MAG": 6,
+          "WEAK_DMG": 9
+        },
+        "materials": [
+          {
+            "id": "m02_002_mat",
+            "count": 3,
+            "source": null
+          },
+          {
+            "id": "m02_002_rare",
+            "count": 1,
+            "source": null
+          }
+        ],
+        "sourceReachable": false
+      },
+      {
+        "id": "craft_instrument_s2",
+        "name": "旅人の竪琴",
+        "rank": 2,
+        "base": "instrument_t4",
+        "from": "",
+        "gold": 105,
+        "fixedEffects": {
+          "PARTY_BUFF_POWER": 8,
+          "MAG": 4
+        },
+        "materials": [
+          {
+            "id": "skeleton_mat",
+            "count": 3,
+            "source": null
+          },
+          {
+            "id": "skeleton_rare",
+            "count": 1,
+            "source": null
+          }
+        ],
+        "sourceReachable": false
+      },
+      {
+        "id": "craft_gun_s2",
+        "name": "早撃ちの銃",
+        "rank": 2,
+        "base": "gun_t4",
+        "from": "",
+        "gold": 105,
+        "fixedEffects": {
+          "CRT": 3,
+          "SPD": 4
+        },
+        "materials": [
+          {
+            "id": "wisp_dragonfly_mat",
+            "count": 3,
+            "source": null
+          },
+          {
+            "id": "wisp_dragonfly_rare",
+            "count": 1,
+            "source": null
+          }
+        ],
+        "sourceReachable": false
+      },
+      {
+        "id": "craft_whip_s2",
+        "name": "棘鞭",
+        "rank": 2,
+        "base": "whip_t4",
+        "from": "",
+        "gold": 105,
+        "fixedEffects": {
+          "STATUS_ON_HIT:poison": 15,
+          "SPD": 3
+        },
+        "materials": [
+          {
+            "id": "m02_005_mat",
+            "count": 3,
+            "source": null
+          },
+          {
+            "id": "m02_005_rare",
+            "count": 1,
+            "source": null
+          }
+        ],
+        "sourceReachable": false
+      },
+      {
+        "id": "craft_cloak_1_s2",
+        "name": "追い風のマント",
+        "rank": 2,
+        "base": "cloak_t4",
+        "from": "",
+        "gold": 105,
+        "fixedEffects": {
+          "FIRST_SPD": 12,
+          "EVA": 2
+        },
+        "materials": [
+          {
+            "id": "wisp_dragonfly_mat",
+            "count": 3,
+            "source": null
+          },
+          {
+            "id": "wisp_dragonfly_rare",
+            "count": 1,
+            "source": null
+          }
+        ],
+        "sourceReachable": false
+      },
+      {
+        "id": "craft_cloak_2_s2",
+        "name": "岩守のマント",
+        "rank": 2,
+        "base": "cloak_t4",
+        "from": "",
+        "gold": 105,
+        "fixedEffects": {
+          "PHYS_CUT": 3,
+          "DEF": 5
+        },
+        "materials": [
+          {
+            "id": "bog_zombie_mat",
+            "count": 3,
+            "source": null
+          },
+          {
+            "id": "bog_zombie_rare",
+            "count": 1,
+            "source": null
+          }
+        ],
+        "sourceReachable": false
+      },
+      {
+        "id": "craft_cloak_3_s2",
+        "name": "星霧のマント",
+        "rank": 2,
+        "base": "cloak_t4",
+        "from": "",
+        "gold": 105,
+        "fixedEffects": {
+          "MAGIC_CUT": 4,
+          "RES": 5
+        },
+        "materials": [
+          {
+            "id": "m02_001_mat",
+            "count": 3,
+            "source": null
+          },
+          {
+            "id": "m02_001_rare",
+            "count": 1,
+            "source": null
+          }
+        ],
+        "sourceReachable": false
+      },
+      {
+        "id": "craft_ring_1_s2",
+        "name": "毒避けの指輪",
+        "rank": 2,
+        "base": "ring_t4",
+        "from": "",
+        "gold": 105,
+        "fixedEffects": {
+          "STATUS_RES": 10,
+          "HP": 20,
+          "STATUS_RATE": 5
+        },
+        "materials": [
+          {
+            "id": "skeleton_mat",
+            "count": 3,
+            "source": null
+          },
+          {
+            "id": "skeleton_rare",
+            "count": 1,
+            "source": null
+          }
+        ],
+        "sourceReachable": false
+      },
+      {
+        "id": "craft_necklace_2_s2",
+        "name": "幸運の首飾り",
+        "rank": 2,
+        "base": "necklace_t4",
+        "from": "",
+        "gold": 105,
+        "fixedEffects": {
+          "DROP": 6,
+          "LUK": 5
+        },
+        "materials": [
+          {
+            "id": "poison_spider_mat",
+            "count": 3,
+            "source": null
+          },
+          {
+            "id": "poison_spider_rare",
+            "count": 1,
+            "source": null
+          }
+        ],
+        "sourceReachable": false
+      },
+      {
+        "id": "craft_charm_3_s2",
+        "name": "小さな護符",
+        "rank": 2,
+        "base": "charm_t4",
+        "from": "",
+        "gold": 105,
+        "fixedEffects": {
+          "HEAL_POWER": 8,
+          "RES": 5,
+          "MP_ON_HIT": 1
+        },
+        "materials": [
+          {
+            "id": "stone_statue_mat",
+            "count": 3,
+            "source": null
+          },
+          {
+            "id": "stone_statue_rare",
+            "count": 1,
+            "source": null
+          }
+        ],
+        "sourceReachable": false
+      },
+      {
+        "id": "craft_dreambreaker",
+        "name": "夢断ちの大剣",
+        "rank": 2,
+        "base": "greatsword_t4",
+        "from": "",
+        "gold": 90,
+        "fixedEffects": {
+          "VS_STATUS:sleep": 30,
+          "FIRST_HIT": 10
+        },
+        "materials": [
+          {
+            "id": "fort_bandit_mat",
+            "count": 3,
+            "source": null
+          },
+          {
+            "id": "m01_001_rare",
+            "count": 1,
+            "source": null
+          }
+        ],
+        "sourceReachable": false
+      },
+      {
+        "id": "craft_thunder_claw",
+        "name": "痺雷の拳",
+        "rank": 2,
+        "base": "fist_t4",
+        "from": "",
+        "gold": 90,
+        "fixedEffects": {
+          "STATUS_ON_HIT:paralysis": 18,
+          "VS_STATUS:paralysis": 12
+        },
+        "materials": [
+          {
+            "id": "fort_bandit_mat",
+            "count": 3,
+            "source": null
+          },
+          {
+            "id": "goblin_quarry_boss_mat",
+            "count": 1,
+            "source": "goblin_quarry_boss"
+          }
+        ],
+        "sourceReachable": false
+      },
+      {
+        "id": "craft_illusion_katana",
+        "name": "幻影の刀",
+        "rank": 2,
+        "base": "katana_t4",
+        "from": "",
+        "gold": 90,
+        "fixedEffects": {
+          "EVA_COUNTER": 15,
+          "EVA": 3
+        },
+        "materials": [
+          {
+            "id": "fort_bandit_mat",
+            "count": 3,
+            "source": null
+          },
+          {
+            "id": "cave_bat_rare",
+            "count": 1,
+            "source": "cave_bat"
+          }
+        ],
+        "sourceReachable": false
+      },
+      {
+        "id": "craft_dawn_katana",
+        "name": "暁の居合刀",
+        "rank": 2,
+        "base": "katana_t4",
+        "from": "",
+        "gold": 90,
+        "fixedEffects": {
+          "FIRST_HIT": 25,
+          "CRT": 3
+        },
+        "materials": [
+          {
+            "id": "fort_bandit_mat",
+            "count": 3,
+            "source": null
+          },
+          {
+            "id": "cave_rat_rare",
+            "count": 1,
+            "source": "cave_rat"
+          }
+        ],
+        "sourceReachable": false
+      },
+      {
+        "id": "craft_siphon_tome",
+        "name": "吸魔の魔導書",
+        "rank": 2,
+        "base": "tome_t4",
+        "from": "",
+        "gold": 90,
+        "fixedEffects": {
+          "CRIT_MP": 2,
+          "CRT": 3
+        },
+        "materials": [
+          {
+            "id": "fort_bandit_mat",
+            "count": 3,
+            "source": null
+          },
+          {
+            "id": "skeleton_rare",
+            "count": 1,
+            "source": null
+          }
+        ],
+        "sourceReachable": false
+      },
+      {
+        "id": "craft_battle_mend_staff",
+        "name": "慈戦の杖",
+        "rank": 2,
+        "base": "staff_t4",
+        "from": "",
+        "gold": 90,
+        "fixedEffects": {
+          "ATTACK_HEAL": 10,
+          "HEAL_POWER": 6
+        },
+        "materials": [
+          {
+            "id": "fort_bandit_mat",
+            "count": 3,
+            "source": null
+          },
+          {
+            "id": "poison_cap_rare",
+            "count": 1,
+            "source": "poison_cap"
+          }
+        ],
+        "sourceReachable": false
+      },
+      {
+        "id": "craft_blood_reaper",
+        "name": "血追いの大鎌",
+        "rank": 2,
+        "base": "scythe_t4",
+        "from": "",
+        "gold": 90,
+        "fixedEffects": {
+          "VS_STATUS:bleed": 20,
+          "LIFESTEAL": 3
+        },
+        "materials": [
+          {
+            "id": "fort_bandit_mat",
+            "count": 3,
+            "source": null
+          },
+          {
+            "id": "wolf_pup_rare",
+            "count": 1,
+            "source": "wolf_pup"
+          }
+        ],
+        "sourceReachable": false
+      },
+      {
+        "id": "craft_riposte_hammer",
+        "name": "報復の戦鎚",
+        "rank": 2,
+        "base": "hammer_t4",
+        "from": "",
+        "gold": 90,
+        "fixedEffects": {
+          "COUNTER": 8,
+          "PHYS_CUT": 4
+        },
+        "materials": [
+          {
+            "id": "fort_bandit_mat",
+            "count": 3,
+            "source": null
+          },
+          {
+            "id": "fort_bandit_rare",
+            "count": 1,
+            "source": null
+          }
+        ],
+        "sourceReachable": false
+      },
+      {
+        "id": "craft_battle_mend_charm",
+        "name": "慈戦の護符",
+        "rank": 2,
+        "base": "charm_t4",
+        "from": "",
+        "gold": 90,
+        "fixedEffects": {
+          "ATTACK_HEAL": 6,
+          "HEAL_POWER": 4
+        },
+        "materials": [
+          {
+            "id": "fort_bandit_mat",
+            "count": 3,
+            "source": null
+          },
+          {
+            "id": "poison_cap_rare",
+            "count": 1,
+            "source": "poison_cap"
+          }
+        ],
+        "sourceReachable": false
+      },
+      {
+        "id": "craft_cycle_ring",
+        "name": "輪転の指輪",
+        "rank": 2,
+        "base": "ring_t4",
+        "from": "",
+        "gold": 90,
+        "fixedEffects": {
+          "NORMAL_SKILL": 12,
+          "CRIT_MP": 1
+        },
+        "materials": [
+          {
+            "id": "fort_bandit_mat",
+            "count": 3,
+            "source": null
+          },
+          {
+            "id": "goblin_rare",
+            "count": 1,
+            "source": "goblin"
+          }
+        ],
+        "sourceReachable": false
+      },
+      {
+        "id": "craft_illusion_cloak",
+        "name": "幻影の外套",
+        "rank": 2,
+        "base": "cloak_t4",
+        "from": "",
+        "gold": 90,
+        "fixedEffects": {
+          "EVA_COUNTER": 10,
+          "EVA": 3
+        },
+        "materials": [
+          {
+            "id": "fort_bandit_mat",
+            "count": 3,
+            "source": null
+          },
+          {
+            "id": "cave_bat_rare",
+            "count": 1,
+            "source": "cave_bat"
+          }
+        ],
+        "sourceReachable": false
+      }
+    ]
+  },
+  "farmingAllFive": {
+    "dungeons": [
+      "mossy_cave",
+      "sunlit_forest",
+      "goblin_quarry",
+      "ruined_fort",
+      "misty_marsh"
+    ],
+    "materialSources": {
+      "cave_rat_mat": "cave_rat",
+      "cave_rat_rare": "cave_rat",
+      "goblin_mat": "goblin",
+      "goblin_rare": "goblin",
+      "cave_bat_mat": "exp_mossy_cave_8",
+      "cave_bat_rare": "cave_bat",
+      "nut_squirrel_mat": "exp_season_01_spring_2",
+      "nut_squirrel_rare": "exp_season_01_spring_2",
+      "m01_005_mat": "exp_goblin_quarry_7",
+      "m01_005_rare": "exp_goblin_quarry_7",
+      "m01_007_mat": "exp_goblin_quarry_2",
+      "m01_007_rare": "exp_goblin_quarry_2",
+      "glowmoss_sprite_mat": "exp_mossy_cave_5",
+      "glowmoss_sprite_rare": "exp_mossy_cave_5",
+      "m01_004_mat": "exp_sunlit_forest_8",
+      "m01_004_rare": "exp_sunlit_forest_3",
+      "exp_r01_golem_mat": "exp_goblin_quarry_6",
+      "exp_r01_golem_rare": "exp_goblin_quarry_6",
+      "exp_mossy_cave_rare": "exp_mossy_cave_8",
+      "pollen_bug_mat": "pollen_bug",
+      "pollen_bug_rare": "pollen_bug",
+      "m01_006_mat": "m01_006",
+      "m01_006_rare": "m01_006",
+      "goblin_boss_mat": "goblin_boss",
+      "goblin_boss_rare": "goblin_boss",
+      "wolf_pup_mat": "wolf_pup",
+      "wolf_pup_rare": "wolf_pup",
+      "poison_cap_mat": "poison_cap",
+      "poison_cap_rare": "poison_cap",
+      "prank_pixie_mat": "prank_pixie",
+      "prank_pixie_rare": "prank_pixie",
+      "exp_r01_giant_mat": "exp_sunlit_forest_5",
+      "exp_r01_giant_rare": "exp_sunlit_forest_5",
+      "exp_sunlit_forest_rare": "exp_sunlit_forest_8",
+      "grove_guardian_mat": "grove_guardian",
+      "grove_guardian_rare": "grove_guardian",
+      "exp_r01_ghost_mat": "exp_goblin_quarry_4",
+      "exp_r01_ghost_rare": "exp_goblin_quarry_4",
+      "exp_r01_machine_mat": "exp_goblin_quarry_8",
+      "exp_goblin_quarry_rare": "exp_goblin_quarry_8",
+      "goblin_quarry_boss_mat": "goblin_quarry_boss",
+      "goblin_quarry_boss_rare": "goblin_quarry_boss",
+      "skeleton_mat": "skeleton",
+      "skeleton_rare": "skeleton",
+      "poison_spider_mat": "poison_spider",
+      "poison_spider_rare": "poison_spider",
+      "fort_bandit_mat": "exp_ruined_fort_7",
+      "fort_bandit_rare": "exp_ruined_fort_7",
+      "m02_004_mat": "exp_misty_marsh_1",
+      "m02_004_rare": "exp_misty_marsh_1",
+      "wisp_dragonfly_mat": "exp_misty_marsh_6",
+      "wisp_dragonfly_rare": "exp_misty_marsh_6",
+      "stone_statue_mat": "exp_wanderer_01",
+      "stone_statue_rare": "exp_wanderer_01",
+      "wandering_armor_mat": "exp_misty_marsh_5",
+      "wandering_armor_rare": "exp_misty_marsh_5",
+      "m02_005_mat": "m02_005",
+      "m02_005_rare": "m02_005",
+      "exp_r02_machine_mat": "exp_ruined_fort_8",
+      "exp_ruined_fort_rare": "exp_ruined_fort_8",
+      "exp_r02_fairy_mat": "exp_season_02_spring_1",
+      "exp_r02_fairy_rare": "exp_season_02_spring_1",
+      "stone_giant_mat": "stone_giant",
+      "stone_giant_rare": "stone_giant",
+      "marsh_frog_mat": "marsh_frog",
+      "marsh_frog_rare": "marsh_frog",
+      "mud_slime_mat": "mud_slime",
+      "mud_slime_rare": "mud_slime",
+      "m02_007_mat": "exp_misty_marsh_7",
+      "m02_007_rare": "exp_misty_marsh_7",
+      "exp_r02_plant_mat": "exp_misty_marsh_4",
+      "exp_r02_plant_rare": "exp_misty_marsh_4",
+      "exp_r02_spirit_mat": "exp_misty_marsh_8",
+      "exp_misty_marsh_rare": "exp_misty_marsh_8",
+      "m02_003_mat": "exp_season_02_spring_2",
+      "m02_003_rare": "exp_season_02_spring_2",
+      "marsh_hydra_mat": "marsh_hydra",
+      "marsh_hydra_rare": "marsh_hydra"
+    },
+    "recipes": [
+      {
+        "id": "iron_sword",
+        "name": "鉄の剣",
+        "rank": 1,
+        "base": "sword_t2",
+        "from": "",
+        "gold": 40,
+        "fixedEffects": {
+          "STR": 2
+        },
+        "materials": [
+          {
+            "id": "goblin_mat",
+            "count": 2,
+            "source": "goblin"
+          },
+          {
+            "id": "cave_rat_mat",
+            "count": 2,
+            "source": "cave_rat"
+          }
+        ],
+        "sourceReachable": true
+      },
+      {
+        "id": "steel_sword",
+        "name": "鋼の剣",
+        "rank": 2,
+        "base": "sword_t4",
+        "from": "iron_sword",
+        "gold": 53,
+        "fixedEffects": {
+          "STR": 4
+        },
+        "materials": [
+          {
+            "id": "fort_bandit_mat",
+            "count": 3,
+            "source": "exp_ruined_fort_7"
+          },
+          {
+            "id": "skeleton_mat",
+            "count": 1,
+            "source": "skeleton"
+          }
+        ],
+        "sourceReachable": true
+      },
+      {
+        "id": "flame_sword",
+        "name": "炎の剣",
+        "rank": 2,
+        "base": "sword_t4",
+        "from": "steel_sword",
+        "gold": 53,
+        "fixedEffects": {
+          "STATUS_ON_HIT:burn": 12
+        },
+        "materials": [
+          {
+            "id": "fire_lizard_mat",
+            "count": 2,
+            "source": null
+          }
+        ],
+        "sourceReachable": false
+      },
+      {
+        "id": "iron_scythe",
+        "name": "鉄の鎌",
+        "rank": 1,
+        "base": "scythe_t2",
+        "from": "",
+        "gold": 40,
+        "fixedEffects": {
+          "STATUS_ON_HIT:bleed": 6,
+          "DOT_POWER": 6
+        },
+        "materials": [
+          {
+            "id": "goblin_mat",
+            "count": 2,
+            "source": "goblin"
+          },
+          {
+            "id": "cave_rat_mat",
+            "count": 2,
+            "source": "cave_rat"
+          }
+        ],
+        "sourceReachable": true
+      },
+      {
+        "id": "steel_scythe",
+        "name": "鋼の大鎌",
+        "rank": 2,
+        "base": "scythe_t4",
+        "from": "iron_scythe",
+        "gold": 53,
+        "fixedEffects": {
+          "STATUS_ON_HIT:bleed": 9,
+          "STR": 3,
+          "DOT_POWER": 9
+        },
+        "materials": [
+          {
+            "id": "fort_bandit_mat",
+            "count": 3,
+            "source": "exp_ruined_fort_7"
+          },
+          {
+            "id": "skeleton_mat",
+            "count": 1,
+            "source": "skeleton"
+          }
+        ],
+        "sourceReachable": true
+      },
+      {
+        "id": "iron_fan",
+        "name": "鉄扇",
+        "rank": 1,
+        "base": "fan_t2",
+        "from": "",
+        "gold": 40,
+        "fixedEffects": {
+          "PARTY_BUFF_POWER": 4
+        },
+        "materials": [
+          {
+            "id": "goblin_mat",
+            "count": 2,
+            "source": "goblin"
+          },
+          {
+            "id": "cave_rat_mat",
+            "count": 2,
+            "source": "cave_rat"
+          }
+        ],
+        "sourceReachable": true
+      },
+      {
+        "id": "silver_fan",
+        "name": "銀扇",
+        "rank": 2,
+        "base": "fan_t4",
+        "from": "iron_fan",
+        "gold": 53,
+        "fixedEffects": {
+          "PARTY_BUFF_POWER": 7,
+          "MAG": 5
+        },
+        "materials": [
+          {
+            "id": "fort_bandit_mat",
+            "count": 3,
+            "source": "exp_ruined_fort_7"
+          },
+          {
+            "id": "skeleton_mat",
+            "count": 1,
+            "source": "skeleton"
+          }
+        ],
+        "sourceReachable": true
+      },
+      {
+        "id": "craft_greatsword_s2",
+        "name": "破岩の大剣",
+        "rank": 2,
+        "base": "greatsword_t4",
+        "from": "",
+        "gold": 105,
+        "fixedEffects": {
+          "DEF_PIERCE": 8,
+          "STR": 5
+        },
+        "materials": [
+          {
+            "id": "skeleton_mat",
+            "count": 3,
+            "source": "skeleton"
+          },
+          {
+            "id": "skeleton_rare",
+            "count": 1,
+            "source": "skeleton"
+          }
+        ],
+        "sourceReachable": true
+      },
+      {
+        "id": "craft_katana_s2",
+        "name": "霞斬り",
+        "rank": 2,
+        "base": "katana_t4",
+        "from": "",
+        "gold": 105,
+        "fixedEffects": {
+          "CRT": 3,
+          "SPD": 3
+        },
+        "materials": [
+          {
+            "id": "wisp_dragonfly_mat",
+            "count": 3,
+            "source": "exp_misty_marsh_6"
+          },
+          {
+            "id": "wisp_dragonfly_rare",
+            "count": 1,
+            "source": "exp_misty_marsh_6"
+          }
+        ],
+        "sourceReachable": true
+      },
+      {
+        "id": "craft_dagger_s2",
+        "name": "毒牙の短剣",
+        "rank": 2,
+        "base": "dagger_t4",
+        "from": "",
+        "gold": 105,
+        "fixedEffects": {
+          "STATUS_ON_HIT:poison": 20,
+          "SPD": 3,
+          "DOT_POWER": 8
+        },
+        "materials": [
+          {
+            "id": "m02_005_mat",
+            "count": 3,
+            "source": "m02_005"
+          },
+          {
+            "id": "m02_005_rare",
+            "count": 1,
+            "source": "m02_005"
+          }
+        ],
+        "sourceReachable": true
+      },
+      {
+        "id": "craft_axe_s2",
+        "name": "裂地の斧",
+        "rank": 2,
+        "base": "axe_t4",
+        "from": "",
+        "gold": 105,
+        "fixedEffects": {
+          "DEF_PIERCE": 10,
+          "STR": 5
+        },
+        "materials": [
+          {
+            "id": "fort_bandit_mat",
+            "count": 3,
+            "source": "exp_ruined_fort_7"
+          },
+          {
+            "id": "fort_bandit_rare",
+            "count": 1,
+            "source": "exp_ruined_fort_7"
+          }
+        ],
+        "sourceReachable": true
+      },
+      {
+        "id": "craft_spear_s2",
+        "name": "突風の槍",
+        "rank": 2,
+        "base": "spear_t4",
+        "from": "",
+        "gold": 105,
+        "fixedEffects": {
+          "SPD": 4,
+          "WEAK_DMG": 6
+        },
+        "materials": [
+          {
+            "id": "m02_002_mat",
+            "count": 3,
+            "source": null
+          },
+          {
+            "id": "m02_002_rare",
+            "count": 1,
+            "source": null
+          }
+        ],
+        "sourceReachable": false
+      },
+      {
+        "id": "craft_bow_s2",
+        "name": "狩人の長弓",
+        "rank": 2,
+        "base": "bow_t4",
+        "from": "",
+        "gold": 105,
+        "fixedEffects": {
+          "WEAK_DMG": 9,
+          "LUK": 4
+        },
+        "materials": [
+          {
+            "id": "skeleton_mat",
+            "count": 3,
+            "source": "skeleton"
+          },
+          {
+            "id": "skeleton_rare",
+            "count": 1,
+            "source": "skeleton"
+          }
+        ],
+        "sourceReachable": true
+      },
+      {
+        "id": "craft_hammer_s2",
+        "name": "震撃の鎚",
+        "rank": 2,
+        "base": "hammer_t4",
+        "from": "",
+        "gold": 105,
+        "fixedEffects": {
+          "STATUS_ON_HIT:stun": 7,
+          "HP": 15
+        },
+        "materials": [
+          {
+            "id": "wisp_dragonfly_mat",
+            "count": 3,
+            "source": "exp_misty_marsh_6"
+          },
+          {
+            "id": "wisp_dragonfly_rare",
+            "count": 1,
+            "source": "exp_misty_marsh_6"
+          }
+        ],
+        "sourceReachable": true
+      },
+      {
+        "id": "craft_fist_s2",
+        "name": "連環の拳",
+        "rank": 2,
+        "base": "fist_t4",
+        "from": "",
+        "gold": 105,
+        "fixedEffects": {
+          "EXTRA_HIT": 10,
+          "SPD": 4
+        },
+        "materials": [
+          {
+            "id": "m02_005_mat",
+            "count": 3,
+            "source": "m02_005"
+          },
+          {
+            "id": "m02_005_rare",
+            "count": 1,
+            "source": "m02_005"
+          }
+        ],
+        "sourceReachable": true
+      },
+      {
+        "id": "craft_staff_s2",
+        "name": "癒芽の杖",
+        "rank": 2,
+        "base": "staff_t4",
+        "from": "",
+        "gold": 105,
+        "fixedEffects": {
+          "HEAL_POWER": 10,
+          "MAG": 5
+        },
+        "materials": [
+          {
+            "id": "fort_bandit_mat",
+            "count": 3,
+            "source": "exp_ruined_fort_7"
+          },
+          {
+            "id": "fort_bandit_rare",
+            "count": 1,
+            "source": "exp_ruined_fort_7"
+          }
+        ],
+        "sourceReachable": true
+      },
+      {
+        "id": "craft_tome_s2",
+        "name": "火術の魔導書",
+        "rank": 2,
+        "base": "tome_t4",
+        "from": "",
+        "gold": 105,
+        "fixedEffects": {
+          "MAG": 6,
+          "WEAK_DMG": 9
+        },
+        "materials": [
+          {
+            "id": "m02_002_mat",
+            "count": 3,
+            "source": null
+          },
+          {
+            "id": "m02_002_rare",
+            "count": 1,
+            "source": null
+          }
+        ],
+        "sourceReachable": false
+      },
+      {
+        "id": "craft_instrument_s2",
+        "name": "旅人の竪琴",
+        "rank": 2,
+        "base": "instrument_t4",
+        "from": "",
+        "gold": 105,
+        "fixedEffects": {
+          "PARTY_BUFF_POWER": 8,
+          "MAG": 4
+        },
+        "materials": [
+          {
+            "id": "skeleton_mat",
+            "count": 3,
+            "source": "skeleton"
+          },
+          {
+            "id": "skeleton_rare",
+            "count": 1,
+            "source": "skeleton"
+          }
+        ],
+        "sourceReachable": true
+      },
+      {
+        "id": "craft_gun_s2",
+        "name": "早撃ちの銃",
+        "rank": 2,
+        "base": "gun_t4",
+        "from": "",
+        "gold": 105,
+        "fixedEffects": {
+          "CRT": 3,
+          "SPD": 4
+        },
+        "materials": [
+          {
+            "id": "wisp_dragonfly_mat",
+            "count": 3,
+            "source": "exp_misty_marsh_6"
+          },
+          {
+            "id": "wisp_dragonfly_rare",
+            "count": 1,
+            "source": "exp_misty_marsh_6"
+          }
+        ],
+        "sourceReachable": true
+      },
+      {
+        "id": "craft_whip_s2",
+        "name": "棘鞭",
+        "rank": 2,
+        "base": "whip_t4",
+        "from": "",
+        "gold": 105,
+        "fixedEffects": {
+          "STATUS_ON_HIT:poison": 15,
+          "SPD": 3
+        },
+        "materials": [
+          {
+            "id": "m02_005_mat",
+            "count": 3,
+            "source": "m02_005"
+          },
+          {
+            "id": "m02_005_rare",
+            "count": 1,
+            "source": "m02_005"
+          }
+        ],
+        "sourceReachable": true
+      },
+      {
+        "id": "craft_cloak_1_s2",
+        "name": "追い風のマント",
+        "rank": 2,
+        "base": "cloak_t4",
+        "from": "",
+        "gold": 105,
+        "fixedEffects": {
+          "FIRST_SPD": 12,
+          "EVA": 2
+        },
+        "materials": [
+          {
+            "id": "wisp_dragonfly_mat",
+            "count": 3,
+            "source": "exp_misty_marsh_6"
+          },
+          {
+            "id": "wisp_dragonfly_rare",
+            "count": 1,
+            "source": "exp_misty_marsh_6"
+          }
+        ],
+        "sourceReachable": true
+      },
+      {
+        "id": "craft_cloak_2_s2",
+        "name": "岩守のマント",
+        "rank": 2,
+        "base": "cloak_t4",
+        "from": "",
+        "gold": 105,
+        "fixedEffects": {
+          "PHYS_CUT": 3,
+          "DEF": 5
+        },
+        "materials": [
+          {
+            "id": "bog_zombie_mat",
+            "count": 3,
+            "source": null
+          },
+          {
+            "id": "bog_zombie_rare",
+            "count": 1,
+            "source": null
+          }
+        ],
+        "sourceReachable": false
+      },
+      {
+        "id": "craft_cloak_3_s2",
+        "name": "星霧のマント",
+        "rank": 2,
+        "base": "cloak_t4",
+        "from": "",
+        "gold": 105,
+        "fixedEffects": {
+          "MAGIC_CUT": 4,
+          "RES": 5
+        },
+        "materials": [
+          {
+            "id": "m02_001_mat",
+            "count": 3,
+            "source": null
+          },
+          {
+            "id": "m02_001_rare",
+            "count": 1,
+            "source": null
+          }
+        ],
+        "sourceReachable": false
+      },
+      {
+        "id": "craft_ring_1_s2",
+        "name": "毒避けの指輪",
+        "rank": 2,
+        "base": "ring_t4",
+        "from": "",
+        "gold": 105,
+        "fixedEffects": {
+          "STATUS_RES": 10,
+          "HP": 20,
+          "STATUS_RATE": 5
+        },
+        "materials": [
+          {
+            "id": "skeleton_mat",
+            "count": 3,
+            "source": "skeleton"
+          },
+          {
+            "id": "skeleton_rare",
+            "count": 1,
+            "source": "skeleton"
+          }
+        ],
+        "sourceReachable": true
+      },
+      {
+        "id": "craft_necklace_2_s2",
+        "name": "幸運の首飾り",
+        "rank": 2,
+        "base": "necklace_t4",
+        "from": "",
+        "gold": 105,
+        "fixedEffects": {
+          "DROP": 6,
+          "LUK": 5
+        },
+        "materials": [
+          {
+            "id": "poison_spider_mat",
+            "count": 3,
+            "source": "poison_spider"
+          },
+          {
+            "id": "poison_spider_rare",
+            "count": 1,
+            "source": "poison_spider"
+          }
+        ],
+        "sourceReachable": true
+      },
+      {
+        "id": "craft_charm_3_s2",
+        "name": "小さな護符",
+        "rank": 2,
+        "base": "charm_t4",
+        "from": "",
+        "gold": 105,
+        "fixedEffects": {
+          "HEAL_POWER": 8,
+          "RES": 5,
+          "MP_ON_HIT": 1
+        },
+        "materials": [
+          {
+            "id": "stone_statue_mat",
+            "count": 3,
+            "source": "exp_wanderer_01"
+          },
+          {
+            "id": "stone_statue_rare",
+            "count": 1,
+            "source": "exp_wanderer_01"
+          }
+        ],
+        "sourceReachable": true
+      },
+      {
+        "id": "craft_dreambreaker",
+        "name": "夢断ちの大剣",
+        "rank": 2,
+        "base": "greatsword_t4",
+        "from": "",
+        "gold": 90,
+        "fixedEffects": {
+          "VS_STATUS:sleep": 30,
+          "FIRST_HIT": 10
+        },
+        "materials": [
+          {
+            "id": "fort_bandit_mat",
+            "count": 3,
+            "source": "exp_ruined_fort_7"
+          },
+          {
+            "id": "m01_001_rare",
+            "count": 1,
+            "source": null
+          }
+        ],
+        "sourceReachable": false
+      },
+      {
+        "id": "craft_thunder_claw",
+        "name": "痺雷の拳",
+        "rank": 2,
+        "base": "fist_t4",
+        "from": "",
+        "gold": 90,
+        "fixedEffects": {
+          "STATUS_ON_HIT:paralysis": 18,
+          "VS_STATUS:paralysis": 12
+        },
+        "materials": [
+          {
+            "id": "fort_bandit_mat",
+            "count": 3,
+            "source": "exp_ruined_fort_7"
+          },
+          {
+            "id": "goblin_quarry_boss_mat",
+            "count": 1,
+            "source": "goblin_quarry_boss"
+          }
+        ],
+        "sourceReachable": true
+      },
+      {
+        "id": "craft_illusion_katana",
+        "name": "幻影の刀",
+        "rank": 2,
+        "base": "katana_t4",
+        "from": "",
+        "gold": 90,
+        "fixedEffects": {
+          "EVA_COUNTER": 15,
+          "EVA": 3
+        },
+        "materials": [
+          {
+            "id": "fort_bandit_mat",
+            "count": 3,
+            "source": "exp_ruined_fort_7"
+          },
+          {
+            "id": "cave_bat_rare",
+            "count": 1,
+            "source": "cave_bat"
+          }
+        ],
+        "sourceReachable": true
+      },
+      {
+        "id": "craft_dawn_katana",
+        "name": "暁の居合刀",
+        "rank": 2,
+        "base": "katana_t4",
+        "from": "",
+        "gold": 90,
+        "fixedEffects": {
+          "FIRST_HIT": 25,
+          "CRT": 3
+        },
+        "materials": [
+          {
+            "id": "fort_bandit_mat",
+            "count": 3,
+            "source": "exp_ruined_fort_7"
+          },
+          {
+            "id": "cave_rat_rare",
+            "count": 1,
+            "source": "cave_rat"
+          }
+        ],
+        "sourceReachable": true
+      },
+      {
+        "id": "craft_siphon_tome",
+        "name": "吸魔の魔導書",
+        "rank": 2,
+        "base": "tome_t4",
+        "from": "",
+        "gold": 90,
+        "fixedEffects": {
+          "CRIT_MP": 2,
+          "CRT": 3
+        },
+        "materials": [
+          {
+            "id": "fort_bandit_mat",
+            "count": 3,
+            "source": "exp_ruined_fort_7"
+          },
+          {
+            "id": "skeleton_rare",
+            "count": 1,
+            "source": "skeleton"
+          }
+        ],
+        "sourceReachable": true
+      },
+      {
+        "id": "craft_battle_mend_staff",
+        "name": "慈戦の杖",
+        "rank": 2,
+        "base": "staff_t4",
+        "from": "",
+        "gold": 90,
+        "fixedEffects": {
+          "ATTACK_HEAL": 10,
+          "HEAL_POWER": 6
+        },
+        "materials": [
+          {
+            "id": "fort_bandit_mat",
+            "count": 3,
+            "source": "exp_ruined_fort_7"
+          },
+          {
+            "id": "poison_cap_rare",
+            "count": 1,
+            "source": "poison_cap"
+          }
+        ],
+        "sourceReachable": true
+      },
+      {
+        "id": "craft_blood_reaper",
+        "name": "血追いの大鎌",
+        "rank": 2,
+        "base": "scythe_t4",
+        "from": "",
+        "gold": 90,
+        "fixedEffects": {
+          "VS_STATUS:bleed": 20,
+          "LIFESTEAL": 3
+        },
+        "materials": [
+          {
+            "id": "fort_bandit_mat",
+            "count": 3,
+            "source": "exp_ruined_fort_7"
+          },
+          {
+            "id": "wolf_pup_rare",
+            "count": 1,
+            "source": "wolf_pup"
+          }
+        ],
+        "sourceReachable": true
+      },
+      {
+        "id": "craft_riposte_hammer",
+        "name": "報復の戦鎚",
+        "rank": 2,
+        "base": "hammer_t4",
+        "from": "",
+        "gold": 90,
+        "fixedEffects": {
+          "COUNTER": 8,
+          "PHYS_CUT": 4
+        },
+        "materials": [
+          {
+            "id": "fort_bandit_mat",
+            "count": 3,
+            "source": "exp_ruined_fort_7"
+          },
+          {
+            "id": "fort_bandit_rare",
+            "count": 1,
+            "source": "exp_ruined_fort_7"
+          }
+        ],
+        "sourceReachable": true
+      },
+      {
+        "id": "craft_battle_mend_charm",
+        "name": "慈戦の護符",
+        "rank": 2,
+        "base": "charm_t4",
+        "from": "",
+        "gold": 90,
+        "fixedEffects": {
+          "ATTACK_HEAL": 6,
+          "HEAL_POWER": 4
+        },
+        "materials": [
+          {
+            "id": "fort_bandit_mat",
+            "count": 3,
+            "source": "exp_ruined_fort_7"
+          },
+          {
+            "id": "poison_cap_rare",
+            "count": 1,
+            "source": "poison_cap"
+          }
+        ],
+        "sourceReachable": true
+      },
+      {
+        "id": "craft_cycle_ring",
+        "name": "輪転の指輪",
+        "rank": 2,
+        "base": "ring_t4",
+        "from": "",
+        "gold": 90,
+        "fixedEffects": {
+          "NORMAL_SKILL": 12,
+          "CRIT_MP": 1
+        },
+        "materials": [
+          {
+            "id": "fort_bandit_mat",
+            "count": 3,
+            "source": "exp_ruined_fort_7"
+          },
+          {
+            "id": "goblin_rare",
+            "count": 1,
+            "source": "goblin"
+          }
+        ],
+        "sourceReachable": true
+      },
+      {
+        "id": "craft_illusion_cloak",
+        "name": "幻影の外套",
+        "rank": 2,
+        "base": "cloak_t4",
+        "from": "",
+        "gold": 90,
+        "fixedEffects": {
+          "EVA_COUNTER": 10,
+          "EVA": 3
+        },
+        "materials": [
+          {
+            "id": "fort_bandit_mat",
+            "count": 3,
+            "source": "exp_ruined_fort_7"
+          },
+          {
+            "id": "cave_bat_rare",
+            "count": 1,
+            "source": "cave_bat"
+          }
+        ],
+        "sourceReachable": true
+      }
+    ]
+  }
+}
