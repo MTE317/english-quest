@@ -150,15 +150,9 @@ function heroAction(href, label) {
 }
 
 function facilityDirectory() {
-  const list = el('div', { class: 'town-grid facility-grid', id: 'facility-list' });
-  const nav = el('div', { class: 'district-switch', role: 'group', 'aria-label': '施設の種類' });
-  function choose(index) {
-    Array.from(nav.children).forEach((button, i) => button.setAttribute('aria-pressed', String(i === index)));
-    render(list, facilityGroups[index].cards.map(townCard));
-  }
-  facilityGroups.forEach(({ title }, i) => nav.append(el('button', { 'aria-controls': list.id, onclick: () => choose(i) }, title)));
-  choose(0);
-  return el('section', {}, el('h2', { class: 'chapter-title' }, '施設案内'), nav, list);
+  return el('section', {}, el('h2', { class: 'chapter-title' }, '施設案内'),
+    el('div', { class: 'town-grid facility-grid', id: 'facility-list' },
+      facilityGroups.flatMap(({ cards }) => cards).map(townCard)));
 }
 
 function showHome(g) {
