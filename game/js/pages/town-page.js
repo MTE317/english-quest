@@ -33,6 +33,9 @@ const workshopSelection = {};
 const itemShopSelection = {};
 const gearShopSelection = {};
 let flash = null;
+let templeTab = 'recovery';
+let templeMember = 0;
+let templeJob = null;
 let guildTab = location.hash === '#guild-active' ? 'active' : 'board';
 
 const requestedFacility = new URLSearchParams(window.location.search).get('facility');
@@ -310,23 +313,87 @@ function gearShop() {
   ];
 }
 
+function templeJobIcon(job) {
+  const kinds = { elementalist: 'staff', gunner: 'gun', dancer: 'whip',
+    spellblade: 'sword', hexer: 'tome', apothecary: 'dagger' };
+  return weaponIcon(job.startWeapon || kinds[job.id] || 'tome');
+}
+
 function temple() {
   const g = session.game;
-  return [
-    el('p', { class: 'muted small' }, '復活とジョブチェンジ。'),
-    g.party.map((m, i) => el('div', { class: 'row small', style: 'align-items:center' },
-      el('div', { style: 'flex:2' }, `${m.name}　${m.hp > 0 ? '元気' : '倒れている'}`),
-      m.hp <= 0 ? el('button', { onclick: () => act((gg) => `${m.name}が復活した（-${revive(data, gg, i)}）`) }, `復活 ${reviveCost(data, m)}`) : null)),
-    g.party.filter((m) => m.persist?.length).map((m) => el('button', { onclick: () => act((gg) => cureAtTemple(data, gg, m)) }, `${m.name}の状態異常を治療`)),
+  const switcher = el('div', { class: 'district-switch temple-tabs', role: 'group', 'aria-label': '神殿の窓口' },
+    [['recovery', '回復'], ['jobs', 'ジョブチェンジ']].map(([id, title]) => el('button', {
+      type: 'button', 'aria-pressed': String(templeTab === id), onclick: () => {
+        templeTab = id; flash = null; draw();
+        view.querySelector('.temple-tabs [aria-pressed="true"]')?.focus({ preventScroll: true });
+      },
+    }, title)));
+  if (templeTab === 'recovery') {
+    const needsCare = g.party.some(m => m.hp <= 0 || m.persist?.length);
+    return [switcher,
+      el('h2', {}, '復活・状態異常の治療'),
+      innPartyPanel(g),
+      !needsCare ? el('p', { class: 'muted small' }, '復活・治療が必要な仲間はいません。') : null,
+      g.party.map((m, i) => m.hp <= 0 || m.persist?.length
+        ? el('section', { class: 'panel temple-treatment' },
+          el('strong', {}, m.name),
+          m.hp <= 0 ? el('button', { onclick: () => act(gg => `${m.name}が復活した（-${revive(data, gg, i)}）`) },
+            `復活（${reviveCost(data, m)} G）`) : null,
+          m.persist?.length ? el('button', { onclick: () => act(gg => cureAtTemple(data, gg, gg.party[i])) },
+            '状態異常を治療する') : null)
+        : null),
+      el('p', { class: 'muted small' }, 'HP・MPの回復は宿屋で行えます。'),
+      el('a', { class: 'btn ghost', href: facilityLink('inn') }, '宿屋へ'),
+    ];
+  }
+
+  templeMember = Math.max(0, Math.min(templeMember, g.party.length - 1));
+  const member = g.party[templeMember];
+  const jobs = availableJobs(data, g);
+  const selected = jobs.find(job => job.id === templeJob)
+    ?? jobs.find(job => job.id === member.job) ?? jobs[0];
+  templeJob = selected?.id ?? null;
+  const current = selected?.id === member.job;
+  const chooseMember = el('div', { class: 'temple-members', role: 'group', 'aria-label': '転職する仲間' },
+    g.party.map((m, i) => el('button', {
+      type: 'button', 'aria-pressed': String(i === templeMember),
+      'aria-label': `${m.name}・${data.jobsById.get(m.job).name}`,
+      onclick: () => {
+        templeMember = i; templeJob = null; flash = null; draw();
+        view.querySelector('.temple-members [aria-pressed="true"]')?.focus({ preventScroll: true });
+      },
+    }, portraitIcon(m.icon, { small: true }),
+    el('strong', {}, m.name), el('small', {}, data.jobsById.get(m.job).name))));
+  const grid = el('div', { class: 'shop-grid temple-job-grid', role: 'group', 'aria-label': '転職できるジョブ' },
+    jobs.map(job => el('button', {
+      type: 'button', class: 'shop-slot', 'aria-pressed': String(job.id === selected?.id),
+      'aria-label': `${job.name}${job.id === member.job ? '・現在のジョブ' : ''}`,
+      onclick: () => {
+        templeJob = job.id; draw();
+        view.querySelector('.temple-job-grid [aria-pressed="true"]')?.focus({ preventScroll: true });
+      },
+    }, templeJobIcon(job), el('span', { class: 'shop-slot-name' }, job.name),
+    job.id === member.job ? el('span', { class: 'shop-slot-count' }, '現在のジョブ') : null)));
+  const detail = selected ? el('section', { class: 'shop-detail temple-job-detail', 'aria-label': '選んだジョブ' },
+    el('header', {}, templeJobIcon(selected), el('h2', {}, selected.name)),
+    el('p', { class: 'shop-description' }, selected.role),
+    selected.weakness ? el('p', { class: 'small muted' }, `苦手：${selected.weakness}`) : null,
+    el('p', {}, `${member.name}：${data.jobsById.get(member.job).name} → ${selected.name}`),
+    el('p', { class: 'small' }, `このジョブの残りAP：${member.ap?.[selected.id] ?? 0}`),
+    el('button', { class: 'primary', disabled: current, onclick: () => {
+      const index = templeMember;
+      if (!confirm(`${member.name}を${selected.name}に無料転職しますか？`)) return;
+      act(gg => {
+        changeJob(data, gg, index, selected.id);
+        return `${member.name}は${selected.name}になった`;
+      });
+    } }, current ? '現在のジョブ' : 'このジョブに転職する（無料）')) : null;
+  return [switcher,
+    el('h2', {}, '転職する仲間'),
+    chooseMember,
+    el('p', { class: 'muted small' }, '転職は何度でも無料。装備できなくなる物は倉庫へ戻り、習得スキルとAPは残ります。'),
+    el('div', { class: 'shop-layout temple-job-layout' }, grid, detail),
     templeExtras(data, g, act),
-    el('h2', {}, 'ジョブチェンジ'),
-    el('p', { class: 'muted small' }, '転職は何度でも無料。ジョブの解放条件は従来どおりです。'),
-    el('p', { class: 'muted small' }, '装備できなくなる物は倉庫に入ります。覚えたスキルと AP はジョブごとに残ります。'),
-    g.party.map((m, i) => el('label', { class: 'small' }, `${m.name}（今：${data.jobsById.get(m.job).name}）`,
-      el('select', {
-        class: 'select',
-        onchange: (e) => { if (e.target.value && confirm(`${m.name}を${data.jobsById.get(e.target.value).name}に無料転職しますか？`)) act((gg) => { changeJob(data, gg, i, e.target.value); return `${m.name}は${data.jobsById.get(e.target.value).name}になった`; }); else draw(); },
-      }, el('option', { value: '' }, '変えない'), availableJobs(data, g).filter((j) => j.id !== m.job).map((j) => el('option', { value: j.id }, j.name))))),
   ];
 }
 
