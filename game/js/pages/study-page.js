@@ -2,17 +2,17 @@
 import { loadGameData } from '../gamedata.js?v=rune-study-1';
 import { loadJson } from '../data.js?v=features-2';
 import { loadLearningCatalog } from '../learning-catalog.js?v=learning-00-v1';
-import { Scheduler } from '../srs.js?v=features-2';
-import { LearningStore, now } from '../storage.js?v=rune-study-1';
+import { Scheduler } from '../srs.js?v=stability-1';
+import { LearningStore, now } from '../storage.js?v=stability-1';
 import { GameSession } from '../save.js?v=rune-study-1';
 import { normalizeGame } from '../game-state.js?v=party6-1';
 import { currentRank } from '../dungeon.js?v=build36-1';
 import { nextRankStatus, checkRankUp } from '../town.js?v=build36-1';
 import { promotionProgress, promotionExamState } from '../promotion.js?v=training-v2-1';
-import { learningStatistics } from '../learning-stats.js?v=training-v2-1';
+import { learningStatistics } from '../learning-stats.js?v=stability-1';
 import { TRAINING_COUNTS, trainingChunksForSet, trainingWordsForSet,
-  trainingPhrasesForSet } from '../training.js?v=learning-00-v1';
-import { runTrainingSession } from '../ui/training-runner.js?v=learning-00-v1';
+  trainingPhrasesForSet } from '../training.js?v=stability-1';
+import { runTrainingSession } from '../ui/training-runner.js?v=stability-1';
 import { runDualPromotionExam } from '../ui/learning-exams.js?v=training-v2-1';
 import { el, render } from '../dom.js';
 import { setSceneMusic } from '../battle-music.js?v=music-suite-1';
@@ -55,8 +55,8 @@ function menu() {
 
 // モードの選択肢と教材の階層を分け、操作中に不要な選択欄を表示しない。
 const MODES = [
-  ['words', '単語・熟語', '4択で新規学習・復習'],
-  ['phrases', '瞬間英作文', '通常・チャンク集中'],
+  ['words', '単語・熟語', '4択で新規学習'],
+  ['phrases', '瞬間英作文', '新規学習・チャンク集中'],
   ['review', '復習', '期限到来・苦手克服'],
 ];
 
@@ -233,7 +233,7 @@ function training() {
       } }, TRAINING_COUNTS.map((n) =>
         el('option', { value: n, selected: state.count === n }, n + '問')))),
     el('p', { class: 'muted small' },
-      '復習期限に正解すると報酬1.2倍。1項目の報酬は1日1回で、間違えた問題も再挑戦できます。'),
+      '復習期限に正解すると報酬1.2倍。1項目の報酬は1日1回です。間違えた問題は復習の「苦手克服」から練習できます。'),
     el('button', {
       class: 'primary',
       disabled: state.mode === 'phrases' && state.phraseMode === 'chunks' && !state.chunkId,

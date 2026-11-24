@@ -45,6 +45,7 @@ export function trainingChunksForSet(catalog, setId) {
 export function makeTrainingPicker(catalog, store, game, scheduler, today,
   { mode = 'words', setId = '00', chunkId = '',
     reviewType = 'both', reviewScope = 'due' } = {}) {
+  const newOnly = mode === 'words' || mode === 'phrases';
   const reviewing = mode === 'review';
   const wantWords = mode === 'words' || (reviewing && reviewType !== 'phrases');
   const wantPhrases = ['phrases', 'chunks'].includes(mode)
@@ -69,7 +70,8 @@ export function makeTrainingPicker(catalog, store, game, scheduler, today,
       wrong: (record?.wrong ?? 0) > 0, fresh: !record };
   });
   const eligible = reviewing ? candidates.filter((candidate) =>
-    reviewScope === 'wrong' ? candidate.wrong : candidate.due) : candidates;
+    reviewScope === 'wrong' ? candidate.wrong : candidate.due)
+    : candidates.filter((candidate) => !newOnly || candidate.fresh);
   const seen = new Set();
   const retries = [];
   let asked = 0;
@@ -106,7 +108,7 @@ export function makeTrainingPicker(catalog, store, game, scheduler, today,
       return result;
     },
     report(entry, passed) {
-      if (passed || queuedForRetry.has(entry.key)) return;
+      if (newOnly || passed || queuedForRetry.has(entry.key)) return;
       queuedForRetry.add(entry.key);
       retries.push({ entry, after: asked + 3 });
     },

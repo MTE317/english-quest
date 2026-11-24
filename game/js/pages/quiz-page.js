@@ -1,8 +1,8 @@
 // 動作確認用：ルーンストーンを選んで10問解く画面
 import { loadCsv, loadJson } from '../data.js?v=features-2';
 import { buildLexicon } from '../lexicon.js';
-import { Scheduler, STAGE_LABEL, dayToString } from '../srs.js?v=features-2';
-import { LearningStore, now, getDebugDayOffset, setDebugDayOffset } from '../storage.js?v=rune-study-1';
+import { Scheduler, STAGE_LABEL, dayToString } from '../srs.js?v=stability-1';
+import { LearningStore, now, getDebugDayOffset, setDebugDayOffset } from '../storage.js?v=stability-1';
 import { QuestionPicker, REASON_LABEL } from '../picker.js';
 import { makeQuestion, questionSpeech, DIRECTION, DIRECTION_LABEL } from '../quiz.js?v=question-speech-1';
 import { speak, canSpeak, stopSpeech } from '../speech.js?v=music-suite-1';
@@ -158,7 +158,7 @@ function showQuestion(q, reason, number, onAnswer, onNext) {
         el('div', { class: 'panel small' },
           el('div', {}, `${q.word.en} ＝ ${q.word.ja}`),
           el('div', { class: 'muted' },
-            `${STAGE_LABEL[rec.stage]}・日を空けた連続正解 ${rec.streak}回・次の復習：${daysLabel(rec.due - today)}`),
+            `${STAGE_LABEL[scheduler.stageOf(rec)]}・記憶の安定度 ${rec.s}日・次の復習：${daysLabel(rec.due - today)}`),
         ),
         canSpeak() && !isEnPrompt ? el('button', { class: 'ghost', onclick: () => speak(voice.answer) }, `🔊 ${voice.answer}`) : null,
         el('button', { class: 'primary', onclick: onNext }, number >= QUESTIONS_PER_TEST ? '結果を見る' : '次へ'),

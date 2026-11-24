@@ -10,8 +10,8 @@ export function learningStatistics(catalog, store, game, scheduler, today) {
   const uniqueKnownPhrases = phrases.filter((p) => phraseRecords[p.id] != null);
   const dueWords = uniqueKnownWords.filter((w) => scheduler.isDue(store.get(w.id), today)).length;
   const duePhrases = uniqueKnownPhrases.filter((p) => scheduler.isDue(phraseRecords[p.id], today)).length;
-  const currentWords = uniqueKnownWords.filter((w) => store.get(w.id).stage === 'learned').length;
-  const currentPhrases = uniqueKnownPhrases.filter((p) => phraseRecords[p.id].stage === 'learned').length;
+  const currentWords = uniqueKnownWords.filter((w) => scheduler.stageOf(store.get(w.id)) === 'learned').length;
+  const currentPhrases = uniqueKnownPhrases.filter((p) => scheduler.stageOf(phraseRecords[p.id]) === 'learned').length;
 
   const chunks = catalog.chunks.map((chunk) => {
     const examples = catalog.phrasesByChunk.get(chunk.id) ?? [];

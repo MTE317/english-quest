@@ -22,9 +22,7 @@ const fresh = () => createNewGame(data, party);
 const d0 = sch.dayOf(T0);
 
 function learnedRec() {
-  let rec = null;
-  for (let d = 0; d < 3; d++) rec = sch.review(rec, true, T0 + d * DAY);
-  return rec;
+  return sch.reviewGrade(sch.reviewGrade(null, 4, T0), 4, T0 + 16 * DAY);
 }
 
 test('訓練場の通常モードは単語と瞬間英作文を明確に分け、共通IDの重複を出題しない', () => {
@@ -81,6 +79,35 @@ test('チャンクは教材に含まれる例文を持つものだけ表示し�
   assert.equal(makeTrainingPicker(catalog, store, g, sch, d0,
     { mode: 'chunks', setId: sub.id, chunkId: outside.id }).size, 0);
   assert.ok(!trainingChunksForSet(catalog, sub.id).some((entry) => entry.id === outside.id));
+});
+
+test('通常訓練は既習項目とセッション中の再出題を除き、チャンクは既習例文を含む', () => {
+  const store = new LearningStore(new MemoryStorage());
+  const game = fresh();
+  const [dueWord, futureWord] = catalog.wordsByStone.get('00');
+  const chunk = trainingChunksForSet(catalog, '00')[0];
+  const inSet = new Set(catalog.phrasesByStone.get('00').map((p) => p.id));
+  const phrase = catalog.phrasesByChunk.get(chunk.id).find((p) => inSet.has(p.id));
+  store.recordAnswer(dueWord.id, sch.review(null, false, T0 - DAY), d0 - 1, false);
+  store.recordAnswer(futureWord.id, sch.review(null, true, T0), d0, true);
+  recordChant(game, config, sch, T0 - DAY, phrase.id, 'x');
+
+  for (const [mode, excluded, size] of [
+    ['words', [dueWord.id, futureWord.id], 805], ['phrases', [phrase.id], 327],
+  ]) {
+    const picker = makeTrainingPicker(catalog, store, game, sch, d0, { mode });
+    assert.equal(picker.size, size);
+    const seen = new Set();
+    for (let entry = picker.next(); entry; entry = picker.next()) {
+      assert.equal(entry.reason, 'new');
+      assert.ok(!seen.has(entry.item.id) && !excluded.includes(entry.item.id));
+      seen.add(entry.item.id);
+      picker.report(entry, false);
+    }
+    assert.equal(seen.size, size);
+  }
+  const chunks = makeTrainingPicker(catalog, store, game, sch, d0, { mode: 'chunks', chunkId: chunk.id });
+  assert.equal(chunks.next().item.id, phrase.id);
 });
 
 test('復習はカテゴリーに関係なく全教材から期限到来・誤答と単語/英作文を選べる', () => {
@@ -144,12 +171,12 @@ test('単語と英作文の習得履歴は、忘れても累積達成として�
   assert.ok(new LearningStore(memory).everLearned.has(word.id));
   const phrase = catalog.phrases[0];
   recordChant(g, config, sch, T0, phrase.id, 'o');
-  recordChant(g, config, sch, T0 + DAY, phrase.id, 'o');
-  recordChant(g, config, sch, T0 + 2 * DAY, phrase.id, 'o');
+  recordChant(g, config, sch, T0 + 4 * DAY, phrase.id, 'o');
+  recordChant(g, config, sch, T0 + 20 * DAY, phrase.id, 'o');
   assert.ok(g.chants.masteredIds.includes(phrase.id));
-  recordChant(g, config, sch, T0 + 3 * DAY, phrase.id, 'x');
+  recordChant(g, config, sch, T0 + 21 * DAY, phrase.id, 'x');
   assert.ok(g.chants.masteredIds.includes(phrase.id));
-  const stats = learningStatistics(catalog, store, g, sch, d0 + 3);
+  const stats = learningStatistics(catalog, store, g, sch, d0 + 21);
   assert.equal(stats.words.masteredEver, 1);
   assert.equal(stats.words.masteredNow, 0);
   assert.equal(stats.phrases.masteredEver, 1);

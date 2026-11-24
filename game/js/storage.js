@@ -10,17 +10,18 @@ export const PROGRESS_KEY = SAVE_KEY;
 const DEBUG_DAY_OFFSET_KEY = 'englishQuest.debug.dayOffset';
 
 // 1語ぶんの記録は配列で保存して小さくする（15,000語で1MB未満にするため）
-// [s, d, last, due, correct, wrong, streak, streakDay, stage]
+// [s, d, last, due, correct, wrong, streak, streakDay, stage, grade]
 const STAGE_CODE = { learning: 1, learned: 2 };
 const CODE_STAGE = { 1: 'learning', 2: 'learned' };
 
 function pack(rec) {
-  return [rec.s, rec.d, rec.last, rec.due, rec.correct, rec.wrong, rec.streak, rec.streakDay ?? -1, STAGE_CODE[rec.stage] ?? 1];
+  return [rec.s, rec.d, rec.last, rec.due, rec.correct, rec.wrong, rec.streak, rec.streakDay ?? -1, STAGE_CODE[rec.stage] ?? 1, ...(rec.grade == null ? [] : [rec.grade])];
 }
 function unpack(a) {
   return {
     s: a[0], d: a[1], last: a[2], due: a[3], correct: a[4], wrong: a[5], streak: a[6],
     streakDay: a[7] < 0 ? null : a[7], stage: CODE_STAGE[a[8]] ?? 'learning',
+    ...(a.length > 9 ? { grade: a[9] } : {}),
   };
 }
 
