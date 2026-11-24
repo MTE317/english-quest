@@ -192,7 +192,7 @@ export function managementView(data, g, act) {
   ];
 }
 
-export function templeExtras(data, g, act) {
+export function templeExtras(data, g, act, selection = {}, jobIcon = () => uiIcon('temple')) {
   const rules = [...data.jobUnlocks.values()];
   const advanced = rules.filter(rule => data.jobsById.get(rule.job_id)?.publicRelease);
   const renderUnlock = (rule) => {
@@ -225,8 +225,39 @@ export function templeExtras(data, g, act) {
       el('button', { disabled: !ready, onclick: () => act(game => unlockJob(data, game, rule.job_id)) }, '素材を捧げて解放'));
   };
   const offerings = advanced.map(renderUnlock).filter(Boolean);
+  const midRules = rules.filter(rule => data.jobsById.get(rule.job_id)?.tier === 'mid');
+  const selected = midRules.find(rule => rule.job_id === selection.job) ?? midRules[0];
+  const detail = el('section', { class: 'shop-detail', 'aria-label': '中級ジョブの解放条件' });
+  const nodes = new Map();
+  function choose(rule) {
+    selection.job = rule.job_id;
+    const job = data.jobsById.get(rule.job_id);
+    for (const [id, node] of nodes) node.setAttribute('aria-pressed', String(id === rule.job_id));
+    render(detail,
+      el('header', {}, jobIcon(job), heading(job.name)),
+      el('p', { class: 'shop-description' }, job.role),
+      renderUnlock(rule));
+  }
+  const grid = el('div', { class: 'shop-grid temple-job-grid', role: 'group', 'aria-label': '解放する中級ジョブ' },
+    midRules.map(rule => {
+      const job = data.jobsById.get(rule.job_id);
+      const opened = (g.unlockedJobs ?? []).includes(job.id);
+      const status = opened ? '解放済み' : rule.method === '素材' ? '素材で解放' : '冒険で発見';
+      const node = el('button', {
+        type: 'button', class: 'shop-slot', 'aria-pressed': 'false',
+        'aria-label': `${job.name}、${status}`,
+        onclick: () => choose(rule),
+      }, el('span', { class: 'shop-item-icon', 'aria-hidden': 'true' }, jobIcon(job)),
+      el('span', { class: 'shop-slot-name' }, job.name),
+      el('span', { class: 'shop-slot-count' }, status));
+      nodes.set(job.id, node);
+      return node;
+    }));
+  if (selected) choose(selected);
   return [
-    panel('中級ジョブの解放', rules.filter((rule) => data.jobsById.get(rule.job_id)?.tier === 'mid').map(renderUnlock)),
+    heading('中級ジョブの解放'),
+    selected ? el('div', { class: 'shop-layout' }, grid, detail)
+      : el('p', { class: 'muted small' }, '解放できる中級ジョブはありません。'),
     offerings.length ? panel('神殿の儀式', offerings) : null,
   ];
 }
