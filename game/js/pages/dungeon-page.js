@@ -13,7 +13,7 @@ import {
 } from '../dungeon.js?v=basic-skill-levels-1';
 import { backpackSlots, backpackUsed, addItem } from '../loot.js?v=basic-skill-levels-1';
 import { maxHp, maxMp } from '../character.js?v=basic-skill-levels-1';
-import { createBattleView } from '../ui/battle-view.js?v=mossy-sprites-1';
+import { createBattleView } from '../ui/battle-view.js?v=enemy-icons-2';
 import { createVictoryView } from '../ui/victory-view.js?v=basic-skill-levels-1';
 import { el, render, stars } from '../dom.js';
 import { buildWorldMap, newDiscoveries } from '../world-map.js?v=trial-five-1';

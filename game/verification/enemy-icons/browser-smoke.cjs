@@ -7,10 +7,15 @@ const base = process.env.BASE_URL ?? 'http://127.0.0.1:8767';
     const page = await browser.newPage({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true });
     const errors = [];
     page.on('pageerror', error => errors.push(error.message));
+    const spriteRequests = [];
+    page.on('request', request => {
+      if (request.url().includes('/art/monsters/')) spriteRequests.push(request.url());
+    });
     await page.goto(base + '/game/dungeon.html');
+    const before = await page.evaluate(() => Object.entries(localStorage).sort());
     await page.evaluate(async () => {
       const root = '/game/js/';
-      const { createBattleView } = await import(root + 'ui/battle-view.js?v=mossy-sprites-1');
+      const { createBattleView } = await import(root + 'ui/battle-view.js?v=enemy-icons-2');
       const { makeEnemy, createBattle } = await import(root + 'battle.js');
       const { createNewGame } = await import(root + 'game-state.js');
       const { loadGameData } = await import(root + 'gamedata.js');
@@ -46,9 +51,9 @@ const base = process.env.BASE_URL ?? 'http://127.0.0.1:8767';
     const enemies = page.locator('.battle-enemies .battle-enemy');
     assert.equal(await enemies.count(), 8);
     const images = page.locator('.battle-enemies .battle-enemy-sprite');
-    assert.equal(await images.count(), 4);
-    await images.last().evaluate(image => image.decode());
-    assert.deepEqual(await images.evaluateAll(imgs => imgs.map(img => img.naturalWidth)), [32, 32, 48, 32]);
+    assert.equal(await images.count(), 0);
+    const expected = await page.evaluate(() => window.spritePilotSession.run.battle.enemies.map(e => e.icon));
+    assert.deepEqual(await enemies.locator('.battle-enemy-icon').allTextContents(), expected);
     assert.match(await enemies.nth(3).locator('.battle-enemy-icon').textContent(), /👺/);
     for (const width of [320, 390]) {
       await page.setViewportSize({ width, height: 844 });
@@ -57,27 +62,31 @@ const base = process.env.BASE_URL ?? 'http://127.0.0.1:8767';
         return [Math.round(r.top), r.left, r.right, r.width, r.height];
       }));
       assert.ok(layout.every(([, left, right, w, h]) => left >= 0 && right <= width && w >= 44 && h >= 44));
-      assert.equal(new Set(layout.map(([top]) => top)).size, 2);
+
     }
     if (process.env.SPRITE_SCREENSHOT) await page.screenshot({ path: process.env.SPRITE_SCREENSHOT });
-    await enemies.first().tap();
-    const info = page.locator('.battle-encyclopedia[open]');
-    assert.equal(await info.getByText('スライム', { exact: true }).count(), 1);
-    assert.equal(await info.getByText('判明した弱点', { exact: true }).count(), 1);
-    assert.equal(await info.locator('.battle-resource.hp').count(), 1);
-    assert.equal(await info.locator('.battle-enemy-sprite').count(), 1);
-    await info.getByRole('button', { name: '閉じる' }).tap();
+    for (const index of [0, 1, 2]) {
+      await enemies.nth(index).tap();
+      const info = page.locator('.battle-encyclopedia[open]');
+      assert.equal(await info.getByText('判明した弱点', { exact: true }).count(), 1);
+      assert.equal(await info.locator('.battle-resource.hp').count(), 1);
+      assert.equal(await info.locator('img').count(), 0);
+      assert.equal(await info.locator('.battle-enemy-icon').textContent(), expected[index]);
+      await info.getByRole('button', { name: '閉じる' }).tap();
+    }
     await page.getByRole('button', { name: '通常攻撃', exact: true }).tap();
     await enemies.nth(1).tap();
     assert.equal(await page.evaluate(() => window.spritePilotSession.run.battle.pending.action.target), 1);
     await mount('blooming_hill', ['slime', 'goblin_boss', 'cave_rat']);
     assert.equal(await images.count(), 0);
-    await page.route('**/art/monsters/gram.png', route => route.abort());
+
     await mount('mossy_cave', ['goblin_boss']);
     await page.waitForFunction(() => !document.querySelector('.battle-enemy-sprite'));
     assert.match(await enemies.first().locator('.battle-enemy-icon').textContent(), /👹/);
+    assert.deepEqual(spriteRequests, []);
+    assert.deepEqual(await page.evaluate(() => Object.entries(localStorage).sort()), before);
     assert.deepEqual(errors, []);
-    console.log('Mossy cave: 8 enemies at 320/390px, 3 sprite species, emoji fallback, inspect/HP/weakness/targeting, outside-cave and missing-image fallback passed.');
+    console.log('Enemy icons: 320/390px, all 3 reverted species, inspect/HP/weakness/targeting and outside-cave passed.');
   } finally {
     await browser.close();
   }
