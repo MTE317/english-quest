@@ -11,8 +11,8 @@ import { nextRankStatus, checkRankUp } from '../town.js?v=build36-1';
 import { promotionProgress, promotionExamState } from '../promotion.js?v=training-v2-1';
 import { learningStatistics } from '../learning-stats.js?v=stability-1';
 import { TRAINING_COUNTS, trainingChunksForSet, trainingWordsForSet,
-  trainingPhrasesForSet } from '../training.js?v=stability-1';
-import { runTrainingSession } from '../ui/training-runner.js?v=stability-1';
+  trainingPhrasesForSet } from '../training.js?v=phrase-mix-1';
+import { runTrainingSession } from '../ui/training-runner.js?v=phrase-mix-1';
 import { runDualPromotionExam } from '../ui/learning-exams.js?v=training-v2-1';
 import { el, render } from '../dom.js';
 import { setSceneMusic } from '../battle-music.js?v=music-suite-1';

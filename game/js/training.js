@@ -12,6 +12,49 @@ const recFor = (entry, store, game) => entry.kind === 'word'
 const keyOf = (entry) => `${entry.kind}:${entry.item.id}`;
 const unique = (values) => [...new Map(values.map((item) => [item.id, item])).values()];
 
+// 通常の英作文ではチャンクの学習ヒントを表示しない。
+// チャンク集中では同じ型を反復するため、表示してよい。
+export function shouldShowChunkHint(mode, phrase) {
+  return mode === 'chunks' && Boolean(phrase?.chunkId);
+}
+
+/**
+ * 通常の新規英作文では教材CSVの連続を崩し、同じチャンクが続かないようにする。
+ * チャンクのない独立フレーズは別グループにしてランダムに混ぜる。
+ * どうしても他のグループが残っていない場合のみ連続を許容する。
+ * チャンク集中・単語・復習には適用しない。
+ */
+function diversifyNewPhrases(entries, rng) {
+  const grouped = new Map();
+  for (const entry of entries) {
+    const key = entry.item.chunkId || `independent:${entry.item.id}`;
+    if (!grouped.has(key)) grouped.set(key, []);
+    grouped.get(key).push(entry);
+  }
+  // 同じチャンク内の出題順も固定しない。
+  const buckets = [...grouped].map(([key, items]) => {
+    for (let i = items.length - 1; i > 0; i--) {
+      const j = Math.floor(rng() * (i + 1));
+      [items[i], items[j]] = [items[j], items[i]];
+    }
+    return { key, items };
+  });
+  const ordered = [];
+  let last = null;
+  while (buckets.length) {
+    // 残りが多いグループから出すと、可能な限り同じチャンクの連続を避けられる。
+    const alternatives = buckets.filter((bucket) => bucket.key !== last);
+    const available = alternatives.length ? alternatives : buckets;
+    const maxRemaining = Math.max(...available.map((bucket) => bucket.items.length));
+    const candidates = available.filter((bucket) => bucket.items.length === maxRemaining);
+    const chosen = candidates[Math.floor(rng() * candidates.length)];
+    ordered.push(chosen.items.pop());
+    last = chosen.key;
+    if (!chosen.items.length) buckets.splice(buckets.indexOf(chosen), 1);
+  }
+  return ordered;
+}
+
 export function trainingWordsForSet(catalog, setId) {
   return unique(setId === 'all' ? catalog.words : catalog.wordsByStone.get(setId) ?? []);
 }
@@ -44,7 +87,7 @@ export function trainingChunksForSet(catalog, setId) {
  */
 export function makeTrainingPicker(catalog, store, game, scheduler, today,
   { mode = 'words', setId = '00', chunkId = '',
-    reviewType = 'both', reviewScope = 'due' } = {}) {
+    reviewType = 'both', reviewScope = 'due', rng = Math.random } = {}) {
   const newOnly = mode === 'words' || mode === 'phrases';
   const reviewing = mode === 'review';
   const wantWords = mode === 'words' || (reviewing && reviewType !== 'phrases');
@@ -69,9 +112,10 @@ export function makeTrainingPicker(catalog, store, game, scheduler, today,
     return { ...entry, record, due: scheduler.isDue(record, today),
       wrong: (record?.wrong ?? 0) > 0, fresh: !record };
   });
-  const eligible = reviewing ? candidates.filter((candidate) =>
+  let eligible = reviewing ? candidates.filter((candidate) =>
     reviewScope === 'wrong' ? candidate.wrong : candidate.due)
     : candidates.filter((candidate) => !newOnly || candidate.fresh);
+  if (mode === 'phrases') eligible = diversifyNewPhrases(eligible, rng);
   const seen = new Set();
   const retries = [];
   let asked = 0;
