@@ -26,8 +26,7 @@ export function createWorldMapView({ world, discoveries, selectedDungeon, onDung
     el('span', { class: 'atlas-destination-meta' },
       el('span', {}, `★${dungeon.rank} ・ ${dungeon.kind}`),
       el('span', { class: 'atlas-destination-status' }, dungeon.state === 'cleared' ? '踏破済み' : newIds.has(dungeon.id) ? '新発見' : '遠征可能')),
-    el('strong', { class: 'atlas-destination-name' }, dungeon.name),
-    el('span', { class: 'atlas-destination-description' }, dungeon.character || '探索して特徴を確かめよう。'));
+    el('strong', { class: 'atlas-destination-name' }, dungeon.name));
     buttons.set(dungeon.id, button);
     return button;
   });
