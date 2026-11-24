@@ -12,6 +12,7 @@ import { monsterKnowledge } from '../monster-knowledge.js';
 import { startBattleMusic, finishBattleMusic } from '../battle-music.js?v=music-suite-1';
 import { unlockBattleSound, playBattleHitSound } from '../battle-sound.js?v=rune-study-1';
 import { portraitIcon } from './portrait.js';
+import { hasMossySprites, mossySprite } from './mossy-sprites.js';
 
 const TARGET_PROMPT = {
   enemy: '攻撃する敵を選ぶ',
@@ -38,7 +39,7 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
     nowMs: now(), state: run.quiz ?? null,
   });
   const turn = el('span', { class: 'battle-turn' });
-  const enemies = el('div', { class: 'battle-enemies', 'data-count': b.enemies.length, 'aria-label': '敵', role: 'group' });
+  const enemies = el('div', { class: hasMossySprites(run) ? 'battle-enemies mossy-sprite-pilot' : 'battle-enemies', 'data-count': b.enemies.length, 'aria-label': '敵', role: 'group' });
   const party = el('div', { id: 'battle-party', class: 'battle-party', 'data-count': g.party.length, 'aria-label': `味方${g.party.length}人`, role: 'group' });
   const partyToggleLabel = `仲間${g.party.length}人の状態を見る`;
   const partyToggle = el('button', { class: 'battle-party-toggle', 'aria-controls': party.id, 'aria-expanded': 'false',
@@ -155,10 +156,20 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
       : el('div', { class: cls, role: 'group', 'aria-label': label }, children);
   }
 
+  function enemyIcon(enemy) {
+    const fallback = el('span', { class: 'battle-enemy-icon', 'aria-hidden': 'true' }, enemy.icon);
+    const sprite = mossySprite(run, enemy.monsterId);
+    if (!sprite) return fallback;
+    const icon = el('span', { class: 'battle-enemy-icon', 'aria-hidden': 'true' },
+      el('img', { class: 'battle-enemy-sprite', width: sprite.size, height: sprite.size,
+        alt: '', draggable: 'false', onerror: () => icon.replaceWith(fallback), src: sprite.url }));
+    return icon;
+  }
+
   function inspectEnemy(enemy) {
     const { weak, resist, normal, scanned } = monsterKnowledge(data, g, enemy);
     render(encyclopedia, el('div', { class: 'battle-encyclopedia-body' },
-      el('span', { class: 'battle-enemy-icon', 'aria-hidden': 'true' }, enemy.icon),
+      enemyIcon(enemy),
       el('h3', { id: 'battle-monster-name' }, enemy.name),
       resource('HP', enemy.hp, enemy.maxHp, 'hp'),
       el('p', {}, enemy.types.map((id) => data.monsterTypes.get(id)?.name ?? id).join('・')),
@@ -192,7 +203,7 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
         'aria-haspopup': targetable ? null : 'dialog',
         onclick: targetable ? () => select(index) : () => inspectEnemy(enemy),
       },
-        el('span', { class: 'battle-enemy-icon', 'aria-hidden': 'true' }, enemy.icon),
+        enemyIcon(enemy),
         targetable ? null : el('span', { class: 'battle-inspect', 'aria-hidden': 'true' }, '図鑑'),
         el('span', { class: 'battle-unit-name' }, enemy.name, enemy.boss ? ' 👑' : '', enemy.eliteId ? ' ⚠' : ''),
         resource('HP', enemy.hp, enemy.maxHp, 'hp'),
