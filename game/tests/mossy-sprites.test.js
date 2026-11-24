@@ -3,9 +3,9 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { mossySprite } from '../js/ui/mossy-sprites.js';
 
-test('洞窟でだけ3種の透過ドット絵を選び、他の戦闘と未知の敵はアイコンに戻す', async () => {
+test('洞窟でだけ5種の透過ドット絵を選び、他の戦闘と未知の敵はアイコンに戻す', async () => {
   const cave = { dungeonId: 'mossy_cave' };
-  for (const [id, size] of [['slime', 32], ['exp_mossy_cave_7', 32], ['goblin_boss', 48]]) {
+  for (const [id, size] of [['slime', 32], ['cave_rat', 32], ['pollen_bug', 32], ['exp_mossy_cave_7', 32], ['goblin_boss', 48]]) {
     const sprite = mossySprite(cave, id);
     const png = await readFile(new URL(sprite.url));
     assert.equal(sprite.size, size);
@@ -16,5 +16,5 @@ test('洞窟でだけ3種の透過ドット絵を選び、他の戦闘と未知�
     assert.equal(mossySprite({ dungeonId: 'blooming_hill' }, id), null);
     assert.equal(mossySprite({ ...cave, challenge: { kind: 'arena' } }, id), null);
   }
-  for (const id of ['goblin', 'cave_rat', 'constructor', undefined]) assert.equal(mossySprite(cave, id), null);
+  for (const id of ['goblin', 'cave_bat', 'constructor', undefined]) assert.equal(mossySprite(cave, id), null);
 });

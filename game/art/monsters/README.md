@@ -3,9 +3,13 @@
 | ID | PNG | 原寸 |
 |---|---|---:|
 | slime | slime.png | 32×32 |
+| cave_rat | rattle.png | 32×32 |
+| pollen_bug | pollen-bug.png | 32×32 |
 | exp_mossy_cave_7 | stone-golem.png | 32×32 |
 | goblin_boss | gram.png | 48×48 |
 
 English Quest 用に描き下ろした静止画。従来の敵アイコンはそのまま維持する。苔むした洞窟の通常遠征の戦闘パネルと、そのパネル内の個別図鑑でだけ表示する。敵を識別するキーは表示名でなく既存の敵 ID。画像のない敵、読み込めない画像、その他の地域・挑戦では従来アイコンに戻る。
 
 モバイルでの再現は、リポジトリルートから `python -m http.server 8767` を起動し、Chromium と Playwright が使える環境で `node game/verification/mossy-sprites/browser-smoke.cjs`。セーブはテストのメモリ内に作成する。
+
+開発用メニューの「敵5体を表示」「敵8体を表示」は、固定編成を表示するための別画面。ラットルと花粉ムシが通常の季節・抽選と関係なく出現する。通常出現データは変更していない。

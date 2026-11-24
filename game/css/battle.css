@@ -551,3 +551,17 @@ body:has(.battle-screen) { background: #10171e; }
   .mossy-sprite-pilot:is([data-count="7"], [data-count="8"]) .battle-enemy-sprite[width="48"] { width: 48px; height: 48px; }
   .battle-screen.answering .mossy-sprite-pilot:is([data-count="7"], [data-count="8"]) .battle-enemy-sprite { height: 32px; }
 }
+
+/* 細い敵枠ではHP/MPラベルと値を上下にし、数字を途中で割らない。 */
+@media (max-width: 540px) {
+  .mossy-sprite-pilot:is([data-count="7"], [data-count="8"]) .battle-resource {
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: center;
+  }
+  .mossy-sprite-pilot:is([data-count="7"], [data-count="8"]) .battle-resource-value {
+    justify-self: center;
+    overflow-wrap: normal;
+    white-space: nowrap;
+  }
+  .mossy-sprite-pilot:is([data-count="7"], [data-count="8"]) .battle-meter { width: 100%; }
+}

@@ -1,6 +1,8 @@
 // 戦闘の表示だけを変える試験導入。敵IDやセーブには画像の情報を追加しない。
 const sprites = new Map([
   ['slime', { file: 'slime.png', size: 32 }],
+  ['cave_rat', { file: 'rattle.png', size: 32 }],
+  ['pollen_bug', { file: 'pollen-bug.png', size: 32 }],
   ['exp_mossy_cave_7', { file: 'stone-golem.png', size: 32 }],
   ['goblin_boss', { file: 'gram.png', size: 48 }],
 ]);

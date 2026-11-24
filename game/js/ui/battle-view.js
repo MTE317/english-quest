@@ -12,7 +12,7 @@ import { monsterKnowledge } from '../monster-knowledge.js';
 import { startBattleMusic, finishBattleMusic } from '../battle-music.js?v=music-suite-1';
 import { unlockBattleSound, playBattleHitSound } from '../battle-sound.js?v=rune-study-1';
 import { portraitIcon } from './portrait.js';
-import { hasMossySprites, mossySprite } from './mossy-sprites.js';
+import { hasMossySprites, mossySprite } from './mossy-sprites.js?v=2';
 
 const TARGET_PROMPT = {
   enemy: '攻撃する敵を選ぶ',

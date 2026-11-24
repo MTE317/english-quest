@@ -10,7 +10,7 @@ const base = process.env.BASE_URL ?? 'http://127.0.0.1:8767';
     await page.goto(base + '/game/dungeon.html');
     await page.evaluate(async () => {
       const root = '/game/js/';
-      const { createBattleView } = await import(root + 'ui/battle-view.js?v=mossy-sprites-1');
+      const { createBattleView } = await import(root + 'ui/battle-view.js?v=mossy-sprites-2');
       const { makeEnemy, createBattle } = await import(root + 'battle.js');
       const { createNewGame } = await import(root + 'game-state.js');
       const { loadGameData } = await import(root + 'gamedata.js');
@@ -40,15 +40,15 @@ const base = process.env.BASE_URL ?? 'http://127.0.0.1:8767';
           scheduler: new Scheduler(), store: new LearningStore(memory()), session, onEnd: () => {} }).start();
       };
     });
-    const ids = ['slime', 'exp_mossy_cave_7', 'goblin_boss', 'goblin', 'cave_rat', 'cave_bat', 'slime', 'goblin'];
+    const ids = ['slime', 'exp_mossy_cave_7', 'goblin_boss', 'goblin', 'pollen_bug', 'cave_rat', 'slime', 'goblin'];
     const mount = (dungeonId, enemies = ids) => page.evaluate(([id, list]) => window.spriteFixture(id, list), [dungeonId, enemies]);
     await mount('mossy_cave');
     const enemies = page.locator('.battle-enemies .battle-enemy');
     assert.equal(await enemies.count(), 8);
     const images = page.locator('.battle-enemies .battle-enemy-sprite');
-    assert.equal(await images.count(), 4);
+    assert.equal(await images.count(), 6);
     await images.last().evaluate(image => image.decode());
-    assert.deepEqual(await images.evaluateAll(imgs => imgs.map(img => img.naturalWidth)), [32, 32, 48, 32]);
+    assert.deepEqual(await images.evaluateAll(imgs => imgs.map(img => img.naturalWidth)), [32, 32, 48, 32, 32, 32]);
     assert.match(await enemies.nth(3).locator('.battle-enemy-icon').textContent(), /👺/);
     for (const width of [320, 390]) {
       await page.setViewportSize({ width, height: 844 });
@@ -77,7 +77,7 @@ const base = process.env.BASE_URL ?? 'http://127.0.0.1:8767';
     await page.waitForFunction(() => !document.querySelector('.battle-enemy-sprite'));
     assert.match(await enemies.first().locator('.battle-enemy-icon').textContent(), /👹/);
     assert.deepEqual(errors, []);
-    console.log('Mossy cave: 8 enemies at 320/390px, 3 sprite species, emoji fallback, inspect/HP/weakness/targeting, outside-cave and missing-image fallback passed.');
+    console.log('Mossy cave: 8 enemies at 320/390px, 5 sprite species, emoji fallback, inspect/HP/weakness/targeting, outside-cave and missing-image fallback passed.');
   } finally {
     await browser.close();
   }
