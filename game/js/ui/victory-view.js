@@ -1,4 +1,4 @@
-import { maxHp, maxMp } from '../character.js?v=build36-1';
+import { maxHp, maxMp } from '../character.js?v=basic-skill-levels-1';
 import { expeditionScene } from './scenery.js';
 import { el } from '../dom.js';
 import { portraitIcon } from './portrait.js';

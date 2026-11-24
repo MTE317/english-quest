@@ -3,7 +3,7 @@
 import { GameSession } from '../save.js?v=rune-study-1';
 import { LearningStore } from '../storage.js?v=rune-study-1';
 import { loadGameData } from '../gamedata.js?v=rune-study-1';
-import { gainXp, makeGear } from '../character.js?v=build36-1';
+import { gainXp, makeGear } from '../character.js?v=basic-skill-levels-1';
 import { el, render } from '../dom.js';
 
 const view = document.getElementById('view');

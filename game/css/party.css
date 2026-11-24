@@ -384,3 +384,8 @@
     min-height: 88px;
   }
 }
+
+/* 基本職は前提線のない独立一覧。上位職のツリーは維持する。 */
+.skill-independent .skill-branches { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; background: none; }
+.skill-independent .skill-branch, .skill-independent .skill-branch li { background: none; }
+.skill-independent .skill-branch::before { display: none; }

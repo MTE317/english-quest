@@ -1,6 +1,6 @@
 // 成長：スキルツリーと AP・スキルの枠・共通ツリー・ジョブを極めたボーナス・武器の熟練度・ジョブチェンジ。
 // data に数として書かれていないものは GROWTH_FORMULAS に置く（docs/requests.md で依頼済み）。
-import { gearDef, aptitudeMul, unequip, maxHp, maxMp } from './character.js?v=skill-loadout-3';
+import { gearDef, aptitudeMul, unequip, maxHp, maxMp } from './character.js?v=basic-skill-levels-1';
 
 export const GROWTH_FORMULAS = Object.freeze({
   action_capacity: 10, // 通常スキルの枠（スキルの cost の合計。sim の cap_a）
@@ -60,6 +60,7 @@ export function isLearned(member, skill) {
 }
 /** 同じ枝の一つ前の段階。習得判定と詳細表示で共有する。 */
 export function skillPrerequisite(data, skill) {
+  if (data.jobsById.get(skill.job)?.tier === 'base') return undefined;
   return jobSkills(data, skill.job).find((candidate) => candidate.path === skill.path && candidate.stage === skill.stage - 1);
 }
 /** 覚えられるか → 理由（覚えられるなら ''） */
@@ -83,6 +84,69 @@ export function learnSkill(data, member, skillId) {
     if (!member.masteredJobs.includes(s.job)) member.masteredJobs.push(s.job);
   }
   if (!equipBlock(data, member, s)) equipSkill(data, member, s.id);
+}
+
+// ---------------- 基本職の技能レベル（習得と使用は別に保存） ----------------
+export function skillMaxLevel(skill) { return 1 + (skill.effect?.levels?.length ?? 0); }
+export function learnedSkillLevel(member, skill) {
+  if (!isLearned(member, skill)) return 0;
+  const level = member.skillLevels?.[skill.id];
+  return Number.isInteger(level) ? Math.max(1, Math.min(skillMaxLevel(skill), level)) : 1;
+}
+export function usedSkillLevel(member, skill) {
+  const max = learnedSkillLevel(member, skill);
+  if (!max) return 1;
+  const level = member.skillUseLevels?.[skill.id];
+  return Number.isInteger(level) ? Math.max(1, Math.min(max, level)) : 1;
+}
+/** 元データを変更せず、指定キャラの使用Lvから毎回組み立てる。二重適用しない。 */
+export function effectiveSkill(data, member, skill) {
+  const base = data.skills.get(skill.id) ?? skill;
+  if (!base.effect?.levels) return skill;
+  const level = usedSkillLevel(member, base);
+  const upgrade = base.effect.levels?.[level - 2];
+  if (!upgrade) return base;
+  return { ...base, mp: upgrade.mp, effect: { ...base.effect, ...upgrade.effect } };
+}
+export function upgradeSkillBlock(data, member, skill) {
+  const level = learnedSkillLevel(member, skill);
+  if (!level) return 'まだ覚えていない';
+  const next = skill.effect.levels?.[level - 1];
+  if (!next) return 'これ以上強化できない';
+  const ap = member.ap?.[skill.job] ?? 0;
+  return ap < next.ap ? `${data.jobsById.get(skill.job).name}の AP が ${ap} / ${next.ap}` : '';
+}
+export function upgradeSkill(data, member, skillId) {
+  const skill = data.skills.get(skillId);
+  if (!skill) throw new Error('そのスキルはない');
+  const reason = upgradeSkillBlock(data, member, skill);
+  if (reason) throw new Error(reason);
+  const level = learnedSkillLevel(member, skill);
+  member.ap[skill.job] -= skill.effect.levels[level - 1].ap;
+  member.skillLevels ??= {};
+  member.skillLevels[skillId] = level + 1;
+  // 使用Lvは操作しない。装着中・持出し中でも勝手にMPや効果を変えない。
+}
+export function setSkillUseLevel(data, member, skillId, level) {
+  const skill = data.skills.get(skillId);
+  if (!skill || !Number.isInteger(level) || level < 1 || level > learnedSkillLevel(member, skill)) {
+    throw new Error('習得済みのLvを選んでください');
+  }
+  member.skillUseLevels ??= {};
+  member.skillUseLevels[skillId] = level;
+}
+/** 不明ID/不正なLvを除外。旧セーブは未指定=Lv1、既得のAPや装着は触らない。 */
+export function normalizeSkillLevels(data, member) {
+  for (const key of ['skillLevels', 'skillUseLevels']) {
+    if (!member[key]) continue;
+    const clean = {};
+    for (const [id, value] of Object.entries(member[key])) {
+      const skill = data.skills.get(id);
+      if (!skill || !isLearned(member, skill) || skillMaxLevel(skill) === 1 || !Number.isInteger(value) || value < 1) continue;
+      clean[id] = Math.min(value, key === 'skillLevels' ? skillMaxLevel(skill) : learnedSkillLevel(member, skill));
+    }
+    member[key] = clean;
+  }
 }
 
 // ---------------- スキルの枠（ほかのジョブのスキルも持ち出せる） ----------------
@@ -151,7 +215,7 @@ export function unequipSkill(member, skillId) {
 /** 戦闘で使えるスキル（つけている通常スキル） */
 export function actionSkills(data, member) {
   const lo = member.loadout ?? ensureLoadout(data, member);
-  return lo.actions.map((id) => data.skills.get(id)).filter(Boolean);
+  return lo.actions.map((id) => data.skills.get(id)).filter(Boolean).map((skill) => effectiveSkill(data, member, skill));
 }
 
 // ---------------- 共通ツリー ----------------

@@ -8,8 +8,8 @@
 //
 // 式・効果の上限は data/balance.json から読む。BATTLE_FORMULAS は旧データ向けの既定値。
 import { evaluate } from './expr.js';
-import { computeStats, gearDef, weaponPower, maxHp, maxMp, gearEffects, affixSum } from './character.js?v=build36-1';
-import { actionSkills, memberMods, addMasteryKill } from './growth.js?v=build36-1';
+import { computeStats, gearDef, weaponPower, maxHp, maxMp, gearEffects, affixSum } from './character.js?v=basic-skill-levels-1';
+import { actionSkills, memberMods, addMasteryKill, effectiveSkill } from './growth.js?v=basic-skill-levels-1';
 import { encounterMonsters, learnMonsterElements, hitEffectiveness } from './monster-knowledge.js';
 
 /** balance.json にまだ式がないもの（sim と同じ） */
@@ -495,6 +495,7 @@ function isMagicSkill(s) {
 
 /** スキルを今使えるか → 使えない理由（使えるなら ''） */
 export function skillMp(data, member, skill) {
+  skill = effectiveSkill(data, member, skill);
   const rate = data.balance.mp_rules?.skill_mp_per_lv ?? 0;
   const elements = skill.effect?.element ? [skill.effect.element] : skill.elements?.length ? skill.elements : ['none'];
   const neutralMagic = skill.kind === 'attack' && skill.effect?.base === 'mag'
@@ -1054,6 +1055,7 @@ function putBuff(buffs, key, value, turns) {
 
 // ---------------- スキル ----------------
 function doSkill(data, game, b, i, s, target, cm, normalSkillReady = false) {
+  s = effectiveSkill(data, game.party[i], s);
   const m = game.party[i];
   const a = b.allies[i];
   const block = skillBlock(data, game, b, i, s);

@@ -1,4 +1,4 @@
-import { gainXp } from './character.js?v=build36-1';
+import { gainXp } from './character.js?v=basic-skill-levels-1';
 
 // 短時間で学べる訓練場。問題の種類と教材カテゴリーの選択はUIと共通で扱う。
 export const TRAINING_COUNTS = Object.freeze([5, 10, 15]);

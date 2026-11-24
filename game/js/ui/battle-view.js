@@ -3,8 +3,9 @@ import { now } from '../storage.js?v=rune-study-1';
 import { QuestionPicker, REASON_LABEL } from '../picker.js';
 import { makePracticeQuestion, questionDirection, questionSpeech, DIRECTION } from '../quiz.js?v=question-speech-1';
 import { speak, canSpeak, stopSpeech } from '../speech.js?v=music-suite-1';
-import { nextTurn, actionOptions, setPending, prepareQuizAction, resolvePending, targetKind, canAct, skillMp, collectBattleHits, enemyIntent, enemyCanAct } from '../battle.js?v=systems-v1';
-import { maxHp, maxMp } from '../character.js?v=build36-1';
+import { nextTurn, actionOptions, setPending, prepareQuizAction, resolvePending, targetKind, canAct, skillMp, collectBattleHits, enemyIntent, enemyCanAct } from '../battle.js?v=basic-skill-levels-1';
+import { skillMaxLevel, usedSkillLevel } from '../growth.js?v=basic-skill-levels-1';
+import { maxHp, maxMp } from '../character.js?v=basic-skill-levels-1';
 import { el, render } from '../dom.js';
 import { expeditionScene } from './scenery.js';
 import { monsterKnowledge } from '../monster-knowledge.js';
@@ -257,7 +258,7 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
     if (sub === 'skill' || sub === 'item') {
       const isSkill = sub === 'skill';
       const choices = isSkill
-        ? opts.skills.map(({ skill, reason }) => listChoice(skill.name, `MP ${skillMp(data, member, skill)}`, reason,
+        ? opts.skills.map(({ skill, reason }) => listChoice(skillMaxLevel(skill) > 1 ? `${skill.name} Lv${usedSkillLevel(member, skill)}` : skill.name, `MP ${skillMp(data, member, skill)}`, reason,
           () => choose({ type: 'skill', skillId: skill.id }), reason))
         : opts.items.map(({ item, count, reason }) => listChoice(item.name, `×${count}`, reason || item.description,
           () => choose({ type: 'item', itemId: item.id }), reason));
