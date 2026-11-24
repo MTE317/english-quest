@@ -28,5 +28,33 @@ const runSave=await page.evaluate(()=>{const s=JSON.parse(localStorage.getItem('
 await page.addInitScript(s=>localStorage.setItem('englishQuest.save.v2',s),runSave);
 await page.reload();await page.getByRole('button').filter({hasText:'black_mage'}).first().click();await page.getByRole('button',{name:'スキル装備',exact:true}).click();await page.getByRole('button',{name:/炎弾/}).click();
 if(!await page.getByLabel('スキルの使用レベル').isDisabled())throw Error('遠征中にLv変更可');
+// 通常の戦闘画面を本体のviewで描画し、実際の正答ボタンから精算まで通す。
+await page.evaluate(async()=>{
+ const {loadGameData}=await import('/game/js/gamedata.js?v=rune-study-1');
+ const {createBattle,makeEnemy}=await import('/game/js/battle.js?v=basic-skill-levels-1');
+ const {createBattleView}=await import('/game/js/ui/battle-view.js?v=basic-skill-levels-1');
+ const {loadLearningCatalog}=await import('/game/js/learning-catalog.js?v=learning-00-v1');
+ const {loadJson}=await import('/game/js/data.js?v=features-2');
+ const {Scheduler}=await import('/game/js/srs.js?v=stability-1');
+ const {LearningStore}=await import('/game/js/storage.js?v=stability-1');
+ const {GameSession}=await import('/game/js/save.js?v=rune-study-1');
+ const memory=()=>{const m=new Map();return {getItem:k=>m.get(k)??null,setItem:(k,v)=>m.set(k,v),removeItem:k=>m.delete(k)};};
+ const data=await loadGameData(),lex=(await loadLearningCatalog()).lexicon;
+ const g=JSON.parse(localStorage.getItem('englishQuest.save.v2')).game;
+ g.party[0].mp=5;g.party[0].skillUseLevels.black_mage_p1_s1=1;
+ const session=new GameSession({storage:memory()});session.startNew(g);
+ session.enterDungeon({dungeonId:'mossy_cave',stoneId:lex.stones[0].id,floor:1,state:'battle'});
+ const enemy=makeEnemy(data,'goblin',{lv:1});enemy.hp=enemy.maxHp=100000;enemy.evasion=0;
+ const b=createBattle(data,session.game,{enemies:[enemy],seed:1217071});b.round=1;b.turn={side:'ally',i:0};b.queue=[{side:'ally',i:1}];session.setBattle(b);
+ window.__skillRegression={session,b:session.run.battle};
+ createBattleView({view:document.getElementById('view'),data,lex,scheduler:new Scheduler((await loadJson('srs.json')).data),store:new LearningStore(memory()),session,onEnd:()=>{}}).start();
+});
+await page.getByRole('button',{name:'スキル',exact:true}).click();
+const low=page.getByRole('button',{name:/炎弾 Lv1.*MP 4/});if(!await low.isEnabled())throw Error('使用Lv1を実行できない');await low.click();
+const answer=await page.evaluate(()=>window.__skillRegression.b.pending.question.answerIndex);
+await page.locator('.battle-answers button').nth(answer).click();
+const result=await page.evaluate(()=>({mp:window.__skillRegression.session.game.party[0].mp,hp:window.__skillRegression.b.enemies[0].hp,level:window.__skillRegression.session.game.party[0].skillLevels.black_mage_p1_s1}));
+if(result.mp!==1||result.hp>=100000||result.level!==3)throw Error('戦闘精算不一致: '+JSON.stringify(result));
+console.log('通常戦闘画面: 習得Lv3/使用Lv1、MP5でMP4技が選択可能、正答後MP1・ダメージ発生・習得Lv3保持');
 console.log('UI: 独立一覧・遠征中Lv変更不可・2回強化・使用Lv据置・Lv3選択・効果/MP・再読込・Lv1選択 成功');
 await browser.close();if(errors.length)throw Error(errors.join('\n'));})();

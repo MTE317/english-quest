@@ -144,3 +144,16 @@ test('同じ持出し技を別キャラが実行しても使用Lvは独立。高
   assert.match(actionOptions(data,copy,b,0).skills.find(x=>x.skill.id===skill.id).reason,/MP/);
   resolve(copy,b);assert.equal(m.mp,mp);assert.equal(b.enemies[0].hp,hp);
 });
+
+test('習得Lv3から使用Lv1へ下げた時、Lv1分だけのMPで候補・実行・精算が一致', () => {
+  const skill=data.skills.get('black_mage_p1_s1'),game=trained(skill,3),m=game.party[0];
+  const highCost=skillMp(data,m,skill);setSkillUseLevel(data,m,skill.id,1);
+  const lowCost=skillMp(data,m,skill);assert.ok(highCost>lowCost+1);
+  m.mp=lowCost+1;assert.ok(m.mp<highCost);
+  const before=m.mp,b=battle(game,skill),option=actionOptions(data,game,b,0).skills.find(x=>x.skill.id===skill.id);
+  assert.equal(option.reason,'');assert.equal(option.skill.effect.m,1.7);
+  const control=trained(skill,1),controlBattle=battle(control,skill);
+  resolve(control,controlBattle);resolve(game,b);
+  assert.equal(m.mp,before-lowCost);assert.equal(b.enemies[0].hp,controlBattle.enemies[0].hp);
+  assert.equal(learnedSkillLevel(m,skill),3);assert.equal(usedSkillLevel(m,skill),1);
+});
