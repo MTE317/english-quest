@@ -4,7 +4,7 @@ import { createNewGame } from '../js/game-state.js';
 import { LearningStore } from '../js/storage.js';
 import { Scheduler } from '../js/srs.js';
 import { recordChant } from '../js/chant.js';
-import { makeTrainingPicker, trainingChunksForSet, applyTrainingAnswer, shouldShowChunkHint } from '../js/training.js';
+import { makeTrainingPicker, trainingChunksForSet, applyTrainingAnswer, shouldShowChunkHint, resolveTrainingMode } from '../js/training.js';
 import { learningStatistics } from '../js/learning-stats.js';
 import { promotionProgress, promotionExamState, makePromotionExam,
   recordPromotionPart, scorePhraseGrades } from '../js/promotion.js';
@@ -24,6 +24,26 @@ const d0 = sch.dayOf(T0);
 function learnedRec() {
   return sch.reviewGrade(sch.reviewGrade(null, 4, T0), 4, T0 + 16 * DAY);
 }
+
+test('瞬間英作文の通常とチャンク集中が、画面選択と出題表示で一致する', () => {
+  const candidate = catalog.phrases.find((phrase) => phrase.chunkId);
+  assert.ok(candidate);
+  for (const [selectedMode, phraseMode, expectedMode, showChunk] of [
+    ['phrases', 'normal', 'phrases', false],
+    ['phrases', 'chunks', 'chunks', true],
+    ['words', 'chunks', 'words', false],
+    ['review', 'chunks', 'review', false],
+  ]) {
+    const mode = resolveTrainingMode(selectedMode, phraseMode);
+    assert.equal(mode, expectedMode);
+    assert.equal(shouldShowChunkHint(mode, candidate), showChunk);
+  }
+  const normalMode = resolveTrainingMode('phrases', 'normal');
+  const normal = makeTrainingPicker(catalog, new LearningStore(new MemoryStorage()),
+    fresh(), sch, d0, { mode: normalMode, setId: '00', chunkId: candidate.chunkId, rng: seededRng(14) });
+  assert.equal(normal.size, 328, '通常モードは以前選んだチャンクIDで絞り込まれない');
+  assert.ok(normal.next());
+});
 
 test('通常の瞬間英作文はチャンク表示をせず、同じチャンクが続かないよう未学習文を出題する', () => {
   const store = new LearningStore(new MemoryStorage());

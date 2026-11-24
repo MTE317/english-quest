@@ -1,5 +1,5 @@
 import { makeQuestion } from '../quiz.js?v=question-speech-1';
-import { makeTrainingPicker, applyTrainingAnswer, shouldShowChunkHint } from '../training.js?v=basic-skill-levels-1';
+import { makeTrainingPicker, applyTrainingAnswer, shouldShowChunkHint } from '../training.js?v=training-start-top-1';
 import { recordChant } from '../chant.js?v=stability-1';
 import { now } from '../storage.js?v=stability-1';
 import { speak, canSpeak, stopSpeech } from '../speech.js?v=music-suite-1';
@@ -7,6 +7,7 @@ import { el, render } from '../dom.js';
 
 const WORD_GRADES = [[1, '×', 'わからない'], [3, '〇', 'わかる'], [4, '◎', '簡単']];
 const REASONS = { due: '期限が来た復習', retry: '苦手問題', new: '新規学習', practice: '練習' };
+const MODE_LABELS = { words: '単語・熟語', phrases: '通常の英作文', chunks: 'チャンク集中', review: '復習' };
 
 export function runTrainingSession({ view, catalog, store, session, scheduler, data,
   chantConfig, options, onFinish }) {
@@ -45,7 +46,7 @@ export function runTrainingSession({ view, catalog, store, session, scheduler, d
   function header(entry) {
     return el('div', { class: 'progress quiz-progress' },
       el('span', {}, '訓練場 ' + (answered + 1) + ' / ' + options.count),
-      el('span', {}, REASONS[entry.reason] ?? '学習中'));
+      el('span', {}, [MODE_LABELS[options.mode], REASONS[entry.reason] ?? '学習中'].filter(Boolean).join('・')));
   }
   function wordQuestion(entry) {
     const word = entry.item;
