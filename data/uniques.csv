@@ -1,10 +1,10 @@
 ﻿id,name,slot,kind,armor_weight,item_lv,star,source,drop_rate,fixed_effects
-u_goblin_boss,ゴブリン親分の拳,weapon,fist,,11,1,goblin_boss,0.15,STR:4|CRT:4|MAG:4|経験値:8
+u_goblin_boss,岩窟のグラムの拳,weapon,fist,,11,1,goblin_boss,0.15,STR:4|CRT:4|MAG:4|経験値:8
 u_stone_giant,石の巨人の兜,head,,heavy,21,2,stone_giant,0.15,HP:33|STATUS_RES:6|DEF:6|経験値:8
 u_storm_eagle,嵐の大鷲の大剣,weapon,greatsword,,31,3,storm_eagle,0.15,STR:7|MAG:7|SPD:7|状態異常付与:poison:15
 u_abyssal_kraken,深淵のクラーケンの鞭,weapon,whip,,41,4,abyssal_kraken,0.15,CRT:8|SPD:8|STR:8|MP節約:15
 u_black_dragon,火山の主・黒竜のお守り,accessory,charm,,51,5,black_dragon,0.15,SPD:9|LUK:9|STR:9|瀕死で耐える:1
-u_grove_guardian,大樹の守り手の楽器,weapon,instrument,,11,1,grove_guardian,0.15,CRT:4|SPD:4|STR:4|全体化:通常攻撃の20%
+u_grove_guardian,大樹のエルダの楽器,weapon,instrument,,11,1,grove_guardian,0.15,CRT:4|SPD:4|STR:4|全体化:通常攻撃の20%
 u_marsh_hydra,湿原の大蛇の銃,weapon,gun,,21,2,marsh_hydra,0.15,STR:6|MAG:6|LUK:6|瀕死で耐える:1
 u_forbidden_keeper,禁書の番人の指輪,accessory,ring,,31,3,forbidden_keeper,0.15,SPD:7|LUK:7|MAG:7|属性付与:dark
 u_steam_colossus,蒸気の巨兵の弓,weapon,bow,,41,4,steam_colossus,0.15,STR:8|SPD:8|CRT:8|毎ターンHP回復:3
@@ -12,8 +12,8 @@ u_silver_wyrm,白銀の古竜の腕輪,accessory,bracelet,,51,5,silver_wyrm,0.15
 u_twisted_tunnel_boss,白き大蟻の拳,weapon,fist,,11,1,twisted_tunnel_boss,0.15,SPD:4|MAG:4|CRT:4|状態異常付与:blind:15
 u_goblin_quarry_boss,王たる呪い師の革鎧,body,,medium,11,1,goblin_quarry_boss,0.15,DEF:4|RES:4|HP:26|MP節約:15
 u_blooming_hill_boss,千年の月の妖精のマント,cloak,,,11,1,blooming_hill_boss,0.15,EVA:4|FIRST_SPD:4|MAGIC_CUT:4|反撃:10
-u_bounty_01_1,血塗れの槍兵の革の帽子,head,,medium,11,1,bounty_01_1,0.5,HP:26|DEF:4|STATUS_RES:4|先制:20
-u_bounty_01_2,鉄牙の大蜘蛛の革鎧,body,,medium,11,1,bounty_01_2,0.5,RES:4|HP:26|DEF:4|HP吸収:5
+u_bounty_01_1,血槍のヴァルドの革の帽子,head,,medium,11,1,bounty_01_1,0.5,HP:26|DEF:4|STATUS_RES:4|先制:20
+u_bounty_01_2,鉄牙のアラネアの革鎧,body,,medium,11,1,bounty_01_2,0.5,RES:4|HP:26|DEF:4|HP吸収:5
 u_bounty_01_3,鉄牙の茨の蔓のマント,cloak,,,11,1,bounty_01_3,0.5,MAGIC_CUT:4|FIRST_SPD:4|EVA:4|全体化:通常攻撃の20%
 u_bounty_01_4,百足の獅子のローブ,body,,light,11,1,bounty_01_4,0.5,DEF:4|HP:26|RES:4|HP吸収:5
 u_roadside_well_boss,千年のスライムの杖,weapon,staff,,21,2,roadside_well_boss,0.15,LUK:6|MAG:6|SPD:6|属性付与:water
