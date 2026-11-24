@@ -203,3 +203,13 @@ body:has(.guild-view) {
   .quest-ui #facility-list .town-card strong { font-size: .75rem; line-height: 1.4; }
   .quest-ui #facility-list .town-card-detail { display: none; }
 }
+
+/* 工房の3窓口を共通のアイコン一覧と詳細で操作する。 */
+.quest-ui .workshop-tabs { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.workshop-filters { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.workshop-filters > label, .workshop-filters select { min-width: 0; }
+.workshop-grid { max-height: 32rem; }
+@media (max-width: 650px) {
+  .workshop-grid { max-height: 20rem; }
+  .quest-ui .workshop-tabs button { font-size: .8rem; padding-inline: 4px; }
+}

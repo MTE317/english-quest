@@ -13,7 +13,7 @@ import { maxHp, maxMp, gearDef } from '../character.js?v=basic-skill-levels-1';
 import { availableJobs, changeJob } from '../growth.js?v=basic-skill-levels-1';
 import { explorationStories, acceptExplorationStory, reportExplorationStory } from '../exploration-story.js?v=basic-skill-levels-1';
 import { cureAtTemple, recordStoredMaterials } from '../temple.js?v=systems-v1';
-import { workshopView, managementView, templeExtras } from '../ui/facility-view.js?v=basic-skill-levels-1';
+import { workshopView, managementView, templeExtras } from '../ui/facility-view.js?v=workshop-tabs-1';
 import { itemShopView, gearShopView } from '../ui/town-shops.js?v=basic-skill-levels-1';
 import { weaponIcon } from '../ui/weapon-icons.js';
 import { equipmentIcon } from '../ui/equipment-icons.js';

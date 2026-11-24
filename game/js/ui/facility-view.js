@@ -5,6 +5,7 @@ import { borrow, repayLoan, loanLimit } from '../town.js?v=basic-skill-levels-1'
 import { unlockJob, jobDiscoveryProgress, offeringRevealed } from '../temple.js?v=systems-v1';
 import { describeFixedEffects, effectLabel, describeEffect } from '../equipment-effects.js?v=build36-1';
 import { equipmentIcon } from './equipment-icons.js';
+import { uiIcon } from './pixel-icons.js';
 
 const heading = (text) => el('h2', {}, text);
 const btn = (text, onclick, disabled = false) => el('button', { onclick, disabled }, text);
@@ -24,72 +25,108 @@ export function workshopView(data, g, act, rng, selection) {
       && Number(data.recipes.find((r) => r.id === def.id)?.workshop_rank ?? def.star) <= (g.facilities[facility] ?? 1);
   });
   const alchemy = data.alchemyRecipes.filter((recipe) => Number(recipe.workshop_rank) <= g.facilities.item_shop);
-  const deck = el('div');
+  const deck = el('section', { class: 'workshop-view' });
   const categoryOf = (def) => ['head', 'body', 'arm'].includes(def.slot) ? 'armor' : def.slot;
   const craftCategories = [['weapon', '武器'], ['armor', '防具'], ['cloak', 'マント'], ['accessory', 'アクセサリー']];
+  function iconCatalog(entries, selectedId, choose, details, empty) {
+    if (!entries.length) return el('p', { class: 'shop-detail muted' }, empty);
+    return el('div', { class: 'shop-layout workshop-layout' },
+      el('div', { class: 'shop-grid workshop-grid', role: 'group', 'aria-label': '選択する一覧' },
+        entries.map(entry => el('button', {
+          type: 'button', class: 'shop-slot', 'data-workshop-item': entry.id,
+          'data-rarity': entry.rarity ?? 'common',
+          'aria-pressed': String(entry.id === selectedId),
+          'aria-label': [entry.name, entry.caption].filter(Boolean).join('、'),
+          onclick: () => { choose(entry.id); redraw(); deck.querySelector('.workshop-grid [aria-pressed="true"]')?.focus({ preventScroll: true }); },
+        }, el('span', { class: 'shop-item-icon', 'aria-hidden': 'true' }, entry.icon()),
+        el('span', { class: 'shop-slot-name' }, entry.name),
+        el('span', { class: 'shop-slot-count' }, entry.caption)))),
+      el('section', { class: 'shop-detail workshop-detail', 'aria-label': '選択した内容の詳細' }, details));
+  }
+
   function redraw() {
-    const selectedBrew = alchemy.find((recipe) => recipe.id === selection.brew) ?? alchemy[0];
-    const gear = g.storage.gear.find((item) => item.uid === selection.gear) ?? g.storage.gear[0];
+    const tabs = [['craft', '制作'], ['gear', '倉庫の装備（強化）'], ['alchemy', '調合台']];
+    if (!tabs.some(([id]) => id === selection.tab)) selection.tab = 'craft';
+    const switcher = el('div', { class: 'district-switch workshop-tabs', role: 'group', 'aria-label': '工房の窓口' },
+      tabs.map(([id, title]) => el('button', { type: 'button', 'data-workshop-tab': id,
+        'aria-pressed': String(selection.tab === id), onclick: () => {
+          selection.tab = id; redraw();
+          deck.querySelector('.workshop-tabs [aria-pressed="true"]')?.focus({ preventScroll: true });
+        },
+      }, title)));
+    if (selection.tab === 'gear') {
+      const gear = g.storage.gear.find(item => item.uid === selection.gear) ?? g.storage.gear[0];
+      selection.gear = gear?.uid;
+      render(deck, switcher, iconCatalog(g.storage.gear.map(item => {
+        const def = data.equipment.get(item.id);
+        const rarity = data.rarityTable.find(r => r.id === item.rarity)?.name ?? item.rarity ?? 'コモン';
+        return { id: String(item.uid), name: `${def?.name ?? item.id}${item.enh > 0 ? ' +' + item.enh : ''}`,
+          rarity: item.rarity, caption: rarity, icon: () => equipmentIcon(def) ?? uiIcon('gear') };
+      }), gear ? String(gear.uid) : '', id => { selection.gear = g.storage.gear.find(item => String(item.uid) === id)?.uid; },
+      gear ? gearOptions(gear) : [], '倉庫に装備がありません。'));
+      return;
+    }
+    if (selection.tab === 'alchemy') {
+      const recipe = alchemy.find(r => r.id === selection.brew) ?? alchemy[0];
+      selection.brew = recipe?.id;
+      const item = recipe ? data.items.get(recipe.result) : null;
+      render(deck, switcher, iconCatalog(alchemy.map(r => ({
+        id: r.id, name: data.items.get(r.result)?.name ?? r.result,
+        caption: `完成 ${r.qty}個`, icon: () => uiIcon('items'),
+      })), recipe?.id, id => { selection.brew = id; }, recipe ? [
+        el('header', {}, uiIcon('items'), heading(item?.name ?? recipe.result)),
+        item?.description ? el('p', { class: 'shop-description' }, item.description) : null,
+        el('p', { class: 'small' }, `調合費：${recipe.gold} G（所持：${g.gold} G）`),
+        el('p', { class: 'small muted' }, `必要素材：${recipe.materials}`),
+        el('p', { class: 'small' }, `完成 ${recipe.qty}個 ／ 所持 ${g.items[recipe.result] ?? 0}個`),
+        btn('調合する', () => act(game => brew(data, game, recipe))),
+      ] : [], '作れるレシピがありません。'));
+      return;
+    }
     const mode = selection.craftMode ?? 'special';
     const category = selection.craftCategory ?? 'weapon';
     const star = selection.craftStar ?? 'all';
-    const filtered = usableDefs.filter((def) =>
+    const filtered = usableDefs.filter(def =>
       Boolean(def.recipeId) === (mode === 'special')
       && categoryOf(def) === category && (star === 'all' || def.star === Number(star)))
       .sort((a, b) => a.itemLv - b.itemLv || a.name.localeCompare(b.name, 'ja'));
-    const selectedDef = filtered.find((def) => def.id === selection.recipe) ?? filtered[0];
-    const selectedIcon = equipmentIcon(selectedDef);
-    const recipe = data.recipes.find((r) => r.id === selectedDef?.id);
-    const needs = recipe ? String(recipe.materials).split('|').filter(Boolean).map((token) => {
-      const [id, count] = token.split(':');
-      return { id, count: Number(count), name: data.materials.get(id)?.name ?? id, have: g.storage.materials[id] ?? 0 };
-    }) : [];
+    const selectedDef = filtered.find(def => def.id === selection.recipe) ?? filtered[0];
+    selection.recipe = selectedDef?.id;
+    const recipe = data.recipes.find(r => r.id === selectedDef?.id);
+    const needs = recipe ? parseAmounts(recipe.materials).map(({ id, count }) => ({
+      id, count, name: data.materials.get(id)?.name ?? id, have: g.storage.materials[id] ?? 0,
+    })) : [];
     const canMake = Boolean(selectedDef) && (recipe
-      ? g.gold >= Number(recipe.gold) && needs.every((m) => m.have >= m.count)
-        && (!recipe.derive_from || g.storage.gear.some((it) => it.id === recipe.derive_from && it.crafted))
+      ? g.gold >= Number(recipe.gold) && needs.every(m => m.have >= m.count)
+        && (!recipe.derive_from || g.storage.gear.some(it => it.id === recipe.derive_from && it.crafted))
       : true);
-    render(deck,
-      heading('制作'),
-      select('制作方法', [['special', '専用レシピ'], ['standard', '通常制作']],
-        (value) => { selection.craftMode = value; selection.recipe = null; redraw(); }, mode),
-      select('装備種別', craftCategories,
-        (value) => { selection.craftCategory = value; selection.recipe = null; redraw(); }, category),
-      select('★', [['all', 'すべて'], ...Array.from({ length: 12 }, (_, i) => [String(i + 1), `★${i + 1}`])],
-        (value) => { selection.craftStar = value; selection.recipe = null; redraw(); }, star),
+    render(deck, switcher,
+      el('div', { class: 'workshop-filters' },
+        select('制作方法', [['special', '専用レシピ'], ['standard', '通常制作']],
+          value => { selection.craftMode = value; selection.recipe = null; redraw(); }, mode),
+        select('装備種別', craftCategories,
+          value => { selection.craftCategory = value; selection.recipe = null; redraw(); }, category),
+        select('★', [['all', 'すべて'], ...Array.from({ length: 12 }, (_, i) => [String(i + 1), `★${i + 1}`])],
+          value => { selection.craftStar = value; selection.recipe = null; redraw(); }, star)),
       el('p', { class: 'muted small' }, `条件に合う制作候補：${filtered.length}件（施設ランクで解放）`),
-      selectedDef ? [
-        select('装備', filtered.map((def) => [def.id, `★${def.star} ${def.name}（Lv${def.itemLv}）`]),
-          (id) => { selection.recipe = id; redraw(); }, selectedDef.id),
-        selectedIcon ? el('p', { class: 'gear-with-icon' },
-          selectedIcon, el('span', {}, selectedDef.name)) : null,
-        selectedDef.recipeDescription ? el('p', { class: 'small' }, selectedDef.recipeDescription) : null,
+      iconCatalog(filtered.map(def => ({ id: def.id, name: def.name, caption: `★${def.star} ／ Lv${def.itemLv}`,
+        icon: () => equipmentIcon(def) ?? uiIcon('gear') })),
+      selectedDef?.id, id => { selection.recipe = id; }, selectedDef ? [
+        el('header', {}, equipmentIcon(selectedDef) ?? uiIcon('gear'), heading(selectedDef.name)),
+        selectedDef.recipeDescription ? el('p', { class: 'shop-description' }, selectedDef.recipeDescription) : null,
         selectedDef.slot === 'weapon' ? el('p', { class: 'small muted' },
           `武器特性：${data.weaponTypes.get(selectedDef.kind)?.feature ?? 'なし'}`) : null,
         describeFixedEffects(data, selectedDef) ? el('p', { class: 'small' },
           `固定効果：${describeFixedEffects(data, selectedDef)}`) : null,
         recipe ? [
           el('p', { class: 'small' }, `制作費：${recipe.gold} G（所持：${g.gold} G）`),
-          ...needs.map((m) => el('p', { class: 'small muted' },
-            `${m.name} ×${m.count}（所持：${m.have}）`)),
+          needs.map(m => el('p', { class: 'small muted' }, `${m.name} ×${m.count}（所持：${m.have}）`)),
           recipe.derive_from ? el('p', { class: 'small muted' },
             `派生元：${data.equipment.get(recipe.derive_from)?.name ?? recipe.derive_from}（制作済みの現物を消費）`) : null,
         ] : el('p', { class: 'small muted' },
           `${data.economy.get(selectedDef.star).craft_gold} G・★${selectedDef.star}以上の通常素材4個`),
-        btn('制作する', () => act((game) => craft(data, game, selectedDef)), !canMake),
-      ] : el('p', { class: 'muted' }, 'この条件で作れる装備はありません。施設ランクか絞り込みを確認してください。'),
-      heading('倉庫の装備'),
-      gear ? [
-        select('加工する装備', g.storage.gear.map((item) => [String(item.uid), `${data.equipment.get(item.id)?.name ?? item.id} +${item.enh}`]),
-          (id) => { selection.gear = g.storage.gear.find((x) => String(x.uid) === id).uid; redraw(); }, String(gear.uid)),
-        gearOptions(gear),
-      ] : el('p', {}, '倉庫に装備がありません。'),
-      heading('調合台'),
-      selectedBrew ? [
-        select('レシピ', alchemy.map((r) => [r.id, data.items.get(r.result)?.name ?? r.result]),
-          (id) => { selection.brew = id; redraw(); }, selectedBrew.id),
-        el('p', { class: 'small muted' }, `${selectedBrew.gold} G・${selectedBrew.materials}・完成 ${selectedBrew.qty}個`),
-        btn('調合する', () => act((game) => brew(data, game, selectedBrew))),
-      ] : el('p', {}, '作れるレシピがありません。'));
+        btn('制作する', () => act(game => craft(data, game, selectedDef)), !canMake),
+      ] : [], 'この条件で作れる装備はありません。施設ランクか絞り込みを確認してください。'));
   }
 
   function gearOptions(item) {
