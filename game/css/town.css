@@ -172,3 +172,9 @@ body:has(.guild-view) {
 @media (max-width: 650px) {
   .temple-job-grid { max-height: 20rem; }
 }
+
+/* 倉庫もショップと同じアイコン一覧＋詳細。 */
+.quest-ui .storage-tabs { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.storage-sort { display: block; margin-top: 10px; font-size: .85rem; }
+.storage-grid { max-height: 32rem; }
+@media (max-width: 650px) { .storage-grid { max-height: 20rem; } }
