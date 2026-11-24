@@ -1,12 +1,20 @@
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { parseCsv, stripBom } from '../js/csv.js';
-import { buildLexicon } from '../js/lexicon.js';
+import { buildLearningCatalog } from '../js/learning-catalog.js';
 
 export const dataPath = (name) => fileURLToPath(new URL(`../../data/${name}`, import.meta.url));
 export const readCsv = (name) => parseCsv(readFileSync(dataPath(name), 'utf8'));
 export const readJson = (name) => JSON.parse(stripBom(readFileSync(dataPath(name), 'utf8')));
-export const realLexicon = () => buildLexicon(readCsv('rune_stones.csv').rows, readCsv('lexicon.csv').rows);
+export const realLearningCatalog = () => buildLearningCatalog({
+  words: readCsv('learning/v1/words.csv').rows,
+  phrases: readCsv('learning/v1/phrases.csv').rows,
+  chunks: readCsv('learning/v1/chunks.csv').rows,
+  categories: readCsv('learning/v1/categories.csv').rows,
+  wordCategories: readCsv('learning/v1/word_categories.csv').rows,
+  phraseCategories: readCsv('learning/v1/phrase_categories.csv').rows,
+});
+export const realLexicon = () => realLearningCatalog().lexicon;
 
 export class MemoryStorage {
   constructor() { this.m = new Map(); }

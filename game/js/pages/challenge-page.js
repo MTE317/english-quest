@@ -1,7 +1,7 @@
 import { loadGameData } from '../gamedata.js?v=rune-study-1';
-import { loadCsv, loadJson, loadOptional } from '../data.js?v=features-2';
+import { loadJson, loadOptional } from '../data.js?v=features-2';
 import { splitList } from '../csv.js';
-import { buildLexicon } from '../lexicon.js';
+import { loadLearningCatalog } from '../learning-catalog.js?v=learning-v1-1';
 import { Scheduler } from '../srs.js?v=features-2';
 import { LearningStore, now } from '../storage.js?v=rune-study-1';
 import { GameSession } from '../save.js?v=rune-study-1';
@@ -214,11 +214,11 @@ function draw() {
 }
 
 (async () => {
-  const [gd, stones, words, srs, arenaFile, t, m, s] = await Promise.all([
-    loadGameData(), loadCsv('rune_stones.csv'), loadCsv('lexicon.csv'), loadJson('srs.json'), loadJson('arena.json'),
+  const [gd, catalog, srs, arenaFile, t, m, s] = await Promise.all([
+    loadGameData(), loadLearningCatalog(), loadJson('srs.json'), loadJson('arena.json'),
     loadOptional('arena_tiers.csv'), loadOptional('arena_battles.csv'), loadOptional('arena_shop.csv'),
   ]);
-  data = gd; lex = buildLexicon(stones.rows, words.rows); scheduler = new Scheduler(srs.data); config = arenaFile.data;
+  data = gd; lex = catalog.lexicon; scheduler = new Scheduler(srs.data); config = arenaFile.data;
   tiers = t?.rows ?? []; matches = m?.rows ?? []; shop = s?.rows ?? [];
   if (session.game && !session.readOnly) {
     normalizeGame(data, session.game, session.run);

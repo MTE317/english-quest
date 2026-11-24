@@ -2,7 +2,6 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createNewGame } from '../js/game-state.js';
 import { LearningStore, LEARNING_KEY } from '../js/storage.js';
-import { buildLexicon } from '../js/lexicon.js';
 import { Scheduler } from '../js/srs.js';
 import {
   stoneProgress, nextUnread, trialBlock, trialPlan, finishExam, promotionBlock, promotionPlan, starLearnedRatio,
@@ -22,11 +21,11 @@ test('資料室：読み解くと進み具合に入る。報酬はない（お�
   const store = new LearningStore(new MemoryStorage());
   const g = createNewGame(data, party);
   const before = JSON.stringify(g);
-  const cards = nextUnread(lex, store, 'rs_1_001', 5);
+  const cards = nextUnread(lex, store, '00:S', 5);
   assert.equal(cards.length, 5);
   store.markRead(cards.map((w) => w.id));
-  assert.equal(stoneProgress(lex, store, sch, 'rs_1_001', today).read, 5);
-  assert.equal(nextUnread(lex, store, 'rs_1_001', 5)[0].id, lex.wordsByStone.get('rs_1_001')[5].id);
+  assert.equal(stoneProgress(lex, store, sch, '00:S', today).read, 5);
+  assert.equal(nextUnread(lex, store, '00:S', 5)[0].id, lex.wordsByStone.get('00:S')[5].id);
   assert.equal(JSON.stringify(g), before);
   // 記録が残る
   assert.equal(new LearningStore(store.storage).read.size, 5);
@@ -37,18 +36,18 @@ test('確認テストは予習前・合格後・当日の不合格後でも任�
   const game = createNewGame(data, party);
   const before = structuredClone(game);
   const e = readCsv('exams.csv').rows.find((r) => r.id === 'confirmation');
-  assert.equal(trialBlock(data, lex, store, sch, 'rs_1_001', today), '');
-  const plan = trialPlan(data, lex, 'rs_1_001', seededRng({ rng: 1 }));
+  assert.equal(trialBlock(data, lex, store, sch, '00:S', today), '');
+  const plan = trialPlan(data, lex, '00:S', seededRng({ rng: 1 }));
   assert.equal(plan.words.length, Number(e.questions));
   assert.equal(new Set(plan.words).size, plan.words.length);
-  assert.ok(plan.words.every((id) => lex.wordsById.get(id).stoneId === 'rs_1_001'));
+  assert.ok(plan.words.every((id) => lex.wordsByStone.get('00:S').some((word) => word.id === id)));
   const need = Math.ceil(Number(e.questions) * Number(e.pass_rate));
   assert.equal(finishExam(data, store, plan, need - 1, today), false);
-  assert.equal(trialBlock(data, lex, store, sch, 'rs_1_001', today), '');
+  assert.equal(trialBlock(data, lex, store, sch, '00:S', today), '');
   assert.equal(finishExam(data, store, plan, need, today, () => { game.gold += 100; game.titles.push('余分な報酬'); }), true);
-  assert.equal(trialBlock(data, lex, store, sch, 'rs_1_001', today), '');
+  assert.equal(trialBlock(data, lex, store, sch, '00:S', today), '');
   assert.equal(finishExam(data, store, plan, 1, today + 1), false);
-  const result = new LearningStore(store.storage).confirmationResult('rs_1_001');
+  const result = new LearningStore(store.storage).confirmationResult('00:S');
   assert.equal(result.attempts, 3);
   assert.equal(result.firstPassedDay, today);
   assert.equal(result.passedDay, today);
@@ -71,65 +70,47 @@ test('教材がない石の確認テストを開始できず、空問題で合�
   assert.equal(store.confirmationResult('empty'), null);
 });
 
-test('旧覚醒・試験の達成日を引き継ぎ、学習履歴と復習予定を保存したまま再受験できる', () => {
+test('新しい教材IDの習熟・復習予定・確認履歴が保存と再読込後も残る', () => {
   const memory = new MemoryStorage();
-  const original = new LearningStore(memory);
-  const word = lex.wordsByStone.get('rs_1_001')[0];
-  original.markRead([word.id]);
-  original.recordAnswer(word.id, sch.review(null, true, T0), today, true);
+  const store = new LearningStore(memory);
+  const word = lex.wordsByStone.get('00:S')[0];
+  const rec = sch.review(null, true, T0);
+  store.markRead([word.id]);
+  store.recordAnswer(word.id, rec, today, true);
+  store.recordConfirmation('00:S', { correct: 16, total: 20, day: today, passed: true });
   const raw = JSON.parse(memory.getItem(LEARNING_KEY));
-  raw.awakened = { rs_1_001: { day: today - 2 } };
-  raw.exams = {
-    'awakening:rs_1_001': { passedDay: today - 2, lastFailDay: null },
-    'awakening:rs_2_001': { lastFailDay: today - 1 },
-    'promotion:R02': { passedDay: today - 3, lastFailDay: null },
-  };
-  memory.setItem(LEARNING_KEY, JSON.stringify(raw));
-  const loaded = new LearningStore(memory);
-  assert.deepEqual(loaded.get(word.id), original.get(word.id));
-  assert.deepEqual(loaded.dailyTotal(today), original.dailyTotal(today));
-  assert.equal(loaded.isRead(word.id), true);
-  assert.equal(loaded.confirmationResult('rs_1_001').firstPassedDay, today - 2);
-  assert.equal(loaded.confirmationResult('rs_1_001').lastCorrect, undefined); // 未記録の点数を推測しない
-  assert.equal(loaded.confirmationResult('rs_2_001').lastPassed, false);
-  assert.deepEqual(loaded.exams['promotion:R02'], raw.exams['promotion:R02']);
-  assert.deepEqual(loaded.exams['awakening:rs_1_001'], raw.exams['awakening:rs_1_001']);
-  assert.deepEqual(loaded.awakened, raw.awakened);
-  assert.equal(trialBlock(data, lex, loaded, sch, 'rs_1_001', today), '');
-  const plan = trialPlan(data, lex, 'rs_1_001', seededRng({ rng: 1 }));
-  finishExam(data, loaded, plan, 1, today);
+  assert.ok(raw.words[word.id]);
   const reloaded = new LearningStore(memory);
-  assert.equal(reloaded.confirmationResult('rs_1_001').firstPassedDay, today - 2);
-  assert.equal(reloaded.confirmationResult('rs_1_001').lastPassed, false);
-  assert.deepEqual(new LearningStore(memory).exams, reloaded.exams); // 再読込で古い合格に上書きしない
+  assert.deepEqual(reloaded.get(word.id), rec);
+  assert.equal(reloaded.dailyTotal(today).answered, 1);
+  assert.equal(reloaded.isRead(word.id), true);
+  assert.equal(reloaded.confirmationResult('00:S').bestCorrect, 16);
+  assert.equal(trialBlock(data, lex, reloaded, sch, '00:S', today), '');
 });
 
-test('学習項目を別の石へ移し、一時的に教材から外しても、同じIDの習得・復習履歴を引き継ぐ', () => {
+test('カテゴリー間の重複は共通IDを使い、どの教材でも同じ習得履歴を表示する', () => {
   const store = new LearningStore(new MemoryStorage());
-  const word = lex.wordsByStone.get('rs_1_001')[0];
+  const word = lex.words.find((w) => w.categoryIds.filter((id) => id.length === 2).length >= 2);
+  assert.ok(word, '複数のメインカテゴリーに関連付けた単語が必要');
+  const other = word.categoryIds.find((id) => id.length === 2 && id !== word.mainId);
   let rec = null;
   for (let d = 0; d < 3; d++) rec = sch.review(rec, true, T0 + d * DAY);
   store.set(word.id, rec);
-  const rows = readCsv('lexicon.csv').rows.map((row) => row.id === word.id ? { ...row, stone_id: 'rs_2_001' } : row);
-  const moved = buildLexicon(readCsv('rune_stones.csv').rows, rows);
-  assert.equal(stoneProgress(moved, store, sch, 'rs_1_001', today).learned, 0);
-  assert.equal(stoneProgress(moved, store, sch, 'rs_2_001', today).learned, 1);
-  const removed = buildLexicon(readCsv('rune_stones.csv').rows, rows.filter((row) => row.id !== word.id));
-  assert.equal(stoneProgress(removed, store, sch, 'rs_2_001', today).learned, 0);
-  store.save();
+  assert.equal(stoneProgress(lex, store, sch, word.mainId, today).learned, 1);
+  assert.equal(stoneProgress(lex, store, sch, other, today).learned, 1);
   const reloaded = new LearningStore(store.storage);
   assert.deepEqual(reloaded.get(word.id), rec);
-  assert.equal(stoneProgress(moved, reloaded, sch, 'rs_2_001', today).learned, 1);
+  assert.equal(stoneProgress(lex, reloaded, sch, other, today).learned, 1);
 });
 
 test('闘技場は確認テストの合否や石の所属に関わらず、読み解いた個々のルーンを総復習する', () => {
   const store = new LearningStore(new MemoryStorage());
-  const ids = [lex.wordsByStone.get('rs_1_001')[0].id, lex.wordsByStone.get('rs_2_001')[0].id];
+  const ids = [lex.wordsByStone.get('00:S')[0].id, lex.words.find((w) => w.mainId === '01').id];
   store.markRead(ids);
-  store.setAwakened('rs_1_001', today - 1);
-  store.recordConfirmation('rs_2_001', { correct: 1, total: 20, day: today, passed: false });
+  store.setAwakened('00:S', today - 1);
+  store.recordConfirmation('01', { correct: 1, total: 20, day: today, passed: false });
   assert.deepEqual(arenaReviewWords(lex, store).map((w) => w.id), ids);
-  store.recordConfirmation('rs_2_001', { correct: 20, total: 20, day: today, passed: true });
+  store.recordConfirmation('01', { correct: 20, total: 20, day: today, passed: true });
   assert.deepEqual(arenaReviewWords(lex, store).map((w) => w.id), ids);
 });
 

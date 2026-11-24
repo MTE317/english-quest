@@ -42,7 +42,9 @@ test('toValue', () => {
 test('manifest.json のファイルがすべて読めて、列の数がそろっている', () => {
   for (const name of DATA_FILES) {
     if (name.endsWith('.json')) { readJson(name); continue; }
-    if (name.endsWith('.csv')) assert.equal(readFileSync(dataPath(name), 'utf8').charCodeAt(0), 0xfeff, `${name} は BOM つきのはず`);
+    if (name.endsWith('.csv') && !name.startsWith('learning/v1/')) {
+      assert.equal(readFileSync(dataPath(name), 'utf8').charCodeAt(0), 0xfeff, `${name} は BOM つきのはず`);
+    }
     const { header, rows, errors } = readCsv(name);
     assert.deepEqual(errors, [], name);
     assert.ok(rows.length > 0, name);

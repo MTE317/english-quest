@@ -1,7 +1,7 @@
 // ギルドの学び舎：資料室（予習）・石碑の間（教材セットと任意の確認テスト）・訓練場（鍛錬）・昇格試験
 import { loadGameData } from '../gamedata.js?v=rune-study-1';
-import { loadCsv, loadJson } from '../data.js?v=features-2';
-import { buildLexicon } from '../lexicon.js';
+import { loadJson } from '../data.js?v=features-2';
+import { loadLearningCatalog } from '../learning-catalog.js?v=learning-v1-1';
 import { Scheduler, STAGE_LABEL } from '../srs.js?v=features-2';
 import { LearningStore, now } from '../storage.js?v=rune-study-1';
 import { QuestionPicker } from '../picker.js';
@@ -47,7 +47,7 @@ function library() {
     lex.stones.map((s) => {
       const p = stoneProgress(lex, store, scheduler, s.id, today());
       return el('button', { disabled: p.allRead, onclick: () => showCards(s.id) },
-        el('div', { class: 'choice-title' }, `${stars(s.star)} ${s.name}`),
+        el('div', { class: 'choice-title' }, s.name),
         el('div', { class: 'stats' }, `読み解いた ${p.read} / ${p.total}`, p.allRead ? '　すべて読み解いた' : ''),
         el('progress', { class: 'study-progress', value: p.read, max: p.total || 1, 'aria-label': '読了したルーン' }));
     }),
@@ -85,7 +85,7 @@ function hall() {
       const block = trialBlock(data, lex, store, scheduler, s.id, today());
       const passed = p.test?.firstPassedDay != null || p.test?.passedDay != null;
       return el('div', { class: `panel small ${passed ? 'confirmed' : ''}` },
-        el('div', { class: 'choice-title' }, `${stars(s.star)} ${s.name}`),
+        el('div', { class: 'choice-title' }, s.name),
         el('div', { class: 'stats' },
           el('span', {}, `読み解いた ${p.read}/${p.total}`),
           el('span', {}, `${STAGE_LABEL.learning} ${p.learning}`), el('span', {}, `${STAGE_LABEL.learned} ${p.learned}`),
@@ -134,7 +134,7 @@ function training() {
     el('label', { class: 'small' }, '問題数', el('select', { class: 'select', onchange: (e) => { st.count = Number(e.target.value); } },
       counts.map((c) => el('option', { value: c, selected: c === st.count }, `${c}問`)))),
     el('label', { class: 'small' }, '新しいルーンを出す石', el('select', { class: 'select', onchange: (e) => { st.stoneId = e.target.value; } },
-      stones.map((s) => el('option', { value: s.id }, `${stars(s.star)} ${s.name}`)))),
+      stones.map((s) => el('option', { value: s.id }, s.name)))),
     el('button', { class: 'primary', onclick: () => startTraining(st) }, '鍛錬をはじめる'),
   ];
 }
@@ -218,10 +218,10 @@ function draw() {
 
 (async () => {
   try {
-    const [gd, srsFile, stones, lexicon] = await Promise.all([loadGameData(), loadJson('srs.json'), loadCsv('rune_stones.csv'), loadCsv('lexicon.csv')]);
+    const [gd, srsFile, catalog] = await Promise.all([loadGameData(), loadJson('srs.json'), loadLearningCatalog()]);
     data = gd; srs = srsFile.data;
     scheduler = new Scheduler(srs);
-    lex = buildLexicon(stones.rows, lexicon.rows);
+    lex = catalog.lexicon;
     store = new LearningStore();
     if (session.game && !session.readOnly) { normalizeGame(data, session.game, session.run); session.save(); }
     draw();

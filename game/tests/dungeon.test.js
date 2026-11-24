@@ -94,7 +94,9 @@ test('★2の冒険先も踏破で発見すればR01のまま既存教材で遠�
 
   const empty = { id: 'empty', star: 4 };
   const stones = allowedStones({ ...lex, stones: [...lex.stones, empty] });
-  assert.deepEqual(stones.map(stone => stone.star), [1, 2, 3]);
+  assert.equal(stones.length, 68);
+  assert.equal(stones[0].id, '00:S');
+  assert.ok(!stones.some(({ id }) => id === 'empty'));
   const stoneId = stones[0].id;
   const picker = new QuestionPicker({
     lex, store: new LearningStore(new MemoryStorage()), scheduler: new Scheduler(readJson('srs.json')),
