@@ -18,6 +18,7 @@ import { itemShopView, gearShopView } from '../ui/town-shops.js?v=basic-skill-le
 import { weaponIcon } from '../ui/weapon-icons.js';
 import { equipmentIcon } from '../ui/equipment-icons.js';
 import { uiIcon } from '../ui/pixel-icons.js';
+import { portraitIcon } from '../ui/portrait.js';
 import { el, render } from '../dom.js';
 import { setSceneMusic } from '../battle-music.js?v=music-suite-1';
 
@@ -254,13 +255,33 @@ function rewardText(q) {
   return [gold ? `${gold} G` : null, item || null, `ポイント ${points}`].filter(Boolean).join('・');
 }
 
+function innPartyPanel(g) {
+  const resource = (label, value, max, kind) => el('span', { class: `expedition-resource ${kind}` },
+    el('span', {}, label), el('span', { class: 'expedition-resource-value' }, `${value}/${max}`),
+    el('span', { class: 'expedition-meter', 'aria-hidden': 'true' },
+      el('span', { style: `width:${max > 0 ? Math.max(0, Math.min(100, value / max * 100)) : 0}%` })));
+  return el('div', { class: 'panel expedition-party', role: 'group', 'aria-label': `仲間${g.party.length}人の状態` },
+    g.party.map((m) => {
+      const conditions = (m.persist ?? []).map((id) => data.statusEffects.get(id)?.name ?? id);
+      if (m.hp <= 0) conditions.unshift('戦闘不能');
+      if (m.room) conditions.push('良い部屋の効果');
+      return el('div', { class: `expedition-member${m.hp <= 0 ? ' error' : ''}`, role: 'group', 'aria-label': `${m.name} Lv${m.lv}` },
+        el('div', { class: 'expedition-member-heading' }, portraitIcon(m.icon, { small: true }),
+          el('span', { class: 'expedition-member-copy' },
+            el('strong', { title: m.name }, m.name), el('small', {}, `Lv${m.lv}`))),
+        resource('HP', m.hp, maxHp(data, m), 'hp'),
+        resource('MP', m.mp, maxMp(data, m), 'mp'),
+        conditions.length ? el('span', { class: 'expedition-conditions' }, conditions.join('・')) : null);
+    }));
+}
+
 function inn() {
   const g = session.game;
   const econ = data.economy.get(feeTier(data, g));
   const fx = data.innRooms.find((r) => r.innRank === g.facilities.inn);
   return [
     el('p', { class: 'muted small' }, '戦闘不能の仲間は', el('a', { href: facilityLink('temple') }, '神殿'), 'で復活できます。'),
-    g.party.map((m) => el('div', { class: 'small' }, `${m.name}　HP ${m.hp}/${maxHp(data, m)}　MP ${m.mp}/${maxMp(data, m)}${m.room ? '　（良い部屋の効果）' : ''}`)),
+    innPartyPanel(g),
     el('button', { onclick: () => act((gg) => `ふつうの部屋に泊まった（-${stayInn(data, gg, false)}）`) }, `ふつうの部屋（${econ.inn_cheap}）：全回復`),
     el('button', { class: 'primary', onclick: () => act((gg) => `良い部屋に泊まった（-${stayInn(data, gg, true)}）`) },
       el('div', {}, `良い部屋（${econ.inn_good}）`), el('div', { class: 'tiny' }, fx?.description ?? '')),
