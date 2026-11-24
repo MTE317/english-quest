@@ -6,15 +6,15 @@ import { Scheduler } from '../srs.js?v=stability-1';
 import { LearningStore, now, loadSettings } from '../storage.js?v=stability-1';
 import { QuestionPicker } from '../picker.js';
 import { GameSession } from '../save.js?v=rune-study-1';
-import { normalizeGame } from '../game-state.js?v=party6-1';
+import { normalizeGame } from '../game-state.js?v=basic-skill-levels-1';
 import {
   allowedDungeons, allowedStones, expeditionFee, startRun, startNextBattle, afterBattle, returnToTown, continueRun, resolveLoot,
   isBossBattle, runFloorRow, runFloorCount, returnItems, currentRank, useItemOutsideBattle, FIELD_ITEM_EFFECTS,
-} from '../dungeon.js?v=trial-five-1';
-import { backpackSlots, backpackUsed, addItem } from '../loot.js?v=build36-1';
-import { maxHp, maxMp } from '../character.js?v=build36-1';
-import { createBattleView } from '../ui/battle-view.js?v=systems-v1';
-import { createVictoryView } from '../ui/victory-view.js?v=pixel-town-1';
+} from '../dungeon.js?v=basic-skill-levels-1';
+import { backpackSlots, backpackUsed, addItem } from '../loot.js?v=basic-skill-levels-1';
+import { maxHp, maxMp } from '../character.js?v=basic-skill-levels-1';
+import { createBattleView } from '../ui/battle-view.js?v=basic-skill-levels-1';
+import { createVictoryView } from '../ui/victory-view.js?v=basic-skill-levels-1';
 import { el, render, stars } from '../dom.js';
 import { buildWorldMap, newDiscoveries } from '../world-map.js?v=trial-five-1';
 import { createWorldMapView } from '../ui/world-map-view.js?v=trial-five-1';

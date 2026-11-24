@@ -1,6 +1,6 @@
 // 新しいゲームの進み具合（セーブの game の中身）
-import { createMember, maxHp, maxMp, levelCap } from './character.js?v=skill-loadout-3';
-import { ensureLoadout, jobSkills, isLearned } from './growth.js?v=skill-loadout-3';
+import { createMember, maxHp, maxMp, levelCap } from './character.js?v=basic-skill-levels-1';
+import { ensureLoadout, jobSkills, isLearned, normalizeSkillLevels } from './growth.js?v=basic-skill-levels-1';
 import { parseAmounts } from './csv.js';
 import { recordStoredMaterials } from './temple.js';
 import { retireLegacyQuestChains } from './retired-quests.js';
@@ -75,7 +75,7 @@ export function normalizeGame(data, game, run = null, { expandParty = true } = {
     m.persist = m.persist ?? []; m.room = m.room ?? null; m.ap = m.ap ?? { [m.job]: 0 };
     m.learned = m.learned ?? []; m.common = m.common ?? []; m.mastery = m.mastery ?? {};
     m.masteredJobs ??= [];
-    if (data.skills) ensureLoadout(data, m);
+    if (data.skills) { normalizeSkillLevels(data, m); ensureLoadout(data, m); }
     for (const gear of Object.values(m.equip ?? {})) alignCraftedEffects(data, gear);
     if (retiredMembers.has(m)) {
       // 現在値は回復させず、新上限だけを適用する。戦闘不能の HP 0 も維持する。

@@ -1,16 +1,17 @@
 // パーティの画面：キャラメイク・6人の一覧・能力値・装備8枠
 import { loadGameData } from '../gamedata.js?v=rune-study-1';
 import { GameSession } from '../save.js?v=rune-study-1';
-import { createNewGame, defaultPartySpecs, normalizeGame } from '../game-state.js?v=skill-loadout-3';
+import { createNewGame, defaultPartySpecs, normalizeGame } from '../game-state.js?v=basic-skill-levels-1';
 import {
   computeStats, SLOTS, SLOT_LABEL, STAT_LABEL, canEquip, equipFromStorage, unequip, gearDef,
   aptitudeGrade, xpToNext, levelCap, gainXp, makeGear,
-} from '../character.js?v=skill-loadout-3';
+} from '../character.js?v=basic-skill-levels-1';
 import {
   jobPaths, isLearned, skillPrerequisite, learnBlock, learnSkill, equipBlock, equipSkill, unequipSkill, capacity, usedCapacity,
   commonPoints, commonBlock, learnCommon, masteryLevel, isJobMastered,
-} from '../growth.js?v=skill-loadout-3';
-import { skillMp } from '../battle.js?v=build36-1';
+  skillMaxLevel, learnedSkillLevel, usedSkillLevel, effectiveSkill, upgradeSkillBlock, upgradeSkill, setSkillUseLevel,
+} from '../growth.js?v=basic-skill-levels-1';
+import { skillMp } from '../battle.js?v=basic-skill-levels-1';
 import { el, render, stars } from '../dom.js';
 import { describeFixedEffects } from '../equipment-effects.js?v=build36-1';
 import { describeSkillEffect } from '../skill-effects.js?v=build36-1';
@@ -193,7 +194,7 @@ function showMember(index) {
     memberSwitcher(index),
     memberBanner(m),
     el('div', { class: 'row' },
-      el('button', { onclick: () => showSkills(index) }, 'スキルツリー'),
+      el('button', { onclick: () => showSkills(index) }, 'スキル習得・強化'),
       el('button', { onclick: () => showLoadout(index) }, 'スキル装備'),
       el('button', { onclick: () => showCommon(index) }, '共通ツリー')),
     el('h2', {}, '装備'),
@@ -254,6 +255,7 @@ function showLoadout(index, kind = 'actions', message = '', skillId = '') {
   }
 
   function selectSkill(skill) {
+    skill = effectiveSkill(data, member, skill);
     selected = skill;
     for (const [id, node] of nodes) node.setAttribute('aria-pressed', String(id === skill.id));
 
@@ -279,6 +281,14 @@ function showLoadout(index, kind = 'actions', message = '', skillId = '') {
       el('dl', { class: 'shop-facts' },
         el('div', {}, el('dt', {}, '必要枠'), el('dd', {}, String(skill.cost))),
         !isPassiveKind ? el('div', {}, el('dt', {}, '消費MP'), el('dd', {}, String(skillMp(data, member, skill)))) : null),
+      skillMaxLevel(skill) > 1 ? el('label', {}, `使用Lv（習得Lv ${learnedSkillLevel(member, skill)}）`,
+        el('select', { 'aria-label': 'スキルの使用レベル', disabled: session.inDungeon, onchange: (event) => {
+          try {
+            session.update((game) => setSkillUseLevel(data, game.party[index], skill.id, Number(event.target.value)));
+            showLoadout(index, kind, '', skill.id);
+          } catch (error) { showLoadout(index, kind, error.message, skill.id); }
+        } }, Array.from({ length: learnedSkillLevel(member, skill) }, (_, i) =>
+          el('option', { value: i + 1, selected: i + 1 === usedSkillLevel(member, skill) }, `Lv${i + 1}`)))) : null,
       blocked ? el('p', { class: 'small muted' }, blocked) : null,
       el('div', { class: 'shop-actions' },
         el('button', {
@@ -331,8 +341,8 @@ function showLoadout(index, kind = 'actions', message = '', skillId = '') {
       ? el('div', { class: 'shop-layout skill-shop-layout' }, grid, detail)
       : el('section', { class: 'shop-detail skill-shop-empty' },
         el('p', { class: 'muted' }, '習得済みのスキルはありません。'),
-        el('button', { class: 'ghost', onclick: () => showSkills(index) }, 'スキルツリーを見る')),
-    el('button', { class: 'ghost skill-loadout-tree-link', onclick: () => showSkills(index) }, 'スキルツリーを見る'),
+        el('button', { class: 'ghost', onclick: () => showSkills(index) }, 'スキル習得・強化を見る')),
+    el('button', { class: 'ghost skill-loadout-tree-link', onclick: () => showSkills(index) }, 'スキル習得・強化を見る'),
   );
 
   if (selected) selectSkill(selected);
@@ -346,7 +356,15 @@ function showSkills(index, jobId, skillId, message = '') {
   const used = usedCapacity(data, member);
   const jobs = [member.job, ...Object.keys(member.ap).filter((id) => id !== member.job && data.jobsById.has(id))];
   const job = jobs.includes(jobId) ? jobId : member.job;
-  const paths = [...jobPaths(data, job).entries()];
+  const basic = data.jobsById.get(job)?.tier === 'base';
+  let paths = basic ? ['攻撃', '回復・防御', '妨害・支援', 'パッシブ'].map(name => [name, []]) : [...jobPaths(data, job).entries()];
+  if (basic) for (const skill of [...jobPaths(data, job).values()].flat()) {
+    const category = skill.kind === 'passive' ? 'パッシブ' : skill.kind === 'attack' ? '攻撃'
+      : ['heal', 'heal_all', 'revive', 'cure', 'cure_all', 'self_buff'].includes(skill.kind) ? '回復・防御' : '妨害・支援';
+    paths.find(([name]) => name === category)[1].push(skill);
+  }
+  if (basic) paths = paths.filter(([, skills]) => skills.length);
+
   const skills = paths.flatMap(([, branch]) => branch);
   let selected = skills.find((skill) => skill.id === skillId) ?? skills[0];
   const detail = el('section', { class: 'skill-detail', 'aria-label': '選んだスキル' });
@@ -369,12 +387,20 @@ function showSkills(index, jobId, skillId, message = '') {
     const learnReason = learnBlock(data, member, skill);
     const equipReason = equipBlock(data, member, skill);
     const prerequisite = skillPrerequisite(data, skill);
+    const upgradeReason = upgradeSkillBlock(data, member, skill);
+    const level = learnedSkillLevel(member, skill);
+    const next = skill.effect.levels?.[level - 1];
     const prerequisiteText = prerequisite ? `${prerequisite.name}（${isLearned(member, prerequisite) ? '習得済' : '未習得'}）` : 'なし';
     render(detail, el('h2', {}, skill.name),
       el('p', { class: 'muted small' }, [skill.path, skill.kind === 'passive' ? 'パッシブ' : `MP ${skillMp(data, member, skill)}`,
         `必要枠 ${skill.cost}`, skill.isFinal && '奥義'].filter(Boolean).join('・')),
-      el('p', { class: 'small' }, describeSkillEffect(data, skill)),
+      el('p', { class: 'small' }, describeSkillEffect(data, effectiveSkill(data, member, skill))),
       el('p', { class: 'small muted' }, `習得AP ${skill.apToLearn}${skill.apToLearn === 0 ? '（最初から習得）' : ''}・前提：${prerequisiteText}`),
+      learned && skillMaxLevel(skill) > 1 ? el('section', {},
+        el('p', {}, `習得Lv ${level}/${skillMaxLevel(skill)}・使用Lv ${usedSkillLevel(member, skill)}（使用Lvは装備画面で選択）`),
+        next ? el('p', {}, `次のLv: 基礎MP ${next.mp}・${describeSkillEffect(data, { ...skill, effect: { ...skill.effect, ...next.effect } })}`) : null,
+        el('button', { disabled: session.inDungeon || !!upgradeReason, onclick: () => updateSkill((m) => upgradeSkill(data, m, skill.id)) },
+          upgradeReason || `Lv${level + 1}へ強化（${jobName(skill.job)} AP ${next.ap}）`)) : null,
       !learned
         ? el('button', { class: 'primary', disabled: !!learnReason,
           onclick: () => updateSkill((m) => learnSkill(data, m, skill.id)) }, learnReason || `覚える（AP ${skill.apToLearn}）`)
@@ -388,13 +414,13 @@ function showSkills(index, jobId, skillId, message = '') {
     el('button', { class: 'ghost', onclick: () => showMember(index) }, `← ${member.name}へ`),
     memberSwitcher(index, (next) => showSkills(next)),
     memberBanner(member),
-    el('h2', {}, 'スキルツリー'),
+    el('h2', {}, 'スキル習得・強化'),
     el('p', { class: 'panel small' }, `残りAP ${member.ap[job] ?? 0}・通常枠 ${used.actions}/${cap.actions}・パッシブ枠 ${used.passives}/${cap.passives}`),
     message ? el('p', { class: 'error', role: 'status' }, message) : null,
     jobs.length > 1 ? el('label', { class: 'small' }, 'ジョブ',
       el('select', { class: 'select', onchange: (event) => showSkills(index, event.target.value) },
         jobs.map((id) => el('option', { value: id, selected: id === job }, jobName(id))))) : null,
-    paths.length ? el('div', { class: 'skill-tree' },
+    paths.length ? el('div', { class: basic ? 'skill-tree skill-independent' : 'skill-tree' },
       el('div', { class: 'skill-tree-root' }, jobName(job), isJobMastered(data, member, job) ? '・極めた！' : ''),
       el('div', { class: 'skill-branches', style: `--branches:${paths.length}` },
         paths.map(([path, branch]) => el('section', { class: 'skill-branch' },
@@ -409,7 +435,7 @@ function showSkills(index, jobId, skillId, message = '') {
               el('span', { class: `skill-node-state${equipped ? ' equipped' : ''}` },
                 equipped ? '装着中' : learned ? '習得済' : available ? '習得可' : '未習得'));
             nodes.set(skill.id, node);
-            const linked = i > 0 && branch[i - 1].stage === skill.stage - 1;
+            const linked = !basic && i > 0 && branch[i - 1].stage === skill.stage - 1;
             return el('li', { class: linked ? 'linked' : '' }, node);
           }))))),
       detail) : el('p', { class: 'muted' }, 'このジョブのスキルはありません。'),

@@ -1,5 +1,5 @@
 import { makeQuestion } from '../quiz.js?v=question-speech-1';
-import { makeTrainingPicker, applyTrainingAnswer, shouldShowChunkHint } from '../training.js?v=phrase-mix-1';
+import { makeTrainingPicker, applyTrainingAnswer, shouldShowChunkHint } from '../training.js?v=basic-skill-levels-1';
 import { recordChant } from '../chant.js?v=stability-1';
 import { now } from '../storage.js?v=stability-1';
 import { speak, canSpeak, stopSpeech } from '../speech.js?v=music-suite-1';

@@ -6,14 +6,14 @@
 //   'loot'         … 拾ったものがバックパックに入りきらない（入れ替えるかあきらめるかを選ぶ）
 //   'return_point' … 帰還ポイント（帰るか先へ進むかを選ぶ）
 //   'cleared'      … いちばん奥のボスを倒した（町に帰るだけ）
-import { createBattle, finishBattle, battleRewards, curedBy } from './battle.js?v=systems-v1';
-import { makeEncounter, floorRow, planBounty } from './encounter.js?v=systems-v1';
-import { rollBattleLoot, addToBackpack, swapIntoBackpack, unloadBackpack } from './loot.js?v=build36-1';
-import { gainXp, maxHp, maxMp, affixSum } from './character.js?v=build36-1';
-import { advanceDays, calendarOf, countKills, refreshBoard } from './town.js?v=trial-five-1';
+import { createBattle, finishBattle, battleRewards, curedBy } from './battle.js?v=basic-skill-levels-1';
+import { makeEncounter, floorRow, planBounty } from './encounter.js?v=basic-skill-levels-1';
+import { rollBattleLoot, addToBackpack, swapIntoBackpack, unloadBackpack } from './loot.js?v=basic-skill-levels-1';
+import { gainXp, maxHp, maxMp, affixSum } from './character.js?v=basic-skill-levels-1';
+import { advanceDays, calendarOf, countKills, refreshBoard } from './town.js?v=basic-skill-levels-1';
 import { discoverJobs, recordStoredMaterials } from './temple.js?v=systems-v1';
-import { memberMods } from './growth.js?v=build36-1';
-import { planExploration, resolveExploration, commitExploration, explorationEntryAllowed } from './exploration.js';
+import { memberMods } from './growth.js?v=basic-skill-levels-1';
+import { planExploration, resolveExploration, commitExploration, explorationEntryAllowed } from './exploration.js?v=basic-skill-levels-1';
 import { isTrialDungeonUnlocked } from './world-map.js?v=trial-five-1';
 
 /** 乱数の種から 0〜1 の乱数を返す関数（状態は obj[key] に入れて保存できる） */

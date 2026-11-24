@@ -1,7 +1,7 @@
 import { el, stars } from '../dom.js';
-import { aptitudeGrade, canEquip, computeStats, equipFromStorage, gearDef, makeGear, SLOT_LABEL } from '../character.js?v=build36-1';
-import { LOOT_FORMULAS } from '../loot.js?v=build36-1';
-import { buyGear, buyItem, gearShopStock, itemShopStock, sellGear, sellPrice } from '../town.js?v=build36-1';
+import { aptitudeGrade, canEquip, computeStats, equipFromStorage, gearDef, makeGear, SLOT_LABEL } from '../character.js?v=basic-skill-levels-1';
+import { LOOT_FORMULAS } from '../loot.js?v=basic-skill-levels-1';
+import { buyGear, buyItem, gearShopStock, itemShopStock, sellGear, sellPrice } from '../town.js?v=basic-skill-levels-1';
 import { goldText, shopView } from './shop-view.js?v=weapon-icons-1';
 import { equipmentIcon } from './equipment-icons.js';
 import { portraitIcon } from './portrait.js';

@@ -1,7 +1,7 @@
 // 戦闘の報酬（お金・素材・装備）とバックパック。
 // 式が data にないものは sim/world.py と同じ値を LOOT_FORMULAS に置く（docs/requests.md で依頼済み）。
 import { evaluate } from './expr.js';
-import { makeGear } from './character.js?v=build36-1';
+import { makeGear } from './character.js?v=basic-skill-levels-1';
 import { splitList } from './csv.js';
 
 export const LOOT_FORMULAS = Object.freeze({

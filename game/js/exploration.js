@@ -1,6 +1,6 @@
-import { maxHp, maxMp } from './character.js?v=build36-1';
-import { monsterPool } from './encounter.js?v=build36-1';
-import { addItem, rollGearDrop } from './loot.js?v=build36-1';
+import { maxHp, maxMp } from './character.js?v=basic-skill-levels-1';
+import { monsterPool } from './encounter.js?v=basic-skill-levels-1';
+import { addItem, rollGearDrop } from './loot.js?v=basic-skill-levels-1';
 
 export function planExploration(config, dungeonId, route, rng) {
   if (!config) return [];

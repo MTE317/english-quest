@@ -1,0 +1,130 @@
+{
+  "conditions": 96,
+  "runs": 2304,
+  "beforeConditions": 48,
+  "beforeRuns": 1152,
+  "unchangedConditions": 48,
+  "fixedFiveIdentical": true,
+  "aggregates": [
+    {
+      "id": "mossy_cave",
+      "mode": "baseline",
+      "wins": 192,
+      "runs": 192,
+      "questions": 23.119791666666668,
+      "normalQ": 7.505208333333333,
+      "bossQ": 8.109375,
+      "endMp": 0.5147247869318182
+    },
+    {
+      "id": "mossy_cave",
+      "mode": "wide",
+      "wins": 192,
+      "runs": 192,
+      "questions": 22.390625,
+      "normalQ": 7.200520833333333,
+      "bossQ": 7.989583333333333,
+      "endMp": 0.35934244791666664
+    },
+    {
+      "id": "mossy_cave",
+      "mode": "level3",
+      "wins": 192,
+      "runs": 192,
+      "questions": 22.723958333333332,
+      "normalQ": 7.34375,
+      "bossQ": 8.036458333333334,
+      "endMp": 0.3766702178030303
+    },
+    {
+      "id": "mossy_cave",
+      "mode": "ultimate",
+      "wins": 192,
+      "runs": 192,
+      "questions": 22.791666666666668,
+      "normalQ": 7.265625,
+      "bossQ": 8.260416666666666,
+      "endMp": 0.22424597537878788
+    },
+    {
+      "id": "sunken_temple",
+      "mode": "baseline",
+      "wins": 191,
+      "runs": 192,
+      "questions": 50.182291666666664,
+      "normalQ": 14.333333333333334,
+      "bossQ": 21.515625,
+      "endMp": 0.39745480685211576
+    },
+    {
+      "id": "sunken_temple",
+      "mode": "wide",
+      "wins": 190,
+      "runs": 192,
+      "questions": 48.791666666666664,
+      "normalQ": 13.825520833333334,
+      "bossQ": 21.140625,
+      "endMp": 0.25543765270284025
+    },
+    {
+      "id": "sunken_temple",
+      "mode": "level3",
+      "wins": 191,
+      "runs": 192,
+      "questions": 49.401041666666664,
+      "normalQ": 13.994791666666666,
+      "bossQ": 21.411458333333332,
+      "endMp": 0.2342594124334046
+    },
+    {
+      "id": "sunken_temple",
+      "mode": "ultimate",
+      "wins": 192,
+      "runs": 192,
+      "questions": 49.78645833333333,
+      "normalQ": 13.700520833333334,
+      "bossQ": 22.385416666666668,
+      "endMp": 0.1308583145636092
+    },
+    {
+      "id": "silent_corridor",
+      "mode": "baseline",
+      "wins": 191,
+      "runs": 192,
+      "questions": 93.5,
+      "normalQ": 14.363541666666666,
+      "bossQ": 21.682291666666668,
+      "endMp": 0.19679492379704094
+    },
+    {
+      "id": "silent_corridor",
+      "mode": "wide",
+      "wins": 188,
+      "runs": 192,
+      "questions": 90.27083333333333,
+      "normalQ": 13.825,
+      "bossQ": 21.145833333333332,
+      "endMp": 0.1212289556398249
+    },
+    {
+      "id": "silent_corridor",
+      "mode": "level3",
+      "wins": 190,
+      "runs": 192,
+      "questions": 92.22916666666667,
+      "normalQ": 14.116666666666667,
+      "bossQ": 21.645833333333332,
+      "endMp": 0.10843081394855611
+    },
+    {
+      "id": "silent_corridor",
+      "mode": "ultimate",
+      "wins": 188,
+      "runs": 192,
+      "questions": 93.33333333333333,
+      "normalQ": 14.371875,
+      "bossQ": 21.473958333333332,
+      "endMp": 0.10660898422918999
+    }
+  ]
+}

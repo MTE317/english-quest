@@ -49,7 +49,7 @@ test('同じジョブの仲間同士でも習得・装着状態は共有しな�
   assert.ok(!second.loadout.passives.includes(passive.id));
 });
 
-test('AP で2段目を覚える（前の段が必要・AP が減る・パッシブは能力値に入る）', () => {
+test('基本職は独立習得（AP が減る・パッシブは能力値に入る）', () => {
   const g = fresh(); const w = g.party[0];
   const s2 = jobSkills(data, 'warrior').find((s) => s.name === '鉄の体'); // 守り2段目：HP+10%
   assert.match(learnBlock(data, w, s2), /AP/);
@@ -60,7 +60,9 @@ test('AP で2段目を覚える（前の段が必要・AP が減る・パッシ�
   assert.ok(w.loadout.passives.includes(s2.id));
   assert.equal(maxHp(data, w), Math.round(hp0 * 1.1));
   const s3 = jobSkills(data, 'warrior').find((s) => s.path === s2.path && s.stage === 4);
-  assert.equal(learnBlock(data, w, s3), '「鉄壁」を覚える');
+  assert.match(learnBlock(data, w, s3), /AP/);
+  w.ap.warrior = s3.apToLearn;
+  assert.equal(learnBlock(data, w, s3), '');
 });
 
 test('枠：cost の合計が上限まで。ほかのジョブのスキルも持ち出せるが奥義はだめ', () => {

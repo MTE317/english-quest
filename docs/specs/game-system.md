@@ -27,6 +27,8 @@
 
 ## スキルと100ビルド
 
+基本8職の独立習得・17技能のLv1〜3強化は [基本職の技能Lv仕様](basic-skill-levels.md) を参照。所属職APで強化し、習得Lvと町で選ぶ使用Lvを分ける。上位職・既存技能ID・Lv1効果・マスター条件は維持する。
+
 比較用カタログの実測基準は既存36。追加候補向けに、雷属性の会心時にMPを回収する構成と、撃破時に毒・猛毒を別の敵へ移す構成をゲーム内に追加した。毒の伝播は1巡に1回、基礎付与率60%。100案の完成編成や共通効果14種の汎用化は別途検証する。スキルを固定ツリーへ無理に収めず、技能・装備・パーティー内の相互作用でビルドを構成する。
 
 参照先は [戦闘仕様](../battle-system.md)、[既存36ビルド](../build-catalog.md)、[拡張設計](../build-expansion-design.md)、[候補カタログ](../../sim/build-design-catalog.json)、[効果案](../../sim/build-design-effects.json)、[ジョブ案](../../sim/build-design-jobs.json)、[武器](../../data/weapon_types.csv)、[属性](../../data/elements.csv)、[状態異常](../../data/status_effects.csv)、[種族](../../data/monster_types.csv)。

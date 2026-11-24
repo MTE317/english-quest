@@ -1,8 +1,8 @@
 import { parseAmounts, splitList } from './csv.js';
-import { makeGear } from './character.js?v=build36-1';
-import { rollAffixes, affixVariants } from './loot.js?v=build36-1';
-import { matchesNeed, parseMaterialNeed } from './town.js?v=build36-1';
-import { currentRank } from './dungeon.js?v=build36-1';
+import { makeGear } from './character.js?v=basic-skill-levels-1';
+import { rollAffixes, affixVariants } from './loot.js?v=basic-skill-levels-1';
+import { matchesNeed, parseMaterialNeed } from './town.js?v=basic-skill-levels-1';
+import { currentRank } from './dungeon.js?v=basic-skill-levels-1';
 import { consumeMaterials } from './temple.js?v=rune-study-1';
 import { describeEffect } from './equipment-effects.js?v=build36-1';
 

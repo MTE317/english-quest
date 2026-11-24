@@ -1,0 +1,7571 @@
+{
+  "fingerprint": "5888d635de425c165b602af19cb139c84d7f0239abf2fb1a53f02f46383abc1b",
+  "sourceUnchangedAtCompletion": true,
+  "harnessSha256": "00fd29c7e8dc28bbebb17e203e44bf532d7c15832c446e91dbf5f64c56baca36",
+  "runs": 24,
+  "seed": 1217071,
+  "accuracy": 0.8,
+  "settings": [
+    {
+      "id": "mossy_cave",
+      "level": 8,
+      "itemCap": 10
+    },
+    {
+      "id": "sunken_temple",
+      "level": 30,
+      "itemCap": 36
+    },
+    {
+      "id": "silent_corridor",
+      "level": 30,
+      "itemCap": 36
+    }
+  ],
+  "fixtures": {
+    "mossy_cave/black_mage/lv1": [
+      {
+        "job": "warrior",
+        "ap": {
+          "warrior": 0
+        },
+        "learned": [
+          "warrior_p1_s2",
+          "warrior_p1_s3"
+        ],
+        "loadout": {
+          "actions": [
+            "warrior_p1_s1",
+            "warrior_p2_s1",
+            "warrior_p3_s1",
+            "warrior_p1_s3"
+          ],
+          "passives": [
+            "warrior_p1_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "sword_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "heavy_head_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "heavy_body_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "heavy_arm_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "knight",
+        "ap": {
+          "knight": 0
+        },
+        "learned": [
+          "knight_p1_s2",
+          "knight_p1_s3"
+        ],
+        "loadout": {
+          "actions": [
+            "knight_p1_s1",
+            "knight_p2_s1",
+            "knight_p3_s1",
+            "knight_p1_s3"
+          ],
+          "passives": [
+            "knight_p1_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "hammer_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "heavy_head_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "heavy_body_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "heavy_arm_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "white_mage",
+        "ap": {
+          "white_mage": 0
+        },
+        "learned": [
+          "white_mage_p1_s2",
+          "white_mage_p1_s3"
+        ],
+        "loadout": {
+          "actions": [
+            "white_mage_p1_s3",
+            "white_mage_p1_s1",
+            "white_mage_p2_s1",
+            "white_mage_p3_s1"
+          ],
+          "passives": [
+            "white_mage_p1_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "staff_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "light_head_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "light_body_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "light_arm_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "hunter",
+        "ap": {
+          "hunter": 0
+        },
+        "learned": [
+          "hunter_p1_s2",
+          "hunter_p1_s3"
+        ],
+        "loadout": {
+          "actions": [
+            "hunter_p1_s1",
+            "hunter_p2_s1",
+            "hunter_p3_s1",
+            "hunter_p1_s3"
+          ],
+          "passives": [
+            "hunter_p1_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "bow_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "medium_head_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "medium_body_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "medium_arm_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "bard",
+        "ap": {
+          "bard": 0
+        },
+        "learned": [
+          "bard_p1_s2",
+          "bard_p1_s3"
+        ],
+        "loadout": {
+          "actions": [
+            "bard_p1_s1",
+            "bard_p2_s1",
+            "bard_p3_s1",
+            "bard_p1_s3"
+          ],
+          "passives": [
+            "bard_p1_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "instrument_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "light_head_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "light_body_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "light_arm_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "black_mage",
+        "ap": {
+          "black_mage": 30
+        },
+        "learned": [],
+        "loadout": {
+          "actions": [
+            "black_mage_p1_s1"
+          ],
+          "passives": []
+        },
+        "skillUseLevels": {
+          "black_mage_p1_s1": 1
+        },
+        "equip": {
+          "weapon": {
+            "id": "tome_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "light_head_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "light_body_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "light_arm_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      }
+    ],
+    "mossy_cave/black_mage/lv2": [
+      {
+        "job": "warrior",
+        "ap": {
+          "warrior": 0
+        },
+        "learned": [
+          "warrior_p1_s2",
+          "warrior_p1_s3"
+        ],
+        "loadout": {
+          "actions": [
+            "warrior_p1_s1",
+            "warrior_p2_s1",
+            "warrior_p3_s1",
+            "warrior_p1_s3"
+          ],
+          "passives": [
+            "warrior_p1_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "sword_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "heavy_head_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "heavy_body_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "heavy_arm_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "knight",
+        "ap": {
+          "knight": 0
+        },
+        "learned": [
+          "knight_p1_s2",
+          "knight_p1_s3"
+        ],
+        "loadout": {
+          "actions": [
+            "knight_p1_s1",
+            "knight_p2_s1",
+            "knight_p3_s1",
+            "knight_p1_s3"
+          ],
+          "passives": [
+            "knight_p1_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "hammer_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "heavy_head_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "heavy_body_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "heavy_arm_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "white_mage",
+        "ap": {
+          "white_mage": 0
+        },
+        "learned": [
+          "white_mage_p1_s2",
+          "white_mage_p1_s3"
+        ],
+        "loadout": {
+          "actions": [
+            "white_mage_p1_s3",
+            "white_mage_p1_s1",
+            "white_mage_p2_s1",
+            "white_mage_p3_s1"
+          ],
+          "passives": [
+            "white_mage_p1_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "staff_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "light_head_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "light_body_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "light_arm_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "hunter",
+        "ap": {
+          "hunter": 0
+        },
+        "learned": [
+          "hunter_p1_s2",
+          "hunter_p1_s3"
+        ],
+        "loadout": {
+          "actions": [
+            "hunter_p1_s1",
+            "hunter_p2_s1",
+            "hunter_p3_s1",
+            "hunter_p1_s3"
+          ],
+          "passives": [
+            "hunter_p1_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "bow_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "medium_head_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "medium_body_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "medium_arm_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "bard",
+        "ap": {
+          "bard": 0
+        },
+        "learned": [
+          "bard_p1_s2",
+          "bard_p1_s3"
+        ],
+        "loadout": {
+          "actions": [
+            "bard_p1_s1",
+            "bard_p2_s1",
+            "bard_p3_s1",
+            "bard_p1_s3"
+          ],
+          "passives": [
+            "bard_p1_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "instrument_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "light_head_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "light_body_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "light_arm_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "black_mage",
+        "ap": {
+          "black_mage": 20
+        },
+        "learned": [],
+        "loadout": {
+          "actions": [
+            "black_mage_p1_s1"
+          ],
+          "passives": []
+        },
+        "skillLevels": {
+          "black_mage_p1_s1": 2
+        },
+        "skillUseLevels": {
+          "black_mage_p1_s1": 2
+        },
+        "equip": {
+          "weapon": {
+            "id": "tome_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "light_head_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "light_body_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "light_arm_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      }
+    ],
+    "mossy_cave/black_mage/lv3": [
+      {
+        "job": "warrior",
+        "ap": {
+          "warrior": 0
+        },
+        "learned": [
+          "warrior_p1_s2",
+          "warrior_p1_s3"
+        ],
+        "loadout": {
+          "actions": [
+            "warrior_p1_s1",
+            "warrior_p2_s1",
+            "warrior_p3_s1",
+            "warrior_p1_s3"
+          ],
+          "passives": [
+            "warrior_p1_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "sword_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "heavy_head_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "heavy_body_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "heavy_arm_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "knight",
+        "ap": {
+          "knight": 0
+        },
+        "learned": [
+          "knight_p1_s2",
+          "knight_p1_s3"
+        ],
+        "loadout": {
+          "actions": [
+            "knight_p1_s1",
+            "knight_p2_s1",
+            "knight_p3_s1",
+            "knight_p1_s3"
+          ],
+          "passives": [
+            "knight_p1_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "hammer_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "heavy_head_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "heavy_body_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "heavy_arm_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "white_mage",
+        "ap": {
+          "white_mage": 0
+        },
+        "learned": [
+          "white_mage_p1_s2",
+          "white_mage_p1_s3"
+        ],
+        "loadout": {
+          "actions": [
+            "white_mage_p1_s3",
+            "white_mage_p1_s1",
+            "white_mage_p2_s1",
+            "white_mage_p3_s1"
+          ],
+          "passives": [
+            "white_mage_p1_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "staff_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "light_head_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "light_body_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "light_arm_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "hunter",
+        "ap": {
+          "hunter": 0
+        },
+        "learned": [
+          "hunter_p1_s2",
+          "hunter_p1_s3"
+        ],
+        "loadout": {
+          "actions": [
+            "hunter_p1_s1",
+            "hunter_p2_s1",
+            "hunter_p3_s1",
+            "hunter_p1_s3"
+          ],
+          "passives": [
+            "hunter_p1_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "bow_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "medium_head_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "medium_body_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "medium_arm_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "bard",
+        "ap": {
+          "bard": 0
+        },
+        "learned": [
+          "bard_p1_s2",
+          "bard_p1_s3"
+        ],
+        "loadout": {
+          "actions": [
+            "bard_p1_s1",
+            "bard_p2_s1",
+            "bard_p3_s1",
+            "bard_p1_s3"
+          ],
+          "passives": [
+            "bard_p1_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "instrument_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "light_head_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "light_body_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "light_arm_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "black_mage",
+        "ap": {
+          "black_mage": 0
+        },
+        "learned": [],
+        "loadout": {
+          "actions": [
+            "black_mage_p1_s1"
+          ],
+          "passives": []
+        },
+        "skillLevels": {
+          "black_mage_p1_s1": 3
+        },
+        "skillUseLevels": {
+          "black_mage_p1_s1": 3
+        },
+        "equip": {
+          "weapon": {
+            "id": "tome_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "light_head_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "light_body_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "light_arm_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      }
+    ],
+    "mossy_cave/black_mage/lv1_lore": [
+      {
+        "job": "warrior",
+        "ap": {
+          "warrior": 0
+        },
+        "learned": [
+          "warrior_p1_s2",
+          "warrior_p1_s3"
+        ],
+        "loadout": {
+          "actions": [
+            "warrior_p1_s1",
+            "warrior_p2_s1",
+            "warrior_p3_s1",
+            "warrior_p1_s3"
+          ],
+          "passives": [
+            "warrior_p1_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "sword_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "heavy_head_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "heavy_body_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "heavy_arm_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "knight",
+        "ap": {
+          "knight": 0
+        },
+        "learned": [
+          "knight_p1_s2",
+          "knight_p1_s3"
+        ],
+        "loadout": {
+          "actions": [
+            "knight_p1_s1",
+            "knight_p2_s1",
+            "knight_p3_s1",
+            "knight_p1_s3"
+          ],
+          "passives": [
+            "knight_p1_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "hammer_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "heavy_head_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "heavy_body_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "heavy_arm_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "white_mage",
+        "ap": {
+          "white_mage": 0
+        },
+        "learned": [
+          "white_mage_p1_s2",
+          "white_mage_p1_s3"
+        ],
+        "loadout": {
+          "actions": [
+            "white_mage_p1_s3",
+            "white_mage_p1_s1",
+            "white_mage_p2_s1",
+            "white_mage_p3_s1"
+          ],
+          "passives": [
+            "white_mage_p1_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "staff_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "light_head_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "light_body_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "light_arm_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "hunter",
+        "ap": {
+          "hunter": 0
+        },
+        "learned": [
+          "hunter_p1_s2",
+          "hunter_p1_s3"
+        ],
+        "loadout": {
+          "actions": [
+            "hunter_p1_s1",
+            "hunter_p2_s1",
+            "hunter_p3_s1",
+            "hunter_p1_s3"
+          ],
+          "passives": [
+            "hunter_p1_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "bow_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "medium_head_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "medium_body_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "medium_arm_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "bard",
+        "ap": {
+          "bard": 0
+        },
+        "learned": [
+          "bard_p1_s2",
+          "bard_p1_s3"
+        ],
+        "loadout": {
+          "actions": [
+            "bard_p1_s1",
+            "bard_p2_s1",
+            "bard_p3_s1",
+            "bard_p1_s3"
+          ],
+          "passives": [
+            "bard_p1_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "instrument_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "light_head_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "light_body_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "light_arm_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "black_mage",
+        "ap": {
+          "black_mage": 20
+        },
+        "learned": [
+          "black_mage_p1_s2"
+        ],
+        "loadout": {
+          "actions": [
+            "black_mage_p1_s1"
+          ],
+          "passives": [
+            "black_mage_p1_s2"
+          ]
+        },
+        "skillUseLevels": {
+          "black_mage_p1_s1": 1
+        },
+        "equip": {
+          "weapon": {
+            "id": "tome_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "light_head_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "light_body_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "light_arm_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      }
+    ],
+    "mossy_cave/black_mage/lv2_lore": [
+      {
+        "job": "warrior",
+        "ap": {
+          "warrior": 0
+        },
+        "learned": [
+          "warrior_p1_s2",
+          "warrior_p1_s3"
+        ],
+        "loadout": {
+          "actions": [
+            "warrior_p1_s1",
+            "warrior_p2_s1",
+            "warrior_p3_s1",
+            "warrior_p1_s3"
+          ],
+          "passives": [
+            "warrior_p1_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "sword_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "heavy_head_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "heavy_body_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "heavy_arm_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "knight",
+        "ap": {
+          "knight": 0
+        },
+        "learned": [
+          "knight_p1_s2",
+          "knight_p1_s3"
+        ],
+        "loadout": {
+          "actions": [
+            "knight_p1_s1",
+            "knight_p2_s1",
+            "knight_p3_s1",
+            "knight_p1_s3"
+          ],
+          "passives": [
+            "knight_p1_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "hammer_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "heavy_head_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "heavy_body_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "heavy_arm_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "white_mage",
+        "ap": {
+          "white_mage": 0
+        },
+        "learned": [
+          "white_mage_p1_s2",
+          "white_mage_p1_s3"
+        ],
+        "loadout": {
+          "actions": [
+            "white_mage_p1_s3",
+            "white_mage_p1_s1",
+            "white_mage_p2_s1",
+            "white_mage_p3_s1"
+          ],
+          "passives": [
+            "white_mage_p1_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "staff_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "light_head_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "light_body_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "light_arm_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "hunter",
+        "ap": {
+          "hunter": 0
+        },
+        "learned": [
+          "hunter_p1_s2",
+          "hunter_p1_s3"
+        ],
+        "loadout": {
+          "actions": [
+            "hunter_p1_s1",
+            "hunter_p2_s1",
+            "hunter_p3_s1",
+            "hunter_p1_s3"
+          ],
+          "passives": [
+            "hunter_p1_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "bow_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "medium_head_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "medium_body_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "medium_arm_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "bard",
+        "ap": {
+          "bard": 0
+        },
+        "learned": [
+          "bard_p1_s2",
+          "bard_p1_s3"
+        ],
+        "loadout": {
+          "actions": [
+            "bard_p1_s1",
+            "bard_p2_s1",
+            "bard_p3_s1",
+            "bard_p1_s3"
+          ],
+          "passives": [
+            "bard_p1_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "instrument_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "light_head_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "light_body_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "light_arm_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "black_mage",
+        "ap": {
+          "black_mage": 10
+        },
+        "learned": [
+          "black_mage_p1_s2"
+        ],
+        "loadout": {
+          "actions": [
+            "black_mage_p1_s1"
+          ],
+          "passives": [
+            "black_mage_p1_s2"
+          ]
+        },
+        "skillLevels": {
+          "black_mage_p1_s1": 2
+        },
+        "skillUseLevels": {
+          "black_mage_p1_s1": 2
+        },
+        "equip": {
+          "weapon": {
+            "id": "tome_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "light_head_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "light_body_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "light_arm_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      }
+    ],
+    "mossy_cave/black_mage/lv3_lore": [
+      {
+        "job": "warrior",
+        "ap": {
+          "warrior": 0
+        },
+        "learned": [
+          "warrior_p1_s2",
+          "warrior_p1_s3"
+        ],
+        "loadout": {
+          "actions": [
+            "warrior_p1_s1",
+            "warrior_p2_s1",
+            "warrior_p3_s1",
+            "warrior_p1_s3"
+          ],
+          "passives": [
+            "warrior_p1_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "sword_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "heavy_head_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "heavy_body_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "heavy_arm_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "knight",
+        "ap": {
+          "knight": 0
+        },
+        "learned": [
+          "knight_p1_s2",
+          "knight_p1_s3"
+        ],
+        "loadout": {
+          "actions": [
+            "knight_p1_s1",
+            "knight_p2_s1",
+            "knight_p3_s1",
+            "knight_p1_s3"
+          ],
+          "passives": [
+            "knight_p1_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "hammer_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "heavy_head_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "heavy_body_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "heavy_arm_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "white_mage",
+        "ap": {
+          "white_mage": 0
+        },
+        "learned": [
+          "white_mage_p1_s2",
+          "white_mage_p1_s3"
+        ],
+        "loadout": {
+          "actions": [
+            "white_mage_p1_s3",
+            "white_mage_p1_s1",
+            "white_mage_p2_s1",
+            "white_mage_p3_s1"
+          ],
+          "passives": [
+            "white_mage_p1_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "staff_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "light_head_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "light_body_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "light_arm_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "hunter",
+        "ap": {
+          "hunter": 0
+        },
+        "learned": [
+          "hunter_p1_s2",
+          "hunter_p1_s3"
+        ],
+        "loadout": {
+          "actions": [
+            "hunter_p1_s1",
+            "hunter_p2_s1",
+            "hunter_p3_s1",
+            "hunter_p1_s3"
+          ],
+          "passives": [
+            "hunter_p1_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "bow_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "medium_head_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "medium_body_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "medium_arm_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "bard",
+        "ap": {
+          "bard": 0
+        },
+        "learned": [
+          "bard_p1_s2",
+          "bard_p1_s3"
+        ],
+        "loadout": {
+          "actions": [
+            "bard_p1_s1",
+            "bard_p2_s1",
+            "bard_p3_s1",
+            "bard_p1_s3"
+          ],
+          "passives": [
+            "bard_p1_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "instrument_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "light_head_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "light_body_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "light_arm_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "black_mage",
+        "ap": {
+          "black_mage": 0
+        },
+        "learned": [
+          "black_mage_p1_s2"
+        ],
+        "loadout": {
+          "actions": [
+            "black_mage_p1_s1"
+          ],
+          "passives": [
+            "black_mage_p1_s2"
+          ]
+        },
+        "skillLevels": {
+          "black_mage_p1_s1": 3
+        },
+        "skillUseLevels": {
+          "black_mage_p1_s1": 3
+        },
+        "equip": {
+          "weapon": {
+            "id": "tome_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "light_head_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "light_body_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "light_arm_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t2",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      }
+    ],
+    "sunken_temple/black_mage/lv1": [
+      {
+        "job": "warrior",
+        "ap": {
+          "warrior": 0
+        },
+        "learned": [
+          "warrior_p1_s2",
+          "warrior_p1_s3"
+        ],
+        "loadout": {
+          "actions": [
+            "warrior_p1_s1",
+            "warrior_p2_s1",
+            "warrior_p3_s1",
+            "warrior_p1_s3"
+          ],
+          "passives": [
+            "warrior_p1_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "sword_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "heavy_head_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "heavy_body_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "heavy_arm_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "knight",
+        "ap": {
+          "knight": 0
+        },
+        "learned": [
+          "knight_p1_s2",
+          "knight_p1_s3"
+        ],
+        "loadout": {
+          "actions": [
+            "knight_p1_s1",
+            "knight_p2_s1",
+            "knight_p3_s1",
+            "knight_p1_s3"
+          ],
+          "passives": [
+            "knight_p1_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "hammer_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "heavy_head_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "heavy_body_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "heavy_arm_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "white_mage",
+        "ap": {
+          "white_mage": 0
+        },
+        "learned": [
+          "white_mage_p1_s2",
+          "white_mage_p1_s3"
+        ],
+        "loadout": {
+          "actions": [
+            "white_mage_p1_s3",
+            "white_mage_p1_s1",
+            "white_mage_p2_s1",
+            "white_mage_p3_s1"
+          ],
+          "passives": [
+            "white_mage_p1_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "staff_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "light_head_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "light_body_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "light_arm_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "hunter",
+        "ap": {
+          "hunter": 0
+        },
+        "learned": [
+          "hunter_p1_s2",
+          "hunter_p1_s3"
+        ],
+        "loadout": {
+          "actions": [
+            "hunter_p1_s1",
+            "hunter_p2_s1",
+            "hunter_p3_s1",
+            "hunter_p1_s3"
+          ],
+          "passives": [
+            "hunter_p1_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "bow_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "medium_head_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "medium_body_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "medium_arm_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "bard",
+        "ap": {
+          "bard": 0
+        },
+        "learned": [
+          "bard_p1_s2",
+          "bard_p1_s3"
+        ],
+        "loadout": {
+          "actions": [
+            "bard_p1_s1",
+            "bard_p2_s1",
+            "bard_p3_s1",
+            "bard_p1_s3"
+          ],
+          "passives": [
+            "bard_p1_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "instrument_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "light_head_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "light_body_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "light_arm_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "black_mage",
+        "ap": {
+          "black_mage": 30
+        },
+        "learned": [],
+        "loadout": {
+          "actions": [
+            "black_mage_p1_s1"
+          ],
+          "passives": []
+        },
+        "skillUseLevels": {
+          "black_mage_p1_s1": 1
+        },
+        "equip": {
+          "weapon": {
+            "id": "tome_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "light_head_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "light_body_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "light_arm_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      }
+    ],
+    "sunken_temple/black_mage/lv2": [
+      {
+        "job": "warrior",
+        "ap": {
+          "warrior": 0
+        },
+        "learned": [
+          "warrior_p1_s2",
+          "warrior_p1_s3"
+        ],
+        "loadout": {
+          "actions": [
+            "warrior_p1_s1",
+            "warrior_p2_s1",
+            "warrior_p3_s1",
+            "warrior_p1_s3"
+          ],
+          "passives": [
+            "warrior_p1_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "sword_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "heavy_head_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "heavy_body_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "heavy_arm_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "knight",
+        "ap": {
+          "knight": 0
+        },
+        "learned": [
+          "knight_p1_s2",
+          "knight_p1_s3"
+        ],
+        "loadout": {
+          "actions": [
+            "knight_p1_s1",
+            "knight_p2_s1",
+            "knight_p3_s1",
+            "knight_p1_s3"
+          ],
+          "passives": [
+            "knight_p1_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "hammer_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "heavy_head_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "heavy_body_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "heavy_arm_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "white_mage",
+        "ap": {
+          "white_mage": 0
+        },
+        "learned": [
+          "white_mage_p1_s2",
+          "white_mage_p1_s3"
+        ],
+        "loadout": {
+          "actions": [
+            "white_mage_p1_s3",
+            "white_mage_p1_s1",
+            "white_mage_p2_s1",
+            "white_mage_p3_s1"
+          ],
+          "passives": [
+            "white_mage_p1_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "staff_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "light_head_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "light_body_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "light_arm_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "hunter",
+        "ap": {
+          "hunter": 0
+        },
+        "learned": [
+          "hunter_p1_s2",
+          "hunter_p1_s3"
+        ],
+        "loadout": {
+          "actions": [
+            "hunter_p1_s1",
+            "hunter_p2_s1",
+            "hunter_p3_s1",
+            "hunter_p1_s3"
+          ],
+          "passives": [
+            "hunter_p1_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "bow_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "medium_head_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "medium_body_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "medium_arm_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "bard",
+        "ap": {
+          "bard": 0
+        },
+        "learned": [
+          "bard_p1_s2",
+          "bard_p1_s3"
+        ],
+        "loadout": {
+          "actions": [
+            "bard_p1_s1",
+            "bard_p2_s1",
+            "bard_p3_s1",
+            "bard_p1_s3"
+          ],
+          "passives": [
+            "bard_p1_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "instrument_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "light_head_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "light_body_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "light_arm_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "black_mage",
+        "ap": {
+          "black_mage": 20
+        },
+        "learned": [],
+        "loadout": {
+          "actions": [
+            "black_mage_p1_s1"
+          ],
+          "passives": []
+        },
+        "skillLevels": {
+          "black_mage_p1_s1": 2
+        },
+        "skillUseLevels": {
+          "black_mage_p1_s1": 2
+        },
+        "equip": {
+          "weapon": {
+            "id": "tome_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "light_head_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "light_body_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "light_arm_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      }
+    ],
+    "sunken_temple/black_mage/lv3": [
+      {
+        "job": "warrior",
+        "ap": {
+          "warrior": 0
+        },
+        "learned": [
+          "warrior_p1_s2",
+          "warrior_p1_s3"
+        ],
+        "loadout": {
+          "actions": [
+            "warrior_p1_s1",
+            "warrior_p2_s1",
+            "warrior_p3_s1",
+            "warrior_p1_s3"
+          ],
+          "passives": [
+            "warrior_p1_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "sword_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "heavy_head_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "heavy_body_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "heavy_arm_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "knight",
+        "ap": {
+          "knight": 0
+        },
+        "learned": [
+          "knight_p1_s2",
+          "knight_p1_s3"
+        ],
+        "loadout": {
+          "actions": [
+            "knight_p1_s1",
+            "knight_p2_s1",
+            "knight_p3_s1",
+            "knight_p1_s3"
+          ],
+          "passives": [
+            "knight_p1_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "hammer_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "heavy_head_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "heavy_body_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "heavy_arm_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "white_mage",
+        "ap": {
+          "white_mage": 0
+        },
+        "learned": [
+          "white_mage_p1_s2",
+          "white_mage_p1_s3"
+        ],
+        "loadout": {
+          "actions": [
+            "white_mage_p1_s3",
+            "white_mage_p1_s1",
+            "white_mage_p2_s1",
+            "white_mage_p3_s1"
+          ],
+          "passives": [
+            "white_mage_p1_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "staff_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "light_head_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "light_body_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "light_arm_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "hunter",
+        "ap": {
+          "hunter": 0
+        },
+        "learned": [
+          "hunter_p1_s2",
+          "hunter_p1_s3"
+        ],
+        "loadout": {
+          "actions": [
+            "hunter_p1_s1",
+            "hunter_p2_s1",
+            "hunter_p3_s1",
+            "hunter_p1_s3"
+          ],
+          "passives": [
+            "hunter_p1_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "bow_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "medium_head_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "medium_body_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "medium_arm_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "bard",
+        "ap": {
+          "bard": 0
+        },
+        "learned": [
+          "bard_p1_s2",
+          "bard_p1_s3"
+        ],
+        "loadout": {
+          "actions": [
+            "bard_p1_s1",
+            "bard_p2_s1",
+            "bard_p3_s1",
+            "bard_p1_s3"
+          ],
+          "passives": [
+            "bard_p1_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "instrument_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "light_head_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "light_body_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "light_arm_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "black_mage",
+        "ap": {
+          "black_mage": 0
+        },
+        "learned": [],
+        "loadout": {
+          "actions": [
+            "black_mage_p1_s1"
+          ],
+          "passives": []
+        },
+        "skillLevels": {
+          "black_mage_p1_s1": 3
+        },
+        "skillUseLevels": {
+          "black_mage_p1_s1": 3
+        },
+        "equip": {
+          "weapon": {
+            "id": "tome_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "light_head_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "light_body_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "light_arm_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      }
+    ],
+    "sunken_temple/black_mage/lv1_lore": [
+      {
+        "job": "warrior",
+        "ap": {
+          "warrior": 0
+        },
+        "learned": [
+          "warrior_p1_s2",
+          "warrior_p1_s3"
+        ],
+        "loadout": {
+          "actions": [
+            "warrior_p1_s1",
+            "warrior_p2_s1",
+            "warrior_p3_s1",
+            "warrior_p1_s3"
+          ],
+          "passives": [
+            "warrior_p1_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "sword_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "heavy_head_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "heavy_body_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "heavy_arm_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "knight",
+        "ap": {
+          "knight": 0
+        },
+        "learned": [
+          "knight_p1_s2",
+          "knight_p1_s3"
+        ],
+        "loadout": {
+          "actions": [
+            "knight_p1_s1",
+            "knight_p2_s1",
+            "knight_p3_s1",
+            "knight_p1_s3"
+          ],
+          "passives": [
+            "knight_p1_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "hammer_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "heavy_head_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "heavy_body_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "heavy_arm_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "white_mage",
+        "ap": {
+          "white_mage": 0
+        },
+        "learned": [
+          "white_mage_p1_s2",
+          "white_mage_p1_s3"
+        ],
+        "loadout": {
+          "actions": [
+            "white_mage_p1_s3",
+            "white_mage_p1_s1",
+            "white_mage_p2_s1",
+            "white_mage_p3_s1"
+          ],
+          "passives": [
+            "white_mage_p1_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "staff_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "light_head_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "light_body_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "light_arm_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "hunter",
+        "ap": {
+          "hunter": 0
+        },
+        "learned": [
+          "hunter_p1_s2",
+          "hunter_p1_s3"
+        ],
+        "loadout": {
+          "actions": [
+            "hunter_p1_s1",
+            "hunter_p2_s1",
+            "hunter_p3_s1",
+            "hunter_p1_s3"
+          ],
+          "passives": [
+            "hunter_p1_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "bow_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "medium_head_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "medium_body_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "medium_arm_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "bard",
+        "ap": {
+          "bard": 0
+        },
+        "learned": [
+          "bard_p1_s2",
+          "bard_p1_s3"
+        ],
+        "loadout": {
+          "actions": [
+            "bard_p1_s1",
+            "bard_p2_s1",
+            "bard_p3_s1",
+            "bard_p1_s3"
+          ],
+          "passives": [
+            "bard_p1_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "instrument_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "light_head_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "light_body_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "light_arm_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "black_mage",
+        "ap": {
+          "black_mage": 20
+        },
+        "learned": [
+          "black_mage_p1_s2"
+        ],
+        "loadout": {
+          "actions": [
+            "black_mage_p1_s1"
+          ],
+          "passives": [
+            "black_mage_p1_s2"
+          ]
+        },
+        "skillUseLevels": {
+          "black_mage_p1_s1": 1
+        },
+        "equip": {
+          "weapon": {
+            "id": "tome_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "light_head_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "light_body_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "light_arm_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      }
+    ],
+    "sunken_temple/black_mage/lv2_lore": [
+      {
+        "job": "warrior",
+        "ap": {
+          "warrior": 0
+        },
+        "learned": [
+          "warrior_p1_s2",
+          "warrior_p1_s3"
+        ],
+        "loadout": {
+          "actions": [
+            "warrior_p1_s1",
+            "warrior_p2_s1",
+            "warrior_p3_s1",
+            "warrior_p1_s3"
+          ],
+          "passives": [
+            "warrior_p1_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "sword_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "heavy_head_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "heavy_body_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "heavy_arm_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "knight",
+        "ap": {
+          "knight": 0
+        },
+        "learned": [
+          "knight_p1_s2",
+          "knight_p1_s3"
+        ],
+        "loadout": {
+          "actions": [
+            "knight_p1_s1",
+            "knight_p2_s1",
+            "knight_p3_s1",
+            "knight_p1_s3"
+          ],
+          "passives": [
+            "knight_p1_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "hammer_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "heavy_head_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "heavy_body_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "heavy_arm_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "white_mage",
+        "ap": {
+          "white_mage": 0
+        },
+        "learned": [
+          "white_mage_p1_s2",
+          "white_mage_p1_s3"
+        ],
+        "loadout": {
+          "actions": [
+            "white_mage_p1_s3",
+            "white_mage_p1_s1",
+            "white_mage_p2_s1",
+            "white_mage_p3_s1"
+          ],
+          "passives": [
+            "white_mage_p1_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "staff_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "light_head_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "light_body_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "light_arm_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "hunter",
+        "ap": {
+          "hunter": 0
+        },
+        "learned": [
+          "hunter_p1_s2",
+          "hunter_p1_s3"
+        ],
+        "loadout": {
+          "actions": [
+            "hunter_p1_s1",
+            "hunter_p2_s1",
+            "hunter_p3_s1",
+            "hunter_p1_s3"
+          ],
+          "passives": [
+            "hunter_p1_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "bow_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "medium_head_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "medium_body_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "medium_arm_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "bard",
+        "ap": {
+          "bard": 0
+        },
+        "learned": [
+          "bard_p1_s2",
+          "bard_p1_s3"
+        ],
+        "loadout": {
+          "actions": [
+            "bard_p1_s1",
+            "bard_p2_s1",
+            "bard_p3_s1",
+            "bard_p1_s3"
+          ],
+          "passives": [
+            "bard_p1_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "instrument_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "light_head_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "light_body_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "light_arm_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "black_mage",
+        "ap": {
+          "black_mage": 10
+        },
+        "learned": [
+          "black_mage_p1_s2"
+        ],
+        "loadout": {
+          "actions": [
+            "black_mage_p1_s1"
+          ],
+          "passives": [
+            "black_mage_p1_s2"
+          ]
+        },
+        "skillLevels": {
+          "black_mage_p1_s1": 2
+        },
+        "skillUseLevels": {
+          "black_mage_p1_s1": 2
+        },
+        "equip": {
+          "weapon": {
+            "id": "tome_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "light_head_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "light_body_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "light_arm_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      }
+    ],
+    "sunken_temple/black_mage/lv3_lore": [
+      {
+        "job": "warrior",
+        "ap": {
+          "warrior": 0
+        },
+        "learned": [
+          "warrior_p1_s2",
+          "warrior_p1_s3"
+        ],
+        "loadout": {
+          "actions": [
+            "warrior_p1_s1",
+            "warrior_p2_s1",
+            "warrior_p3_s1",
+            "warrior_p1_s3"
+          ],
+          "passives": [
+            "warrior_p1_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "sword_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "heavy_head_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "heavy_body_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "heavy_arm_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "knight",
+        "ap": {
+          "knight": 0
+        },
+        "learned": [
+          "knight_p1_s2",
+          "knight_p1_s3"
+        ],
+        "loadout": {
+          "actions": [
+            "knight_p1_s1",
+            "knight_p2_s1",
+            "knight_p3_s1",
+            "knight_p1_s3"
+          ],
+          "passives": [
+            "knight_p1_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "hammer_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "heavy_head_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "heavy_body_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "heavy_arm_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "white_mage",
+        "ap": {
+          "white_mage": 0
+        },
+        "learned": [
+          "white_mage_p1_s2",
+          "white_mage_p1_s3"
+        ],
+        "loadout": {
+          "actions": [
+            "white_mage_p1_s3",
+            "white_mage_p1_s1",
+            "white_mage_p2_s1",
+            "white_mage_p3_s1"
+          ],
+          "passives": [
+            "white_mage_p1_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "staff_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "light_head_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "light_body_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "light_arm_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "hunter",
+        "ap": {
+          "hunter": 0
+        },
+        "learned": [
+          "hunter_p1_s2",
+          "hunter_p1_s3"
+        ],
+        "loadout": {
+          "actions": [
+            "hunter_p1_s1",
+            "hunter_p2_s1",
+            "hunter_p3_s1",
+            "hunter_p1_s3"
+          ],
+          "passives": [
+            "hunter_p1_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "bow_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "medium_head_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "medium_body_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "medium_arm_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "bard",
+        "ap": {
+          "bard": 0
+        },
+        "learned": [
+          "bard_p1_s2",
+          "bard_p1_s3"
+        ],
+        "loadout": {
+          "actions": [
+            "bard_p1_s1",
+            "bard_p2_s1",
+            "bard_p3_s1",
+            "bard_p1_s3"
+          ],
+          "passives": [
+            "bard_p1_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "instrument_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "light_head_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "light_body_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "light_arm_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "black_mage",
+        "ap": {
+          "black_mage": 0
+        },
+        "learned": [
+          "black_mage_p1_s2"
+        ],
+        "loadout": {
+          "actions": [
+            "black_mage_p1_s1"
+          ],
+          "passives": [
+            "black_mage_p1_s2"
+          ]
+        },
+        "skillLevels": {
+          "black_mage_p1_s1": 3
+        },
+        "skillUseLevels": {
+          "black_mage_p1_s1": 3
+        },
+        "equip": {
+          "weapon": {
+            "id": "tome_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "light_head_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "light_body_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "light_arm_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      }
+    ],
+    "silent_corridor/black_mage/lv1": [
+      {
+        "job": "warrior",
+        "ap": {
+          "warrior": 0
+        },
+        "learned": [
+          "warrior_p1_s2",
+          "warrior_p1_s3"
+        ],
+        "loadout": {
+          "actions": [
+            "warrior_p1_s1",
+            "warrior_p2_s1",
+            "warrior_p3_s1",
+            "warrior_p1_s3"
+          ],
+          "passives": [
+            "warrior_p1_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "sword_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "heavy_head_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "heavy_body_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "heavy_arm_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "knight",
+        "ap": {
+          "knight": 0
+        },
+        "learned": [
+          "knight_p1_s2",
+          "knight_p1_s3"
+        ],
+        "loadout": {
+          "actions": [
+            "knight_p1_s1",
+            "knight_p2_s1",
+            "knight_p3_s1",
+            "knight_p1_s3"
+          ],
+          "passives": [
+            "knight_p1_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "hammer_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "heavy_head_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "heavy_body_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "heavy_arm_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "white_mage",
+        "ap": {
+          "white_mage": 0
+        },
+        "learned": [
+          "white_mage_p1_s2",
+          "white_mage_p1_s3"
+        ],
+        "loadout": {
+          "actions": [
+            "white_mage_p1_s3",
+            "white_mage_p1_s1",
+            "white_mage_p2_s1",
+            "white_mage_p3_s1"
+          ],
+          "passives": [
+            "white_mage_p1_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "staff_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "light_head_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "light_body_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "light_arm_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "hunter",
+        "ap": {
+          "hunter": 0
+        },
+        "learned": [
+          "hunter_p1_s2",
+          "hunter_p1_s3"
+        ],
+        "loadout": {
+          "actions": [
+            "hunter_p1_s1",
+            "hunter_p2_s1",
+            "hunter_p3_s1",
+            "hunter_p1_s3"
+          ],
+          "passives": [
+            "hunter_p1_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "bow_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "medium_head_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "medium_body_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "medium_arm_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "bard",
+        "ap": {
+          "bard": 0
+        },
+        "learned": [
+          "bard_p1_s2",
+          "bard_p1_s3"
+        ],
+        "loadout": {
+          "actions": [
+            "bard_p1_s1",
+            "bard_p2_s1",
+            "bard_p3_s1",
+            "bard_p1_s3"
+          ],
+          "passives": [
+            "bard_p1_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "instrument_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "light_head_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "light_body_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "light_arm_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "black_mage",
+        "ap": {
+          "black_mage": 30
+        },
+        "learned": [],
+        "loadout": {
+          "actions": [
+            "black_mage_p1_s1"
+          ],
+          "passives": []
+        },
+        "skillUseLevels": {
+          "black_mage_p1_s1": 1
+        },
+        "equip": {
+          "weapon": {
+            "id": "tome_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "light_head_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "light_body_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "light_arm_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      }
+    ],
+    "silent_corridor/black_mage/lv2": [
+      {
+        "job": "warrior",
+        "ap": {
+          "warrior": 0
+        },
+        "learned": [
+          "warrior_p1_s2",
+          "warrior_p1_s3"
+        ],
+        "loadout": {
+          "actions": [
+            "warrior_p1_s1",
+            "warrior_p2_s1",
+            "warrior_p3_s1",
+            "warrior_p1_s3"
+          ],
+          "passives": [
+            "warrior_p1_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "sword_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "heavy_head_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "heavy_body_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "heavy_arm_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "knight",
+        "ap": {
+          "knight": 0
+        },
+        "learned": [
+          "knight_p1_s2",
+          "knight_p1_s3"
+        ],
+        "loadout": {
+          "actions": [
+            "knight_p1_s1",
+            "knight_p2_s1",
+            "knight_p3_s1",
+            "knight_p1_s3"
+          ],
+          "passives": [
+            "knight_p1_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "hammer_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "heavy_head_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "heavy_body_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "heavy_arm_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "white_mage",
+        "ap": {
+          "white_mage": 0
+        },
+        "learned": [
+          "white_mage_p1_s2",
+          "white_mage_p1_s3"
+        ],
+        "loadout": {
+          "actions": [
+            "white_mage_p1_s3",
+            "white_mage_p1_s1",
+            "white_mage_p2_s1",
+            "white_mage_p3_s1"
+          ],
+          "passives": [
+            "white_mage_p1_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "staff_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "light_head_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "light_body_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "light_arm_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "hunter",
+        "ap": {
+          "hunter": 0
+        },
+        "learned": [
+          "hunter_p1_s2",
+          "hunter_p1_s3"
+        ],
+        "loadout": {
+          "actions": [
+            "hunter_p1_s1",
+            "hunter_p2_s1",
+            "hunter_p3_s1",
+            "hunter_p1_s3"
+          ],
+          "passives": [
+            "hunter_p1_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "bow_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "medium_head_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "medium_body_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "medium_arm_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "bard",
+        "ap": {
+          "bard": 0
+        },
+        "learned": [
+          "bard_p1_s2",
+          "bard_p1_s3"
+        ],
+        "loadout": {
+          "actions": [
+            "bard_p1_s1",
+            "bard_p2_s1",
+            "bard_p3_s1",
+            "bard_p1_s3"
+          ],
+          "passives": [
+            "bard_p1_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "instrument_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "light_head_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "light_body_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "light_arm_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "black_mage",
+        "ap": {
+          "black_mage": 20
+        },
+        "learned": [],
+        "loadout": {
+          "actions": [
+            "black_mage_p1_s1"
+          ],
+          "passives": []
+        },
+        "skillLevels": {
+          "black_mage_p1_s1": 2
+        },
+        "skillUseLevels": {
+          "black_mage_p1_s1": 2
+        },
+        "equip": {
+          "weapon": {
+            "id": "tome_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "light_head_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "light_body_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "light_arm_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      }
+    ],
+    "silent_corridor/black_mage/lv3": [
+      {
+        "job": "warrior",
+        "ap": {
+          "warrior": 0
+        },
+        "learned": [
+          "warrior_p1_s2",
+          "warrior_p1_s3"
+        ],
+        "loadout": {
+          "actions": [
+            "warrior_p1_s1",
+            "warrior_p2_s1",
+            "warrior_p3_s1",
+            "warrior_p1_s3"
+          ],
+          "passives": [
+            "warrior_p1_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "sword_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "heavy_head_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "heavy_body_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "heavy_arm_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "knight",
+        "ap": {
+          "knight": 0
+        },
+        "learned": [
+          "knight_p1_s2",
+          "knight_p1_s3"
+        ],
+        "loadout": {
+          "actions": [
+            "knight_p1_s1",
+            "knight_p2_s1",
+            "knight_p3_s1",
+            "knight_p1_s3"
+          ],
+          "passives": [
+            "knight_p1_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "hammer_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "heavy_head_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "heavy_body_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "heavy_arm_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "white_mage",
+        "ap": {
+          "white_mage": 0
+        },
+        "learned": [
+          "white_mage_p1_s2",
+          "white_mage_p1_s3"
+        ],
+        "loadout": {
+          "actions": [
+            "white_mage_p1_s3",
+            "white_mage_p1_s1",
+            "white_mage_p2_s1",
+            "white_mage_p3_s1"
+          ],
+          "passives": [
+            "white_mage_p1_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "staff_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "light_head_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "light_body_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "light_arm_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "hunter",
+        "ap": {
+          "hunter": 0
+        },
+        "learned": [
+          "hunter_p1_s2",
+          "hunter_p1_s3"
+        ],
+        "loadout": {
+          "actions": [
+            "hunter_p1_s1",
+            "hunter_p2_s1",
+            "hunter_p3_s1",
+            "hunter_p1_s3"
+          ],
+          "passives": [
+            "hunter_p1_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "bow_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "medium_head_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "medium_body_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "medium_arm_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "bard",
+        "ap": {
+          "bard": 0
+        },
+        "learned": [
+          "bard_p1_s2",
+          "bard_p1_s3"
+        ],
+        "loadout": {
+          "actions": [
+            "bard_p1_s1",
+            "bard_p2_s1",
+            "bard_p3_s1",
+            "bard_p1_s3"
+          ],
+          "passives": [
+            "bard_p1_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "instrument_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "light_head_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "light_body_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "light_arm_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "black_mage",
+        "ap": {
+          "black_mage": 0
+        },
+        "learned": [],
+        "loadout": {
+          "actions": [
+            "black_mage_p1_s1"
+          ],
+          "passives": []
+        },
+        "skillLevels": {
+          "black_mage_p1_s1": 3
+        },
+        "skillUseLevels": {
+          "black_mage_p1_s1": 3
+        },
+        "equip": {
+          "weapon": {
+            "id": "tome_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "light_head_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "light_body_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "light_arm_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      }
+    ],
+    "silent_corridor/black_mage/lv1_lore": [
+      {
+        "job": "warrior",
+        "ap": {
+          "warrior": 0
+        },
+        "learned": [
+          "warrior_p1_s2",
+          "warrior_p1_s3"
+        ],
+        "loadout": {
+          "actions": [
+            "warrior_p1_s1",
+            "warrior_p2_s1",
+            "warrior_p3_s1",
+            "warrior_p1_s3"
+          ],
+          "passives": [
+            "warrior_p1_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "sword_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "heavy_head_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "heavy_body_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "heavy_arm_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "knight",
+        "ap": {
+          "knight": 0
+        },
+        "learned": [
+          "knight_p1_s2",
+          "knight_p1_s3"
+        ],
+        "loadout": {
+          "actions": [
+            "knight_p1_s1",
+            "knight_p2_s1",
+            "knight_p3_s1",
+            "knight_p1_s3"
+          ],
+          "passives": [
+            "knight_p1_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "hammer_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "heavy_head_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "heavy_body_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "heavy_arm_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "white_mage",
+        "ap": {
+          "white_mage": 0
+        },
+        "learned": [
+          "white_mage_p1_s2",
+          "white_mage_p1_s3"
+        ],
+        "loadout": {
+          "actions": [
+            "white_mage_p1_s3",
+            "white_mage_p1_s1",
+            "white_mage_p2_s1",
+            "white_mage_p3_s1"
+          ],
+          "passives": [
+            "white_mage_p1_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "staff_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "light_head_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "light_body_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "light_arm_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "hunter",
+        "ap": {
+          "hunter": 0
+        },
+        "learned": [
+          "hunter_p1_s2",
+          "hunter_p1_s3"
+        ],
+        "loadout": {
+          "actions": [
+            "hunter_p1_s1",
+            "hunter_p2_s1",
+            "hunter_p3_s1",
+            "hunter_p1_s3"
+          ],
+          "passives": [
+            "hunter_p1_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "bow_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "medium_head_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "medium_body_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "medium_arm_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "bard",
+        "ap": {
+          "bard": 0
+        },
+        "learned": [
+          "bard_p1_s2",
+          "bard_p1_s3"
+        ],
+        "loadout": {
+          "actions": [
+            "bard_p1_s1",
+            "bard_p2_s1",
+            "bard_p3_s1",
+            "bard_p1_s3"
+          ],
+          "passives": [
+            "bard_p1_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "instrument_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "light_head_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "light_body_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "light_arm_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "black_mage",
+        "ap": {
+          "black_mage": 20
+        },
+        "learned": [
+          "black_mage_p1_s2"
+        ],
+        "loadout": {
+          "actions": [
+            "black_mage_p1_s1"
+          ],
+          "passives": [
+            "black_mage_p1_s2"
+          ]
+        },
+        "skillUseLevels": {
+          "black_mage_p1_s1": 1
+        },
+        "equip": {
+          "weapon": {
+            "id": "tome_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "light_head_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "light_body_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "light_arm_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      }
+    ],
+    "silent_corridor/black_mage/lv2_lore": [
+      {
+        "job": "warrior",
+        "ap": {
+          "warrior": 0
+        },
+        "learned": [
+          "warrior_p1_s2",
+          "warrior_p1_s3"
+        ],
+        "loadout": {
+          "actions": [
+            "warrior_p1_s1",
+            "warrior_p2_s1",
+            "warrior_p3_s1",
+            "warrior_p1_s3"
+          ],
+          "passives": [
+            "warrior_p1_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "sword_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "heavy_head_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "heavy_body_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "heavy_arm_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "knight",
+        "ap": {
+          "knight": 0
+        },
+        "learned": [
+          "knight_p1_s2",
+          "knight_p1_s3"
+        ],
+        "loadout": {
+          "actions": [
+            "knight_p1_s1",
+            "knight_p2_s1",
+            "knight_p3_s1",
+            "knight_p1_s3"
+          ],
+          "passives": [
+            "knight_p1_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "hammer_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "heavy_head_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "heavy_body_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "heavy_arm_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "white_mage",
+        "ap": {
+          "white_mage": 0
+        },
+        "learned": [
+          "white_mage_p1_s2",
+          "white_mage_p1_s3"
+        ],
+        "loadout": {
+          "actions": [
+            "white_mage_p1_s3",
+            "white_mage_p1_s1",
+            "white_mage_p2_s1",
+            "white_mage_p3_s1"
+          ],
+          "passives": [
+            "white_mage_p1_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "staff_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "light_head_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "light_body_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "light_arm_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "hunter",
+        "ap": {
+          "hunter": 0
+        },
+        "learned": [
+          "hunter_p1_s2",
+          "hunter_p1_s3"
+        ],
+        "loadout": {
+          "actions": [
+            "hunter_p1_s1",
+            "hunter_p2_s1",
+            "hunter_p3_s1",
+            "hunter_p1_s3"
+          ],
+          "passives": [
+            "hunter_p1_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "bow_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "medium_head_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "medium_body_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "medium_arm_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "bard",
+        "ap": {
+          "bard": 0
+        },
+        "learned": [
+          "bard_p1_s2",
+          "bard_p1_s3"
+        ],
+        "loadout": {
+          "actions": [
+            "bard_p1_s1",
+            "bard_p2_s1",
+            "bard_p3_s1",
+            "bard_p1_s3"
+          ],
+          "passives": [
+            "bard_p1_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "instrument_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "light_head_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "light_body_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "light_arm_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "black_mage",
+        "ap": {
+          "black_mage": 10
+        },
+        "learned": [
+          "black_mage_p1_s2"
+        ],
+        "loadout": {
+          "actions": [
+            "black_mage_p1_s1"
+          ],
+          "passives": [
+            "black_mage_p1_s2"
+          ]
+        },
+        "skillLevels": {
+          "black_mage_p1_s1": 2
+        },
+        "skillUseLevels": {
+          "black_mage_p1_s1": 2
+        },
+        "equip": {
+          "weapon": {
+            "id": "tome_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "light_head_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "light_body_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "light_arm_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      }
+    ],
+    "silent_corridor/black_mage/lv3_lore": [
+      {
+        "job": "warrior",
+        "ap": {
+          "warrior": 0
+        },
+        "learned": [
+          "warrior_p1_s2",
+          "warrior_p1_s3"
+        ],
+        "loadout": {
+          "actions": [
+            "warrior_p1_s1",
+            "warrior_p2_s1",
+            "warrior_p3_s1",
+            "warrior_p1_s3"
+          ],
+          "passives": [
+            "warrior_p1_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "sword_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "heavy_head_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "heavy_body_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "heavy_arm_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "knight",
+        "ap": {
+          "knight": 0
+        },
+        "learned": [
+          "knight_p1_s2",
+          "knight_p1_s3"
+        ],
+        "loadout": {
+          "actions": [
+            "knight_p1_s1",
+            "knight_p2_s1",
+            "knight_p3_s1",
+            "knight_p1_s3"
+          ],
+          "passives": [
+            "knight_p1_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "hammer_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "heavy_head_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "heavy_body_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "heavy_arm_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "white_mage",
+        "ap": {
+          "white_mage": 0
+        },
+        "learned": [
+          "white_mage_p1_s2",
+          "white_mage_p1_s3"
+        ],
+        "loadout": {
+          "actions": [
+            "white_mage_p1_s3",
+            "white_mage_p1_s1",
+            "white_mage_p2_s1",
+            "white_mage_p3_s1"
+          ],
+          "passives": [
+            "white_mage_p1_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "staff_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "light_head_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "light_body_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "light_arm_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "hunter",
+        "ap": {
+          "hunter": 0
+        },
+        "learned": [
+          "hunter_p1_s2",
+          "hunter_p1_s3"
+        ],
+        "loadout": {
+          "actions": [
+            "hunter_p1_s1",
+            "hunter_p2_s1",
+            "hunter_p3_s1",
+            "hunter_p1_s3"
+          ],
+          "passives": [
+            "hunter_p1_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "bow_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "medium_head_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "medium_body_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "medium_arm_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "bard",
+        "ap": {
+          "bard": 0
+        },
+        "learned": [
+          "bard_p1_s2",
+          "bard_p1_s3"
+        ],
+        "loadout": {
+          "actions": [
+            "bard_p1_s1",
+            "bard_p2_s1",
+            "bard_p3_s1",
+            "bard_p1_s3"
+          ],
+          "passives": [
+            "bard_p1_s2"
+          ]
+        },
+        "equip": {
+          "weapon": {
+            "id": "instrument_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "light_head_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "light_body_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "light_arm_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      },
+      {
+        "job": "black_mage",
+        "ap": {
+          "black_mage": 0
+        },
+        "learned": [
+          "black_mage_p1_s2"
+        ],
+        "loadout": {
+          "actions": [
+            "black_mage_p1_s1"
+          ],
+          "passives": [
+            "black_mage_p1_s2"
+          ]
+        },
+        "skillLevels": {
+          "black_mage_p1_s1": 3
+        },
+        "skillUseLevels": {
+          "black_mage_p1_s1": 3
+        },
+        "equip": {
+          "weapon": {
+            "id": "tome_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "offhand": null,
+          "head": {
+            "id": "light_head_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "body": {
+            "id": "light_body_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "arm": {
+            "id": "light_arm_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "cloak": {
+            "id": "cloak_t7",
+            "enh": 1,
+            "quality": 1.15,
+            "rarity": "common",
+            "affixes": {}
+          },
+          "accessory1": null,
+          "accessory2": null
+        }
+      }
+    ]
+  },
+  "rows": [
+    {
+      "id": "mossy_cave",
+      "level": 8,
+      "itemCap": 10,
+      "job": "black_mage",
+      "mode": "lv1",
+      "runs": 24,
+      "wins": 24,
+      "questions": 21.5,
+      "endMp": 0.6241666666666665,
+      "actualSkillMp": 19.791666666666668,
+      "attackActions": 4.375,
+      "partyAttackActions": 16.541666666666668,
+      "kills": 7,
+      "spentAp": 0,
+      "remainingAp": 30,
+      "usedCapacity": {
+        "actions": 1,
+        "passives": 0
+      },
+      "capacity": {
+        "actions": 10,
+        "passives": 10
+      },
+      "rawFireCoefficient": 1.7,
+      "normal": {
+        "battles": 48,
+        "wins": 48,
+        "questions": 7.229166666666667,
+        "mpSpent": 6.666666666666667,
+        "actualSkillMp": 6.666666666666667,
+        "attackActions": 1.4791666666666667,
+        "partyAttackActions": 5.666666666666667,
+        "kills": 2.5,
+        "skills": {
+          "black_mage_p1_s1": 64
+        }
+      },
+      "boss": {
+        "battles": 24,
+        "wins": 24,
+        "questions": 7.041666666666667,
+        "mpSpent": 6.458333333333333,
+        "actualSkillMp": 6.458333333333333,
+        "attackActions": 1.4166666666666667,
+        "partyAttackActions": 5.208333333333333,
+        "kills": 2,
+        "skills": {
+          "black_mage_p1_s1": 31
+        }
+      }
+    },
+    {
+      "id": "mossy_cave",
+      "level": 8,
+      "itemCap": 10,
+      "job": "black_mage",
+      "mode": "lv2",
+      "runs": 24,
+      "wins": 24,
+      "questions": 21,
+      "endMp": 0.5599999999999999,
+      "actualSkillMp": 23,
+      "attackActions": 4.25,
+      "partyAttackActions": 16.083333333333332,
+      "kills": 7,
+      "spentAp": 10,
+      "remainingAp": 20,
+      "usedCapacity": {
+        "actions": 1,
+        "passives": 0
+      },
+      "capacity": {
+        "actions": 10,
+        "passives": 10
+      },
+      "rawFireCoefficient": 1.95,
+      "normal": {
+        "battles": 48,
+        "wins": 48,
+        "questions": 6.958333333333333,
+        "mpSpent": 7.75,
+        "actualSkillMp": 7.75,
+        "attackActions": 1.3958333333333333,
+        "partyAttackActions": 5.458333333333333,
+        "kills": 2.5,
+        "skills": {
+          "black_mage_p1_s1": 62
+        }
+      },
+      "boss": {
+        "battles": 24,
+        "wins": 24,
+        "questions": 7.083333333333333,
+        "mpSpent": 7.5,
+        "actualSkillMp": 7.5,
+        "attackActions": 1.4583333333333333,
+        "partyAttackActions": 5.166666666666667,
+        "kills": 2,
+        "skills": {
+          "black_mage_p1_s1": 30
+        }
+      }
+    },
+    {
+      "id": "mossy_cave",
+      "level": 8,
+      "itemCap": 10,
+      "job": "black_mage",
+      "mode": "lv3",
+      "runs": 24,
+      "wins": 24,
+      "questions": 20.5,
+      "endMp": 0.4891666666666667,
+      "actualSkillMp": 26.541666666666668,
+      "attackActions": 4.208333333333333,
+      "partyAttackActions": 15.666666666666666,
+      "kills": 7,
+      "spentAp": 30,
+      "remainingAp": 0,
+      "usedCapacity": {
+        "actions": 1,
+        "passives": 0
+      },
+      "capacity": {
+        "actions": 10,
+        "passives": 10
+      },
+      "rawFireCoefficient": 2.2,
+      "normal": {
+        "battles": 48,
+        "wins": 48,
+        "questions": 6.770833333333333,
+        "mpSpent": 9.041666666666666,
+        "actualSkillMp": 9.041666666666666,
+        "attackActions": 1.375,
+        "partyAttackActions": 5.3125,
+        "kills": 2.5,
+        "skills": {
+          "black_mage_p1_s1": 62
+        }
+      },
+      "boss": {
+        "battles": 24,
+        "wins": 24,
+        "questions": 6.958333333333333,
+        "mpSpent": 8.458333333333334,
+        "actualSkillMp": 8.458333333333334,
+        "attackActions": 1.4583333333333333,
+        "partyAttackActions": 5.041666666666667,
+        "kills": 2,
+        "skills": {
+          "black_mage_p1_s1": 29
+        }
+      }
+    },
+    {
+      "id": "mossy_cave",
+      "level": 8,
+      "itemCap": 10,
+      "job": "black_mage",
+      "mode": "lv1_lore",
+      "runs": 24,
+      "wins": 24,
+      "questions": 21.083333333333332,
+      "endMp": 0.6324999999999998,
+      "actualSkillMp": 19.375,
+      "attackActions": 4.291666666666667,
+      "partyAttackActions": 16.125,
+      "kills": 7,
+      "spentAp": 10,
+      "remainingAp": 20,
+      "usedCapacity": {
+        "actions": 1,
+        "passives": 1
+      },
+      "capacity": {
+        "actions": 10,
+        "passives": 10
+      },
+      "rawFireCoefficient": 1.9549999999999998,
+      "normal": {
+        "battles": 48,
+        "wins": 48,
+        "questions": 7,
+        "mpSpent": 6.458333333333333,
+        "actualSkillMp": 6.458333333333333,
+        "attackActions": 1.4166666666666667,
+        "partyAttackActions": 5.479166666666667,
+        "kills": 2.5,
+        "skills": {
+          "black_mage_p1_s1": 62
+        }
+      },
+      "boss": {
+        "battles": 24,
+        "wins": 24,
+        "questions": 7.083333333333333,
+        "mpSpent": 6.458333333333333,
+        "actualSkillMp": 6.458333333333333,
+        "attackActions": 1.4583333333333333,
+        "partyAttackActions": 5.166666666666667,
+        "kills": 2,
+        "skills": {
+          "black_mage_p1_s1": 31
+        }
+      }
+    },
+    {
+      "id": "mossy_cave",
+      "level": 8,
+      "itemCap": 10,
+      "job": "black_mage",
+      "mode": "lv2_lore",
+      "runs": 24,
+      "wins": 24,
+      "questions": 20.25,
+      "endMp": 0.57,
+      "actualSkillMp": 22.5,
+      "attackActions": 4.083333333333333,
+      "partyAttackActions": 15.5,
+      "kills": 7,
+      "spentAp": 20,
+      "remainingAp": 10,
+      "usedCapacity": {
+        "actions": 1,
+        "passives": 1
+      },
+      "capacity": {
+        "actions": 10,
+        "passives": 10
+      },
+      "rawFireCoefficient": 2.2424999999999997,
+      "normal": {
+        "battles": 48,
+        "wins": 48,
+        "questions": 6.645833333333333,
+        "mpSpent": 7.625,
+        "actualSkillMp": 7.625,
+        "attackActions": 1.3125,
+        "partyAttackActions": 5.229166666666667,
+        "kills": 2.5,
+        "skills": {
+          "black_mage_p1_s1": 61
+        }
+      },
+      "boss": {
+        "battles": 24,
+        "wins": 24,
+        "questions": 6.958333333333333,
+        "mpSpent": 7.25,
+        "actualSkillMp": 7.25,
+        "attackActions": 1.4583333333333333,
+        "partyAttackActions": 5.041666666666667,
+        "kills": 2,
+        "skills": {
+          "black_mage_p1_s1": 29
+        }
+      }
+    },
+    {
+      "id": "mossy_cave",
+      "level": 8,
+      "itemCap": 10,
+      "job": "black_mage",
+      "mode": "lv3_lore",
+      "runs": 24,
+      "wins": 24,
+      "questions": 19.875,
+      "endMp": 0.48666666666666664,
+      "actualSkillMp": 26.541666666666668,
+      "attackActions": 4.083333333333333,
+      "partyAttackActions": 15.291666666666666,
+      "kills": 7,
+      "spentAp": 40,
+      "remainingAp": 0,
+      "usedCapacity": {
+        "actions": 1,
+        "passives": 1
+      },
+      "capacity": {
+        "actions": 10,
+        "passives": 10
+      },
+      "rawFireCoefficient": 2.53,
+      "normal": {
+        "battles": 48,
+        "wins": 48,
+        "questions": 6.625,
+        "mpSpent": 8.75,
+        "actualSkillMp": 8.75,
+        "attackActions": 1.3333333333333333,
+        "partyAttackActions": 5.1875,
+        "kills": 2.5,
+        "skills": {
+          "black_mage_p1_s1": 60
+        }
+      },
+      "boss": {
+        "battles": 24,
+        "wins": 24,
+        "questions": 6.625,
+        "mpSpent": 9.041666666666666,
+        "actualSkillMp": 9.041666666666666,
+        "attackActions": 1.4166666666666667,
+        "partyAttackActions": 4.916666666666667,
+        "kills": 2,
+        "skills": {
+          "black_mage_p1_s1": 31
+        }
+      }
+    },
+    {
+      "id": "sunken_temple",
+      "level": 30,
+      "itemCap": 36,
+      "job": "black_mage",
+      "mode": "lv1",
+      "runs": 24,
+      "wins": 24,
+      "questions": 45.208333333333336,
+      "endMp": 0.5110815602836879,
+      "actualSkillMp": 48.25,
+      "attackActions": 8.625,
+      "partyAttackActions": 34.958333333333336,
+      "kills": 7,
+      "spentAp": 0,
+      "remainingAp": 30,
+      "usedCapacity": {
+        "actions": 1,
+        "passives": 0
+      },
+      "capacity": {
+        "actions": 10,
+        "passives": 10
+      },
+      "rawFireCoefficient": 1.7,
+      "normal": {
+        "battles": 48,
+        "wins": 48,
+        "questions": 13.25,
+        "mpSpent": 14.125,
+        "actualSkillMp": 14.125,
+        "attackActions": 2.5,
+        "partyAttackActions": 10.708333333333334,
+        "kills": 2.5,
+        "skills": {
+          "black_mage_p1_s1": 113
+        }
+      },
+      "boss": {
+        "battles": 24,
+        "wins": 24,
+        "questions": 18.708333333333332,
+        "mpSpent": 20,
+        "actualSkillMp": 20,
+        "attackActions": 3.625,
+        "partyAttackActions": 13.541666666666666,
+        "kills": 2,
+        "skills": {
+          "black_mage_p1_s1": 80
+        }
+      }
+    },
+    {
+      "id": "sunken_temple",
+      "level": 30,
+      "itemCap": 36,
+      "job": "black_mage",
+      "mode": "lv2",
+      "runs": 24,
+      "wins": 24,
+      "questions": 44,
+      "endMp": 0.374113475177305,
+      "actualSkillMp": 61.333333333333336,
+      "attackActions": 8.291666666666666,
+      "partyAttackActions": 33.75,
+      "kills": 7,
+      "spentAp": 10,
+      "remainingAp": 20,
+      "usedCapacity": {
+        "actions": 1,
+        "passives": 0
+      },
+      "capacity": {
+        "actions": 10,
+        "passives": 10
+      },
+      "rawFireCoefficient": 1.95,
+      "normal": {
+        "battles": 48,
+        "wins": 48,
+        "questions": 12.979166666666666,
+        "mpSpent": 17.833333333333332,
+        "actualSkillMp": 17.833333333333332,
+        "attackActions": 2.4166666666666665,
+        "partyAttackActions": 10.4375,
+        "kills": 2.5,
+        "skills": {
+          "black_mage_p1_s1": 107
+        }
+      },
+      "boss": {
+        "battles": 24,
+        "wins": 24,
+        "questions": 18.041666666666668,
+        "mpSpent": 25.666666666666668,
+        "actualSkillMp": 25.666666666666668,
+        "attackActions": 3.4583333333333335,
+        "partyAttackActions": 12.875,
+        "kills": 2,
+        "skills": {
+          "black_mage_p1_s1": 77
+        }
+      }
+    },
+    {
+      "id": "sunken_temple",
+      "level": 30,
+      "itemCap": 36,
+      "job": "black_mage",
+      "mode": "lv3",
+      "runs": 24,
+      "wins": 24,
+      "questions": 43.041666666666664,
+      "endMp": 0.2943262411347518,
+      "actualSkillMp": 68.625,
+      "attackActions": 8.208333333333334,
+      "partyAttackActions": 32.958333333333336,
+      "kills": 7,
+      "spentAp": 30,
+      "remainingAp": 0,
+      "usedCapacity": {
+        "actions": 1,
+        "passives": 0
+      },
+      "capacity": {
+        "actions": 10,
+        "passives": 10
+      },
+      "rawFireCoefficient": 2.2,
+      "normal": {
+        "battles": 48,
+        "wins": 48,
+        "questions": 12.8125,
+        "mpSpent": 20.25,
+        "actualSkillMp": 20.25,
+        "attackActions": 2.4375,
+        "partyAttackActions": 10.25,
+        "kills": 2.5,
+        "skills": {
+          "black_mage_p1_s1": 108
+        }
+      },
+      "boss": {
+        "battles": 24,
+        "wins": 24,
+        "questions": 17.416666666666668,
+        "mpSpent": 28.125,
+        "actualSkillMp": 28.125,
+        "attackActions": 3.3333333333333335,
+        "partyAttackActions": 12.458333333333334,
+        "kills": 2,
+        "skills": {
+          "black_mage_p1_s1": 75
+        }
+      }
+    },
+    {
+      "id": "sunken_temple",
+      "level": 30,
+      "itemCap": 36,
+      "job": "black_mage",
+      "mode": "lv1_lore",
+      "runs": 24,
+      "wins": 24,
+      "questions": 44,
+      "endMp": 0.5172872340425532,
+      "actualSkillMp": 47.25,
+      "attackActions": 8.375,
+      "partyAttackActions": 33.708333333333336,
+      "kills": 7,
+      "spentAp": 10,
+      "remainingAp": 20,
+      "usedCapacity": {
+        "actions": 1,
+        "passives": 1
+      },
+      "capacity": {
+        "actions": 10,
+        "passives": 10
+      },
+      "rawFireCoefficient": 1.9549999999999998,
+      "normal": {
+        "battles": 48,
+        "wins": 48,
+        "questions": 12.979166666666666,
+        "mpSpent": 13.875,
+        "actualSkillMp": 13.875,
+        "attackActions": 2.4583333333333335,
+        "partyAttackActions": 10.4375,
+        "kills": 2.5,
+        "skills": {
+          "black_mage_p1_s1": 111
+        }
+      },
+      "boss": {
+        "battles": 24,
+        "wins": 24,
+        "questions": 18.041666666666668,
+        "mpSpent": 19.5,
+        "actualSkillMp": 19.5,
+        "attackActions": 3.4583333333333335,
+        "partyAttackActions": 12.833333333333334,
+        "kills": 2,
+        "skills": {
+          "black_mage_p1_s1": 78
+        }
+      }
+    },
+    {
+      "id": "sunken_temple",
+      "level": 30,
+      "itemCap": 36,
+      "job": "black_mage",
+      "mode": "lv2_lore",
+      "runs": 24,
+      "wins": 24,
+      "questions": 42.583333333333336,
+      "endMp": 0.36746453900709225,
+      "actualSkillMp": 61.333333333333336,
+      "attackActions": 8.125,
+      "partyAttackActions": 32.666666666666664,
+      "kills": 7,
+      "spentAp": 20,
+      "remainingAp": 10,
+      "usedCapacity": {
+        "actions": 1,
+        "passives": 1
+      },
+      "capacity": {
+        "actions": 10,
+        "passives": 10
+      },
+      "rawFireCoefficient": 2.2424999999999997,
+      "normal": {
+        "battles": 48,
+        "wins": 48,
+        "questions": 12.75,
+        "mpSpent": 18.166666666666668,
+        "actualSkillMp": 18.166666666666668,
+        "attackActions": 2.4375,
+        "partyAttackActions": 10.208333333333334,
+        "kills": 2.5,
+        "skills": {
+          "black_mage_p1_s1": 109
+        }
+      },
+      "boss": {
+        "battles": 24,
+        "wins": 24,
+        "questions": 17.083333333333332,
+        "mpSpent": 25,
+        "actualSkillMp": 25,
+        "attackActions": 3.25,
+        "partyAttackActions": 12.25,
+        "kills": 2,
+        "skills": {
+          "black_mage_p1_s1": 75
+        }
+      }
+    },
+    {
+      "id": "sunken_temple",
+      "level": 30,
+      "itemCap": 36,
+      "job": "black_mage",
+      "mode": "lv3_lore",
+      "runs": 24,
+      "wins": 24,
+      "questions": 40.958333333333336,
+      "endMp": 0.31205673758865254,
+      "actualSkillMp": 66.75,
+      "attackActions": 7.875,
+      "partyAttackActions": 31.333333333333332,
+      "kills": 7,
+      "spentAp": 40,
+      "remainingAp": 0,
+      "usedCapacity": {
+        "actions": 1,
+        "passives": 1
+      },
+      "capacity": {
+        "actions": 10,
+        "passives": 10
+      },
+      "rawFireCoefficient": 2.53,
+      "normal": {
+        "battles": 48,
+        "wins": 48,
+        "questions": 12.270833333333334,
+        "mpSpent": 19.875,
+        "actualSkillMp": 19.875,
+        "attackActions": 2.3333333333333335,
+        "partyAttackActions": 9.833333333333334,
+        "kills": 2.5,
+        "skills": {
+          "black_mage_p1_s1": 106
+        }
+      },
+      "boss": {
+        "battles": 24,
+        "wins": 24,
+        "questions": 16.416666666666668,
+        "mpSpent": 27,
+        "actualSkillMp": 27,
+        "attackActions": 3.2083333333333335,
+        "partyAttackActions": 11.666666666666666,
+        "kills": 2,
+        "skills": {
+          "black_mage_p1_s1": 72
+        }
+      }
+    },
+    {
+      "id": "silent_corridor",
+      "level": 30,
+      "itemCap": 36,
+      "job": "black_mage",
+      "mode": "lv1",
+      "runs": 24,
+      "wins": 24,
+      "questions": 88.375,
+      "endMp": 0.15425531914893617,
+      "actualSkillMp": 87,
+      "attackActions": 16.333333333333332,
+      "partyAttackActions": 72.20833333333333,
+      "kills": 16,
+      "spentAp": 0,
+      "remainingAp": 30,
+      "usedCapacity": {
+        "actions": 1,
+        "passives": 0
+      },
+      "capacity": {
+        "actions": 10,
+        "passives": 10
+      },
+      "rawFireCoefficient": 1.7,
+      "normal": {
+        "battles": 120,
+        "wins": 120,
+        "questions": 13.833333333333334,
+        "mpSpent": 13.8,
+        "actualSkillMp": 13.8,
+        "attackActions": 2.566666666666667,
+        "partyAttackActions": 11.375,
+        "kills": 2.8,
+        "skills": {
+          "black_mage_p1_s1": 276
+        }
+      },
+      "boss": {
+        "battles": 24,
+        "wins": 24,
+        "questions": 19.208333333333332,
+        "mpSpent": 18,
+        "actualSkillMp": 18,
+        "attackActions": 3.5,
+        "partyAttackActions": 15.333333333333334,
+        "kills": 2,
+        "skills": {
+          "black_mage_p1_s1": 72
+        }
+      }
+    },
+    {
+      "id": "silent_corridor",
+      "level": 30,
+      "itemCap": 36,
+      "job": "black_mage",
+      "mode": "lv2",
+      "runs": 24,
+      "wins": 24,
+      "questions": 87.41666666666667,
+      "endMp": 0.05939716312056737,
+      "actualSkillMp": 101.33333333333333,
+      "attackActions": 16,
+      "partyAttackActions": 71,
+      "kills": 16,
+      "spentAp": 10,
+      "remainingAp": 20,
+      "usedCapacity": {
+        "actions": 1,
+        "passives": 0
+      },
+      "capacity": {
+        "actions": 10,
+        "passives": 10
+      },
+      "rawFireCoefficient": 1.95,
+      "normal": {
+        "battles": 120,
+        "wins": 120,
+        "questions": 13.4,
+        "mpSpent": 17.4,
+        "actualSkillMp": 17.4,
+        "attackActions": 2.4583333333333335,
+        "partyAttackActions": 10.975,
+        "kills": 2.8,
+        "skills": {
+          "black_mage_p1_s1": 261
+        }
+      },
+      "boss": {
+        "battles": 24,
+        "wins": 24,
+        "questions": 20.416666666666668,
+        "mpSpent": 14.333333333333334,
+        "actualSkillMp": 14.333333333333334,
+        "attackActions": 3.7083333333333335,
+        "partyAttackActions": 16.125,
+        "kills": 2,
+        "skills": {
+          "black_mage_p1_s1": 43
+        }
+      }
+    },
+    {
+      "id": "silent_corridor",
+      "level": 30,
+      "itemCap": 36,
+      "job": "black_mage",
+      "mode": "lv3",
+      "runs": 24,
+      "wins": 24,
+      "questions": 86.58333333333333,
+      "endMp": 0.07092198581560287,
+      "actualSkillMp": 104.625,
+      "attackActions": 16.041666666666668,
+      "partyAttackActions": 69.95833333333333,
+      "kills": 16,
+      "spentAp": 30,
+      "remainingAp": 0,
+      "usedCapacity": {
+        "actions": 1,
+        "passives": 0
+      },
+      "capacity": {
+        "actions": 10,
+        "passives": 10
+      },
+      "rawFireCoefficient": 2.2,
+      "normal": {
+        "battles": 120,
+        "wins": 120,
+        "questions": 13.233333333333333,
+        "mpSpent": 18.45,
+        "actualSkillMp": 18.45,
+        "attackActions": 2.441666666666667,
+        "partyAttackActions": 10.758333333333333,
+        "kills": 2.8,
+        "skills": {
+          "black_mage_p1_s1": 246
+        }
+      },
+      "boss": {
+        "battles": 24,
+        "wins": 24,
+        "questions": 20.416666666666668,
+        "mpSpent": 12.375,
+        "actualSkillMp": 12.375,
+        "attackActions": 3.8333333333333335,
+        "partyAttackActions": 16.166666666666668,
+        "kills": 2,
+        "skills": {
+          "black_mage_p1_s1": 33
+        }
+      }
+    },
+    {
+      "id": "silent_corridor",
+      "level": 30,
+      "itemCap": 36,
+      "job": "black_mage",
+      "mode": "lv1_lore",
+      "runs": 24,
+      "wins": 24,
+      "questions": 86,
+      "endMp": 0.1569148936170213,
+      "actualSkillMp": 85.5,
+      "attackActions": 15.75,
+      "partyAttackActions": 69.33333333333333,
+      "kills": 16,
+      "spentAp": 10,
+      "remainingAp": 20,
+      "usedCapacity": {
+        "actions": 1,
+        "passives": 1
+      },
+      "capacity": {
+        "actions": 10,
+        "passives": 10
+      },
+      "rawFireCoefficient": 1.9549999999999998,
+      "normal": {
+        "battles": 120,
+        "wins": 120,
+        "questions": 13.358333333333333,
+        "mpSpent": 13.5,
+        "actualSkillMp": 13.5,
+        "attackActions": 2.466666666666667,
+        "partyAttackActions": 10.908333333333333,
+        "kills": 2.8,
+        "skills": {
+          "black_mage_p1_s1": 270
+        }
+      },
+      "boss": {
+        "battles": 24,
+        "wins": 24,
+        "questions": 19.208333333333332,
+        "mpSpent": 18,
+        "actualSkillMp": 18,
+        "attackActions": 3.4166666666666665,
+        "partyAttackActions": 14.791666666666666,
+        "kills": 2,
+        "skills": {
+          "black_mage_p1_s1": 72
+        }
+      }
+    },
+    {
+      "id": "silent_corridor",
+      "level": 30,
+      "itemCap": 36,
+      "job": "black_mage",
+      "mode": "lv2_lore",
+      "runs": 24,
+      "wins": 24,
+      "questions": 84.41666666666667,
+      "endMp": 0.04476950354609929,
+      "actualSkillMp": 101.66666666666667,
+      "attackActions": 15.583333333333334,
+      "partyAttackActions": 68.33333333333333,
+      "kills": 16,
+      "spentAp": 20,
+      "remainingAp": 10,
+      "usedCapacity": {
+        "actions": 1,
+        "passives": 1
+      },
+      "capacity": {
+        "actions": 10,
+        "passives": 10
+      },
+      "rawFireCoefficient": 2.2424999999999997,
+      "normal": {
+        "battles": 120,
+        "wins": 120,
+        "questions": 13.116666666666667,
+        "mpSpent": 17.133333333333333,
+        "actualSkillMp": 17.133333333333333,
+        "attackActions": 2.433333333333333,
+        "partyAttackActions": 10.666666666666666,
+        "kills": 2.8,
+        "skills": {
+          "black_mage_p1_s1": 257
+        }
+      },
+      "boss": {
+        "battles": 24,
+        "wins": 24,
+        "questions": 18.833333333333332,
+        "mpSpent": 16,
+        "actualSkillMp": 16,
+        "attackActions": 3.4166666666666665,
+        "partyAttackActions": 15,
+        "kills": 2,
+        "skills": {
+          "black_mage_p1_s1": 48
+        }
+      }
+    },
+    {
+      "id": "silent_corridor",
+      "level": 30,
+      "itemCap": 36,
+      "job": "black_mage",
+      "mode": "lv3_lore",
+      "runs": 24,
+      "wins": 24,
+      "questions": 82.08333333333333,
+      "endMp": 0.058953900709219846,
+      "actualSkillMp": 102,
+      "attackActions": 15.208333333333334,
+      "partyAttackActions": 65.95833333333333,
+      "kills": 16,
+      "spentAp": 40,
+      "remainingAp": 0,
+      "usedCapacity": {
+        "actions": 1,
+        "passives": 1
+      },
+      "capacity": {
+        "actions": 10,
+        "passives": 10
+      },
+      "rawFireCoefficient": 2.53,
+      "normal": {
+        "battles": 120,
+        "wins": 120,
+        "questions": 12.683333333333334,
+        "mpSpent": 18.375,
+        "actualSkillMp": 18.375,
+        "attackActions": 2.35,
+        "partyAttackActions": 10.291666666666666,
+        "kills": 2.8,
+        "skills": {
+          "black_mage_p1_s1": 245
+        }
+      },
+      "boss": {
+        "battles": 24,
+        "wins": 24,
+        "questions": 18.666666666666668,
+        "mpSpent": 10.125,
+        "actualSkillMp": 10.125,
+        "attackActions": 3.4583333333333335,
+        "partyAttackActions": 14.5,
+        "kills": 2,
+        "skills": {
+          "black_mage_p1_s1": 27
+        }
+      }
+    }
+  ]
+}
