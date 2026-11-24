@@ -142,7 +142,7 @@ body:has(.guild-view) {
 .guild-contract progress { width: 100%; accent-color: #8a3b28; }
 
 /* 神殿：窓口を横並びにし、仲間とジョブを画像から選ぶ。 */
-.quest-ui .temple-tabs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.quest-ui .temple-tabs { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .temple-members {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
