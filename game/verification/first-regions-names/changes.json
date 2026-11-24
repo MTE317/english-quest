@@ -1,0 +1,158 @@
+{
+  "monsters": [
+    {
+      "id": "cave_rat",
+      "old": "洞窟ネズミ",
+      "new": "ラットル"
+    },
+    {
+      "id": "goblin_boss",
+      "old": "ゴブリン親分",
+      "new": "岩窟のグラム"
+    },
+    {
+      "id": "wolf_pup",
+      "old": "森オオカミの仔",
+      "new": "ワーグの仔"
+    },
+    {
+      "id": "nut_squirrel",
+      "old": "木の実リス",
+      "new": "スクル"
+    },
+    {
+      "id": "grove_guardian",
+      "old": "大樹の守り手",
+      "new": "大樹のエルダ"
+    },
+    {
+      "id": "bounty_01_1",
+      "old": "血塗れの槍兵",
+      "new": "血槍のヴァルド"
+    },
+    {
+      "id": "bounty_01_2",
+      "old": "鉄牙の大蜘蛛",
+      "new": "鉄牙のアラネア"
+    },
+    {
+      "id": "exp_mossy_cave_5",
+      "old": "苔影結晶の精",
+      "new": "クリスタルウィスプ"
+    },
+    {
+      "id": "exp_mossy_cave_6",
+      "old": "苔影胞子茸",
+      "new": "スポアリング"
+    },
+    {
+      "id": "exp_mossy_cave_7",
+      "old": "苔影石殻人形",
+      "new": "ストーンゴーレム"
+    },
+    {
+      "id": "exp_mossy_cave_8",
+      "old": "苔影夜翼蝙蝠",
+      "new": "ノクティル"
+    },
+    {
+      "id": "exp_sunlit_forest_1",
+      "old": "陽森森の小鹿",
+      "new": "フォーン"
+    },
+    {
+      "id": "exp_sunlit_forest_2",
+      "old": "陽森葉擦れの精",
+      "new": "リーフウィスプ"
+    },
+    {
+      "id": "exp_sunlit_forest_3",
+      "old": "陽森蔦の守人",
+      "new": "ヴァインウォーカー"
+    },
+    {
+      "id": "exp_sunlit_forest_4",
+      "old": "陽森木霊妖精",
+      "new": "ドリームピクシー"
+    },
+    {
+      "id": "exp_sunlit_forest_5",
+      "old": "陽森樹皮巨人",
+      "new": "バークジャイアント"
+    },
+    {
+      "id": "exp_sunlit_forest_6",
+      "old": "陽森蜜吸い蜂",
+      "new": "メリル"
+    },
+    {
+      "id": "exp_sunlit_forest_7",
+      "old": "陽森森影狼",
+      "new": "ソムニル"
+    },
+    {
+      "id": "exp_sunlit_forest_8",
+      "old": "陽森芽吹き樹人",
+      "new": "スプラウト"
+    }
+  ],
+  "materials": [
+    {
+      "id": "cave_rat_rare",
+      "old": "ネズミの前歯",
+      "new": "ラットルの前歯"
+    },
+    {
+      "id": "goblin_boss_mat",
+      "old": "親分のバンダナ",
+      "new": "グラムのバンダナ"
+    },
+    {
+      "id": "goblin_boss_rare",
+      "old": "親分の金貨袋",
+      "new": "グラムの金貨袋"
+    },
+    {
+      "id": "bounty_01_1_mat",
+      "old": "血塗れの槍兵の布切れ",
+      "new": "血槍のヴァルドの布切れ"
+    },
+    {
+      "id": "bounty_01_1_rare",
+      "old": "血塗れの槍兵の紋章",
+      "new": "血槍のヴァルドの紋章"
+    },
+    {
+      "id": "bounty_01_2_mat",
+      "old": "鉄牙の大蜘蛛の殻",
+      "new": "鉄牙のアラネアの殻"
+    },
+    {
+      "id": "bounty_01_2_rare",
+      "old": "鉄牙の大蜘蛛の毒腺",
+      "new": "鉄牙のアラネアの毒腺"
+    }
+  ],
+  "uniques": [
+    {
+      "id": "u_goblin_boss",
+      "old": "ゴブリン親分の拳",
+      "new": "岩窟のグラムの拳"
+    },
+    {
+      "id": "u_grove_guardian",
+      "old": "大樹の守り手の楽器",
+      "new": "大樹のエルダの楽器"
+    },
+    {
+      "id": "u_bounty_01_1",
+      "old": "血塗れの槍兵の革の帽子",
+      "new": "血槍のヴァルドの革の帽子"
+    },
+    {
+      "id": "u_bounty_01_2",
+      "old": "鉄牙の大蜘蛛の革鎧",
+      "new": "鉄牙のアラネアの革鎧"
+    }
+  ]
+}

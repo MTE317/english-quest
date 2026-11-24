@@ -2,7 +2,7 @@
 slime_mat,ぷるぷるゼリー,1,common,slime,,
 slime_rare,濃いゼリー,1,rare,slime,,
 cave_rat_mat,灰色の毛皮,1,common,cave_rat,,
-cave_rat_rare,ネズミの前歯,1,rare,cave_rat,,
+cave_rat_rare,ラットルの前歯,1,rare,cave_rat,,
 goblin_mat,ぼろ布,1,common,goblin,,
 goblin_rare,ゴブリンの耳飾り,1,rare,goblin,,
 cave_bat_mat,コウモリの翼,1,common,cave_bat,,
@@ -15,8 +15,8 @@ mushroom_soldier_mat,胞子袋,1,season,mushroom_soldier,autumn,earth
 mushroom_soldier_rare,眠りダケ,1,rare,mushroom_soldier,autumn,
 snow_hare_mat,白い毛皮,1,season,snow_hare,winter,ice
 snow_hare_rare,雪の結晶,1,rare,snow_hare,winter,
-goblin_boss_mat,親分のバンダナ,1,boss,goblin_boss,,
-goblin_boss_rare,親分の金貨袋,1,rare,goblin_boss,,
+goblin_boss_mat,グラムのバンダナ,1,boss,goblin_boss,,
+goblin_boss_rare,グラムの金貨袋,1,rare,goblin_boss,,
 skeleton_mat,古びた骨,2,common,skeleton,,
 skeleton_rare,骨の王冠,2,rare,skeleton,,
 poison_spider_mat,丈夫な糸,2,common,poison_spider,,
@@ -167,10 +167,10 @@ goblin_quarry_boss_mat,王たる呪い師の布切れ,1,boss,goblin_quarry_boss,
 goblin_quarry_boss_rare,王たる呪い師の紋章,1,rare,goblin_quarry_boss,,
 blooming_hill_boss_mat,千年の月の妖精の鱗粉,1,boss,blooming_hill_boss,,wind
 blooming_hill_boss_rare,千年の月の妖精の妖精の羽,1,rare,blooming_hill_boss,,wind
-bounty_01_1_mat,血塗れの槍兵の布切れ,1,boss,bounty_01_1,,
-bounty_01_1_rare,血塗れの槍兵の紋章,1,rare,bounty_01_1,,
-bounty_01_2_mat,鉄牙の大蜘蛛の殻,1,boss,bounty_01_2,,wind
-bounty_01_2_rare,鉄牙の大蜘蛛の毒腺,1,rare,bounty_01_2,,wind
+bounty_01_1_mat,血槍のヴァルドの布切れ,1,boss,bounty_01_1,,
+bounty_01_1_rare,血槍のヴァルドの紋章,1,rare,bounty_01_1,,
+bounty_01_2_mat,鉄牙のアラネアの殻,1,boss,bounty_01_2,,wind
+bounty_01_2_rare,鉄牙のアラネアの毒腺,1,rare,bounty_01_2,,wind
 bounty_01_3_mat,鉄牙の茨の蔓の葉,1,boss,bounty_01_3,,earth
 bounty_01_3_rare,鉄牙の茨の蔓の種,1,rare,bounty_01_3,,earth
 bounty_01_4_mat,百足の獅子の毛皮,1,boss,bounty_01_4,,
