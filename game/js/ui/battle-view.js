@@ -37,7 +37,6 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
     lex, store, scheduler, stoneId: run.quiz?.stoneId ?? run.stoneId ?? lex.stones[0].id,
     nowMs: now(), state: run.quiz ?? null,
   });
-  const turn = el('span', { class: 'battle-turn' });
   const enemies = el('div', { class: 'battle-enemies', 'data-count': b.enemies.length, 'aria-label': '敵', role: 'group' });
   const party = el('div', { id: 'battle-party', class: 'battle-party', 'data-count': g.party.length, 'aria-label': `味方${g.party.length}人`, role: 'group' });
   const partyToggleLabel = `仲間${g.party.length}人の状態を見る`;
@@ -61,13 +60,15 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
   const encyclopedia = el('dialog', { class: 'battle-encyclopedia', 'aria-labelledby': 'battle-monster-name' });
   encyclopedia.addEventListener('click', (event) => { if (event.target === encyclopedia) encyclopedia.close(); });
   const screen = el('div', { class: `battle-screen scene-${expeditionScene(run.dungeonId, run.challenge)}` },
-    el('div', { class: 'battle-location' },
-      el('h2', {}, run.label ?? data.dungeons.get(run.dungeonId).name),
-      el('span', { class: 'battle-floor' }, `${run.floor}階`), turn),
-    enemies,
-    partyToggle, party,
+    el('section', { class: 'battle-stage', 'aria-label': '戦場' },
+      el('div', { class: 'battle-location' },
+        el('h2', {}, run.label ?? data.dungeons.get(run.dungeonId).name),
+        el('span', { class: 'battle-floor' }, run.challenge ? `${(run.battlesDone ?? 0) + 1}戦目` : `${run.floor}階`)),
+      enemies),
     log,
-    panel, encyclopedia, logDialog);
+    panel,
+    partyToggle, party,
+    encyclopedia, logDialog);
   screen.addEventListener('click', unlockBattleSound, { capture: true });
 
   function onEnd(result) {
@@ -180,7 +181,6 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
 
   function drawField(actor, { kind, indices = [], select } = {}, action = null) {
     if (encyclopedia.open) encyclopedia.close();
-    turn.textContent = `${b.round}ターン目`;
     const selectedKind = action ? targetKind(data, action) : null;
     render(enemies, b.enemies.map((enemy, index) => {
       const targetable = kind === 'enemy' && indices.includes(index);
