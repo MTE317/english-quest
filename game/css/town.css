@@ -178,3 +178,28 @@ body:has(.guild-view) {
 .storage-sort { display: block; margin-top: 10px; font-size: .85rem; }
 .storage-grid { max-height: 32rem; }
 @media (max-width: 650px) { .storage-grid { max-height: 20rem; } }
+
+/* 12施設を常に4列×3段で表示する。 */
+.quest-ui #facility-list {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+.quest-ui #facility-list .town-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  min-width: 0;
+  padding: 12px 7px;
+  gap: 7px;
+  text-align: center;
+}
+.quest-ui #facility-list .town-card > span:last-child { min-width: 0; width: 100%; }
+.quest-ui #facility-list .town-card::after { display: none; }
+@media (max-width: 650px) {
+  .quest-ui #facility-list { gap: 5px; }
+  .quest-ui #facility-list .town-card { min-height: 92px; padding: 8px 3px; gap: 4px; }
+  .quest-ui #facility-list .town-card-icon { width: 32px; height: 36px; }
+  .quest-ui #facility-list .town-card strong { font-size: .75rem; line-height: 1.4; }
+  .quest-ui #facility-list .town-card-detail { display: none; }
+}
