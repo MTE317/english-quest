@@ -2,7 +2,7 @@
 // 設定は data/srs.json を読む。srs.json にない項目（数ではなく説明の文だけが入っている項目も）は下の FALLBACK を使う
 // （どれを使ったかは scheduler.usedFallbacks で分かる）。fsrs_w は FALLBACK の値を正とする（docs/checklist.md の回答）。
 //
-// 4択なので評価は2段階：正解＝Good(3)、不正解＝Again(1)。
+// 試験・ダンジョンは正誤で評価し、訓練場の単語は自己評価で記憶を更新する。
 // 日数は「現実の日付」で数える（記憶は現実の時間で薄れるため。ゲーム内の日数とは別）。
 // 日付の切り替わりは srs.json の day_boundary_hour（午前4時）。
 
@@ -13,9 +13,7 @@ export const FALLBACK = Object.freeze({
     1.01925, 1.9395, 0.11, 0.29605, 2.2698, 0.2315, 2.9898, 0.51655, 0.6621],
   desired_retention: 0.9,
   maximum_interval_days: 36500,
-  // 「日を空けて3回続けて正解したら習得」の 3 と「日を空けて」の日数
-  learned_streak: 3,
-  learned_min_gap_days: 1,
+  learned_stability_days: 30,
   // 誤答の選択肢を「同じ石の似た単語」にし始める連続正解数（それまでは別の石から）
   familiar_streak: 1,
   // 1回の遠征の中で、間違えた単語をもう一度出すまでにはさむ問題数
@@ -61,8 +59,7 @@ export class Scheduler {
     this.w = pick('fsrs_w');
     this.retention = pick('desired_retention');
     this.maxInterval = pick('maximum_interval_days');
-    this.learnedStreak = pick('learned_streak');
-    this.learnedMinGap = pick('learned_min_gap_days');
+    this.learnedStability = pick('learned_stability_days');
     this.familiarStreak = pick('familiar_streak');
     this.retryGap = pick('retry_gap');
     this.newPerRun = pick('new_per_run');
@@ -116,7 +113,7 @@ export class Scheduler {
     return this.reviewGrade(rec, correct ? 3 : 1, nowMs);
   }
 
-  reviewGrade(rec, g, nowMs) {
+  reviewGrade(rec, g, nowMs, answerCorrect = g >= 2) {
     const today = this.dayOf(nowMs);
     const correct = g >= 2;
     let s;
@@ -131,41 +128,45 @@ export class Scheduler {
         s = this.shortTermStability(rec.s, g);
       } else {
         const r = this.retrievability(elapsed, rec.s);
-        s = correct ? rec.s + (this.recallStability(rec.d, rec.s, r) - rec.s) * (g === 2 ? this.w[15] : 1) : this.forgetStability(rec.d, rec.s, r);
+        const gradeMultiplier = g === 2 ? this.w[15] : g === 4 ? this.w[16] : 1;
+        s = correct ? rec.s + (this.recallStability(rec.d, rec.s, r) - rec.s) * gradeMultiplier
+          : this.forgetStability(rec.d, rec.s, r);
       }
     }
     s = Math.max(s, 0.1);
 
-    const prev = rec ?? { correct: 0, wrong: 0, streak: 0, streakDay: null, stage: STAGE.LEARNING };
-    let { streak, streakDay, stage } = prev;
-    if (correct) {
-      // 「日を空けて」続けて正解：同じ日に何度正解しても1回分
-      if (streakDay == null || today - streakDay >= this.learnedMinGap) {
-        streak += 1;
-        streakDay = today;
-      }
-      if (streak >= this.learnedStreak) stage = STAGE.LEARNED;
-    } else {
+    // 連続正解数は選択肢の難しさを決めるために残す。
+    const prev = rec ?? { correct: 0, wrong: 0, streak: 0, streakDay: null };
+    let { streak, streakDay } = prev;
+    if (!answerCorrect) {
       streak = 0;
       streakDay = null;
-      stage = STAGE.LEARNING; // 習得していても間違えたら学習中に戻す
+    } else if (streakDay == null || today > streakDay) {
+      streak += 1;
+      streakDay = today;
     }
+    const stability = round2(s);
     return {
-      s: round2(s),
+      s: stability,
       d: round2(d),
       last: today,
       // 間違えた単語は、安定度に関係なく次の日にもう一度出す（FSRS の「再学習」にあたる）
       due: today + (correct ? this.intervalDays(s) : 1),
-      correct: prev.correct + (correct ? 1 : 0),
-      wrong: prev.wrong + (correct ? 0 : 1),
+      correct: prev.correct + Number(answerCorrect),
+      wrong: prev.wrong + Number(!answerCorrect),
       streak,
       streakDay,
-      stage,
+      grade: g,
+      stage: this.stageOf({ s: stability, grade: g }),
     };
   }
 
   // ---- 記録の見方 ----
-  stageOf(rec) { return rec ? rec.stage : STAGE.NEW; }
+  stageOf(rec) {
+    if (!rec) return STAGE.NEW;
+    const lastSuccess = rec.grade == null ? rec.streak > 0 : rec.grade >= 2;
+    return lastSuccess && rec.s >= this.learnedStability ? STAGE.LEARNED : STAGE.LEARNING;
+  }
   /** 復習の時期が来たか（＝かすれたルーン） */
   isDue(rec, today) { return !!rec && rec.due <= today; }
   /** いま思い出せる確率の見込み（未解読は 0） */

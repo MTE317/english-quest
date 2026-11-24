@@ -2,7 +2,7 @@
 import { loadFiles, loadJson } from '../data.js?v=features-2';
 import { splitList, parseAmounts } from '../csv.js';
 import { buildLearningCatalog, FEATURED_SET_ID } from '../learning-catalog.js?v=learning-v1-1';
-import { Scheduler } from '../srs.js?v=features-2';
+import { Scheduler } from '../srs.js?v=stability-1';
 import { el, render } from '../dom.js';
 
 const view = document.getElementById('view');

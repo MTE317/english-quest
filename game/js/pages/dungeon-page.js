@@ -2,8 +2,8 @@
 import { loadGameData } from '../gamedata.js?v=rune-study-1';
 import { loadJson } from '../data.js?v=features-2';
 import { loadLearningCatalog } from '../learning-catalog.js?v=learning-00-v1';
-import { Scheduler } from '../srs.js?v=features-2';
-import { LearningStore, now, loadSettings } from '../storage.js?v=rune-study-1';
+import { Scheduler } from '../srs.js?v=stability-1';
+import { LearningStore, now, loadSettings } from '../storage.js?v=stability-1';
 import { QuestionPicker } from '../picker.js';
 import { GameSession } from '../save.js?v=rune-study-1';
 import { normalizeGame } from '../game-state.js?v=party6-1';

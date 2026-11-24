@@ -25,6 +25,7 @@ export function recordChant(game, config, scheduler, ms, id, gradeId) {
   const previous = records[id] ?? null;
   const updated = scheduler.reviewGrade(previous, GRADES[grade.fsrs], ms);
   const mastered = new Set(game.chants?.masteredIds ?? []);
+  if (previous?.stage === 'learned') mastered.add(id);
   if (updated.stage === 'learned') mastered.add(id);
   const dayHistory = { ...(game.chants?.dailyHistory ?? {}) };
   const history = dayHistory[today] ?? { answered: 0, good: 0, hard: 0, again: 0 };

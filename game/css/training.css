@@ -91,3 +91,18 @@
   .training-mode-grid button:last-child { grid-column: span 2; min-height: 54px; }
   .learning-category-grid { grid-template-columns: 1fr; }
 }
+
+.training-word-grades {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+.training-word-grades button {
+  display: grid;
+  place-content: center;
+  gap: 3px;
+  min-height: 54px;
+  margin: 0;
+  white-space: normal;
+}
+.training-word-grades button span { font-size: 1.25rem; }
