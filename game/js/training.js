@@ -1,4 +1,4 @@
-import { gainXp } from './character.js?v=basic-skill-levels-1';
+import { gainXp, xpToNext, levelCap } from './character.js?v=basic-skill-levels-1';
 
 // 短時間で学べる訓練場。問題の種類と教材カテゴリーの選択はUIと共通で扱う。
 export const TRAINING_COUNTS = Object.freeze([5, 10, 15]);
@@ -187,7 +187,11 @@ export function rewardTrainingAnswer(data, game,
     member.trainingCredit ??= { xp: 0, ap: {} };
     member.trainingCredit.ap ??= {};
     const storedXp = member.trainingCredit.xp ?? 0;
-    const totalXp = storedXp + baseXp;
+    // 直近遠征の合計XPをさらにLv倍しない。各人の次Lv必要量を使う下限だけ補う。
+    const progressFloor = member.lv < levelCap(data)
+      ? xpToNext(data, member.lv) * (data.balance.training.xp_min_level_fraction ?? 0) * multiplier
+      : 0;
+    const totalXp = storedXp + Math.max(baseXp, progressFloor);
     const xp = Math.floor(totalXp + 1e-9);
     member.trainingCredit.xp = Math.round((totalXp - xp) * 1e6) / 1e6;
     const job = member.job;

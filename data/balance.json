@@ -644,6 +644,8 @@
       15
     ],
     "efficiency_vs_dungeon": 0.8,
+    "xp_min_level_fraction": 0.001,
+    "xp_min_level_fraction_note": "現行訓練の1問・1人XPはmax(直近安全帰還のパーティ合計XP/問×0.10,本人の次Lv必要XP×0.001)。Lv上限では下限補正なし。期限到来の初回正答×1.20。小数繰越・同項目1日1回は従来どおり。旧efficiency_vs_dungeonは現行訓練では不使用。",
     "days": 0
   },
   "accuracy_drop_per_rank": 0.03,
