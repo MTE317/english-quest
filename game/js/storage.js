@@ -60,6 +60,7 @@ export class LearningStore {
   constructor(storage) {
     this.storage = safeStorage(storage);
     this.words = new Map();
+    this.everLearned = new Set();
     this.daily = new Map(); // 学習の日付 → { answered, correct }
     this.read = new Set(); // 資料室で読み解いたルーン
     this.awakened = {}; // 旧版の覚醒履歴。能力・出題条件には使わず、互換のため保存する。
@@ -68,6 +69,7 @@ export class LearningStore {
   }
   load() {
     this.words.clear();
+    this.everLearned = new Set();
     this.daily.clear();
     this.read = new Set();
     this.awakened = {};
@@ -78,6 +80,8 @@ export class LearningStore {
       if (!raw) return;
       const obj = JSON.parse(raw);
       for (const [id, a] of Object.entries(obj.words ?? {})) this.words.set(id, unpack(a));
+      this.everLearned = new Set(obj.everLearned ?? []);
+      for (const [id, rec] of this.words) if (rec.stage === 'learned') this.everLearned.add(id);
       for (const [day, a] of Object.entries(obj.daily ?? {})) this.daily.set(Number(day), { answered: a[0], correct: a[1] });
       this.read = new Set(obj.read ?? []);
       this.awakened = obj.awakened ?? {};
@@ -94,14 +98,15 @@ export class LearningStore {
     const daily = {};
     for (const [day, t] of this.daily) daily[day] = [t.answered, t.correct];
     this.storage.setItem(LEARNING_KEY, JSON.stringify({
-      v: 1, words, daily, read: [...this.read], awakened: this.awakened, exams: this.exams,
+      v: 2, words, everLearned: [...this.everLearned], daily, read: [...this.read], awakened: this.awakened, exams: this.exams,
     }));
   }
   get(id) { return this.words.get(id) ?? null; }
-  set(id, rec) { this.words.set(id, rec); this.save(); }
+  set(id, rec) { this.words.set(id, rec); if (rec?.stage === 'learned') this.everLearned.add(id); this.save(); }
   /** 1問答えたことを記録する：単語の記録を置きかえ、その日の合計（解いた数・正解数）を足して保存 */
   recordAnswer(id, rec, day, correct) {
     this.words.set(id, rec);
+    if (rec?.stage === 'learned') this.everLearned.add(id);
     const t = this.daily.get(day) ?? { answered: 0, correct: 0 };
     this.daily.set(day, { answered: t.answered + 1, correct: t.correct + (correct ? 1 : 0) });
     this.save();
@@ -141,7 +146,7 @@ export class LearningStore {
   }
   setExam(key, value) { this.exams[key] = { ...(this.exams[key] ?? {}), ...value }; this.save(); }
   clear() {
-    this.words.clear(); this.daily.clear(); this.read = new Set(); this.awakened = {}; this.exams = {};
+    this.words.clear(); this.everLearned.clear(); this.daily.clear(); this.read = new Set(); this.awakened = {}; this.exams = {};
     this.storage?.removeItem(LEARNING_KEY);
   }
 }

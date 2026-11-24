@@ -116,14 +116,9 @@ test('最低進度と★12の全36編成で、必須技能と付与が実際に�
       const positiveCosts = costs => Object.fromEntries(Object.entries(costs).filter(([, cost]) => cost > 0));
       assert.deepEqual(positiveCosts(fixture.assembly.ap[m.id]), positiveCosts(paid), `${build.id}: APを通常費用で支払う`);
     }
-    const trainingJp = fixture.assembly.jobTraining.reduce((sum, entry) => {
-      assert.equal(entry.jp, data.jobsById.get(entry.to).changeJp);
-      return sum + entry.jp;
-    }, 0);
-    const startingJp = [...new Set(game.party.map((m) => m.job))].filter((id) => data.jobsById.get(id).tier === 'mid')
-      .reduce((sum, id) => sum + data.jobsById.get(id).changeJp, 0);
-    assert.equal(fixture.assembly.jp, startingJp + trainingJp);
-    assert.equal(game.jp, 0, '組立用JPを実所持JPに残さない');
+    assert.ok(fixture.assembly.jobTraining.every((entry) =>
+      entry.from !== entry.to && data.jobsById.has(entry.to)), '各転職は無料で合法なジョブ間の移動');
+    assert.equal(game.jp, undefined, 'JPは実所持データからも廃止');
   }
 });
 

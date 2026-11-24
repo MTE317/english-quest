@@ -202,15 +202,15 @@ export class GameSession {
   /**
    * 全滅：ゲームの進み具合をダンジョンに入る前に戻して、すぐ保存する。
    * 学習記録は別の場所にあるので、ここでは触らない（残る）。
-   * 図鑑・討伐数・報酬は入場時に戻す。詠唱の記録とJPは残す。
+   * 図鑑・討伐数・報酬は入場時に戻す。詠唱の記録は残す。
    */
   wipe() {
     this.#needRun();
     const run = this.state.run;
-    const { chants, jp } = this.state.game;
+    const { chants } = this.state.game;
     this.state.game = clone(run.snapshot);
     if (chants != null) this.state.game.chants = chants;
-    if (jp != null) this.state.game.jp = jp;
+
     this.state.run = null;
     this.state.lastWipe = { at: this.now(), dungeonId: run.dungeonId, floor: run.floor, battlesDone: run.battlesDone };
     this.save();

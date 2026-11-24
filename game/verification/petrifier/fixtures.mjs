@@ -12,7 +12,6 @@ export function unlockAndTrain(data, game, index, { level = 45 } = {}) {
     game.storage.materials = { ...game.storage.materials, ...OFFERING };
     unlockJob(data, game, 'petrifier');
   }
-  game.jp = (game.jp ?? 0) + 240;
   changeJob(data, game, index, 'petrifier');
   const member = game.party[index];
   member.lv = level;

@@ -1,59 +1,38 @@
 {
- "_note": "詠唱（瞬間英作文）の設定。神殿の詠唱の間で行う。単語の4択とは別の教材・別の学習記録",
- "place": "神殿・詠唱の間",
- "flow": "日本語の文を出す → 声に出して英語で言う → 押すと正解（en・alt_en・note）を表示して読み上げ → 自分で ○・△・× を押す",
- "grades": {
-  "o": {
-   "label": "○",
-   "fsrs": "good",
-   "jp": 10
+  "_note": "瞬間英作文・チャンクは訓練場に統合。○△×の自己評価でSRSを更新する。転職JPは廃止。",
+  "place": "訓練場",
+  "flow": "日本語を見て英語を声に出す → 模範英文と音声 → ○△×で自己判定",
+  "grades": {
+    "o": {
+      "label": "○ 言えた",
+      "fsrs": "good"
+    },
+    "t": {
+      "label": "△ 詰まった",
+      "fsrs": "hard"
+    },
+    "x": {
+      "label": "× 言えなかった",
+      "fsrs": "again"
+    }
   },
-  "t": {
-   "label": "△（言えたが詰まった）",
-   "fsrs": "hard",
-   "jp": 6
-  },
-  "x": {
-   "label": "×",
-   "fsrs": "again",
-   "jp": 3
-  }
- },
- "_grades_note": "×でもJPを少し入れるのは、正直に×を押しやすくするため",
- "desired_retention": 0.9,
- "daily_options": [
-  {
-   "questions": 15,
-   "new": 3
-  },
-  {
-   "questions": 30,
-   "new": 5
-  },
-  {
-   "questions": 60,
-   "new": 10
-  }
- ],
- "daily_default": 1,
- "_daily_note": "1日の量は設定で選ぶ。期限が来た文を先に出し、残りを選んだ魔導書の新しい文で埋める（new が上限）。1日の量を超えても練習できるが、その分のJPは入らない",
- "jp_only_within_daily": true,
- "advances_day": false,
- "day_boundary_hour": 4,
- "book_select": "最初からどの魔導書でも選べる（★で縛らない）",
- "review_scope": "期限が来た文は、どの魔導書のものでも出す",
- "wipe": "詠唱の記録とJPは全滅で戻らない（町でためるため）。全滅で戻るのはダンジョンに入ってから後のことだけ",
- "jp": {
-  "name": "ジョブポイント（JP）",
-  "pool": "パーティで共有",
-  "use": "転職のたびに、そのキャラの転職先ジョブの change_jp を払う（jobs.csv・jobs_mid.csv）",
-  "first_job_free": true,
-  "cap": 2000,
-  "_cap_note": "ためられるJPは2,000まで（30分/日で約8日分）。上限のときに詠唱して増えなかった分は、強さに関係しない記録（詠唱の称号と、続けた日数）に数える"
- },
- "estimate": "1日のJPは解いた数×約7.5（15問≈110・30問≈240・60問≈500）。sim/chant.py",
- "over_cap": {
-  "titles": "上限を超えた分も含めた詠唱の正解数で称号（例：100・500・1,000・5,000・10,000問）",
-  "streak": "詠唱を1日分やった日が何日続いたか（記録として表示）"
- }
+  "desired_retention": 0.9,
+  "day_boundary_hour": 4,
+  "daily_options": [
+    {
+      "questions": 5,
+      "new": 5
+    },
+    {
+      "questions": 10,
+      "new": 10
+    },
+    {
+      "questions": 15,
+      "new": 15
+    }
+  ],
+  "daily_default": 1,
+  "advances_day": false,
+  "review_scope": "期限到来の単語とフレーズを優先。短時間の新規学習・苦手練習も可能。"
 }

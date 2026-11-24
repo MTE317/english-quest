@@ -52,9 +52,10 @@ test('鎌の特効は状態ごとに乗り、奥義は1回の命中で両方を�
   game.quests.push(hunt());
   countKills(game, [defeat('wolf_pup')], 'sunlit_forest');
   reportQuest(data, game, 100, () => 0);
-  game.jp = 220;
+  const gold = game.gold;
   changeJob(data, game, 0, job);
-  assert.equal(game.jp, 0);
+  assert.equal(game.jp, undefined);
+  assert.equal(game.gold, gold);
   const member = game.party[0];
   member.lv = 30;
   member.mp = maxMp(data, member);

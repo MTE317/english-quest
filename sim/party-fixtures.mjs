@@ -240,7 +240,7 @@ export function prepareParty(data, dungeon, profileId = 'balanced', preparation 
     ...(build ? { catalogBuildId: build.id, catalogSchemaVersion: BUILD_CATALOG.schemaVersion } : {}),
     rank: dungeon.rank, level, stage, itemCap, enhancement,
     comparison: specialized ? '専用制作と同じ素体・品質・強化の通常制作を比較' : '同★の通常制作で基本と属性・状態耐性の準備を比較',
-    assembly: { gold: 0, byPurpose: {}, materials: {}, ap: {}, jp: 0, ...(build ? { jobTraining: [] } : {}) }, gear: [], enchants: [], skipped: [],
+    assembly: { gold: 0, byPurpose: {}, materials: {}, ap: {}, ...(build ? { jobTraining: [] } : {}) }, gear: [], enchants: [], skipped: [],
   };
   const grade = Number(data.enchantGrades.filter((r) => Number(r.workshop_rank) <= dungeon.rank)
     .sort((a, b) => Number(b.grade) - Number(a.grade))[0]?.grade ?? 1);
@@ -321,8 +321,8 @@ export function prepareParty(data, dungeon, profileId = 'balanced', preparation 
     }
     m.loadout = { actions: [], passives: [] }; m.learned = []; m.ap = {};
     const toLearn = [...wanted].map((id) => data.skills.get(id)).sort((a, b) => a.stage - b.stage || a.id.localeCompare(b.id));
-    // 新カタログの持ち出しは実際に転職してAP習得し、元の職へ戻るJPも計上する。
-    // 既存12編成の費用・生成順は従来の比較結果を保つため変えない。
+    // 新カタログの持ち出しは実際に無料転職してAPを習得する。
+    // 転職回数と学習順序は比較条件として記録するが、JP・Gの費用は発生しない。
     const originalJob = m.job;
     if (build) {
       const jobOrder = [originalJob, ...new Set(toLearn.filter((s) => s.job !== originalJob).map((s) => s.job))];
@@ -331,13 +331,8 @@ export function prepareParty(data, dungeon, profileId = 'balanced', preparation 
     const trainAs = (jobId) => {
       if (!build || m.job === jobId) return;
       const from = m.job;
-      const cost = data.jobsById.get(jobId).changeJp;
-      const originalJp = game.jp ?? 0;
-      game.jp = originalJp + cost;
       changeJob(data, game, i, jobId);
-      if (game.jp !== originalJp) throw new Error('比較用転職費が実際のAPIと一致しません。');
-      fixture.assembly.jp += cost;
-      fixture.assembly.jobTraining.push({ member: i, from, to: jobId, jp: cost });
+      fixture.assembly.jobTraining.push({ member: i, from, to: jobId });
     };
     fixture.assembly.ap[m.id] = {};
     for (const s of toLearn) {
@@ -433,8 +428,6 @@ export function prepareParty(data, dungeon, profileId = 'balanced', preparation 
   game.items = { [heal]: 3, [mana]: 2, revive_salts: 1, antidote: 2, ...(dungeon.rank >= 2 ? { panacea: 1 } : {}) };
   fixture.assembly.byPurpose.items = Object.entries(game.items).reduce((sum, [id, count]) => sum + data.items.get(id).price * count, 0);
   fixture.assembly.gold += fixture.assembly.byPurpose.items;
-  fixture.assembly.jp += [...new Set(game.party.map((m) => m.job))].filter((id) => data.jobsById.get(id).tier === 'mid')
-    .reduce((sum, id) => sum + data.jobsById.get(id).changeJp, 0);
   if (build && prepared) fixture.core = assertBuildCore(data, game);
   game.gold = initialGold;
   return game;

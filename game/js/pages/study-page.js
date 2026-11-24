@@ -1,232 +1,222 @@
-// ギルドの学び舎：資料室（予習）・石碑の間（教材セットと任意の確認テスト）・訓練場（鍛錬）・昇格試験
+// 英語学習は訓練場（単語・瞬間英作文・チャンク）と試験の間へ集約する。
 import { loadGameData } from '../gamedata.js?v=rune-study-1';
 import { loadJson } from '../data.js?v=features-2';
-import { loadLearningCatalog } from '../learning-catalog.js?v=learning-v1-1';
-import { Scheduler, STAGE_LABEL } from '../srs.js?v=features-2';
+import { loadLearningCatalog, FEATURED_SET_ID } from '../learning-catalog.js?v=learning-v1-1';
+import { Scheduler } from '../srs.js?v=features-2';
 import { LearningStore, now } from '../storage.js?v=rune-study-1';
-import { QuestionPicker } from '../picker.js';
 import { GameSession } from '../save.js?v=rune-study-1';
 import { normalizeGame } from '../game-state.js?v=party6-1';
-import { seededRng, currentRank } from '../dungeon.js?v=build36-1';
-import { checkRankUp } from '../town.js?v=build36-1';
-import {
-  stoneProgress, nextUnread, trialBlock, trialPlan, finishExam, promotionBlock, promotionPlan, starLearnedRatio,
-  trainingReward, applyTraining,
-} from '../study.js?v=build36-1';
-import { runQuiz } from '../ui/quiz-runner.js?v=music-suite-1';
-import { speak, canSpeak } from '../speech.js?v=music-suite-1';
-import { el, render, stars } from '../dom.js';
-
+import { currentRank } from '../dungeon.js?v=build36-1';
+import { nextRankStatus, checkRankUp } from '../town.js?v=build36-1';
+import { promotionProgress, promotionExamState } from '../promotion.js?v=training-v2-1';
+import { learningStatistics } from '../learning-stats.js?v=training-v2-1';
+import { TRAINING_COUNTS } from '../training.js?v=training-v2-1';
+import { runTrainingSession } from '../ui/training-runner.js?v=training-v2-1';
+import { runDualPromotionExam } from '../ui/learning-exams.js?v=training-v2-1';
+import { el, render } from '../dom.js';
 import { setSceneMusic } from '../battle-music.js?v=music-suite-1';
-
 import { installGameShell } from '../ui/game-shell.js?v=pixel-town-1';
 
 const view = document.getElementById('view');
-setSceneMusic('facility');
 const session = new GameSession();
 installGameShell('study', session);
 session.installAutoSave(window);
-let data; let lex; let scheduler; let store; let srs;
-const today = () => scheduler.dayOf(now());
-const rng = () => seededRng({ rng: (Date.now() ^ (Math.random() * 2 ** 32)) >>> 0 });
-const TABS = [['library', '資料室'], ['hall', '石碑の間'], ['training', '訓練場'], ['exam', '昇格試験']];
-const requestedTab = new URLSearchParams(window.location.search).get('tab');
-let tab = TABS.find(([id]) => id === requestedTab)?.[0] ?? 'library';
+setSceneMusic('facility');
 
-function tabs() {
-  return el('div', { class: 'tabs study-tabs', role: 'group', 'aria-label': '学習施設' }, TABS.map(([id, label]) => el('button', { class: tab === id ? 'on' : '', 'aria-pressed': String(tab === id), onclick: () => {
-    tab = id; const url = new URL(location.href); url.searchParams.set('tab', id); history.replaceState(null, '', url);
-    draw(); view.querySelector('.study-tabs .on')?.focus({ preventScroll: true });
-  } }, label)));
+let data; let catalog; let store; let scheduler; let chantConfig;
+const TABS = [['training', '訓練場'], ['exam', '試験の間']];
+const query = new URLSearchParams(location.search);
+let tab = query.get('tab') === 'exam' ? 'exam' : 'training';
+const state = {
+  mode: ['words','phrases','chunks','review','mixed'].includes(query.get('mode')) ? query.get('mode') : 'mixed',
+  setId: FEATURED_SET_ID, chunkId: 'C001', count: 10,
+};
+let message = '';
+
+function menu() {
+  return el('div', { class: 'tabs study-tabs', role: 'group', 'aria-label': '英語学習' },
+    TABS.map(([id, label]) => el('button', {
+      class: tab === id ? 'on' : '', 'aria-pressed': String(tab === id),
+      onclick: () => {
+        tab = id;
+        const url = new URL(location.href); url.searchParams.set('tab', id);
+        history.replaceState(null, '', url);
+        message = '';
+        draw();
+      },
+    }, label)));
 }
 
-// ---------------- 資料室：予習カード ----------------
-function library() {
-  return [
-    el('p', { class: 'muted small' }, '次に出るルーンを読み解く（英語・意味・例文・発音）。読むだけでは報酬はありません。'),
-    lex.stones.map((s) => {
-      const p = stoneProgress(lex, store, scheduler, s.id, today());
-      return el('button', { disabled: p.allRead, onclick: () => showCards(s.id) },
-        el('div', { class: 'choice-title' }, s.name),
-        el('div', { class: 'stats' }, `読み解いた ${p.read} / ${p.total}`, p.allRead ? '　すべて読み解いた' : ''),
-        el('progress', { class: 'study-progress', value: p.read, max: p.total || 1, 'aria-label': '読了したルーン' }));
-    }),
-  ];
+function chosenText(set) {
+  const count = (catalog.wordsByStone.get(set.id) ?? []).length;
+  const phrases = (catalog.phrasesByStone.get(set.id) ?? []).length;
+  return set.name + '（単語' + count + '・英作文' + phrases + '）';
 }
 
-function showCards(stoneId) {
-  const cards = nextUnread(lex, store, stoneId, 999);
-  let k = 0;
-  const show = () => {
-    if (k >= cards.length) { draw(); return; }
-    const w = cards[k];
-    render(view,
-      el('div', { class: 'progress' }, el('span', {}, '予習カード'), el('span', {}, `${k + 1} / ${cards.length}`)),
-      el('div', { class: 'panel card' },
-        el('div', { class: 'prompt', lang: 'en' }, w.en),
-        canSpeak() ? el('div', { class: 'center' }, el('button', { class: 'speak', 'aria-label': '英語の発音を聞く', onclick: () => speak(w.en) }, '🔊')) : null,
-        el('div', { class: 'center', style: 'font-size:1.3rem' }, w.ja),
-        w.pos ? el('div', { class: 'center muted small' }, w.pos) : null,
-        w.exampleEn ? el('div', { class: 'small', lang: 'en' }, w.exampleEn) : null,
-        w.exampleJa ? el('div', { class: 'small muted' }, w.exampleJa) : null),
-      el('button', { class: 'primary', onclick: () => { store.markRead([w.id]); k += 1; show(); } }, '読み解いた → 次へ'),
-      el('button', { class: 'ghost', onclick: () => draw() }, 'ここでやめる'));
-    window.scrollTo(0, 0);
-  };
-  show();
-}
-
-// ---------------- 石碑の間 ----------------
-function hall() {
-  return [
-    el('p', { class: 'muted small' }, 'ルーンストーンごとに学習の進み具合を確認できます。確認テストは任意です。予習前でも、合格後でも、何度でも受けられます。'),
-    lex.stones.map((s) => {
-      const p = stoneProgress(lex, store, scheduler, s.id, today());
-      const block = trialBlock(data, lex, store, scheduler, s.id, today());
-      const passed = p.test?.firstPassedDay != null || p.test?.passedDay != null;
-      return el('div', { class: `panel small ${passed ? 'confirmed' : ''}` },
-        el('div', { class: 'choice-title' }, s.name),
-        el('div', { class: 'stats' },
-          el('span', {}, `読み解いた ${p.read}/${p.total}`),
-          el('span', {}, `${STAGE_LABEL.learning} ${p.learning}`), el('span', {}, `${STAGE_LABEL.learned} ${p.learned}`),
-          p.due ? el('span', { class: 'error' }, `かすれ ${p.due}`) : null),
-        passed ? el('p', { class: 'small' }, '✓ 確認テストの合格記録あり') : null,
-        p.test?.lastTotal > 0 ? el('p', { class: 'muted small' },
-          `前回 ${p.test.lastCorrect} / ${p.test.lastTotal}問正解 ・ ${p.test.legacyImported ? '記録分の最高' : '最高'} ${Math.round(p.test.bestRate * 100)}%`)
-          : p.test?.legacyImported ? el('p', { class: 'muted small' }, '以前のテスト記録を引き継いでいます。') : null,
-        el('button', { disabled: !!block, onclick: () => startTrial(s.id) }, block || '確認テストを受ける（任意）'));
-    }),
-  ];
-}
-
-function startTrial(stoneId) {
-  const plan = trialPlan(data, lex, stoneId, rng());
-  let i = 0;
-  runQuiz({
-    view, lex, scheduler, store, total: plan.words.length, format: 'mixed', title: '確認テスト',
-    next: () => ({ word: lex.wordsById.get(plan.words[i++]) }),
-    onDone: (correct, total) => {
-      const passed = finishExam(data, store, plan, correct, today());
-      render(view,
-        el('h2', {}, passed ? '確認テスト合格！' : '確認テストの結果'),
-        el('div', { class: 'panel center' }, el('div', { class: 'prompt' }, `${correct} / ${total}`), el('div', { class: 'muted' }, `合格は ${Math.round(plan.passRate * 100)}%`)),
-        el('p', { class: 'small' }, '結果と回答したルーンの学習記録を保存しました。何度でも受け直せます。'),
-        el('button', { onclick: () => startTrial(stoneId) }, 'もう一度受ける'),
-        el('button', { class: 'primary', onclick: () => { tab = 'hall'; draw(); } }, '石碑の間へ'));
-    },
-  });
-}
-
-// ---------------- 訓練場：鍛錬 ----------------
 function training() {
-  const g = session.game;
-  const counts = data.balance.training?.questions ?? [5, 10, 15];
-  const st = { member: 0, kind: 'xp', count: counts[counts.length - 1], stoneId: lex.stones[0].id };
-  const read = lex.stones.filter((s) => stoneProgress(lex, store, scheduler, s.id, today()).read > 0);
-  const stones = read.length ? read : lex.stones;
-  st.stoneId = stones[0].id;
+  const today = scheduler.dayOf(now());
+  const progress = learningStatistics(catalog, store, session.game, scheduler, today);
+  const modes = [
+    ['mixed', 'おまかせ', '単語と英作文を混ぜて学習'],
+    ['words', '単語・熟語', '4択で新規学習と復習'],
+    ['phrases', '瞬間英作文', '日本語から英文を声に出す'],
+    ['chunks', 'チャンク集中', '同じ型の英文を続けて反復'],
+    ['review', '復習・苦手', '期限到来と間違えた問題'],
+  ];
+  const allSets = [catalog.stonesById.get(FEATURED_SET_ID),
+    ...catalog.mainCategories.map((main) => catalog.stonesById.get(main.id))].filter(Boolean);
+  const subSets = catalog.subcategories;
   return [
-    el('p', { class: 'muted small' }, '戦闘なしでまとめて解く。かすれたルーン（復習）を先に出す。日数は進まず、お金や素材は入らない。'),
-    el('label', { class: 'small' }, 'だれを鍛える', el('select', { class: 'select', onchange: (e) => { st.member = Number(e.target.value); } },
-      g.party.map((m, i) => el('option', { value: i }, `${m.name}（${data.jobsById.get(m.job).name} Lv${m.lv}）`)))),
-    el('label', { class: 'small' }, '何を伸ばす', el('select', { class: 'select', onchange: (e) => { st.kind = e.target.value; } },
-      el('option', { value: 'xp' }, '経験値'), el('option', { value: 'ap' }, 'AP（今のジョブ）'))),
-    el('label', { class: 'small' }, '問題数', el('select', { class: 'select', onchange: (e) => { st.count = Number(e.target.value); } },
-      counts.map((c) => el('option', { value: c, selected: c === st.count }, `${c}問`)))),
-    el('label', { class: 'small' }, '新しいルーンを出す石', el('select', { class: 'select', onchange: (e) => { st.stoneId = e.target.value; } },
-      stones.map((s) => el('option', { value: s.id }, s.name)))),
-    el('button', { class: 'primary', onclick: () => startTraining(st) }, '鍛錬をはじめる'),
+    el('p', { class: 'muted small' },
+      '時間がなくても5問から。育成対象は選ばず、6人全員へ冒険の約10分の1を目安とした少量のXP・APを付与します。'),
+    el('div', { class: 'route-facts' },
+      [['単語の復習待ち', progress.words.due],
+        ['英作文の復習待ち', progress.phrases.due],
+        ['習得した単語', progress.words.masteredEver],
+        ['言えるようになった英文', progress.phrases.masteredEver]]
+        .map(([title, value]) => el('div', {}, el('small', {}, title), el('strong', {}, String(value))))),
+    el('h3', {}, '学習モード'),
+    el('div', { class: 'training-mode-grid', role: 'group', 'aria-label': '学習モード' },
+      modes.map(([id, title, note]) => el('button', {
+        class: 'training-mode', 'aria-pressed': String(state.mode === id),
+        onclick: () => { state.mode = id; message = ''; draw(); },
+      }, el('strong', {}, title), el('small', {}, note)))),
+    el('h3', {}, '教材を選ぶ'),
+    el('div', { class: 'training-set-grid', role: 'group', 'aria-label': '教材コレクション' },
+      allSets.map((set) => el('button', {
+        class: 'training-set', 'aria-pressed': String(state.setId === set.id),
+        onclick: () => { state.setId = set.id; draw(); },
+      }, el('span', { class: 'training-set-gem', 'aria-hidden': 'true' }, '◆'),
+      el('strong', {}, set.name),
+      el('small', {}, state.mode === 'words'
+        ? String((catalog.wordsByStone.get(set.id) ?? []).length) + '項目'
+        : String((catalog.phrasesByStone.get(set.id) ?? []).length) + 'フレーズ')))),
+    el('label', { class: 'small' }, 'さらに細かく選ぶ（任意）',
+      el('select', { class: 'select', value: state.setId, onchange: (e) => {
+        state.setId = e.target.value; draw();
+      } }, [
+        ...allSets.map((set) => el('option', { value: set.id, selected: state.setId === set.id }, chosenText(set))),
+        ...catalog.mainCategories.map((main) => el('optgroup', { label: main.name },
+          subSets.filter((sub) => sub.mainId === main.id).map((sub) =>
+            el('option', { value: sub.id, selected: state.setId === sub.id }, chosenText(sub))))),
+        el('option', { value: 'all', selected: state.setId === 'all' }, '全カテゴリー'),
+      ])),
+    state.mode === 'chunks'
+      ? el('label', { class: 'small' }, '練習するチャンク',
+        el('select', { class: 'select', onchange: (e) => { state.chunkId = e.target.value; draw(); } },
+          catalog.chunks.map((chunk) => el('option', {
+            value: chunk.id, selected: chunk.id === state.chunkId,
+          }, chunk.id + ' ' + chunk.pattern + '（例文' +
+            (catalog.phrasesByChunk.get(chunk.id) ?? []).length + '件）'))),
+        el('p', { class: 'muted small' }, '例文が1件のチャンクも学習できますが、複数文での反復には例文追加が必要です。')) : null,
+    el('label', { class: 'small' }, '問題数',
+      el('select', { class: 'select', onchange: (e) => { state.count = Number(e.target.value); draw(); } },
+        TRAINING_COUNTS.map((n) => el('option', { value: n, selected: state.count === n }, n + '問')))),
+    el('p', { class: 'muted small' }, '間違えた項目は再出題・苦手記録に反映。期限に正解したときは訓練報酬が1.2倍（1項目1日1回）。'),
+    el('button', { class: 'primary', onclick: startTraining }, state.count + '問の訓練を始める'),
+    el('a', { class: 'btn', href: 'records.html?tab=log' }, '学習統計を見る'),
   ];
 }
 
-function startTraining(st) {
-  const picker = new QuestionPicker({ lex, store, scheduler, stoneId: st.stoneId, nowMs: now() });
-  runQuiz({
-    view, lex, scheduler, store, total: st.count, title: '鍛錬',
-    next: () => picker.next(),
-    onAnswer: (w, ok) => picker.report(w.id, ok),
-    onDone: (correct, total) => {
-      let msg;
-      session.update((g) => {
-        const m = g.party[st.member];
-        const r = trainingReward(data, g, m, st.kind, correct, total);
-        const ups = applyTraining(data, g, st.member, r);
-        msg = r.xp ? `${m.name}：経験値 +${r.xp}${ups ? `（Lv${m.lv}に上がった！）` : ''}` : `${m.name}：AP +${r.ap}`;
-        if (!r.xp && st.kind === 'xp') msg += '（今の★の敵より強くなりすぎて、鍛錬の経験値が入らない）';
-      });
-      render(view,
-        el('h2', {}, '鍛錬おわり'),
-        el('div', { class: 'panel center' }, el('div', { class: 'prompt' }, `${correct} / ${total}`)),
-        el('div', { class: 'panel small' }, msg),
-        el('button', { class: 'primary', onclick: () => { tab = 'training'; draw(); } }, 'もどる'));
+function startTraining() {
+  message = '';
+  runTrainingSession({
+    view, catalog, store, session, scheduler, data, chantConfig,
+    options: { ...state },
+    onFinish: (result) => {
+      message = result.answered
+        ? result.answered + '問完了（単語' + result.words + '・英作文' + result.phrases +
+          '）。6人合計 XP +' + result.xp + ' / AP +' + result.ap + '。端数は次回へ繰り越します。'
+        : 'この条件では出題可能な項目がありません。教材や学習モードを変更してください。';
+      tab = 'training'; draw();
     },
   });
 }
 
-// ---------------- 昇格試験 ----------------
 function exam() {
   const g = session.game;
-  const idx = data.ranks.findIndex((r) => r.id === g.rank);
-  const next = data.ranks[idx + 1];
-  const star = currentRank(data, g).maxDungeonRank;
-  const r = starLearnedRatio(lex, store, scheduler, star);
-  const block = promotionBlock(data, lex, store, scheduler, g, today());
+  const rank = currentRank(data, g);
+  const status = nextRankStatus(data, g);
+  const next = status?.next;
+  if (!next) return [el('p', {}, 'すべてのランクを達成しました！')];
+  const current = next.needsExam
+    ? promotionProgress(catalog, store, g, next.id) : null;
+  const passed = current ? promotionExamState(store, next.id) : null;
   return [
-    el('div', { class: 'panel small' },
-      el('div', {}, `今のランク：${currentRank(data, g).title}`),
-      next ? el('div', {}, `次のランク：${next.title}${next.needsExam ? '（昇格試験あり）' : '（試験なし。ギルドのポイントで上がる）'}`) : null,
-      el('div', {}, `★${star}のルーンの習得：${r.learned} / ${r.total}（${Math.round(r.ratio * 100)}%）`)),
-    next?.id === 'S' ? el('a', { class: 'btn primary', href: 'challenge.html' }, '最終試験へ') : next?.needsExam ? el('button', { class: 'primary', disabled: !!block, onclick: () => startPromotion() }, block || '昇格試験を受ける') : null,
-    el('p', { class: 'muted small' }, '合格したうえで、ギルドのポイントと「今の★のダンジョンを踏破」がそろうとランクが上がる。'),
+    el('div', { class: 'panel' },
+      el('h3', {}, '冒険者ランク：' + rank.title),
+      el('p', {}, '次の目標：' + next.title),
+      !next.needsExam ? el('p', { class: 'muted small' }, '「＋」ランクはギルドポイントで昇格します。') : null,
+      current ? el('div', { class: 'route-facts' },
+        [['単語の累積習得', current.words + ' / ' + current.required.words],
+          ['英作文の累積習得', current.phrases + ' / ' + current.required.phrases],
+          ['単語試験', passed.wordPassed ? '合格' : '未合格'],
+          ['英作文試験', passed.phrasePassed ? '合格' : '未合格']]
+          .map(([name, value]) => el('div', {}, el('small', {}, name), el('strong', {}, value)))) : null,
+      (status?.needs ?? []).length
+        ? el('p', { class: 'muted small' }, 'その他の昇格条件：' + status.needs.join('・')) : null),
+    next.id === 'S'
+      ? el('a', { class: 'btn primary', href: 'challenge.html' }, 'Sランク最終試験へ')
+      : next.needsExam
+        ? el('button', { class: 'primary',
+          disabled: !current.wordMet || !current.phraseMet || (g.examsPassed ?? []).includes(next.id),
+          onclick: () => startPromotion(next.id) },
+          (g.examsPassed ?? []).includes(next.id) ? '二分野とも合格済み' :
+            !current.wordMet || !current.phraseMet ? '累積習得条件を達成すると受験可能' : '単語・英作文の昇格試験に挑む') : null,
+    el('p', { class: 'muted small' },
+      '単語4択と瞬間英作文の両方で80%以上が必要です。各分野の合格履歴は保存し、合格済みの分野は再受験不要です。'),
   ];
 }
 
-function startPromotion() {
-  const plan = promotionPlan(data, lex, session.game, rng());
-  let i = 0;
-  runQuiz({
-    view, lex, scheduler, store, total: plan.words.length, format: 'mixed', title: '昇格試験',
-    next: () => ({ word: lex.wordsById.get(plan.words[i++]) }),
-    onDone: (correct, total) => {
-      const lines = [];
-      const passed = finishExam(data, store, plan, correct, today(), () => {
-        session.update((g) => { g.examsPassed.push(plan.rankId); lines.push(...checkRankUp(data, g)); });
-      });
-      render(view,
-        el('h2', {}, passed ? '合格！' : '不合格…'),
-        el('div', { class: 'panel center' }, el('div', { class: 'prompt' }, `${correct} / ${total}`), el('div', { class: 'muted' }, `合格は ${Math.round(plan.passRate * 100)}%`)),
-        lines.length ? el('div', { class: 'panel small' }, lines.map((l) => el('div', {}, l))) : null,
-        passed && !lines.length ? el('p', { class: 'small' }, 'ポイントか踏破がそろうとランクが上がる。') : null,
-        passed ? null : el('p', { class: 'small' }, '次の日に再挑戦できる。'),
-        el('button', { class: 'primary', onclick: () => { tab = 'exam'; draw(); } }, 'もどる'));
+function startPromotion(rankId) {
+  runDualPromotionExam({ view, catalog, store, session, scheduler, chantConfig, rankId,
+    onFinish: ({ complete }) => {
+      if (complete) {
+        const updates = [];
+        session.update((g) => {
+          if (!g.examsPassed.includes(rankId)) g.examsPassed.push(rankId);
+          updates.push(...checkRankUp(data, g));
+        });
+        message = updates.length ? updates.join('　') :
+          '単語・瞬間英作文の両試験に合格しました！ その他の昇格条件を満たすとランクが上がります。';
+      } else message = '未合格の分野を復習してから再挑戦しましょう。合格済みの分野は保持されます。';
+      tab = 'exam'; draw();
     },
   });
 }
 
 function draw() {
   if (!session.game?.party) {
-    render(view, el('p', {}, 'まだパーティがいません。'), el('a', { class: 'btn primary', href: 'party.html' }, 'パーティを作る'));
+    render(view, el('p', {}, '先にパーティを作成してください。'),
+      el('a', { class: 'btn primary', href: 'party.html' }, 'パーティを作る'));
     return;
   }
   if (session.inDungeon) {
-    render(view, el('p', {}, 'ダンジョンの中にいます。'), el('a', { class: 'btn primary', href: 'dungeon.html' }, 'ダンジョンへ'));
+    render(view, el('p', {}, '遠征中です。町に帰ってから訓練できます。'),
+      el('a', { class: 'btn primary', href: 'dungeon.html' }, '遠征を続ける'));
     return;
   }
-  render(view, tabs(), el('section', { class: 'study-room' }, el('h2', { class: 'chapter-title' }, TABS.find(([id]) => id === tab)[1]), { library, hall, training, exam }[tab]()));
-  window.scrollTo(0, 0);
+  render(view, menu(), message ? el('p', { class: 'panel small', role: 'status' }, message) : null,
+    el('section', { class: 'study-room' },
+      el('h2', { class: 'chapter-title' }, tab === 'exam' ? '試験の間' : '訓練場'),
+      tab === 'exam' ? exam() : training()));
 }
 
 (async () => {
   try {
-    const [gd, srsFile, catalog] = await Promise.all([loadGameData(), loadJson('srs.json'), loadLearningCatalog()]);
-    data = gd; srs = srsFile.data;
-    scheduler = new Scheduler(srs);
-    lex = catalog.lexicon;
+    const [gd, srs, cat, cfg] = await Promise.all([
+      loadGameData(), loadJson('srs.json'), loadLearningCatalog(), loadJson('chant.json'),
+    ]);
+    data = gd; catalog = cat; chantConfig = cfg.data;
+    scheduler = new Scheduler(srs.data);
     store = new LearningStore();
-    if (session.game && !session.readOnly) { normalizeGame(data, session.game, session.run); session.save(); }
+    if (session.game && !session.readOnly) {
+      normalizeGame(data, session.game, session.run);
+      session.save();
+    }
     draw();
   } catch (e) {
-    render(view, el('p', { class: 'error' }, `読み込みに失敗：${e.message}`));
+    render(view, el('p', { class: 'error' }, '読み込みに失敗：' + e.message));
     console.error(e);
   }
 })();

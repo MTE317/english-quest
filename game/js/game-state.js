@@ -65,7 +65,7 @@ export function normalizeGame(data, game, run = null, { expandParty = true } = {
   delete game.overdue;
   game.notices = game.notices ?? [];
   retireLegacyQuestChains(data, game);
-  game.jp ??= 0;
+  delete game.jp; // 転職費用のJPは廃止。教材は学習記録へ統一。
   game.titles ??= [];
   game.unlockedJobs = game.unlockedJobs ?? [];
   game.examsPassed = game.examsPassed ?? [];

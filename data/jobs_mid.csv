@@ -1,7 +1,7 @@
-﻿id,name,role,hp,str,mag,def,res,spd,luk,unlock,change_jp,dmg_mul
-elementalist,精霊術士,風・土・水の魔法,B,D,A,C,A,B,C,発見（★3奥地）,200,1.0
-gunner,銃士,銃のスペシャリスト,B,C,D,B,C,A,A,素材,200,1.0
-dancer,踊り子,鞭と舞の支援役,C,B,B,D,B,A,B,素材,200,1.0
-spellblade,魔法剣士,武器に属性をのせる,B,A,B,C,C,B,C,発見（★2奥地）,200,1.0
-hexer,呪術師,弱体化と闇の魔法,B,D,A,D,A,B,B,素材,200,1.0
-apothecary,薬師,アイテムと調合,B,C,C,B,B,C,A,素材,200,1.0
+﻿id,name,role,hp,str,mag,def,res,spd,luk,unlock,dmg_mul
+elementalist,精霊術士,風・土・水の魔法,B,D,A,C,A,B,C,発見（★3奥地）,1.0
+gunner,銃士,銃のスペシャリスト,B,C,D,B,C,A,A,素材,1.0
+dancer,踊り子,鞭と舞の支援役,C,B,B,D,B,A,B,素材,1.0
+spellblade,魔法剣士,武器に属性をのせる,B,A,B,C,C,B,C,発見（★2奥地）,1.0
+hexer,呪術師,弱体化と闇の魔法,B,D,A,D,A,B,B,素材,1.0
+apothecary,薬師,アイテムと調合,B,C,C,B,B,C,A,素材,1.0

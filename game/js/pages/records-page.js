@@ -1,6 +1,11 @@
 import { GameSession } from '../save.js?v=rune-study-1';
 import { loadGameData } from '../gamedata.js?v=rune-study-1';
-import { LearningStore, loadSettings, saveSettings } from '../storage.js?v=rune-study-1';
+import { LearningStore, loadSettings, saveSettings, now } from '../storage.js?v=rune-study-1';
+import { loadLearningCatalog, FEATURED_SET_ID } from '../learning-catalog.js?v=learning-v1-1';
+import { learningStatistics } from '../learning-stats.js?v=training-v2-1';
+import { masteredWordIds, masteredPhraseIds } from '../promotion.js?v=training-v2-1';
+import { loadJson } from '../data.js?v=features-2';
+import { Scheduler } from '../srs.js?v=features-2';
 import { dayToString } from '../srs.js?v=features-2';
 import { DIRECTION } from '../quiz.js?v=features-2';
 import { el, render } from '../dom.js';
@@ -20,7 +25,7 @@ function section(title, ...body) {
 }
 
 async function show() {
-  const data = await loadGameData();
+  const [data, catalog, srs] = await Promise.all([loadGameData(), loadLearningCatalog(), loadJson('srs.json')]);
   const game = session.game;
   const equipped = (game?.party ?? []).flatMap((member) => Object.values(member.equip).filter(Boolean));
   const owned = new Set([...(game?.catalog?.gear ?? []), ...(game?.storage?.gear ?? []).map((x) => x.id), ...equipped.map((x) => x.id)]);
@@ -63,17 +68,58 @@ async function show() {
       section('称号', game?.titles?.length ? game.titles.map((title) => el('div', {}, title)) : el('p', {}, 'まだ称号を獲得していません。'))];
   }
   function log() {
-    const days = [...store.daily.entries()].sort(([a], [b]) => b - a);
-    const answered = days.reduce((sum, [, row]) => sum + row.answered, 0);
-    const correct = days.reduce((sum, [, row]) => sum + row.correct, 0);
-    return [el('h2', { class: 'chapter-title' }, '単語の学習記録'),
-      el('div', { class: 'route-facts' }, [['学んだルーン', `${store.size}語`], ['回答数', `${answered}問`],
-        ['正答率', answered ? `${Math.round(correct / answered * 100)}%` : '―']].map(([label, value]) =>
-        el('div', {}, el('small', {}, label), el('strong', {}, value)))),
-      el('h2', { class: 'chapter-title' }, '日ごとの記録'),
-      days.length ? el('ul', { class: 'journal-days' }, days.map(([day, row]) =>
-        el('li', {}, el('span', {}, dayToString(day)), el('strong', {}, `${row.answered}問中 ${row.correct}問正解`))))
-        : el('p', { class: 'muted' }, '戦闘や訓練で答えた問題が、日ごとに記録されます。')];
+    const scheduler = new Scheduler(srs.data);
+    const stats = learningStatistics(catalog, store, game, scheduler, scheduler.dayOf(now()));
+    const learnedWords = masteredWordIds(store);
+    const learnedPhrases = masteredPhraseIds(game);
+    const featuredWords = catalog.wordsByStone.get(FEATURED_SET_ID) ?? [];
+    const featuredPhrases = catalog.phrasesByStone.get(FEATURED_SET_ID) ?? [];
+    const wordsAnswered = stats.days.reduce((sum, row) => sum + row.words, 0);
+    const phrasesAnswered = stats.days.reduce((sum, row) => sum + row.phrases, 0);
+    const recent = stats.days.slice(0, 14);
+    const fact = (label, value) => el('div', {},
+      el('small', {}, label), el('strong', {}, String(value)));
+    const meter = (label, learned, total) => el('div', { class: 'learning-meter' },
+      el('div', { class: 'learning-meter-caption' },
+        el('strong', {}, label), el('span', {}, learned + ' / ' + total)),
+      el('progress', { max: total || 1, value: learned, 'aria-label': label + 'の習得率' }));
+    return [
+      el('h2', { class: 'chapter-title' }, '英語学習の統計'),
+      el('p', { class: 'muted small' }, '教材v1.0の全項目を共通IDで集計しています。00コレクションと他のカテゴリーの重複は二重カウントしません。'),
+      el('div', { class: 'route-facts' }, [
+        ['覚えた単語・熟語', stats.words.masteredEver + ' / ' + stats.words.total],
+        ['言えるようになった英文', stats.phrases.masteredEver + ' / ' + stats.phrases.total],
+        ['チャンクの定着', stats.chunks.mastered + ' / ' + stats.chunks.total],
+        ['復習待ち', stats.words.due + stats.phrases.due],
+        ['学習した日数', stats.days.length + '日'],
+        ['累積回答', (wordsAnswered + phrasesAnswered) + '問'],
+      ].map(([label, value]) => fact(label, value))),
+      el('h3', {}, '現在の記憶と累積達成'),
+      el('div', { class: 'route-facts' }, [
+        ['単語：現在習得', stats.words.masteredNow],
+        ['単語：一度でも習得', stats.words.masteredEver],
+        ['英作文：現在習得', stats.phrases.masteredNow],
+        ['英作文：一度でも習得', stats.phrases.masteredEver],
+      ].map(([label, value]) => fact(label, value))),
+      el('h3', {}, '00 最優先学習コレクション'),
+      meter('S優先単語', featuredWords.filter((w) => learnedWords.has(w.id)).length, featuredWords.length),
+      meter('S優先フレーズ', featuredPhrases.filter((p) => learnedPhrases.has(p.id)).length, featuredPhrases.length),
+      el('h3', {}, 'カテゴリー別進捗'),
+      el('div', { class: 'learning-category-grid' }, stats.main.map((category) =>
+        el('div', { class: 'panel small' },
+          el('strong', {}, category.name),
+          meter('単語・熟語', category.wordLearned, category.words),
+          meter('瞬間英作文', category.phraseLearned, category.phrases)))),
+      el('h3', {}, '回答履歴'),
+      el('div', { class: 'route-facts' }, [
+        ['単語4択', wordsAnswered + '問'], ['英作文（自己評価）', phrasesAnswered + '問'],
+      ].map(([label, value]) => fact(label, value))),
+      recent.length ? el('ul', { class: 'journal-days' }, recent.map((row) => el('li', {},
+        el('span', {}, dayToString(row.day)),
+        el('strong', {}, '単語 ' + row.words + '問 / 英作文 ' + row.phrases + '問'))))
+        : el('p', { class: 'muted' }, '単語・英作文の学習を始めると日々の記録がここに残ります。'),
+      el('p', { class: 'muted small' }, 'チャンクは2文以上の反復を伴い、関連フレーズの7割以上が累積習得した場合に定着と判定します。英作文の成績は自己評価に基づきます。'),
+    ];
   }
   const nav = el('div', { class: 'district-switch', role: 'group', 'aria-label': '手帳のページ' });
   const body = el('div');
