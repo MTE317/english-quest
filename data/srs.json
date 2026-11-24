@@ -1,7 +1,7 @@
 {
  "_note": "出題と復習の設定（仮）。FSRSを参考にする",
  "desired_retention": 0.9,
- "learned_rule": "日を空けて3回続けて正解したら習得（仮）",
+ "learned_rule": "記憶の安定度が30日以上で直近のSRS評価が成功なら習得（仮）",
  "new_per_run": [
   10,
   15
@@ -18,8 +18,7 @@
  "storage": "単語ごとに段階・次の復習日・連続正解数などを保存（15,000語で1MB未満）",
  "fsrs_w": "FSRS-5 の公開されている初期値（ゲーム側の FALLBACK を正とする）",
  "maximum_interval_days": 36500,
- "learned_streak": 3,
- "learned_min_gap_days": 1,
+ "learned_stability_days": 30,
  "familiar_streak": 1,
  "retry_gap": 3,
  "new_per_run_rule": "普段は15語。かすれたルーンが増えるにつれて10語まで減らし、reduce_new_when_due_over を超えたら reduced_new_per_run（5語）",

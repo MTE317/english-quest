@@ -1,10 +1,11 @@
 import { makeQuestion } from '../quiz.js?v=question-speech-1';
 import { makeTrainingPicker, applyTrainingAnswer } from '../training.js?v=basic-skill-levels-1';
-import { recordChant } from '../chant.js?v=training-v2-1';
-import { now } from '../storage.js?v=rune-study-1';
+import { recordChant } from '../chant.js?v=stability-1';
+import { now } from '../storage.js?v=stability-1';
 import { speak, canSpeak, stopSpeech } from '../speech.js?v=music-suite-1';
 import { el, render } from '../dom.js';
 
+const WORD_GRADES = [[1, '×', 'わからない'], [3, '〇', 'わかる'], [4, '◎', '簡単']];
 const REASONS = { due: '期限が来た復習', retry: '苦手問題', new: '新規学習', practice: '練習' };
 
 export function runTrainingSession({ view, catalog, store, session, scheduler, data,
@@ -57,13 +58,20 @@ export function runTrainingSession({ view, catalog, store, session, scheduler, d
       done = true;
       const correct = index === q.answerIndex;
       const time = now();
-      const rec = scheduler.review(store.get(word.id), correct, time);
-      store.recordAnswer(word.id, rec, scheduler.dayOf(time), correct);
-      picker.report(entry, correct);
-      recordReward(entry, correct);
-      answered++;
-      words++;
-      if (correct) wordCorrect++;
+      let rated = false;
+      function rate(grade) {
+        if (rated) return;
+        rated = true;
+        const rec = scheduler.reviewGrade(store.get(word.id), correct ? grade : 1, time, correct);
+        store.recordAnswer(word.id, rec, scheduler.dayOf(time), correct);
+        picker.report(entry, correct);
+        recordReward(entry, correct);
+        answered++;
+        words++;
+        if (correct) wordCorrect++;
+      }
+      // 誤答はその場で Again として保存する。
+      if (!correct) rate(1);
       for (let i = 0; i < buttons.length; i++) {
         buttons[i].disabled = true;
         if (i === q.answerIndex) buttons[i].classList.add('correct');
@@ -73,9 +81,20 @@ export function runTrainingSession({ view, catalog, store, session, scheduler, d
         el('div', { class: 'feedback ' + (correct ? 'good' : 'bad'), role: 'status' },
           correct ? '正解！' : '正解は「' + q.choices[q.answerIndex].text + '」'),
         el('p', { class: 'small center' }, word.en + ' ＝ ' + word.ja),
-        el('button', { class: 'primary', onclick: next },
-          answered >= options.count ? '結果を見る' : '次へ'));
-      feedback.querySelector('button')?.focus();
+        el('p', { class: 'small center', id: 'word-grade-label' },
+          correct ? 'どのくらい覚えていますか？' : '誤答は × として記録しました'),
+        el('div', { class: 'training-word-grades', role: 'group', 'aria-labelledby': 'word-grade-label' },
+          WORD_GRADES.map(([grade, symbol, label]) => el('button', {
+            disabled: !correct && grade !== 1,
+            'aria-label': symbol + ' ' + label,
+            onclick: () => {
+              if (feedback.parentNode !== view) return;
+              rate(grade);
+              next();
+            },
+          }, el('span', {}, symbol), el('small', {}, label)))));
+      feedback.querySelector('button:not(:disabled)').focus();
+      feedback.scrollIntoView({ block: 'nearest' });
     } }, el('span', { class: 'choice-letter', 'aria-hidden': 'true' },
       String.fromCharCode(65 + index)), el('span', {}, choice.text)));
     render(view, header(entry),

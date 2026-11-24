@@ -35,20 +35,41 @@ test('正解が続くと間隔が伸び、間違えると縮む', () => {
   assert.equal(rec.due - rec.last, 1);
 });
 
-test('日を空けて3回続けて正解で習得。同じ日の正解は1回分', () => {
-  let rec = sch.review(null, true, T0);
-  rec = sch.review(rec, true, T0 + 1000);
-  assert.equal(rec.streak, 1);
-  rec = sch.review(rec, true, T0 + DAY);
-  assert.equal(rec.stage, STAGE.LEARNING);
-  rec = sch.review(rec, true, T0 + 3 * DAY);
-  assert.equal(rec.streak, 3);
-  assert.equal(rec.stage, STAGE.LEARNED);
-  rec = sch.review(rec, false, T0 + 10 * DAY);
-  assert.equal(rec.streak, 0);
-  assert.equal(rec.stage, STAGE.LEARNING);
-  assert.equal(rec.wrong, 1);
-  assert.equal(rec.correct, 4);
+test('習得は安定度30日以上かつ直近のSRS評価が成功', () => {
+  assert.equal(sch.stageOf({ s: 29.99, streak: 3, stage: 'learned' }), STAGE.LEARNING);
+  assert.equal(sch.stageOf({ s: 30, streak: 1 }), STAGE.LEARNED);
+  assert.equal(sch.stageOf({ s: 50, streak: 1, grade: 1 }), STAGE.LEARNING);
+  const first = sch.reviewGrade(null, 4, T0);
+  const second = sch.reviewGrade(first, 4, T0);
+  assert.equal(first.stage, STAGE.LEARNING);
+  assert.equal(second.streak, 1);
+  assert.equal(second.stage, STAGE.LEARNED);
+  assert.equal(sch.review(second, false, T0 + DAY).stage, STAGE.LEARNING);
+});
+
+test('自己評価で間隔を決め、4択の正誤はそのまま保存する', () => {
+  const store = new LearningStore(new MemoryStorage());
+  const first = sch.review(null, true, T0);
+  const time = T0 + 4 * DAY;
+  const again = sch.reviewGrade(first, 1, time, true);
+  const good = sch.reviewGrade(first, 3, time, true);
+  const easy = sch.reviewGrade(first, 4, time, true);
+  assert.ok(easy.due > good.due && good.due > again.due);
+  store.recordAnswer('word', again, sch.dayOf(time), true);
+  const restored = new LearningStore(store.storage);
+  assert.deepEqual(restored.dailyTotal(sch.dayOf(time)), { answered: 1, correct: 1 });
+  assert.equal(restored.get('word').correct, 2);
+  assert.equal(restored.get('word').wrong, 0);
+  assert.equal(restored.get('word').grade, 1);
+});
+
+test('旧版の習得済み記録は現在の安定度で判定しても累積実績に残る', () => {
+  const memory = new MemoryStorage();
+  memory.setItem(LEARNING_KEY, JSON.stringify({ words: { word: [14, 4, 5, 19, 3, 0, 3, 5, 2] } }));
+  const store = new LearningStore(memory);
+  assert.equal(sch.stageOf(store.get('word')), STAGE.LEARNING);
+  store.recordAnswer('word', sch.review(store.get('word'), false, T0), sch.dayOf(T0), false);
+  assert.ok(new LearningStore(memory).everLearned.has('word'));
 });
 
 test('かすれたルーンが増えるにつれて新出を減らす（new_per_run_rule）', () => {

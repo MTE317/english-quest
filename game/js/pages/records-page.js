@@ -1,11 +1,11 @@
 import { GameSession } from '../save.js?v=rune-study-1';
 import { loadGameData } from '../gamedata.js?v=rune-study-1';
-import { LearningStore, loadSettings, saveSettings, now } from '../storage.js?v=rune-study-1';
+import { LearningStore, loadSettings, saveSettings, now } from '../storage.js?v=stability-1';
 import { loadLearningCatalog } from '../learning-catalog.js?v=learning-00-v1';
-import { learningStatistics } from '../learning-stats.js?v=training-v2-1';
+import { learningStatistics } from '../learning-stats.js?v=stability-1';
 import { loadJson } from '../data.js?v=features-2';
-import { Scheduler } from '../srs.js?v=features-2';
-import { dayToString } from '../srs.js?v=features-2';
+import { Scheduler } from '../srs.js?v=stability-1';
+import { dayToString } from '../srs.js?v=stability-1';
 import { DIRECTION } from '../quiz.js?v=features-2';
 import { el, render } from '../dom.js';
 import { monsterKnowledge } from '../monster-knowledge.js';
