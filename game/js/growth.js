@@ -72,7 +72,7 @@ export function learnBlock(data, member, skill) {
   if (ap < skill.apToLearn) return `${data.jobsById.get(skill.job).name}の AP が ${ap} / ${skill.apToLearn}`;
   return '';
 }
-/** AP を使って覚える。枠に空きがあれば自動でつける */
+/** AP を使って覚える。装着はスキル装備画面で行う。 */
 export function learnSkill(data, member, skillId) {
   const s = data.skills.get(skillId);
   const block = learnBlock(data, member, s);
@@ -83,7 +83,6 @@ export function learnSkill(data, member, skillId) {
     member.masteredJobs ??= [];
     if (!member.masteredJobs.includes(s.job)) member.masteredJobs.push(s.job);
   }
-  if (!equipBlock(data, member, s)) equipSkill(data, member, s.id);
 }
 
 // ---------------- 基本職の技能レベル（習得と使用は別に保存） ----------------
