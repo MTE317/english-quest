@@ -1,10 +1,12 @@
-import { denominateGoldData } from './gold.js?v=paid-skills-1';
+import { denominateGoldData } from './gold.js?v=jobs-master-1';
 // ゲームで使う data/ のファイルをまとめて読み、ID で引ける形にする。
-import { loadCsv, loadJson, loadOptional } from './data.js?v=paid-skills-1';
-import { toNumber, splitList } from './csv.js?v=paid-skills-1';
+import { loadCsv, loadJson, loadOptional } from './data.js?v=jobs-master-1';
+import { toNumber, splitList } from './csv.js?v=jobs-master-1';
 
 const FILES = {
   balance: 'balance.json',
+  basicJobRules: 'basic_job_rules.json',
+  skillMigration: 'skill_migration.json',
   jobs: 'jobs.csv',
   jobsMid: 'jobs_mid.csv',
   jobsPublicAdvanced: 'jobs_advanced.csv',
@@ -61,11 +63,18 @@ const byId = (rows, key = 'id') => new Map(rows.map((r) => [r[key], r]));
  */
 export function buildGameData(raw) {
   raw = structuredClone(raw); // 通貨換算で呼出元のCSV/JSONを変更しない。
-  const STATS = ['hp', 'str', 'mag', 'def', 'res', 'spd', 'luk'];
+  const STATS = ['hp', 'mp', 'str', 'mag', 'def', 'res', 'spd', 'luk'];
   const job = (r, tier) => ({
-    id: r.id, name: r.name, role: r.role, tier,
-    grades: Object.fromEntries(STATS.map((k) => [k, r[k]])),
+    id: r.id, name: r.name, role: r.role, tier: r.tier || tier,
+    grades: Object.fromEntries(STATS.map((k) => [k, r[k] || (k === 'mp' ? r.mag : 'C')])),
     elements: splitList(r.main_elements),
+    supportElements: splitList(r.support_elements),
+    sWeapons: splitList(r.s_weapons),
+    aWeapons: splitList(r.a_weapons),
+    statReference: r.stat_reference || '',
+    style: r.style || '',
+    ultimateConcept: r.ultimate_concept || '',
+    skillsReady: r.skills_ready == null || r.skills_ready === '' ? tier === 'base' : r.skills_ready === '1',
     weakness: r.weakness ?? '',
     startWeapon: r.start_weapon || null,
     startArmorWeight: r.start_armor_weight || null,
@@ -73,12 +82,11 @@ export function buildGameData(raw) {
   });
   const jobs = [
     ...raw.jobs.map((r) => job(r, 'base')),
-    ...raw.jobsMid.map((r) => job(r, 'mid')),
-    ...(raw.jobsPublicAdvanced ?? []).map((r) => ({ ...job(r, 'advanced'), publicRelease: true })),
-    ...(raw.jobsAdvanced ?? []).map((r) => job(r, 'advanced')),
+    ...raw.jobsMid.map((r) => job(r, 'additional')),
+    ...(raw.jobsPublicAdvanced ?? []).map((r) => ({ ...job(r, 'legendary'), publicRelease: true })),
   ];
 
-  const aptitude = new Map(raw.aptitude.map((r) => [r.grade, toNumber(r.multiplier, null)])); // × は null（装備不可）
+  const aptitude = new Map(raw.aptitude.map((r) => [r.grade, toNumber(r.multiplier, null)]));
   const weaponTypes = byId(raw.weaponTypes.map((r) => ({
     id: r.id, name: r.name, elements: splitList(r.elements), hands: toNumber(r.hands, 1),
     powerMul: toNumber(r.power_mul, 1), spdMod: toNumber(r.spd_mod, 0), critBonus: toNumber(r.crit_bonus, 0),
@@ -132,6 +140,8 @@ export function buildGameData(raw) {
 
   return denominateGoldData({
     balance: raw.balance,
+    basicJobRules: raw.basicJobRules ?? {},
+    skillMigration: raw.skillMigration ?? {},
     jobs,
     jobsById: byId(jobs),
     aptitude,
@@ -304,7 +314,10 @@ export function loadGameData() {
       }));
       const raw = Object.fromEntries(entries);
       const expansion = (await loadOptional('extra_game_data.json'))?.data;
+      const retiredJobTables = new Set(['jobsAdvanced', 'jobUnlocks', 'jobWeaponApt', 'jobArmorApt', 'skills', 'jobMastery']);
       for (const key of ['jobsAdvanced', 'jobUnlocks', 'jobWeaponApt', 'jobArmorApt', 'skills', 'uniques', 'monsters', 'dungeons', 'dungeonFloors', 'dropTables', 'materials', 'jobMastery']) {
+        // 今回の職業マスターへ旧拡張ファイルの職・技能を再混入させない。
+        if (raw.basicJobRules?.version && retiredJobTables.has(key)) continue;
         if (Array.isArray(expansion?.[key])) raw[key] = [...(raw[key] ?? []), ...expansion[key]];
       }
       return buildGameData(raw);
@@ -314,4 +327,5 @@ export function loadGameData() {
 }
 
 export const GAME_FILES = FILES;
+
 

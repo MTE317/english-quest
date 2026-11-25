@@ -36,8 +36,11 @@ import { buildGameData } from '../js/gamedata.js';
 export function realGameData() {
   return buildGameData({
     balance: readJson('balance.json'),
+    basicJobRules: readJson('basic_job_rules.json'),
+    skillMigration: readJson('skill_migration.json'),
     jobs: readCsv('jobs.csv').rows,
     jobsMid: readCsv('jobs_mid.csv').rows,
+    jobsPublicAdvanced: readCsv('jobs_advanced.csv').rows,
     aptitude: readCsv('aptitude.csv').rows,
     jobWeaponApt: readCsv('job_weapon_aptitude.csv').rows,
     jobArmorApt: readCsv('job_armor_aptitude.csv').rows,
@@ -70,5 +73,6 @@ export function realGameData() {
     commonTree: readCsv('common_tree.csv').rows,
     jobMastery: readCsv('job_mastery.csv').rows,
     exams: readCsv('exams.csv').rows,
+    jobUnlocks: readCsv('job_unlocks.csv').rows,
   });
 }

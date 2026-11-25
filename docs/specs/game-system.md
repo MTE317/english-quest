@@ -1,5 +1,8 @@
 # ゲームシステム
 
+> 職業・技能の現行仕様は [50職基準](../jobs-baseline-v1.md)、[基本8職技能](../basic-jobs-skills-v1.md)、[共通実装仕様](../jobs-master-implementation.md) を優先します。以下に残る旧職階級・マスター常時ボーナス等は旧仕様の記録です。
+
+
 [仕様索引](README.md) · [装備・制作](equipment-crafting.md) · [学習・ランク](learning-rank.md)
 
 ## 編成と戦闘

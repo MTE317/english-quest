@@ -1,7 +1,7 @@
-import { el, render } from '../dom.js?v=paid-skills-1';
-import { equipmentIcon } from './equipment-icons.js?v=paid-skills-1';
-import { uiIcon } from './pixel-icons.js?v=paid-skills-1';
-import { describeFixedEffects, describeEffect } from '../equipment-effects.js?v=paid-skills-1';
+import { el, render } from '../dom.js?v=jobs-master-1';
+import { equipmentIcon } from './equipment-icons.js?v=jobs-master-1';
+import { uiIcon } from './pixel-icons.js?v=jobs-master-1';
+import { describeFixedEffects, describeEffect } from '../equipment-effects.js?v=jobs-master-1';
 
 // 倉庫の表示順と選択状態だけを管理し、所持品の保存順は変更しない。
 export function storageView(data, game, state) {

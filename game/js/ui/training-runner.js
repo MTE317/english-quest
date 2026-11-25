@@ -1,9 +1,9 @@
-import { makeQuestion } from '../quiz.js?v=paid-skills-1';
-import { makeTrainingPicker, applyTrainingAnswer, shouldShowChunkHint } from '../training.js?v=paid-skills-1';
-import { recordChant } from '../chant.js?v=paid-skills-1';
-import { now } from '../storage.js?v=paid-skills-1';
-import { speak, canSpeak, stopSpeech } from '../speech.js?v=paid-skills-1';
-import { el, render } from '../dom.js?v=paid-skills-1';
+import { makeQuestion } from '../quiz.js?v=jobs-master-1';
+import { makeTrainingPicker, applyTrainingAnswer, shouldShowChunkHint } from '../training.js?v=jobs-master-1';
+import { recordChant } from '../chant.js?v=jobs-master-1';
+import { now } from '../storage.js?v=jobs-master-1';
+import { speak, canSpeak, stopSpeech } from '../speech.js?v=jobs-master-1';
+import { el, render } from '../dom.js?v=jobs-master-1';
 
 const WORD_GRADES = [[1, '×', 'わからない'], [3, '〇', 'わかる'], [4, '◎', '簡単']];
 const REASONS = { due: '期限が来た復習', retry: '苦手問題', new: '新規学習', practice: '練習' };

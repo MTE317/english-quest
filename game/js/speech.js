@@ -1,5 +1,5 @@
 // 英語の読み上げ（Web Speech API）。使えないブラウザでは何もしない。
-import { setSpeechPlaying } from './battle-music.js?v=paid-skills-1';
+import { setSpeechPlaying } from './battle-music.js?v=jobs-master-1';
 
 let activeSpeech;
 

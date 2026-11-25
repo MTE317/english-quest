@@ -77,7 +77,7 @@ test('現ゲームと入場時の写しを独立した効果辞書で更新し�
   for (const container of [game, updated]) {
     assert.equal(container.gold, 0);
     assert.deepEqual(container.party[0].equip.weapon.affixes, data.equipment.get('craft_dagger_s2').fixedEffects);
-    assert.deepEqual(container.storage.gear[0].affixes, data.equipment.get('shadow_scythe').fixedEffects);
+    assert.deepEqual(container.storage.gear.find((gear) => gear.id === 'shadow_scythe').affixes, data.equipment.get('shadow_scythe').fixedEffects);
   }
   const currentGear = game.party[0].equip.weapon; const snapshotGear = updated.party[0].equip.weapon;
   assert.notStrictEqual(currentGear, snapshotGear);
@@ -107,7 +107,7 @@ test('移行後のセーブ再読込と全滅でも、更新済みの固定効�
   reloaded.wipe();
   assert.equal(reloaded.game.gold, 0);
   assert.deepEqual(reloaded.game.party[0].equip.weapon.affixes, data.equipment.get('craft_dagger_s2').fixedEffects);
-  assert.deepEqual(reloaded.game.storage.gear[0].affixes, data.equipment.get('shadow_scythe').fixedEffects);
+  assert.deepEqual(reloaded.game.storage.gear.find((gear) => gear.id === 'shadow_scythe').affixes, data.equipment.get('shadow_scythe').fixedEffects);
   const afterWipe = new GameSession({ storage: memory, now: () => T0 });
   assert.deepEqual(afterWipe.game, reloaded.game);
 });
@@ -125,3 +125,4 @@ test('二度移行しても値は変わらず、旧所持金は0Gを含めて維
   }
   assert.equal(normalizeGame(data, null), null);
 });
+

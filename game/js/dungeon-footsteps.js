@@ -1,4 +1,4 @@
-import { loadSettings } from './storage.js?v=paid-skills-1';
+import { loadSettings } from './storage.js?v=jobs-master-1';
 
 let context;
 let buffer;

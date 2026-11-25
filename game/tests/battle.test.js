@@ -6,7 +6,7 @@ import {
 } from '../js/battle.js';
 import { learnSkill, equipSkill } from '../js/growth.js';
 import { monsterKnowledge } from '../js/monster-knowledge.js';
-import { createNewGame } from '../js/game-state.js';
+import { equippedGame } from './combat-fixtures.js';
 import { evaluate } from '../js/expr.js';
 import { maxHp } from '../js/character.js';
 import { realGameData, readJson } from './helpers.js';
@@ -39,7 +39,7 @@ test('命中した属性だけを図鑑に記録し、弱点・耐性・通常�
     ['resist', ['fire'], ['slash', 'ice']],
     ['normal', ['fire'], ['ice']],
   ]) {
-    const game = createNewGame(data, party);
+    const game = equippedGame(data, party);
     const enemy = { ...makeEnemy(data, 'goblin', { lv: 1 }), weak, resist, hp: 9999, spd: 0 };
     const b = createBattle(data, game, { enemies: [enemy], seed: 5 });
     assert.deepEqual(game.catalog.monsters, ['goblin']);
@@ -69,7 +69,7 @@ test('敵の能力値は balance.json の式（★の補正・ボスの倍率を
 });
 
 test('★1の敵に全問正解で勝てる。経験値と AP がもらえる', () => {
-  const game = createNewGame(data, party);
+  const game = equippedGame(data, party);
   const b = createBattle(data, game, { enemies: mossyEnemies(), seed: 1 });
   const { result } = fight(game, b);
   assert.equal(result, 'win');
@@ -81,7 +81,7 @@ test('★1の敵に全問正解で勝てる。経験値と AP がもらえる', 
 
 test('同じ種と同じ答えなら同じ結果（乱数は battle に入っている）', () => {
   const run = () => {
-    const game = createNewGame(data, party);
+    const game = equippedGame(data, party);
     const b = createBattle(data, game, { enemies: mossyEnemies(3), seed: 42 });
     fight(game, b, (n) => n % 3 !== 0);
     return JSON.stringify([b.log, game.party.map((m) => m.hp)]);
@@ -90,7 +90,7 @@ test('同じ種と同じ答えなら同じ結果（乱数は battle に入って
 });
 
 test('途中で保存して読み直しても、同じ結果になる（読み込み直しで変えられない）', () => {
-  const g1 = createNewGame(data, party);
+  const g1 = equippedGame(data, party);
   const b1 = createBattle(data, g1, { enemies: mossyEnemies(3), seed: 7 });
   // 3行動したところで保存（JSON にして戻す）
   let n = 0;
@@ -108,7 +108,7 @@ test('途中で保存して読み直しても、同じ結果になる（読み�
 
 test('不正解だと弱い行動になる（与えるダメージが減る）', () => {
   const dmgWith = (correct) => {
-    const game = createNewGame(data, party);
+    const game = equippedGame(data, party);
     const e = makeEnemy(data, 'goblin', { lv: 5, dungeonId: 'mossy_cave' });
     e.spd = 0; // 味方が先に動く
     const b = createBattle(data, game, { enemies: [e], seed: 3 });
@@ -124,22 +124,22 @@ test('不正解だと弱い行動になる（与えるダメージが減る）',
 });
 
 test('弱点の属性は大きく、効きにくい属性は小さく', () => {
-  const game = createNewGame(data, party);
-  game.party[2].ap = 10; learnSkill(data, game.party[2], 'black_mage_p1_s1'); equipSkill(data, game.party[2], 'black_mage_p1_s1');
+  const game = equippedGame(data, party);
+  learnSkill(data, game.party[2], 'black_mage_A01'); equipSkill(data, game.party[2], 'black_mage_A01');
   // スライムは炎が弱点・打撃が効きにくい。黒魔道士の炎弾（炎）
   const fire = knownSkills(data, game.party[2]).find((s) => s.elements.includes('fire'));
   assert.ok(fire, '黒魔道士の炎のスキル');
   const e = makeEnemy(data, 'slime', { lv: 1, dungeonId: 'mossy_cave' });
   e.hp = e.maxHp = 99999; e.spd = 0;
   const b = createBattle(data, game, { enemies: [e], seed: 5 });
-  while (nextTurn(data, game, b) && b.turn.i !== 2) { setPending(b, { type: 'skill', skillId: 'knight_p1_s1' }, Q); b.pending.action = { type: 'flee' }; b.canFlee = false; resolvePending(data, game, b, true); }
+  while (nextTurn(data, game, b) && b.turn.i !== 2) { setPending(b, { type: 'flee' }, Q); b.canFlee = false; resolvePending(data, game, b, true); }
   setPending(b, { type: 'skill', skillId: fire.id, target: 0 }, Q);
   resolvePending(data, game, b, true);
   assert.ok(b.log.some((l) => l.includes('弱点！')), b.log.join('\n'));
 });
 
 test('ボスからは逃げられない。逃げられる戦闘は確率がある', () => {
-  const game = createNewGame(data, party);
+  const game = equippedGame(data, party);
   const b = createBattle(data, game, { enemies: [makeEnemy(data, 'goblin', { lv: 1, boss: true })], seed: 1 });
   assert.equal(fleeRate(data, game, b), 0);
   const b2 = createBattle(data, game, { enemies: mossyEnemies(), seed: 1 });
@@ -150,7 +150,7 @@ test('ボスからは逃げられない。逃げられる戦闘は確率があ�
 });
 
 test('道具：使うと減り、HP が回復する。戦闘不能の味方は気付け薬で起きる', () => {
-  const game = createNewGame(data, party);
+  const game = equippedGame(data, party);
   game.items = { potion: 2, revive_salts: 1 };
   game.party[1].hp = 10;
   game.party[2].hp = 0;
@@ -170,7 +170,7 @@ test('道具：使うと減り、HP が回復する。戦闘不能の味方は�
 });
 
 test('状態異常：敵からかかり、戦闘のあとも残るもの（呪いなど）は persist に残る', () => {
-  const game = createNewGame(data, party);
+  const game = equippedGame(data, party);
   const cursed = makeEnemy(data, 'goblin', { lv: 1, eliteId: 'cursed' });
   cursed.statusRate = 1; cursed.magicRate = 0; cursed.str = 1;
   const b = createBattle(data, game, { enemies: [cursed], seed: 11 });
@@ -191,33 +191,40 @@ test('状態異常：敵からかかり、戦闘のあとも残るもの（呪�
 });
 
 test('全問不正解で強い敵と戦うと全滅する（負けがある）', () => {
-  const game = createNewGame(data, party);
+  const game = equippedGame(data, party);
   const b = createBattle(data, game, { enemies: ['goblin', 'goblin', 'goblin'].map((id) => makeEnemy(data, id, { lv: 12, dungeonId: 'mossy_cave' })), seed: 2 });
   assert.equal(fight(game, b, () => false).result, 'lose');
 });
 
-test('APで習得・装着した各ジョブの1段目スキルを実行できる', () => {
-  for (const job of data.jobs) {
-    const game = createNewGame(data, [{ name: 'X', job: job.id, icon: 'x' }, ...party.slice(1)]);
-    const member=game.party[0]; member.ap=1000;
-    for (const skill of data.skills.values()) if(skill.job===job.id && skill.stage===1) {
-      learnSkill(data,member,skill.id); equipSkill(data,member,skill.id);
-    }
-    assert.ok(knownSkills(data,member).length > 0);
-    for (const s of knownSkills(data, member)) {
+test('基本8職の前提なしアクティブをAPで習得・装着して実行できる', () => {
+  for (const job of data.jobs.filter(job => job.tier === 'base')) {
+    const entrances = [...data.skills.values()].filter(skill => skill.job === job.id && !skill.isFinal
+      && skill.kind !== 'passive' && !skill.effect.prerequisites?.length);
+    assert.ok(entrances.length > 0);
+    for (const skill of entrances) {
+      const game = equippedGame(data, [{ name: 'X', job: job.id, icon: 'x' }, ...party.slice(1)]);
+      const member = game.party[0];
+      member.ap = 1000;
+      learnSkill(data, member, skill.id);
+      equipSkill(data, member, skill.id);
       const e = makeEnemy(data, 'slime', { lv: 1 }); e.spd = 0; e.hp = e.maxHp = 99999;
       const b = createBattle(data, game, { enemies: [e], seed: 1 });
-      game.party[0].mp = 999;
-      while (nextTurn(data, game, b).i !== 0) { b.pending = { actor: b.turn.i, action: { type: 'flee' } }; b.canFlee = false; resolvePending(data, game, b, true); }
-      setPending(b, { type: 'skill', skillId: s.id, target: s.kind === 'revive' ? 1 : 0 }, Q);
-      resolvePending(data, game, b, true);
+      member.mp = 999;
+      b.turn = { side: 'ally', i: 0 };
+      const option = actionOptions(data, game, b, 0).skills.find(entry => entry.skill.id === skill.id);
+      assert.ok(option, skill.id);
+      assert.equal(option.reason, '', skill.id);
+      const kind = targetKind(data, { type: 'skill', skillId: skill.id }, member);
+      setPending(b, { type: 'skill', skillId: skill.id, target: kind === 'ally' ? 1 : 0 }, Q);
+      assert.doesNotThrow(() => resolvePending(data, game, b, true), skill.id);
+      assert.equal(b.pending, null, skill.id);
     }
   }
 });
 
 test('石化した敵だけが残れば報酬を得て勝利し、味方全員も石化していれば敗北する', () => {
   for (const allAlliesPetrified of [false, true]) {
-    const game = createNewGame(data, party);
+    const game = equippedGame(data, party);
     const b = createBattle(data, game, { enemies: mossyEnemies(), seed: 1 });
     b.enemies[0].hp = 0;
     b.enemies[1].statuses.petrify = { turns: 99, n: 1 };
@@ -229,7 +236,7 @@ test('石化した敵だけが残れば報酬を得て勝利し、味方全員�
 });
 
 test('連戦で状態異常の残りターンと段階が保存され、スタンと挑発が解除される', () => {
-  const game = createNewGame(data, party);
+  const game = equippedGame(data, party);
   game.party[0].persist = ['curse'];
   const battle = () => createBattle(data, game, { enemies: mossyEnemies(), seed: 1 });
   const b = battle();
@@ -245,7 +252,7 @@ test('連戦で状態異常の残りターンと段階が保存され、スタ�
 });
 
 test('無属性を含む5段階の相性と、0ダメージの命中による相性発見', () => {
-  const game = createNewGame(data, party);
+  const game = equippedGame(data, party);
   const enemy = makeEnemy(data, 'lava_golem', { lv: 5 });
   assert.deepEqual(['water', 'ice', 'none', 'slash', 'fire'].map((id) => elementMul(data, enemy, id)), [2, 1.5, 1, 0.5, 0]);
   const target = { ...enemy, immune: ['slash'], strongWeak: [], weak: [], resist: [] };
@@ -259,7 +266,7 @@ test('無属性を含む5段階の相性と、0ダメージの命中による相
 });
 
 test('魔力漏出で敵のMPが減り、MP不足時は魔法攻撃を通常攻撃に切り替える', () => {
-  const game = createNewGame(data, party);
+  const game = equippedGame(data, party);
   const enemy = makeEnemy(data, 'goblin', { lv: 3 });
   enemy.magicRate = 1;
   enemy.mp = 2;
@@ -274,7 +281,7 @@ test('魔力漏出で敵のMPが減り、MP不足時は魔法攻撃を通常攻�
 
 test('複合属性は免疫と弱点のうち有利な倍率を採用する', () => {
   function damage(dual) {
-    const game = createNewGame(data, party);
+    const game = equippedGame(data, party);
     const target = { ...makeEnemy(data, 'lava_golem', { lv: 5 }), immune: ['slash'], strongWeak: ['fire'] };
     const b = createBattle(data, game, { enemies: [target], seed: 5 });
     if (dual) game.party[0].equip.weapon.affixes = { 'ELEMENT:fire': 1 };
@@ -286,4 +293,5 @@ test('複合属性は免疫と弱点のうち有利な倍率を採用する', ()
   assert.equal(damage(false), 0);
   assert.ok(damage(true) > 0);
 });
+
 

@@ -199,6 +199,9 @@ body:has(.battle-screen) { background: #10171e; }
 .battle-resource.hp { --meter-fill: var(--battle-hp); }
 .battle-enemy .battle-resource.hp { --meter-fill: #ed9d86; }
 .battle-resource.mp { --meter-fill: var(--battle-mp); }
+.battle-resource.ultimate { --meter-fill: #d5ae61; }
+.battle-resource.ultimate.ready { color: #f2d186; }
+.battle-resource.ultimate.ready .battle-meter { box-shadow: 0 0 5px #e5c57a80; }
 .battle-conditions {
   display: block;
   color: #f2b2a3;
@@ -579,3 +582,4 @@ body:has(.battle-screen) { background: #10171e; }
 }
 .battle-stage .battle-enemy-marks { text-shadow: 0 1px 3px #000; }
 .battle-stage .battle-conditions { background: #101e30e8; border-radius: 3px; padding: 1px 3px; }
+

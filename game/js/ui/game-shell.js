@@ -1,5 +1,5 @@
-import { el } from '../dom.js?v=paid-skills-1';
-import { uiIcon } from './pixel-icons.js?v=paid-skills-1';
+import { el } from '../dom.js?v=jobs-master-1';
+import { uiIcon } from './pixel-icons.js?v=jobs-master-1';
 
 const destinations = [
   ['town', '町', 'temple', 'index.html'],

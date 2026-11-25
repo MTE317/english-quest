@@ -79,6 +79,7 @@ function elementText(data, skill) {
 /** 装備・能力・相手による補正前の効果。実ダメージや実付与率を確定値として案内しない。 */
 export function describeSkillEffect(data, skill) {
   const effect = skill.effect ?? {};
+  if (effect.description) return effect.description;
   const target = effect.tgt === 'all' ? '敵全体' : effect.tgt === 'random' ? 'ランダムな敵' : '敵一体';
   const parts = [];
   if (effect.require_weapon) parts.push(`${data.weaponTypes.get(effect.require_weapon)?.name ?? effect.require_weapon}装備時のみ使用可能`);
@@ -105,7 +106,7 @@ export function describeSkillEffect(data, skill) {
       parts.push(`${target}に状態異常を与える${effect.base === 'mag' ? '魔法' : '技能'}`);
       break;
     case 'heal': case 'heal_all':
-      parts.push(`${skill.kind === 'heal_all' ? '味方全員' : '味方一人'}のHPを回復（MAGと武器威力が基準・基礎倍率${effect.m ?? 1}倍）`);
+      parts.push(`${skill.kind === 'heal_all' ? '味方全員' : '味方一人'}のHPを回復（MAGと魔法装備補助が基準・基礎倍率${effect.m ?? 1}倍）`);
       if (effect.cure) parts.push('状態異常も治す');
       if (effect.revive_all) parts.push(`倒れた味方を最大HPの${pct(effect.revive_all)}で蘇生（石化中を除く）`);
       break;

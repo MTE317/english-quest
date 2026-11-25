@@ -2,24 +2,27 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { buildGameData, GAME_FILES } from '../js/gamedata.js';
-import { createNewGame } from '../js/game-state.js';
+import { withEngineSkillFixtures, equippedGame } from './combat-fixtures.js';
 import { makeGear, maxHp, maxMp, computeStats } from '../js/character.js';
 import { createBattle, makeEnemy, setPending, resolvePending, nextTurn, enemyIntent, skillMp, fleeRate, actionOptions, rand } from '../js/battle.js';
 import { enchantFamilies, enchant } from '../js/workshop.js';
 import { describeEffect } from '../js/equipment-effects.js';
 import { readCsv, readJson } from './helpers.js';
 
-const master = buildGameData(Object.fromEntries(Object.entries(GAME_FILES).map(([key, name]) =>
-  [key, name.endsWith('.json') ? readJson(name) : readCsv(name).rows])));
+const master = withEngineSkillFixtures(buildGameData(Object.fromEntries(Object.entries(GAME_FILES).map(([key, name]) =>
+  [key, name.endsWith('.json') ? readJson(name) : readCsv(name).rows]))));
 // 会心・ダメージ幅は比較だけを安定させる。確率・ターン・効果の本体は実エンジンを通す。
 const data = { ...master, balance: { ...master.balance, battle_formulas: {
   ...master.balance.battle_formulas, crit_cap: 0, ally_rand: [1, 1], enemy_rand: [1, 1],
 } } };
 
 function prepare({ job = 'warrior', weapon, seed = 1, count = 1, boss = false, rules = data } = {}) {
-  const game = createNewGame(rules, [job, 'warrior', 'black_mage', 'white_mage', 'thief', 'bard'].map((j) => ({ name: j, job: j, icon: 'x' })));
+  const game = equippedGame(rules, [job, 'warrior', 'black_mage', 'white_mage', 'thief', 'bard'].map((j) => ({ name: j, job: j, icon: 'x' })));
   const member = game.party[0];
-  for (const m of game.party) { m.lv = 20; m.hp = maxHp(rules, m); m.mp = maxMp(rules, m); }
+  for (const m of game.party) {
+    m.learned = [...rules.skills.keys()]; // 商品の修得導線と切り離した、汎用効果の制御条件。
+    m.lv = 20; m.hp = maxHp(rules, m); m.mp = maxMp(rules, m);
+  }
   if (weapon) {
     const def = rules.equipment.get(weapon);
     member.equip.weapon = makeGear(game, weapon, { affixes: { ...(def.fixedEffects ?? {}) } });
@@ -211,8 +214,8 @@ test('状態・弱体特効は魔法にも乗り、外したときには元の�
   assert.equal(noStatus.damage, plain.damage);
 });
 
-test('励ましはMP移譲、吸魔は使用MPまでの回収となり、繰り返してもMPが純増しない', () => {
-  for (const target of [0, 1]) {
+test('励ましは他の味方へのMP移譲、吸魔は使用MPまでの回収となり、MPが純増しない', () => {
+  for (const target of [1]) {
     const ctx = prepare({ job: 'bard' });
     ctx.member.mp = maxMp(data, ctx.member) - 5;
     if (target) ctx.game.party[target].mp = 0;
@@ -222,6 +225,10 @@ test('励ましはMP移譲、吸魔は使用MPまでの回収となり、繰り�
     act(ctx, 'bard_p3_s1', true, target);
     assert.equal(total(), before - cost);
   }
+  const self = prepare({ job: 'bard' });
+  const beforeSelf = self.member.mp;
+  act(self, 'bard_p3_s1', true, 0);
+  assert.equal(self.member.mp, beforeSelf, '自分へのMP移譲は実行せず、消費も回復もしない');
   const ctx = prepare({ job: 'hexer', weapon: 'tome_t1' });
   ctx.member.equip.weapon.affixes.MAG = 10000;
   const before = ctx.member.mp;
@@ -354,3 +361,4 @@ test('逃走率付与は行動者だけに反映し、表示と実際の逃走�
   ctx.enemy.boss = false; ctx.battle.allies[0].statuses.bind = { turns: 2 };
   assert.equal(fleeRate(rules, ctx.game, ctx.battle, 0), 0);
 });
+

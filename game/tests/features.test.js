@@ -74,7 +74,7 @@ test('制作、分解、強化、調合と施設投資が在庫や資金に反�
   facilityUpgrade(data, g, 'weapon_workshop');
   assert.equal(g.facilities.weapon_workshop, 2);
   craft(data, g, data.equipment.get('iron_sword'));
-  const gear = g.storage.gear[0];
+  const gear = g.storage.gear.find((entry) => entry.id === 'iron_sword' && entry.crafted);
   assert.equal(gear.crafted, true);
   const dummy = makeGear(g, 'sword_t1');
   g.storage.gear.push(dummy);
@@ -93,11 +93,13 @@ test('制作、分解、強化、調合と施設投資が在庫や資金に反�
   assert.equal(g.gold, money + 10);
 });
 
-test('素材で中級ジョブを解放できる', () => {
+test('技能準備中の追加職には素材を消費しない', () => {
   const g = game();
   g.storage.materials = { poison_spider_mat: 4, skeleton_mat: 3 };
-  unlockJob(data, g, 'apothecary');
-  assert.ok(g.unlockedJobs.includes('apothecary'));
+  const before = structuredClone(g.storage.materials);
+  assert.throws(() => unlockJob(data, g, 'apothecary'), /まだ解放できません/);
+  assert.deepEqual(g.storage.materials, before);
+  assert.ok(!g.unlockedJobs.includes('apothecary'));
 });
 
 test('季節の敵と賞金首は連続クエスト廃止後も出現する', () => {
@@ -145,3 +147,4 @@ test('場面の4択と空欄の4択は正解を一つだけ含む', () => {
     if (format === 'cloze') assert.match(q.prompt, /＿＿＿/);
   }
 });
+

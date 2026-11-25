@@ -1,7 +1,7 @@
-import { availableAp, spendAp, normalizeAp, hasVisitedJob } from './ap.js?v=paid-skills-1';
-// 成長：スキルツリーと AP・スキルの枠・共通ツリー・ジョブを極めたボーナス・武器の熟練度・ジョブチェンジ。
+import { availableAp, spendAp, normalizeAp, hasVisitedJob } from './ap.js?v=jobs-master-1';
+// 成長：共通AP・技能の修得と強化・装備枠・武器熟練度・ジョブチェンジ。
 // data に数として書かれていないものは GROWTH_FORMULAS に置く（docs/requests.md で依頼済み）。
-import { gearDef, aptitudeMul, unequip, maxHp, maxMp } from './character.js?v=paid-skills-1';
+import { gearDef, aptitudeMul, unequip, maxHp, maxMp } from './character.js?v=jobs-master-1';
 
 export const GROWTH_FORMULAS = Object.freeze({
   action_capacity: 10, // 通常スキルの枠（スキルの cost の合計。sim の cap_a）
@@ -51,7 +51,7 @@ export function jobPaths(data, jobId) {
 }
 /** 習得は明示的な記録だけで判定する。ジョブ経験やAP0では自動習得しない。 */
 export function isLearned(member, skill) {
-  return (member.learned ?? []).includes(skill.id);
+  return Boolean(skill && (member.learned ?? []).includes(skill.id));
 }
 /** 無料習得廃止前のセーブに限り、既得の初期スキルを明示的な習得記録へ移す。 */
 export function migrateInitialSkills(data, member) {
@@ -66,15 +66,32 @@ export function migrateInitialSkills(data, member) {
 }
 /** 同じ枝の一つ前の段階。習得判定と詳細表示で共有する。 */
 export function skillPrerequisite(data, skill) {
+  const explicit = skill?.effect?.prerequisites;
+  if (explicit) return explicit.length ? data.skills.get(explicit[0].id) : undefined;
   if (data.jobsById.get(skill.job)?.tier === 'base') return undefined;
   return jobSkills(data, skill.job).find((candidate) => candidate.path === skill.path && candidate.stage === skill.stage - 1);
 }
 /** 覚えられるか → 理由（覚えられるなら ''） */
 export function learnBlock(data, member, skill) {
+  if (!skill) return 'そのスキルはない';
   if (isLearned(member, skill)) return '覚えている';
   if (skill.job !== 'common' && !hasVisitedJob(member, skill.job)) return '先にこのジョブへ転職してください';
-  const prev = skillPrerequisite(data, skill);
-  if (prev && !isLearned(member, prev)) return `「${prev.name}」を覚える`;
+  if (skill.isFinal) {
+    const required = data.basicJobRules?.ultimate?.required_skills ?? 10;
+    const count = jobSkills(data, skill.job).filter((s) => !s.isFinal && isLearned(member, s)).length;
+    if (count < required) return `この職の奥義以外を${required}種類修得（${count}/${required}）`;
+  }
+  if (Array.isArray(skill.effect?.prerequisites)) {
+    for (const prerequisite of skill.effect.prerequisites) {
+      const prev = data.skills.get(prerequisite.id);
+      if (!prev || learnedSkillLevel(member, prev) < prerequisite.level) {
+        return `「${prev?.name ?? prerequisite.id}」Lv${prerequisite.level}を修得`;
+      }
+    }
+  } else {
+    const prev = skillPrerequisite(data, skill);
+    if (prev && !isLearned(member, prev)) return `「${prev.name}」を覚える`;
+  }
   const ap = availableAp(data, member);
   if (ap < skill.apToLearn) return `AP が ${ap} / ${skill.apToLearn}`;
   return '';
@@ -92,7 +109,7 @@ export function learnSkill(data, member, skillId) {
   }
 }
 
-// ---------------- 基本職の技能レベル（習得と使用は別に保存） ----------------
+// ---------------- 技能レベル（修得した最高Lvで常に発動） ----------------
 export function skillMaxLevel(skill) { return 1 + (skill.effect?.levels?.length ?? 0); }
 export function learnedSkillLevel(member, skill) {
   if (!isLearned(member, skill)) return 0;
@@ -100,10 +117,7 @@ export function learnedSkillLevel(member, skill) {
   return Number.isInteger(level) ? Math.max(1, Math.min(skillMaxLevel(skill), level)) : 1;
 }
 export function usedSkillLevel(member, skill) {
-  const max = learnedSkillLevel(member, skill);
-  if (!max) return 1;
-  const level = member.skillUseLevels?.[skill.id];
-  return Number.isInteger(level) ? Math.max(1, Math.min(max, level)) : 1;
+  return Math.max(1, learnedSkillLevel(member, skill));
 }
 /** 元データを変更せず、指定キャラの使用Lvから毎回組み立てる。二重適用しない。 */
 export function effectiveSkill(data, member, skill) {
@@ -112,7 +126,7 @@ export function effectiveSkill(data, member, skill) {
   const level = usedSkillLevel(member, base);
   const upgrade = base.effect.levels?.[level - 2];
   if (!upgrade) return base;
-  return { ...base, mp: upgrade.mp, effect: { ...base.effect, ...upgrade.effect } };
+  return { ...base, mp: upgrade.mp ?? base.mp, effect: { ...base.effect, ...upgrade.effect }, level };
 }
 export function upgradeSkillBlock(data, member, skill) {
   const level = learnedSkillLevel(member, skill);
@@ -131,25 +145,26 @@ export function upgradeSkill(data, member, skillId) {
   spendAp(data, member, skill.effect.levels[level - 1].ap);
   member.skillLevels ??= {};
   member.skillLevels[skillId] = level + 1;
-  // 使用Lvは操作しない。装着中・持出し中でも勝手にMPや効果を変えない。
+  // 装着し直さず、次の行動から強化したLvを使う。
 }
+/** 旧呼出元用の互換関数。発動Lvは選択できず、最高Lvだけを受け付ける。 */
 export function setSkillUseLevel(data, member, skillId, level) {
   const skill = data.skills.get(skillId);
-  if (!skill || !Number.isInteger(level) || level < 1 || level > learnedSkillLevel(member, skill)) {
-    throw new Error('習得済みのLvを選んでください');
+  if (!skill || level !== learnedSkillLevel(member, skill)) {
+    throw new Error('技能は修得済みの最高Lvで発動します');
   }
-  member.skillUseLevels ??= {};
-  member.skillUseLevels[skillId] = level;
+  delete member.skillUseLevels;
 }
 /** 不明ID/不正なLvを除外。旧セーブは未指定=Lv1、既得のAPや装着は触らない。 */
 export function normalizeSkillLevels(data, member) {
-  for (const key of ['skillLevels', 'skillUseLevels']) {
+  delete member.skillUseLevels;
+  for (const key of ['skillLevels']) {
     if (!member[key]) continue;
     const clean = {};
     for (const [id, value] of Object.entries(member[key])) {
       const skill = data.skills.get(id);
       if (!skill || !isLearned(member, skill) || skillMaxLevel(skill) === 1 || !Number.isInteger(value) || value < 1) continue;
-      clean[id] = Math.min(value, key === 'skillLevels' ? skillMaxLevel(skill) : learnedSkillLevel(member, skill));
+      clean[id] = Math.min(value, skillMaxLevel(skill));
     }
     member[key] = clean;
   }
@@ -158,34 +173,54 @@ export function normalizeSkillLevels(data, member) {
 // ---------------- スキルの枠（ほかのジョブのスキルも持ち出せる） ----------------
 const isPassive = (s) => s.kind === 'passive';
 
+/** 修得・装着は武器に縛らず、発動時だけ装備条件を確かめる。 */
+export function skillWeaponBlock(data, member, skill) {
+  const weapons = skill?.effect?.weapons;
+  const required = skill?.effect?.require_weapon;
+  if ((!Array.isArray(weapons) || !weapons.length) && !required) return '';
+  const kind = member.equip?.weapon ? gearDef(data, member.equip.weapon).kind : 'unarmed';
+  const allowed = Array.isArray(weapons) && weapons.length ? weapons : [required];
+  if (allowed.includes(kind) || (kind === 'unarmed' && allowed.includes('none'))) return '';
+  return `${allowed.map((id) => ['unarmed', 'none'].includes(id) ? '素手' : data.weaponTypes?.get(id)?.name ?? id).join('・')}が必要`;
+}
+
 /** 既存セーブを含め、アクティブとパッシブをスキル種別どおりに必ず分離する。 */
 function normalizeLoadout(data, member) {
   const current = member.loadout ?? { actions: [], passives: [] };
-  const ids = [...(current.actions ?? []), ...(current.passives ?? [])];
+  // 新しい専用枠の選択を、旧形式の通常枠に混ざった奥義より優先する。
+  const ids = [current.ultimate, ...(current.actions ?? []), ...(current.passives ?? [])].filter(Boolean);
   const actions = [];
   const passives = [];
+  let ultimate = null;
+  const cap = capacity(data, member);
+  const used = { actions: 0, passives: 0 };
   for (const id of ids) {
     const skill = data.skills.get(id);
     if (!skill || !isLearned(member, skill)) continue;
-    const list = isPassive(skill) ? passives : actions;
-    if (!list.includes(id)) list.push(id);
+    if (skill.isFinal) { ultimate ??= id; continue; }
+    const key = isPassive(skill) ? 'passives' : 'actions';
+    const list = key === 'passives' ? passives : actions;
+    if (!list.includes(id) && used[key] + skill.cost <= cap[key]) {
+      list.push(id);
+      used[key] += skill.cost;
+    }
   }
-  member.loadout = { actions, passives };
+  member.loadout = { actions, passives, ultimate };
   return member.loadout;
 }
 
 export function ensureLoadout(data, member) {
   if (member.loadout) return normalizeLoadout(data, member);
   // はじめて：今のジョブの覚えているスキルを入るだけつける
-  member.loadout = { actions: [], passives: [] };
+  member.loadout = { actions: [], passives: [], ultimate: null };
   for (const s of jobSkills(data, member.job)) if (isLearned(member, s) && !equipBlock(data, member, s)) equipSkill(data, member, s.id);
   return member.loadout;
 }
 export function capacity(data, member) {
   const m = commonMods(data, member);
   return {
-    actions: GROWTH_FORMULAS.action_capacity + (m.cap_action ?? 0),
-    passives: GROWTH_FORMULAS.passive_capacity + (m.cap_passive ?? 0),
+    actions: (data.basicJobRules?.capacity?.actions ?? GROWTH_FORMULAS.action_capacity) + (m.cap_action ?? 0),
+    passives: (data.basicJobRules?.capacity?.passives ?? GROWTH_FORMULAS.passive_capacity) + (m.cap_passive ?? 0),
   };
 }
 export function usedCapacity(data, member) {
@@ -195,11 +230,16 @@ export function usedCapacity(data, member) {
 }
 /** 枠につけられるか → 理由 */
 export function equipBlock(data, member, skill) {
+  if (!skill) return 'そのスキルはない';
   const lo = normalizeLoadout(data, member);
+  if (skill.isFinal) {
+    if (lo.ultimate === skill.id) return 'つけている';
+    if (!isLearned(member, skill)) return '覚えていない';
+    return lo.ultimate ? '奥義は1つまで装備できます' : '';
+  }
   const list = isPassive(skill) ? lo.passives : lo.actions;
   if (list.includes(skill.id)) return 'つけている';
   if (!isLearned(member, skill)) return '覚えていない';
-  if (skill.isFinal && skill.job !== member.job) return 'ほかのジョブの奥義は持ち出せない';
   const cap = capacity(data, member);
   const used = usedCapacity(data, member);
   const key = isPassive(skill) ? 'passives' : 'actions';
@@ -208,20 +248,29 @@ export function equipBlock(data, member, skill) {
 }
 export function equipSkill(data, member, skillId) {
   const s = data.skills.get(skillId);
-  member.loadout = member.loadout ?? { actions: [], passives: [] };
+  member.loadout = member.loadout ?? { actions: [], passives: [], ultimate: null };
   const block = equipBlock(data, member, s);
   if (block) throw new Error(block);
-  (isPassive(s) ? member.loadout.passives : member.loadout.actions).push(s.id);
+  if (s.isFinal) member.loadout.ultimate = s.id;
+  else (isPassive(s) ? member.loadout.passives : member.loadout.actions).push(s.id);
 }
 export function unequipSkill(member, skillId) {
   if (!member.loadout) return;
-  member.loadout.actions = member.loadout.actions.filter((x) => x !== skillId);
-  member.loadout.passives = member.loadout.passives.filter((x) => x !== skillId);
+  member.loadout.actions = (member.loadout.actions ?? []).filter((x) => x !== skillId);
+  member.loadout.passives = (member.loadout.passives ?? []).filter((x) => x !== skillId);
+  if (member.loadout.ultimate === skillId) member.loadout.ultimate = null;
 }
 /** 戦闘で使えるスキル（つけている通常スキル） */
 export function actionSkills(data, member) {
-  const lo = member.loadout ?? ensureLoadout(data, member);
+  const lo = ensureLoadout(data, member);
   return lo.actions.map((id) => data.skills.get(id)).filter(Boolean).map((skill) => effectiveSkill(data, member, skill));
+}
+
+/** 奥義は通常アクティブ容量とは別の1枠。継承後も同じLvで使える。 */
+export function ultimateSkill(data, member) {
+  const lo = ensureLoadout(data, member);
+  const skill = data.skills.get(lo.ultimate);
+  return skill ? effectiveSkill(data, member, skill) : null;
 }
 
 // ---------------- 共通ツリー ----------------
@@ -302,7 +351,9 @@ export function memberMods(data, member) {
   const out = {};
   if (!data.skills) return out;
   for (const id of member.loadout?.passives ?? []) {
-    const mod = data.skills.get(id)?.effect.mod ?? {};
+    const skill = data.skills.get(id);
+    if (!skill || !isLearned(member, skill) || skillWeaponBlock(data, member, skill)) continue;
+    const mod = effectiveSkill(data, member, skill).effect.mod ?? {};
     for (const [k, v] of Object.entries(mod)) {
       if (['wdmg', 'edmg', 'tdmg', 'status_count_damage'].includes(k)) out[k] = [...(out[k] ?? []), v];
       else if (typeof v === 'number') out[k] = (out[k] ?? 0) + v;
@@ -318,7 +369,7 @@ export function memberMods(data, member) {
   }
   add(out, common);
   add(out, equipmentSetMods(data, member));
-  for (const j of data.jobMastery ?? []) if (isJobMastered(data, member, j.job)) add(out, parseBonusText(j.bonus));
+  // マスター状態は実績用。装着枠の外から常時能力を加算しない。
   return out;
 }
 
@@ -343,12 +394,12 @@ export function addMasteryKill(data, member) {
 /** 選べるジョブ：基本ジョブと、解放したジョブ */
 export function availableJobs(data, game) {
   const unlocked = new Set(game.unlockedJobs ?? []);
-  return data.jobs.filter((j) => j.tier === 'base' || unlocked.has(j.id));
+  return data.jobs.filter((j) => j.skillsReady !== false && (j.tier === 'base' || unlocked.has(j.id)));
 }
 
 /**
  * ジョブを変える。新しいジョブで装備できない（適正×）物は倉庫へ。
- * ほかのジョブの奥義はスキルの枠から外す。
+ * 修得済みの技能と奥義の装着は転職後も保持する。
  */
 export function changeJob(data, game, index, jobId) {
   const m = game.party[index];
@@ -361,13 +412,8 @@ export function changeJob(data, game, index, jobId) {
     const g = m.equip[slot];
     if (g && aptitudeMul(data, jobId, gearDef(data, g)) == null) unequip(data, game, m, slot);
   }
-  if (m.loadout) {
-    for (const id of [...m.loadout.actions, ...m.loadout.passives]) {
-      const s = data.skills.get(id);
-      if (s?.isFinal && s.job !== jobId) unequipSkill(m, id);
-    }
-  }
   m.hp = Math.min(m.hp, maxHp(data, m));
   m.mp = Math.min(m.mp, maxMp(data, m));
 }
+
 

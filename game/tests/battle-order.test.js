@@ -2,13 +2,13 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { battleStats, createBattle, finishBattle, makeEnemy, nextTurn, prepareQuizAction, resolvePending, setPending } from '../js/battle.js';
 import { maxHp, maxMp } from '../js/character.js';
-import { createNewGame } from '../js/game-state.js';
+import { equippedGame } from './combat-fixtures.js';
 import { GameSession } from '../js/save.js';
 import { MemoryStorage, realGameData } from './helpers.js';
 
 function encounter() {
   const data = realGameData();
-  const game = createNewGame(data, ['warrior', 'knight', 'black_mage', 'white_mage', 'thief', 'bard']
+  const game = equippedGame(data, ['warrior', 'knight', 'black_mage', 'white_mage', 'thief', 'bard']
     .map((job) => ({ name: job, job, icon: 'x' })));
   const enemy = { ...makeEnemy(data, 'goblin', { lv: 1 }), hp: 10000, spd: 0, status: null };
   const battle = createBattle(data, game, { enemies: [enemy], seed: 7 });
@@ -196,3 +196,4 @@ test('B1 敵の行動不能中は出血せず、次の行動機会に出血で�
   assert.equal(battle.result, 'win');
   assert.deepEqual(game.party.map((m) => m.hp), before);
 });
+

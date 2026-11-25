@@ -2,15 +2,15 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { buildGameData, GAME_FILES } from '../js/gamedata.js';
-import { createNewGame } from '../js/game-state.js';
+import { withEngineSkillFixtures, equippedGame } from './combat-fixtures.js';
 import { makeGear, maxHp, maxMp } from '../js/character.js';
 import { createBattle, makeEnemy, setPending, resolvePending, nextTurn, skillMp, collectBattleHits } from '../js/battle.js';
 import { equipSkill, unequipSkill } from '../js/growth.js';
 import { recoverAfterBattle } from '../js/dungeon.js';
 import { readCsv, readJson } from './helpers.js';
 
-const master = buildGameData(Object.fromEntries(Object.entries(GAME_FILES).map(([key, name]) =>
-  [key, name.endsWith('.json') ? readJson(name) : readCsv(name).rows])));
+const master = withEngineSkillFixtures(buildGameData(Object.fromEntries(Object.entries(GAME_FILES).map(([key, name]) =>
+  [key, name.endsWith('.json') ? readJson(name) : readCsv(name).rows]))));
 const rules = { ...master, balance: { ...master.balance, battle_formulas: {
   ...master.balance.battle_formulas, crit_cap: 0, ally_rand: [1, 1], enemy_rand: [1, 1], turn_rand: [1, 1],
 } } };
@@ -18,9 +18,10 @@ const rules = { ...master, balance: { ...master.balance, battle_formulas: {
 const criticalRules = { ...rules, balance: { ...rules.balance, battle_formulas: { ...rules.balance.battle_formulas, crit_cap: 1 } } };
 
 function setup({ job = 'warrior', weapon = 'sword_t1', count = 1, data = rules, seed = 3 } = {}) {
-  const game = createNewGame(data, [job, 'warrior', 'black_mage', 'white_mage', 'thief', 'bard'].map((j, i) => ({ name: `仲間${i + 1}`, job: j, icon: 'x' })));
+  const game = equippedGame(data, [job, 'warrior', 'black_mage', 'white_mage', 'thief', 'bard'].map((j, i) => ({ name: `仲間${i + 1}`, job: j, icon: 'x' })));
   for (const member of game.party) {
     member.lv = 20;
+    member.learned = [...data.skills.keys()]; // 汎用戦闘効果だけを比較する制御データ。
     member.loadout = { actions: [], passives: [] };
     member.hp = maxHp(data, member);
     member.mp = maxMp(data, member);
@@ -411,4 +412,5 @@ test('魔力の余韻はパッシブ枠へ装備した生存者だけの戦闘�
   recoverAfterBattle(ctx.data, ctx.game);
   assert.equal(ctx.member.mp, 0, '枠から外すと効果がなくなる');
 });
+
 

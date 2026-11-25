@@ -1,13 +1,13 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { loadData } from '../../sim/balance.mjs';
-import { createNewGame } from '../js/game-state.js';
+import { withEngineSkillFixtures, equippedGame } from './combat-fixtures.js';
 import { createBattle, makeEnemy, setPending, resolvePending } from '../js/battle.js';
 import { maxHp, maxMp } from '../js/character.js';
 
-const data = loadData();
+const data = withEngineSkillFixtures(loadData());
 function setup(seed = 42) {
-  const game = createNewGame(data, ['black_mage', 'warrior', 'hunter', 'white_mage', 'thief', 'bard']
+  const game = equippedGame(data, ['black_mage', 'warrior', 'hunter', 'white_mage', 'thief', 'bard']
     .map((job, i) => ({ job, name: `テスト${i}`, icon: 'x' })));
   for (const m of game.party) { m.lv = 20; m.hp = maxHp(data, m); m.mp = maxMp(data, m); }
   const enemies = [0, 1].map(() => makeEnemy(data, 'goblin', { lv: 20, eliteId: 'shadow' }));
@@ -48,7 +48,7 @@ test('物理回避の既存挙動を保ち、状態専用技能は回避判定�
   const ctx = setup(); const hp = ctx.battle.enemies[0].hp;
   act(ctx, null, 1);
   assert.equal(ctx.battle.enemies[0].hp, hp);
-  const skill = [...data.skills.values()].find(s => s.kind === 'status');
+  const skill = data.skills.get('hunter_p3_s4'); // 回避を通さない汎用status効果の制御データ。
   assert.ok(skill);
   const high = setup(7); const low = structuredClone(high);
   low.battle.enemies[0].evasion = 0;
@@ -66,3 +66,4 @@ test('回答待ちをJSON保存した後も魔法回避と出題数が同じに�
   for (const ctx of [original, restored]) resolvePending(data, ctx.game, ctx.battle, true);
   assert.deepEqual(restored, original);
 });
+

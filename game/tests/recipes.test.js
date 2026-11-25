@@ -4,14 +4,19 @@ import { buildGameData, GAME_FILES } from '../js/gamedata.js';
 import { createNewGame } from '../js/game-state.js';
 import { craft } from '../js/workshop.js';
 import { canEquip, computeStats, gearEffects, makeGear, maxHp } from '../js/character.js';
-import { createBattle, makeEnemy, setPending, resolvePending, skillMp } from '../js/battle.js';
+import { createBattle, makeEnemy, setPending, resolvePending, skillMp, battleStats } from '../js/battle.js';
 import { readCsv, readJson } from './helpers.js';
 
 const data = buildGameData(Object.fromEntries(Object.entries(GAME_FILES).map(([key, name]) =>
   [key, name.endsWith('.json') ? readJson(name) : readCsv(name).rows])));
 const party = (job = 'warrior') => [job, 'knight', 'black_mage', 'white_mage', 'thief', 'bard']
   .map((j) => ({ job: j, name: j, icon: 'x' }));
-const fresh = (job = 'warrior') => createNewGame(data, party(job));
+const fresh = (job = 'warrior') => {
+  const game = createNewGame(data, party(job));
+  // このファイルは制作の入出庫だけを比較するため、開始時の支給品を除く。
+  game.storage.gear = [];
+  return game;
+};
 
 function supply(game, recipeId) {
   const row = data.recipes.find((r) => r.id === recipeId);
@@ -151,25 +156,33 @@ test('MP節約・回復強化・全体支援の固定効果が実際の計算に
       enemies: [makeEnemy(data, 'slime', { lv: 1 })], seed: 3,
     });
     b.turn = { side: 'ally', i: 0 };
-    setPending(b, { type: 'skill', skillId: 'white_mage_p1_s1', target: 0 }, {});
+    m.learned = ['white_mage_A01'];
+    m.loadout = { actions: ['white_mage_A01'], passives: [], ultimate: null };
+    setPending(b, { type: 'skill', skillId: 'white_mage_A01', target: 0 }, {});
     const before = m.hp;
     resolvePending(data, game, b, true);
     return m.hp - before;
   };
   assert.ok(heal('craft_staff_s2') > heal('staff_t4'));
 
-  const buff = (instrumentId) => {
+  const buff = (instrumentId, removeSupportAffix = false) => {
     const game = fresh('bard');
     const m = game.party[0];
     const def = data.equipment.get(instrumentId);
     m.equip.weapon = makeGear(game, instrumentId, { affixes: { ...(def.fixedEffects ?? {}) } });
+    if (removeSupportAffix) delete m.equip.weapon.affixes.PARTY_BUFF_POWER;
     const b = createBattle(data, game, {
       enemies: [makeEnemy(data, 'slime', { lv: 1 })], seed: 3,
     });
     b.turn = { side: 'ally', i: 0 };
-    setPending(b, { type: 'skill', skillId: 'bard_p1_s1', target: 0 }, {});
+    m.learned = ['bard_A01'];
+    m.loadout = { actions: ['bard_A01'], passives: [], ultimate: null };
+    const before = battleStats(data, game, b, 0).def;
+    setPending(b, { type: 'skill', skillId: 'bard_A01', target: 0 }, {});
     resolvePending(data, game, b, true);
-    return b.partyBuffs.def?.[0];
+    return battleStats(data, game, b, 0).def / before - 1;
   };
   assert.ok(buff('craft_instrument_s2') > buff('instrument_t4'));
+  assert.ok(buff('craft_instrument_s2') > buff('craft_instrument_s2', true), '同じ武器のMAGを保ち、全体支援付与だけを除くと強化量が下がる');
 });
+

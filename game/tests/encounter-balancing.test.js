@@ -7,14 +7,16 @@ import { encounterWeights, monsterPool, makeEncounter, planBounty, bountyProbabi
 import { startRun, startNextBattle, afterBattle, returnToTown, runRoute, runFloorRow, runFloorCount, isBossBattle } from '../js/dungeon.js';
 import { calendarOf } from '../js/town.js';
 import { goldForEnemy } from '../js/loot.js';
+import { withEngineSkillFixtures } from './combat-fixtures.js';
 
-const data = realGameData();
+const data = withEngineSkillFixtures(realGameData());
 const party = ['warrior', 'knight', 'black_mage', 'white_mage', 'thief', 'bard'].map((job) => ({ name: job, job, icon: 'x' }));
 
 test('賞金首の補正は道具・パッシブ・装備から各1つを採用し上限を守る', () => {
   const game = createNewGame(data, party);
   assert.equal(bountyProbability(data, game, 'mossy_cave', true), .4);
   for (const member of game.party.slice(0, 2)) {
+    member.learned.push('hunter_p2_s5');
     member.loadout.passives = ['hunter_p2_s5'];
     member.equip.accessory1 = { affixes: { BOUNTY_CHANCE: 5 } };
   }
@@ -199,3 +201,4 @@ test('最終ボスから逃げても踏破扱いにならず、帰還または�
   returnToTown(data, session);
   assert.equal(session.game.cleared.mossy_cave, undefined);
 });
+

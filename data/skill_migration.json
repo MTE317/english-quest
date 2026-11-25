@@ -1,0 +1,1750 @@
+{
+  "version": 1,
+  "retired_skills": [
+    {
+      "id": "warrior_p1_s1",
+      "job": "warrior",
+      "name": "剛断ち",
+      "ap": 10,
+      "levels": [
+        {
+          "ap": 10,
+          "mp": 5,
+          "effect": {
+            "m": 2.05
+          }
+        },
+        {
+          "ap": 20,
+          "mp": 6,
+          "effect": {
+            "m": 2.3
+          }
+        }
+      ]
+    },
+    {
+      "id": "warrior_p1_s2",
+      "job": "warrior",
+      "name": "刃の心得",
+      "ap": 10,
+      "levels": []
+    },
+    {
+      "id": "warrior_p1_s3",
+      "job": "warrior",
+      "name": "旋風斬",
+      "ap": 20,
+      "levels": [
+        {
+          "ap": 10,
+          "mp": 9,
+          "effect": {
+            "m": 1.15
+          }
+        },
+        {
+          "ap": 20,
+          "mp": 10,
+          "effect": {
+            "m": 1.25
+          }
+        }
+      ]
+    },
+    {
+      "id": "warrior_p1_s4",
+      "job": "warrior",
+      "name": "天裂き",
+      "ap": 30,
+      "levels": []
+    },
+    {
+      "id": "warrior_p2_s1",
+      "job": "warrior",
+      "name": "挑みの構え",
+      "ap": 10,
+      "levels": []
+    },
+    {
+      "id": "warrior_p2_s2",
+      "job": "warrior",
+      "name": "鉄の体",
+      "ap": 10,
+      "levels": []
+    },
+    {
+      "id": "warrior_p2_s3",
+      "job": "warrior",
+      "name": "鉄壁",
+      "ap": 20,
+      "levels": []
+    },
+    {
+      "id": "warrior_p2_s4",
+      "job": "warrior",
+      "name": "堅守",
+      "ap": 30,
+      "levels": []
+    },
+    {
+      "id": "warrior_p3_s1",
+      "job": "warrior",
+      "name": "捨て身斬り",
+      "ap": 10,
+      "levels": []
+    },
+    {
+      "id": "warrior_p3_s2",
+      "job": "warrior",
+      "name": "逆境",
+      "ap": 10,
+      "levels": []
+    },
+    {
+      "id": "warrior_p3_s3",
+      "job": "warrior",
+      "name": "血風",
+      "ap": 20,
+      "levels": []
+    },
+    {
+      "id": "warrior_p3_s4",
+      "job": "warrior",
+      "name": "戦意高揚",
+      "ap": 30,
+      "levels": []
+    },
+    {
+      "id": "knight_p1_s1",
+      "job": "knight",
+      "name": "守りの号令",
+      "ap": 10,
+      "levels": []
+    },
+    {
+      "id": "knight_p1_s2",
+      "job": "knight",
+      "name": "かばいの誓い",
+      "ap": 10,
+      "levels": []
+    },
+    {
+      "id": "knight_p1_s3",
+      "job": "knight",
+      "name": "不動の盾",
+      "ap": 20,
+      "levels": []
+    },
+    {
+      "id": "knight_p1_s4",
+      "job": "knight",
+      "name": "聖域の盾",
+      "ap": 30,
+      "levels": []
+    },
+    {
+      "id": "knight_p2_s1",
+      "job": "knight",
+      "name": "聖剣",
+      "ap": 10,
+      "levels": [
+        {
+          "ap": 10,
+          "mp": 5,
+          "effect": {
+            "m": 1.6
+          }
+        },
+        {
+          "ap": 20,
+          "mp": 6,
+          "effect": {
+            "m": 1.8
+          }
+        }
+      ]
+    },
+    {
+      "id": "knight_p2_s2",
+      "job": "knight",
+      "name": "光の加護",
+      "ap": 10,
+      "levels": []
+    },
+    {
+      "id": "knight_p2_s3",
+      "job": "knight",
+      "name": "癒しの手",
+      "ap": 20,
+      "levels": []
+    },
+    {
+      "id": "knight_p2_s4",
+      "job": "knight",
+      "name": "清廉",
+      "ap": 30,
+      "levels": []
+    },
+    {
+      "id": "knight_p3_s1",
+      "job": "knight",
+      "name": "盾打ち",
+      "ap": 10,
+      "levels": [
+        {
+          "ap": 10,
+          "mp": 4,
+          "effect": {
+            "m": 1.55
+          }
+        },
+        {
+          "ap": 20,
+          "mp": 5,
+          "effect": {
+            "m": 1.7
+          }
+        }
+      ]
+    },
+    {
+      "id": "knight_p3_s2",
+      "job": "knight",
+      "name": "盾の心得",
+      "ap": 10,
+      "levels": []
+    },
+    {
+      "id": "knight_p3_s3",
+      "job": "knight",
+      "name": "反撃の構え",
+      "ap": 20,
+      "levels": []
+    },
+    {
+      "id": "knight_p3_s4",
+      "job": "knight",
+      "name": "鉄の意志",
+      "ap": 30,
+      "levels": []
+    },
+    {
+      "id": "black_mage_p1_s1",
+      "job": "black_mage",
+      "name": "炎弾",
+      "ap": 10,
+      "levels": [
+        {
+          "ap": 10,
+          "mp": 5,
+          "effect": {
+            "m": 1.95
+          }
+        },
+        {
+          "ap": 20,
+          "mp": 6,
+          "effect": {
+            "m": 2.2
+          }
+        }
+      ]
+    },
+    {
+      "id": "black_mage_p1_s2",
+      "job": "black_mage",
+      "name": "炎の心得",
+      "ap": 10,
+      "levels": []
+    },
+    {
+      "id": "black_mage_p1_s3",
+      "job": "black_mage",
+      "name": "焔の渦",
+      "ap": 20,
+      "levels": []
+    },
+    {
+      "id": "black_mage_p1_s4",
+      "job": "black_mage",
+      "name": "星墜とし",
+      "ap": 30,
+      "levels": []
+    },
+    {
+      "id": "black_mage_p2_s1",
+      "job": "black_mage",
+      "name": "氷槍",
+      "ap": 10,
+      "levels": [
+        {
+          "ap": 10,
+          "mp": 5,
+          "effect": {
+            "m": 1.95
+          }
+        },
+        {
+          "ap": 20,
+          "mp": 6,
+          "effect": {
+            "m": 2.2
+          }
+        }
+      ]
+    },
+    {
+      "id": "black_mage_p2_s2",
+      "job": "black_mage",
+      "name": "氷の心得",
+      "ap": 10,
+      "levels": []
+    },
+    {
+      "id": "black_mage_p2_s3",
+      "job": "black_mage",
+      "name": "吹雪",
+      "ap": 20,
+      "levels": []
+    },
+    {
+      "id": "black_mage_p2_s4",
+      "job": "black_mage",
+      "name": "凍てつく枷",
+      "ap": 30,
+      "levels": []
+    },
+    {
+      "id": "black_mage_p3_s1",
+      "job": "black_mage",
+      "name": "雷鳴",
+      "ap": 10,
+      "levels": [
+        {
+          "ap": 10,
+          "mp": 5,
+          "effect": {
+            "m": 1.95
+          }
+        },
+        {
+          "ap": 20,
+          "mp": 6,
+          "effect": {
+            "m": 2.2
+          }
+        }
+      ]
+    },
+    {
+      "id": "black_mage_p3_s2",
+      "job": "black_mage",
+      "name": "雷の心得",
+      "ap": 10,
+      "levels": []
+    },
+    {
+      "id": "black_mage_p3_s3",
+      "job": "black_mage",
+      "name": "雷雲",
+      "ap": 20,
+      "levels": []
+    },
+    {
+      "id": "black_mage_p3_s4",
+      "job": "black_mage",
+      "name": "魔力集中",
+      "ap": 30,
+      "levels": []
+    },
+    {
+      "id": "white_mage_p1_s1",
+      "job": "white_mage",
+      "name": "癒しの光",
+      "ap": 10,
+      "levels": [
+        {
+          "ap": 10,
+          "mp": 5,
+          "effect": {
+            "m": 1.8
+          }
+        },
+        {
+          "ap": 20,
+          "mp": 6,
+          "effect": {
+            "m": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": "white_mage_p1_s2",
+      "job": "white_mage",
+      "name": "慈愛",
+      "ap": 10,
+      "levels": []
+    },
+    {
+      "id": "white_mage_p1_s3",
+      "job": "white_mage",
+      "name": "祝福の雨",
+      "ap": 20,
+      "levels": []
+    },
+    {
+      "id": "white_mage_p1_s4",
+      "job": "white_mage",
+      "name": "再生の祈り",
+      "ap": 30,
+      "levels": []
+    },
+    {
+      "id": "white_mage_p2_s1",
+      "job": "white_mage",
+      "name": "清めの光",
+      "ap": 10,
+      "levels": []
+    },
+    {
+      "id": "white_mage_p2_s2",
+      "job": "white_mage",
+      "name": "加護",
+      "ap": 10,
+      "levels": []
+    },
+    {
+      "id": "white_mage_p2_s3",
+      "job": "white_mage",
+      "name": "目覚めの祈り",
+      "ap": 20,
+      "levels": []
+    },
+    {
+      "id": "white_mage_p2_s4",
+      "job": "white_mage",
+      "name": "守りの祈り",
+      "ap": 30,
+      "levels": []
+    },
+    {
+      "id": "white_mage_p3_s1",
+      "job": "white_mage",
+      "name": "聖弾",
+      "ap": 10,
+      "levels": [
+        {
+          "ap": 10,
+          "mp": 4,
+          "effect": {
+            "m": 1.5
+          }
+        },
+        {
+          "ap": 20,
+          "mp": 5,
+          "effect": {
+            "m": 1.7
+          }
+        }
+      ]
+    },
+    {
+      "id": "white_mage_p3_s2",
+      "job": "white_mage",
+      "name": "光の心得",
+      "ap": 10,
+      "levels": []
+    },
+    {
+      "id": "white_mage_p3_s3",
+      "job": "white_mage",
+      "name": "聖なる鎖",
+      "ap": 20,
+      "levels": []
+    },
+    {
+      "id": "white_mage_p3_s4",
+      "job": "white_mage",
+      "name": "裁きの光",
+      "ap": 30,
+      "levels": []
+    },
+    {
+      "id": "thief_p1_s1",
+      "job": "thief",
+      "name": "影縫い",
+      "ap": 10,
+      "levels": [
+        {
+          "ap": 10,
+          "mp": 5,
+          "effect": {
+            "m": 1.5
+          }
+        },
+        {
+          "ap": 20,
+          "mp": 6,
+          "effect": {
+            "m": 1.7
+          }
+        }
+      ]
+    },
+    {
+      "id": "thief_p1_s2",
+      "job": "thief",
+      "name": "刃さばき",
+      "ap": 10,
+      "levels": []
+    },
+    {
+      "id": "thief_p1_s3",
+      "job": "thief",
+      "name": "急所突き",
+      "ap": 20,
+      "levels": []
+    },
+    {
+      "id": "thief_p1_s4",
+      "job": "thief",
+      "name": "千影",
+      "ap": 30,
+      "levels": []
+    },
+    {
+      "id": "thief_p2_s1",
+      "job": "thief",
+      "name": "盗む",
+      "ap": 10,
+      "levels": []
+    },
+    {
+      "id": "thief_p2_s2",
+      "job": "thief",
+      "name": "目利き",
+      "ap": 10,
+      "levels": []
+    },
+    {
+      "id": "thief_p2_s3",
+      "job": "thief",
+      "name": "金品強奪",
+      "ap": 20,
+      "levels": []
+    },
+    {
+      "id": "thief_p2_s4",
+      "job": "thief",
+      "name": "追い討ちの勘",
+      "ap": 30,
+      "levels": []
+    },
+    {
+      "id": "thief_p3_s1",
+      "job": "thief",
+      "name": "煙玉",
+      "ap": 10,
+      "levels": []
+    },
+    {
+      "id": "thief_p3_s2",
+      "job": "thief",
+      "name": "身軽",
+      "ap": 10,
+      "levels": []
+    },
+    {
+      "id": "thief_p3_s3",
+      "job": "thief",
+      "name": "毒刃",
+      "ap": 20,
+      "levels": [
+        {
+          "ap": 10,
+          "mp": 7,
+          "effect": {
+            "m": 1.15
+          }
+        },
+        {
+          "ap": 20,
+          "mp": 8,
+          "effect": {
+            "m": 1.3
+          }
+        }
+      ]
+    },
+    {
+      "id": "thief_p3_s4",
+      "job": "thief",
+      "name": "見切り",
+      "ap": 30,
+      "levels": []
+    },
+    {
+      "id": "monk_p1_s1",
+      "job": "monk",
+      "name": "発勁",
+      "ap": 10,
+      "levels": [
+        {
+          "ap": 10,
+          "mp": 6,
+          "effect": {
+            "m": 2.15
+          }
+        },
+        {
+          "ap": 20,
+          "mp": 7,
+          "effect": {
+            "m": 2.4
+          }
+        }
+      ]
+    },
+    {
+      "id": "monk_p1_s2",
+      "job": "monk",
+      "name": "拳の心得",
+      "ap": 10,
+      "levels": []
+    },
+    {
+      "id": "monk_p1_s3",
+      "job": "monk",
+      "name": "連打",
+      "ap": 20,
+      "levels": []
+    },
+    {
+      "id": "monk_p1_s4",
+      "job": "monk",
+      "name": "崩山拳",
+      "ap": 30,
+      "levels": []
+    },
+    {
+      "id": "monk_p2_s1",
+      "job": "monk",
+      "name": "練気",
+      "ap": 10,
+      "levels": []
+    },
+    {
+      "id": "monk_p2_s2",
+      "job": "monk",
+      "name": "内功",
+      "ap": 10,
+      "levels": []
+    },
+    {
+      "id": "monk_p2_s3",
+      "job": "monk",
+      "name": "気合いの一喝",
+      "ap": 20,
+      "levels": []
+    },
+    {
+      "id": "monk_p2_s4",
+      "job": "monk",
+      "name": "心眼",
+      "ap": 30,
+      "levels": []
+    },
+    {
+      "id": "monk_p3_s1",
+      "job": "monk",
+      "name": "受け流し",
+      "ap": 10,
+      "levels": []
+    },
+    {
+      "id": "monk_p3_s2",
+      "job": "monk",
+      "name": "鍛えた体",
+      "ap": 10,
+      "levels": []
+    },
+    {
+      "id": "monk_p3_s3",
+      "job": "monk",
+      "name": "闘気",
+      "ap": 20,
+      "levels": []
+    },
+    {
+      "id": "monk_p3_s4",
+      "job": "monk",
+      "name": "不倒",
+      "ap": 30,
+      "levels": []
+    },
+    {
+      "id": "hunter_p1_s1",
+      "job": "hunter",
+      "name": "狙い撃ち",
+      "ap": 10,
+      "levels": [
+        {
+          "ap": 10,
+          "mp": 6,
+          "effect": {
+            "m": 2.15
+          }
+        },
+        {
+          "ap": 20,
+          "mp": 7,
+          "effect": {
+            "m": 2.4
+          }
+        }
+      ]
+    },
+    {
+      "id": "hunter_p1_s2",
+      "job": "hunter",
+      "name": "射手の心得",
+      "ap": 10,
+      "levels": []
+    },
+    {
+      "id": "hunter_p1_s3",
+      "job": "hunter",
+      "name": "乱れ撃ち",
+      "ap": 20,
+      "levels": []
+    },
+    {
+      "id": "hunter_p1_s4",
+      "job": "hunter",
+      "name": "星穿ち",
+      "ap": 30,
+      "levels": []
+    },
+    {
+      "id": "hunter_p2_s1",
+      "job": "hunter",
+      "name": "見極め",
+      "ap": 10,
+      "levels": []
+    },
+    {
+      "id": "hunter_p2_s2",
+      "job": "hunter",
+      "name": "獣狩り",
+      "ap": 10,
+      "levels": []
+    },
+    {
+      "id": "hunter_p2_s3",
+      "job": "hunter",
+      "name": "急所狙い",
+      "ap": 20,
+      "levels": []
+    },
+    {
+      "id": "hunter_p2_s4",
+      "job": "hunter",
+      "name": "狩人の眼",
+      "ap": 30,
+      "levels": []
+    },
+    {
+      "id": "hunter_p3_s1",
+      "job": "hunter",
+      "name": "足止めの矢",
+      "ap": 10,
+      "levels": [
+        {
+          "ap": 10,
+          "mp": 5,
+          "effect": {
+            "m": 0.95
+          }
+        },
+        {
+          "ap": 20,
+          "mp": 6,
+          "effect": {
+            "m": 1.1
+          }
+        }
+      ]
+    },
+    {
+      "id": "hunter_p3_s2",
+      "job": "hunter",
+      "name": "毒矢の心得",
+      "ap": 10,
+      "levels": []
+    },
+    {
+      "id": "hunter_p3_s3",
+      "job": "hunter",
+      "name": "眠り矢",
+      "ap": 20,
+      "levels": []
+    },
+    {
+      "id": "hunter_p3_s4",
+      "job": "hunter",
+      "name": "閃光弾",
+      "ap": 30,
+      "levels": []
+    },
+    {
+      "id": "bard_p1_s1",
+      "job": "bard",
+      "name": "守りの歌",
+      "ap": 10,
+      "levels": []
+    },
+    {
+      "id": "bard_p1_s2",
+      "job": "bard",
+      "name": "響く声",
+      "ap": 10,
+      "levels": []
+    },
+    {
+      "id": "bard_p1_s3",
+      "job": "bard",
+      "name": "疾風の歌",
+      "ap": 20,
+      "levels": []
+    },
+    {
+      "id": "bard_p1_s4",
+      "job": "bard",
+      "name": "英雄の凱歌",
+      "ap": 30,
+      "levels": []
+    },
+    {
+      "id": "bard_p2_s1",
+      "job": "bard",
+      "name": "不協和音",
+      "ap": 10,
+      "levels": [
+        {
+          "ap": 10,
+          "mp": 5,
+          "effect": {
+            "m": 1.5
+          }
+        },
+        {
+          "ap": 20,
+          "mp": 6,
+          "effect": {
+            "m": 1.7
+          }
+        }
+      ]
+    },
+    {
+      "id": "bard_p2_s2",
+      "job": "bard",
+      "name": "奏者の心得",
+      "ap": 10,
+      "levels": []
+    },
+    {
+      "id": "bard_p2_s3",
+      "job": "bard",
+      "name": "子守歌",
+      "ap": 20,
+      "levels": []
+    },
+    {
+      "id": "bard_p2_s4",
+      "job": "bard",
+      "name": "狂詩曲",
+      "ap": 30,
+      "levels": []
+    },
+    {
+      "id": "bard_p3_s1",
+      "job": "bard",
+      "name": "励まし",
+      "ap": 10,
+      "levels": []
+    },
+    {
+      "id": "bard_p3_s2",
+      "job": "bard",
+      "name": "語り部",
+      "ap": 10,
+      "levels": []
+    },
+    {
+      "id": "bard_p3_s3",
+      "job": "bard",
+      "name": "鼓舞",
+      "ap": 20,
+      "levels": [
+        {
+          "ap": 10,
+          "mp": 8,
+          "effect": {
+            "buff": {
+              "str": 0.33,
+              "mag": 0.33
+            }
+          }
+        },
+        {
+          "ap": 20,
+          "mp": 9,
+          "effect": {
+            "buff": {
+              "str": 0.36,
+              "mag": 0.36
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "bard_p3_s4",
+      "job": "bard",
+      "name": "幸運の詩",
+      "ap": 30,
+      "levels": []
+    },
+    {
+      "id": "elementalist_p1_s1",
+      "job": "elementalist",
+      "name": "風刃",
+      "ap": 10,
+      "levels": []
+    },
+    {
+      "id": "elementalist_p1_s2",
+      "job": "elementalist",
+      "name": "石礫",
+      "ap": 20,
+      "levels": []
+    },
+    {
+      "id": "elementalist_p1_s3",
+      "job": "elementalist",
+      "name": "水撃",
+      "ap": 30,
+      "levels": []
+    },
+    {
+      "id": "elementalist_p1_s4",
+      "job": "elementalist",
+      "name": "精霊の大嵐",
+      "ap": 40,
+      "levels": []
+    },
+    {
+      "id": "elementalist_p2_s1",
+      "job": "elementalist",
+      "name": "精霊の声",
+      "ap": 10,
+      "levels": []
+    },
+    {
+      "id": "elementalist_p2_s2",
+      "job": "elementalist",
+      "name": "大地の壁",
+      "ap": 20,
+      "levels": []
+    },
+    {
+      "id": "elementalist_p2_s3",
+      "job": "elementalist",
+      "name": "癒しの泉",
+      "ap": 30,
+      "levels": []
+    },
+    {
+      "id": "elementalist_p2_s4",
+      "job": "elementalist",
+      "name": "属性の守り",
+      "ap": 40,
+      "levels": []
+    },
+    {
+      "id": "gunner_p1_s1",
+      "job": "gunner",
+      "name": "速射",
+      "ap": 10,
+      "levels": []
+    },
+    {
+      "id": "gunner_p1_s2",
+      "job": "gunner",
+      "name": "早撃ち",
+      "ap": 20,
+      "levels": []
+    },
+    {
+      "id": "gunner_p1_s3",
+      "job": "gunner",
+      "name": "貫通弾",
+      "ap": 30,
+      "levels": []
+    },
+    {
+      "id": "gunner_p1_s4",
+      "job": "gunner",
+      "name": "弾幕",
+      "ap": 40,
+      "levels": []
+    },
+    {
+      "id": "gunner_p2_s1",
+      "job": "gunner",
+      "name": "焼夷弾",
+      "ap": 10,
+      "levels": []
+    },
+    {
+      "id": "gunner_p2_s2",
+      "job": "gunner",
+      "name": "冷凍弾",
+      "ap": 20,
+      "levels": []
+    },
+    {
+      "id": "gunner_p2_s3",
+      "job": "gunner",
+      "name": "雷撃弾",
+      "ap": 30,
+      "levels": []
+    },
+    {
+      "id": "gunner_p2_s4",
+      "job": "gunner",
+      "name": "弾の工夫",
+      "ap": 40,
+      "levels": []
+    },
+    {
+      "id": "dancer_p1_s1",
+      "job": "dancer",
+      "name": "癒しの舞",
+      "ap": 10,
+      "levels": []
+    },
+    {
+      "id": "dancer_p1_s2",
+      "job": "dancer",
+      "name": "舞の余韻",
+      "ap": 20,
+      "levels": []
+    },
+    {
+      "id": "dancer_p1_s3",
+      "job": "dancer",
+      "name": "清めの舞",
+      "ap": 30,
+      "levels": []
+    },
+    {
+      "id": "dancer_p1_s4",
+      "job": "dancer",
+      "name": "天女の舞",
+      "ap": 40,
+      "levels": []
+    },
+    {
+      "id": "dancer_p2_s1",
+      "job": "dancer",
+      "name": "絡め取り",
+      "ap": 10,
+      "levels": []
+    },
+    {
+      "id": "dancer_p2_s2",
+      "job": "dancer",
+      "name": "鞭の心得",
+      "ap": 20,
+      "levels": []
+    },
+    {
+      "id": "dancer_p2_s3",
+      "job": "dancer",
+      "name": "打ち据え",
+      "ap": 30,
+      "levels": []
+    },
+    {
+      "id": "dancer_p2_s4",
+      "job": "dancer",
+      "name": "しなやかな体",
+      "ap": 40,
+      "levels": []
+    },
+    {
+      "id": "spellblade_p1_s1",
+      "job": "spellblade",
+      "name": "炎の剣気",
+      "ap": 10,
+      "levels": []
+    },
+    {
+      "id": "spellblade_p1_s2",
+      "job": "spellblade",
+      "name": "氷の剣気",
+      "ap": 20,
+      "levels": []
+    },
+    {
+      "id": "spellblade_p1_s3",
+      "job": "spellblade",
+      "name": "雷の剣気",
+      "ap": 30,
+      "levels": []
+    },
+    {
+      "id": "spellblade_p1_s4",
+      "job": "spellblade",
+      "name": "属性解放",
+      "ap": 40,
+      "levels": []
+    },
+    {
+      "id": "spellblade_p2_s1",
+      "job": "spellblade",
+      "name": "魔力斬り",
+      "ap": 10,
+      "levels": []
+    },
+    {
+      "id": "spellblade_p2_s2",
+      "job": "spellblade",
+      "name": "剣と魔の心得",
+      "ap": 20,
+      "levels": []
+    },
+    {
+      "id": "spellblade_p2_s3",
+      "job": "spellblade",
+      "name": "双魔斬",
+      "ap": 30,
+      "levels": []
+    },
+    {
+      "id": "spellblade_p2_s4",
+      "job": "spellblade",
+      "name": "魔力の守り",
+      "ap": 40,
+      "levels": []
+    },
+    {
+      "id": "hexer_p1_s1",
+      "job": "hexer",
+      "name": "衰えの呪",
+      "ap": 10,
+      "levels": []
+    },
+    {
+      "id": "hexer_p1_s2",
+      "job": "hexer",
+      "name": "守り崩しの呪",
+      "ap": 20,
+      "levels": []
+    },
+    {
+      "id": "hexer_p1_s3",
+      "job": "hexer",
+      "name": "蝕みの呪",
+      "ap": 30,
+      "levels": []
+    },
+    {
+      "id": "hexer_p1_s4",
+      "job": "hexer",
+      "name": "終焉の刻印",
+      "ap": 40,
+      "levels": []
+    },
+    {
+      "id": "hexer_p2_s1",
+      "job": "hexer",
+      "name": "闇弾",
+      "ap": 10,
+      "levels": []
+    },
+    {
+      "id": "hexer_p2_s2",
+      "job": "hexer",
+      "name": "闇の心得",
+      "ap": 20,
+      "levels": []
+    },
+    {
+      "id": "hexer_p2_s3",
+      "job": "hexer",
+      "name": "吸魔",
+      "ap": 30,
+      "levels": []
+    },
+    {
+      "id": "hexer_p2_s4",
+      "job": "hexer",
+      "name": "呪いの達人",
+      "ap": 40,
+      "levels": []
+    },
+    {
+      "id": "apothecary_p1_s1",
+      "job": "apothecary",
+      "name": "応急手当",
+      "ap": 10,
+      "levels": []
+    },
+    {
+      "id": "apothecary_p1_s2",
+      "job": "apothecary",
+      "name": "薬の知識",
+      "ap": 20,
+      "levels": []
+    },
+    {
+      "id": "apothecary_p1_s3",
+      "job": "apothecary",
+      "name": "爆薬投げ",
+      "ap": 30,
+      "levels": []
+    },
+    {
+      "id": "apothecary_p1_s4",
+      "job": "apothecary",
+      "name": "万能の霊薬",
+      "ap": 40,
+      "levels": []
+    },
+    {
+      "id": "apothecary_p2_s1",
+      "job": "apothecary",
+      "name": "毒薬投げ",
+      "ap": 10,
+      "levels": []
+    },
+    {
+      "id": "apothecary_p2_s2",
+      "job": "apothecary",
+      "name": "毒薬の心得",
+      "ap": 20,
+      "levels": []
+    },
+    {
+      "id": "apothecary_p2_s3",
+      "job": "apothecary",
+      "name": "節約",
+      "ap": 30,
+      "levels": []
+    },
+    {
+      "id": "apothecary_p2_s4",
+      "job": "apothecary",
+      "name": "解毒の体質",
+      "ap": 40,
+      "levels": []
+    },
+    {
+      "id": "warrior_p1_s5",
+      "job": "warrior",
+      "name": "刃の極意",
+      "ap": 45,
+      "levels": []
+    },
+    {
+      "id": "warrior_p2_s5",
+      "job": "warrior",
+      "name": "不動の構え",
+      "ap": 45,
+      "levels": []
+    },
+    {
+      "id": "warrior_p3_s5",
+      "job": "warrior",
+      "name": "修羅の血",
+      "ap": 45,
+      "levels": []
+    },
+    {
+      "id": "knight_p1_s5",
+      "job": "knight",
+      "name": "守護者の誓い",
+      "ap": 45,
+      "levels": []
+    },
+    {
+      "id": "knight_p2_s5",
+      "job": "knight",
+      "name": "裁きの剣",
+      "ap": 45,
+      "levels": []
+    },
+    {
+      "id": "knight_p3_s5",
+      "job": "knight",
+      "name": "鉄の城壁",
+      "ap": 45,
+      "levels": []
+    },
+    {
+      "id": "black_mage_p1_s5",
+      "job": "black_mage",
+      "name": "灼熱の心得",
+      "ap": 45,
+      "levels": []
+    },
+    {
+      "id": "black_mage_p2_s5",
+      "job": "black_mage",
+      "name": "絶対零度",
+      "ap": 45,
+      "levels": []
+    },
+    {
+      "id": "black_mage_p3_s5",
+      "job": "black_mage",
+      "name": "雷神の心得",
+      "ap": 45,
+      "levels": []
+    },
+    {
+      "id": "white_mage_p1_s5",
+      "job": "white_mage",
+      "name": "癒しの極意",
+      "ap": 45,
+      "levels": []
+    },
+    {
+      "id": "white_mage_p2_s5",
+      "job": "white_mage",
+      "name": "聖なる守り",
+      "ap": 45,
+      "levels": []
+    },
+    {
+      "id": "white_mage_p3_s5",
+      "job": "white_mage",
+      "name": "光の審判",
+      "ap": 45,
+      "levels": []
+    },
+    {
+      "id": "thief_p1_s5",
+      "job": "thief",
+      "name": "影の刃",
+      "ap": 45,
+      "levels": []
+    },
+    {
+      "id": "thief_p2_s5",
+      "job": "thief",
+      "name": "宝探しの極意",
+      "ap": 45,
+      "levels": []
+    },
+    {
+      "id": "thief_p3_s5",
+      "job": "thief",
+      "name": "残像",
+      "ap": 45,
+      "levels": []
+    },
+    {
+      "id": "monk_p1_s5",
+      "job": "monk",
+      "name": "百裂の型",
+      "ap": 45,
+      "levels": []
+    },
+    {
+      "id": "monk_p2_s5",
+      "job": "monk",
+      "name": "封じ手",
+      "ap": 45,
+      "levels": []
+    },
+    {
+      "id": "monk_p3_s5",
+      "job": "monk",
+      "name": "金剛の体",
+      "ap": 45,
+      "levels": []
+    },
+    {
+      "id": "hunter_p1_s5",
+      "job": "hunter",
+      "name": "鷹の目",
+      "ap": 45,
+      "levels": []
+    },
+    {
+      "id": "hunter_p2_s5",
+      "job": "hunter",
+      "name": "狩人の勘",
+      "ap": 45,
+      "levels": []
+    },
+    {
+      "id": "hunter_p3_s5",
+      "job": "hunter",
+      "name": "石化の罠",
+      "ap": 45,
+      "levels": []
+    },
+    {
+      "id": "bard_p1_s5",
+      "job": "bard",
+      "name": "大合唱",
+      "ap": 45,
+      "levels": []
+    },
+    {
+      "id": "bard_p2_s5",
+      "job": "bard",
+      "name": "癒しの旋律",
+      "ap": 45,
+      "levels": []
+    },
+    {
+      "id": "bard_p3_s5",
+      "job": "bard",
+      "name": "衰えの詩",
+      "ap": 45,
+      "levels": []
+    },
+    {
+      "id": "elementalist_p1_s5",
+      "job": "elementalist",
+      "name": "精霊王の呼び声",
+      "ap": 45,
+      "levels": []
+    },
+    {
+      "id": "elementalist_p2_s5",
+      "job": "elementalist",
+      "name": "精霊の衣",
+      "ap": 45,
+      "levels": []
+    },
+    {
+      "id": "gunner_p1_s5",
+      "job": "gunner",
+      "name": "一撃必中",
+      "ap": 45,
+      "levels": []
+    },
+    {
+      "id": "gunner_p2_s5",
+      "job": "gunner",
+      "name": "石化弾",
+      "ap": 45,
+      "levels": []
+    },
+    {
+      "id": "dancer_p1_s5",
+      "job": "dancer",
+      "name": "千変の舞",
+      "ap": 45,
+      "levels": []
+    },
+    {
+      "id": "dancer_p2_s5",
+      "job": "dancer",
+      "name": "縛めの鞭",
+      "ap": 45,
+      "levels": []
+    },
+    {
+      "id": "spellblade_p1_s5",
+      "job": "spellblade",
+      "name": "魔剣の極意",
+      "ap": 45,
+      "levels": []
+    },
+    {
+      "id": "spellblade_p2_s5",
+      "job": "spellblade",
+      "name": "魔力の刃",
+      "ap": 45,
+      "levels": []
+    },
+    {
+      "id": "hexer_p1_s5",
+      "job": "hexer",
+      "name": "死の宣告",
+      "ap": 45,
+      "levels": []
+    },
+    {
+      "id": "hexer_p2_s5",
+      "job": "hexer",
+      "name": "闇の極意",
+      "ap": 45,
+      "levels": []
+    },
+    {
+      "id": "apothecary_p1_s5",
+      "job": "apothecary",
+      "name": "秘薬の知識",
+      "ap": 45,
+      "levels": []
+    },
+    {
+      "id": "apothecary_p2_s5",
+      "job": "apothecary",
+      "name": "採取の極意",
+      "ap": 45,
+      "levels": []
+    },
+    {
+      "id": "apothecary_p3_s1",
+      "job": "apothecary",
+      "name": "猛毒薬",
+      "ap": 10,
+      "levels": []
+    },
+    {
+      "id": "monk_p4_s1",
+      "job": "monk",
+      "name": "雷掌",
+      "ap": 10,
+      "levels": [
+        {
+          "ap": 10,
+          "mp": 6,
+          "effect": {
+            "m": 1.35
+          }
+        },
+        {
+          "ap": 20,
+          "mp": 7,
+          "effect": {
+            "m": 1.5
+          }
+        }
+      ]
+    },
+    {
+      "id": "spellblade_p3_s1",
+      "job": "spellblade",
+      "name": "霜刃",
+      "ap": 10,
+      "levels": []
+    },
+    {
+      "id": "spellblade_p3_s2",
+      "job": "spellblade",
+      "name": "灼刃",
+      "ap": 12,
+      "levels": []
+    },
+    {
+      "id": "hexer_p3_s1",
+      "job": "hexer",
+      "name": "封魔の呪",
+      "ap": 10,
+      "levels": []
+    },
+    {
+      "id": "hexer_p3_s2",
+      "job": "hexer",
+      "name": "萎縮の呪",
+      "ap": 12,
+      "levels": []
+    },
+    {
+      "id": "thief_p4_s1",
+      "job": "thief",
+      "name": "幻惑刃",
+      "ap": 10,
+      "levels": []
+    },
+    {
+      "id": "thief_p4_s2",
+      "job": "thief",
+      "name": "眠り薬",
+      "ap": 12,
+      "levels": []
+    },
+    {
+      "id": "stormcaster_chain",
+      "job": "stormcaster",
+      "name": "鎖雷",
+      "ap": 10,
+      "levels": []
+    },
+    {
+      "id": "stormcaster_critical_mp",
+      "job": "stormcaster",
+      "name": "雷撃会心の還元",
+      "ap": 18,
+      "levels": []
+    },
+    {
+      "id": "stormcaster_tempest",
+      "job": "stormcaster",
+      "name": "百雷の嵐",
+      "ap": 45,
+      "levels": []
+    },
+    {
+      "id": "venomist_venom",
+      "job": "venomist",
+      "name": "毒の継承",
+      "ap": 10,
+      "levels": []
+    },
+    {
+      "id": "venomist_spread",
+      "job": "venomist",
+      "name": "病蝕の刃",
+      "ap": 18,
+      "levels": []
+    },
+    {
+      "id": "venomist_ring",
+      "job": "venomist",
+      "name": "毒環の宴",
+      "ap": 45,
+      "levels": []
+    },
+    {
+      "id": "venomist_harvest",
+      "job": "venomist",
+      "name": "重毒追い",
+      "ap": 20,
+      "levels": []
+    },
+    {
+      "id": "bloodblade_scorch",
+      "job": "bloodblade",
+      "name": "灼刃",
+      "ap": 10,
+      "levels": []
+    },
+    {
+      "id": "bloodblade_rend",
+      "job": "bloodblade",
+      "name": "血風斬",
+      "ap": 15,
+      "levels": []
+    },
+    {
+      "id": "bloodblade_wounds",
+      "job": "bloodblade",
+      "name": "継続傷の心得",
+      "ap": 20,
+      "levels": []
+    },
+    {
+      "id": "bloodblade_reaping",
+      "job": "bloodblade",
+      "name": "緋の刈り取り",
+      "ap": 45,
+      "levels": []
+    },
+    {
+      "id": "infernalist_art",
+      "job": "infernalist",
+      "name": "炎獄輪",
+      "ap": 10,
+      "levels": []
+    },
+    {
+      "id": "infernalist_passive",
+      "job": "infernalist",
+      "name": "火傷への余熱",
+      "ap": 20,
+      "levels": []
+    },
+    {
+      "id": "infernalist_ultimate",
+      "job": "infernalist",
+      "name": "灰燼の火雨",
+      "ap": 45,
+      "levels": []
+    },
+    {
+      "id": "seal_archer_art",
+      "job": "seal_archer",
+      "name": "封技の矢",
+      "ap": 10,
+      "levels": []
+    },
+    {
+      "id": "seal_archer_passive",
+      "job": "seal_archer",
+      "name": "封印追撃",
+      "ap": 20,
+      "levels": []
+    },
+    {
+      "id": "seal_archer_ultimate",
+      "job": "seal_archer",
+      "name": "静寂の一射",
+      "ap": 45,
+      "levels": []
+    },
+    {
+      "id": "neutralist_art",
+      "job": "neutralist",
+      "name": "無相弾",
+      "ap": 10,
+      "levels": []
+    },
+    {
+      "id": "neutralist_passive",
+      "job": "neutralist",
+      "name": "無相の節約",
+      "ap": 20,
+      "levels": []
+    },
+    {
+      "id": "neutralist_ultimate",
+      "job": "neutralist",
+      "name": "白紙の星",
+      "ap": 45,
+      "levels": []
+    },
+    {
+      "id": "petrifier_shot",
+      "job": "petrifier",
+      "name": "硬化弾",
+      "ap": 10,
+      "levels": []
+    },
+    {
+      "id": "petrifier_pierce",
+      "job": "petrifier",
+      "name": "穿岩弾",
+      "ap": 15,
+      "levels": []
+    },
+    {
+      "id": "petrifier_aim",
+      "job": "petrifier",
+      "name": "石化の狙い",
+      "ap": 18,
+      "levels": []
+    },
+    {
+      "id": "petrifier_volley",
+      "job": "petrifier",
+      "name": "石化の斉射",
+      "ap": 45,
+      "levels": []
+    }
+  ]
+}

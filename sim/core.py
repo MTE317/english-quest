@@ -14,9 +14,9 @@ T = dict(
     flee=0,              # 逃げる（遊び方で切り替え）
     song=0.30, whip=0.5,
 )
-G = {"A": 4, "B": 3, "C": 2, "D": 1}
+G = {"S": 5, "A": 4, "B": 3, "C": 2, "D": 1}
 STATS = ["HP", "STR", "MAG", "DEF", "RES", "SPD", "LUK"]
-APT = {"S": 1.2, "A": 1.0, "B": 0.85, "C": 0.7}
+APT = {"S": 1.2, "A": 1.0, "B": 0.85, "C": 0.7, "D": 0.55}
 def rnd(rng, a, b): return a + rng.random() * (b - a)
 def xp_need(lv): return round(25 * lv ** 1.5)
 
@@ -56,6 +56,10 @@ PART_W = 0.53   # 頭・体・腕それぞれ（3つで以前の1.6相当）
 
 class Char:
     def __init__(s, job, name):
+        if db.JOB_MASTER:
+            raise RuntimeError("50職・基本8職の新マスターはJavaScript版の実戦処理で検証します。"
+                               "node game/verification/jobs-master/measure.mjs をリポジトリ直下で実行してください。"
+                               "旧Pythonモデルは新技能の効果・共通AP・奥義ゲージを再現しないため使用できません。")
         s.job, s.name, s.lv, s.xp = job, name, 1, 0
         s.ap = {job: 0}; s.mastery = {}; s.persist = set(); s.room = {}
         s.A, s.P, s.mods, s._key = [], [], {}, None

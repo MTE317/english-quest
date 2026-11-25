@@ -6,22 +6,26 @@ import { createBattle, makeEnemy, nextTurn, setPending, resolvePending, battleRe
 import { GameSession } from '../js/save.js';
 import { LEARNING_KEY } from '../js/storage.js';
 import { MemoryStorage, realGameData } from './helpers.js';
+import { equippedGame } from './combat-fixtures.js';
 
 const data = realGameData();
 const fresh = () => createNewGame(data, defaultPartySpecs(data));
-const legacy = () => createNewGame(data, defaultPartySpecs(data).slice(0, 4), { partySize: 4 });
+const legacy = () => equippedGame(data, defaultPartySpecs(data).slice(0, 4), { partySize: 4 });
 
-test('新規作成は6人を要求し、全員に初期装備と重複しないIDを用意する', () => {
+test('新規作成は6人を要求し、全員無装備・技能なしと配給装備の一意なIDを用意する', () => {
   const specs = defaultPartySpecs(data);
   const game = fresh();
   assert.equal(PARTY_SIZE, 6);
   assert.equal(game.party.length, 6);
   assert.deepEqual(specs.map((member) => member.job), data.balance.new_game.party_jobs);
   assert.equal(new Set(game.party.map((member) => member.id)).size, 6);
-  const gear = game.party.flatMap((member) => Object.values(member.equip).filter(Boolean));
+  const gear = [...game.storage.gear, ...game.party.flatMap((member) => Object.values(member.equip).filter(Boolean))];
+  assert.ok(game.storage.gear.length > 0);
   assert.equal(new Set(gear.map((item) => item.uid)).size, gear.length);
   for (const member of game.party) {
-    assert.ok(member.equip.weapon);
+    assert.ok(Object.values(member.equip).every(item => item === null));
+    assert.deepEqual(member.learned, []);
+    assert.equal(member.ap, data.basicJobRules.starting_ap);
     assert.equal(member.hp, maxHp(data, member));
     assert.equal(member.mp, maxMp(data, member));
   }
@@ -54,7 +58,9 @@ test('町の旧4人セーブは育成・負傷・装備・学習記録を保持�
     assert.equal(member.lv, 8);
     assert.equal(member.hp, maxHp(data, member));
     assert.equal(member.mp, maxMp(data, member));
-    for (const item of Object.values(member.equip).filter(Boolean)) assert.ok(item.uid > 800);
+    assert.ok(Object.values(member.equip).every(item => item === null));
+    assert.deepEqual(member.learned, []);
+    assert.equal(member.ap, data.basicJobRules.starting_ap);
   }
   assert.equal(storage.getItem(LEARNING_KEY), learning);
   const once = structuredClone(session.game);
@@ -124,4 +130,5 @@ test('6人全員に行動機会と報酬があり、5・6人目を回復対象�
   assert.equal(rewards.xp.length, 6);
   assert.equal(rewards.ap.length, 6);
 });
+
 

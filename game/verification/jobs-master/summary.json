@@ -1,0 +1,449 @@
+{
+  "output": "C:\\Users\\fg400\\OneDrive\\ドキュメント\\ChatGPT\\English RPG\\english-quest-jobs-master\\game\\verification\\jobs-master\\results.json",
+  "jobs": 50,
+  "skills": 120,
+  "skillSmokeCases": 400,
+  "dungeonScenarios": 60,
+  "dungeonTrials": 480,
+  "sourceSha256": {
+    "data/jobs.csv": "2cef828df563636f47511154a672a595bf8084672a802aa30caad38f570ece8c",
+    "data/jobs_mid.csv": "1006dec264cddee51017e4ac1ba2fbff2181593771b4aa66f843ddf28b33a51b",
+    "data/jobs_advanced.csv": "3c4c54f7974f6e22b23dd14aa5eba2a2dacd9180970ee82c4f0bdfaa4c7ef679",
+    "data/skills.csv": "75c295d4a1febd0124d8465945d7c87c4da494a324daa41e576246cebda0007a",
+    "data/basic_job_rules.json": "5f75c3a6b64daff2b7eeabb94eb6c281c3499207a7dddeff725d4726d9a9553a",
+    "data/balance.json": "65121b5d19e16f8ba9df4f7f92a95cd64f0a9d5de0bca8fce68a47fc58ccc984",
+    "data/weapon_types.csv": "d3bbfab85b40c1f3f9e93f8bcb1d2e31f24a18c4d93c283c27fcb668def38070",
+    "data/job_weapon_aptitude.csv": "59eb31d2c06b2d8276c5a11e831745d4bd00df3c86b145e20ac1bc5052c4fc00",
+    "game/js/gamedata.js": "cdf36c70c01387af49d6f47fb34b7db64eae5d1d012d76786cf58b32675e09fe",
+    "game/js/character.js": "a5d7a4e0943a63988b8e2313f4df39197d3d7ca530478093217d523449ce4e42",
+    "game/js/growth.js": "38c365c965e3fbf25fd0390a07f6f3760bae4e7c59f8cc54db65216a1039fa6e",
+    "game/js/battle.js": "223eb2821588cf8dd94db7852c35315b4ffbb6cd511a8a3f5534ef0ed8b773ec",
+    "game/js/job-combat.js": "0574ac178ef8a3018b2cfc2cb9183149551e5b019bad1a2db5820ac447bcc84e",
+    "game/js/game-state.js": "68a2732c03f5fc9eb9cf92118f9d81e9dcb7eb4421e341e9de066a462a013009",
+    "game/js/dungeon.js": "b787c2de0e8bdc1fb56e46720b5e48d1a6580fdedb87ac89c777f8b72fb7a706",
+    "game/js/encounter.js": "09c25dba8f6afb2768b6328d0fff54eb6f58f9ebba10c1a420e483a999fd287a",
+    "game/verification/jobs-master/measure.mjs": "47b5c0b94772f50fe743718c1c1c7d4d60805d85b79a9a1ec4abc8fc92344aa4"
+  },
+  "clearRates": [
+    {
+      "dungeon": "mossy_cave",
+      "phase": "entry",
+      "formation": "balanced",
+      "accuracy": 0.7,
+      "rate": 0.125
+    },
+    {
+      "dungeon": "mossy_cave",
+      "phase": "entry",
+      "formation": "balanced",
+      "accuracy": 1,
+      "rate": 0.875
+    },
+    {
+      "dungeon": "mossy_cave",
+      "phase": "entry",
+      "formation": "songs-and-tricks",
+      "accuracy": 0.7,
+      "rate": 0
+    },
+    {
+      "dungeon": "mossy_cave",
+      "phase": "entry",
+      "formation": "songs-and-tricks",
+      "accuracy": 1,
+      "rate": 0.5
+    },
+    {
+      "dungeon": "mossy_cave",
+      "phase": "entry",
+      "formation": "physical-party",
+      "accuracy": 0.7,
+      "rate": 0.25
+    },
+    {
+      "dungeon": "mossy_cave",
+      "phase": "entry",
+      "formation": "physical-party",
+      "accuracy": 1,
+      "rate": 0.75
+    },
+    {
+      "dungeon": "mossy_cave",
+      "phase": "prepared",
+      "formation": "balanced",
+      "accuracy": 0.7,
+      "rate": 1
+    },
+    {
+      "dungeon": "mossy_cave",
+      "phase": "prepared",
+      "formation": "balanced",
+      "accuracy": 1,
+      "rate": 1
+    },
+    {
+      "dungeon": "mossy_cave",
+      "phase": "prepared",
+      "formation": "songs-and-tricks",
+      "accuracy": 0.7,
+      "rate": 1
+    },
+    {
+      "dungeon": "mossy_cave",
+      "phase": "prepared",
+      "formation": "songs-and-tricks",
+      "accuracy": 1,
+      "rate": 1
+    },
+    {
+      "dungeon": "mossy_cave",
+      "phase": "prepared",
+      "formation": "physical-party",
+      "accuracy": 0.7,
+      "rate": 1
+    },
+    {
+      "dungeon": "mossy_cave",
+      "phase": "prepared",
+      "formation": "physical-party",
+      "accuracy": 1,
+      "rate": 1
+    },
+    {
+      "dungeon": "sunlit_forest",
+      "phase": "entry",
+      "formation": "balanced",
+      "accuracy": 0.7,
+      "rate": 1
+    },
+    {
+      "dungeon": "sunlit_forest",
+      "phase": "entry",
+      "formation": "balanced",
+      "accuracy": 1,
+      "rate": 1
+    },
+    {
+      "dungeon": "sunlit_forest",
+      "phase": "entry",
+      "formation": "songs-and-tricks",
+      "accuracy": 0.7,
+      "rate": 1
+    },
+    {
+      "dungeon": "sunlit_forest",
+      "phase": "entry",
+      "formation": "songs-and-tricks",
+      "accuracy": 1,
+      "rate": 1
+    },
+    {
+      "dungeon": "sunlit_forest",
+      "phase": "entry",
+      "formation": "physical-party",
+      "accuracy": 0.7,
+      "rate": 1
+    },
+    {
+      "dungeon": "sunlit_forest",
+      "phase": "entry",
+      "formation": "physical-party",
+      "accuracy": 1,
+      "rate": 1
+    },
+    {
+      "dungeon": "sunlit_forest",
+      "phase": "prepared",
+      "formation": "balanced",
+      "accuracy": 0.7,
+      "rate": 1
+    },
+    {
+      "dungeon": "sunlit_forest",
+      "phase": "prepared",
+      "formation": "balanced",
+      "accuracy": 1,
+      "rate": 1
+    },
+    {
+      "dungeon": "sunlit_forest",
+      "phase": "prepared",
+      "formation": "songs-and-tricks",
+      "accuracy": 0.7,
+      "rate": 1
+    },
+    {
+      "dungeon": "sunlit_forest",
+      "phase": "prepared",
+      "formation": "songs-and-tricks",
+      "accuracy": 1,
+      "rate": 1
+    },
+    {
+      "dungeon": "sunlit_forest",
+      "phase": "prepared",
+      "formation": "physical-party",
+      "accuracy": 0.7,
+      "rate": 1
+    },
+    {
+      "dungeon": "sunlit_forest",
+      "phase": "prepared",
+      "formation": "physical-party",
+      "accuracy": 1,
+      "rate": 1
+    },
+    {
+      "dungeon": "ruined_fort",
+      "phase": "entry",
+      "formation": "balanced",
+      "accuracy": 0.7,
+      "rate": 0
+    },
+    {
+      "dungeon": "ruined_fort",
+      "phase": "entry",
+      "formation": "balanced",
+      "accuracy": 1,
+      "rate": 0
+    },
+    {
+      "dungeon": "ruined_fort",
+      "phase": "entry",
+      "formation": "songs-and-tricks",
+      "accuracy": 0.7,
+      "rate": 0
+    },
+    {
+      "dungeon": "ruined_fort",
+      "phase": "entry",
+      "formation": "songs-and-tricks",
+      "accuracy": 1,
+      "rate": 0
+    },
+    {
+      "dungeon": "ruined_fort",
+      "phase": "entry",
+      "formation": "physical-party",
+      "accuracy": 0.7,
+      "rate": 0
+    },
+    {
+      "dungeon": "ruined_fort",
+      "phase": "entry",
+      "formation": "physical-party",
+      "accuracy": 1,
+      "rate": 0
+    },
+    {
+      "dungeon": "ruined_fort",
+      "phase": "prepared",
+      "formation": "balanced",
+      "accuracy": 0.7,
+      "rate": 1
+    },
+    {
+      "dungeon": "ruined_fort",
+      "phase": "prepared",
+      "formation": "balanced",
+      "accuracy": 1,
+      "rate": 1
+    },
+    {
+      "dungeon": "ruined_fort",
+      "phase": "prepared",
+      "formation": "songs-and-tricks",
+      "accuracy": 0.7,
+      "rate": 0.75
+    },
+    {
+      "dungeon": "ruined_fort",
+      "phase": "prepared",
+      "formation": "songs-and-tricks",
+      "accuracy": 1,
+      "rate": 1
+    },
+    {
+      "dungeon": "ruined_fort",
+      "phase": "prepared",
+      "formation": "physical-party",
+      "accuracy": 0.7,
+      "rate": 1
+    },
+    {
+      "dungeon": "ruined_fort",
+      "phase": "prepared",
+      "formation": "physical-party",
+      "accuracy": 1,
+      "rate": 1
+    },
+    {
+      "dungeon": "misty_marsh",
+      "phase": "entry",
+      "formation": "balanced",
+      "accuracy": 0.7,
+      "rate": 0
+    },
+    {
+      "dungeon": "misty_marsh",
+      "phase": "entry",
+      "formation": "balanced",
+      "accuracy": 1,
+      "rate": 0
+    },
+    {
+      "dungeon": "misty_marsh",
+      "phase": "entry",
+      "formation": "songs-and-tricks",
+      "accuracy": 0.7,
+      "rate": 0
+    },
+    {
+      "dungeon": "misty_marsh",
+      "phase": "entry",
+      "formation": "songs-and-tricks",
+      "accuracy": 1,
+      "rate": 0
+    },
+    {
+      "dungeon": "misty_marsh",
+      "phase": "entry",
+      "formation": "physical-party",
+      "accuracy": 0.7,
+      "rate": 0
+    },
+    {
+      "dungeon": "misty_marsh",
+      "phase": "entry",
+      "formation": "physical-party",
+      "accuracy": 1,
+      "rate": 0
+    },
+    {
+      "dungeon": "misty_marsh",
+      "phase": "prepared",
+      "formation": "balanced",
+      "accuracy": 0.7,
+      "rate": 1
+    },
+    {
+      "dungeon": "misty_marsh",
+      "phase": "prepared",
+      "formation": "balanced",
+      "accuracy": 1,
+      "rate": 1
+    },
+    {
+      "dungeon": "misty_marsh",
+      "phase": "prepared",
+      "formation": "songs-and-tricks",
+      "accuracy": 0.7,
+      "rate": 0.875
+    },
+    {
+      "dungeon": "misty_marsh",
+      "phase": "prepared",
+      "formation": "songs-and-tricks",
+      "accuracy": 1,
+      "rate": 1
+    },
+    {
+      "dungeon": "misty_marsh",
+      "phase": "prepared",
+      "formation": "physical-party",
+      "accuracy": 0.7,
+      "rate": 1
+    },
+    {
+      "dungeon": "misty_marsh",
+      "phase": "prepared",
+      "formation": "physical-party",
+      "accuracy": 1,
+      "rate": 1
+    },
+    {
+      "dungeon": "goblin_quarry",
+      "phase": "entry",
+      "formation": "balanced",
+      "accuracy": 0.7,
+      "rate": 0
+    },
+    {
+      "dungeon": "goblin_quarry",
+      "phase": "entry",
+      "formation": "balanced",
+      "accuracy": 1,
+      "rate": 0.125
+    },
+    {
+      "dungeon": "goblin_quarry",
+      "phase": "entry",
+      "formation": "songs-and-tricks",
+      "accuracy": 0.7,
+      "rate": 0
+    },
+    {
+      "dungeon": "goblin_quarry",
+      "phase": "entry",
+      "formation": "songs-and-tricks",
+      "accuracy": 1,
+      "rate": 0.25
+    },
+    {
+      "dungeon": "goblin_quarry",
+      "phase": "entry",
+      "formation": "physical-party",
+      "accuracy": 0.7,
+      "rate": 0
+    },
+    {
+      "dungeon": "goblin_quarry",
+      "phase": "entry",
+      "formation": "physical-party",
+      "accuracy": 1,
+      "rate": 0.5
+    },
+    {
+      "dungeon": "goblin_quarry",
+      "phase": "prepared",
+      "formation": "balanced",
+      "accuracy": 0.7,
+      "rate": 1
+    },
+    {
+      "dungeon": "goblin_quarry",
+      "phase": "prepared",
+      "formation": "balanced",
+      "accuracy": 1,
+      "rate": 1
+    },
+    {
+      "dungeon": "goblin_quarry",
+      "phase": "prepared",
+      "formation": "songs-and-tricks",
+      "accuracy": 0.7,
+      "rate": 1
+    },
+    {
+      "dungeon": "goblin_quarry",
+      "phase": "prepared",
+      "formation": "songs-and-tricks",
+      "accuracy": 1,
+      "rate": 1
+    },
+    {
+      "dungeon": "goblin_quarry",
+      "phase": "prepared",
+      "formation": "physical-party",
+      "accuracy": 0.7,
+      "rate": 1
+    },
+    {
+      "dungeon": "goblin_quarry",
+      "phase": "prepared",
+      "formation": "physical-party",
+      "accuracy": 1,
+      "rate": 1
+    }
+  ]
+}

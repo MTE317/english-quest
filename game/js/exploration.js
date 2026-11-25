@@ -1,7 +1,7 @@
-import { roundGold } from './gold.js?v=paid-skills-1';
-import { maxHp, maxMp } from './character.js?v=paid-skills-1';
-import { monsterPool } from './encounter.js?v=paid-skills-1';
-import { addItem, rollGearDrop } from './loot.js?v=paid-skills-1';
+import { roundGold } from './gold.js?v=jobs-master-1';
+import { maxHp, maxMp } from './character.js?v=jobs-master-1';
+import { monsterPool } from './encounter.js?v=jobs-master-1';
+import { addItem, rollGearDrop } from './loot.js?v=jobs-master-1';
 
 export function planExploration(config, dungeonId, route, rng) {
   if (!config) return [];

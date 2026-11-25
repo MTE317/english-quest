@@ -16,6 +16,7 @@ import { acceptQuest, canReport, checkRankUp, makeBoard, reportQuest } from '../
 import { QuestionPicker } from '../js/picker.js';
 import { Scheduler } from '../js/srs.js';
 import { LearningStore } from '../js/storage.js';
+import { equippedGame } from './combat-fixtures.js';
 
 const data = realGameData();
 const lex = realLexicon();
@@ -23,7 +24,7 @@ const party = ['warrior', 'knight', 'black_mage', 'white_mage', 'thief', 'bard']
 
 function newSession(storage = new MemoryStorage()) {
   const s = new GameSession({ storage });
-  s.startNew(createNewGame(data, party));
+  s.startNew(equippedGame(data, party));
   return s;
 }
 
@@ -139,6 +140,7 @@ test('入ると日数を使い、全滅すると日数・お金・経験値・�
 
 test('いちばん奥まで：階を進み、帰還ポイント・ボス・クリア。帰るとバックパックは倉庫へ', () => {
   const s = newSession();
+  const initialStorage = structuredClone(s.game.storage);
   for (const m of s.game.party) { gainXp(data, m, 5000); m.hp = maxHp(data, m); m.mp = maxMp(data, m); }
   s.save();
   const dg = data.dungeons.get('mossy_cave');
@@ -161,8 +163,8 @@ test('いちばん奥まで：階を進み、帰還ポイント・ボス・ク�
   returnToTown(data, s);
   assert.equal(s.inDungeon, false);
   assert.equal(s.game.cleared.mossy_cave, 1);
-  assert.equal(s.game.storage.gear.length, pack.gear.length);
-  for (const [id, c] of Object.entries(pack.materials)) assert.equal(s.game.storage.materials[id], c);
+  assert.equal(s.game.storage.gear.length, initialStorage.gear.length + pack.gear.length);
+  for (const [id, c] of Object.entries(pack.materials)) assert.equal(s.game.storage.materials[id], (initialStorage.materials[id] ?? 0) + c);
 });
 
 test('帰還ポイントでないところからは帰れない（帰還の羽があれば帰れる）', () => {
@@ -475,3 +477,4 @@ test('休憩は生存者だけを部分回復し、上限を超えない', () =>
   assert.equal(member.hp, 1 + Math.floor(maxHp(local, member) * 0.10));
   assert.equal(member.mp, Math.floor(maxMp(local, member) * 0.05));
 });
+

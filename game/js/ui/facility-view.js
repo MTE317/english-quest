@@ -1,11 +1,11 @@
-import { el, render } from '../dom.js?v=paid-skills-1';
-import { parseAmounts } from '../csv.js?v=paid-skills-1';
-import { craft, brew, enhance, dismantle, reroll, enchant, enchantFamilies, facilityUpgrade } from '../workshop.js?v=paid-skills-1';
-import { borrow, repayLoan, loanLimit } from '../town.js?v=paid-skills-1';
-import { unlockJob, jobDiscoveryProgress, offeringRevealed } from '../temple.js?v=paid-skills-1';
-import { describeFixedEffects, effectLabel, describeEffect } from '../equipment-effects.js?v=paid-skills-1';
-import { equipmentIcon } from './equipment-icons.js?v=paid-skills-1';
-import { uiIcon } from './pixel-icons.js?v=paid-skills-1';
+import { el, render } from '../dom.js?v=jobs-master-1';
+import { parseAmounts } from '../csv.js?v=jobs-master-1';
+import { craft, brew, enhance, dismantle, reroll, enchant, enchantFamilies, facilityUpgrade } from '../workshop.js?v=jobs-master-1';
+import { borrow, repayLoan, loanLimit } from '../town.js?v=jobs-master-1';
+import { unlockJob, jobDiscoveryProgress, offeringRevealed } from '../temple.js?v=jobs-master-1';
+import { describeFixedEffects, effectLabel, describeEffect } from '../equipment-effects.js?v=jobs-master-1';
+import { equipmentIcon } from './equipment-icons.js?v=jobs-master-1';
+import { uiIcon } from './pixel-icons.js?v=jobs-master-1';
 
 const heading = (text) => el('h2', {}, text);
 const btn = (text, onclick, disabled = false) => el('button', { onclick, disabled }, text);
@@ -193,8 +193,11 @@ export function managementView(data, g, act) {
 }
 
 export function templeExtras(data, g, act, selection = {}, jobIcon = () => uiIcon('temple')) {
-  const rules = [...data.jobUnlocks.values()];
-  const advanced = rules.filter(rule => data.jobsById.get(rule.job_id)?.publicRelease);
+  const rules = [...data.jobUnlocks.values()].filter(rule => {
+    const job = data.jobsById.get(rule.job_id);
+    return job && job.skillsReady !== false;
+  });
+  const advanced = rules.filter(rule => data.jobsById.get(rule.job_id)?.tier === 'legendary');
   const renderUnlock = (rule) => {
     const job = data.jobsById.get(rule.job_id);
     const name = job.name;
@@ -213,7 +216,7 @@ export function templeExtras(data, g, act, selection = {}, jobIcon = () => uiIco
           ? el('p', { class: 'muted' }, '次の踏破で確定して発見します。') : null);
     }
     if (rule.method !== '素材') return el('p', {}, `${name} ・ ダンジョンで発見`);
-    const concealed = job.tier === 'advanced';
+    const concealed = job.tier === 'legendary';
     if (concealed && !offeringRevealed(data, g, rule)) return null;
     const requirements = parseAmounts(rule.materials);
     const materials = requirements.map(({ id, count }) => {
@@ -225,9 +228,9 @@ export function templeExtras(data, g, act, selection = {}, jobIcon = () => uiIco
       el('button', { disabled: !ready, onclick: () => act(game => unlockJob(data, game, rule.job_id)) }, '素材を捧げて解放'));
   };
   const offerings = advanced.map(renderUnlock).filter(Boolean);
-  const midRules = rules.filter(rule => data.jobsById.get(rule.job_id)?.tier === 'mid');
+  const midRules = rules.filter(rule => data.jobsById.get(rule.job_id)?.tier === 'additional');
   const selected = midRules.find(rule => rule.job_id === selection.job) ?? midRules[0];
-  const detail = el('section', { class: 'shop-detail', 'aria-label': '中級ジョブの解放条件' });
+  const detail = el('section', { class: 'shop-detail', 'aria-label': '追加ジョブの解放条件' });
   const nodes = new Map();
   function choose(rule) {
     selection.job = rule.job_id;
@@ -238,7 +241,7 @@ export function templeExtras(data, g, act, selection = {}, jobIcon = () => uiIco
       el('p', { class: 'shop-description' }, job.role),
       renderUnlock(rule));
   }
-  const grid = el('div', { class: 'shop-grid temple-job-grid', role: 'group', 'aria-label': '解放する中級ジョブ' },
+  const grid = el('div', { class: 'shop-grid temple-job-grid', role: 'group', 'aria-label': '解放する追加ジョブ' },
     midRules.map(rule => {
       const job = data.jobsById.get(rule.job_id);
       const opened = (g.unlockedJobs ?? []).includes(job.id);
@@ -255,10 +258,11 @@ export function templeExtras(data, g, act, selection = {}, jobIcon = () => uiIco
     }));
   if (selected) choose(selected);
   return [
-    heading('中級ジョブの解放'),
+    heading('追加ジョブの解放'),
     selected ? el('div', { class: 'shop-layout' }, grid, detail)
-      : el('p', { class: 'muted small' }, '解放できる中級ジョブはありません。'),
+      : el('p', { class: 'muted small' }, '現在、解放できる追加ジョブはありません。'),
     offerings.length ? panel('神殿の儀式', offerings) : null,
   ];
 }
+
 
