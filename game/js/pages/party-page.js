@@ -9,7 +9,7 @@ import {
 } from '../character.js?v=skill-growth-2';
 import {
   jobPaths, isLearned, learnBlock, learnSkill, equipBlock, equipSkill, unequipSkill, capacity, usedCapacity,
-  commonApCost, commonBlock, learnCommon, masteryLevel, isJobMastered,
+  commonApCost, commonBlock, learnCommon, masteryLevel, isJobMastered, GROWTH_FORMULAS,
   skillMaxLevel, learnedSkillLevel, effectiveSkill, upgradeSkillBlock, upgradeSkill, skillWeaponBlock,
 } from '../growth.js?v=skill-growth-2';
 import { skillMp } from '../battle.js?v=skill-growth-2';
@@ -233,12 +233,34 @@ function jobAptitudeChart(job) {
   return el('figure', { class: 'job-aptitude-figure' }, chart);
 }
 
+function weaponMasteryPanel(member) {
+  const perLevel = GROWTH_FORMULAS.mastery_kills_per_level;
+  const cap = Math.round(data.balance.battle.mastery_max / data.balance.battle.mastery_per_level);
+  const target = Math.max(1, cap * perLevel);
+  return el('details', { class: 'panel mastery-toggle' },
+    el('summary', {}, '武器の熟練度'),
+    el('ul', { class: 'weapon-mastery-list' }, [...data.weaponTypes.values()].map(type => {
+      const kills = Math.max(0, Number(member.mastery?.[type.id]) || 0);
+      const level = masteryLevel(data, member, type.id);
+      return el('li', { class: 'weapon-mastery-card' },
+        weaponIcon(type.id),
+        el('div', { class: 'weapon-mastery-body' },
+          el('div', { class: 'weapon-mastery-heading' },
+            el('strong', {}, type.name), el('span', {}, `熟練度 ${level}/${cap}`)),
+          el('progress', {
+            class: 'weapon-mastery-bar', max: target, value: Math.min(target, kills),
+            'aria-label': `${type.name}の熟練度 ${level}/${cap}`,
+            'aria-valuetext': level >= cap ? '最大熟練度' : `熟練度 ${level}/${cap}、次の熟練度まで ${perLevel - kills % perLevel}体`,
+          }),
+          el('small', { class: 'muted' }, level >= cap ? 'MAX' : `次の熟練度まで ${perLevel - kills % perLevel}体`)));
+    })));
+}
+
 function showMember(index, tab = 'skills') {
   if (tab === 'skills') return showSkills(index);
   const m = session.game.party[index];
   const st = computeStats(data, m);
   const cap = levelCap(data);
-  const weaponTypes = Object.keys(m.mastery ?? {});
   const statRows = [
     ['HP', `${m.hp} / ${st.hp}`], ['MP', `${m.mp} / ${st.mp}`],
     ...['str', 'mag', 'def', 'res', 'spd', 'luk'].map(k => [STAT_LABEL[k], st[k]]),
@@ -270,11 +292,7 @@ function showMember(index, tab = 'skills') {
       el('details', { class: 'panel aptitude-toggle' },
         el('summary', {}, '能力適性'),
         jobAptitudeChart(data.jobsById.get(m.job))),
-      el('h2', {}, '武器の熟練度'),
-      weaponTypes.length ? el('div', { class: 'panel small' }, weaponTypes.map(type =>
-        el('div', { class: 'weapon-mastery-entry' }, weaponIcon(type),
-          el('span', {}, `${data.weaponTypes.get(type)?.name ?? type}：熟練度 ${masteryLevel(data, m, type)}（倒した数 ${m.mastery[type]}）`))))
-        : el('p', { class: 'muted small' }, 'なし'),
+      weaponMasteryPanel(m),
     ]);
   window.scrollTo(0, 0);
 }
