@@ -49,7 +49,7 @@ const facilityGroups = [
     { id: 'guild', name: 'ギルド酒場', icon: 'guild', detail: '依頼の受注・報告、昇格', show: guild },
     { id: 'inn', name: '宿屋', icon: 'inn', detail: 'HP・MPを回復', show: inn },
     { id: 'temple', name: '神殿', icon: 'temple', detail: '復活・治療、無料転職・ジョブ解放', show: temple },
-    { href: 'party.html', name: 'パーティ', icon: 'party', detail: '仲間の装備・スキル' },
+    { href: 'party.html', name: 'パーティー', icon: 'party', detail: '仲間の装備・スキル' },
   ] },
   { title: '買い物・強化', cards: [
     { id: 'items', name: '道具屋', icon: 'items', detail: '道具を買う、荷物枠を広げる', show: items },
@@ -163,8 +163,9 @@ function showHome(g) {
     return;
   }
   render(view, sceneHeader('冒険者の町', 'town', {
-    detail: '行き先とルーンストーンを選んで遠征へ。',
-    action: heroAction('dungeon.html', '冒険先を選ぶ'), status: statusBar(g),
+    action: el('div', { class: 'town-hero-actions' },
+      heroAction('dungeon.html', '冒険先を選ぶ'),
+      heroAction('party.html', 'パーティー')), status: statusBar(g),
   }), townActions(g), townNotices(g), stopCards(), facilityDirectory());
 }
 
@@ -304,7 +305,7 @@ function items() {
 function gearShop() {
   return [
     gearShopView(data, session.game, gearShopSelection, act),
-    el('a', { class: 'btn', href: 'party.html' }, 'パーティの装備を変更'),
+    el('a', { class: 'btn', href: 'party.html' }, 'パーティーの装備を変更'),
   ];
 }
 
@@ -413,7 +414,7 @@ function draw() {
   if (!g?.party) {
     render(view, sceneHeader('冒険者の町', 'town', {
       detail: '仲間を編成してダンジョンへ。英語の4択に正解すると、仲間が攻撃やスキルを繰り出します。',
-      action: heroAction('party.html', 'パーティを作る'),
+      action: heroAction('party.html', 'パーティーを作る'),
     }), stopCards(true));
     return;
   }
