@@ -1,4 +1,5 @@
 import { el } from '../dom.js';
+import { expeditionScene } from './scenery.js';
 
 // ノードの接続を廃止し、公開されている冒険先をカード一覧から選ぶ。
 export function createWorldMapView({ world, discoveries, selectedDungeon, onDungeon }) {
@@ -23,10 +24,12 @@ export function createWorldMapView({ world, discoveries, selectedDungeon, onDung
       'aria-label': `${dungeon.name}、★${dungeon.rank}、${dungeon.state === 'cleared' ? '踏破済み' : '遠征可能'}`,
       onclick: () => choose(dungeon.id),
     },
+    el('span', { class: `atlas-destination-icon scene-${expeditionScene(dungeon.id)}`, 'aria-hidden': 'true' }),
+    el('strong', { class: 'atlas-destination-name' }, dungeon.name),
     el('span', { class: 'atlas-destination-meta' },
       el('span', {}, `★${dungeon.rank} ・ ${dungeon.kind}`),
       el('span', { class: 'atlas-destination-status' }, dungeon.state === 'cleared' ? '踏破済み' : newIds.has(dungeon.id) ? '新発見' : '遠征可能')),
-    el('strong', { class: 'atlas-destination-name' }, dungeon.name));
+    );
     buttons.set(dungeon.id, button);
     return button;
   });
@@ -37,6 +40,6 @@ export function createWorldMapView({ world, discoveries, selectedDungeon, onDung
       el('span', { class: 'atlas-count' }, `発見済み ${dungeons.length} / 5`)),
     discoveries.length
       ? el('p', { class: 'atlas-status', role: 'status' }, `新しい冒険先を発見：${discoveries.map((d) => d.name).join('、')}`)
-      : el('p', { class: 'atlas-status' }, '行き先を選んで遠征の準備をしよう。未発見の場所はまだ表示されません。'),
+      : null,
     el('div', { class: 'atlas-destinations', role: 'group', 'aria-label': '発見済みの冒険先一覧' }, cards));
 }
