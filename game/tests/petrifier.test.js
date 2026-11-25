@@ -68,7 +68,7 @@ test('無料転職・AP78、保存再読込・持出し・重複装着禁止・�
   const game = fresh();
   const m = unlockAndTrain(data, game, 0);
   assert.equal(game.jp, undefined);
-  assert.equal(m.ap.petrifier, 0);
+  assert.equal(m.ap, 0);
   assert.throws(() => equipSkill(data, m, 'petrifier_aim'), /つけている/);
   m.loadout.passives.push('petrifier_aim');
   const storage = new MemoryStorage(), s = new GameSession({ storage }); s.startNew(game);
@@ -170,3 +170,4 @@ test('確定した境界: 命中付き銃技だけ石化率が増え、既存の
   assert.ok(boosted > 0, '命中付き銃技には補正が働く');
   assert.ok(oldSuccess > 0 && oldSuccess < 256, '状態専用技は従来の確率判定を行う');
 });
+

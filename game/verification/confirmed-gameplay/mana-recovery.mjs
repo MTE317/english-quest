@@ -12,6 +12,7 @@ for(const level of [3,30]) for(const upper of (level===30?[false,true]:[false]))
     const game=createNewGame(data,['warrior','knight','black_mage','white_mage','thief','bard'].map((job,i)=>({job,name:`検証${i}`,icon:'x'})));
     for(const m of game.party){m.lv=level;m.hp=maxHp(data,m);m.mp=0;}
     const m=game.party[0];
+    m.ap=30;
     if(tree)learnCommon(data,m,'mana_afterglow');
     if(upper)learnCommon(data,m,'mana2');
     if(passive)equipSkill(data,m,'common_mana_afterglow');

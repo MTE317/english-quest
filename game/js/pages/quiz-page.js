@@ -1,12 +1,12 @@
 // 動作確認用：ルーンストーンを選んで10問解く画面
-import { loadCsv, loadJson } from '../data.js?v=features-2';
-import { buildLexicon } from '../lexicon.js';
-import { Scheduler, STAGE_LABEL, dayToString } from '../srs.js?v=stability-1';
-import { LearningStore, now, getDebugDayOffset, setDebugDayOffset } from '../storage.js?v=stability-1';
-import { QuestionPicker, REASON_LABEL } from '../picker.js';
-import { makeQuestion, questionSpeech, DIRECTION, DIRECTION_LABEL } from '../quiz.js?v=question-speech-1';
-import { speak, canSpeak, stopSpeech } from '../speech.js?v=music-suite-1';
-import { el, render, stars } from '../dom.js';
+import { loadCsv, loadJson } from '../data.js?v=unified-ap-1';
+import { buildLexicon } from '../lexicon.js?v=unified-ap-1';
+import { Scheduler, STAGE_LABEL, dayToString } from '../srs.js?v=unified-ap-1';
+import { LearningStore, now, getDebugDayOffset, setDebugDayOffset } from '../storage.js?v=unified-ap-1';
+import { QuestionPicker, REASON_LABEL } from '../picker.js?v=unified-ap-1';
+import { makeQuestion, questionSpeech, DIRECTION, DIRECTION_LABEL } from '../quiz.js?v=unified-ap-1';
+import { speak, canSpeak, stopSpeech } from '../speech.js?v=unified-ap-1';
+import { el, render, stars } from '../dom.js?v=unified-ap-1';
 
 // この画面は動作確認用なので、問題数はユーザーの指定（10問）で固定
 const QUESTIONS_PER_TEST = 10;
@@ -227,4 +227,5 @@ function showResult(results) {
     render(view, el('p', { class: 'error' }, `読み込みに失敗：${e.message}`));
   }
 })();
+
 

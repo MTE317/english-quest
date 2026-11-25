@@ -1,24 +1,24 @@
-import { loadGameData } from '../gamedata.js?v=gold-unit-1';
-import { loadJson, loadOptional } from '../data.js?v=features-2';
-import { splitList } from '../csv.js';
-import { loadLearningCatalog } from '../learning-catalog.js?v=learning-00-v1';
-import { Scheduler } from '../srs.js?v=stability-1';
-import { LearningStore, now } from '../storage.js?v=stability-1';
-import { GameSession } from '../save.js?v=gold-unit-1';
-import { normalizeGame } from '../game-state.js?v=gold-unit-1';
-import { createBattle, makeEnemy, finishBattle } from '../battle.js?v=basic-skill-levels-1';
-import { currentRank, useItemOutsideBattle, FIELD_ITEM_EFFECTS } from '../dungeon.js?v=gold-unit-1';
-import { nextRankStatus, checkRankUp } from '../town.js?v=gold-unit-1';
-import { makeGear } from '../character.js?v=basic-skill-levels-1';
-import { arenaReviewWords } from '../study.js?v=build36-1';
-import { promotionProgress } from '../promotion.js?v=training-v2-1';
-import { runDualPromotionExam } from '../ui/learning-exams.js?v=training-v2-1';
-import { createBattleView } from '../ui/battle-view.js?v=battle-field-1';
-import { runQuiz } from '../ui/quiz-runner.js?v=music-suite-1';
-import { el, render } from '../dom.js';
-import { setSceneMusic } from '../battle-music.js?v=music-suite-1';
+import { loadGameData } from '../gamedata.js?v=unified-ap-1';
+import { loadJson, loadOptional } from '../data.js?v=unified-ap-1';
+import { splitList } from '../csv.js?v=unified-ap-1';
+import { loadLearningCatalog } from '../learning-catalog.js?v=unified-ap-1';
+import { Scheduler } from '../srs.js?v=unified-ap-1';
+import { LearningStore, now } from '../storage.js?v=unified-ap-1';
+import { GameSession } from '../save.js?v=unified-ap-1';
+import { normalizeGame } from '../game-state.js?v=unified-ap-1';
+import { createBattle, makeEnemy, finishBattle } from '../battle.js?v=unified-ap-1';
+import { currentRank, useItemOutsideBattle, FIELD_ITEM_EFFECTS } from '../dungeon.js?v=unified-ap-1';
+import { nextRankStatus, checkRankUp } from '../town.js?v=unified-ap-1';
+import { makeGear } from '../character.js?v=unified-ap-1';
+import { arenaReviewWords } from '../study.js?v=unified-ap-1';
+import { promotionProgress } from '../promotion.js?v=unified-ap-1';
+import { runDualPromotionExam } from '../ui/learning-exams.js?v=unified-ap-1';
+import { createBattleView } from '../ui/battle-view.js?v=unified-ap-1';
+import { runQuiz } from '../ui/quiz-runner.js?v=unified-ap-1';
+import { el, render } from '../dom.js?v=unified-ap-1';
+import { setSceneMusic } from '../battle-music.js?v=unified-ap-1';
 
-import { installGameShell } from '../ui/game-shell.js?v=pixel-town-1';
+import { installGameShell } from '../ui/game-shell.js?v=unified-ap-1';
 
 const view = document.getElementById('view');
 const session = new GameSession();
@@ -233,3 +233,4 @@ function draw() {
   }
   draw();
 })().catch((error) => render(view, el('p', { class: 'error' }, error.message)));
+

@@ -1,5 +1,5 @@
 // 英語の読み上げ（Web Speech API）。使えないブラウザでは何もしない。
-import { setSpeechPlaying } from './battle-music.js?v=music-suite-1';
+import { setSpeechPlaying } from './battle-music.js?v=unified-ap-1';
 
 let activeSpeech;
 
@@ -43,3 +43,4 @@ export function speak(text) {
 }
 
 if (typeof window !== 'undefined') window.addEventListener('pagehide', stopSpeech);
+

@@ -1,29 +1,30 @@
+import { availableAp } from '../ap.js?v=unified-ap-1';
 // 町をホームにして、施設カードから各施設を開く。
-import { loadGameData } from '../gamedata.js?v=gold-unit-1';
-import { GameSession } from '../save.js?v=gold-unit-1';
-import { normalizeGame } from '../game-state.js?v=gold-unit-1';
-import { currentRank, seededRng } from '../dungeon.js?v=gold-unit-1';
+import { loadGameData } from '../gamedata.js?v=unified-ap-1';
+import { GameSession } from '../save.js?v=unified-ap-1';
+import { normalizeGame } from '../game-state.js?v=unified-ap-1';
+import { currentRank, seededRng } from '../dungeon.js?v=unified-ap-1';
 import {
   calendarOf, fillBoard, boardSize, questAcceptLimit, acceptQuest, canAcceptQuest, abandonQuest, canReport, reportQuest, questText, questProgress, questDestination, questRewardGold, questRankPoints, questDepositTotal, questAbandonRefund, nextRankStatus, stayInn, revive, reviveCost, checkRankUp,
   canExpandBackpack, expandBackpack, feeTier,
   nextBackpackTier,
-} from '../town.js?v=gold-unit-1';
-import { backpackSlots } from '../loot.js?v=gold-unit-1';
-import { maxHp, maxMp, gearDef } from '../character.js?v=basic-skill-levels-1';
-import { availableJobs, changeJob } from '../growth.js?v=basic-skill-levels-1';
-import { explorationStories, acceptExplorationStory, reportExplorationStory } from '../exploration-story.js?v=gold-unit-1';
-import { cureAtTemple, recordStoredMaterials } from '../temple.js?v=systems-v1';
-import { workshopView, managementView, templeExtras } from '../ui/facility-view.js?v=gold-unit-1';
-import { itemShopView, gearShopView } from '../ui/town-shops.js?v=gold-unit-1';
-import { weaponIcon } from '../ui/weapon-icons.js';
-import { equipmentIcon } from '../ui/equipment-icons.js';
-import { storageView } from '../ui/storage-view.js?v=storage-tabs-1';
-import { uiIcon } from '../ui/pixel-icons.js';
-import { portraitIcon } from '../ui/portrait.js';
-import { el, render } from '../dom.js';
-import { setSceneMusic } from '../battle-music.js?v=music-suite-1';
+} from '../town.js?v=unified-ap-1';
+import { backpackSlots } from '../loot.js?v=unified-ap-1';
+import { maxHp, maxMp, gearDef } from '../character.js?v=unified-ap-1';
+import { availableJobs, changeJob } from '../growth.js?v=unified-ap-1';
+import { explorationStories, acceptExplorationStory, reportExplorationStory } from '../exploration-story.js?v=unified-ap-1';
+import { cureAtTemple, recordStoredMaterials } from '../temple.js?v=unified-ap-1';
+import { workshopView, managementView, templeExtras } from '../ui/facility-view.js?v=unified-ap-1';
+import { itemShopView, gearShopView } from '../ui/town-shops.js?v=unified-ap-1';
+import { weaponIcon } from '../ui/weapon-icons.js?v=unified-ap-1';
+import { equipmentIcon } from '../ui/equipment-icons.js?v=unified-ap-1';
+import { storageView } from '../ui/storage-view.js?v=unified-ap-1';
+import { uiIcon } from '../ui/pixel-icons.js?v=unified-ap-1';
+import { portraitIcon } from '../ui/portrait.js?v=unified-ap-1';
+import { el, render } from '../dom.js?v=unified-ap-1';
+import { setSceneMusic } from '../battle-music.js?v=unified-ap-1';
 
-import { installGameShell, sceneHeader } from '../ui/game-shell.js?v=pixel-town-1';
+import { installGameShell, sceneHeader } from '../ui/game-shell.js?v=unified-ap-1';
 
 const view = document.getElementById('view');
 const session = new GameSession();
@@ -377,7 +378,7 @@ function temple() {
     el('p', { class: 'shop-description' }, selected.role),
     selected.weakness ? el('p', { class: 'small muted' }, `苦手：${selected.weakness}`) : null,
     el('p', {}, `${member.name}：${data.jobsById.get(member.job).name} → ${selected.name}`),
-    el('p', { class: 'small' }, `このジョブの残りAP：${member.ap?.[selected.id] ?? 0}`),
+    el('p', { class: 'small' }, `残りAP（全ジョブ共通）：${availableAp(data, member)}`),
     el('button', { class: 'primary', disabled: current, onclick: () => {
       const index = templeMember;
       if (!confirm(`${member.name}を${selected.name}に無料転職しますか？`)) return;
@@ -455,3 +456,4 @@ function refresh() {
     console.error(e);
   }
 })();
+

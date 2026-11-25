@@ -1,9 +1,9 @@
-import { maxHp, maxMp } from '../character.js?v=basic-skill-levels-1';
-import { expeditionScene } from './scenery.js';
-import { el } from '../dom.js';
-import { portraitIcon } from './portrait.js';
-import { equipmentIcon } from './equipment-icons.js';
-import { uiIcon } from './pixel-icons.js';
+import { maxHp, maxMp } from '../character.js?v=unified-ap-1';
+import { expeditionScene } from './scenery.js?v=unified-ap-1';
+import { el } from '../dom.js?v=unified-ap-1';
+import { portraitIcon } from './portrait.js?v=unified-ap-1';
+import { equipmentIcon } from './equipment-icons.js?v=unified-ap-1';
+import { uiIcon } from './pixel-icons.js?v=unified-ap-1';
 
 function resource(label, value, max) {
   const percent = max > 0 ? Math.min(100, Math.max(0, (value / max) * 100)) : 0;
@@ -75,3 +75,4 @@ export function createVictoryView({ data, dungeon, party, result, backpack, tota
       el('span', {}, `遠征合計 ${totalGold} G`)),
     el('div', { class: 'victory-actions' }, actions));
 }
+

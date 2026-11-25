@@ -20,7 +20,7 @@ function fixture(job,mode,cfg){
  const game=createNewGame(data,['warrior','knight','white_mage','hunter','bard',job].map((job,i)=>({job,name:`検証${i}`,icon:'x'})));
  game.items={};
  for(const [i,m] of game.party.entries()){
-  m.lv=cfg.level;m.ap[m.job]=30;
+  m.lv=cfg.level;m.ap=30;
   if(i<5||mode==='wide')for(const id of wide[m.job])growth.learnSkill(data,m,id);
   if(i===5&&mode==='level3'){growth.upgradeSkill(data,m,core[job]);growth.upgradeSkill(data,m,core[job]);growth.setSkillUseLevel(data,m,core[job],3);}
   if(i===5&&mode==='ultimate')growth.learnSkill(data,m,[...data.skills.values()].find(s=>s.job===job&&s.isFinal).id);
@@ -36,7 +36,7 @@ function fixture(job,mode,cfg){
   }
   m.hp=maxHp(data,m);m.mp=maxMp(data,m);
  }
- assert.equal(game.party[5].ap[job],mode==='baseline'?30:0);
+ assert.equal(game.party[5].ap,mode==='baseline'?30:0);
  return game;
 }
 function fight(game,enemies,seed){

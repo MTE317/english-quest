@@ -20,7 +20,7 @@ function fixture(job,mode,cfg){
  const game=createNewGame(data,['warrior','knight','white_mage','hunter','bard',job].map((job,i)=>({job,name:`検証${i}`,icon:'x'})));
  game.items={};
  for(const [i,m] of game.party.entries()){
-  m.lv=cfg.level;m.ap[m.job]=i===5&&mode==='lv3_lore'?40:30;
+  m.lv=cfg.level;m.ap=i===5&&mode==='lv3_lore'?40:30;
   if(i<5)for(const id of wide[m.job])growth.learnSkill(data,m,id);
   if(i===5){
    const level=Number(mode[2]);
@@ -41,7 +41,7 @@ function fixture(job,mode,cfg){
   m.hp=maxHp(data,m);m.mp=maxMp(data,m);
  }
  const upgrade=[0,10,30][Number(mode[2])-1],lore=mode.endsWith('_lore')?10:0;
- assert.equal(game.party[5].ap[job],(mode==='lv3_lore'?40:30)-upgrade-lore);
+ assert.equal(game.party[5].ap,(mode==='lv3_lore'?40:30)-upgrade-lore);
  return game;
 }
 function fight(game,enemies,seed){
@@ -80,7 +80,7 @@ for(const cfg of settings)for(const job of jobs)for(const mode of modes){
   }
   trials.push({win:battles.every(b=>b.win),questions:battles.reduce((n,b)=>n+b.questions,0),mp:game.party[5].mp/maxMp(data,game.party[5]),actualSkillMp:battles.reduce((n,b)=>n+b.actualSkillMp,0),attackActions:battles.reduce((n,b)=>n+b.attackActions,0),partyAttackActions:battles.reduce((n,b)=>n+b.partyAttackActions,0),kills:battles.reduce((n,b)=>n+b.kills,0)});
  }
- const row={...cfg,job,mode,runs,wins:trials.filter(t=>t.win).length,questions:mean(trials.map(t=>t.questions)),endMp:mean(trials.map(t=>t.mp)),actualSkillMp:mean(trials.map(t=>t.actualSkillMp)),attackActions:mean(trials.map(t=>t.attackActions)),partyAttackActions:mean(trials.map(t=>t.partyAttackActions)),kills:mean(trials.map(t=>t.kills)),spentAp:(Number(mode[2])===3?30:Number(mode[2])===2?10:0)+(mode.endsWith('_lore')?10:0),remainingAp:template.party[5].ap[job],usedCapacity:growth.usedCapacity(data,template.party[5]),capacity:growth.capacity(data,template.party[5]),rawFireCoefficient:growth.effectiveSkill(data,template.party[5],data.skills.get(core[job])).effect.m*(1+(mode.endsWith('_lore')?data.skills.get('black_mage_p1_s2').effect.mod.edmg[1]:0)),normal:summary(normal),boss:summary(boss)};
+ const row={...cfg,job,mode,runs,wins:trials.filter(t=>t.win).length,questions:mean(trials.map(t=>t.questions)),endMp:mean(trials.map(t=>t.mp)),actualSkillMp:mean(trials.map(t=>t.actualSkillMp)),attackActions:mean(trials.map(t=>t.attackActions)),partyAttackActions:mean(trials.map(t=>t.partyAttackActions)),kills:mean(trials.map(t=>t.kills)),spentAp:(Number(mode[2])===3?30:Number(mode[2])===2?10:0)+(mode.endsWith('_lore')?10:0),remainingAp:template.party[5].ap,usedCapacity:growth.usedCapacity(data,template.party[5]),capacity:growth.capacity(data,template.party[5]),rawFireCoefficient:growth.effectiveSkill(data,template.party[5],data.skills.get(core[job])).effect.m*(1+(mode.endsWith('_lore')?data.skills.get('black_mage_p1_s2').effect.mod.edmg[1]:0)),normal:summary(normal),boss:summary(boss)};
  rows.push(row);console.log(`${key}: ${row.wins}/${runs}, Q=${row.questions.toFixed(2)}`);
 }
 const result={fingerprint,sourceUnchangedAtCompletion:fingerprint===sourceFingerprint(),harnessSha256:createHash('sha256').update(readFileSync(import.meta.filename)).digest('hex'),runs,seed,accuracy,settings,fixtures,rows};

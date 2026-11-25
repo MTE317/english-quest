@@ -1,10 +1,11 @@
-import { migrateGold, goldVersion } from './gold.js?v=gold-unit-1';
+import { normalizeAp } from './ap.js?v=unified-ap-1';
+import { migrateGold, goldVersion } from './gold.js?v=unified-ap-1';
 // 新しいゲームの進み具合（セーブの game の中身）
-import { createMember, maxHp, maxMp, levelCap } from './character.js?v=basic-skill-levels-1';
-import { ensureLoadout, jobSkills, isLearned, normalizeSkillLevels } from './growth.js?v=basic-skill-levels-1';
-import { parseAmounts } from './csv.js';
-import { recordStoredMaterials } from './temple.js';
-import { retireLegacyQuestChains } from './retired-quests.js?v=gold-unit-1';
+import { createMember, maxHp, maxMp, levelCap } from './character.js?v=unified-ap-1';
+import { ensureLoadout, jobSkills, isLearned, normalizeSkillLevels } from './growth.js?v=unified-ap-1';
+import { parseAmounts } from './csv.js?v=unified-ap-1';
+import { recordStoredMaterials } from './temple.js?v=unified-ap-1';
+import { retireLegacyQuestChains } from './retired-quests.js?v=unified-ap-1';
 
 export const PARTY_SIZE = 6;
 
@@ -75,7 +76,7 @@ export function normalizeGame(data, game, run = null, { expandParty = true } = {
   preserveMasteredJobs(data, game);
   const retiredMembers = retireRuneBonuses(data, game);
   for (const m of game.party ?? []) {
-    m.persist = m.persist ?? []; m.room = m.room ?? null; m.ap = m.ap ?? { [m.job]: 0 };
+    m.persist = m.persist ?? []; m.room = m.room ?? null; normalizeAp(data, m);
     m.learned = m.learned ?? []; m.common = m.common ?? []; m.mastery = m.mastery ?? {};
     m.masteredJobs ??= [];
     if (data.skills) { normalizeSkillLevels(data, m); ensureLoadout(data, m); }
@@ -197,3 +198,4 @@ function alignCraftedEffects(data, gear) {
   // 効果の辞書をコピーし、マスタや別の装備・入場時の写しと共有しない。
   gear.affixes = { ...(def.fixedEffects ?? {}) };
 }
+

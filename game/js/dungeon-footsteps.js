@@ -1,4 +1,4 @@
-import { loadSettings } from './storage.js?v=rune-study-1';
+import { loadSettings } from './storage.js?v=unified-ap-1';
 
 let context;
 let buffer;
@@ -48,3 +48,4 @@ export async function playDungeonFootstep() {
     // 音声を利用できない環境でも入場演出を続ける。
   }
 }
+

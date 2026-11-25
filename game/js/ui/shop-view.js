@@ -1,4 +1,4 @@
-import { el, render } from '../dom.js';
+import { el, render } from '../dom.js?v=unified-ap-1';
 
 export const goldText = (price) => `${price.toLocaleString('ja-JP')} G`;
 
@@ -99,3 +99,4 @@ export function shopView(state, catalogs) {
   draw();
   return el('section', { class: 'shop-view', 'aria-label': 'ショップ' }, content, dialog);
 }
+

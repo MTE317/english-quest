@@ -1,4 +1,4 @@
-import { unlockFootsteps, playDungeonFootstep } from '../dungeon-footsteps.js?v=entrance-1';
+import { unlockFootsteps, playDungeonFootstep } from '../dungeon-footsteps.js?v=unified-ap-1';
 
 let active = null;
 
@@ -62,3 +62,4 @@ async function runEntrance(name, enter) {
     if (previousFocus?.isConnected) previousFocus.focus({ preventScroll: true });
   }
 }
+

@@ -1,11 +1,11 @@
-import { el, render } from '../dom.js';
-import { parseAmounts } from '../csv.js';
-import { craft, brew, enhance, dismantle, reroll, enchant, enchantFamilies, facilityUpgrade } from '../workshop.js?v=gold-unit-1';
-import { borrow, repayLoan, loanLimit } from '../town.js?v=gold-unit-1';
-import { unlockJob, jobDiscoveryProgress, offeringRevealed } from '../temple.js?v=systems-v1';
-import { describeFixedEffects, effectLabel, describeEffect } from '../equipment-effects.js?v=build36-1';
-import { equipmentIcon } from './equipment-icons.js';
-import { uiIcon } from './pixel-icons.js';
+import { el, render } from '../dom.js?v=unified-ap-1';
+import { parseAmounts } from '../csv.js?v=unified-ap-1';
+import { craft, brew, enhance, dismantle, reroll, enchant, enchantFamilies, facilityUpgrade } from '../workshop.js?v=unified-ap-1';
+import { borrow, repayLoan, loanLimit } from '../town.js?v=unified-ap-1';
+import { unlockJob, jobDiscoveryProgress, offeringRevealed } from '../temple.js?v=unified-ap-1';
+import { describeFixedEffects, effectLabel, describeEffect } from '../equipment-effects.js?v=unified-ap-1';
+import { equipmentIcon } from './equipment-icons.js?v=unified-ap-1';
+import { uiIcon } from './pixel-icons.js?v=unified-ap-1';
 
 const heading = (text) => el('h2', {}, text);
 const btn = (text, onclick, disabled = false) => el('button', { onclick, disabled }, text);
@@ -261,3 +261,4 @@ export function templeExtras(data, g, act, selection = {}, jobIcon = () => uiIco
     offerings.length ? panel('神殿の儀式', offerings) : null,
   ];
 }
+

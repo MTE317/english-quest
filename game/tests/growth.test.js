@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { createNewGame } from '../js/game-state.js';
 import {
   learnBlock, learnSkill, isLearned, jobSkills, ensureLoadout, equipBlock, equipSkill, unequipSkill, capacity, usedCapacity, actionSkills,
-  commonPoints, learnCommon, commonBlock, memberMods, parseBonusText, isJobMastered, masteryLevel, addMasteryKill,
+  learnCommon, commonBlock, memberMods, parseBonusText, isJobMastered, masteryLevel, addMasteryKill,
   changeJob, availableJobs, GROWTH_FORMULAS,
 } from '../js/growth.js';
 import { computeStats, maxHp, canEquip, makeGear, equipFromStorage, gainXp, weaponPower } from '../js/character.js';
@@ -41,7 +41,7 @@ test('同じジョブの仲間同士でも習得・装着状態は共有しな�
   const first = g.party[0];
   const second = g.party[1];
   const passive = jobSkills(data, 'warrior').find((s) => s.kind === 'passive' && s.stage === 2);
-  first.ap.warrior = passive.apToLearn;
+  first.ap = passive.apToLearn;
   learnSkill(data, first, passive.id);
   assert.equal(isLearned(first, passive), true);
   assert.equal(isLearned(second, passive), false);
@@ -55,11 +55,11 @@ test('基本職は独立習得（AP が減る・パッシブは能力値に入�
   const g = fresh(); const w = g.party[0];
   const s2 = jobSkills(data, 'warrior').find((s) => s.name === '鉄の体'); // 守り2段目：HP+10%
   assert.match(learnBlock(data, w, s2), /AP/);
-  w.ap.warrior = s2.apToLearn + 3;
+  w.ap = s2.apToLearn + 3;
   const hp0 = maxHp(data, w);
   const loadoutBefore = structuredClone(w.loadout);
   learnSkill(data, w, s2.id);
-  assert.equal(w.ap.warrior, 3);
+  assert.equal(w.ap, 3);
   assert.deepEqual(w.loadout, loadoutBefore);
   assert.equal(maxHp(data, w), hp0);
   equipSkill(data, w, s2.id);
@@ -67,7 +67,7 @@ test('基本職は独立習得（AP が減る・パッシブは能力値に入�
   assert.equal(maxHp(data, w), Math.round(hp0 * 1.1));
   const s3 = jobSkills(data, 'warrior').find((s) => s.path === s2.path && s.stage === 4);
   assert.match(learnBlock(data, w, s3), /AP/);
-  w.ap.warrior = s3.apToLearn;
+  w.ap = s3.apToLearn;
   assert.equal(learnBlock(data, w, s3), '');
 });
 
@@ -78,7 +78,7 @@ test('枠：cost の合計が上限まで。ほかのジョブのスキルも持
   // 未経験ジョブの初期スキルは共有されない。転職経験があれば持ち出せる。
   const fire = jobSkills(data, 'black_mage').find((s) => s.stage === 1 && s.kind === 'attack');
   assert.equal(equipBlock(data, w, fire), '覚えていない');
-  w.ap.black_mage = 0; // 一度そのジョブに就いた履歴
+  w.visitedJobs.push('black_mage'); // 一度そのジョブに就いた履歴
   assert.equal(equipBlock(data, w, fire), '');
   equipSkill(data, w, fire.id);
   assert.ok(actionSkills(data, w).includes(fire));
@@ -90,12 +90,12 @@ test('枠：cost の合計が上限まで。ほかのジョブのスキルも持
   assert.ok(usedCapacity(data, w).actions <= cap.actions);
 });
 
-test('共通ツリー：レベルでポイントが入り、効果が入る。枠も広がる', () => {
+test('共通ツリー：レベル条件と共通APで習得し、効果と枠が広がる', () => {
   const g = fresh(); const w = g.party[0];
   const vit = data.commonTree.find((n) => n.id === 'vit1');
   assert.match(commonBlock(data, w, vit), /Lv/);
   gainXp(data, w, 1e6);
-  assert.equal(commonPoints(data, w).earned, (w.lv - 1) * GROWTH_FORMULAS.common_points_per_level);
+  w.ap = 30;
   const hp0 = maxHp(data, w);
   learnCommon(data, w, 'vit1');
   assert.equal(maxHp(data, w), Math.round(hp0 * 1.05));
@@ -149,3 +149,4 @@ test('ジョブチェンジ：基本ジョブは選べる。装備できない�
   g.unlockedJobs = ['gunner'];
   assert.ok(availableJobs(data, g).some((j) => j.id === 'gunner'));
 });
+

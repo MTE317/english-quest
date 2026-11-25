@@ -31,7 +31,7 @@ function fixture(job,id,phase,gearMode){
  game.facilities.weapon_workshop=star;game.facilities.armor_workshop=star;
  const gearCosts=[];
  for(const m of game.party){
-  m.lv=level;m.ap[m.job]=ap;
+  m.lv=level;m.ap=ap;
   if(ap)for(const id of purchases[m.job])learnSkill(data,m,id);
   const known=[...data.skills.values()].filter(s=>s.job===m.job&&isLearned(m,s));
   // 回復/全体技を先に装着。自職以外の持ち出し・奥義・上位職なし。

@@ -1,12 +1,12 @@
-import { roundGold, goldScale, goldLimit } from './gold.js?v=gold-unit-1';
+import { roundGold, goldScale, goldLimit } from './gold.js?v=unified-ap-1';
 // 町の基本：暦と銀行融資・ギルドのクエストと冒険者ランク・各施設。
 // data に数や式として書かれていないものは、シミュレーター（sim/world.py）と同じ値を TOWN_FORMULAS に置く（docs/requests.md で依頼済み）。
-import { evaluate } from './expr.js';
-import { makeGear, maxHp, maxMp, gearDef } from './character.js?v=basic-skill-levels-1';
-import { addItem } from './loot.js?v=gold-unit-1';
-import { currentRank, allowedDungeons } from './dungeon.js?v=gold-unit-1';
-import { monsterPool } from './encounter.js?v=basic-skill-levels-1';
-import { unlockReportedHuntJobs } from './temple.js?v=systems-v1';
+import { evaluate } from './expr.js?v=unified-ap-1';
+import { makeGear, maxHp, maxMp, gearDef } from './character.js?v=unified-ap-1';
+import { addItem } from './loot.js?v=unified-ap-1';
+import { currentRank, allowedDungeons } from './dungeon.js?v=unified-ap-1';
+import { monsterPool } from './encounter.js?v=unified-ap-1';
+import { unlockReportedHuntJobs } from './temple.js?v=unified-ap-1';
 
 export const TOWN_FORMULAS = Object.freeze({
   days_per_month: 30, // balance.json の calendar.days_per_month があればそちらを使う
@@ -578,3 +578,4 @@ export function repayLoan(game, amount) {
   game.loan -= paid;
   return `${paid} G 返済した。`;
 }
+

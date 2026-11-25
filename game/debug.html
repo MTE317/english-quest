@@ -19,7 +19,7 @@
     <section class="panel">
       <h2>パーティーの育成（開発用）</h2>
       <p class="small muted">町にいるときだけ使えます。確認後、現在のセーブに反映します。</p>
-      <button id="debug-party-max" type="button" disabled>全員をLv99・現職AP999に設定</button>
+      <button id="debug-party-max" type="button" disabled>全員をLv99・AP999に設定</button>
       <p id="debug-party-status" class="small" role="status"></p>
     </section>
     <details class="panel">
@@ -31,10 +31,10 @@
     </details>
   </main>
   <script type="module">
-    import { GameSession } from './js/save.js?v=features-2';
-    import { LearningStore, safeStorage, setDebugDayOffset } from './js/storage.js?v=features-2';
-    import { loadGameData } from './js/gamedata.js?v=rune-study-1';
-    import { canDebugParty, confirmDebugParty } from './js/debug-party.js?v=party-max-1';
+    import { GameSession } from './js/save.js?v=unified-ap-1';
+    import { LearningStore, safeStorage, setDebugDayOffset } from './js/storage.js?v=unified-ap-1';
+    import { loadGameData } from './js/gamedata.js?v=unified-ap-1';
+    import { canDebugParty, confirmDebugParty } from './js/debug-party.js?v=unified-ap-1';
     const boost = document.getElementById('debug-party-max');
     const boostStatus = document.getElementById('debug-party-status');
     let data;
@@ -88,4 +88,3 @@
   </script>
 </body>
 </html>
-

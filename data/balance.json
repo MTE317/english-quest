@@ -1,5 +1,10 @@
-{
-  "gold_economy": { "version": 1, "scale": 10, "minimum_step": 10, "significant_digits": 3 },
+﻿{
+  "gold_economy": {
+    "version": 1,
+    "scale": 10,
+    "minimum_step": 10,
+    "significant_digits": 3
+  },
   "_note": "実ゲームのJSによる検証用。目標と測定結果はdocs/balance-report.md・sim/results参照。2026-11-23調整。",
   "enemy": {
     "hp": "(150 + 6.5*Lv) * hp_mul * 1.478 * dungeon.enemy_mul * hp_rank_mul[★]",
@@ -98,7 +103,7 @@
     "buff_cap": 0.6,
     "weak": 1.5,
     "resist": 0.5,
-    "immune": 0.0,
+    "immune": 0,
     "knight_cover_rate": 0.5,
     "knight_cover_cut": 0.5,
     "bard_song": 0.2,
@@ -114,26 +119,71 @@
     "boss_battle": "boss + 1",
     "layout_version": 2,
     "exploration": {
-      "slots": { "2": [0.5], "3": [0.8], "6": [0.8, 0.8] },
-      "weights": { "chest": 45, "gather": 40, "rest": 15 },
+      "slots": {
+        "2": [
+          0.5
+        ],
+        "3": [
+          0.8
+        ],
+        "6": [
+          0.8,
+          0.8
+        ]
+      },
+      "weights": {
+        "chest": 45,
+        "gather": 40,
+        "rest": 15
+      },
       "chest": {
-        "weights": { "gear": 15, "material": 35, "gold": 35, "item": 15 },
+        "weights": {
+          "gear": 15,
+          "material": 35,
+          "gold": 35,
+          "item": 15
+        },
         "gold": 0.04,
         "item": "potion",
         "first_gold": 0.15,
         "first_materials": 2
       },
-      "rest": { "hp": 0.10, "mp": 0.05 },
+      "rest": {
+        "hp": 0.1,
+        "mp": 0.05
+      },
       "fixed": {
         "mossy_cave": [
-          { "id": "first-cache", "floor": 1, "type": "chest", "first": true, "material": "slime_mat" },
-          { "id": "survey", "floor": 2, "type": "investigate", "flag": "SQ-1" }
+          {
+            "id": "first-cache",
+            "floor": 1,
+            "type": "chest",
+            "first": true,
+            "material": "slime_mat"
+          },
+          {
+            "id": "survey",
+            "floor": 2,
+            "type": "investigate",
+            "flag": "SQ-1"
+          }
         ],
         "sunlit_forest": [
-          { "id": "side-entrance", "floor": 1, "type": "discover", "discovery": "dungeon:old_catacomb" }
+          {
+            "id": "side-entrance",
+            "floor": 1,
+            "type": "discover",
+            "discovery": "dungeon:old_catacomb"
+          }
         ],
         "old_catacomb": [
-          { "id": "story-tablet", "floor": 3, "type": "investigate", "flag": "SQ-2-tablet", "requiredStory": "SQ-2" }
+          {
+            "id": "story-tablet",
+            "floor": 3,
+            "type": "investigate",
+            "flag": "SQ-2-tablet",
+            "requiredStory": "SQ-2"
+          }
         ]
       },
       "entry": {}
@@ -145,7 +195,9 @@
     "bounty_quest_chance": 0.4,
     "bounty_chance_cap": 0.8,
     "expedition_fee_rate": 0.08,
-    "free_expeditions": ["mossy_cave"],
+    "free_expeditions": [
+      "mossy_cave"
+    ],
     "legacy_layout": {
       "mossy_cave": {
         "floors": 5,
@@ -654,8 +706,8 @@
   "items_in_battle": "1行動・1問として使える。不正解だと効果×0.1〜0.5（ほかの行動と同じ）",
   "wipe": {
     "rollback": "ダンジョンに入る前の状態に戻る（お金・素材・ドロップ・経験値・日数すべて）",
-    "xp_keep": 0.0,
-    "mercy_per_step": 0.0,
+    "xp_keep": 0,
+    "mercy_per_step": 0,
     "_note": "遠征中のゲーム報酬を巻戻す。消費道具/保証金契約も入場時に復元。学習記録・詠唱JP・モンスターと判明相性の知識は保持。",
     "_retry_note": "耐性・状態対策・スキル/装備の組合せを見直す。必要なら低い★で育成する。"
   },
@@ -667,7 +719,13 @@
       "title": "調査隊の目印",
       "brief": "持ち帰った調査記録には、以前の調査隊が残した目印が写っていた。記録を確かめるため、もう一度最奥まで進んで無事に帰還する。",
       "conclusion": "目印の位置を記録に追記した。これで次の調査隊は迷わず進める。",
-      "reward": { "gold": 60, "points": 1, "materials": { "slime_mat": 3 } }
+      "reward": {
+        "gold": 60,
+        "points": 1,
+        "materials": {
+          "slime_mat": 3
+        }
+      }
     },
     {
       "id": "SQ-2",
@@ -678,11 +736,17 @@
       "title": "石板の照合",
       "brief": "調査隊の帳簿に、発見した入口と同じ紋様があった。奥に残る石板を調べ、踏破を報告する。",
       "conclusion": "石板と帳簿の紋様が一致した。調べた道筋を調査隊の記録に残した。",
-      "reward": { "gold": 120, "points": 2, "materials": { "skeleton_mat": 4 } }
+      "reward": {
+        "gold": 120,
+        "points": 2,
+        "materials": {
+          "skeleton_mat": 4
+        }
+      }
     }
   ],
   "guild_points": {
-    "same_rank": 1.0,
+    "same_rank": 1,
     "one_rank_lower": 0.5,
     "_note": "今の上限の★のクエストは満点、1つ下の★は半分のポイント"
   },
@@ -893,5 +957,10 @@
       "craft_cycle_ring",
       "craft_illusion_cloak"
     ]
+  },
+  "ap_system": {
+    "legacy_common_point_ap": 10,
+    "note": "APはキャラごとに全ジョブ・共通パッシブで共通。旧ジョブ別残高を合算し、未使用共通ポイントは1pt=10APで一度だけ換算。以後レベルによる共通ポイント付与は廃止。"
   }
 }
+

@@ -16,7 +16,7 @@ function fresh(job = 'warrior') {
 }
 function trained(skill, level = 1) {
   const game = fresh(skill.job), m = game.party[0];
-  m.ap[skill.job] = 1000;
+  m.ap = 1000;
   if (!isLearned(m, skill)) learnSkill(data, m, skill.id);
   m.loadout = { actions: [skill.id], passives: [] };
   for (let i = 1; i < level; i++) upgradeSkill(data, m, skill.id);
@@ -39,28 +39,28 @@ test('基本8職123技能は独立習得。上位職の前提・奥義・共通�
   const skills = [...data.skills.values()].filter(s => basic.some(j => j.id === s.job));
   assert.equal(skills.length, 123); assert.equal(leveled.length, 17);
   for (const s of skills) {
-    const m = fresh(s.job).party[0]; m.ap[s.job] = s.apToLearn;
+    const m = fresh(s.job).party[0]; m.ap = s.apToLearn;
     assert.equal(skillPrerequisite(data, s), undefined);
-    if (s.apToLearn) { assert.equal(learnBlock(data, m, s), ''); learnSkill(data, m, s.id); assert.equal(m.ap[s.job], 0); }
+    if (s.apToLearn) { assert.equal(learnBlock(data, m, s), ''); learnSkill(data, m, s.id); assert.equal(m.ap, 0); }
   }
   const mid = [...data.skills.values()].find(s => !basic.some(j => j.id === s.job) && skillPrerequisite(data, s)?.apToLearn > 0);
   assert.ok(mid); assert.match(learnBlock(data, fresh(mid.job).party[0], mid), /覚える/);
   assert.ok(leveled.every(s => !s.isFinal && s.kind !== 'passive' && basic.some(j => j.id === s.job)));
 });
 
-test('所属職AP10/20だけ消費。習得と使用Lvを分離し、他キャラ・未経験・不正値を拒否', () => {
+test('共通AP10/20を消費。習得と使用Lvを分離し、他キャラ・未経験・不正値を拒否', () => {
   const s = data.skills.get('black_mage_p1_s1'), game = fresh('black_mage'), m = game.party[0];
-  m.ap.black_mage = 30; m.ap.warrior = 99;
+  m.ap = 129;
   const other = structuredClone(game.party[5]); const cap = usedCapacity(data, m);
   upgradeSkill(data, m, s.id);
-  assert.equal(learnedSkillLevel(m,s),2); assert.equal(usedSkillLevel(m,s),1); assert.equal(m.ap.black_mage,20);
+  assert.equal(learnedSkillLevel(m,s),2); assert.equal(usedSkillLevel(m,s),1); assert.equal(m.ap,119);
   setSkillUseLevel(data,m,s.id,2); upgradeSkill(data,m,s.id);
-  assert.equal(usedSkillLevel(m,s),2); assert.equal(m.ap.black_mage,0); assert.equal(m.ap.warrior,99);
+  assert.equal(usedSkillLevel(m,s),2); assert.equal(m.ap,99);
   assert.deepEqual(game.party[5],other); assert.deepEqual(usedCapacity(data,m),cap);
   assert.throws(()=>upgradeSkill(data,m,s.id),/強化できない/);
   for (const lv of [0,4,-1,1.5,NaN,'2']) assert.throws(()=>setSkillUseLevel(data,m,s.id,lv));
-  const poor=fresh('black_mage').party[0]; poor.ap.black_mage=9;
-  assert.throws(()=>upgradeSkill(data,poor,s.id),/AP/); assert.equal(poor.ap.black_mage,9);
+  const poor=fresh('black_mage').party[0]; poor.ap=9;
+  assert.throws(()=>upgradeSkill(data,poor,s.id),/AP/); assert.equal(poor.ap,9);
   assert.throws(()=>upgradeSkill(data,fresh().party[0],s.id),/覚えていない/);
 });
 
@@ -89,18 +89,18 @@ test('17技能全Lvの実行: 表示・MP・威力/回復/支援が同じ使用L
 
 test('複数メンバーが同じ技能を別Lvで持ち出し、保存再読込しても混ざらない', () => {
   const s=data.skills.get('black_mage_p1_s1'),game=trained(s,3),m=game.party[0];
-  const peer=game.party[5]; peer.ap.black_mage=10; upgradeSkill(data,peer,s.id); setSkillUseLevel(data,peer,s.id,2);
+  const peer=game.party[5]; peer.ap=10; upgradeSkill(data,peer,s.id); setSkillUseLevel(data,peer,s.id,2);
   changeJob(data,game,0,'warrior'); changeJob(data,game,5,'knight');
   const storage=new MemoryStorage(),session=new GameSession({storage});session.startNew(game);
   const loaded=new GameSession({storage});normalizeGame(data,loaded.game);
   assert.equal(effectiveSkill(data,loaded.game.party[0],s).effect.m,2.2);
   assert.equal(effectiveSkill(data,loaded.game.party[5],s).effect.m,1.95);
   assert.ok(loaded.game.party[0].loadout.actions.includes(s.id));
-  assert.equal(loaded.game.party[0].ap.black_mage,m.ap.black_mage);
+  assert.equal(loaded.game.party[0].ap,m.ap);
 });
 
 test('旧セーブのAP・装着・マスターは維持し、Lv未指定はLv1。全強化はマスターに不要', () => {
-  const game=fresh(),m=game.party[0]; m.ap.warrior=1000;
+  const game=fresh(),m=game.party[0]; m.ap=1000;
   for(const s of data.skills.values()) if(s.job==='warrior'&&!isLearned(m,s)) learnSkill(data,m,s.id);
   assert.ok(isJobMastered(data,m,'warrior'));const saved=structuredClone(m);
   normalizeGame(data,game);assert.deepEqual(m.ap,saved.ap);assert.deepEqual(m.loadout,saved.loadout);assert.deepEqual(m.masteredJobs,saved.masteredJobs);
@@ -120,7 +120,7 @@ test('遠征途中・問題待ちの保存再開は同じ使用Lv/乱数で解�
     const loaded=new GameSession({storage});normalizeGame(data,loaded.game,loaded.run);resolve(loaded.game,loaded.run.battle);
     assert.deepEqual(loaded.run.battle,controlBattle);assert.equal(loaded.game.party[0].mp,controlGame.party[0].mp);
     loaded.wipe(); assert.equal(usedSkillLevel(loaded.game.party[0],skill),level);
-    assert.equal(loaded.game.party[0].ap.black_mage,game.party[0].ap.black_mage);
+    assert.equal(loaded.game.party[0].ap,game.party[0].ap);
   }
 });
 
@@ -157,3 +157,4 @@ test('習得Lv3から使用Lv1へ下げた時、Lv1分だけのMPで候補・実
   assert.equal(m.mp,before-lowCost);assert.equal(b.enemies[0].hp,controlBattle.enemies[0].hp);
   assert.equal(learnedSkillLevel(m,skill),3);assert.equal(usedSkillLevel(m,skill),1);
 });
+

@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { loadData } from '../../sim/balance.mjs';
 import { createNewGame, defaultPartySpecs } from '../js/game-state.js';
 import { unlockJob } from '../js/temple.js';
-import { changeJob, learnSkill } from '../js/growth.js';
+import { changeJob, learnSkill, equipSkill } from '../js/growth.js';
 import { createBattle, makeEnemy, resolvePending, setPending } from '../js/battle.js';
 
 test('毒の伝播は倒した敵の状態を引き継ぎ、無効な対象を飛ばして1巡に1回だけ試す', () => {
@@ -13,8 +13,8 @@ test('毒の伝播は倒した敵の状態を引き継ぎ、無効な対象を�
   unlockJob(data, game, 'venomist');
   game.jp = 200;
   changeJob(data, game, 0, 'venomist');
-  game.party[0].ap.venomist = 18;
-  learnSkill(data, game.party[0], 'venomist_spread');
+  game.party[0].ap = 18;
+  learnSkill(data, game.party[0], 'venomist_spread'); equipSkill(data, game.party[0], 'venomist_spread');
   assert.ok(game.party[0].loadout.passives.includes('venomist_spread'));
 
   const enemies = Array.from({ length: 5 }, () => makeEnemy(data, 'slime', { lv: 1 }));
@@ -62,3 +62,4 @@ test('状態条件の補正は対象に付いた毒と猛毒の種類数に応�
   assert.ok(Math.abs(damage(['poison', 'toxic']) - baseline * 1.36) <= 2);
   assert.equal(damage(['burn']), baseline);
 });
+

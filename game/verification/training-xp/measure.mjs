@@ -26,7 +26,7 @@ for(const lv of levels)for(const reference of [5,30])for(const [mode,list]of Obj
  for(const [variant,apply]of [['before',beforeModule.applyTrainingAnswer],['after',applyTrainingAnswer]]){
   const g=fresh(lv);g.xpPerQuestion=reference;let displayedXp=0;
   for(let i=0;i<100;i++)displayedXp+=apply(data,g,{...list[i%list.length],day:1+Math.floor(i/5),due,passed:i%5!==0}).xp;
-  const m=g.party[0];pair[variant]={lv:m.lv,xp:m.xp,credit:m.trainingCredit.xp,ap:m.ap[m.job],displayedPartyXp:displayedXp,progressTowardStartingLevel:lv===99?0:(m.xp+levelsSpent(lv,m.lv))/xpToNext(data,lv)};
+  const m=g.party[0];pair[variant]={lv:m.lv,xp:m.xp,credit:m.trainingCredit.xp,ap:m.ap,displayedPartyXp:displayedXp,progressTowardStartingLevel:lv===99?0:(m.xp+levelsSpent(lv,m.lv))/xpToNext(data,lv)};
  }
  training.push({startLv:lv,nextLevelXp:xpToNext(data,lv),reference,mode,due,questions:100,correct:80,...pair});
 }

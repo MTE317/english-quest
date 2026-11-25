@@ -1,11 +1,11 @@
+import { availableAp, spendAp, normalizeAp, hasVisitedJob } from './ap.js?v=unified-ap-1';
 // 成長：スキルツリーと AP・スキルの枠・共通ツリー・ジョブを極めたボーナス・武器の熟練度・ジョブチェンジ。
 // data に数として書かれていないものは GROWTH_FORMULAS に置く（docs/requests.md で依頼済み）。
-import { gearDef, aptitudeMul, unequip, maxHp, maxMp } from './character.js?v=basic-skill-levels-1';
+import { gearDef, aptitudeMul, unequip, maxHp, maxMp } from './character.js?v=unified-ap-1';
 
 export const GROWTH_FORMULAS = Object.freeze({
   action_capacity: 10, // 通常スキルの枠（スキルの cost の合計。sim の cap_a）
   passive_capacity: 10, // パッシブの枠（sim の cap_p）
-  common_points_per_level: 1, // 共通ツリーのポイント：Lv2 から1レベルごとに1（common_tree.csv に入手の決まりがないので仮）
   mastery_kills_per_level: 30, // 武器の熟練度：その種類の武器で30体倒すごとに1つ上がる（sim と同じ）
 });
 
@@ -56,7 +56,7 @@ export function isLearned(member, skill) {
   if (skill.id === 'common_mana_afterglow' && skill.job === 'common' && skill.apToLearn === 0) return true;
   // AP 0 は「そのジョブに初めて就いた時点で覚える初期スキル」。
   // 未経験ジョブの初期スキルまで全員共通で使える状態にはしない。
-  return skill.apToLearn === 0 && Object.hasOwn(member.ap ?? {}, skill.job);
+  return skill.apToLearn === 0 && hasVisitedJob(member, skill.job);
 }
 /** 同じ枝の一つ前の段階。習得判定と詳細表示で共有する。 */
 export function skillPrerequisite(data, skill) {
@@ -66,10 +66,11 @@ export function skillPrerequisite(data, skill) {
 /** 覚えられるか → 理由（覚えられるなら ''） */
 export function learnBlock(data, member, skill) {
   if (isLearned(member, skill)) return '覚えている';
+  if (!hasVisitedJob(member, skill.job)) return '先にこのジョブへ転職してください';
   const prev = skillPrerequisite(data, skill);
   if (prev && !isLearned(member, prev)) return `「${prev.name}」を覚える`;
-  const ap = member.ap?.[skill.job] ?? 0;
-  if (ap < skill.apToLearn) return `${data.jobsById.get(skill.job).name}の AP が ${ap} / ${skill.apToLearn}`;
+  const ap = availableAp(data, member);
+  if (ap < skill.apToLearn) return `AP が ${ap} / ${skill.apToLearn}`;
   return '';
 }
 /** AP を使って覚える。装着はスキル装備画面で行う。 */
@@ -77,7 +78,7 @@ export function learnSkill(data, member, skillId) {
   const s = data.skills.get(skillId);
   const block = learnBlock(data, member, s);
   if (block) throw new Error(block);
-  member.ap[s.job] -= s.apToLearn;
+  spendAp(data, member, s.apToLearn);
   member.learned = [...(member.learned ?? []), s.id];
   if (isJobMastered(data, member, s.job)) {
     member.masteredJobs ??= [];
@@ -112,8 +113,8 @@ export function upgradeSkillBlock(data, member, skill) {
   if (!level) return 'まだ覚えていない';
   const next = skill.effect.levels?.[level - 1];
   if (!next) return 'これ以上強化できない';
-  const ap = member.ap?.[skill.job] ?? 0;
-  return ap < next.ap ? `${data.jobsById.get(skill.job).name}の AP が ${ap} / ${next.ap}` : '';
+  const ap = availableAp(data, member);
+  return ap < next.ap ? `AP が ${ap} / ${next.ap}` : '';
 }
 export function upgradeSkill(data, member, skillId) {
   const skill = data.skills.get(skillId);
@@ -121,7 +122,7 @@ export function upgradeSkill(data, member, skillId) {
   const reason = upgradeSkillBlock(data, member, skill);
   if (reason) throw new Error(reason);
   const level = learnedSkillLevel(member, skill);
-  member.ap[skill.job] -= skill.effect.levels[level - 1].ap;
+  spendAp(data, member, skill.effect.levels[level - 1].ap);
   member.skillLevels ??= {};
   member.skillLevels[skillId] = level + 1;
   // 使用Lvは操作しない。装着中・持出し中でも勝手にMPや効果を変えない。
@@ -218,21 +219,19 @@ export function actionSkills(data, member) {
 }
 
 // ---------------- 共通ツリー ----------------
-export function commonPoints(data, member) {
-  const earned = Math.max(0, member.lv - 1) * GROWTH_FORMULAS.common_points_per_level;
-  const spent = (member.common ?? []).reduce((a, id) => a + (data.commonTree.find((n) => n.id === id)?.points ?? 0), 0);
-  return { earned, spent, left: earned - spent };
-}
+export function commonApCost(node) { return node.apToLearn; }
 export function commonBlock(data, member, node) {
+  if (!node) return 'その共通パッシブはない';
   if ((member.common ?? []).includes(node.id)) return '覚えている';
   if (member.lv < node.level) return `Lv${node.level}から`;
-  if (commonPoints(data, member).left < node.points) return 'ポイントが足りない';
+  if (availableAp(data, member) < commonApCost(node)) return 'APが足りない';
   return '';
 }
 export function learnCommon(data, member, nodeId) {
   const node = data.commonTree.find((n) => n.id === nodeId);
   const block = commonBlock(data, member, node);
   if (block) throw new Error(block);
+  spendAp(data, member, commonApCost(node));
   member.common = [...(member.common ?? []), node.id];
 }
 function commonMods(data, member) {
@@ -349,8 +348,9 @@ export function changeJob(data, game, index, jobId) {
   const m = game.party[index];
   if (!availableJobs(data, game).some((j) => j.id === jobId)) throw new Error('そのジョブはまだ選べない');
   if (m.job === jobId) throw new Error('今のジョブと同じ');
+  normalizeAp(data, m);
   m.job = jobId;
-  m.ap[jobId] = m.ap[jobId] ?? 0;
+  if (!m.visitedJobs.includes(jobId)) m.visitedJobs.push(jobId);
   for (const slot of ['offhand', 'weapon', 'head', 'body', 'arm']) {
     const g = m.equip[slot];
     if (g && aptitudeMul(data, jobId, gearDef(data, g)) == null) unequip(data, game, m, slot);
@@ -366,3 +366,4 @@ export function changeJob(data, game, index, jobId) {
   m.hp = Math.min(m.hp, maxHp(data, m));
   m.mp = Math.min(m.mp, maxMp(data, m));
 }
+

@@ -24,7 +24,7 @@ export function fixture(job){
   game.jp=data.jobsById.get(job).changeJp;costs.jp=game.jp;changeJob(data,game,5,job);
  }
  for(const [i,m] of game.party.entries()){
-  m.lv=45;m.loadout={actions:[],passives:[]};m.ap[m.job]=1000;costs.ap[i]=0;
+  m.lv=45;m.loadout={actions:[],passives:[]};m.ap=1000;costs.ap[i]=0;
   const skills=[...data.skills.values()].filter(s=>s.job===m.job&&s.stage<=3);
   for(const s of skills){if(!isLearned(m,s)){learnSkill(data,m,s.id);costs.ap[i]+=s.apToLearn;}}
   m.loadout={actions:[],passives:[]};

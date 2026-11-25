@@ -1,4 +1,5 @@
-import { gainXp, xpToNext, levelCap } from './character.js?v=basic-skill-levels-1';
+import { normalizeAp, gainAp } from './ap.js?v=unified-ap-1';
+import { gainXp, xpToNext, levelCap } from './character.js?v=unified-ap-1';
 
 // 短時間で学べる訓練場。問題の種類と教材カテゴリーの選択はUIと共通で扱う。
 export const TRAINING_COUNTS = Object.freeze([5, 10, 15]);
@@ -184,8 +185,8 @@ export function rewardTrainingAnswer(data, game,
   const baseAp = (Number(data.balance.rewards?.ap_per_battle) || 2)
     / TRAINING_AP_QUESTIONS_PER_BATTLE * TRAINING_AP_RATIO * multiplier;
   const members = (game.party ?? []).map((member) => {
-    member.trainingCredit ??= { xp: 0, ap: {} };
-    member.trainingCredit.ap ??= {};
+    normalizeAp(data, member);
+    member.trainingCredit ??= { xp: 0, ap: 0 };
     const storedXp = member.trainingCredit.xp ?? 0;
     // 直近遠征の合計XPをさらにLv倍しない。各人の次Lv必要量を使う下限だけ補う。
     const progressFloor = member.lv < levelCap(data)
@@ -194,11 +195,10 @@ export function rewardTrainingAnswer(data, game,
     const totalXp = storedXp + Math.max(baseXp, progressFloor);
     const xp = Math.floor(totalXp + 1e-9);
     member.trainingCredit.xp = Math.round((totalXp - xp) * 1e6) / 1e6;
-    const job = member.job;
-    const storedAp = member.trainingCredit.ap[job] ?? 0;
+    const storedAp = member.trainingCredit.ap ?? 0;
     const totalAp = storedAp + baseAp;
     const ap = Math.floor(totalAp + 1e-9);
-    member.trainingCredit.ap[job] = Math.round((totalAp - ap) * 1e6) / 1e6;
+    member.trainingCredit.ap = Math.round((totalAp - ap) * 1e6) / 1e6;
     // gainXp と同じ関数を共有し、訓練場だけ別のレベル計算にしない。
     return { member, xp, ap };
   });
@@ -215,9 +215,10 @@ export function applyTrainingAnswer(data, game, input) {
       xp += reward.xp;
     }
     if (reward.ap) {
-      reward.member.ap[reward.member.job] = (reward.member.ap[reward.member.job] ?? 0) + reward.ap;
+      gainAp(data, reward.member, reward.ap);
       ap += reward.ap;
     }
   }
   return { awarded: true, xp, ap };
 }
+

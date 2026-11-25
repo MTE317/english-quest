@@ -206,7 +206,7 @@ test('復習はカテゴリーに関係なく全教材から期限到来・誤�
 
 test('訓練報酬は6人全員、1項目1日1回、小数繰越で低額XP/APに変わる', () => {
   const g = fresh();
-  const before = g.party.map((m) => ({ xp: m.xp, ap: m.ap[m.job], lv: m.lv }));
+  const before = g.party.map((m) => ({ xp: m.xp, ap: m.ap, lv: m.lv }));
   const first = applyTrainingAnswer(data, g, { kind: 'word', id: catalog.words[0].id, day: d0 });
   assert.equal(first.awarded, true);
   assert.equal(applyTrainingAnswer(data, g, { kind: 'word', id: catalog.words[0].id, day: d0 }).awarded, false);
@@ -217,7 +217,7 @@ test('訓練報酬は6人全員、1項目1日1回、小数繰越で低額XP/AP�
   for (let i = 0; i < 6; i++) {
     const member = g.party[i];
     assert.ok(member.xp > before[i].xp);
-    assert.ok(member.ap[member.job] > before[i].ap);
+    assert.ok(member.ap > before[i].ap);
     assert.ok(member.xp - before[i].xp < 30); // 戦闘より圧倒的に少ない
   }
   assert.equal(g.day, 1);
@@ -286,3 +286,4 @@ test('英語学習統計は重複を除いたカテゴリー別の習得を表�
   assert.ok(stats.main.length === 7);
   assert.deepEqual(arenaReviewWords(lex, store).map((w) => w.id), [w.id]);
 });
+

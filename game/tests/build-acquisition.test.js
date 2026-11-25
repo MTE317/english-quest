@@ -101,9 +101,9 @@ test('追加8技能は前提とAPを払い、枠へ装備して実際の対象�
     const chain = [...data.skills.values()].filter((s) => s.job === skill.job && s.path === skill.path && s.stage <= skill.stage)
       .sort((a, b) => a.stage - b.stage);
     const cost = chain.filter((s) => !isLearned(member, s)).reduce((sum, s) => sum + s.apToLearn, 0);
-    member.ap[skill.job] = cost;
+    member.ap = cost;
     for (const entry of chain) if (!isLearned(member, entry)) learnSkill(data, member, entry.id);
-    assert.equal(member.ap[skill.job], 0);
+    assert.equal(member.ap, 0);
     member.loadout = { actions: [], passives: [] };
     equipSkill(data, member, id);
     const status = data.statusByName.get(skill.effect.st[0]);
@@ -123,3 +123,4 @@ test('追加8技能は前提とAPを払い、枠へ装備して実際の対象�
     assert.ok(applied, `${skill.name}: ${status?.name ?? '能力ダウン'}`);
   }
 });
+

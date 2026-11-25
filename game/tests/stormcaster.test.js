@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { loadData } from '../../sim/balance.mjs';
 import { createNewGame, defaultPartySpecs } from '../js/game-state.js';
 import { unlockJob, recordStoredMaterials, offeringRevealed } from '../js/temple.js';
-import { availableJobs, changeJob, learnSkill, skillPrerequisite } from '../js/growth.js';
+import { availableJobs, changeJob, learnSkill, skillPrerequisite, equipSkill } from '../js/growth.js';
 import { canEquip, makeGear, maxMp } from '../js/character.js';
 import { actionOptions, createBattle, makeEnemy, resolvePending, setPending } from '../js/battle.js';
 
@@ -34,11 +34,11 @@ function train(game) {
   game.jp = 1000;
   changeJob(data, game, 0, job);
   const member = game.party[0];
-  member.ap[job] = 63;
+  member.ap = 63;
   member.loadout = { actions: [chain], passives: [] };
   // 奥義とパッシブは独立に習得できる。
-  learnSkill(data, member, ultimate);
-  learnSkill(data, member, passive);
+  learnSkill(data, member, ultimate); equipSkill(data, member, ultimate);
+  learnSkill(data, member, passive); equipSkill(data, member, passive);
   return member;
 }
 
@@ -89,3 +89,4 @@ test('雷会心の還元は正解時に1行動1回、奥義は1戦1回', () => {
     /もう使った/);
   assert.ok(!tryTempest(seed, false).log.some(line => line.includes('会心の余韻')));
 });
+

@@ -1,7 +1,7 @@
-import { denominateGoldData } from './gold.js?v=gold-unit-1';
+import { denominateGoldData } from './gold.js?v=unified-ap-1';
 // ゲームで使う data/ のファイルをまとめて読み、ID で引ける形にする。
-import { loadCsv, loadJson, loadOptional } from './data.js?v=features-2';
-import { toNumber, splitList } from './csv.js';
+import { loadCsv, loadJson, loadOptional } from './data.js?v=unified-ap-1';
+import { toNumber, splitList } from './csv.js?v=unified-ap-1';
 
 const FILES = {
   balance: 'balance.json',
@@ -270,7 +270,7 @@ function buildBattleData(raw) {
     facilities: raw.facilities.map((r) => ({ id: r.id, name: r.name, role: r.role })),
   } : {};
   const growth = raw.commonTree ? {
-    commonTree: raw.commonTree.map((r) => ({ id: r.id, name: r.name, level: toNumber(r.level, 1), points: toNumber(r.points, 1), kind: r.kind, effect: r.effect })),
+    commonTree: raw.commonTree.map((r) => ({ id: r.id, name: r.name, level: toNumber(r.level, 1), points: toNumber(r.points, 1), apToLearn: toNumber(r.ap_to_learn, toNumber(r.points, 1) * 10), kind: r.kind, effect: r.effect })),
     jobMastery: raw.jobMastery.map((r) => ({ job: r.job, condition: r.condition, bonus: r.bonus_all_jobs })),
     exams: (raw.exams ?? []).map((r) => ({
       id: r.id, kind: r.kind, questions: toNumber(r.questions, 20), passRate: toNumber(r.pass_rate, 0.8), retryAfterDays: toNumber(r.retry_after_days, 1), unlock: r.unlock,
@@ -314,3 +314,4 @@ export function loadGameData() {
 }
 
 export const GAME_FILES = FILES;
+

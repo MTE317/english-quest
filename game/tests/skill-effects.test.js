@@ -30,7 +30,7 @@ test('新しい2段目の前提は習得判定と同じ技能を参照する', (
   const game = createNewGame(data, ['spellblade', 'knight', 'black_mage', 'white_mage', 'thief', 'bard']
     .map((job) => ({ job, name: job, icon: 'x' })));
   const member = game.party[0];
-  member.ap.spellblade = 100;
+  member.ap = 100;
   const frost = data.skills.get('spellblade_p3_s1');
   const burn = data.skills.get('spellblade_p3_s2');
   assert.equal(skillPrerequisite(data, frost), undefined);
@@ -56,3 +56,4 @@ test('既存技能も対象・連撃・回復・パッシブ・治療対象を�
     assert.doesNotMatch(text, /undefined|NaN|説明はありません|状態異常なし/, skill.id);
   }
 });
+

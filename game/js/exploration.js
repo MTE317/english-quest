@@ -1,7 +1,7 @@
-import { roundGold } from './gold.js?v=gold-unit-1';
-import { maxHp, maxMp } from './character.js?v=basic-skill-levels-1';
-import { monsterPool } from './encounter.js?v=basic-skill-levels-1';
-import { addItem, rollGearDrop } from './loot.js?v=gold-unit-1';
+import { roundGold } from './gold.js?v=unified-ap-1';
+import { maxHp, maxMp } from './character.js?v=unified-ap-1';
+import { monsterPool } from './encounter.js?v=unified-ap-1';
+import { addItem, rollGearDrop } from './loot.js?v=unified-ap-1';
 
 export function planExploration(config, dungeonId, route, rng) {
   if (!config) return [];
@@ -113,3 +113,4 @@ export function resolveExploration(data, game, run, floor, season, rngForEvent, 
     run.explorationNotices.push(notice);
   }
 }
+

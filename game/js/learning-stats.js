@@ -1,4 +1,4 @@
-import { masteredWordIds, masteredPhraseIds } from './promotion.js';
+import { masteredWordIds, masteredPhraseIds } from './promotion.js?v=unified-ap-1';
 
 export function learningStatistics(catalog, store, game, scheduler, today) {
   const wordMasteredIds = masteredWordIds(store);
@@ -51,3 +51,4 @@ export function learningStatistics(catalog, store, game, scheduler, today) {
     main,
   };
 }
+

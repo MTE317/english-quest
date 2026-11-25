@@ -1,5 +1,5 @@
-import { el } from '../dom.js';
-import { uiIcon } from './pixel-icons.js';
+import { el } from '../dom.js?v=unified-ap-1';
+import { uiIcon } from './pixel-icons.js?v=unified-ap-1';
 
 const destinations = [
   ['town', '町', 'temple', 'index.html'],
@@ -45,3 +45,4 @@ export function sceneHeader(title, scene, { detail, action, returnToTown = false
       el('h1', {}, title), detail ? el('p', {}, detail) : null, action),
     status);
 }
+

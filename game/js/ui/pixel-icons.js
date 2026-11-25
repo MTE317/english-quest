@@ -1,4 +1,4 @@
-import { el } from '../dom.js';
+import { el } from '../dom.js?v=unified-ap-1';
 
 // 町で使う12種類の印。名前は隣のテキストで読み上げ、絵は装飾として扱う。
 const icons = ['guild', 'inn', 'temple', 'party', 'items', 'gear',
@@ -13,3 +13,4 @@ export function uiIcon(name) {
     'aria-hidden': 'true',
   });
 }
+

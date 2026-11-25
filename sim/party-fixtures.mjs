@@ -301,6 +301,7 @@ export function prepareParty(data, dungeon, profileId = 'balanced', preparation 
     const definition = memberDefinitions(build)[i];
     const coreSkills = prepared ? requiredSkills(definition) : [];
     m.lv = level; m.equip = Object.fromEntries(SLOTS.map((slot) => [slot, null]));
+    m.ap = data.commonTree.filter(n => n.level <= level).reduce((sum,n) => sum + n.apToLearn, 0);
     for (const node of [...data.commonTree].sort((a, b) => a.level - b.level)) if (!commonBlock(data, m, node)) learnCommon(data, m, node.id);
     const own = idx.skills.filter((s) => s.job === m.job && s.stage <= stage);
     const wanted = new Set(own.map((s) => s.id));
@@ -319,7 +320,7 @@ export function prepareParty(data, dungeon, profileId = 'balanced', preparation 
       for (const prerequisite of idx.skills.filter((candidate) => candidate.job === s.job && candidate.path === s.path && candidate.stage <= s.stage)) wanted.add(prerequisite.id);
       if (data.jobsById.get(s.job).tier === 'mid' && !game.unlockedJobs.includes(s.job)) game.unlockedJobs.push(s.job);
     }
-    m.loadout = { actions: [], passives: [] }; m.learned = []; m.ap = {};
+    m.loadout = { actions: [], passives: [] }; m.learned = []; m.ap = 0; m.visitedJobs = [m.job];
     const toLearn = [...wanted].map((id) => data.skills.get(id)).sort((a, b) => a.stage - b.stage || a.id.localeCompare(b.id));
     // 新カタログの持ち出しは実際に無料転職してAPを習得する。
     // 転職回数と学習順序は比較条件として記録するが、JP・Gの費用は発生しない。
@@ -338,7 +339,8 @@ export function prepareParty(data, dungeon, profileId = 'balanced', preparation 
     for (const s of toLearn) {
       if (isLearned(m, s)) continue;
       trainAs(s.job);
-      m.ap[s.job] = (m.ap[s.job] ?? 0) + s.apToLearn;
+      if (!m.visitedJobs.includes(s.job)) m.visitedJobs.push(s.job);
+      m.ap += s.apToLearn;
       // AP台帳を初期化すると、その職のAP 0技能は習得済みになる。
       if (!isLearned(m, s)) learnSkill(data, m, s.id);
       fixture.assembly.ap[m.id][s.job] = (fixture.assembly.ap[m.id][s.job] ?? 0) + s.apToLearn;
