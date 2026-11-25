@@ -408,3 +408,24 @@
 .skill-learning-grid > li { min-width: 0; padding-top: 0; background: none; }
 .skill-learning-grid .shop-slot { height: 100%; }
 .skill-learning-layout > .skill-shop-detail { align-self: start; }
+
+/* 個人画面はスキル・装備・能力の3入口に統一。 */
+.member-main-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 7px;
+  margin: 12px 0;
+}
+.quest-ui .member-main-tabs button { min-width: 0; margin: 0; }
+.quest-ui .member-main-tabs button[aria-pressed="true"] {
+  border-color: #e5c276;
+  background: #e7bd69;
+  color: #2a1c08;
+  font-weight: 700;
+}
+.skill-learning-catalog .common-passives {
+  margin-top: 16px;
+  padding-top: 0;
+  background: none;
+}
+.skill-learning-catalog .common-passives::before { display: none; }
