@@ -98,6 +98,39 @@ export function rand(b) {
 }
 const between = (b, [lo, hi]) => lo + (hi - lo) * rand(b);
 const chance = (b, p) => rand(b) < p;
+const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
+const STATUS_TIERS = Object.freeze({ '★': 2, '◎': 1.5, '〇': 1, '△': 0.5, '×': 0 });
+
+/** 全状態異常・弱体の味方側付与率。耐性100%は完全無効。 */
+export function allyStatusChance(data, game, b, i, id, rate, stats = battleStats(data, game, b, i)) {
+  const st = data.statusEffects.get(id);
+  const group = st?.group ?? '弱体化';
+  const resist = clamp(stats.statusResist + bval(b.partyBuffs, 'sres:すべて')
+    + bval(b.partyBuffs, 'sres:' + group) + partyPassive(data, game, b, 'party_sres')
+    + masterStatusResist(data, game, b, i, id), 0, f(data, 'status_resist_cap'));
+  if (st && memberMods(data, game.party[i]).nopoison && st.kind.startsWith('dot') && st.cure.includes('毒消し')) return 0;
+  return clamp(rate * (1 - resist) * masterStatusMultiplier(data, game, b, i, id)
+    * (1 - clamp(bval(b.partyBuffs, 'immune'), 0, 1)), 0, 1);
+}
+
+/** 敵側の状態異常・能力弱体の共通付与率。 */
+export function enemyStatusChance(data, enemy, round, id, rate, control = false) {
+  let p = rate * (STATUS_TIERS[enemy.statusAffinity?.[id]] ?? 1);
+  if (enemy.boss) {
+    if (f(data, 'boss_status_immune').includes(id)) return 0;
+    if (control) {
+      if ((enemy.controlGuardUntil ?? 0) >= round && enemy.controlGuardUntil > 0) return 0;
+      p *= f(data, 'boss_control_mul') * 0.5 ** (enemy.statusHits?.[id] ?? 0);
+    } else p *= f(data, 'boss_status_mul');
+  }
+  return clamp(p, 0, f(data, 'status_rate_cap'));
+}
+
+/** 強化と弱体は別々に上限を適用してから差し引く。 */
+export function statModifier(data, buff, debuff, boss = false) {
+  return 1 + clamp(buff, 0, data.basicJobRules?.caps?.stat_buff ?? .5)
+    - clamp(debuff, 0, boss ? .3 : data.basicJobRules?.caps?.stat_debuff ?? f(data, 'debuff_cap'));
+}
 const pick = (b, arr) => arr[Math.floor(rand(b) * arr.length)];
 function weighted(b, arr, weightOf) {
   const total = arr.reduce((a, x) => a + weightOf(x), 0);
@@ -230,12 +263,12 @@ export function battleStats(data, game, b, i) {
   const a = b.allies[i];
   const down = Boolean(a.statuses.statdown);
   for (const k of ABILITY_KEYS) {
-    const change = bval(b.partyBuffs, k) + bval(a.buffs, k) + masterBuff(data, game, b, i, k) - bval(a.buffs, 'down:' + k)
-      - (down ? OLD_DOWN_RATE : 0);
-    st[k] *= 1 + Math.max(-(data.basicJobRules?.caps?.stat_debuff ?? .5), Math.min(data.basicJobRules?.caps?.stat_buff ?? .5, change));
+    const buff = bval(b.partyBuffs, k) + bval(a.buffs, k) + masterBuff(data, game, b, i, k)
+      + (k === 'res' && b.round <= 3 ? partyPassive(data, game, b, 'start_res') : 0);
+    const debuff = bval(a.buffs, 'down:' + k) + (down ? OLD_DOWN_RATE : 0)
+      + (k === 'str' && has(a, 'dot_strdown', data) ? OLD_DOWN_RATE : 0);
+    st[k] *= statModifier(data, buff, debuff);
   }
-  if (b.round <= 3) st.res *= 1 + partyPassive(data, game, b, 'start_res');
-  if (has(a, 'dot_strdown', data)) st.str *= 1 - OLD_DOWN_RATE; // 火傷は STR も下がる（sim と同じく能力ダウンと同じ幅）
   st.crit = Math.min(f(data, 'crit_cap'), st.crit + bval(a.buffs, 'crt') + masterBuff(data, game, b, i, 'crt') + masterCritBonus(data, game, b, i));
   st.evasion = Math.min(f(data, 'evasion_cap'), st.evasion + bval(b.partyBuffs, 'eva') + bval(a.buffs, 'eva') + masterBuff(data, game, b, i, 'eva') + masterEvasionBonus(data, game, b, i));
   return st;
@@ -268,7 +301,7 @@ function startRound(data, game, b) {
     units.push({ side: 'ally', i, spd });
   });
   b.enemies.forEach((e, i) => {
-    if (enemyCanAct(e)) units.push({ side: 'enemy', i, spd: e.spd * (1 - enemyStatDebuff(data, e, 'spd')) });
+    if (enemyCanAct(e)) units.push({ side: 'enemy', i, spd: e.spd * statModifier(data, bval(e.buffs ?? {}, 'spd'), enemyStatDebuff(data, e, 'spd'), e.boss) });
   });
   for (const u of units) u.spd *= between(b, f(data, 'turn_rand'));
   units.sort((x, y) => y.spd - x.spd);
@@ -811,7 +844,8 @@ function attackDamage(data, game, b, i, e, skill, cm, { offhand = false, actionB
   const pierce = kind === 'phys'
     ? Math.min(data.basicJobRules?.caps?.def_ignore ?? .9, (qigong ? 0 : wt?.defPierce ?? 0) + (skill?.effect.defign ?? 0) + affixSum(m, 'DEF_PIERCE') / 100) : 0;
   const defense = kind === 'phys' ? enemy.def * (1 - pierce) : enemy.res;
-  const df = defense * (1 - enemyStatDebuff(data, enemy, kind === 'phys' ? 'def' : 'res'));
+  const df = defense * statModifier(data, bval(enemy.buffs ?? {}, kind === 'phys' ? 'def' : 'res'),
+    enemyStatDebuff(data, enemy, kind === 'phys' ? 'def' : 'res'), enemy.boss);
   let em = els.length ? Math.max(...els.map((el) => elementMul(data, enemy, el))) : 1;
   if (skill?.effect.noresist && em > 0) em = Math.max(1, em);
   if (em > 1) em *= skill?.effect.wb ?? 1;
@@ -1101,18 +1135,10 @@ function inflictEnemy(data, b, e, [name, rate], cm, statRate = 0, source = {}) {
   enemy.statusHits ??= {};
   const alias = STATUS_ALIASES[name];
   const st = data.statusByName.get(name) ?? data.statusEffects.get(name);
-  const tiers = { '★': 2, '◎': 1.5, '〇': 1, '△': 0.5, '×': 0 };
-  let p = rate * cm * (1 + statRate) * (tiers[enemy.statusAffinity?.[st?.id]] ?? 1);
-  const key = st?.id ?? name;
-  const control = st && CONTROL_KINDS.has(st.kind);
-  if (enemy.boss) {
-    if (st && f(data, 'boss_status_immune').includes(st.id)) p = 0;
-    if (control) {
-      p *= f(data, 'boss_control_mul') * 0.5 ** (enemy.statusHits[key] ?? 0);
-      if ((enemy.controlGuardUntil ?? 0) >= b.round && enemy.controlGuardUntil > 0) p = 0;
-    } else p *= f(data, 'boss_status_mul');
-  }
-  p = Math.max(0, Math.min(f(data, 'status_rate_cap'), p));
+  if (!st && !alias) return false;
+  const key = st?.id ?? 'statdown';
+  const control = Boolean(st && CONTROL_KINDS.has(st.kind));
+  const p = enemyStatusChance(data, enemy, b.round, key, rate * cm * (1 + statRate), control);
   if (!chance(b, p)) { log(b, `${enemy.name}には効かなかった`); return false; }
   enemy.statusHits[key] = (enemy.statusHits[key] ?? 0) + 1;
   if (alias) {
@@ -1382,13 +1408,13 @@ function applyMasterAttackAfter(data, game, b, actor, target, skill, cm, result)
   if (rules.steal) masterSteal(data, game, b, actor, target, rules.steal, cm);
   if (enemy.hp <= 0) return;
   const after = rules.attack_after;
-  const affinity = { '★': 2, '◎': 1.5, '〇': 1, '△': .5, '×': 0 }[enemy.statusAffinity?.statdown] ?? 1;
-  if (after && chance(b, Math.min(data.basicJobRules?.caps?.status_rate ?? .95, after.rate * cm * affinity * (enemy.boss ? f(data, 'boss_status_mul') : 1)))) {
+  if (after && chance(b, enemyStatusChance(data, enemy, b.round, 'statdown', after.rate * cm))) {
     for (const [key, value] of Object.entries(after.debuff ?? {})) {
       // 技能ごとに保持して異なる防御崩しは共通上限内で合算する。
       enemy.masterDebuffs ??= {};
       const old = enemy.masterDebuffs[`${skill.id}:${key}`];
-      if (!old || value >= old.value) enemy.masterDebuffs[`${skill.id}:${key}`] = { stat: key, value, turns: after.turns };
+      if (!old || value > old.value) enemy.masterDebuffs[`${skill.id}:${key}`] = { stat: key, value, turns: after.turns };
+      else if (value === old.value) old.turns = Math.max(old.turns, after.turns);
     }
     log(b, `${enemy.name}の能力を崩した`);
   }
@@ -1687,8 +1713,10 @@ function enemyTurn(data, game, b, e) {
         } else log(b, enemy.name + 'は力を高めた');
       } else if (disrupt) {
         const index = pick(b, alive);
-        putBuff(b.allies[index].buffs, 'down:str', 0.25, 3);
-        log(b, enemy.name + 'の妨害で' + game.party[index].name + 'の力が下がった');
+        if (chance(b, allyStatusChance(data, game, b, index, 'statdown', 1))) {
+          putBuff(b.allies[index].buffs, 'down:str', 0.25, 3);
+          log(b, enemy.name + 'の妨害で' + game.party[index].name + 'の力が下がった');
+        } else log(b, game.party[index].name + 'は妨害を防いだ');
       } else {
         friend.hp = Math.min(friend.maxHp, friend.hp + Math.round(friend.maxHp * 0.2));
         log(b, enemy.name + 'は' + friend.name + 'を回復した');
@@ -1746,8 +1774,10 @@ function enemyTurn(data, game, b, e) {
       continue;
     }
     const burn = !magic && enemy.statuses.burn ? 1 - OLD_DOWN_RATE : 1;
-    const atk = (magic ? enemy.mag : enemy.str) * intent.power * (1 - enemyStatDebuff(data, enemy, magic ? 'mag' : 'str'))
-      * (1 + bval(enemy.buffs ?? {}, magic ? 'mag' : 'str')) * (enemy.statuses.fear ? 0.8 : 1) * burn;
+    const atk = (magic ? enemy.mag : enemy.str) * intent.power
+      * statModifier(data, bval(enemy.buffs ?? {}, magic ? 'mag' : 'str'),
+        enemyStatDebuff(data, enemy, magic ? 'mag' : 'str') + (1 - burn), enemy.boss)
+      * (enemy.statuses.fear ? 0.8 : 1);
     const df = magic ? ts.res : ts.def;
     const gearCut = affixSum(target, magic ? 'MAGIC_CUT' : 'PHYS_CUT') / 100;
     const counterStance = !magic && ta.masterCounter && !ta.masterCounterUsed ? ta.masterCounter : null;
@@ -1769,17 +1799,14 @@ function enemyTurn(data, game, b, e) {
     if (target.hp <= 0) continue;
     const counter = Math.min(1, bval(ta.buffs, 'counter') + Math.min(f(data, 'counter_affix_cap'), affixSum(target, 'COUNTER') / 100));
     // 反撃から追撃・吸収・追加状態異常は発生しない。
-    if (enemy.status && !chance(b, bval(b.partyBuffs, 'immune'))) {
+    if (enemy.status) {
       const st = data.statusEffects.get(enemy.status);
-      if (enemy.status === 'statdown' && chance(b, enemy.statusRate)) {
+      if (enemy.status === 'statdown' && chance(b, allyStatusChance(data, game, b, t, 'statdown', enemy.statusRate, ts))) {
         for (const key of ABILITY_KEYS) putBuff(ta.buffs, 'down:' + key, OLD_DOWN_RATE, 3);
         log(b, target.name + 'の能力が下がった');
       }
       if (st) {
-        const partySres = partyPassive(data, game, b, 'party_sres');
-        const sres = Math.min(f(data, 'status_resist_cap'), ts.statusResist + bval(b.partyBuffs, 'sres:すべて') + bval(b.partyBuffs, `sres:${st.group}`) + partySres + masterStatusResist(data, game, b, t, st.id));
-        const immune = memberMods(data, target).nopoison && st.kind.startsWith('dot') && st.cure.includes('毒消し');
-        if (!immune && chance(b, enemy.statusRate * Math.max(0, 1 - sres) * masterStatusMultiplier(data, game, b, t, st.id))) {
+        if (chance(b, allyStatusChance(data, game, b, t, st.id, enemy.statusRate, ts))) {
           const cur = ta.statuses[st.id];
           if (cur && st.kind === 'dot') { cur.n = Math.min(3, cur.n + 1); cur.turns = st.turns; } else ta.statuses[st.id] = { turns: st.turns, n: 1 };
           if (st.persists && !target.persist.includes(st.id)) {
