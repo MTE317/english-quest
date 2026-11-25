@@ -23,13 +23,14 @@ import { setSceneMusic } from '../battle-music.js?v=music-suite-1';
 import { expeditionScene } from '../ui/scenery.js';
 import { installGameShell } from '../ui/game-shell.js?v=pixel-town-1';
 import { portraitIcon } from '../ui/portrait.js';
-import { playDungeonEntrance } from '../ui/dungeon-entrance.js?v=entrance-1';
+import { playDungeonEntrance } from '../ui/dungeon-entrance.js?v=entrance-2';
 
 const view = document.getElementById('view');
 const session = new GameSession();
 installGameShell('dungeon', session);
 session.installAutoSave(window);
 let data; let lex; let scheduler; let store; let srs;
+let advancing = false;
 
 const gearName = (g) => `${data.equipment.get(g.id).name}${g.rarity && g.rarity !== 'common' ? `（${data.rarityTable.find((r) => r.id === g.rarity)?.name ?? '固有'}）` : ''}`;
 
@@ -224,7 +225,7 @@ function showRun(result = null) {
   if (run.state === 'ready') {
     const boss = isBossBattle(data, run);
     actions = [
-      el('button', { class: 'primary', onclick: beginBattle }, boss ? '👑 ボスに挑む' : '次の戦闘へ'),
+      el('button', { class: 'primary', onclick: moveToNextBattle }, boss ? '👑 ボスに挑む' : '次の戦闘へ'),
       el('button', { onclick: () => showFieldItems(result) }, '道具を使う'),
       ...returnItems(data, g).map((id) => el('button', {
         onclick: () => { if (confirm(`${data.items.get(id).name}で町に帰りますか？`)) { const pack = summary(run); returnToTown(data, session, id); showReturned(pack); } },
@@ -233,7 +234,7 @@ function showRun(result = null) {
   } else if (run.state === 'return_point') {
     actions = [
       el('div', { class: 'panel small' }, '帰還ポイントに着いた。ここから町に帰れる。'),
-      el('button', { class: 'primary', onclick: () => { continueRun(session); showRun(); } }, '先へ進む'),
+      el('button', { class: 'primary', onclick: moveToNextBattle }, '先へ進む'),
       el('button', { onclick: () => { const pack = summary(run); returnToTown(data, session); showReturned(pack); } }, '町に帰る（拾った物は持ち帰る）'),
       el('button', { onclick: () => showFieldItems(result) }, '道具を使う'),
     ];
@@ -314,6 +315,25 @@ function showFieldItems(result) {
 }
 
 // ---------------- 戦闘 ----------------
+async function moveToNextBattle() {
+  const run = session.run;
+  if (advancing || !run || run.battle || !['ready', 'return_point'].includes(run.state)) return;
+  advancing = true;
+  try {
+    const name = `${data.dungeons.get(run.dungeonId).name}　${run.floor}階`;
+    await playDungeonEntrance(name, () => {
+      if (run.state === 'return_point') continueRun(session);
+      beginBattle();
+    });
+  } catch (error) {
+    console.error(error);
+    render(view, el('p', { class: 'error', role: 'alert' }, `移動に失敗：${error.message}`),
+      el('button', { onclick: () => showRun() }, 'もう一度開く'));
+  } finally {
+    advancing = false;
+  }
+}
+
 function beginBattle() {
   startNextBattle(data, session);
   battleView().start();
