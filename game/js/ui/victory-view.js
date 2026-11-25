@@ -2,6 +2,8 @@ import { maxHp, maxMp } from '../character.js?v=basic-skill-levels-1';
 import { expeditionScene } from './scenery.js';
 import { el } from '../dom.js';
 import { portraitIcon } from './portrait.js';
+import { equipmentIcon } from './equipment-icons.js';
+import { uiIcon } from './pixel-icons.js';
 
 function resource(label, value, max) {
   const percent = max > 0 ? Math.min(100, Math.max(0, (value / max) * 100)) : 0;
@@ -32,12 +34,27 @@ function memberCard(data, member, growth) {
     conditions.length ? el('div', { class: 'victory-conditions' }, conditions.join('・')) : null);
 }
 
+export function createLootIcons(data, loot, gearName) {
+  const entries = [
+    ...(loot.materials ?? []).map(({ id, count }) => ({
+      name: data.materials.get(id)?.name ?? id, count, icon: () => uiIcon('storage'),
+    })),
+    ...(loot.gear ?? []).map(gear => ({
+      name: gearName(gear), count: 1, rarity: gear.rarity,
+      icon: () => equipmentIcon(data.equipment.get(gear.id)) ?? uiIcon('gear'),
+    })),
+  ];
+  return entries.length ? el('ul', { class: 'result-icon-grid', 'aria-label': '獲得品一覧' },
+    entries.map(entry => el('li', { class: 'result-icon-tile', 'data-rarity': entry.rarity ?? 'common' },
+      el('span', { class: 'result-item-icon', 'aria-hidden': 'true' }, entry.icon()),
+      el('span', { class: 'result-item-name' }, entry.name),
+      el('span', { class: 'result-item-count' }, `×${entry.count}`))))
+    : el('p', { class: 'victory-empty' }, 'なし');
+}
+
 export function createVictoryView({ data, dungeon, party, result, backpack, totalGold, gearName, actions }) {
   const { loot, growth, floor, battleNumber, battleCount } = result;
-  const drops = [
-    ...loot.materials.map(({ id, count }) => ({ name: data.materials.get(id).name, count })),
-    ...loot.gear.map((gear) => ({ name: gearName(gear), count: 1 })),
-  ];
+
 
   return el('div', { class: `victory-screen scene-${expeditionScene(dungeon.id)}` },
     el('header', { class: 'victory-header' },
@@ -48,9 +65,7 @@ export function createVictoryView({ data, dungeon, party, result, backpack, tota
         el('h3', { id: 'victory-rewards-title' }, '戦闘報酬'),
         el('div', { class: 'victory-gold' }, el('span', {}, 'ゴールド'), el('strong', {}, `+${loot.gold}`))),
       el('div', { class: 'victory-drops-title' }, 'ドロップ品'),
-      drops.length ? el('ul', { class: 'victory-drops' }, drops.map(({ name, count }) =>
-        el('li', {}, el('span', {}, name), el('span', {}, `×${count}`))))
-        : el('p', { class: 'victory-empty' }, 'なし')),
+      createLootIcons(data, loot, gearName)),
     el('section', { 'aria-labelledby': 'victory-party-title' },
       el('h3', { id: 'victory-party-title' }, 'パーティーの成長'),
       el('ul', { class: 'victory-party' }, party.map((member, index) =>
