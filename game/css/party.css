@@ -504,3 +504,13 @@
 .weapon-mastery-bar::-webkit-progress-value { background: #ebc686; }
 .weapon-mastery-bar::-moz-progress-bar { background: #ebc686; }
 .weapon-mastery-body > small { font-size: .72rem; }
+
+/* 状態異常ごとのかかりやすさ */
+.status-susceptibility-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin: 12px 0; }
+.status-susceptibility-item { display: flex; align-items: center; justify-content: space-between; gap: 6px; padding: 8px 10px; border: 1px solid var(--line, #41506b); border-radius: 6px; }
+.status-susceptibility-item dt { overflow-wrap: anywhere; }
+.status-susceptibility-item dd { margin: 0; font-size: 1.3rem; font-weight: bold; flex-shrink: 0; }
+.status-grade-weak { color: #ff9292; }
+.status-grade-normal { color: #ddd; }
+.status-grade-resist { color: #8edfc3; }
+.status-grade-immune { color: #ffd573; }
