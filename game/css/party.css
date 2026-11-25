@@ -260,7 +260,7 @@
    ショップと同じタイル一覧 + 詳細ペイン。 */
 .skill-loadout-tabs {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 8px;
   margin: 14px 0 12px;
 }
@@ -458,3 +458,10 @@
 .skill-learning-catalog .common-passives { padding: 0; }
 
 .skill-category > ol { list-style: none; }
+
+.skill-shop-effect { line-height: 1.7; white-space: pre-line; }
+.job-profile { margin: 0 0 14px; }
+.job-profile > div { display: grid; grid-template-columns: 6em minmax(0, 1fr); gap: 8px; padding: 6px 0; border-bottom: 1px solid var(--line); }
+.job-profile dt { color: var(--accent); }
+.job-profile dd { margin: 0; overflow-wrap: anywhere; }
+

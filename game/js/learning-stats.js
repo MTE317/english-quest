@@ -1,4 +1,4 @@
-import { masteredWordIds, masteredPhraseIds } from './promotion.js?v=paid-skills-1';
+import { masteredWordIds, masteredPhraseIds } from './promotion.js?v=jobs-master-1';
 
 export function learningStatistics(catalog, store, game, scheduler, today) {
   const wordMasteredIds = masteredWordIds(store);

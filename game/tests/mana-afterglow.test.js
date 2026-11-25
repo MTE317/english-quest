@@ -35,21 +35,23 @@ for(const upper of [false,true]) for(const [label,tree,passive] of [['なし',fa
 test('共通パッシブも未経験職のスキルも無料習得せず、不正な装着を除く',()=>{
   const {m}=setup(false,false);
   assert.equal(isLearned(m,data.skills.get('common_mana_afterglow')),false);
-  assert.equal(isLearned(m,data.skills.get('black_mage_p1_s1')),false);
-  assert.throws(()=>equipSkill(data,m,'black_mage_p1_s1'),/覚えていない/);
+  assert.equal(isLearned(m,data.skills.get('black_mage_A01')),false);
+  assert.throws(()=>equipSkill(data,m,'black_mage_A01'),/覚えていない/);
   m.loadout.passives.push('common_mana_afterglow');
-  m.loadout.actions.push('black_mage_p1_s1');
+  m.loadout.actions.push('black_mage_A01');
   ensureLoadout(data,m);
   assert.ok(!m.loadout.passives.includes('common_mana_afterglow'));
-  assert.ok(!m.loadout.actions.includes('black_mage_p1_s1'));
+  assert.ok(!m.loadout.actions.includes('black_mage_A01'));
 });
 test('他のMP回復要因には基本版の上限を課さない',()=>{
   const {game,m}=setup(true,true,true);
   // 追加発生源の合成を検証するテスト専用データ。正式データは変更しない。
   const extra={...data,skills:new Map(data.skills)};
-  extra.skills.set('test_mp_source',{id:'test_mp_source',effect:{mod:{mp_regen:.07}}});
+  extra.skills.set('test_mp_source',{id:'test_mp_source',kind:'passive',effect:{mod:{mp_regen:.07}}});
+  m.learned.push('test_mp_source');
   m.loadout.passives.push('test_mp_source');
   assert.ok(Math.abs(memberMods(extra,m).mp_regen-.32)<1e-12);
   recoverAfterBattle(extra,game); assert.equal(m.mp,Math.round(maxMp(extra,m)*.32));
 });
+
 

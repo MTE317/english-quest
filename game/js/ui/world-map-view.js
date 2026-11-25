@@ -1,5 +1,5 @@
-import { el } from '../dom.js?v=paid-skills-1';
-import { expeditionScene } from './scenery.js?v=paid-skills-1';
+import { el } from '../dom.js?v=jobs-master-1';
+import { expeditionScene } from './scenery.js?v=jobs-master-1';
 
 // ノードの接続を廃止し、公開されている冒険先をカード一覧から選ぶ。
 export function createWorldMapView({ world, discoveries, selectedDungeon, onDungeon }) {

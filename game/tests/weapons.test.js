@@ -5,6 +5,7 @@ import { buildGameData, GAME_FILES } from '../js/gamedata.js';
 import { createNewGame } from '../js/game-state.js';
 import { canEquip, makeGear, computeStats } from '../js/character.js';
 import { createBattle, makeEnemy, setPending, resolvePending } from '../js/battle.js';
+import { masterBuff } from '../js/job-combat.js';
 import { rollBattleLoot } from '../js/loot.js';
 import { craft } from '../js/workshop.js';
 import { gearShopStock } from '../js/town.js';
@@ -64,12 +65,13 @@ test('16武器種・通常装備384本・★1〜★12の各24段階・全公開�
 
 test('鎌と扇は店・工房・ドロップの通常武器リストに含まれる', () => {
   const g = fresh();
+  g.storage.gear = [];
   const stock = gearShopStock(data, g);
   assert.ok(stock.some(({ def }) => def.id === 'scythe_t1'));
   assert.ok(stock.some(({ def }) => def.id === 'fan_t1'));
   assert.ok(data.equipment.get('scythe_t2').source.includes('ドロップ'));
   assert.ok(data.equipment.get('fan_t2').source.includes('ドロップ'));
-  g.gold = 1000;
+  g.gold = 1000000;
   g.storage.materials = { goblin_mat: 4, cave_rat_mat: 4 };
   craft(data, g, data.equipment.get('iron_scythe'));
   craft(data, g, data.equipment.get('iron_fan'));
@@ -82,7 +84,7 @@ test('ジョブ適性・両手武器・扇の二刀流禁止を維持', () => {
   const dancer = fresh('dancer').party[0];
   assert.equal(canEquip(data, dancer, 'weapon', makeGear({ nextUid: 0 }, 'fan_t24')).ok, true);
   assert.equal(canEquip(data, dancer, 'offhand', makeGear({ nextUid: 0 }, 'fan_t1')).ok, false);
-  assert.equal(canEquip(data, fresh('knight').party[0], 'weapon', makeGear({ nextUid: 0 }, 'scythe_t1')).ok, false);
+  assert.equal(canEquip(data, fresh('knight').party[0], 'weapon', makeGear({ nextUid: 0 }, 'scythe_t1')).ok, true);
 });
 
 test('鎌は出血中の敵への武器攻撃+10%、通常攻撃で出血を与える', () => {
@@ -104,11 +106,14 @@ test('扇は風属性のMAG攻撃で、全体強化量を10%増やす', () => {
   assert.ok(weak > plain * 1.3, `${weak} vs ${plain}`);
   const via = (weapon) => {
     const ctx = prepare(weapon, 'bard', 5);
-    action(ctx, 'skill', 'bard_p1_s1'); // DEF/RES 各25%の守りの歌
-    return ctx.battle.partyBuffs.def?.[0];
+    const actor = ctx.game.party[0];
+    actor.learned = ['bard_A01'];
+    actor.loadout = { actions: ['bard_A01'], passives: [], ultimate: null };
+    action(ctx, 'skill', 'bard_A01');
+    return masterBuff(data, ctx.game, ctx.battle, 0, 'def');
   };
-  assert.equal(via('instrument_t1'), 0.25);
-  assert.ok(Math.abs(via('fan_t1') - 0.275) < 1e-9);
+  assert.ok(via('instrument_t1') > 0);
+  assert.ok(Math.abs(via('fan_t1') / via('instrument_t1') - 1.10) < 1e-9);
 });
 
 test('鎚はスタン、槍は敵2体への貫通が発動する', () => {
@@ -129,6 +134,7 @@ test('弓は弱点攻撃の倍率が高く、短剣はSPDと素材の入手確�
   const bowWeak = damage('bow_t1', 'hunter', ['pierce']);
   assert.ok(bowWeak > bowNormal * 1.65, `${bowWeak} vs ${bowNormal}`);
   const thief = fresh('thief');
+  thief.party[0].equip.weapon = makeGear(thief, 'dagger_t1');
   const speedWith = computeStats(data, thief.party[0]).spd;
   const oldDagger = thief.party[0].equip.weapon;
   thief.party[0].equip.weapon = null;
@@ -148,3 +154,4 @@ test('弓は弱点攻撃の倍率が高く、短剣はSPDと素材の入手確�
   thief.party[0].equip.weapon = null;
   assert.ok(!getMats().some((m) => m.id === 'slime_mat'));
 });
+

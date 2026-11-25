@@ -1,11 +1,11 @@
 // パーティのキャラ：能力値・装備8枠・レベル。
 // 式は data/balance.json から読む。balance.json に式として書かれていないもの（説明の文だけのもの）は、
 // シミュレーター（sim/core.py）と同じ式を下の SIM_FORMULAS に置いて使う。docs/requests.md で balance.json への追加を依頼済み。
-import { evaluate, isFormula } from './expr.js?v=paid-skills-1';
-import { memberMods, masteryMul, ensureLoadout } from './growth.js?v=paid-skills-1';
+import { evaluate, isFormula } from './expr.js?v=jobs-master-1';
+import { memberMods, masteryMul, ensureLoadout } from './growth.js?v=jobs-master-1';
 
-export const STATS = ['hp', 'str', 'mag', 'def', 'res', 'spd', 'luk'];
-export const STAT_LABEL = { hp: 'HP', str: 'STR', mag: 'MAG', def: 'DEF', res: 'RES', spd: 'SPD', luk: 'LUK' };
+export const STATS = ['hp', 'mp', 'str', 'mag', 'def', 'res', 'spd', 'luk'];
+export const STAT_LABEL = { hp: 'HP', mp: 'MP', str: 'STR', mag: 'MAG', def: 'DEF', res: 'RES', spd: 'SPD', luk: 'LUK' };
 
 /** 装備の8枠（7つは仕様書のとおり。8つ目は二刀流の2本目として仮置き。docs/requests.md 参照） */
 export const SLOTS = ['weapon', 'offhand', 'head', 'body', 'arm', 'cloak', 'accessory1', 'accessory2'];
@@ -53,16 +53,19 @@ export function gearDef(data, gear) {
 
 // ---------------- 適正 ----------------
 
-/** 適正の文字（S/A/B/C/×）。表にない組み合わせは × */
+/** 武器は全職で装備可能。表にない武器の適性もDとして扱う。 */
 export function aptitudeGrade(data, jobId, def) {
-  if (def.slot === 'weapon') return data.jobWeaponApt.get(jobId)?.[def.kind] || '×';
+  if (def.slot === 'weapon') {
+    const value = data.jobWeaponApt.get(jobId)?.[def.kind];
+    return value && value !== '×' ? value : 'D';
+  }
   if (def.armorWeight) return data.jobArmorApt.get(jobId)?.[def.armorWeight] || '×';
   return null; // マント・アクセサリーは適正なし
 }
 export function aptitudeMul(data, jobId, def) {
   const g = aptitudeGrade(data, jobId, def);
   if (g == null) return 1;
-  return data.aptitude.get(g) ?? null; // null は装備不可
+  return data.aptitude.get(g) ?? (g === 'D' ? 0.55 : null);
 }
 
 /**
@@ -89,7 +92,7 @@ export function canEquip(data, member, slot, gear) {
 
 function grade(data, member, stat) {
   const job = data.jobsById.get(member.job);
-  const letter = job.grades[stat];
+  const letter = job.grades[stat] ?? (stat === 'mp' ? job.grades.mag : undefined);
   const g = data.balance.player.grade_points[letter];
   if (g == null) throw new Error(`${member.job} の ${stat} の段階「${letter}」が grade_points にない`);
   return g;
@@ -113,6 +116,7 @@ export function affixSum(member, key) {
 export function baseStat(data, member, stat) {
   const p = data.balance.player;
   const g = grade(data, member, stat);
+  if (stat === 'mp') return evaluate(p.mp, { g, gMP: g, gMAG: g, Lv: member.lv });
   return evaluate(stat === 'hp' ? p.hp : p.other_stats, { g, Lv: member.lv });
 }
 
@@ -132,7 +136,7 @@ export function maxHp(data, member) {
 }
 export function maxMp(data, member) {
   const mods = memberMods(data, member);
-  return Math.round(evaluate(data.balance.player.mp, { gMAG: grade(data, member, 'mag'), Lv: member.lv }) * (1 + (member.room?.mp ?? 0) + (mods.mp ?? 0)));
+  return Math.max(0, Math.round((baseStat(data, member, 'mp') + affixSum(member, 'MP')) * (1 + (member.room?.mp ?? 0) + (mods.mp ?? 0))));
 }
 
 /** 防具（頭・体・腕）1つぶんの防御の値 */
@@ -154,6 +158,17 @@ export function weaponPower(data, member, gear) {
     itemLv: def.itemLv, quality: gear.quality, enh: gear.enh, power_mul: wt.powerMul,
     apt: aptitudeMul(data, member.job, def) ?? 0,
   }) * masteryMul(data, member, def.kind); // 武器の熟練度
+}
+
+/** 魔法用装備の補助値。物理武器威力や銃の倍率を魔法・回復へ転用しない。 */
+export function spellPower(data, member, gear = member.equip?.weapon) {
+  if (!gear) return 0;
+  const def = gearDef(data, gear);
+  const rules = data.basicJobRules?.spell_equipment ?? {};
+  if (!(rules.types ?? ['staff', 'tome', 'instrument', 'fan']).includes(def.kind)) return 0;
+  const base = (rules.base ?? 3) + (rules.per_level ?? 1.8) * def.itemLv;
+  return Math.max(0, base * (gear.quality ?? 1) * (1 + 0.05 * (gear.enh ?? 0))
+    * (aptitudeMul(data, member.job, def) ?? 0));
 }
 
 /** 装備・ジョブ・レベルを合わせた能力値と、派生の値 */
@@ -277,22 +292,20 @@ export function starterGearIds(data, jobId) {
 }
 
 /**
- * キャラを1人作る（Lv1・HP/MP 満タン・最初の装備つき）
+ * キャラを1人作る（Lv1・HP/MP満タン・無装備・技能未修得）。
  * @param spec { name, job, icon }
  */
 export function createMember(data, game, spec, index) {
   if (!data.jobsById.has(spec.job)) throw new Error(`ジョブ ${spec.job} がない`);
   const member = {
     id: `m${index + 1}`, name: spec.name, icon: spec.icon, job: spec.job,
-    lv: 1, xp: 0, hp: 0, mp: 0, ap: 0, apVersion: 1, skillAcquisitionVersion: 1, visitedJobs: [spec.job], persist: [], learned: [], common: [], mastery: {}, loadout: null,
+    lv: 1, xp: 0, hp: 0, mp: 0, ap: data.basicJobRules?.starting_ap ?? 30, apVersion: 1, skillAcquisitionVersion: 1, visitedJobs: [spec.job], persist: [], learned: [], common: [], mastery: {}, loadout: null,
     equip: Object.fromEntries(SLOTS.map((s) => [s, null])),
   };
-  for (const [slot, id] of Object.entries(starterGearIds(data, spec.job))) {
-    if (id) member.equip[slot] = makeGear(game, id);
-  }
   if (data.skills) ensureLoadout(data, member);
   member.hp = maxHp(data, member);
   member.mp = maxMp(data, member);
   return member;
 }
+
 

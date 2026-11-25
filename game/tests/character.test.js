@@ -17,7 +17,7 @@ const party = [
 ];
 const fresh = () => createNewGame(data, party);
 
-test('6人・装備8枠・Lv1・HP/MP満タン・最初の装備', () => {
+test('6人・装備8枠・Lv1・HP/MP満タン・無装備で開始する', () => {
   const g = fresh();
   assert.equal(g.party.length, PARTY_SIZE);
   for (const m of g.party) {
@@ -25,8 +25,9 @@ test('6人・装備8枠・Lv1・HP/MP満タン・最初の装備', () => {
     assert.equal(SLOTS.length, 8);
     assert.equal(m.lv, 1);
     assert.equal(m.hp, computeStats(data, m).hp);
-    assert.ok(m.equip.weapon, `${m.job} の武器`);
-    for (const s of ['head', 'body', 'arm']) assert.ok(m.equip[s], `${m.job} の${s}`);
+    assert.ok(Object.values(m.equip).every(gear => gear === null), `${m.job} は無装備`);
+    assert.deepEqual(m.learned, []);
+    assert.equal(m.ap, data.basicJobRules.starting_ap);
   }
   const ids = starterGearIds(data, 'warrior');
   assert.equal(data.equipment.get(ids.weapon).kind, 'sword');
@@ -41,39 +42,41 @@ test('能力値は balance.json の式どおり（戦士 Lv1：HP=B, STR=A）', 
   const g = p.grade_points;
   assert.equal(st.hp, 70 + g.B * 30);
   assert.equal(st.str, 8 + g.A * 6);
-  assert.equal(st.mp, 12 + g.D * 6);
-  // 剣 Lv3・適正S(1.2)：(8+1.6*3)*1.2
-  assert.equal(st.attack, Math.round((8 + 1.6 * 3) * 1.2));
-  // 重装3つ・適正S：(6+1.3*3)*1.0*1.6 * 1.2
-  assert.equal(st.def, Math.round(8 + g.B * 6 + (6 + 1.3 * 3) * 1.6 * 1.2));
+  assert.equal(st.mp, 12 + g[data.jobsById.get('warrior').grades.mp] * 6);
+  assert.equal(st.attack, 0);
+  assert.equal(st.def, 8 + g.B * 6);
   assert.ok(st.crit > 0 && st.crit < 1 && st.evasion > 0 && st.evasion <= 0.45);
 });
 
 test('装備を外すと能力値が下がる・倉庫に入る', () => {
   const g = fresh();
   const w = g.party[0];
+  const body = makeGear(g, starterGearIds(data, w.job).body);
+  w.equip.body = body;
+  const storedBefore = g.storage.gear.length;
   const before = computeStats(data, w);
   unequip(data, g, w, 'body');
   assert.ok(computeStats(data, w).def < before.def);
-  assert.equal(g.storage.gear.length, 1);
-  equipFromStorage(data, g, w, 'body', g.storage.gear[0].uid);
+  assert.equal(g.storage.gear.length, storedBefore + 1);
+  equipFromStorage(data, g, w, 'body', body.uid);
   assert.equal(computeStats(data, w).def, before.def);
-  assert.equal(g.storage.gear.length, 0);
+  assert.equal(g.storage.gear.length, storedBefore);
 });
 
-test('適正×は装備できない・枠が違うとつけられない', () => {
+test('不得意な武器・防具も適性Dで装備できる・枠が違うとつけられない', () => {
   const g = fresh();
   const mage = g.party[2];
   const sword = makeGear(g, 'sword_t1');
-  assert.equal(canEquip(data, mage, 'weapon', sword).ok, false);
+  assert.equal(canEquip(data, mage, 'weapon', sword).ok, true);
   const heavy = makeGear(g, 'heavy_body_t1');
-  assert.equal(canEquip(data, mage, 'body', heavy).ok, false);
+  assert.equal(canEquip(data, mage, 'body', heavy).ok, true);
   assert.equal(canEquip(data, g.party[0], 'head', sword).ok, false);
 });
 
 test('二刀流：片手武器だけ。両手武器・鞭は不可。武器を外すとサブ武器も外れる', () => {
   const g = fresh();
-  const w = g.party[0]; // 戦士：剣S・大剣S
+  const w = g.party[0]; // 戦士：剣S・大剣A
+  w.equip.weapon = makeGear(g, starterGearIds(data, w.job).weapon);
   const sword2 = makeGear(g, 'sword_t2');
   assert.equal(canEquip(data, w, 'offhand', sword2).ok, true);
   g.storage.gear.push(sword2);
@@ -117,3 +120,4 @@ test('すべてのジョブで最初の能力値が計算できる', () => {
     for (const v of Object.values(st)) assert.ok(Number.isFinite(v), `${job.id}`);
   }
 });
+

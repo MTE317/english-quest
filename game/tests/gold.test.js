@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { loadData } from '../../sim/balance.mjs';
 import { createNewGame, normalizeGame, defaultPartySpecs } from '../js/game-state.js';
 import { roundGold } from '../js/gold.js';
-import { GameSession } from '../js/save.js';
+import { GameSession, SAVE_VERSION } from '../js/save.js';
 import { MemoryStorage, readCsv } from './helpers.js';
 import { fillBoard, acceptQuest, reportQuest, questAbandonRefund, itemShopStock, gearShopStock, buyItem, buyGear, sellPrice, loanLimit, repayLoan } from '../js/town.js';
 const data=loadData(),fresh=()=>createNewGame(data,defaultPartySpecs(data));
@@ -31,7 +31,7 @@ test('旧所持金・借入・全契約・返還マーカーを正確に10倍、
 test('遠征中の現在・復元元・獲得額を独立換算し、保存・全滅後にも二重換算しない',()=>{
  const mem=new MemoryStorage(),g=fresh();let session=new GameSession({storage:mem});delete g.goldVersion;g.gold=1000;g.loan=111;
  session.startNew(g);session.state.version=1;session.enterDungeon({dungeonId:'mossy_cave'},(run,g)=>{g.gold=1037;run.earned={gold:37,xp:80};run.expeditionFee=12;run.explorationNotices=[{gold:23}];});
- session=new GameSession({storage:mem});assert.equal(session.state.version,2);
+ session=new GameSession({storage:mem});assert.equal(session.state.version,SAVE_VERSION);
  normalizeGame(data,session.game,session.run);session.save();
  const s=new GameSession({storage:mem});normalizeGame(data,s.game,s.run);
  assert.equal(s.game.gold,10370);assert.equal(s.game.loan,1110);assert.equal(s.run.snapshot.loan,1110);assert.equal(s.run.snapshot.gold,10000);assert.deepEqual(s.run.earned,{gold:370,xp:80});assert.equal(s.run.expeditionFee,120);assert.equal(s.run.explorationNotices[0].gold,230);
@@ -76,3 +76,4 @@ test('全ランクの旧最大合法借入を換算しても新融資上限を�
   const once=g.loan;normalizeGame(data,g);assert.equal(g.loan,once);
  }
 });
+

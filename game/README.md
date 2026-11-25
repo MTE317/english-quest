@@ -1,5 +1,10 @@
 # game/ — English Quest 本体
 
+職業・技能の現行マスターは [50職の基準](../docs/jobs-baseline-v1.md)、[基本8職120技能](../docs/basic-jobs-skills-v1.md)、[実装・検証](../docs/jobs-master-implementation.md) です。新規開始は無装備・技能なし。倉庫の初級装備と初期AP30から準備してください。
+
+ローカル起動：リポジトリ直下で `node scripts/serve.cjs` を実行し、表示されたURLを開きます。
+
+
 ビルドなしの素の JavaScript（ES モジュール）。GitHub Pages でそのまま動く。
 
 ## 開き方（ローカル）

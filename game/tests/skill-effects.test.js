@@ -2,58 +2,65 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { realGameData } from './helpers.js';
 import { describeSkillEffect } from '../js/skill-effects.js';
-import { learnBlock, skillPrerequisite } from '../js/growth.js';
+import { learnBlock, skillPrerequisite, effectiveSkill } from '../js/growth.js';
 import { createNewGame } from '../js/game-state.js';
+import { prerequisiteText } from '../js/ui/skill-presentation.js';
 
 const data = realGameData();
 
-test('追加8技能の状態異常・基礎付与率と攻撃の属性・倍率を説明する', () => {
+test('基本職技能の説明に属性・倍率・基礎率と適用条件を残す', () => {
   const expected = [
-    ['apothecary_p3_s1', ['猛毒', '70%', '敵一体']],
-    ['monk_p4_s1', ['麻痺', '45%', '雷属性', '1.2倍', '物理攻撃']],
-    ['spellblade_p3_s1', ['凍結', '35%', '氷属性', '1.2倍', '武器依存']],
-    ['spellblade_p3_s2', ['火傷', '60%', '炎属性', '1.2倍', '武器依存']],
-    ['hexer_p3_s1', ['沈黙', '70%', '魔法']],
-    ['hexer_p3_s2', ['能力ダウン', '60%', '魔法']],
-    ['thief_p4_s1', ['暗闇', '55%', '武器の属性', '1.1倍']],
-    ['thief_p4_s2', ['睡眠', '60%', '敵一体']],
+    ['monk_A07', ['封印', '35%', '攻撃ダメージはない', '耐性・免疫・ボス補正']],
+    ['thief_A03', ['敵全体', '暗闇', '25%', '消耗品の煙玉は要求しない']],
+    ['hunter_A08', ['獣・鳥・虫', '20%', '1回だけ適用', '他種族にも基本攻撃は成立']],
+    ['black_mage_A04', ['炎属性', 'MAG', '0.65倍', '火傷', '20%', '同じ攻撃の条件特効に使わない']],
+    ['warrior_A02', ['敵全体', '0.55倍', '武器に従う', '追加の英語回答は発生しない']],
   ];
   for (const [id, fragments] of expected) {
     const text = describeSkillEffect(data, data.skills.get(id));
     for (const fragment of fragments) assert.ok(text.includes(fragment), `${id}: ${fragment}`);
-    assert.match(text, /基礎付与率/);
-    assert.match(text, /補正や耐性で変化/);
   }
 });
 
-test('新しい2段目の前提は習得判定と同じ技能を参照する', () => {
-  const game = createNewGame(data, ['spellblade', 'knight', 'black_mage', 'white_mage', 'thief', 'bard']
-    .map((job) => ({ job, name: job, icon: 'x' })));
+test('習得画面の前提表示が必要Lvと習得判定に一致する', () => {
+  const game = createNewGame(data, ['warrior', 'knight', 'black_mage', 'white_mage', 'thief', 'bard']
+    .map(job => ({ job, name: job, icon: 'x' })));
   const member = game.party[0];
   member.ap = 100;
-  const frost = data.skills.get('spellblade_p3_s1');
-  const burn = data.skills.get('spellblade_p3_s2');
-  assert.equal(skillPrerequisite(data, frost), undefined);
-  assert.equal(skillPrerequisite(data, burn).id, frost.id);
-  assert.equal(burn.stage, 2);
-  assert.equal(burn.apToLearn, 12);
-  assert.match(learnBlock(data, member, burn), /霜刃/);
-  member.learned.push(frost.id);
-  assert.equal(learnBlock(data, member, burn), '');
+  const first = data.skills.get('warrior_A01');
+  const sweep = data.skills.get('warrior_A02');
+  assert.equal(skillPrerequisite(data, first), undefined);
+  assert.equal(skillPrerequisite(data, sweep).id, first.id);
+  assert.match(learnBlock(data, member, sweep), /剛断ち.*Lv2/);
+  member.learned.push(first.id);
+  member.skillLevels = { [first.id]: 1 };
+  assert.match(prerequisiteText(data, member, sweep), /剛断ち Lv2（現在Lv1）/);
+  assert.match(learnBlock(data, member, sweep), /Lv2/);
+  member.skillLevels[first.id] = 2;
+  assert.match(prerequisiteText(data, member, sweep), /剛断ち Lv2（達成）/);
+  assert.equal(learnBlock(data, member, sweep), '');
 });
 
-test('既存技能も対象・連撃・回復・パッシブ・治療対象を日本語で説明する', () => {
-  assert.match(describeSkillEffect(data, data.skills.get('monk_p1_s3')), /4連撃/);
-  assert.match(describeSkillEffect(data, data.skills.get('white_mage_p1_s3')), /味方全員のHPを回復/);
-  assert.match(describeSkillEffect(data, data.skills.get('warrior_p2_s2')), /最大HP \+10%/);
-  assert.match(describeSkillEffect(data, data.skills.get('common_mana_afterglow')), /戦闘後に最大MPの10%を回復/);
-  const dance = describeSkillEffect(data, data.skills.get('dancer_p1_s3'));
-  assert.match(dance, /味方全員/);
-  for (const condition of ['毒', '睡眠', '沈黙']) assert.ok(dance.includes(condition));
-  for (const condition of ['呪い', '石化', '衰弱']) assert.ok(!dance.includes(condition));
-  for (const skill of data.skills.values()) {
-    const text = describeSkillEffect(data, skill);
-    assert.doesNotMatch(text, /undefined|NaN|説明はありません|状態異常なし/, skill.id);
+test('治療・蘇生・歌の説明は対象と例外を区別する', () => {
+  const cure = describeSkillEffect(data, data.skills.get('white_mage_A03'));
+  assert.match(cure, /味方1人/);
+  assert.match(cure, /毒・睡眠・暗闇/);
+  assert.match(cure, /石化中の味方には使用できない/);
+  const sanctuary = describeSkillEffect(data, data.skills.get('white_mage_U01'));
+  assert.match(sanctuary, /指定した1人だけ/);
+  assert.match(sanctuary, /全体回復・治療は重ねて適用しない/);
+  assert.match(describeSkillEffect(data, data.skills.get('bard_A01')), /別曲なら.*併用できる/);
+  assert.match(describeSkillEffect(data, data.skills.get('bard_P01')), /奥義.*には適用しない/);
+});
+
+test('基本8職の全600段階が修得最高Lvの説明を表示できる', () => {
+  const skills = [...data.skills.values()].filter(skill => skill.effect.master);
+  assert.equal(skills.length, 120);
+  for (const skill of skills) for (let level = 1; level <= 5; level += 1) {
+    const member = { learned: [skill.id], skillLevels: { [skill.id]: level }, skillUseLevels: { [skill.id]: 1 } };
+    const effective = effectiveSkill(data, member, skill);
+    const text = describeSkillEffect(data, effective);
+    assert.equal(text, level === 1 ? skill.effect.description : skill.effect.levels[level - 2].effect.description, `${skill.id} Lv${level}`);
+    assert.doesNotMatch(text, /undefined|NaN|説明はありません/, `${skill.id} Lv${level}`);
   }
 });
-

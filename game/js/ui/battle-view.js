@@ -1,17 +1,19 @@
 // 戦況を表示したまま、下段をコマンド・対象の案内・問題・結果に切り替える。
-import { now } from '../storage.js?v=paid-skills-1';
-import { QuestionPicker, REASON_LABEL } from '../picker.js?v=paid-skills-1';
-import { makePracticeQuestion, questionDirection, questionSpeech, DIRECTION } from '../quiz.js?v=paid-skills-1';
-import { speak, canSpeak, stopSpeech } from '../speech.js?v=paid-skills-1';
-import { nextTurn, actionOptions, setPending, prepareQuizAction, resolvePending, targetKind, canAct, skillMp, collectBattleHits, enemyIntent, enemyCanAct } from '../battle.js?v=paid-skills-1';
-import { skillMaxLevel, usedSkillLevel } from '../growth.js?v=paid-skills-1';
-import { maxHp, maxMp } from '../character.js?v=paid-skills-1';
-import { el, render } from '../dom.js?v=paid-skills-1';
-import { expeditionScene } from './scenery.js?v=paid-skills-1';
-import { monsterKnowledge } from '../monster-knowledge.js?v=paid-skills-1';
-import { startBattleMusic, finishBattleMusic } from '../battle-music.js?v=paid-skills-1';
-import { unlockBattleSound, playBattleHitSound } from '../battle-sound.js?v=paid-skills-1';
-import { portraitIcon } from './portrait.js?v=paid-skills-1';
+import { now } from '../storage.js?v=jobs-master-1';
+import { QuestionPicker, REASON_LABEL } from '../picker.js?v=jobs-master-1';
+import { makePracticeQuestion, questionDirection, questionSpeech, DIRECTION } from '../quiz.js?v=jobs-master-1';
+import { speak, canSpeak, stopSpeech } from '../speech.js?v=jobs-master-1';
+import { nextTurn, actionOptions, setPending, prepareQuizAction, resolvePending, targetKind, skillMp, collectBattleHits, enemyIntent, enemyCanAct } from '../battle.js?v=jobs-master-1';
+import { skillMaxLevel, learnedSkillLevel, effectiveSkill } from '../growth.js?v=jobs-master-1';
+import { maxHp, maxMp } from '../character.js?v=jobs-master-1';
+import { el, render } from '../dom.js?v=jobs-master-1';
+import { expeditionScene } from './scenery.js?v=jobs-master-1';
+import { monsterKnowledge } from '../monster-knowledge.js?v=jobs-master-1';
+import { startBattleMusic, finishBattleMusic } from '../battle-music.js?v=jobs-master-1';
+import { unlockBattleSound, playBattleHitSound } from '../battle-sound.js?v=jobs-master-1';
+import { portraitIcon } from './portrait.js?v=jobs-master-1';
+import { ultimateGauge } from './skill-presentation.js?v=jobs-master-1';
+import { describeSkillEffect } from '../skill-effects.js?v=jobs-master-1';
 
 const TARGET_PROMPT = {
   enemy: '攻撃する敵を選ぶ',
@@ -181,7 +183,7 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
 
   function drawField(actor, { kind, indices = [], select } = {}, action = null) {
     if (encyclopedia.open) encyclopedia.close();
-    const selectedKind = action ? targetKind(data, action) : null;
+    const selectedKind = action ? targetKind(data, action, g.party[actor]) : null;
     render(enemies, b.enemies.map((enemy, index) => {
       const targetable = kind === 'enemy' && indices.includes(index);
       const chosen = selectedKind === 'enemy' && action.target === index;
@@ -218,6 +220,7 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
       const classes = `battle-ally${index === actor ? ' active' : ''}${member.hp <= 0 ? ' down' : ''}`;
       const status = member.hp <= 0 ? '戦闘不能' : `HP ${member.hp}/${hp}、MP ${member.mp}/${mp}`;
       const conditionNames = battleConditionLabels(data, { ...b.allies[index], hp: member.hp });
+      const gauge = ultimateGauge(data, member);
       const label = [member.name, index === actor ? '行動中' : '', status, ...conditionNames, targetable ? '対象に選ぶ' : ''].filter(Boolean).join('、');
       return unitCard(classes, chosen, label, targetable ? () => select(index) : null,
         el('span', { class: 'battle-ally-heading' },
@@ -226,6 +229,7 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
         el('span', { class: 'battle-ally-info' },
           resource('HP', member.hp, hp, 'hp'),
           resource('MP', member.mp, mp, 'mp'),
+          member.loadout?.ultimate ? resource('奥義', gauge.value, gauge.max, `ultimate${gauge.ready ? ' ready' : ''}`) : null,
           conditions(conditionNames)));
     }));
     render(latest, b.log.slice(-3).map((line) => el('span', { class: 'battle-log-line' }, line)));
@@ -253,6 +257,8 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
       el('span', { class: 'battle-command-copy' }, label, detail ? el('small', {}, detail) : null));
   }
 
+  const battleMp = skill => skillMp(data, g.party[b.turn.i], skill, { battle: b, actor: b.turn.i });
+
   function showCommand(sub = null, message = null) {
     const actor = b.turn.i;
     const member = g.party[actor];
@@ -265,8 +271,8 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
     if (sub === 'skill' || sub === 'item') {
       const isSkill = sub === 'skill';
       const choices = isSkill
-        ? opts.skills.map(({ skill, reason }) => listChoice(skillMaxLevel(skill) > 1 ? `${skill.name} Lv${usedSkillLevel(member, skill)}` : skill.name, `MP ${skillMp(data, member, skill)}`, reason,
-          () => choose({ type: 'skill', skillId: skill.id }), reason))
+        ? opts.skills.map(entry => listChoice(skillMaxLevel(entry.skill) > 1 ? `${entry.skill.name} Lv${learnedSkillLevel(member, entry.skill)}` : entry.skill.name, `MP ${battleMp(entry.skill)}`, entry.reason,
+          () => chooseSkill(entry), entry.reason))
         : opts.items.map(({ item, count, reason }) => listChoice(item.name, `×${count}`, reason || item.description,
           () => choose({ type: 'item', itemId: item.id }), reason));
       showPanel(isSkill ? 'スキル' : 'アイテム', [
@@ -281,6 +287,8 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
     showPanel(`${member.name}の番`, [notice, el('div', { class: 'battle-commands' },
       command('⚔', '通常攻撃', () => choose({ type: 'attack' })),
       command('✦', 'スキル', () => showCommand('skill')),
+      command('★', '奥義', () => chooseSkill(opts.ultimate), opts.ultimate?.skill
+        ? `${opts.ultimate.skill.name}・${opts.ultimate.gauge}/${opts.ultimate.max}${opts.ultimate.reason ? `・${opts.ultimate.reason}` : ''}` : '奥義未装備', !opts.ultimate?.skill || !!opts.ultimate.reason),
       command('✚', 'アイテム', () => showCommand('item')),
       command('↪', '逃げる', () => choose({ type: 'flee' }),
         opts.flee.reason || `成功率 ${Math.round(opts.flee.rate * 100)}%`, !!opts.flee.reason))]);
@@ -292,27 +300,61 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
       detail ? el('small', {}, detail) : null);
   }
 
-  function chooseTarget(action, sub) {
-    const kind = targetKind(data, action);
+  function chooseSkill(entry) {
+    if (!entry?.skill || entry.reason) return;
+    const skill = entry.skill;
+    const action = { type: 'skill', skillId: skill.id };
+    const elements = entry.elements ?? skill.effect.rules?.choose_element ?? [];
+    const back = () => showCommand(skill.isFinal ? null : 'skill');
+    const chooseBoost = selected => {
+      if (!entry.boost) return chooseTarget(selected, skill.isFinal ? null : 'skill', entry.targetReasons);
+      const baseMp = battleMp(skill);
+      const extraMp = entry.boost.mp;
+      showPanel(`${skill.name}のMP投入`, [
+        el('p', { class: 'battle-notice' }, describeSkillEffect(data, skill)),
+        el('div', { class: 'battle-action-list' },
+          listChoice('通常の威力', `MP ${baseMp}`, null, () => chooseTarget(selected, 'skill', entry.targetReasons)),
+          listChoice('追加MPを投入', `MP ${baseMp + extraMp}`, `直接ダメージ +${Math.round(entry.boost.bonus * 100)}%`,
+            () => chooseTarget({ ...selected, boost: true }, 'skill', entry.targetReasons), g.party[b.turn.i].mp < baseMp + extraMp ? 'MPが足りない' : '')),
+      ], { back });
+    };
+    if (!elements.length) return chooseBoost(action);
+    showPanel(`${skill.name}の属性`, [
+      el('p', { class: 'battle-notice' }, describeSkillEffect(data, skill)),
+      el('div', { class: 'battle-action-list' }, elements.map(element => listChoice(
+        data.elements.get(element)?.name ?? element, `MP ${battleMp(skill)}`, null,
+        () => chooseBoost({ ...action, element })))),
+    ], { back });
+  }
+
+  function chooseTarget(action, sub, targetReasons = {}) {
+    const member = g.party[b.turn.i];
+    const skill = action.type === 'skill' ? effectiveSkill(data, member, data.skills.get(action.skillId)) : null;
+    const kind = targetKind(data, action, member);
     if (!TARGET_PROMPT[kind]) return ask({ ...action, target: null });
 
     let indices;
     if (kind === 'enemy') {
-      indices = b.enemies.flatMap((enemy, index) => enemyCanAct(enemy) ? [index] : []);
+      indices = b.enemies.flatMap((enemy, index) => enemyCanAct(enemy) && !targetReasons[index] ? [index] : []);
     } else if (kind === 'ko_ally') {
-      indices = g.party.flatMap((member, index) => member.hp <= 0 ? [index] : []);
+      indices = g.party.flatMap((target, index) => target.hp <= 0 && !b.allies[index].statuses?.petrify ? [index] : []);
     } else {
-      indices = g.party.flatMap((_, index) => canAct(g, b, index) ? [index] : []);
+      indices = g.party.flatMap((target, index) => target.hp > 0
+        && !(skill?.effect.master && b.allies[index].statuses?.petrify)
+        && !(skill?.effect.rules?.cover?.target === 'selected' && index === b.turn.i) ? [index] : []);
     }
 
     const select = (target) => ask({ ...action, target });
+    if (!indices.length && kind === 'ko_ally' && action.type === 'skill'
+      && data.skills.get(action.skillId)?.effect.rules?.revive && data.skills.get(action.skillId)?.kind === 'heal_all') return ask({ ...action, target: null });
     if (indices.length === 0) return showCommand(sub, '選べる対象がいません。');
     if (indices.length === 1) return select(indices[0]);
 
     drawField(b.turn.i, { kind, indices, select });
-    const enemyTargets = kind === 'enemy' ? el('div', { class: 'battle-targets' }, indices.map((index) => {
+    const enemyTargets = kind === 'enemy' ? el('div', { class: 'battle-targets' }, b.enemies.flatMap((enemy, index) => enemyCanAct(enemy) ? [index] : []).map((index) => {
       const enemy = b.enemies[index];
-      return el('button', { onclick: () => select(index) }, `${enemy.icon} ${enemy.name}`);
+      const reason = targetReasons[index];
+      return el('button', { disabled: !!reason, onclick: () => select(index) }, `${enemy.icon} ${enemy.name}${reason ? `・${reason}` : ''}`);
     })) : null;
     showPanel(actionLabel(action), [
       el('p', { class: 'battle-target-prompt' }, TARGET_PROMPT[kind]),
@@ -344,7 +386,8 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
   function actionLabel(action) {
     if (action.type === 'attack') return '通常攻撃';
     if (action.type === 'flee') return '逃げる';
-    if (action.type === 'skill') return data.skills.get(action.skillId).name;
+    if (action.type === 'skill') return [data.skills.get(action.skillId).name,
+      action.element ? `（${data.elements.get(action.element)?.name ?? action.element}）` : '', action.boost ? '・MP投入' : ''].join('');
     return data.items.get(action.itemId).name;
   }
 
@@ -419,4 +462,5 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
     },
   };
 }
+
 

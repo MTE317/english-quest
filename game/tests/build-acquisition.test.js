@@ -4,8 +4,8 @@ import { buildGameData, GAME_FILES } from '../js/gamedata.js';
 import { createNewGame } from '../js/game-state.js';
 import { craft, enchant, enchantFamilies } from '../js/workshop.js';
 import { rollAffixes, affixVariants } from '../js/loot.js';
-import { gearEffects, maxHp, maxMp } from '../js/character.js';
-import { learnSkill, equipSkill, isLearned } from '../js/growth.js';
+import { gearEffects, maxHp, maxMp, makeGear } from '../js/character.js';
+import { learnSkill, equipSkill, isLearned, upgradeSkill, learnedSkillLevel } from '../js/growth.js';
 import { createBattle, makeEnemy, setPending, resolvePending } from '../js/battle.js';
 import { parseAmounts } from '../js/csv.js';
 import { readCsv, readJson, seededRng } from './helpers.js';
@@ -90,25 +90,31 @@ test('ランダム効果の状態特効と属性耐性は対象IDを持ち、未
   }
 });
 
-test('追加8技能は前提とAPを払い、枠へ装備して実際の対象状態を付与できる', () => {
-  assert.equal(additions.build36_skills.length, 8);
-  for (const id of additions.build36_skills) {
+test('新マスターの状態付与8技能は前提LvとAPを払い、装備して実際に付与できる', () => {
+  const ids = ['warrior_A05', 'thief_A04', 'black_mage_A04', 'black_mage_A05',
+    'black_mage_A06', 'hunter_A03', 'hunter_A04', 'white_mage_A08'];
+  for (const id of ids) {
     const skill = data.skills.get(id);
     const game = fresh(skill.job);
     const member = game.party[0];
     member.lv = 20;
     member.loadout = { actions: [], passives: [] };
-    const chain = [...data.skills.values()].filter((s) => s.job === skill.job && s.path === skill.path && s.stage <= skill.stage)
-      .sort((a, b) => a.stage - b.stage);
-    const cost = chain.filter((s) => !isLearned(member, s)).reduce((sum, s) => sum + s.apToLearn, 0);
-    member.ap = cost;
-    for (const entry of chain) if (!isLearned(member, entry)) learnSkill(data, member, entry.id);
-    assert.equal(member.ap, 0);
+    member.ap = 1000;
+    function acquire(skillId, level = 1) {
+      const entry = data.skills.get(skillId);
+      for (const prerequisite of entry.effect.prerequisites ?? []) acquire(prerequisite.id, prerequisite.level);
+      if (!isLearned(member, entry)) learnSkill(data, member, entry.id);
+      while (learnedSkillLevel(member, entry) < level) upgradeSkill(data, member, entry.id);
+    }
+    acquire(id);
+    assert.ok(member.ap < 1000);
+    const weapon = [...data.equipment.values()].find((def) => def.slot === 'weapon'
+      && (skill.effect.weapons ?? []).includes(def.kind));
+    if (weapon) member.equip.weapon = makeGear(game, weapon.id);
     member.loadout = { actions: [], passives: [] };
     equipSkill(data, member, id);
-    const status = data.statusByName.get(skill.effect.st[0]);
-    const abilityDown = skill.effect.st[0] === '能力ダウン';
-    assert.ok(status || abilityDown);
+    const status = data.statusEffects.get(skill.effect.st[0]);
+    assert.ok(status);
     let applied = false;
     for (let seed = 1; seed <= 80 && !applied; seed++) {
       member.hp = maxHp(data, member); member.mp = maxMp(data, member);
@@ -118,9 +124,10 @@ test('追加8技能は前提とAPを払い、枠へ装備して実際の対象�
       battle.round = 1; battle.turn = { side: 'ally', i: 0 };
       setPending(battle, { type: 'skill', skillId: id, target: 0 }, {});
       resolvePending(data, game, battle, true);
-      applied ||= abilityDown ? enemy.debuffs.str?.[0] === 0.2 : Boolean(enemy.statuses[status.id]);
+      applied ||= Boolean(enemy.statuses[status.id]);
     }
-    assert.ok(applied, `${skill.name}: ${status?.name ?? '能力ダウン'}`);
+    assert.ok(applied, `${skill.name}: ${status.name}`);
   }
 });
+
 

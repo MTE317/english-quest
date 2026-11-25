@@ -1,9 +1,9 @@
 // データ確認画面：data/ のファイルごとの行数と、中身の表
-import { loadFiles, loadJson } from '../data.js?v=paid-skills-1';
-import { splitList, parseAmounts } from '../csv.js?v=paid-skills-1';
-import { buildLearningCatalog, FEATURED_SET_ID } from '../learning-catalog.js?v=paid-skills-1';
-import { Scheduler } from '../srs.js?v=paid-skills-1';
-import { el, render } from '../dom.js?v=paid-skills-1';
+import { loadFiles, loadJson } from '../data.js?v=jobs-master-1';
+import { splitList, parseAmounts } from '../csv.js?v=jobs-master-1';
+import { buildLearningCatalog } from '../learning-catalog.js?v=jobs-master-1';
+import { Scheduler } from '../srs.js?v=jobs-master-1';
+import { el, render } from '../dom.js?v=jobs-master-1';
 
 const view = document.getElementById('view');
 let loaded = null;
@@ -31,7 +31,7 @@ function checks(files) {
         Object.entries(keys).map(([key, filename]) => [key, files[filename].rows]),
       ));
       notes.push(`教材v${catalog.version}：単語 ${catalog.words.length}語・瞬間英作文 ${catalog.phrases.length}文・チャンク ${catalog.chunks.length}型`);
-      notes.push(`7メイン・${catalog.subcategories.length}サブ、00の最優先 ${catalog.wordsByStone.get(FEATURED_SET_ID).length}語・${catalog.phrasesByStone.get(FEATURED_SET_ID).length}文`);
+      notes.push(`7メイン・${catalog.subcategories.length}サブ、00の教材 ${catalog.wordsByStone.get('00').length}語・${catalog.phrasesByStone.get('00').length}文`);
     } catch (error) { notes.push(`学習教材エラー：${error.message}`); }
   }
   const srs = files['srs.json'];

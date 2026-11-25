@@ -7,6 +7,9 @@ def f(x, d=0.0):
     try: return float(x)
     except (TypeError, ValueError): return d
 BAL = json.load(open(os.path.join(D, "balance.json"), encoding="utf-8"))
+MASTER_RULES_PATH = os.path.join(D, "basic_job_rules.json")
+MASTER_RULES = json.load(open(MASTER_RULES_PATH, encoding="utf-8-sig")) if os.path.exists(MASTER_RULES_PATH) else {}
+JOB_MASTER = bool(MASTER_RULES)
 
 ELEM = {r["id"]: r["name"] for r in R(f"{D}/elements.csv")}
 ELEM_ID = {v: k for k, v in ELEM.items()}
@@ -38,16 +41,23 @@ AW = {"heavy": "重", "medium": "中", "light": "軽"}
 JID = {}; JOBS = {}; TIER = {}
 def _job(r, tier):
     JID[r["id"]] = r["name"]; TIER[r["name"]] = tier
-    JOBS[r["name"]] = dict(id=r["id"], g=" ".join(r[k] for k in ("hp", "str", "mag", "def", "res", "spd", "luk")), w={}, armor={}, tier=tier)
+    JOBS[r["name"]] = dict(id=r["id"], g=" ".join(r[k] for k in ("hp", "str", "mag", "def", "res", "spd", "luk")),
+                           mp_grade=r.get("mp", r["mag"]), ready=r.get("skills_ready", "1") == "1", w={}, armor={}, tier=tier)
 for r in R(f"{D}/jobs.csv"): _job(r, "基本")
-for r in R(f"{D}/jobs_mid.csv"): _job(r, "中級")
-UPPER = R(f"{SEC}/upper_jobs.csv") if os.path.exists(f"{SEC}/upper_jobs.csv") else []
+for r in R(f"{D}/jobs_mid.csv"): _job(r, "追加" if JOB_MASTER else "中級")
+PUBLIC_JOBS_PATH = os.path.join(D, "jobs_advanced.csv")
+for r in R(PUBLIC_JOBS_PATH) if os.path.exists(PUBLIC_JOBS_PATH) else []:
+    _job(r, "伝説" if JOB_MASTER else "上級")
+# 新マスターでは秘密側の旧職一覧を合成しない。50職のCSVが唯一の職業マスター。
+UPPER = R(f"{SEC}/upper_jobs.csv") if not JOB_MASTER and os.path.exists(f"{SEC}/upper_jobs.csv") else []
 for r in UPPER: _job(r, "上級")
 for r in R(f"{D}/job_weapon_aptitude.csv"):
+    if r["job_id"] not in JID: continue
     j = JID[r["job_id"]]
     for wid, g in r.items():
         if wid != "job_id" and g not in ("×", ""): JOBS[j]["w"][WID[wid]] = g
 for r in R(f"{D}/job_armor_aptitude.csv"):
+    if r["job_id"] not in JID: continue
     j = JID[r["job_id"]]; JOBS[j]["armor"] = {AW[k]: r[k] for k in ("heavy", "medium", "light")}
 for r in UPPER:
     j = r["name"]
@@ -55,11 +65,14 @@ for r in UPPER:
         wid, g = p.split(":"); JOBS[j]["w"][WID[wid]] = g
     JOBS[j]["armor"] = {"重": r["armor_heavy"], "中": r["armor_medium"], "軽": r["armor_light"]}
 for j, d in JOBS.items():
-    best = max(d["w"], key=lambda w: {"S": 3, "A": 2, "B": 1, "C": 0}[d["w"][w]])
+    best = max(d["w"], key=lambda w: {"S": 4, "A": 3, "B": 2, "C": 1, "D": 0}[d["w"][w]])
     d["start_weapon"] = best
-    d["arm"] = max(d["armor"], key=lambda a: {"S": 3, "A": 2, "B": 1, "C": 0, "×": -1}[d["armor"][a]])
-BASE_JOBS = [j for j in JOBS if TIER[j] == "基本"]; MID_JOBS = [j for j in JOBS if TIER[j] == "中級"]; UPPER_JOBS = [j for j in JOBS if TIER[j] == "上級"]
-STAGE_AP = {"基本": [0, 10, 20, 30, 45], "中級": [0, 20, 30, 40, 50], "上級": [0, 20, 30, 40, 55]}
+    d["arm"] = max(d["armor"], key=lambda a: {"S": 4, "A": 3, "B": 2, "C": 1, "D": 0, "×": -1}[d["armor"][a]])
+BASE_JOBS = [j for j in JOBS if TIER[j] == "基本"]
+MID_JOBS = [j for j in JOBS if TIER[j] in ("中級", "追加")]
+UPPER_JOBS = [j for j in JOBS if TIER[j] in ("上級", "伝説")]
+STAGE_AP = {"基本": [0, 10, 20, 30, 45], "中級": [0, 20, 30, 40, 50], "上級": [0, 20, 30, 40, 55],
+            "追加": [0, 20, 30, 40, 50], "伝説": [0, 20, 30, 40, 55]}
 
 # ---- スキル
 KIND = {"attack": "atk", "heal": "heal", "heal_all": "healall", "revive": "revive", "cure": "cure", "cure_all": "cureall", "party_buff": "pbuff",
@@ -68,8 +81,8 @@ KIND = {"attack": "atk", "heal": "heal", "heal_all": "healall", "revive": "reviv
 ST_JA = {"毒", "猛毒", "火傷", "出血", "呪い", "睡眠", "麻痺", "凍結", "スタン", "石化", "束縛", "恐怖", "沈黙", "封印", "暗闇", "混乱", "魅了", "DEFダウン"}
 def _skill(r, jobname):
     eff = json.loads(r["effect_json"]) if r["effect_json"] else {}
-    s = dict(job=jobname, path=r["path"], stage=int(r["stage"]), name=r["name"], k=KIND[r["kind"]], cost=int(r["cost"]), mp=int(r["mp"]),
-             final=r["is_final"] == "1")
+    s = dict(id=r["id"], job=jobname, path=r["path"], stage=int(r["stage"]), name=r["name"], k=KIND.get(r["kind"], r["kind"]),
+             cost=int(r["cost"]), mp=int(r["mp"]), ap=int(r["ap_to_learn"]), final=r["is_final"] == "1")
     s.update(eff)
     if r["element"]:
         els = EL(r["element"])
@@ -85,7 +98,7 @@ def _skill(r, jobname):
     if s["k"] == "passive" and "mod" not in s: s["mod"] = {}
     return s
 SKILLS = [_skill(r, JID[r["job"]]) for r in R(f"{D}/skills.csv") if r["job"] != "common"]
-if os.path.exists(f"{SEC}/upper_skills.csv"):
+if not JOB_MASTER and os.path.exists(f"{SEC}/upper_skills.csv"):
     SKILLS += [_skill(r, JID[r["job"]]) for r in R(f"{SEC}/upper_skills.csv")]
 BY_JOB = {}
 for s in SKILLS: BY_JOB.setdefault(s["job"], []).append(s)
@@ -135,8 +148,9 @@ ENH = [f(r["success_rate"]) for r in R(f"{D}/enhance_rates.csv")]
 AFFIX = {}
 for r in R(f"{D}/affixes.csv"): AFFIX.setdefault(r["slot"], []).append(dict(stat=r["stat"], lo=f(r["min"]), hi=f(r["max"]), scale=r["scales_with_item_lv"] == "1", w=f(r["weight"])))
 EQUIP = R(f"{D}/equipment.csv")
-UNLOCKS = {JID[r["job_id"]]: dict(method=r["method"], mats=[(p.split(":")[0], int(p.split(":")[1])) for p in r["materials"].split("|") if p],
-                                  dungeon=r["discover_dungeon"], chance=f(r["discover_chance_after_boss"])) for r in R(f"{D}/job_unlocks.csv")}
+UNLOCKS = {JID[r["job_id"]]: dict(method=r.get("method", ""), mats=[(p.split(":")[0], int(p.split(":")[1])) for p in r.get("materials", "").split("|") if p],
+                                  dungeon=r.get("discover_dungeon", ""), chance=f(r.get("discover_chance_after_boss")))
+           for r in R(f"{D}/job_unlocks.csv") if r["job_id"] in JID}
 for r in UPPER:
     if r["unlock_method"] == "素材":
         UNLOCKS[r["name"]] = dict(method="素材", mats=[(p.split(":")[0], int(p.split(":")[1])) for p in r["unlock_detail"].split("|")], dungeon="", chance=0)

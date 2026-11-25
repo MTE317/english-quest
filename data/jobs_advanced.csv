@@ -1,8 +1,7 @@
-﻿id,name,role,hp,str,mag,def,res,spd,luk,main_elements,weakness,start_weapon,start_armor_weight,unlock,dmg_mul
-stormcaster,雷術士,単体雷魔法と会心時のMP回収,C,D,A,D,B,B,A,thunder,雷耐性と複数敵に弱い,tome,light,素材,1.0
-venomist,毒術士,複数戦で毒を伝播させる,C,B,C,C,C,A,B,pierce,単体戦と毒耐性に弱い,dagger,light,素材,1.0
-bloodblade,血刃士,火傷と出血を重ねて鎌で攻める,B,A,D,C,C,B,C,slash|fire,継続傷が効かない敵に弱い,scythe,medium,討伐報告,1.0
-infernalist,炎術士,火傷した敵への炎全体魔法,B,D,A,D,A,B,D,fire,炎耐性と火傷無効に弱い,tome,light,素材,1.0
-seal_archer,封技弓士,封印と弓の追撃,B,A,D,B,C,C,C,pierce,封印無効に弱い,bow,medium,討伐報告,1.0
-neutralist,無相術士,無属性直接魔法とMP節約,B,D,A,D,A,B,D,none,属性弱点を突けない,tome,light,素材,1.0
-petrifier,石弾士,石化銃撃と土の貫通弾,B,C,D,B,C,A,A,earth,石化免疫と土耐性,gun,medium,素材,1.0
+﻿id,name,role,tier,hp,mp,str,mag,def,res,spd,luk,main_elements,support_elements,s_weapons,a_weapons,stat_reference,style,ultimate_concept,skills_ready,weakness,start_weapon,start_armor_weight,unlock,dmg_mul
+hero,勇者,危機からの反攻・救援,legendary,A,B,A,B,B,B,B,C,slash|light,thunder,sword,spear,STR・MAG／勇気,弱点攻撃・護衛・危機の克服から勇気を得て攻勢へつなぐ,強烈な一撃と全体の立て直し。勇気の蓄積で追加強化,0,,sword,medium,個別技能の実装待ち,1
+demon_lord,魔王,高消費の権能・強力な変身,legendary,A,A,B,A,C,B,D,C,dark|fire,slash,greatsword,scythe|tome,MAG中心／武器技STR／MP,大きなMP消費に見合う権能で圧倒し、魔王化へつなげる,魔王化し、一定期間の攻撃性能と殲滅力を大幅強化,0,,greatsword,medium,個別技能の実装待ち,1
+sword_saint,剣聖,同じ技を極める武器攻撃,legendary,B,C,A,D,B,B,A,A,slash,,katana,sword,STR／SPD・LUK,同じ武器技の継続使用で、威力・精度・燃費を高める,極意を放つ究極の武器技。蓄積で追加強化,0,,katana,medium,個別技能の実装待ち,1
+sage,賢者,魔法の記憶・組み合わせ,legendary,C,A,D,A,C,A,B,C,fire|ice|wind|earth|thunder|water,,tome,staff,MAG・MP,魔法1つを記憶し、別の魔法と組み合わせて発動する,強力な複合詠唱と術式の再準備。記憶で追加効果,0,,tome,light,個別技能の実装待ち,1
+saint,聖者,壊滅からの救済・奇跡,legendary,B,A,D,A,C,A,C,B,light,water,staff,fan,MAG／MP・RES,大きな救済効果と致命傷への備え。日常回復は専門職と分担,全体蘇生・大回復・致命傷への防護を組み合わせる,0,,staff,light,個別技能の実装待ち,1
+overlord,覇王,仲間の攻勢を束ねる前衛,legendary,A,C,A,C,B,B,B,C,slash|fire,earth,axe,greatsword|spear,STR・HP／覇気,仲間の攻撃行動から覇気を蓄え、自身の大技へ集約,圧倒的な攻撃と全体への攻勢支援。覇気で追加強化,0,,axe,heavy,個別技能の実装待ち,1

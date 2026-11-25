@@ -17,15 +17,15 @@
 // - 戦闘を始めたら setBattle() で保存する。1行動ごとにも setBattle() で保存する
 //   → 負けそうなときに閉じて開き直しても、同じ戦闘の同じところから続く
 // - 全員倒れたら、画面に出す前に wipe() を呼ぶ（その場で保存される）
-import { SAVE_KEY, safeStorage } from './storage.js?v=paid-skills-1';
+import { SAVE_KEY, safeStorage } from './storage.js?v=jobs-master-1';
 
-export const SAVE_VERSION = 2;
+export const SAVE_VERSION = 3;
 const CHANT_BACKUP_KEY = 'englishQuest.chantBackup.v2';
 const BROKEN_KEY = `${SAVE_KEY}.broken`;
 
-// 古い版のセーブを新しい版に直す関数（版を上げたらここに足す）。MIGRATIONS[1] は 1 → 2
+// 外側の保存形式は1→2→3と移行する。職業・技能の実データ移行はnormalizeGameが一度だけ行う。
 // 金額は正式データ読込後のnormalizeGameで換算する。外側の版で旧クライアントの誤書込を防ぐ。
-const MIGRATIONS = { 1: data => ({ ...data }) };
+const MIGRATIONS = { 1: data => ({ ...data }), 2: data => ({ ...data }) };
 
 const clone = (x) => (x == null ? x : structuredClone(x));
 
@@ -249,4 +249,5 @@ export class GameSession {
     if (!this.state.run) throw new Error('ダンジョンの中ではない');
   }
 }
+
 

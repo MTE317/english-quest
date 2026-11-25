@@ -1,11 +1,12 @@
-import { normalizeAp } from './ap.js?v=paid-skills-1';
-import { migrateGold, goldVersion } from './gold.js?v=paid-skills-1';
+import { normalizeAp } from './ap.js?v=jobs-master-1';
+import { migrateGold, goldVersion } from './gold.js?v=jobs-master-1';
 // 新しいゲームの進み具合（セーブの game の中身）
-import { createMember, maxHp, maxMp, levelCap } from './character.js?v=paid-skills-1';
-import { ensureLoadout, jobSkills, isLearned, normalizeSkillLevels, migrateInitialSkills } from './growth.js?v=paid-skills-1';
-import { parseAmounts } from './csv.js?v=paid-skills-1';
-import { recordStoredMaterials } from './temple.js?v=paid-skills-1';
-import { retireLegacyQuestChains } from './retired-quests.js?v=paid-skills-1';
+import { createMember, maxHp, maxMp, levelCap, starterGearIds, makeGear } from './character.js?v=jobs-master-1';
+import { ensureLoadout, jobSkills, isLearned, normalizeSkillLevels, migrateInitialSkills } from './growth.js?v=jobs-master-1';
+import { parseAmounts } from './csv.js?v=jobs-master-1';
+import { recordStoredMaterials } from './temple.js?v=jobs-master-1';
+import { retireLegacyQuestChains } from './retired-quests.js?v=jobs-master-1';
+import { migrateJobMaster, JOB_MASTER_VERSION } from './jobs-migration.js?v=jobs-master-1';
 
 export const PARTY_SIZE = 6;
 
@@ -42,6 +43,17 @@ export function createNewGame(data, partySpecs, { partySize = PARTY_SIZE } = {})
     backpackTier: data.backpackTiers?.[0]?.tier ?? 1,
   };
   game.party = partySpecs.map((spec, i) => createMember(data, game, spec, i));
+  if (data.basicJobRules) {
+    // 配給品は倉庫に置き、全員が無装備の状態から手動で装備を選べるようにする。
+    for (const member of game.party) {
+      member.jobMasterVersion = JOB_MASTER_VERSION;
+      member.ultimateGauge = 0;
+      for (const id of Object.values(starterGearIds(data, member.job))) if (id) game.storage.gear.push(makeGear(game, id));
+    }
+    game.jobMasterVersion = JOB_MASTER_VERSION;
+    game.starterSuppliesVersion = 1;
+    game.notices = ['初級装備を倉庫に用意しました。仲間の装備画面で装備を選び、技能画面でAPを使って最初の技能を修得できます。'];
+  }
   return normalizeGame(data, game, null, { expandParty: partySize === PARTY_SIZE });
 }
 
@@ -73,6 +85,8 @@ export function normalizeGame(data, game, run = null, { expandParty = true } = {
   game.titles ??= [];
   game.unlockedJobs = game.unlockedJobs ?? [];
   game.examsPassed = game.examsPassed ?? [];
+  const masterChangedMembers = new Set((game.party ?? []).filter((member) => member.jobMasterVersion !== JOB_MASTER_VERSION));
+  const masterChanged = migrateJobMaster(data, game, run);
   for (const member of game.party ?? []) migrateInitialSkills(data, member);
   preserveMasteredJobs(data, game);
   const retiredMembers = retireRuneBonuses(data, game);
@@ -82,7 +96,8 @@ export function normalizeGame(data, game, run = null, { expandParty = true } = {
     m.masteredJobs ??= [];
     if (data.skills) { normalizeSkillLevels(data, m); ensureLoadout(data, m); }
     for (const gear of Object.values(m.equip ?? {})) alignCraftedEffects(data, gear);
-    if (retiredMembers.has(m)) {
+    m.ultimateGauge = Math.max(0, Math.min(data.basicJobRules?.ultimate?.gauge_max ?? 100, Number(m.ultimateGauge) || 0));
+    if (retiredMembers.has(m) || (masterChanged && masterChangedMembers.has(m))) {
       // 現在値は回復させず、新上限だけを適用する。戦闘不能の HP 0 も維持する。
       if (Number.isFinite(m.hp)) m.hp = Math.min(m.hp, maxHp(data, m));
       if (Number.isFinite(m.mp)) m.mp = Math.min(m.mp, maxMp(data, m));
@@ -117,6 +132,10 @@ function expandLegacyParty(data, game) {
     ids.add(member.id);
     member.lv = level;
     member.room = null;
+    if (data.basicJobRules) {
+      member.jobMasterVersion = JOB_MASTER_VERSION;
+      member.ultimateGauge = 0;
+    }
     member.hp = maxHp(data, member);
     member.mp = maxMp(data, member);
     member.masteredJobs = [];
@@ -199,4 +218,5 @@ function alignCraftedEffects(data, gear) {
   // 効果の辞書をコピーし、マスタや別の装備・入場時の写しと共有しない。
   gear.affixes = { ...(def.fixedEffects ?? {}) };
 }
+
 

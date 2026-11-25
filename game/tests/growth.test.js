@@ -2,9 +2,10 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createNewGame } from '../js/game-state.js';
 import {
-  learnBlock, learnSkill, isLearned, jobSkills, ensureLoadout, equipBlock, equipSkill, unequipSkill, capacity, usedCapacity, actionSkills,
-  learnCommon, commonBlock, memberMods, parseBonusText, isJobMastered, masteryLevel, addMasteryKill,
-  changeJob, availableJobs, GROWTH_FORMULAS,
+  learnBlock, learnSkill, isLearned, jobSkills, ensureLoadout, equipBlock, equipSkill,
+  unequipSkill, capacity, usedCapacity, actionSkills, learnCommon, commonBlock,
+  memberMods, parseBonusText, isJobMastered, masteryLevel, addMasteryKill,
+  changeJob, availableJobs, ultimateSkill,
 } from '../js/growth.js';
 import { computeStats, maxHp, canEquip, makeGear, equipFromStorage, gainXp, weaponPower } from '../js/character.js';
 import { realGameData } from './helpers.js';
@@ -13,144 +14,128 @@ const data = realGameData();
 const party = ['warrior', 'knight', 'black_mage', 'white_mage', 'thief', 'bard'].map((job) => ({ name: job, job, icon: 'x' }));
 const fresh = () => createNewGame(data, party);
 
-test('新規開始では1段目も未習得で、スキル枠は空', () => {
-  const w = fresh().party[0];
-  const s1 = jobSkills(data, 'warrior').filter((s) => s.stage === 1);
-  assert.ok(s1.every((s) => !isLearned(w, s) && s.apToLearn > 0));
-  assert.deepEqual(actionSkills(data, w), []);
-  assert.ok(actionSkills(data, w).every((s) => s.job === 'warrior' && s.kind !== 'passive'));
+test('新規開始では入口技能も未修得で、通常枠・奥義枠は空', () => {
+  const member = fresh().party[0];
+  assert.ok(jobSkills(data, 'warrior').every((skill) => !isLearned(member, skill) && skill.apToLearn > 0));
+  assert.deepEqual(actionSkills(data, member), []);
+  assert.equal(ultimateSkill(data, member), null);
 });
 
-test('未経験ジョブの初期スキルは共有されず、装備枠はアクティブ・パッシブに分離される', () => {
-  const w = fresh().party[0];
-  const foreign = jobSkills(data, 'black_mage').find((s) => s.stage === 1);
-  assert.equal(isLearned(w, foreign), false);
-
-  const active = jobSkills(data, 'warrior').find((s) => s.stage === 1 && s.kind !== 'passive');
-  const passive = jobSkills(data, 'warrior').find((s) => s.kind === 'passive');
-  w.learned.push(passive.id, active.id);
-  w.loadout = { actions: [passive.id, active.id], passives: [active.id, passive.id] };
-  ensureLoadout(data, w);
-  assert.deepEqual(w.loadout.actions, [active.id]);
-  assert.deepEqual(w.loadout.passives, [passive.id]);
+test('旧形式の混在枠を通常・パッシブ・奥義の枠へ分離し重複を取り除く', () => {
+  const member = fresh().party[0];
+  const active = data.skills.get('warrior_A01');
+  const passive = data.skills.get('warrior_P02');
+  const ultimate = data.skills.get('warrior_U01');
+  member.learned = [active.id, passive.id, ultimate.id];
+  member.loadout = { actions: [passive.id, active.id, ultimate.id], passives: [active.id, passive.id, ultimate.id] };
+  ensureLoadout(data, member);
+  assert.deepEqual(member.loadout, { actions: [active.id], passives: [passive.id], ultimate: ultimate.id });
 });
 
-test('同じジョブの仲間同士でも習得・装着状態は共有しない', () => {
-  const specs = Array.from({ length: 6 }, (_, i) => ({ name: `warrior${i + 1}`, job: 'warrior', icon: 'x' }));
-  const g = createNewGame(data, specs);
-  const first = g.party[0];
-  const second = g.party[1];
-  const passive = jobSkills(data, 'warrior').find((s) => s.kind === 'passive' && s.stage === 2);
+test('同じ職業の仲間でも修得・装着状態を共有せず、修得だけで装着しない', () => {
+  const game = createNewGame(data, Array.from({ length: 6 }, (_, i) => ({ name: String(i), job: 'warrior', icon: 'x' })));
+  const [first, second] = game.party;
+  const passive = data.skills.get('warrior_P02');
   first.ap = passive.apToLearn;
   learnSkill(data, first, passive.id);
-  assert.equal(isLearned(first, passive), true);
-  assert.equal(isLearned(second, passive), false);
+  assert.equal(first.ap, 0);
+  assert.ok(isLearned(first, passive));
+  assert.ok(!isLearned(second, passive));
   assert.ok(!first.loadout.passives.includes(passive.id));
   equipSkill(data, first, passive.id);
   assert.ok(first.loadout.passives.includes(passive.id));
   assert.ok(!second.loadout.passives.includes(passive.id));
 });
 
-test('基本職は独立習得（AP が減る・パッシブは能力値に入る）', () => {
-  const g = fresh(); const w = g.party[0];
-  const s2 = jobSkills(data, 'warrior').find((s) => s.name === '鉄の体'); // 守り2段目：HP+10%
-  assert.match(learnBlock(data, w, s2), /AP/);
-  w.ap = s2.apToLearn + 3;
-  const hp0 = maxHp(data, w);
-  const loadoutBefore = structuredClone(w.loadout);
-  learnSkill(data, w, s2.id);
-  assert.equal(w.ap, 3);
-  assert.deepEqual(w.loadout, loadoutBefore);
-  assert.equal(maxHp(data, w), hp0);
-  equipSkill(data, w, s2.id);
-  assert.ok(w.loadout.passives.includes(s2.id));
-  assert.equal(maxHp(data, w), Math.round(hp0 * 1.1));
-  const s3 = jobSkills(data, 'warrior').find((s) => s.path === s2.path && s.stage === 4);
-  assert.match(learnBlock(data, w, s3), /AP/);
-  w.ap = s3.apToLearn;
-  assert.equal(learnBlock(data, w, s3), '');
+test('AP不足と前提Lvを区別し、装備したパッシブだけ能力値へ反映する', () => {
+  const member = fresh().party[0];
+  const passive = data.skills.get('warrior_P02');
+  member.ap = 0;
+  assert.match(learnBlock(data, member, passive), /AP/);
+  member.ap = passive.apToLearn + 3;
+  const before = computeStats(data, member).str;
+  learnSkill(data, member, passive.id);
+  assert.equal(member.ap, 3);
+  assert.equal(computeStats(data, member).str, before);
+  equipSkill(data, member, passive.id);
+  assert.ok(computeStats(data, member).str > before);
+  assert.match(learnBlock(data, member, data.skills.get('warrior_A02')), /Lv2/);
 });
 
-test('枠：cost の合計が上限まで。ほかのジョブのスキルも持ち出せるが奥義はだめ', () => {
-  const g = fresh(); const w = g.party[0];
-  const cap = capacity(data, w);
-  assert.equal(cap.actions, GROWTH_FORMULAS.action_capacity);
-  // 転職経験だけでは習得しない。APで覚えてから持ち出す。
-  const fire = jobSkills(data, 'black_mage').find((s) => s.stage === 1 && s.kind === 'attack');
-  assert.equal(equipBlock(data, w, fire), '覚えていない');
-  w.visitedJobs.push('black_mage');
-  assert.equal(equipBlock(data, w, fire), '覚えていない');
-  w.ap = fire.apToLearn;
-  learnSkill(data, w, fire.id);
-  assert.equal(equipBlock(data, w, fire), '');
-  equipSkill(data, w, fire.id);
-  assert.ok(actionSkills(data, w).includes(fire));
-  const fin = jobSkills(data, 'black_mage').find((s) => s.isFinal);
-  w.learned.push(fin.id);
-  assert.match(equipBlock(data, w, fin), /奥義/);
-  unequipSkill(w, fire.id);
-  assert.ok(!actionSkills(data, w).includes(fire));
-  assert.ok(usedCapacity(data, w).actions <= cap.actions);
+test('覚えた他職技能と奥義を持ち出せ、通常容量と奥義1枠は別に管理する', () => {
+  const member = fresh().party[0];
+  const fire = data.skills.get('black_mage_A01');
+  assert.equal(equipBlock(data, member, fire), '覚えていない');
+  member.visitedJobs.push('black_mage');
+  member.ap = fire.apToLearn;
+  learnSkill(data, member, fire.id);
+  equipSkill(data, member, fire.id);
+  assert.ok(actionSkills(data, member).some((skill) => skill.id === fire.id));
+  const ultimate = data.skills.get('black_mage_U01');
+  member.learned.push(ultimate.id);
+  const used = usedCapacity(data, member);
+  equipSkill(data, member, ultimate.id);
+  assert.equal(ultimateSkill(data, member).id, ultimate.id);
+  assert.deepEqual(usedCapacity(data, member), used);
+  unequipSkill(member, fire.id);
+  assert.deepEqual(actionSkills(data, member), []);
+  assert.ok(usedCapacity(data, member).actions <= capacity(data, member).actions);
 });
 
-test('共通ツリー：レベル条件と共通APで習得し、効果と枠が広がる', () => {
-  const g = fresh(); const w = g.party[0];
-  const vit = data.commonTree.find((n) => n.id === 'vit1');
-  assert.match(commonBlock(data, w, vit), /Lv/);
-  gainXp(data, w, 1e6);
-  w.ap = 30;
-  const hp0 = maxHp(data, w);
-  learnCommon(data, w, 'vit1');
-  assert.equal(maxHp(data, w), Math.round(hp0 * 1.05));
-  learnCommon(data, w, 'cap1');
-  assert.equal(capacity(data, w).actions, GROWTH_FORMULAS.action_capacity + 1);
+test('共通ツリーはレベルと共通APを使い、強化と容量を増やす', () => {
+  const member = fresh().party[0];
+  const node = data.commonTree.find((entry) => entry.id === 'vit1');
+  assert.match(commonBlock(data, member, node), /Lv/);
+  gainXp(data, member, 1e6);
+  member.ap = 100;
+  const hp = maxHp(data, member);
+  const cap = capacity(data, member);
+  learnCommon(data, member, 'vit1');
+  assert.equal(maxHp(data, member), Math.round(hp * 1.05));
+  learnCommon(data, member, 'cap1');
+  assert.equal(capacity(data, member).actions, cap.actions + 1);
   assert.deepEqual(parseBonusText('戦闘が終わったときMP最大の10%回復'), { mp_regen: 0.1 });
   assert.deepEqual(parseBonusText('STRとMAG+2%'), { str: 0.02, mag: 0.02 });
   assert.deepEqual(parseBonusText('会心率+2%'), { crt: 0.02 });
 });
 
-test('ジョブを極めると、全ジョブにボーナス（戦士：STR+3%）', () => {
-  const g = fresh(); const w = g.party[0];
-  const str0 = computeStats(data, w).str;
-  w.learned = jobSkills(data, 'warrior').map((s) => s.id);
-  assert.ok(isJobMastered(data, w, 'warrior'));
-  assert.ok(memberMods(data, w).str >= 0.03);
-  assert.ok(computeStats(data, w).str > str0);
+test('全技能修得はマスター判定になるが、枠外の常時能力報酬は発生しない', () => {
+  const member = fresh().party[0];
+  const before = computeStats(data, member).str;
+  member.learned = jobSkills(data, 'warrior').map((skill) => skill.id);
+  assert.ok(isJobMastered(data, member, 'warrior'));
+  assert.equal(memberMods(data, member).str ?? 0, 0);
+  assert.equal(computeStats(data, member).str, before);
 });
 
-test('武器熟練度：高レベル武器は熟練度0でも装備可能、30体ごとに威力+2%（最大+20%）', () => {
-  const g = fresh(); const w = g.party[0];
-  const top = makeGear(g, 'sword_t24'); // ★12・剣の熟練度0
-  assert.equal(masteryLevel(data, w, 'sword'), 0);
-  assert.equal(canEquip(data, w, 'weapon', top).ok, true);
-  g.storage.gear.push(top);
-  equipFromStorage(data, g, w, 'weapon', top.uid);
-  assert.equal(w.equip.weapon.id, 'sword_t24');
-  const p0 = weaponPower(data, w, w.equip.weapon);
-  for (let k = 0; k < 60; k++) addMasteryKill(data, w);
-  assert.equal(masteryLevel(data, w, 'sword'), 2);
-  assert.ok(Math.abs(weaponPower(data, w, w.equip.weapon) / p0 - 1.04) < 1e-9);
-  for (let k = 0; k < 300; k++) addMasteryKill(data, w);
-  assert.equal(masteryLevel(data, w, 'sword'), 10);
-  assert.ok(Math.abs(weaponPower(data, w, w.equip.weapon) / p0 - 1.20) < 1e-9);
+test('武器熟練度は装備条件にせず、30討伐ごとの威力補正と最大値を保つ', () => {
+  const game = fresh();
+  const member = game.party[0];
+  const top = makeGear(game, 'sword_t24');
+  assert.equal(masteryLevel(data, member, 'sword'), 0);
+  assert.equal(canEquip(data, member, 'weapon', top).ok, true);
+  game.storage.gear.push(top);
+  equipFromStorage(data, game, member, 'weapon', top.uid);
+  const before = weaponPower(data, member, member.equip.weapon);
+  for (let n = 0; n < 60; n += 1) addMasteryKill(data, member);
+  assert.equal(masteryLevel(data, member, 'sword'), 2);
+  assert.ok(Math.abs(weaponPower(data, member, member.equip.weapon) / before - 1.04) < 1e-9);
+  for (let n = 0; n < 300; n += 1) addMasteryKill(data, member);
+  assert.equal(masteryLevel(data, member, 'sword'), 10);
+  assert.ok(Math.abs(weaponPower(data, member, member.equip.weapon) / before - 1.2) < 1e-9);
 });
 
-test('ジョブチェンジ：基本ジョブは選べる。装備できない物は倉庫へ', () => {
-  const g = fresh();
-  assert.ok(availableJobs(data, g).every((j) => j.tier === 'base'));
-  assert.throws(() => changeJob(data, g, 0, 'gunner'));
-  const originalGold = g.gold;
-  changeJob(data, g, 0, 'black_mage'); // 剣と重装は黒魔道士は×
-  const w = g.party[0];
-  assert.equal(w.job, 'black_mage');
-  assert.equal(g.jp, undefined);
-  assert.equal(g.gold, originalGold);
-  assert.equal(w.equip.weapon, null);
-  assert.equal(w.equip.body, null);
-  assert.ok(g.storage.gear.length >= 4);
-  assert.deepEqual(actionSkills(data, w), []);
-  assert.ok(jobSkills(data, 'black_mage').every(s => !isLearned(w, s)));
-  g.unlockedJobs = ['gunner'];
-  assert.ok(availableJobs(data, g).some((j) => j.id === 'gunner'));
+test('基本職への転職は無料で武器を保持し、未実装の追加職は選べない', () => {
+  const game = fresh();
+  const member = game.party[0];
+  member.equip.weapon = makeGear(game, 'sword_t1');
+  const gold = game.gold;
+  changeJob(data, game, 0, 'black_mage');
+  assert.equal(member.job, 'black_mage');
+  assert.equal(member.equip.weapon.id, 'sword_t1');
+  assert.equal(game.gold, gold);
+  assert.deepEqual(member.learned, []);
+  game.unlockedJobs = ['gunner'];
+  assert.ok(availableJobs(data, game).every((job) => job.tier === 'base'));
+  assert.throws(() => changeJob(data, game, 0, 'gunner'), /選べない/);
 });
-

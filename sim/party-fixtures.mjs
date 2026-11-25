@@ -34,7 +34,11 @@ function freezeTree(value) {
   }
   return value;
 }
-export const BUILD_CATALOG = freezeTree(JSON.parse(readFileSync(new URL('./build-catalog.json', import.meta.url), 'utf8')));
+export const LEGACY_FIXTURE_NOTICE = '旧ビルドカタログは新職業マスターでは廃止済みです。node game/verification/jobs-master/measure.mjs を実行してください。';
+export const BUILD_CATALOG = freezeTree({
+  ...JSON.parse(readFileSync(new URL('./build-catalog.json', import.meta.url), 'utf8')),
+  status: 'retired', supersededBy: 'game/verification/jobs-master/measure.mjs',
+});
 export const BUILD_DEFINITIONS = Object.freeze(Object.fromEntries(BUILD_CATALOG.builds.map((build) => [build.id, build])));
 export const PROFILES = Object.freeze({
   ...LEGACY_PROFILES,
@@ -145,6 +149,7 @@ function checkBuildProgress(data, build, rank, stage) {
 
 /** 核心が技能枠や付与枠から落ちた比較結果を作らない。専用制作の固定効果だけで代用もしない。 */
 export function assertBuildCore(data, game) {
+  if (data.basicJobRules?.master) throw new Error(LEGACY_FIXTURE_NOTICE);
   const fixture = game.simulationFixture;
   const build = BUILD_DEFINITIONS[fixture?.catalogBuildId];
   if (!build) throw new Error('検証する開発ビルドのIDがありません。');
@@ -207,6 +212,7 @@ function recipeScore(def, weights, normal) {
 }
 
 export function prepareParty(data, dungeon, profileId = 'balanced', preparation = 'standard', options = {}) {
+  if (data.basicJobRules?.master) throw new Error(LEGACY_FIXTURE_NOTICE);
   const profile = PROFILES[profileId];
   const strategy = ['critical6', 'weakness6'].includes(profileId) ? profileId.slice(0, -1) : profileId;
   if (!profile) throw new Error(`比較用編成がありません: ${profileId}`);
@@ -434,3 +440,4 @@ export function prepareParty(data, dungeon, profileId = 'balanced', preparation 
   game.gold = initialGold;
   return game;
 }
+

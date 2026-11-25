@@ -8,11 +8,25 @@ import { startRun, afterBattle, returnToTown } from '../js/dungeon.js';
 import { discoverJobs, jobDiscoveryProgress } from '../js/temple.js';
 import { readCsv, readJson, MemoryStorage } from './helpers.js';
 
-const data = buildGameData(Object.fromEntries(Object.entries(GAME_FILES).map(([key, name]) =>
+const master = buildGameData(Object.fromEntries(Object.entries(GAME_FILES).map(([key, name]) =>
   [key, name.endsWith('.json') ? readJson(name) : readCsv(name).rows])));
+// 発見処理は実装済み職を模した制御データで検証する。商品側の42職は準備中のまま。
+const data = { ...master, jobsById: new Map(master.jobsById), jobUnlocks: new Map() };
+for (const [id, dungeon] of [['spellblade', 'ruined_fort'], ['elementalist', 'howling_canyon']]) {
+  data.jobsById.set(id, { ...master.jobsById.get(id), skillsReady: true });
+  data.jobUnlocks.set(id, { job_id: id, method: '発見', discover_dungeon: dungeon,
+    discover_chance_after_boss: '0.1', discover_guarantee_clears: '3' });
+}
 const specs = ['warrior', 'knight', 'black_mage', 'white_mage', 'thief', 'bard'].map((job) => ({ name: job, job, icon: 'x' }));
 const discoveries = [['spellblade', 'ruined_fort'], ['elementalist', 'howling_canyon']];
 const fresh = () => createNewGame(data, specs);
+
+test('新マスターの準備中42職は踏破しても解放せず、旧職を復活させない', () => {
+  const game = createNewGame(master, specs);
+  for (const dungeon of master.dungeons.values()) discoverJobs(master, game, dungeon.id, () => 0);
+  assert.deepEqual(game.unlockedJobs, []);
+  assert.equal(master.jobs.filter((job) => job.skillsReady === false).length, 42);
+});
 
 test('公開の発見2職だけ3踏破保証を持ち、元の10%抽選を維持する', () => {
   const rules = [...data.jobUnlocks.values()].filter((rule) => Number(rule.discover_guarantee_clears) > 0);
@@ -134,3 +148,4 @@ test('全滅や途中帰還を繰り返しても発見の踏破回数を増や�
   assert.equal(session.game.cleared.ruined_fort, 1);
   assert.deepEqual(session.game.unlockedJobs, []);
 });
+

@@ -143,11 +143,12 @@ test('武器・防具屋：★1は装備Lv下限+3の段階。買うと倉庫へ
   assert.ok(stock.length > 0 && stock.every((x) => x.def.itemLv === 3 && x.star === 1));
   const sword = stock.find((x) => x.def.id === 'sword_t1');
   assert.equal(sword.price, 10 * Math.round(Math.round((8 + 1.6 * 3) * 4.5) * (1 - Number(readCsv('adventurer_ranks.csv').rows[0].shop_discount))));
+  const beforeCount = g.storage.gear.length;
   const gear = buyGear(data, g, 'sword_t1');
-  assert.equal(g.storage.gear.length, 1);
+  assert.equal(g.storage.gear.length, beforeCount + 1);
   const p = sellPrice(data, gear);
   sellGear(data, g, gear.uid);
-  assert.equal(g.storage.gear.length, 0);
+  assert.equal(g.storage.gear.length, beforeCount);
   assert.equal(g.gold, 10000 - sword.price + p);
 });
 
@@ -207,3 +208,4 @@ test('掲示板：入れかえは受けていない枠だけ', () => {
   assert.equal(g.board.length, boardSize(data, g));
   assert.ok(g.board.every((q) => !old.includes(q.uid)));
 });
+

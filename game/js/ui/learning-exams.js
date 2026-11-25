@@ -1,11 +1,11 @@
 // 単語4択と瞬間英作文の二段階試験。分野別の合格記録はLearningStoreに保存する。
-import { runQuiz } from './quiz-runner.js?v=paid-skills-1';
-import { el, render } from '../dom.js?v=paid-skills-1';
-import { now } from '../storage.js?v=paid-skills-1';
-import { speak, canSpeak, stopSpeech } from '../speech.js?v=paid-skills-1';
-import { recordChant } from '../chant.js?v=paid-skills-1';
+import { runQuiz } from './quiz-runner.js?v=jobs-master-1';
+import { el, render } from '../dom.js?v=jobs-master-1';
+import { now } from '../storage.js?v=jobs-master-1';
+import { speak, canSpeak, stopSpeech } from '../speech.js?v=jobs-master-1';
+import { recordChant } from '../chant.js?v=jobs-master-1';
 import { makePromotionExam, promotionExamState, recordPromotionPart,
-  scorePhraseGrades, PHRASE_GRADE_SCORES } from '../promotion.js?v=paid-skills-1';
+  scorePhraseGrades, PHRASE_GRADE_SCORES } from '../promotion.js?v=jobs-master-1';
 
 export function runDualPromotionExam({ view, catalog, store, session, scheduler, rankId,
   chantConfig, onFinish }) {

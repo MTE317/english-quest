@@ -1,4 +1,4 @@
-import { unlockFootsteps, playDungeonFootstep } from '../dungeon-footsteps.js?v=paid-skills-1';
+import { unlockFootsteps, playDungeonFootstep } from '../dungeon-footsteps.js?v=jobs-master-1';
 
 let active = null;
 
