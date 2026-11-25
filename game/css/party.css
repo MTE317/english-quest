@@ -477,3 +477,30 @@
 .aptitude-radar-value { fill: #ebc68640; stroke: #ebc686; stroke-width: 2.5; stroke-linejoin: round; }
 .aptitude-radar-dot { fill: #ffe3a1; }
 .aptitude-radar-label { fill: #f3eee5; font-size: 13px; font-weight: 700; }
+
+/* 全武器種の熟練度を0から表示する。 */
+.weapon-mastery-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+  gap: 10px;
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+}
+.weapon-mastery-card {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
+  padding: 9px;
+  border: 1px solid var(--line);
+  background: var(--panel-2);
+}
+.weapon-mastery-body { flex: 1; min-width: 0; }
+.weapon-mastery-heading { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 3px 8px; font-size: .85rem; }
+.weapon-mastery-heading > span { color: var(--accent); font-variant-numeric: tabular-nums; }
+.weapon-mastery-bar { display: block; width: 100%; height: 9px; margin: 6px 0; border: 0; accent-color: #ebc686; background: #081325; }
+.weapon-mastery-bar::-webkit-progress-bar { background: #081325; }
+.weapon-mastery-bar::-webkit-progress-value { background: #ebc686; }
+.weapon-mastery-bar::-moz-progress-bar { background: #ebc686; }
+.weapon-mastery-body > small { font-size: .72rem; }
