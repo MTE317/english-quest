@@ -12,7 +12,7 @@ import { promotionProgress, promotionExamState } from '../promotion.js?v=skill-g
 import { learningStatistics } from '../learning-stats.js?v=skill-growth-2';
 import { TRAINING_COUNTS, trainingChunksForSet, trainingWordsForSet,
   trainingPhrasesForSet, resolveTrainingMode } from '../training.js?v=skill-growth-2';
-import { runTrainingSession } from '../ui/training-runner.js?v=skill-growth-2';
+import { runTrainingSession } from '../ui/training-runner.js?v=grades-above-choices-1';
 import { runDualPromotionExam } from '../ui/learning-exams.js?v=skill-growth-2';
 import { el, render } from '../dom.js?v=skill-growth-2';
 import { setSceneMusic } from '../battle-music.js?v=skill-growth-2';
