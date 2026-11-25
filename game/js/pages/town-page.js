@@ -1,30 +1,30 @@
-import { availableAp } from '../ap.js?v=jobs-master-1';
+import { availableAp } from '../ap.js?v=skill-growth-2';
 // 町をホームにして、施設カードから各施設を開く。
-import { loadGameData } from '../gamedata.js?v=jobs-master-1';
-import { GameSession } from '../save.js?v=jobs-master-1';
-import { normalizeGame } from '../game-state.js?v=jobs-master-1';
-import { currentRank, seededRng } from '../dungeon.js?v=jobs-master-1';
+import { loadGameData } from '../gamedata.js?v=skill-growth-2';
+import { GameSession } from '../save.js?v=skill-growth-2';
+import { normalizeGame } from '../game-state.js?v=skill-growth-2';
+import { currentRank, seededRng } from '../dungeon.js?v=skill-growth-2';
 import {
   calendarOf, fillBoard, boardSize, questAcceptLimit, acceptQuest, canAcceptQuest, abandonQuest, canReport, reportQuest, questText, questProgress, questDestination, questRewardGold, questRankPoints, questDepositTotal, questAbandonRefund, nextRankStatus, stayInn, revive, reviveCost, checkRankUp,
   canExpandBackpack, expandBackpack, feeTier,
   nextBackpackTier,
-} from '../town.js?v=jobs-master-1';
-import { backpackSlots } from '../loot.js?v=jobs-master-1';
-import { maxHp, maxMp, gearDef } from '../character.js?v=jobs-master-1';
-import { availableJobs, changeJob } from '../growth.js?v=jobs-master-1';
-import { explorationStories, acceptExplorationStory, reportExplorationStory } from '../exploration-story.js?v=jobs-master-1';
-import { cureAtTemple, recordStoredMaterials } from '../temple.js?v=jobs-master-1';
-import { workshopView, managementView, templeExtras } from '../ui/facility-view.js?v=jobs-master-1';
-import { itemShopView, gearShopView } from '../ui/town-shops.js?v=jobs-master-1';
-import { weaponIcon } from '../ui/weapon-icons.js?v=jobs-master-1';
-import { equipmentIcon } from '../ui/equipment-icons.js?v=jobs-master-1';
-import { storageView } from '../ui/storage-view.js?v=jobs-master-1';
-import { uiIcon } from '../ui/pixel-icons.js?v=jobs-master-1';
-import { portraitIcon } from '../ui/portrait.js?v=jobs-master-1';
-import { el, render } from '../dom.js?v=jobs-master-1';
-import { setSceneMusic } from '../battle-music.js?v=jobs-master-1';
+} from '../town.js?v=skill-growth-2';
+import { backpackSlots } from '../loot.js?v=skill-growth-2';
+import { maxHp, maxMp, gearDef } from '../character.js?v=skill-growth-2';
+import { availableJobs, changeJob } from '../growth.js?v=skill-growth-2';
+import { explorationStories, acceptExplorationStory, reportExplorationStory } from '../exploration-story.js?v=skill-growth-2';
+import { cureAtTemple, recordStoredMaterials } from '../temple.js?v=skill-growth-2';
+import { workshopView, managementView, templeExtras } from '../ui/facility-view.js?v=skill-growth-2';
+import { itemShopView, gearShopView } from '../ui/town-shops.js?v=skill-growth-2';
+import { weaponIcon } from '../ui/weapon-icons.js?v=skill-growth-2';
+import { equipmentIcon } from '../ui/equipment-icons.js?v=skill-growth-2';
+import { storageView } from '../ui/storage-view.js?v=skill-growth-2';
+import { uiIcon } from '../ui/pixel-icons.js?v=skill-growth-2';
+import { portraitIcon } from '../ui/portrait.js?v=skill-growth-2';
+import { el, render } from '../dom.js?v=skill-growth-2';
+import { setSceneMusic } from '../battle-music.js?v=skill-growth-2';
 
-import { installGameShell, sceneHeader } from '../ui/game-shell.js?v=jobs-master-1';
+import { installGameShell, sceneHeader } from '../ui/game-shell.js?v=skill-growth-2';
 
 const view = document.getElementById('view');
 const session = new GameSession();

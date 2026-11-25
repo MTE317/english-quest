@@ -1,12 +1,12 @@
-import { normalizeAp } from './ap.js?v=jobs-master-1';
-import { migrateGold, goldVersion } from './gold.js?v=jobs-master-1';
+import { normalizeAp } from './ap.js?v=skill-growth-2';
+import { migrateGold, goldVersion } from './gold.js?v=skill-growth-2';
 // 新しいゲームの進み具合（セーブの game の中身）
-import { createMember, maxHp, maxMp, levelCap, starterGearIds, makeGear } from './character.js?v=jobs-master-1';
-import { ensureLoadout, jobSkills, isLearned, normalizeSkillLevels, migrateInitialSkills } from './growth.js?v=jobs-master-1';
-import { parseAmounts } from './csv.js?v=jobs-master-1';
-import { recordStoredMaterials } from './temple.js?v=jobs-master-1';
-import { retireLegacyQuestChains } from './retired-quests.js?v=jobs-master-1';
-import { migrateJobMaster, JOB_MASTER_VERSION } from './jobs-migration.js?v=jobs-master-1';
+import { createMember, maxHp, maxMp, levelCap, starterGearIds, makeGear } from './character.js?v=skill-growth-2';
+import { ensureLoadout, jobSkills, isLearned, normalizeSkillLevels, migrateInitialSkills } from './growth.js?v=skill-growth-2';
+import { parseAmounts } from './csv.js?v=skill-growth-2';
+import { recordStoredMaterials } from './temple.js?v=skill-growth-2';
+import { retireLegacyQuestChains } from './retired-quests.js?v=skill-growth-2';
+import { migrateJobMaster, JOB_MASTER_VERSION } from './jobs-migration.js?v=skill-growth-2';
 
 export const PARTY_SIZE = 6;
 
@@ -47,6 +47,7 @@ export function createNewGame(data, partySpecs, { partySize = PARTY_SIZE } = {})
     // 配給品は倉庫に置き、全員が無装備の状態から手動で装備を選べるようにする。
     for (const member of game.party) {
       member.jobMasterVersion = JOB_MASTER_VERSION;
+      member.skillGrowthVersion=2;
       member.ultimateGauge = 0;
       for (const id of Object.values(starterGearIds(data, member.job))) if (id) game.storage.gear.push(makeGear(game, id));
     }
@@ -134,6 +135,7 @@ function expandLegacyParty(data, game) {
     member.room = null;
     if (data.basicJobRules) {
       member.jobMasterVersion = JOB_MASTER_VERSION;
+      member.skillGrowthVersion=2;
       member.ultimateGauge = 0;
     }
     member.hp = maxHp(data, member);

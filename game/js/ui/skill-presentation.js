@@ -36,6 +36,7 @@ export function prerequisiteText(data, member, skill) {
   const entries = prerequisites.map(({ id, level = 1 }) => {
     const known = (member.learned ?? []).includes(id);
     const current = known ? Math.max(1, Number(member.skillLevels?.[id]) || 1) : 0;
+    if(data.skills.get(id)?.effect?.growth_mode==='none')return `${data.skills.get(id).name} 修得（${known?"達成":"未修得"}）`;
     return `${data.skills.get(id)?.name ?? id} Lv${level}（${current >= level ? '達成' : `現在Lv${current}`}）`;
   });
   if (skill.isFinal) {

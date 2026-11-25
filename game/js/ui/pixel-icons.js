@@ -1,4 +1,4 @@
-import { el } from '../dom.js?v=jobs-master-1';
+import { el } from '../dom.js?v=skill-growth-2';
 
 // 町で使う12種類の印。名前は隣のテキストで読み上げ、絵は装飾として扱う。
 const icons = ['guild', 'inn', 'temple', 'party', 'items', 'gear',

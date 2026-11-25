@@ -1,5 +1,5 @@
-import { el } from '../dom.js?v=jobs-master-1';
-import { weaponIcon } from './weapon-icons.js?v=jobs-master-1';
+import { el } from '../dom.js?v=skill-growth-2';
+import { weaponIcon } from './weapon-icons.js?v=skill-growth-2';
 
 // 防具は装備の部位ごとに1枚を共用する。軽さ・レアリティ・個別IDでは分けない。
 const armorSlots = new Set(['head', 'arm', 'body', 'cloak']);

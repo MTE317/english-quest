@@ -9,7 +9,7 @@ test('現行マスターは50職・基本8職120技能・全Lvを持つ', () => 
   const result = inspectMaster();
   assert.equal(result.jobs, 50);
   assert.equal(result.skills, 120);
-  assert.equal(result.skillLevelDefinitions, 600);
+  assert.equal(result.skillLevelDefinitions, 396);
   assert.equal(result.additionalJobs, 36);
   assert.equal(result.legendaryJobs, 6);
 });

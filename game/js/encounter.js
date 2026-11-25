@@ -1,7 +1,7 @@
 // 出てくる敵を決める（ダンジョンと階から）。
-import { makeEnemy } from './battle.js?v=jobs-master-1';
-import { affixSum } from './character.js?v=jobs-master-1';
-import { memberMods } from './growth.js?v=jobs-master-1';
+import { makeEnemy } from './battle.js?v=skill-growth-2';
+import { affixSum } from './character.js?v=skill-growth-2';
+import { memberMods } from './growth.js?v=skill-growth-2';
 
 /** そのダンジョンにふだん出るモンスター */
 export function monsterPool(data, dungeonId, season) {

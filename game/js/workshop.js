@@ -1,11 +1,11 @@
-import { roundGold, goldScale } from './gold.js?v=jobs-master-1';
-import { parseAmounts, splitList } from './csv.js?v=jobs-master-1';
-import { makeGear } from './character.js?v=jobs-master-1';
-import { rollAffixes, affixVariants } from './loot.js?v=jobs-master-1';
-import { matchesNeed, parseMaterialNeed } from './town.js?v=jobs-master-1';
-import { currentRank } from './dungeon.js?v=jobs-master-1';
-import { consumeMaterials } from './temple.js?v=jobs-master-1';
-import { describeEffect } from './equipment-effects.js?v=jobs-master-1';
+import { roundGold, goldScale } from './gold.js?v=skill-growth-2';
+import { parseAmounts, splitList } from './csv.js?v=skill-growth-2';
+import { makeGear } from './character.js?v=skill-growth-2';
+import { rollAffixes, affixVariants } from './loot.js?v=skill-growth-2';
+import { matchesNeed, parseMaterialNeed } from './town.js?v=skill-growth-2';
+import { currentRank } from './dungeon.js?v=skill-growth-2';
+import { consumeMaterials } from './temple.js?v=skill-growth-2';
+import { describeEffect } from './equipment-effects.js?v=skill-growth-2';
 
 const facilityFor = (def) => def.slot === 'weapon' ? 'weapon_workshop'
   : ['cloak', 'accessory'].includes(def.slot) ? 'accessory_workshop' : 'armor_workshop';

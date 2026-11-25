@@ -1,10 +1,10 @@
-import { el, stars } from '../dom.js?v=jobs-master-1';
-import { aptitudeGrade, canEquip, computeStats, equipFromStorage, gearDef, makeGear, SLOT_LABEL } from '../character.js?v=jobs-master-1';
-import { LOOT_FORMULAS } from '../loot.js?v=jobs-master-1';
-import { buyGear, buyItem, gearShopStock, itemShopStock, sellGear, sellPrice } from '../town.js?v=jobs-master-1';
-import { goldText, shopView } from './shop-view.js?v=jobs-master-1';
-import { equipmentIcon } from './equipment-icons.js?v=jobs-master-1';
-import { portraitIcon } from './portrait.js?v=jobs-master-1';
+import { el, stars } from '../dom.js?v=skill-growth-2';
+import { aptitudeGrade, canEquip, computeStats, equipFromStorage, gearDef, makeGear, SLOT_LABEL } from '../character.js?v=skill-growth-2';
+import { LOOT_FORMULAS } from '../loot.js?v=skill-growth-2';
+import { buyGear, buyItem, gearShopStock, itemShopStock, sellGear, sellPrice } from '../town.js?v=skill-growth-2';
+import { goldText, shopView } from './shop-view.js?v=skill-growth-2';
+import { equipmentIcon } from './equipment-icons.js?v=skill-growth-2';
+import { portraitIcon } from './portrait.js?v=skill-growth-2';
 
 const itemCategories = [
   { id: 'hp', label: 'HP回復' }, { id: 'mp', label: 'MP回復' },

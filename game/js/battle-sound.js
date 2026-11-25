@@ -1,4 +1,4 @@
-import { loadSettings } from './storage.js?v=jobs-master-1';
+import { loadSettings } from './storage.js?v=skill-growth-2';
 
 let context;
 let resume;

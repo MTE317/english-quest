@@ -1,7 +1,7 @@
-import { denominateGoldData } from './gold.js?v=jobs-master-1';
+import { denominateGoldData } from './gold.js?v=skill-growth-2';
 // ゲームで使う data/ のファイルをまとめて読み、ID で引ける形にする。
-import { loadCsv, loadJson, loadOptional } from './data.js?v=jobs-master-1';
-import { toNumber, splitList } from './csv.js?v=jobs-master-1';
+import { loadCsv, loadJson, loadOptional } from './data.js?v=skill-growth-2';
+import { toNumber, splitList } from './csv.js?v=skill-growth-2';
 
 const FILES = {
   balance: 'balance.json',

@@ -1,6 +1,6 @@
 // 基本8職の技能効果。数値は技能マスタ、蓄積は戦闘オブジェクトへ保存する。
-import { effectiveSkill } from './growth.js?v=jobs-master-1';
-import { gearDef, maxHp, maxMp } from './character.js?v=jobs-master-1';
+import { effectiveSkill } from './growth.js?v=skill-growth-2';
+import { gearDef, maxHp, maxMp } from './character.js?v=skill-growth-2';
 
 export const masterTags = (skill) => skill?.effect?.tags ?? [];
 export const weaponSkill = (skill) => Boolean(skill && !skill.isFinal
@@ -24,6 +24,7 @@ export function matchesTag(skill, tag) {
   if (!skill || skill.isFinal) return false;
   if (tag === 'active' || !tag) return skill.kind !== 'passive';
   if (tag === 'weapon') return weaponSkill(skill);
+  if (tag === 'heal') return ['heal','heal_all'].includes(skill.kind);
   if (tag === 'healing') return healingSkill(skill);
   return masterTags(skill).includes(tag);
 }
@@ -48,6 +49,7 @@ export function masterCondition(data, game, b, actor, target, condition = {}, sk
     case 'weapon_type': return condition.weapons?.includes(member.equip?.weapon ? gearDef(data, member.equip.weapon).kind : 'none');
     case 'element': return skill?.elements?.some(id => condition.elements?.includes(id));
     case 'own_song': return b.allies.some(unit => Object.values(unit.masterEffects ?? {}).some(e => e.song && e.source === actor));
+    case 'mp_threshold': return member.mp >= maxMp(data, member) * (condition.threshold ?? .5);
     case 'mp_half': return member.mp >= maxMp(data, member) * .5;
     default: return !condition.when;
   }
@@ -192,6 +194,7 @@ export function finishMasterOpportunity(data, game, b, actor, ctx, skill = null,
   }
   for (const [index, covering] of b.allies.entries()) {
     const cover = covering.masterCover;
+    if(index===actor && covering.masterUltimateCover && (covering.masterUltimateCover.grantedClock!==b.actionClock || !voluntary) && --covering.masterUltimateCover.remaining<=0)delete covering.masterUltimateCover;
     if (!cover || (cover.target === 'selected' ? cover.targetIndex !== actor : index !== actor)) continue;
     if ((cover.grantedClock !== b.actionClock || !voluntary) && --cover.remaining <= 0) delete covering.masterCover;
   }
@@ -204,7 +207,7 @@ export function finishMasterOpportunity(data, game, b, actor, ctx, skill = null,
   }
   for (const [key, effect] of Object.entries(a.masterEffects ?? {})) {
     if (effect.grantedClock === b.actionClock) continue;
-    if (effect.nextMpSave && matchesTag(skill, effect.nextMpSave.tag)) delete a.masterEffects[key];
+    if (effect.nextMpSave && matchesTag(skill, effect.nextMpSave.tag) && ((effect.nextMpSave.uses ??= 1), --effect.nextMpSave.uses <= 0)) delete a.masterEffects[key];
     if (effect.nextDamage && matchesTag(skill, effect.nextDamage.tag)) delete a.masterEffects[key];
   }
   a.previousWeaponSkill = weaponSkill(skill) ? skill.id : null;
@@ -219,14 +222,15 @@ export function masterCoverTarget(data, game, b, original, magic) {
     if (actor === original || game.party[actor].hp <= 0) continue;
     const a = b.allies[actor];
     if (['petrify', 'sleep', 'freeze', 'stun', 'paralysis', 'confusion', 'charm'].some(id => a.statuses[id])) continue;
-    const definitions = [a.masterCover, ...passiveRules(data, game.party[actor]).map(rule => rule.cover && ({ ...rule.cover, sourceSkill: rule.skill.id }))].filter(Boolean);
+    const definitions = [a.masterCover, ...passiveRules(data, game.party[actor]).map(rule => rule.cover && ({ ...rule.cover, sourceSkill: rule.skill.id })), a.masterUltimateCover].filter(Boolean);
     for (const cover of definitions) {
       if (magic && cover.physical_only !== false) continue;
       if (cover.target === 'selected' && cover.targetIndex !== original) continue;
       if (cover.target === 'all_low_hp' && game.party[original].hp > maxHp(data, game.party[original]) * (cover.hp_threshold ?? .3)) continue;
-      if (a.coverRound !== b.round) { a.coverRound = b.round; a.coverCount = 0; }
-      const limit = a.masterCover?.target === 'all' ? a.masterCover.limit : cover.limit ?? 1;
-      if (a.coverCount >= limit) continue;
+      if (a.coverRound !== b.round) { a.coverRound = b.round; a.coverCount = 0; a.normalCoverCount=0; }
+      const limit=a.masterUltimateCover?.limit??1;
+      if(a.coverCount>=limit || (cover.target!=='all' && (a.normalCoverCount??0)>=1))continue;
+      a.selectedCoverNormal=cover.target!=='all';
       return { actor, cover, rate: cover.rate ?? 1 };
     }
   }
@@ -235,7 +239,7 @@ export function masterCoverTarget(data, game, b, original, magic) {
 
 export function onMasterCover(data, game, b, actor, received = false) {
   const a = b.allies[actor];
-  if (!received) { a.coverCount = (a.coverCount ?? 0) + 1; return; }
+  if (!received) { a.coverCount = (a.coverCount ?? 0) + 1; if(a.selectedCoverNormal)a.normalCoverCount=(a.normalCoverCount??0)+1; return; }
   a.lastCoverRound = b.round;
   a.lastCoverClock = b.actionClock ?? 0;
   for (const rule of passiveRules(data, game.party[actor])) if (rule.on_cover) {

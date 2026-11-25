@@ -1,9 +1,9 @@
 // データ確認画面：data/ のファイルごとの行数と、中身の表
-import { loadFiles, loadJson } from '../data.js?v=jobs-master-1';
-import { splitList, parseAmounts } from '../csv.js?v=jobs-master-1';
-import { buildLearningCatalog } from '../learning-catalog.js?v=jobs-master-1';
-import { Scheduler } from '../srs.js?v=jobs-master-1';
-import { el, render } from '../dom.js?v=jobs-master-1';
+import { loadFiles, loadJson } from '../data.js?v=skill-growth-2';
+import { splitList, parseAmounts } from '../csv.js?v=skill-growth-2';
+import { buildLearningCatalog } from '../learning-catalog.js?v=skill-growth-2';
+import { Scheduler } from '../srs.js?v=skill-growth-2';
+import { el, render } from '../dom.js?v=skill-growth-2';
 
 const view = document.getElementById('view');
 let loaded = null;

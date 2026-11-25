@@ -1,12 +1,12 @@
-import { goldScale } from '../gold.js?v=jobs-master-1';
-import { normalizeGame } from '../game-state.js?v=jobs-master-1';
+import { goldScale } from '../gold.js?v=skill-growth-2';
+import { normalizeGame } from '../game-state.js?v=skill-growth-2';
 // 動作確認用：自動保存・ダンジョンの途中からの再開・全滅で入る前に戻る、を試す画面
 // 戦闘とダンジョンはまだないので、報酬（お金・素材・装備・経験値）は「仮」の値を足すだけ
-import { GameSession } from '../save.js?v=jobs-master-1';
-import { LearningStore } from '../storage.js?v=jobs-master-1';
-import { loadGameData } from '../gamedata.js?v=jobs-master-1';
-import { gainXp, makeGear } from '../character.js?v=jobs-master-1';
-import { el, render } from '../dom.js?v=jobs-master-1';
+import { GameSession } from '../save.js?v=skill-growth-2';
+import { LearningStore } from '../storage.js?v=skill-growth-2';
+import { loadGameData } from '../gamedata.js?v=skill-growth-2';
+import { gainXp, makeGear } from '../character.js?v=skill-growth-2';
+import { el, render } from '../dom.js?v=skill-growth-2';
 
 const view = document.getElementById('view');
 const session = new GameSession();

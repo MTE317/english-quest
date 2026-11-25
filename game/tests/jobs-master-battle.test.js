@@ -134,7 +134,7 @@ test('白魔道士の奥義は選んだ1人だけを蘇生し、蘇生対象へ�
   ctx.game.party[3].hp = 1; ctx.battle.allies[3].statuses.poison = { turns: 3 };
   act(ctx, 0, 'white_mage_U01', 2);
   assert.equal(ctx.game.party[1].hp, 0);
-  assert.equal(ctx.game.party[2].hp, Math.floor(maxHp(ctx.data, ctx.game.party[2]) * .3));
+  assert.equal(ctx.game.party[2].hp, Math.floor(maxHp(ctx.data, ctx.game.party[2]) * .7));
   assert.ok(ctx.game.party[3].hp > 1);
   assert.equal(ctx.battle.allies[3].statuses.poison, undefined);
 });
