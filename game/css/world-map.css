@@ -19,7 +19,7 @@
 .atlas-status { margin: 0; font-size: .88rem; color: #e5cb96; }
 .atlas-destinations {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 76px), 1fr));
   gap: 10px;
 }
 .atlas .atlas-destination {
@@ -28,8 +28,10 @@
   width: 100%;
   min-height: 114px;
   margin: 0;
-  padding: 13px;
-  text-align: left;
+  padding: 8px 4px;
+  text-align: center;
+  justify-items: center;
+  align-content: start;
   border: 1px solid #62718b;
   background: #1c2c41;
   color: #f8eed9;
@@ -44,17 +46,26 @@
   border-color: #f5da9f;
   box-shadow: inset 0 0 0 1px #f5da9f, inset 0 -3px #81613b;
 }
-.atlas-destination-meta { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px; color: #d3c39f; font-size: .78rem; }
+.atlas-destination-meta { display: flex; flex-direction: column; align-items: center; gap: 3px; color: #d3c39f; font-size: .78rem; }
 .atlas-destination-status { color: #b0ddc3; }
-.atlas-destination-name { font-size: 1.04rem; line-height: 1.35; }
+.atlas-destination-name { font-size: .8rem; line-height: 1.35; }
 .atlas-destination-description { color: #d0dae3; font-size: .82rem; line-height: 1.45; }
 .atlas .atlas-destination[aria-pressed="true"] .atlas-destination-name { color: #ffdf94; }
 .atlas-new-destination { animation: atlas-appear 450ms ease-out both; }
 @keyframes atlas-appear { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
 @media (max-width: 540px) {
-  .atlas-destinations { grid-template-columns: 1fr; }
+  .atlas-destinations { grid-template-columns: repeat(auto-fill, minmax(min(100%, 76px), 1fr)); }
   .atlas .atlas-destination { min-height: 100px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .atlas-new-destination { animation: none; }
+}
+
+.atlas-destination-icon {
+  display: block;
+  width: 48px;
+  height: 48px;
+  border: 1px solid #9b865b;
+  background: #192941 var(--scene, url('../art/wilds.webp')) center / cover no-repeat;
+  image-rendering: pixelated;
 }

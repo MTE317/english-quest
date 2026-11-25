@@ -17,7 +17,7 @@ import { createBattleView } from '../ui/battle-view.js?v=battle-field-1';
 import { createVictoryView } from '../ui/victory-view.js?v=basic-skill-levels-1';
 import { el, render, stars } from '../dom.js';
 import { buildWorldMap, newDiscoveries } from '../world-map.js?v=trial-five-1';
-import { createWorldMapView } from '../ui/world-map-view.js?v=trial-five-1';
+import { createWorldMapView } from '../ui/world-map-view.js?v=destination-icons-1';
 import { setSceneMusic } from '../battle-music.js?v=music-suite-1';
 
 import { expeditionScene } from '../ui/scenery.js';
@@ -130,7 +130,6 @@ function showDeparture(message = null) {
   render(view,
     el('section', { class: 'departure' },
       el('h2', { class: 'chapter-title' }, '遠征の準備'),
-      beginner ? el('p', { class: 'panel small' }, `はじめは近場の「${nearby.name}」がおすすめ。短い冒険を2〜3回重ねて仲間を育て、回復やスキルを準備してから標準ダンジョンへ挑もう。行き先は自由に選べます。`) : null,
       message ? el('p', { class: 'panel error', role: 'alert' }, message, '　', el('a', { href: 'index.html?facility=temple' }, '神殿へ')) : null,
       atlas,
       el('div', { class: 'panel departure-plan' },
