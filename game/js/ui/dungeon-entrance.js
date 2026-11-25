@@ -32,13 +32,13 @@ async function runEntrance(name, enter) {
     overlay.style.setProperty('--entry-radius', `${radius}px`);
     const started = performance.now();
     const close = time => {
-      const progress = Math.min(1, (time - started) / 2120);
+      const progress = Math.min(1, (time - started) / 1120);
       overlay.style.setProperty('--entry-radius', `${radius * (1 - progress) ** 1.6}px`);
       if (progress < 1) frame = requestAnimationFrame(close);
     };
     if (!reduced) frame = requestAnimationFrame(close);
     // タイマーで刻み、音声が使えなくても同じテンポで進める。
-    for (const delay of [200, 850, 1500]) timers.push(setTimeout(() => {
+    for (const delay of [100, 450, 800]) timers.push(setTimeout(() => {
       playDungeonFootstep();
       if (!reduced) {
         overlay.classList.remove('step');
@@ -46,7 +46,7 @@ async function runEntrance(name, enter) {
         overlay.classList.add('step');
       }
     }, delay));
-    await wait(2150);
+    await wait(1150);
     overlay.classList.add('closed');
     overlay.classList.add('named');
     await wait(130);
