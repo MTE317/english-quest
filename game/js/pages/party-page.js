@@ -16,7 +16,7 @@ import { skillMp } from '../battle.js?v=skill-growth-2';
 import { el, render, stars } from '../dom.js?v=skill-growth-2';
 import { describeFixedEffects } from '../equipment-effects.js?v=skill-growth-2';
 import { describeSkillEffect } from '../skill-effects.js?v=skill-growth-2';
-import { SKILL_CATEGORIES, skillCategory, skillLoadoutKind, equippedSkillIds, isSkillEquipped, skillCostLabel, skillWeaponText, prerequisiteText, jobProfileRows } from '../ui/skill-presentation.js?v=skill-growth-2';
+import { SKILL_CATEGORIES, skillCategory, skillLoadoutKind, equippedSkillIds, isSkillEquipped, skillCostLabel, skillWeaponText, prerequisiteText } from '../ui/skill-presentation.js?v=skill-growth-2';
 
 import { setSceneMusic } from '../battle-music.js?v=skill-growth-2';
 
@@ -192,6 +192,47 @@ function memberNavigation(index, active, switchMember) {
   ];
 }
 
+function jobAptitudeChart(job) {
+  const stats = ['hp', 'mp', 'str', 'mag', 'def', 'res', 'spd', 'luk'];
+  const grades = data.balance.player.grade_points;
+  const max = Math.max(1, ...Object.values(grades).filter(Number.isFinite));
+  const svgNode = (tag, attrs = {}, ...children) => {
+    const node = document.createElementNS('http://www.w3.org/2000/svg', tag);
+    for (const [key, value] of Object.entries(attrs)) node.setAttribute(key, String(value));
+    node.append(...children);
+    return node;
+  };
+  const point = (index, radius) => {
+    const angle = -Math.PI / 2 + index * Math.PI / 4;
+    return [180 + Math.cos(angle) * radius, 180 + Math.sin(angle) * radius];
+  };
+  const polygon = radius => stats.map((_, i) => point(i, radius).join(',')).join(' ');
+  const labels = stats.map(key => `${STAT_LABEL[key]} ${job?.grades?.[key] ?? '―'}`);
+  const chart = svgNode('svg', {
+    viewBox: '0 0 360 360', class: 'job-aptitude-chart', role: 'img',
+    'aria-label': `${job?.name ?? ''}の能力適性：${labels.join('、')}`,
+  }, svgNode('title', {}, `${job?.name ?? ''}の能力適性`));
+  for (let ring = 1; ring <= 5; ring++) chart.append(svgNode('polygon', {
+    points: polygon(110 * ring / 5), class: 'aptitude-radar-grid',
+  }));
+  const values = stats.map((key, i) => {
+    const value = grades[job?.grades?.[key]];
+    return point(i, 110 * (Number.isFinite(value) ? Math.max(0, Math.min(1, value / max)) : 0));
+  });
+  stats.forEach((_, i) => {
+    const [x, y] = point(i, 110);
+    chart.append(svgNode('line', { x1: 180, y1: 180, x2: x, y2: y, class: 'aptitude-radar-axis' }));
+  });
+  chart.append(svgNode('polygon', { points: values.map(p => p.join(',')).join(' '), class: 'aptitude-radar-value' }));
+  stats.forEach((_, i) => {
+    const [x, y] = values[i];
+    const [lx, ly] = point(i, 146);
+    chart.append(svgNode('circle', { cx: x, cy: y, r: 3, class: 'aptitude-radar-dot' }),
+      svgNode('text', { x: lx, y: ly, 'text-anchor': 'middle', 'dominant-baseline': 'middle', class: 'aptitude-radar-label' }, labels[i]));
+  });
+  return el('figure', { class: 'job-aptitude-figure' }, chart);
+}
+
 function showMember(index, tab = 'skills') {
   if (tab === 'skills') return showSkills(index);
   const m = session.game.party[index];
@@ -223,9 +264,7 @@ function showMember(index, tab = 'skills') {
 
     ] : [
       el('h2', {}, '能力'),
-      el('dl', { class: 'job-profile' }, jobProfileRows(data, data.jobsById.get(m.job)).map(([label, value]) =>
-        el('div', {}, el('dt', {}, label), el('dd', {}, value)))),
-      el('p', { class: 'small muted' }, `能力適性：${['hp', 'mp', 'str', 'mag', 'def', 'res', 'spd', 'luk'].map(key => `${STAT_LABEL[key] ?? key.toUpperCase()} ${data.jobsById.get(m.job)?.grades?.[key] ?? '―'}`).join('・')}`),
+      jobAptitudeChart(data.jobsById.get(m.job)),
       el('p', { class: 'muted small' }, m.lv < cap ? `次のレベルまで ${xpToNext(data, m.lv) - m.xp}` : '最大レベル'),
       el('table', { class: 'stat-table' }, el('tbody', {}, statRows.map(([key, value]) =>
         el('tr', {}, el('th', {}, key), el('td', {}, String(value)))))),
@@ -233,7 +272,7 @@ function showMember(index, tab = 'skills') {
       weaponTypes.length ? el('div', { class: 'panel small' }, weaponTypes.map(type =>
         el('div', { class: 'weapon-mastery-entry' }, weaponIcon(type),
           el('span', {}, `${data.weaponTypes.get(type)?.name ?? type}：熟練度 ${masteryLevel(data, m, type)}（倒した数 ${m.mastery[type]}）`))))
-        : el('p', { class: 'muted small' }, 'まだない（敵を倒すとその武器の熟練度が上がる）'),
+        : el('p', { class: 'muted small' }, 'なし'),
     ]);
   window.scrollTo(0, 0);
 }
