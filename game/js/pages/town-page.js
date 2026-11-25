@@ -103,11 +103,9 @@ function townActions(g) {
   const reportable = g.quests.filter((q) => canReport(data, g, q)).length;
   const down = g.party.filter((m) => m.hp <= 0).length;
   const cure = g.party.some((m) => m.persist?.length);
-  const rest = g.party.some((m) => m.hp > 0 && (m.hp < maxHp(data, m) || m.mp < maxMp(data, m)));
   const actions = [
     reportable ? el('a', { href: facilityLink('guild') + '#guild-active' }, `報告できる依頼 ${reportable}件`) : null,
     down || cure ? el('a', { href: facilityLink('temple') }, down ? `戦闘不能 ${down}人・神殿へ` : '状態異常の治療へ') : null,
-    rest ? el('a', { href: facilityLink('inn') }, 'HP・MPの回復へ') : null,
   ].filter(Boolean);
   return actions.length ? el('nav', { class: 'town-actions', 'aria-label': '町でできること' }, actions) : null;
 }
