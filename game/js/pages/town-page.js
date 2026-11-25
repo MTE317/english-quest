@@ -277,7 +277,6 @@ function inn() {
   const econ = data.economy.get(feeTier(data, g));
   const fx = data.innRooms.find((r) => r.innRank === g.facilities.inn);
   return [
-    el('p', { class: 'muted small' }, '戦闘不能の仲間は', el('a', { href: facilityLink('temple') }, '神殿'), 'で復活できます。'),
     innPartyPanel(g),
     el('button', { onclick: () => act((gg) => `ふつうの部屋に泊まった（-${stayInn(data, gg, false)}）`) }, `ふつうの部屋（${econ.inn_cheap}）：全回復`),
     el('button', { class: 'primary', onclick: () => act((gg) => `良い部屋に泊まった（-${stayInn(data, gg, true)}）`) },
