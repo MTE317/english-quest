@@ -23,6 +23,7 @@ import { setSceneMusic } from '../battle-music.js?v=music-suite-1';
 import { expeditionScene } from '../ui/scenery.js';
 import { installGameShell } from '../ui/game-shell.js?v=pixel-town-1';
 import { portraitIcon } from '../ui/portrait.js';
+import { playDungeonEntrance } from '../ui/dungeon-entrance.js?v=entrance-1';
 
 const view = document.getElementById('view');
 const session = new GameSession();
@@ -108,13 +109,22 @@ function showDeparture(message = null) {
   };
   const departure = el('button', {
     class: 'primary',
-    onclick: () => {
-      if (!st.stoneId) return;
+    onclick: async () => {
+      if (!st.stoneId || departure.disabled || session.inDungeon) return;
       if (session.game.party.every((m) => m.hp <= 0)) { showDeparture('全員倒れている。宿屋や神殿で回復してから出発しよう。'); return; }
-      const picker = new QuestionPicker({ lex, store, scheduler, stoneId: st.stoneId, nowMs: now() });
-      startRun(data, session, { dungeonId: st.dungeonId, stoneId: st.stoneId, quizState: picker.toState(),
-        seed: (Date.now() ^ (Math.random() * 2 ** 32)) >>> 0, bountyLure: lure.checked });
-      showRun();
+      departure.disabled = true;
+      try {
+        const picker = new QuestionPicker({ lex, store, scheduler, stoneId: st.stoneId, nowMs: now() });
+        startRun(data, session, { dungeonId: st.dungeonId, stoneId: st.stoneId, quizState: picker.toState(),
+          seed: (Date.now() ^ (Math.random() * 2 ** 32)) >>> 0, bountyLure: lure.checked });
+        await playDungeonEntrance(data.dungeons.get(st.dungeonId).name, () => showRun());
+      } catch (error) {
+        console.error(error);
+        render(view, el('p', { class: 'error', role: 'alert' }, `入場に失敗：${error.message}`),
+          el('button', { onclick: () => session.inDungeon ? showRun() : showDeparture() }, 'もう一度開く'));
+      } finally {
+        departure.disabled = false;
+      }
     },
   }, '出発する');
   const atlas = createWorldMapView({
@@ -356,3 +366,4 @@ function battleView() {
     console.error(e);
   }
 })();
+

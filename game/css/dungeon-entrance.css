@@ -1,0 +1,41 @@
+.dungeon-entrance {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  touch-action: none;
+  cursor: wait;
+  background: radial-gradient(circle at 50% 46%, transparent var(--entry-radius, 150vmax), #03060c calc(var(--entry-radius, 150vmax) + 28px));
+}
+.dungeon-entrance.closed { background: #03060c; }
+.dungeon-entrance-title {
+  max-width: calc(100vw - 48px);
+  padding: 18px 24px;
+  color: #f4e8c8;
+  font-size: clamp(1.1rem, 4.8vw, 1.65rem);
+  font-weight: 700;
+  letter-spacing: .16em;
+  text-align: center;
+  line-height: 1.7;
+  text-shadow: 0 2px 12px #ac8c4c66;
+  opacity: 0;
+  transition: opacity 160ms ease;
+}
+.dungeon-entrance.named .dungeon-entrance-title { opacity: 1; }
+.dungeon-entrance.step { animation: entrance-step 150ms ease-out; }
+@keyframes entrance-step {
+  0%, 100% { background-position: 0 0; }
+  45% { background-position: 0 3px; }
+}
+.dungeon-entrance.reveal {
+  opacity: 0;
+  transition: opacity 320ms ease-out;
+}
+.dungeon-entrance.reduced-motion { background: #03060c; }
+.dungeon-entrance.reduced-motion.reveal { transition-duration: 100ms; }
+@media (prefers-reduced-motion: reduce) {
+  .dungeon-entrance { animation: none; }
+  .dungeon-entrance-title { transition: none; }
+}
