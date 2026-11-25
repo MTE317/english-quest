@@ -42,6 +42,14 @@ test('入場は暗転後に一度だけ開始し、演出が終わると操作�
   assert.equal(entered, 0);
   assert.equal(nodes[1].textContent, '木漏れ日の森');
   assert.equal(playDungeonEntrance('別の場所', () => { entered += 10; }), run);
+  await new Promise(resolve => setTimeout(resolve, 800));
+  assert.equal(entered, 0, '足音の途中ではまだ戦闘を開始しない');
+  assert.equal(nodes[0].classList.contains('closed'), false);
+  await new Promise(resolve => setTimeout(resolve, 1600));
+  assert.equal(nodes[0].classList.contains('named'), true);
+  assert.equal(nodes[0].classList.contains('reveal'), false);
+  await new Promise(resolve => setTimeout(resolve, 1700));
+  assert.equal(nodes[0].classList.contains('reveal'), false, 'ダンジョン名を約2秒長く表示する');
   await run;
   assert.equal(entered, 1);
   assert.equal(body.children.length, 2);
