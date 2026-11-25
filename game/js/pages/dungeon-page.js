@@ -60,7 +60,7 @@ function showDeparture(message = null) {
   }
   const g = session.game;
   if (!g?.party) {
-    render(view, el('p', {}, 'まだパーティがいません。'), el('a', { class: 'btn primary', href: 'party.html' }, 'パーティを作る'));
+    render(view, el('p', {}, 'まだパーティーがいません。'), el('a', { class: 'btn primary', href: 'party.html' }, 'パーティーを作る'));
     return;
   }
   const rank = currentRank(data, g);

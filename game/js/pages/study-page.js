@@ -322,8 +322,8 @@ function startPromotion(rankId) {
 
 function draw() {
   if (!session.game?.party) {
-    render(view, el('p', {}, '先にパーティを作成してください。'),
-      el('a', { class: 'btn primary', href: 'party.html' }, 'パーティを作る'));
+    render(view, el('p', {}, '先にパーティーを作成してください。'),
+      el('a', { class: 'btn primary', href: 'party.html' }, 'パーティーを作る'));
     return;
   }
   if (session.inDungeon) {

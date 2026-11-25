@@ -43,7 +43,7 @@ function shuffled(values) {
 function start(kind, label, battles, pool, extra = {}) {
   if (!pool.length) throw new Error('教材を学習してから挑戦してください。');
   if (!battles.length || battles.some((row) => !row.length || row.some((e) => !data.monsters.has(e.id) || !Number.isFinite(e.lv)))) throw new Error('対戦相手のデータを確認してください。');
-  if (session.game.party.every((member) => member.hp <= 0)) throw new Error('先にパーティを回復してください。');
+  if (session.game.party.every((member) => member.hp <= 0)) throw new Error('先にパーティーを回復してください。');
   const stoneId = lex.wordsById.get(pool[0]).stoneId;
   session.enterDungeon({ challenge: kind, label, battles, questionPool: shuffled(pool), stoneId, ...extra });
   draw();
@@ -173,8 +173,8 @@ function draw() {
   const game = session.game;
   const run = session.run;
   if (!game?.party || (run && !run.challenge)) {
-    render(view, el('p', {}, game?.party ? '町に戻ってから挑戦できます。' : '先にパーティを作ってください。'),
-      el('a', { href: game?.party ? 'dungeon.html' : 'party.html', class: 'btn' }, game?.party ? 'ダンジョンへ' : 'パーティを作る'));
+    render(view, el('p', {}, game?.party ? '町に戻ってから挑戦できます。' : '先にパーティーを作ってください。'),
+      el('a', { href: game?.party ? 'dungeon.html' : 'party.html', class: 'btn' }, game?.party ? 'ダンジョンへ' : 'パーティーを作る'));
     return;
   }
   if (run?.battle) { createBattleView({ view, data, lex, store, scheduler, session, onEnd: endBattle }).start(); return; }

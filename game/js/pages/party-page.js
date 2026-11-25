@@ -1,4 +1,4 @@
-// パーティの画面：キャラメイク・6人の一覧・能力値・装備8枠
+// パーティーの画面：キャラメイク・6人の一覧・能力値・装備8枠
 import { loadGameData } from '../gamedata.js?v=rune-study-1';
 import { GameSession } from '../save.js?v=rune-study-1';
 import { createNewGame, defaultPartySpecs, normalizeGame } from '../game-state.js?v=basic-skill-levels-1';
@@ -94,7 +94,7 @@ function showCreate() {
   edit(0);
   render(view,
     el('section', { class: 'recruit-screen' },
-      el('h2', { class: 'chapter-title' }, `${specs.length}人のパーティを作る`),
+      el('h2', { class: 'chapter-title' }, `${specs.length}人のパーティーを作る`),
       el('p', { class: 'muted' }, '仲間を選ぶと、名前・ジョブ・見た目を変更できます。この編成のまま出発もできます。'),
       el('p', { class: 'small muted' }, `初期装備と支度金 ${data.balance.new_game?.gold ?? 0} G を持って出発します。回復役を1人入れると、長く戦いやすくなります。`),
       roster, editor,
@@ -133,7 +133,7 @@ function showParty() {
               el('div', {}, el('span', {}, `MP　${m.mp} / ${st.mp}`), bar(m.mp, st.mp, 'mp')))));
       })),
     new URLSearchParams(location.search).has('debug') ? debugTools() : null,
-    !session.inDungeon ? el('details', { class: 'panel small' }, el('summary', {}, 'パーティを作り直す'),
+    !session.inDungeon ? el('details', { class: 'panel small' }, el('summary', {}, 'パーティーを作り直す'),
       el('p', { class: 'muted' }, '新しい編成で確定すると冒険を最初から始めます。学習記録は引き継ぎます。'),
       el('button', { class: 'ghost', onclick: showCreate }, '新しい編成を決める')) : null,
   );
@@ -190,7 +190,7 @@ function showMember(index) {
     ['クリティカル率', pct(st.crit)], ['回避率', pct(st.evasion)], ['状態異常の耐性', pct(st.statusResist)],
   ];
   render(view,
-    el('button', { class: 'ghost', onclick: showParty }, '← パーティの一覧へ'),
+    el('button', { class: 'ghost', onclick: showParty }, '← パーティーの一覧へ'),
     memberSwitcher(index),
     memberBanner(m),
     el('div', { class: 'row' },

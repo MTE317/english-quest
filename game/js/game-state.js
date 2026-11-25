@@ -25,7 +25,7 @@ export function defaultPartySpecs(data) {
  * 最初のお金と日付は data にまだないので、balance.json の new_game があればそれを使う（docs/requests.md で依頼中）
  */
 export function createNewGame(data, partySpecs, { partySize = PARTY_SIZE } = {}) {
-  if (!Array.isArray(partySpecs) || partySpecs.length !== partySize) throw new Error(`パーティは${partySize}人`);
+  if (!Array.isArray(partySpecs) || partySpecs.length !== partySize) throw new Error(`パーティーは${partySize}人`);
   const start = data.balance.new_game ?? {};
   const game = {
     day: start.day ?? 1,
@@ -118,7 +118,7 @@ function expandLegacyParty(data, game) {
     game.party.push(member);
     added.push(member.name);
   }
-  game.notices.push(`${added.join('・')}が加入し、パーティが${PARTY_SIZE}人になりました。加入時のレベルは仲間の最低レベル（Lv${level}）です。`);
+  game.notices.push(`${added.join('・')}が加入し、パーティーが${PARTY_SIZE}人になりました。加入時のレベルは仲間の最低レベル（Lv${level}）です。`);
 }
 
 /** 新技能の追加前に極めていたジョブのボーナスを、一度だけ既得として記録する。 */

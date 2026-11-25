@@ -49,7 +49,7 @@ function draw() {
   ));
 
   if (!session.hasSave || !session.game.party) {
-    parts.push(el('a', { class: 'btn primary', href: 'party.html' }, 'パーティを作ってはじめる'));
+    parts.push(el('a', { class: 'btn primary', href: 'party.html' }, 'パーティーを作ってはじめる'));
     return render(view, parts);
   }
 

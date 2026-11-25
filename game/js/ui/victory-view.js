@@ -52,7 +52,7 @@ export function createVictoryView({ data, dungeon, party, result, backpack, tota
         el('li', {}, el('span', {}, name), el('span', {}, `×${count}`))))
         : el('p', { class: 'victory-empty' }, 'なし')),
     el('section', { 'aria-labelledby': 'victory-party-title' },
-      el('h3', { id: 'victory-party-title' }, 'パーティの成長'),
+      el('h3', { id: 'victory-party-title' }, 'パーティーの成長'),
       el('ul', { class: 'victory-party' }, party.map((member, index) =>
         memberCard(data, member, growth[index])))),
     el('div', { class: 'victory-expedition' },

@@ -213,3 +213,19 @@ body:has(.guild-view) {
   .workshop-grid { max-height: 20rem; }
   .quest-ui .workshop-tabs button { font-size: .8rem; padding-inline: 4px; }
 }
+
+/* 町の主要操作をスマホでも横並びにする。 */
+.town-hero-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 18px;
+}
+.quest-ui .town-hero-actions .hero-action {
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  padding: 10px 8px;
+  gap: 6px;
+  font-size: .9rem;
+}
