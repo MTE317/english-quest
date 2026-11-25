@@ -210,7 +210,7 @@ export function computeStats(data, member) {
   const caps = data.balance.battle_formulas ?? {};
   out.crit = Math.max(0, Math.min(caps.crit_cap ?? 0.85, out.crit));
   out.evasion = Math.max(0, Math.min(caps.evasion_cap ?? 0.6, out.evasion));
-  out.statusResist = Math.max(0, Math.min(caps.status_resist_cap ?? 0.9, out.statusResist));
+  out.statusResist = Math.max(0, Math.min(caps.status_resist_cap ?? 1, out.statusResist));
   return out;
 }
 
