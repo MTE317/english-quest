@@ -429,3 +429,32 @@
   background: none;
 }
 .skill-learning-catalog .common-passives::before { display: none; }
+
+/* 説明を上に、カテゴリは押して開閉する。 */
+.skill-learning-layout { display: block; }
+.skill-loadout-layout { grid-template-columns: minmax(0, 1fr); }
+.skill-learning-catalog .skill-category {
+  min-width: 0;
+  border: 1px solid var(--line);
+  background: #142238;
+}
+.skill-category > summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 48px;
+  padding: 8px 12px;
+  color: var(--accent);
+  font-weight: 700;
+  cursor: pointer;
+  list-style: none;
+}
+.skill-category > summary::-webkit-details-marker { display: none; }
+.skill-category > summary::after { content: '+'; font-size: 1.25rem; }
+.skill-category[open] > summary::after { content: '−'; }
+.skill-category[open] > summary { border-bottom: 1px solid var(--line); }
+.skill-learning-catalog .skill-category .skill-learning-grid { margin: 0; border: 0; }
+.skill-learning-catalog .common-passives { padding: 0; }
+
+.skill-category > ol { list-style: none; }

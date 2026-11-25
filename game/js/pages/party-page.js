@@ -29,6 +29,7 @@ const session = new GameSession();
 installGameShell('party', session);
 session.installAutoSave(window);
 let data;
+const skillCategoryOpen = new Map();
 
 const pct = (x) => `${Math.round(x * 1000) / 10}%`;
 const jobName = (id) => data.jobsById.get(id)?.name ?? id;
@@ -351,7 +352,7 @@ function showLoadout(index, kind = 'actions', message = '', skillId = '') {
         onclick: () => showLoadout(index, 'passives'),
       }, `パッシブ（${used.passives}/${cap.passives}）`)),
     skills.length
-      ? el('div', { class: 'shop-layout skill-shop-layout' }, grid, detail)
+      ? el('div', { class: 'shop-layout skill-shop-layout skill-loadout-layout' }, detail, grid)
       : el('section', { class: 'shop-detail skill-shop-empty' },
         el('p', { class: 'muted' }, '習得済みのスキルはありません。'),
         el('button', { class: 'ghost', onclick: () => showSkills(index) }, 'スキル習得・強化を見る')),
@@ -435,8 +436,13 @@ function showSkills(index, jobId, skillId, message = '') {
       }, reason || `覚える（${node.points}pt）`));
   }
 
-  const commonPassives = el('section', { class: 'skill-branch common-passives' },
-    el('h3', {}, `共通パッシブ（残り ${commonPoints(data, member).left}pt）`),
+  const commonKey = `${index}:common`;
+  const commonPassives = el('details', {
+    class: 'skill-category common-passives',
+    open: skillCategoryOpen.get(commonKey) ?? Boolean(skillId?.startsWith('common:')),
+    ontoggle: event => skillCategoryOpen.set(commonKey, event.currentTarget.open),
+  },
+    el('summary', {}, `共通パッシブ（残り ${commonPoints(data, member).left}pt）`),
     el('ol', { class: 'shop-grid skill-learning-grid' }, data.commonTree.map(node => {
       const learned = (member.common ?? []).includes(node.id);
       const available = !learned && !commonBlock(data, member, node);
@@ -456,18 +462,24 @@ function showSkills(index, jobId, skillId, message = '') {
   render(view,
     memberNavigation(index, 'skills', next => showSkills(next)),
     el('h2', {}, 'スキル習得・強化'),
+    detail,
     el('button', { class: 'ghost', onclick: () => showLoadout(index, selected?.kind === 'passive' ? 'passives' : 'actions', '', selected?.kind === 'common' ? '' : selected?.id) }, 'スキル装備・取り外しへ'),
     el('p', { class: 'panel small' }, `残りAP ${member.ap[job] ?? 0}・共通ポイント ${commonPoints(data, member).left}pt・通常枠 ${used.actions}/${cap.actions}・パッシブ枠 ${used.passives}/${cap.passives}`),
     message ? el('p', { class: 'error', role: 'status' }, message) : null,
     jobs.length > 1 ? el('label', { class: 'small' }, 'ジョブ',
       el('select', { class: 'select', onchange: (event) => showSkills(index, event.target.value) },
         jobs.map((id) => el('option', { value: id, selected: id === job }, jobName(id))))) : null,
-    (paths.length || data.commonTree.length) ? el('div', { class: 'shop-layout skill-shop-layout skill-learning-layout' },
+    (paths.length || data.commonTree.length) ? el('div', { class: 'skill-learning-layout' },
       el('div', { class: basic ? 'skill-tree skill-independent skill-learning-catalog' : 'skill-tree skill-learning-catalog' },
       el('div', { class: 'skill-tree-root' }, jobName(job), isJobMastered(data, member, job) ? '・極めた！' : ''),
       el('div', { class: 'skill-branches', style: `--branches:${paths.length}` },
-        paths.map(([path, branch]) => el('section', { class: 'skill-branch' },
-          el('h3', {}, path),
+        paths.map(([path, branch]) => el('details', {
+          class: 'skill-category',
+          open: skillCategoryOpen.get(`${index}:${job}:${path}`)
+            ?? (!skillId?.startsWith('common:') && branch.some(skill => skill.id === selected?.id)),
+          ontoggle: event => skillCategoryOpen.set(`${index}:${job}:${path}`, event.currentTarget.open),
+        },
+          el('summary', {}, path),
           el('ol', { class: 'shop-grid skill-learning-grid' }, branch.map((skill, i) => {
             const learned = isLearned(member, skill);
             const equipped = member.loadout.actions.includes(skill.id) || member.loadout.passives.includes(skill.id);
@@ -484,8 +496,7 @@ function showSkills(index, jobId, skillId, message = '') {
             const linked = !basic && i > 0 && branch[i - 1].stage === skill.stage - 1;
             return el('li', { class: linked ? 'linked' : '' }, node);
           }))))),
-      commonPassives),
-      detail) : el('p', { class: 'muted' }, 'このジョブのスキルはありません。'),
+      commonPassives)) : el('p', { class: 'muted' }, 'このジョブのスキルはありません。'),
   );
   const commonSelection = data.commonTree.find(node => `common:${node.id}` === skillId);
   if (commonSelection) selectCommon(commonSelection);
