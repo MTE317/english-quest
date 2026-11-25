@@ -264,10 +264,12 @@ function showMember(index, tab = 'skills') {
 
     ] : [
       el('h2', {}, '能力'),
-      jobAptitudeChart(data.jobsById.get(m.job)),
       el('p', { class: 'muted small' }, m.lv < cap ? `次のレベルまで ${xpToNext(data, m.lv) - m.xp}` : '最大レベル'),
       el('table', { class: 'stat-table' }, el('tbody', {}, statRows.map(([key, value]) =>
         el('tr', {}, el('th', {}, key), el('td', {}, String(value)))))),
+      el('details', { class: 'panel aptitude-toggle' },
+        el('summary', {}, '能力適性'),
+        jobAptitudeChart(data.jobsById.get(m.job))),
       el('h2', {}, '武器の熟練度'),
       weaponTypes.length ? el('div', { class: 'panel small' }, weaponTypes.map(type =>
         el('div', { class: 'weapon-mastery-entry' }, weaponIcon(type),
