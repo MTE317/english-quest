@@ -43,7 +43,7 @@ export const BATTLE_FORMULAS = Object.freeze({
   crit_cap: 0.85,
   crit_multiplier_cap: 3,
   evasion_cap: 0.6,
-  status_resist_cap: 0.9,
+  status_resist_cap: 1,
   damage_cut_cap: 0.7,
   element_resist_cap: 0.8,
   minimum_damage_share: 0.08,
