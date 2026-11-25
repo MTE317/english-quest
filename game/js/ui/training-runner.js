@@ -102,7 +102,8 @@ export function runTrainingSession({ view, catalog, store, session, scheduler, d
       el('div', { class: 'prompt', lang: 'en' }, q.prompt),
       canSpeak() ? el('div', { class: 'center' },
         el('button', { class: 'speak', onclick: () => speak(word.en) }, '🔊 発音')) : null,
-      el('div', { class: 'options' }, buttons), feedback);
+      feedback,
+      el('div', { class: 'options' }, buttons));
     window.scrollTo(0, 0);
   }
   function phraseQuestion(entry) {
