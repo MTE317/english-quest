@@ -396,6 +396,7 @@ test('魔力の余韻はパッシブ枠へ装備した生存者だけの戦闘�
   ctx.member.mp = 0;
   recoverAfterBattle(ctx.data, ctx.game);
   assert.equal(ctx.member.mp, 0, '覚えていても未装備なら回復しない');
+  ctx.member.learned.push('common_mana_afterglow'); // 戦闘効果の検証用に習得済みを用意
   equipSkill(ctx.data, ctx.member, 'common_mana_afterglow');
   recoverAfterBattle(ctx.data, ctx.game);
   assert.equal(ctx.member.mp, Math.round(maximum * .1));
@@ -410,3 +411,4 @@ test('魔力の余韻はパッシブ枠へ装備した生存者だけの戦闘�
   recoverAfterBattle(ctx.data, ctx.game);
   assert.equal(ctx.member.mp, 0, '枠から外すと効果がなくなる');
 });
+

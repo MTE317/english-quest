@@ -1,11 +1,11 @@
-import { normalizeAp } from './ap.js?v=unified-ap-1';
-import { migrateGold, goldVersion } from './gold.js?v=unified-ap-1';
+import { normalizeAp } from './ap.js?v=paid-skills-1';
+import { migrateGold, goldVersion } from './gold.js?v=paid-skills-1';
 // 新しいゲームの進み具合（セーブの game の中身）
-import { createMember, maxHp, maxMp, levelCap } from './character.js?v=unified-ap-1';
-import { ensureLoadout, jobSkills, isLearned, normalizeSkillLevels } from './growth.js?v=unified-ap-1';
-import { parseAmounts } from './csv.js?v=unified-ap-1';
-import { recordStoredMaterials } from './temple.js?v=unified-ap-1';
-import { retireLegacyQuestChains } from './retired-quests.js?v=unified-ap-1';
+import { createMember, maxHp, maxMp, levelCap } from './character.js?v=paid-skills-1';
+import { ensureLoadout, jobSkills, isLearned, normalizeSkillLevels, migrateInitialSkills } from './growth.js?v=paid-skills-1';
+import { parseAmounts } from './csv.js?v=paid-skills-1';
+import { recordStoredMaterials } from './temple.js?v=paid-skills-1';
+import { retireLegacyQuestChains } from './retired-quests.js?v=paid-skills-1';
 
 export const PARTY_SIZE = 6;
 
@@ -73,6 +73,7 @@ export function normalizeGame(data, game, run = null, { expandParty = true } = {
   game.titles ??= [];
   game.unlockedJobs = game.unlockedJobs ?? [];
   game.examsPassed = game.examsPassed ?? [];
+  for (const member of game.party ?? []) migrateInitialSkills(data, member);
   preserveMasteredJobs(data, game);
   const retiredMembers = retireRuneBonuses(data, game);
   for (const m of game.party ?? []) {

@@ -1,28 +1,28 @@
-import { availableAp } from '../ap.js?v=unified-ap-1';
+import { availableAp } from '../ap.js?v=paid-skills-1';
 // パーティーの画面：キャラメイク・6人の一覧・能力値・装備8枠
-import { loadGameData } from '../gamedata.js?v=unified-ap-1';
-import { GameSession } from '../save.js?v=unified-ap-1';
-import { createNewGame, defaultPartySpecs, normalizeGame } from '../game-state.js?v=unified-ap-1';
+import { loadGameData } from '../gamedata.js?v=paid-skills-1';
+import { GameSession } from '../save.js?v=paid-skills-1';
+import { createNewGame, defaultPartySpecs, normalizeGame } from '../game-state.js?v=paid-skills-1';
 import {
   computeStats, SLOTS, SLOT_LABEL, STAT_LABEL, canEquip, equipFromStorage, unequip, gearDef,
   aptitudeGrade, xpToNext, levelCap, gainXp, makeGear,
-} from '../character.js?v=unified-ap-1';
+} from '../character.js?v=paid-skills-1';
 import {
   jobPaths, isLearned, skillPrerequisite, learnBlock, learnSkill, equipBlock, equipSkill, unequipSkill, capacity, usedCapacity,
   commonApCost, commonBlock, learnCommon, masteryLevel, isJobMastered,
   skillMaxLevel, learnedSkillLevel, usedSkillLevel, effectiveSkill, upgradeSkillBlock, upgradeSkill, setSkillUseLevel,
-} from '../growth.js?v=unified-ap-1';
-import { skillMp } from '../battle.js?v=unified-ap-1';
-import { el, render, stars } from '../dom.js?v=unified-ap-1';
-import { describeFixedEffects } from '../equipment-effects.js?v=unified-ap-1';
-import { describeSkillEffect } from '../skill-effects.js?v=unified-ap-1';
+} from '../growth.js?v=paid-skills-1';
+import { skillMp } from '../battle.js?v=paid-skills-1';
+import { el, render, stars } from '../dom.js?v=paid-skills-1';
+import { describeFixedEffects } from '../equipment-effects.js?v=paid-skills-1';
+import { describeSkillEffect } from '../skill-effects.js?v=paid-skills-1';
 
-import { setSceneMusic } from '../battle-music.js?v=unified-ap-1';
+import { setSceneMusic } from '../battle-music.js?v=paid-skills-1';
 
-import { installGameShell } from '../ui/game-shell.js?v=unified-ap-1';
-import { weaponIcon } from '../ui/weapon-icons.js?v=unified-ap-1';
-import { armorIcon, equipmentIcon } from '../ui/equipment-icons.js?v=unified-ap-1';
-import { portraitIcon, portraitLabel, PORTRAIT_GROUPS } from '../ui/portrait.js?v=unified-ap-1';
+import { installGameShell } from '../ui/game-shell.js?v=paid-skills-1';
+import { weaponIcon } from '../ui/weapon-icons.js?v=paid-skills-1';
+import { armorIcon, equipmentIcon } from '../ui/equipment-icons.js?v=paid-skills-1';
+import { portraitIcon, portraitLabel, PORTRAIT_GROUPS } from '../ui/portrait.js?v=paid-skills-1';
 
 const view = document.getElementById('view');
 setSceneMusic('facility');
@@ -408,7 +408,7 @@ function showSkills(index, jobId, skillId, message = '') {
       el('p', { class: 'muted small' }, [skill.path, skill.kind === 'passive' ? 'パッシブ' : `MP ${skillMp(data, member, skill)}`,
         `必要枠 ${skill.cost}`, skill.isFinal && '奥義'].filter(Boolean).join('・')),
       el('p', { class: 'small' }, describeSkillEffect(data, effectiveSkill(data, member, skill))),
-      el('p', { class: 'small muted' }, `習得AP ${skill.apToLearn}${skill.apToLearn === 0 ? '（最初から習得）' : ''}・前提：${prerequisiteText}`),
+      el('p', { class: 'small muted' }, `習得AP ${skill.apToLearn}・前提：${prerequisiteText}`),
       learned && skillMaxLevel(skill) > 1 ? el('section', {},
         el('p', {}, `習得Lv ${level}/${skillMaxLevel(skill)}・使用Lv ${usedSkillLevel(member, skill)}（使用Lvは装備画面で選択）`),
         next ? el('p', {}, `次のLv: 基礎MP ${next.mp}・${describeSkillEffect(data, { ...skill, effect: { ...skill.effect, ...next.effect } })}`) : null,

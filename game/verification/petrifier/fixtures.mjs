@@ -16,7 +16,7 @@ export function unlockAndTrain(data, game, index, { level = 45 } = {}) {
   const member = game.party[index];
   member.lv = level;
   member.loadout = { actions: ['petrifier_shot'], passives: [] };
-  member.ap = 78;
+  member.ap = PETRIFIER_SKILLS.reduce((sum,id) => sum + data.skills.get(id).apToLearn, 0);
   for (const id of PETRIFIER_SKILLS) if (!isLearned(member, data.skills.get(id))) learnSkill(data, member, id);
   for (const id of PETRIFIER_SKILLS) if (!equipBlock(data, member, data.skills.get(id))) equipSkill(data, member, id);
   assert.equal(member.ap, 0);

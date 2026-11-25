@@ -50,7 +50,8 @@ test('基本8職123技能は独立習得。上位職の前提・奥義・共通�
 
 test('共通AP10/20を消費。習得と使用Lvを分離し、他キャラ・未経験・不正値を拒否', () => {
   const s = data.skills.get('black_mage_p1_s1'), game = fresh('black_mage'), m = game.party[0];
-  m.ap = 129;
+  m.ap = 139;
+  learnSkill(data,m,s.id);
   const other = structuredClone(game.party[5]); const cap = usedCapacity(data, m);
   upgradeSkill(data, m, s.id);
   assert.equal(learnedSkillLevel(m,s),2); assert.equal(usedSkillLevel(m,s),1); assert.equal(m.ap,119);
@@ -59,7 +60,7 @@ test('共通AP10/20を消費。習得と使用Lvを分離し、他キャラ・�
   assert.deepEqual(game.party[5],other); assert.deepEqual(usedCapacity(data,m),cap);
   assert.throws(()=>upgradeSkill(data,m,s.id),/強化できない/);
   for (const lv of [0,4,-1,1.5,NaN,'2']) assert.throws(()=>setSkillUseLevel(data,m,s.id,lv));
-  const poor=fresh('black_mage').party[0]; poor.ap=9;
+  const poor=fresh('black_mage').party[0]; poor.ap=19; learnSkill(data,poor,s.id);
   assert.throws(()=>upgradeSkill(data,poor,s.id),/AP/); assert.equal(poor.ap,9);
   assert.throws(()=>upgradeSkill(data,fresh().party[0],s.id),/覚えていない/);
 });
@@ -89,7 +90,7 @@ test('17技能全Lvの実行: 表示・MP・威力/回復/支援が同じ使用L
 
 test('複数メンバーが同じ技能を別Lvで持ち出し、保存再読込しても混ざらない', () => {
   const s=data.skills.get('black_mage_p1_s1'),game=trained(s,3),m=game.party[0];
-  const peer=game.party[5]; peer.ap=10; upgradeSkill(data,peer,s.id); setSkillUseLevel(data,peer,s.id,2);
+  const peer=game.party[5]; peer.ap=20; learnSkill(data,peer,s.id); upgradeSkill(data,peer,s.id); setSkillUseLevel(data,peer,s.id,2);
   changeJob(data,game,0,'warrior'); changeJob(data,game,5,'knight');
   const storage=new MemoryStorage(),session=new GameSession({storage});session.startNew(game);
   const loaded=new GameSession({storage});normalizeGame(data,loaded.game);

@@ -1,5 +1,5 @@
-import { normalizeAp, gainAp } from './ap.js?v=unified-ap-1';
-import { gainXp, xpToNext, levelCap } from './character.js?v=unified-ap-1';
+import { normalizeAp, gainAp } from './ap.js?v=paid-skills-1';
+import { gainXp, xpToNext, levelCap } from './character.js?v=paid-skills-1';
 
 // 短時間で学べる訓練場。問題の種類と教材カテゴリーの選択はUIと共通で扱う。
 export const TRAINING_COUNTS = Object.freeze([5, 10, 15]);

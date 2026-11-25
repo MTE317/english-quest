@@ -1,5 +1,5 @@
-import { gainAp } from './ap.js?v=unified-ap-1';
-import { roundGold } from './gold.js?v=unified-ap-1';
+import { gainAp } from './ap.js?v=paid-skills-1';
+import { roundGold } from './gold.js?v=paid-skills-1';
 // ダンジョンの遠征：行き先とルーンストーンを選ぶ・階層・帰還ポイント・ドロップ・バックパック・全滅で入る前に戻る。
 // 進み具合は session.run に入れる（1戦ごとに保存。全滅したら session.wipe() で入る前に戻る）。
 //
@@ -8,15 +8,15 @@ import { roundGold } from './gold.js?v=unified-ap-1';
 //   'loot'         … 拾ったものがバックパックに入りきらない（入れ替えるかあきらめるかを選ぶ）
 //   'return_point' … 帰還ポイント（帰るか先へ進むかを選ぶ）
 //   'cleared'      … いちばん奥のボスを倒した（町に帰るだけ）
-import { createBattle, finishBattle, battleRewards, curedBy } from './battle.js?v=unified-ap-1';
-import { makeEncounter, floorRow, planBounty } from './encounter.js?v=unified-ap-1';
-import { rollBattleLoot, addToBackpack, swapIntoBackpack, unloadBackpack } from './loot.js?v=unified-ap-1';
-import { gainXp, maxHp, maxMp, affixSum } from './character.js?v=unified-ap-1';
-import { advanceDays, calendarOf, countKills, refreshBoard } from './town.js?v=unified-ap-1';
-import { discoverJobs, recordStoredMaterials } from './temple.js?v=unified-ap-1';
-import { memberMods } from './growth.js?v=unified-ap-1';
-import { planExploration, resolveExploration, commitExploration, explorationEntryAllowed } from './exploration.js?v=unified-ap-1';
-import { isTrialDungeonUnlocked } from './world-map.js?v=unified-ap-1';
+import { createBattle, finishBattle, battleRewards, curedBy } from './battle.js?v=paid-skills-1';
+import { makeEncounter, floorRow, planBounty } from './encounter.js?v=paid-skills-1';
+import { rollBattleLoot, addToBackpack, swapIntoBackpack, unloadBackpack } from './loot.js?v=paid-skills-1';
+import { gainXp, maxHp, maxMp, affixSum } from './character.js?v=paid-skills-1';
+import { advanceDays, calendarOf, countKills, refreshBoard } from './town.js?v=paid-skills-1';
+import { discoverJobs, recordStoredMaterials } from './temple.js?v=paid-skills-1';
+import { memberMods } from './growth.js?v=paid-skills-1';
+import { planExploration, resolveExploration, commitExploration, explorationEntryAllowed } from './exploration.js?v=paid-skills-1';
+import { isTrialDungeonUnlocked } from './world-map.js?v=paid-skills-1';
 
 /** 乱数の種から 0〜1 の乱数を返す関数（状態は obj[key] に入れて保存できる） */
 export function seededRng(obj, key = 'rng') {

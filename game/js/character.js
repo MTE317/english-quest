@@ -1,8 +1,8 @@
 // パーティのキャラ：能力値・装備8枠・レベル。
 // 式は data/balance.json から読む。balance.json に式として書かれていないもの（説明の文だけのもの）は、
 // シミュレーター（sim/core.py）と同じ式を下の SIM_FORMULAS に置いて使う。docs/requests.md で balance.json への追加を依頼済み。
-import { evaluate, isFormula } from './expr.js?v=unified-ap-1';
-import { memberMods, masteryMul, ensureLoadout } from './growth.js?v=unified-ap-1';
+import { evaluate, isFormula } from './expr.js?v=paid-skills-1';
+import { memberMods, masteryMul, ensureLoadout } from './growth.js?v=paid-skills-1';
 
 export const STATS = ['hp', 'str', 'mag', 'def', 'res', 'spd', 'luk'];
 export const STAT_LABEL = { hp: 'HP', str: 'STR', mag: 'MAG', def: 'DEF', res: 'RES', spd: 'SPD', luk: 'LUK' };
@@ -284,7 +284,7 @@ export function createMember(data, game, spec, index) {
   if (!data.jobsById.has(spec.job)) throw new Error(`ジョブ ${spec.job} がない`);
   const member = {
     id: `m${index + 1}`, name: spec.name, icon: spec.icon, job: spec.job,
-    lv: 1, xp: 0, hp: 0, mp: 0, ap: 0, apVersion: 1, visitedJobs: [spec.job], persist: [], learned: [], common: [], mastery: {}, loadout: null,
+    lv: 1, xp: 0, hp: 0, mp: 0, ap: 0, apVersion: 1, skillAcquisitionVersion: 1, visitedJobs: [spec.job], persist: [], learned: [], common: [], mastery: {}, loadout: null,
     equip: Object.fromEntries(SLOTS.map((s) => [s, null])),
   };
   for (const [slot, id] of Object.entries(starterGearIds(data, spec.job))) {

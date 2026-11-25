@@ -1,4 +1,4 @@
-import { unlockFootsteps, playDungeonFootstep } from '../dungeon-footsteps.js?v=unified-ap-1';
+import { unlockFootsteps, playDungeonFootstep } from '../dungeon-footsteps.js?v=paid-skills-1';
 
 let active = null;
 

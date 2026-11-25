@@ -25,7 +25,8 @@ for(const [enemyId,dungeonId,lv]of [['goblin_boss','mossy_cave',5],['stone_giant
  for(let n=0;n<runs;n++){
   const seed=927141+n*7919,game=createNewGame(data,['warrior','black_mage','white_mage','hunter','thief',job].map((job,i)=>({job,name:'role'+i,icon:'human_01'})));
   for(const m of game.party){m.lv=10;m.hp=maxHp(data,m);m.mp=maxMp(data,m);}
-  const m=game.party[5];m.ap=10;
+  const m=game.party[5];m.ap=10+data.skills.get(skillId).apToLearn;
+  learnSkill(data,m,skillId);
   game.gold=100000;game.facilities.weapon_workshop=2;
   const recipe=data.recipes.find(r=>r.id===named[job]);
   const weapon=makeWeapon(game,gearMode==='named'?named[job]:recipe.base_equipment_id);

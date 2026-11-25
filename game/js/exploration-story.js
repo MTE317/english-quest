@@ -1,4 +1,4 @@
-import { allowedDungeons } from './dungeon.js?v=unified-ap-1';
+import { allowedDungeons } from './dungeon.js?v=paid-skills-1';
 
 function availableStories(data, game) {
   const reachable = new Set(allowedDungeons(data, game).map(d => d.id));

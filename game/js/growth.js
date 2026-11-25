@@ -1,7 +1,7 @@
-import { availableAp, spendAp, normalizeAp, hasVisitedJob } from './ap.js?v=unified-ap-1';
+import { availableAp, spendAp, normalizeAp, hasVisitedJob } from './ap.js?v=paid-skills-1';
 // 成長：スキルツリーと AP・スキルの枠・共通ツリー・ジョブを極めたボーナス・武器の熟練度・ジョブチェンジ。
 // data に数として書かれていないものは GROWTH_FORMULAS に置く（docs/requests.md で依頼済み）。
-import { gearDef, aptitudeMul, unequip, maxHp, maxMp } from './character.js?v=unified-ap-1';
+import { gearDef, aptitudeMul, unequip, maxHp, maxMp } from './character.js?v=paid-skills-1';
 
 export const GROWTH_FORMULAS = Object.freeze({
   action_capacity: 10, // 通常スキルの枠（スキルの cost の合計。sim の cap_a）
@@ -49,14 +49,20 @@ export function jobPaths(data, jobId) {
   for (const s of jobSkills(data, jobId)) { if (!out.has(s.path)) out.set(s.path, []); out.get(s.path).push(s); }
   return out;
 }
-/** 覚えているか（ap_to_learn が0のものは最初から） */
+/** 習得は明示的な記録だけで判定する。ジョブ経験やAP0では自動習得しない。 */
 export function isLearned(member, skill) {
-  if ((member.learned ?? []).includes(skill.id)) return true;
-  // 共通の魔力の余韻だけは職経験を必要としない初期パッシブ。
-  if (skill.id === 'common_mana_afterglow' && skill.job === 'common' && skill.apToLearn === 0) return true;
-  // AP 0 は「そのジョブに初めて就いた時点で覚える初期スキル」。
-  // 未経験ジョブの初期スキルまで全員共通で使える状態にはしない。
-  return skill.apToLearn === 0 && hasVisitedJob(member, skill.job);
+  return (member.learned ?? []).includes(skill.id);
+}
+/** 無料習得廃止前のセーブに限り、既得の初期スキルを明示的な習得記録へ移す。 */
+export function migrateInitialSkills(data, member) {
+  if (member.skillAcquisitionVersion === 1) return;
+  const retired = new Set(data.balance?.content_updates?.retired_initial_skills ?? []);
+  const learned = new Set(member.learned ?? []);
+  for (const skill of data.skills?.values() ?? []) {
+    if (retired.has(skill.id) && (skill.job === 'common' || hasVisitedJob(member, skill.job))) learned.add(skill.id);
+  }
+  member.learned = [...learned];
+  member.skillAcquisitionVersion = 1;
 }
 /** 同じ枝の一つ前の段階。習得判定と詳細表示で共有する。 */
 export function skillPrerequisite(data, skill) {
@@ -66,7 +72,7 @@ export function skillPrerequisite(data, skill) {
 /** 覚えられるか → 理由（覚えられるなら ''） */
 export function learnBlock(data, member, skill) {
   if (isLearned(member, skill)) return '覚えている';
-  if (!hasVisitedJob(member, skill.job)) return '先にこのジョブへ転職してください';
+  if (skill.job !== 'common' && !hasVisitedJob(member, skill.job)) return '先にこのジョブへ転職してください';
   const prev = skillPrerequisite(data, skill);
   if (prev && !isLearned(member, prev)) return `「${prev.name}」を覚える`;
   const ap = availableAp(data, member);
@@ -361,8 +367,6 @@ export function changeJob(data, game, index, jobId) {
       if (s?.isFinal && s.job !== jobId) unequipSkill(m, id);
     }
   }
-  // 新しいジョブの最初のスキル（ap_to_learn 0）を、枠に空きがあればつける
-  for (const s of jobSkills(data, jobId)) if (isLearned(m, s) && !equipBlock(data, m, s)) equipSkill(data, m, s.id);
   m.hp = Math.min(m.hp, maxHp(data, m));
   m.mp = Math.min(m.mp, maxMp(data, m));
 }

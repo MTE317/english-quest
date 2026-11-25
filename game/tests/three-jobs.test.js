@@ -16,7 +16,7 @@ const jobs = ['infernalist','seal_archer','neutralist'];
 const materials = { infernalist: {lava_golem_rare:2,lava_golem_mat:4}, neutralist:{paper_golem_rare:2,paper_golem_mat:4} };
 function train(job) {
  const game=fresh(); game.unlockedJobs.push(job);
- changeJob(data,game,0,job); const m=game.party[0]; m.lv=45; m.ap=65;
+ changeJob(data,game,0,job); const m=game.party[0]; m.lv=45; m.ap=75; learnSkill(data,m,job+'_art');
  m.loadout={actions:[job+'_art'],passives:[]};
  learnSkill(data,m,job+'_passive');learnSkill(data,m,job+'_ultimate');equipSkill(data,m,job+'_passive');equipSkill(data,m,job+'_ultimate');
  m.equip.weapon=makeGear(game,job==='seal_archer'?'bow_t1':'tome_t1');m.mp=maxMp(data,m);
@@ -47,7 +47,7 @@ test('封技弓士は対象の封印使いを実際に討伐して依頼報告�
  countKills(s.game,[enemy],'sky_isles');assert.ok(!s.game.unlockedJobs.includes('seal_archer'));s.wipe();assert.throws(()=>reportQuest(data,s.game,100));
  countKills(s.game,[enemy],'sky_isles');reportQuest(data,s.game,100,()=>0);assert.ok(s.game.unlockedJobs.includes('seal_archer'));
 });
-for(const job of jobs)test(`${job}: AP65・無料転職・持出し・現職奥義・保存再読込`,()=>{
+for(const job of jobs)test(`${job}: AP75・無料転職・持出し・現職奥義・保存再読込`,()=>{
  const game=train(job),m=game.party[0];assert.equal(game.jp,undefined);assert.equal(m.ap,0);
  const out=act(game,job+'_ultimate');assert.equal(actionOptions(data,out.game,out.b,0).skills.find(x=>x.skill.id===job+'_ultimate').reason,'この戦闘ではもう使った');
  const s=new GameSession({storage:new MemoryStorage()});s.startNew(game);const reread=new GameSession({storage:s.store.storage});normalizeGame(data,reread.game);

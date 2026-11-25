@@ -59,7 +59,8 @@ test('鎌の特効は状態ごとに乗り、奥義は1回の命中で両方を�
   const member = game.party[0];
   member.lv = 30;
   member.mp = maxMp(data, member);
-  member.ap = 80;
+  member.ap = 90;
+  learnSkill(data, member, 'bloodblade_scorch'); equipSkill(data, member, 'bloodblade_scorch');
   assert.ok(member.loadout.actions.includes('bloodblade_scorch'));
   member.loadout.actions = ['bloodblade_scorch'];
   for (const skill of ['bloodblade_rend', 'bloodblade_wounds', 'bloodblade_reaping']) { learnSkill(data, member, skill); equipSkill(data, member, skill); }

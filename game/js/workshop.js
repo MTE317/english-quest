@@ -1,11 +1,11 @@
-import { roundGold, goldScale } from './gold.js?v=unified-ap-1';
-import { parseAmounts, splitList } from './csv.js?v=unified-ap-1';
-import { makeGear } from './character.js?v=unified-ap-1';
-import { rollAffixes, affixVariants } from './loot.js?v=unified-ap-1';
-import { matchesNeed, parseMaterialNeed } from './town.js?v=unified-ap-1';
-import { currentRank } from './dungeon.js?v=unified-ap-1';
-import { consumeMaterials } from './temple.js?v=unified-ap-1';
-import { describeEffect } from './equipment-effects.js?v=unified-ap-1';
+import { roundGold, goldScale } from './gold.js?v=paid-skills-1';
+import { parseAmounts, splitList } from './csv.js?v=paid-skills-1';
+import { makeGear } from './character.js?v=paid-skills-1';
+import { rollAffixes, affixVariants } from './loot.js?v=paid-skills-1';
+import { matchesNeed, parseMaterialNeed } from './town.js?v=paid-skills-1';
+import { currentRank } from './dungeon.js?v=paid-skills-1';
+import { consumeMaterials } from './temple.js?v=paid-skills-1';
+import { describeEffect } from './equipment-effects.js?v=paid-skills-1';
 
 const facilityFor = (def) => def.slot === 'weapon' ? 'weapon_workshop'
   : ['cloak', 'accessory'].includes(def.slot) ? 'accessory_workshop' : 'armor_workshop';

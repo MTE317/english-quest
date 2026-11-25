@@ -34,7 +34,8 @@ function train(game) {
   game.jp = 1000;
   changeJob(data, game, 0, job);
   const member = game.party[0];
-  member.ap = 63;
+  member.ap = 73;
+  learnSkill(data, member, chain);
   member.loadout = { actions: [chain], passives: [] };
   // 奥義とパッシブは独立に習得できる。
   learnSkill(data, member, ultimate); equipSkill(data, member, ultimate);
