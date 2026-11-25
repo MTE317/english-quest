@@ -408,3 +408,53 @@
 .skill-learning-grid > li { min-width: 0; padding-top: 0; background: none; }
 .skill-learning-grid .shop-slot { height: 100%; }
 .skill-learning-layout > .skill-shop-detail { align-self: start; }
+
+/* 個人画面はスキル・装備・能力の3入口に統一。 */
+.member-main-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 7px;
+  margin: 12px 0;
+}
+.quest-ui .member-main-tabs button { min-width: 0; margin: 0; }
+.quest-ui .member-main-tabs button[aria-pressed="true"] {
+  border-color: #e5c276;
+  background: #e7bd69;
+  color: #2a1c08;
+  font-weight: 700;
+}
+.skill-learning-catalog .common-passives {
+  margin-top: 16px;
+  padding-top: 0;
+  background: none;
+}
+.skill-learning-catalog .common-passives::before { display: none; }
+
+/* 説明を上に、カテゴリは押して開閉する。 */
+.skill-learning-layout { display: block; }
+.skill-loadout-layout { grid-template-columns: minmax(0, 1fr); }
+.skill-learning-catalog .skill-category {
+  min-width: 0;
+  border: 1px solid var(--line);
+  background: #142238;
+}
+.skill-category > summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 48px;
+  padding: 8px 12px;
+  color: var(--accent);
+  font-weight: 700;
+  cursor: pointer;
+  list-style: none;
+}
+.skill-category > summary::-webkit-details-marker { display: none; }
+.skill-category > summary::after { content: '+'; font-size: 1.25rem; }
+.skill-category[open] > summary::after { content: '−'; }
+.skill-category[open] > summary { border-bottom: 1px solid var(--line); }
+.skill-learning-catalog .skill-category .skill-learning-grid { margin: 0; border: 0; }
+.skill-learning-catalog .common-passives { padding: 0; }
+
+.skill-category > ol { list-style: none; }

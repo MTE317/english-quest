@@ -29,6 +29,7 @@ const session = new GameSession();
 installGameShell('party', session);
 session.installAutoSave(window);
 let data;
+const skillCategoryOpen = new Map();
 
 const pct = (x) => `${Math.round(x * 1000) / 10}%`;
 const jobName = (id) => data.jobsById.get(id)?.name ?? id;
@@ -178,25 +179,32 @@ function memberSwitcher(index, select = showMember) {
     }, portraitIcon(member.icon, { small: true }), el('span', {}, member.name))));
 }
 
-function showMember(index) {
-  const g = session.game;
-  const m = g.party[index];
+function memberNavigation(index, active, switchMember) {
+  return [
+    el('button', { class: 'ghost', onclick: showParty }, '← パーティーの一覧へ'),
+    memberSwitcher(index, switchMember ?? (next => showMember(next, active))),
+    memberBanner(session.game.party[index]),
+    el('div', { class: 'member-main-tabs', role: 'group', 'aria-label': 'キャラクターのメニュー' },
+      [['skills', 'スキル'], ['equipment', '装備'], ['abilities', '能力']].map(([id, title]) =>
+        el('button', { type: 'button', 'aria-pressed': String(active === id), onclick: () => showMember(index, id) }, title))),
+  ];
+}
+
+function showMember(index, tab = 'skills') {
+  if (tab === 'skills') return showSkills(index);
+  const m = session.game.party[index];
   const st = computeStats(data, m);
   const cap = levelCap(data);
+  const weaponTypes = Object.keys(m.mastery ?? {});
   const statRows = [
     ['HP', `${m.hp} / ${st.hp}`], ['MP', `${m.mp} / ${st.mp}`],
-    ...['str', 'mag', 'def', 'res', 'spd', 'luk'].map((k) => [STAT_LABEL[k], st[k]]),
+    ...['str', 'mag', 'def', 'res', 'spd', 'luk'].map(k => [STAT_LABEL[k], st[k]]),
     ['攻撃力（武器）', st.offhandAttack ? `${st.attack} ＋ ${st.offhandAttack}` : st.attack],
     ['クリティカル率', pct(st.crit)], ['回避率', pct(st.evasion)], ['状態異常の耐性', pct(st.statusResist)],
   ];
   render(view,
-    el('button', { class: 'ghost', onclick: showParty }, '← パーティーの一覧へ'),
-    memberSwitcher(index),
-    memberBanner(m),
-    el('div', { class: 'row' },
-      el('button', { onclick: () => showSkills(index) }, 'スキル習得・強化'),
-      el('button', { onclick: () => showLoadout(index) }, 'スキル装備'),
-      el('button', { onclick: () => showCommon(index) }, '共通ツリー')),
+    memberNavigation(index, tab),
+    tab === 'equipment' ? [
     el('h2', {}, '装備'),
     el('ul', { class: 'equipment-slots' },
       SLOTS.map((slot) => {
@@ -210,10 +218,18 @@ function showMember(index) {
               SLOT_LABEL[slot]),
             el('span', { class: 'equipment-slot-name' }, gear ? gearLabel(gear, m.job) : '未装備')));
       })),
-    el('details', { class: 'panel' }, el('summary', {}, '能力値'),
+
+    ] : [
+      el('h2', {}, '能力'),
       el('p', { class: 'muted small' }, m.lv < cap ? `次のレベルまで ${xpToNext(data, m.lv) - m.xp}` : '最大レベル'),
-      el('table', { class: 'stat-table' }, el('tbody', {}, statRows.map(([k, v]) => el('tr', {}, el('th', {}, k), el('td', {}, String(v))))))),
-  );
+      el('table', { class: 'stat-table' }, el('tbody', {}, statRows.map(([key, value]) =>
+        el('tr', {}, el('th', {}, key), el('td', {}, String(value)))))),
+      el('h2', {}, '武器の熟練度'),
+      weaponTypes.length ? el('div', { class: 'panel small' }, weaponTypes.map(type =>
+        el('div', { class: 'weapon-mastery-entry' }, weaponIcon(type),
+          el('span', {}, `${data.weaponTypes.get(type)?.name ?? type}：熟練度 ${masteryLevel(data, m, type)}（倒した数 ${m.mastery[type]}）`))))
+        : el('p', { class: 'muted small' }, 'まだない（敵を倒すとその武器の熟練度が上がる）'),
+    ]);
   window.scrollTo(0, 0);
 }
 
@@ -318,9 +334,7 @@ function showLoadout(index, kind = 'actions', message = '', skillId = '') {
   }));
 
   render(view,
-    el('button', { class: 'ghost', onclick: () => showMember(index) }, `← ${member.name}へ`),
-    memberSwitcher(index, (next) => showLoadout(next, kind)),
-    memberBanner(member),
+    memberNavigation(index, 'skills', next => showLoadout(next, kind)),
     el('h2', {}, 'スキル装備'),
     el('p', { class: 'muted small' }, '習得済みスキルを選び、詳細を確認して装着・取り外しできます。転職前に覚えたスキルも使用できます。'),
     message ? el('p', { class: 'error', role: 'status' }, message) : null,
@@ -338,7 +352,7 @@ function showLoadout(index, kind = 'actions', message = '', skillId = '') {
         onclick: () => showLoadout(index, 'passives'),
       }, `パッシブ（${used.passives}/${cap.passives}）`)),
     skills.length
-      ? el('div', { class: 'shop-layout skill-shop-layout' }, grid, detail)
+      ? el('div', { class: 'shop-layout skill-shop-layout skill-loadout-layout' }, detail, grid)
       : el('section', { class: 'shop-detail skill-shop-empty' },
         el('p', { class: 'muted' }, '習得済みのスキルはありません。'),
         el('button', { class: 'ghost', onclick: () => showSkills(index) }, 'スキル習得・強化を見る')),
@@ -405,23 +419,67 @@ function showSkills(index, jobId, skillId, message = '') {
         : el('p', { class: 'small muted' }, '習得済み。装着・取り外しはスキル装備画面で行えます。'));
   }
 
+  function selectCommon(node) {
+    selected = { id: `common:${node.id}`, kind: 'common' };
+    for (const [id, button] of nodes) button.setAttribute('aria-pressed', String(id === selected.id));
+    const learned = (member.common ?? []).includes(node.id);
+    const reason = commonBlock(data, member, node);
+    render(detail,
+      el('header', {}, skillIcon({ kind: 'passive' }), el('h2', {}, node.name)),
+      el('p', { class: 'shop-description' }, '共通パッシブ'),
+      el('p', {}, node.effect),
+      el('p', { class: 'small muted' }, `必要Lv ${node.level}・必要ポイント ${node.points}pt・残り ${commonPoints(data, member).left}pt`),
+      el('p', { class: 'small muted' }, '習得後はどのジョブでも常時有効です。装着は不要です。'),
+      learned ? el('p', { class: 'skill-shop-equipped' }, '習得済み') : el('button', {
+        class: 'primary', disabled: session.inDungeon || !!reason,
+        onclick: () => updateSkill(target => learnCommon(data, target, node.id)),
+      }, reason || `覚える（${node.points}pt）`));
+  }
+
+  const commonKey = `${index}:common`;
+  const commonPassives = el('details', {
+    class: 'skill-category common-passives',
+    open: skillCategoryOpen.get(commonKey) ?? Boolean(skillId?.startsWith('common:')),
+    ontoggle: event => skillCategoryOpen.set(commonKey, event.currentTarget.open),
+  },
+    el('summary', {}, `共通パッシブ（残り ${commonPoints(data, member).left}pt）`),
+    el('ol', { class: 'shop-grid skill-learning-grid' }, data.commonTree.map(node => {
+      const learned = (member.common ?? []).includes(node.id);
+      const available = !learned && !commonBlock(data, member, node);
+      const id = `common:${node.id}`;
+      const button = el('button', {
+        type: 'button', class: 'shop-slot skill-shop-slot', 'aria-pressed': 'false',
+        'aria-label': `${node.name}、共通パッシブ、${learned ? '習得済' : available ? '習得可' : '未習得'}`,
+        onclick: () => selectCommon(node),
+      }, skillIcon({ kind: 'passive' }),
+      el('span', { class: 'shop-slot-name' }, node.name),
+      el('span', { class: 'shop-slot-count' }, `Lv${node.level}・${node.points}pt`),
+      el('span', { class: 'skill-node-state' }, learned ? '習得済' : available ? '習得可' : '未習得'));
+      nodes.set(id, button);
+      return el('li', {}, button);
+    })));
+
   render(view,
-    el('button', { class: 'ghost', onclick: () => showMember(index) }, `← ${member.name}へ`),
-    memberSwitcher(index, (next) => showSkills(next)),
-    memberBanner(member),
+    memberNavigation(index, 'skills', next => showSkills(next)),
     el('h2', {}, 'スキル習得・強化'),
-    el('button', { class: 'ghost', onclick: () => showLoadout(index, selected?.kind === 'passive' ? 'passives' : 'actions', '', selected?.id) }, 'スキル装備・取り外しへ'),
-    el('p', { class: 'panel small' }, `残りAP ${member.ap[job] ?? 0}・通常枠 ${used.actions}/${cap.actions}・パッシブ枠 ${used.passives}/${cap.passives}`),
+    detail,
+    el('button', { class: 'ghost', onclick: () => showLoadout(index, selected?.kind === 'passive' ? 'passives' : 'actions', '', selected?.kind === 'common' ? '' : selected?.id) }, 'スキル装備・取り外しへ'),
+    el('p', { class: 'panel small' }, `残りAP ${member.ap[job] ?? 0}・共通ポイント ${commonPoints(data, member).left}pt・通常枠 ${used.actions}/${cap.actions}・パッシブ枠 ${used.passives}/${cap.passives}`),
     message ? el('p', { class: 'error', role: 'status' }, message) : null,
     jobs.length > 1 ? el('label', { class: 'small' }, 'ジョブ',
       el('select', { class: 'select', onchange: (event) => showSkills(index, event.target.value) },
         jobs.map((id) => el('option', { value: id, selected: id === job }, jobName(id))))) : null,
-    paths.length ? el('div', { class: 'shop-layout skill-shop-layout skill-learning-layout' },
+    (paths.length || data.commonTree.length) ? el('div', { class: 'skill-learning-layout' },
       el('div', { class: basic ? 'skill-tree skill-independent skill-learning-catalog' : 'skill-tree skill-learning-catalog' },
       el('div', { class: 'skill-tree-root' }, jobName(job), isJobMastered(data, member, job) ? '・極めた！' : ''),
       el('div', { class: 'skill-branches', style: `--branches:${paths.length}` },
-        paths.map(([path, branch]) => el('section', { class: 'skill-branch' },
-          el('h3', {}, path),
+        paths.map(([path, branch]) => el('details', {
+          class: 'skill-category',
+          open: skillCategoryOpen.get(`${index}:${job}:${path}`)
+            ?? (!skillId?.startsWith('common:') && branch.some(skill => skill.id === selected?.id)),
+          ontoggle: event => skillCategoryOpen.set(`${index}:${job}:${path}`, event.currentTarget.open),
+        },
+          el('summary', {}, path),
           el('ol', { class: 'shop-grid skill-learning-grid' }, branch.map((skill, i) => {
             const learned = isLearned(member, skill);
             const equipped = member.loadout.actions.includes(skill.id) || member.loadout.passives.includes(skill.id);
@@ -437,41 +495,14 @@ function showSkills(index, jobId, skillId, message = '') {
             nodes.set(skill.id, node);
             const linked = !basic && i > 0 && branch[i - 1].stage === skill.stage - 1;
             return el('li', { class: linked ? 'linked' : '' }, node);
-          })))))),
-      detail) : el('p', { class: 'muted' }, 'このジョブのスキルはありません。'),
+          }))))),
+      commonPassives)) : el('p', { class: 'muted' }, 'このジョブのスキルはありません。'),
   );
-  if (selected) selectSkill(selected);
+  const commonSelection = data.commonTree.find(node => `common:${node.id}` === skillId);
+  if (commonSelection) selectCommon(commonSelection);
+  else if (selected) selectSkill(selected);
+  else if (data.commonTree[0]) selectCommon(data.commonTree[0]);
   if (!jobId) window.scrollTo(0, 0);
-}
-
-function showCommon(index, msg = null) {
-  const g = session.game;
-  const m = g.party[index];
-  const pts = commonPoints(data, m);
-  const weaponTypes = Object.keys(m.mastery ?? {});
-  render(view,
-    el('button', { class: 'ghost', onclick: () => showMember(index) }, `← ${m.name}へ`),
-    memberSwitcher(index, (next) => showCommon(next)),
-    memberBanner(m),
-    msg ? el('div', { class: 'panel small error' }, msg) : null,
-    el('h2', {}, `共通ツリー（ポイント ${pts.left}）`),
-    el('p', { class: 'muted small' }, 'レベルが上がるとポイントが入る。どのジョブでも効く。'),
-    data.commonTree.map((n) => {
-      const has = (m.common ?? []).includes(n.id);
-      const block = commonBlock(data, m, n);
-      return el('div', { class: `skill ${has ? 'learned' : ''}` },
-        el('div', {}, n.name, el('span', { class: 'tiny muted' }, `　Lv${n.level}・${n.points}pt　${n.effect}`)),
-        has ? el('span', { class: 'tiny' }, '覚えている') : el('button', {
-          disabled: !!block,
-          onclick: () => { try { session.update((game) => learnCommon(data, game.party[index], n.id)); showCommon(index); } catch (e) { showCommon(index, e.message); } },
-        }, block || '覚える'));
-    }),
-    el('h2', {}, '武器の熟練度'),
-    weaponTypes.length ? el('div', { class: 'panel small' }, weaponTypes.map((t) => el('div', { class: 'weapon-mastery-entry' },
-      weaponIcon(t), el('span', {}, `${data.weaponTypes.get(t)?.name ?? t}：熟練度 ${masteryLevel(data, m, t)}（倒した数 ${m.mastery[t]}）`))))
-      : el('p', { class: 'muted small' }, 'まだない（敵を倒すとその武器の熟練度が上がる）'),
-  );
-  window.scrollTo(0, 0);
 }
 
 // ---------------- 枠を選んで付けかえる ----------------
@@ -516,18 +547,16 @@ function showSlot(index, slot) {
         offhandRemoved && slot === 'weapon' ? el('p', { class: 'small' }, 'サブ武器も倉庫へ戻ります。') : null),
       el('button', { class: 'primary', onclick: () => {
         session.update((game) => equipFromStorage(data, game, game.party[index], slot, gear.uid));
-        showMember(index);
+        showMember(index, 'equipment');
       } }, 'この装備に替える'));
   }
   render(view,
-    el('button', { class: 'ghost', onclick: () => showMember(index) }, `← ${m.name}へ`),
-    memberSwitcher(index, (next) => showSlot(next, slot)),
-    memberBanner(m),
+    memberNavigation(index, 'equipment', next => showSlot(next, slot)),
     el('h2', {}, SLOT_LABEL[slot]),
     el('div', { class: 'panel small' }, el('span', { class: 'equipment-slot-label' }, '装備中'),
       m.equip[slot] ? gearNameWithIcon(m.equip[slot], m.job) : '未装備'),
     m.equip[slot] ? el('button', {
-      onclick: () => { session.update((game) => unequip(data, game, game.party[index], slot)); showMember(index); },
+      onclick: () => { session.update((game) => unequip(data, game, game.party[index], slot)); showMember(index, 'equipment'); },
     }, '外して倉庫へ') : null,
     el('h2', {}, '倉庫から選ぶ'),
     cands.length === 0 ? el('p', { class: 'muted' }, 'この枠につけられる装備は倉庫にありません。') : null,
