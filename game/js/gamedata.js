@@ -1,3 +1,4 @@
+import { denominateGoldData } from './gold.js?v=gold-unit-1';
 // ゲームで使う data/ のファイルをまとめて読み、ID で引ける形にする。
 import { loadCsv, loadJson, loadOptional } from './data.js?v=features-2';
 import { toNumber, splitList } from './csv.js';
@@ -59,6 +60,7 @@ const byId = (rows, key = 'id') => new Map(rows.map((r) => [r[key], r]));
  * @param raw { balance: object, jobs: rows, ... }
  */
 export function buildGameData(raw) {
+  raw = structuredClone(raw); // 通貨換算で呼出元のCSV/JSONを変更しない。
   const STATS = ['hp', 'str', 'mag', 'def', 'res', 'spd', 'luk'];
   const job = (r, tier) => ({
     id: r.id, name: r.name, role: r.role, tier,
@@ -128,7 +130,7 @@ export function buildGameData(raw) {
   }
   const aptTable = (rows) => new Map(rows.map((r) => [r.job_id, r]));
 
-  return {
+  return denominateGoldData({
     balance: raw.balance,
     jobs,
     jobsById: byId(jobs),
@@ -151,7 +153,7 @@ export function buildGameData(raw) {
     kokuinSlots: raw.kokuinSlots ?? [],
     sets: byId(raw.sets ?? []),
     ...buildBattleData(raw),
-  };
+  });
 }
 
 /** `STR:4|特効:beast:15` → { STR: 4, '特効:beast': 15 } */

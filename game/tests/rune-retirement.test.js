@@ -56,9 +56,9 @@ test('解放済みの枠は累計費用を一度だけ返還し、旧装備デ�
   const beforeInventory = structuredClone(game.storage);
   normalizeGame(data, game);
   assertRetired(game);
-  assert.equal(game.gold, beforeGold + 7000); // 3枠の 0+1000+5000 と、2枠の 0+1000
+  assert.equal(game.gold, beforeGold + 70000); // 3枠の 0+1000+5000 と、2枠の 0+1000
   assert.deepEqual(game.storage, beforeInventory);
-  assert.deepEqual(game.runeRetirement, { version: 1, gold: 7000, materials: {} });
+  assert.deepEqual(game.runeRetirement, { version: 1, gold: 70000, materials: {} });
   assert.equal(game.notices.filter((s) => s.includes('返還')).length, 1);
   const once = structuredClone(game);
   normalizeGame(data, game);
@@ -125,8 +125,8 @@ test('遠征中のセーブと入場時の写しを移行し、再読込・全�
   const battleBefore = structuredClone(session.run.battle);
   normalizeGame(data, session.game, session.run);
   session.save();
-  assert.equal(session.game.gold, initial.gold + 7000 + 300);
-  assert.equal(session.run.snapshot.gold, initial.gold + 7000);
+  assert.equal(session.game.gold, initial.gold + 70000 + 300);
+  assert.equal(session.run.snapshot.gold, initial.gold + 70000);
   assert.equal(session.game.party[0].hp, 0);
   assert.deepEqual(session.run.battle, battleBefore);
   assertRetired(session.game);
@@ -136,12 +136,12 @@ test('遠征中のセーブと入場時の写しを移行し、再読込・全�
   const resumed = new GameSession({ storage });
   normalizeGame(data, resumed.game, resumed.run);
   resumed.save();
-  assert.equal(resumed.game.gold, initial.gold + 7000 + 300);
+  assert.equal(resumed.game.gold, initial.gold + 70000 + 300);
   resumed.wipe();
   const afterWipe = new GameSession({ storage });
   normalizeGame(data, afterWipe.game, afterWipe.run);
   afterWipe.save();
-  assert.equal(afterWipe.game.gold, initial.gold + 7000);
+  assert.equal(afterWipe.game.gold, initial.gold + 70000);
   assertRetired(afterWipe.game);
   assert.equal(afterWipe.game.notices.filter((s) => s.includes('返還')).length, 1);
   assert.equal(storage.getItem(LEARNING_KEY), learningRaw);

@@ -1,17 +1,17 @@
 // ダンジョンの画面：行き先とルーンストーンを選ぶ → 階を進む → 戦闘 → 帰還ポイント・ボス → 町へ
-import { loadGameData } from '../gamedata.js?v=rune-study-1';
+import { loadGameData } from '../gamedata.js?v=gold-unit-1';
 import { loadJson } from '../data.js?v=features-2';
 import { loadLearningCatalog } from '../learning-catalog.js?v=learning-00-v1';
 import { Scheduler } from '../srs.js?v=stability-1';
 import { LearningStore, now, loadSettings } from '../storage.js?v=stability-1';
 import { QuestionPicker } from '../picker.js';
-import { GameSession } from '../save.js?v=rune-study-1';
-import { normalizeGame } from '../game-state.js?v=basic-skill-levels-1';
+import { GameSession } from '../save.js?v=gold-unit-1';
+import { normalizeGame } from '../game-state.js?v=gold-unit-1';
 import {
   allowedDungeons, allowedStones, expeditionFee, startRun, startNextBattle, afterBattle, returnToTown, continueRun, resolveLoot,
   isBossBattle, runFloorRow, runFloorCount, returnItems, currentRank, useItemOutsideBattle, FIELD_ITEM_EFFECTS,
-} from '../dungeon.js?v=basic-skill-levels-1';
-import { backpackSlots, backpackUsed, addItem } from '../loot.js?v=basic-skill-levels-1';
+} from '../dungeon.js?v=gold-unit-1';
+import { backpackSlots, backpackUsed, addItem } from '../loot.js?v=gold-unit-1';
 import { maxHp, maxMp } from '../character.js?v=basic-skill-levels-1';
 import { createBattleView } from '../ui/battle-view.js?v=battle-field-1';
 import { createVictoryView, createLootIcons } from '../ui/victory-view.js?v=result-icons-1';

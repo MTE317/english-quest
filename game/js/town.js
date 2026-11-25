@@ -1,9 +1,10 @@
+import { roundGold, goldScale, goldLimit } from './gold.js?v=gold-unit-1';
 // 町の基本：暦と銀行融資・ギルドのクエストと冒険者ランク・各施設。
 // data に数や式として書かれていないものは、シミュレーター（sim/world.py）と同じ値を TOWN_FORMULAS に置く（docs/requests.md で依頼済み）。
 import { evaluate } from './expr.js';
 import { makeGear, maxHp, maxMp, gearDef } from './character.js?v=basic-skill-levels-1';
-import { addItem } from './loot.js?v=basic-skill-levels-1';
-import { currentRank, allowedDungeons } from './dungeon.js?v=basic-skill-levels-1';
+import { addItem } from './loot.js?v=gold-unit-1';
+import { currentRank, allowedDungeons } from './dungeon.js?v=gold-unit-1';
 import { monsterPool } from './encounter.js?v=basic-skill-levels-1';
 import { unlockReportedHuntJobs } from './temple.js?v=systems-v1';
 
@@ -53,7 +54,7 @@ export function advanceDays(data, game, n) {
 
 function monthEnd(data, game) {
   const bank = data.balance.bank ?? {};
-  const interest = game.loan > 0 ? Math.ceil(game.loan * (bank.loan_interest_monthly ?? 0)) : 0;
+  const interest = game.loan > 0 ? roundGold(data, game.loan * (bank.loan_interest_monthly ?? 0), 'ceil') : 0;
   if (!interest) return [];
   game.loan += interest;
   return [`月末：銀行融資の利息 ${interest} G`];
@@ -96,7 +97,8 @@ export function questKey(q) {
 export function questRewardGold(data, game, q) {
   if (Number.isFinite(q.rewardGold)) return finiteMoney(q.rewardGold);
   const def = data.quests.find((x) => x.id === q.questId);
-  return Math.round((data.economy.get(q.rank)?.run_income ?? 0) * (def?.rewardGoldPct ?? 0) / 100 * (1 + currentRank(data, game).questBonus));
+  const amount = (data.economy.get(q.rank)?.run_income ?? 0) * (def?.rewardGoldPct ?? 0) / 100 * (1 + currentRank(data, game).questBonus);
+  return q.goldLegacyContract ? Math.round(amount / goldScale(data)) * goldScale(data) : roundGold(data, amount);
 }
 
 export function questDepositTotal(game) {
@@ -106,7 +108,7 @@ export function questDepositTotal(game) {
 export function questAbandonRefund(data, q, day) {
   if (q.special && day > q.deadlineDay && !onTime(q)) return 0;
   const rate = Math.min(1, Math.max(0, Number(questRules(data).abandon_refund_rate ?? 0.8)));
-  return Math.floor(finiteMoney(q.depositPaid) * rate);
+  return Math.floor(finiteMoney(q.depositPaid) / goldScale(data) * rate) * goldScale(data);
 }
 
 export function questDestination(data, q) {
@@ -171,7 +173,7 @@ function createQuestOffer(data, game, candidate, rng) {
     count: def.countMin + Math.floor(rng() * (def.countMax - def.countMin + 1)), progress: 0, contractVersion: 1,
   };
   q.rewardGold = questRewardGold(data, game, q);
-  q.depositGold = q.type === 'bounty' ? Math.ceil(q.rewardGold * Number(questRules(data).deposit_rate ?? 0.1)) : 0;
+  q.depositGold = q.type === 'bounty' ? roundGold(data, q.rewardGold * Number(questRules(data).deposit_rate ?? 0.1), 'ceil') : 0;
   return q;
 }
 
@@ -218,7 +220,7 @@ export function fillBoard(data, game, rng = Math.random) {
     const offer = createQuestOffer(data, game, special, () => 0);
     const days = data.dungeons.get(offer.dungeonId).days;
     Object.assign(offer, { special: true, daysToComplete: days >= 3 ? 12 : days === 2 ? 10 : 8,
-      depositGold: Math.ceil(offer.rewardGold * .10) });
+      depositGold: roundGold(data, offer.rewardGold * .10, 'ceil') });
     game.specialQuest = offer;
   }
   return game.board;
@@ -346,7 +348,7 @@ export function reportQuest(data, game, uid, rng = Math.random) {
   const def = data.quests.find((x) => x.id === q.questId);
   if (!def) throw new Error('依頼の報酬データが見つかりません。');
   const baseGold = questRewardGold(data, game, q);
-  const gold = q.special && onTime(q) ? Math.round(baseGold * 1.3) : baseGold;
+  const gold = q.special && onTime(q) ? (q.goldLegacyContract ? Math.round(baseGold / goldScale(data) * 1.3) * goldScale(data) : roundGold(data, baseGold * 1.3)) : baseGold;
   const lines = [];
   if (q.type === 'gather') {
     let need = q.count;
@@ -423,7 +425,7 @@ export function stayInn(data, game, good) {
 
 // ---------------- 神殿（復活だけ。ほかはチェックリスト12番） ----------------
 export function reviveCost(data, member) {
-  return Math.round(evaluate(TOWN_FORMULAS.revive, { Lv: member.lv }));
+  return roundGold(data, goldScale(data) * evaluate(TOWN_FORMULAS.revive, { Lv: member.lv }));
 }
 export function revive(data, game, index) {
   const m = game.party[index];
@@ -438,7 +440,7 @@ export function revive(data, game, index) {
 
 // ---------------- 店 ----------------
 export const discount = (data, game) => currentRank(data, game).shopDiscount;
-const priceWith = (data, game, p) => Math.max(1, Math.round(p * (1 - discount(data, game))));
+const priceWith = (data, game, p) => roundGold(data, p * (1 - discount(data, game)));
 
 /** 道具屋の品ぞろえ（items.csv の shop_rank が道具屋のランク以下で、店で売るもの） */
 export function itemShopStock(data, game) {
@@ -474,7 +476,7 @@ export function gearShopStock(data, game) {
 }
 export function gearPrice(data, def) {
   const P = data.balance.shop_gear_price;
-  return Math.round(evaluate(def.slot === 'weapon' ? P.weapon : P.armor, { itemLv: def.itemLv }));
+  return roundGold(data, goldScale(data) * evaluate(def.slot === 'weapon' ? P.weapon : P.armor, { itemLv: def.itemLv }));
 }
 export function buyGear(data, game, equipId) {
   const e = gearShopStock(data, game).find((x) => x.def.id === equipId);
@@ -491,7 +493,7 @@ export function sellPrice(data, gear) {
   const def = gearDef(data, gear);
   const star = Math.min(data.economy.size, Math.max(1, evaluate(TOWN_FORMULAS.sell_rank, { itemLv: def.itemLv })));
   const ri = Math.max(0, data.rarityTable.findIndex((r) => r.id === gear.rarity));
-  return Math.max(1, Math.round(evaluate(TOWN_FORMULAS.sell_price, { run_income: data.economy.get(star).run_income, rarity_index: ri })));
+  return roundGold(data, evaluate(TOWN_FORMULAS.sell_price, { run_income: data.economy.get(star).run_income, rarity_index: ri }));
 }
 export function sellGear(data, game, uid) {
   const i = game.storage.gear.findIndex((g) => g.uid === uid);
@@ -557,7 +559,7 @@ export function expandBackpack(data, game) {
 export function loanLimit(data, game) {
   const rank = currentRank(data, game).maxDungeonRank;
   const index = Math.max(0, data.ranks.findIndex((r) => r.id === game.rank));
-  return Math.floor(3 * data.economy.get(rank).guild_fee * (1 + 0.25 * index / 2));
+  return goldLimit(data, 3 * data.economy.get(rank).guild_fee * (1 + 0.25 * index / 2));
 }
 
 export function borrow(data, game, amount) {

@@ -1,3 +1,4 @@
+import { roundGold } from '../js/gold.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createNewGame, normalizeGame } from '../js/game-state.js';
@@ -26,7 +27,7 @@ test('旧会費の滞納だけを清算し、月末は銀行融資の利息だ�
   assert.equal(g.loan, 111);
   const notes = advanceDays(data, g, TOWN_FORMULAS.days_per_month);
   assert.equal(g.gold, 5);
-  assert.equal(g.loan, 111 + Math.ceil(111 * readJson('balance.json').bank.loan_interest_monthly));
+  assert.equal(g.loan, 111 + roundGold(data, 111 * readJson('balance.json').bank.loan_interest_monthly, 'ceil'));
   assert.ok(notes.some(n => n.includes('融資')));
   assert.equal(calendarOf(data, 31).month, 2);
   assert.equal(calendarOf(data, 1).season.id, 'spring');
@@ -56,7 +57,7 @@ test('特別依頼は報告日ではなく討伐日で期限の返金と報酬�
     g.day += 3;
     const before = g.gold;
     reportQuest(data, g, q.uid, rng());
-    assert.equal(g.gold - before, late ? q.rewardGold : Math.round(q.rewardGold * 1.3) + q.depositPaid);
+    assert.equal(g.gold - before, late ? q.rewardGold : roundGold(data, q.rewardGold * 1.3) + q.depositPaid);
   }
 });
 
@@ -111,17 +112,17 @@ test('宿屋：HP・MP が全回復。良い部屋は最大HPが増える（倒�
   assert.equal(maxHp(data, g.party[0]), Math.round(base * (1 + Number(fx.max_hp_pct) / 100)));
   assert.equal(g.party[0].hp, maxHp(data, g.party[0]));
   assert.equal(g.party[1].hp, 0);
-  assert.equal(g.gold, 1000 - Number(readCsv('economy_by_rank.csv').rows[0].inn_good));
+  assert.equal(g.gold, 1000 - data.economy.get(1).inn_good);
   assert.ok(computeStats(data, g.party[0]).hp > base);
 });
 
 test('神殿の復活：30×レベル', () => {
   const g = fresh();
-  g.party[2].hp = 0; g.gold = 100;
-  assert.equal(reviveCost(data, g.party[2]), 30);
+  g.party[2].hp = 0; g.gold = 1000;
+  assert.equal(reviveCost(data, g.party[2]), 300);
   revive(data, g, 2);
   assert.equal(g.party[2].hp, maxHp(data, g.party[2]));
-  assert.equal(g.gold, 70);
+  assert.equal(g.gold, 700);
 });
 
 test('道具屋：ランク1の品ぞろえ・割引・10個まで', () => {
@@ -131,7 +132,7 @@ test('道具屋：ランク1の品ぞろえ・割引・10個まで', () => {
   assert.ok(stock.every((x) => x.item.shopRank <= 1 && x.item.source === '店'));
   const potion = stock.find((x) => x.item.id === 'potion');
   const disc = Number(readCsv('adventurer_ranks.csv').rows[0].shop_discount);
-  assert.equal(potion.price, Math.round(data.items.get('potion').price * (1 - disc)));
+  assert.equal(potion.price, roundGold(data, data.items.get('potion').price * (1 - disc)));
   assert.equal(buyItem(data, g, 'potion', 15), 10);
 });
 
@@ -141,7 +142,7 @@ test('武器・防具屋：★1は装備Lv下限+3の段階。買うと倉庫へ
   const stock = gearShopStock(data, g);
   assert.ok(stock.length > 0 && stock.every((x) => x.def.itemLv === 3 && x.star === 1));
   const sword = stock.find((x) => x.def.id === 'sword_t1');
-  assert.equal(sword.price, Math.round(Math.round((8 + 1.6 * 3) * 4.5) * (1 - Number(readCsv('adventurer_ranks.csv').rows[0].shop_discount))));
+  assert.equal(sword.price, 10 * Math.round(Math.round((8 + 1.6 * 3) * 4.5) * (1 - Number(readCsv('adventurer_ranks.csv').rows[0].shop_discount))));
   const gear = buyGear(data, g, 'sword_t1');
   assert.equal(g.storage.gear.length, 1);
   const p = sellPrice(data, gear);
@@ -156,12 +157,12 @@ test('バックパックを広げる：お金と素材の条件（backpack.csv �
   assert.deepEqual(need[0].types.sort(), ['beast', 'humanoid']);
   g.facilities.item_shop = 2;
   assert.equal(canExpandBackpack(data, g).ok, false);
-  g.gold = 600; g.storage.materials.goblin_mat = 3; g.storage.materials.cave_rat_mat = 2; g.storage.materials.slime_mat = 9;
+  g.gold = 6000; g.storage.materials.goblin_mat = 3; g.storage.materials.cave_rat_mat = 2; g.storage.materials.slime_mat = 9;
   assert.equal(canExpandBackpack(data, g).ok, true, canExpandBackpack(data, g).reasons.join());
   expandBackpack(data, g);
   assert.equal(g.backpackTier, 2);
   assert.equal(g.storage.materials.slime_mat, 9); // スライム（不定形）は使わない
-  assert.equal(g.gold, 100);
+  assert.equal(g.gold, 1000);
 });
 
 test('古いセーブに足りない項目を足す', () => {

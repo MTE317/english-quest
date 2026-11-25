@@ -1,8 +1,9 @@
+import { roundGold, goldScale } from './gold.js?v=gold-unit-1';
 import { parseAmounts, splitList } from './csv.js';
 import { makeGear } from './character.js?v=basic-skill-levels-1';
-import { rollAffixes, affixVariants } from './loot.js?v=basic-skill-levels-1';
-import { matchesNeed, parseMaterialNeed } from './town.js?v=basic-skill-levels-1';
-import { currentRank } from './dungeon.js?v=basic-skill-levels-1';
+import { rollAffixes, affixVariants } from './loot.js?v=gold-unit-1';
+import { matchesNeed, parseMaterialNeed } from './town.js?v=gold-unit-1';
+import { currentRank } from './dungeon.js?v=gold-unit-1';
 import { consumeMaterials } from './temple.js?v=rune-study-1';
 import { describeEffect } from './equipment-effects.js?v=build36-1';
 
@@ -87,7 +88,7 @@ export function enhance(data, game, gear, rng) {
   const cap = Number(capFor(data, game, facilityFor(def))?.enhance_cap ?? 0);
   if (!row || Number(row.to_level) > cap) throw new Error('この工房での強化上限に達しています。');
   const base = (20 + def.itemLv * 4) * 1.8 ** gear.enh;
-  pay(game, Math.ceil(base * (def.slot === 'weapon' ? 1 : 0.5)), { enhancement_stone: 1 });
+  pay(game, roundGold(data, goldScale(data) * base * (def.slot === 'weapon' ? 1 : 0.5), 'ceil'), { enhancement_stone: 1 });
   const odds = Math.min(1, Number(row.success_rate) + 0.05 * (gear.enhanceFailures ?? 0));
   if (rng() >= odds) {
     gear.enhanceFailures = (gear.enhanceFailures ?? 0) + 1;

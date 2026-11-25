@@ -221,7 +221,7 @@ test('訓練報酬は6人全員、1項目1日1回、小数繰越で低額XP/AP�
     assert.ok(member.xp - before[i].xp < 30); // 戦闘より圧倒的に少ない
   }
   assert.equal(g.day, 1);
-  assert.equal(g.gold, 1000);
+  assert.equal(g.gold, 10000);
   assert.deepEqual(g.storage.materials, {});
   assert.equal(applyTrainingAnswer(data, g, { kind: 'word', id: catalog.words[0].id, day: d0 + 1 }).awarded, true);
 });

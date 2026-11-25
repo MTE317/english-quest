@@ -1,13 +1,13 @@
-import { loadGameData } from '../gamedata.js?v=rune-study-1';
+import { loadGameData } from '../gamedata.js?v=gold-unit-1';
 import { loadJson } from '../data.js?v=features-2';
 import { loadLearningCatalog } from '../learning-catalog.js?v=learning-00-v1';
 import { Scheduler } from '../srs.js?v=stability-1';
 import { LearningStore, loadSettings } from '../storage.js?v=stability-1';
-import { GameSession } from '../save.js?v=rune-study-1';
-import { normalizeGame } from '../game-state.js?v=basic-skill-levels-1';
-import { allowedDungeons } from '../dungeon.js?v=basic-skill-levels-1';
+import { GameSession } from '../save.js?v=gold-unit-1';
+import { normalizeGame } from '../game-state.js?v=gold-unit-1';
+import { allowedDungeons } from '../dungeon.js?v=gold-unit-1';
 import { createBattleView } from '../ui/battle-view.js?v=battle-field-1';
-import { createStatusDebugSession } from '../debug-status.js?v=status-debug-1';
+import { createStatusDebugSession } from '../debug-status.js?v=gold-unit-1';
 import { stopSpeech } from '../speech.js?v=music-suite-1';
 import { setSceneMusic } from '../battle-music.js?v=music-suite-1';
 import { el, render } from '../dom.js';

@@ -1,3 +1,4 @@
+import { roundGold } from './gold.js?v=gold-unit-1';
 // ダンジョンの遠征：行き先とルーンストーンを選ぶ・階層・帰還ポイント・ドロップ・バックパック・全滅で入る前に戻る。
 // 進み具合は session.run に入れる（1戦ごとに保存。全滅したら session.wipe() で入る前に戻る）。
 //
@@ -8,12 +9,12 @@
 //   'cleared'      … いちばん奥のボスを倒した（町に帰るだけ）
 import { createBattle, finishBattle, battleRewards, curedBy } from './battle.js?v=basic-skill-levels-1';
 import { makeEncounter, floorRow, planBounty } from './encounter.js?v=basic-skill-levels-1';
-import { rollBattleLoot, addToBackpack, swapIntoBackpack, unloadBackpack } from './loot.js?v=basic-skill-levels-1';
+import { rollBattleLoot, addToBackpack, swapIntoBackpack, unloadBackpack } from './loot.js?v=gold-unit-1';
 import { gainXp, maxHp, maxMp, affixSum } from './character.js?v=basic-skill-levels-1';
-import { advanceDays, calendarOf, countKills, refreshBoard } from './town.js?v=basic-skill-levels-1';
+import { advanceDays, calendarOf, countKills, refreshBoard } from './town.js?v=gold-unit-1';
 import { discoverJobs, recordStoredMaterials } from './temple.js?v=systems-v1';
 import { memberMods } from './growth.js?v=basic-skill-levels-1';
-import { planExploration, resolveExploration, commitExploration, explorationEntryAllowed } from './exploration.js?v=basic-skill-levels-1';
+import { planExploration, resolveExploration, commitExploration, explorationEntryAllowed } from './exploration.js?v=gold-unit-1';
 import { isTrialDungeonUnlocked } from './world-map.js?v=trial-five-1';
 
 /** 乱数の種から 0〜1 の乱数を返す関数（状態は obj[key] に入れて保存できる） */
@@ -50,7 +51,7 @@ export function canTrainIn(dungeon) {
 export function expeditionFee(data, dungeon) {
   const config = data.balance.dungeon ?? {};
   if ((config.free_expeditions ?? []).includes(dungeon.id)) return 0;
-  return Math.round(data.economy.get(dungeon.rank).run_income * dungeon.incomeMul * (config.expedition_fee_rate ?? 0));
+  return roundGold(data, data.economy.get(dungeon.rank).run_income * dungeon.incomeMul * (config.expedition_fee_rate ?? 0));
 }
 
 /** 遠征の行き先にかかわらず、出題できる教材を選べる。 */
@@ -205,7 +206,7 @@ export function afterBattle(data, session) {
         if (existing) existing.count += 1;
         else loot.materials.push({ id, count: 1 });
       }
-      loot.gold = Math.round(loot.gold * (1 + goldBonus));
+      loot.gold = roundGold(data, loot.gold * (1 + goldBonus));
       if (b.enemies.some((e) => e.boss && !e.bounty)) discoverJobs(data, g, run.dungeonId, seededRng(run));
       run.pendingLoot ??= [];
       receiveLoot(data, g, run, loot);

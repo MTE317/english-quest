@@ -1,6 +1,7 @@
+import { roundGold } from './gold.js?v=gold-unit-1';
 import { maxHp, maxMp } from './character.js?v=basic-skill-levels-1';
 import { monsterPool } from './encounter.js?v=basic-skill-levels-1';
-import { addItem, rollGearDrop } from './loot.js?v=basic-skill-levels-1';
+import { addItem, rollGearDrop } from './loot.js?v=gold-unit-1';
 
 export function planExploration(config, dungeonId, route, rng) {
   if (!config) return [];
@@ -100,7 +101,7 @@ export function resolveExploration(data, game, run, floor, season, rngForEvent, 
       }
       const income = data.economy.get(dungeon.rank).run_income * dungeon.incomeMul;
       if (reward === 'gold' || (event.type === 'chest' && !loot.gear.length && !loot.materials.length && !notice.item)) {
-        loot.gold = Math.max(1, Math.floor(income * (event.first ? config.chest.first_gold : config.chest.gold)));
+        loot.gold = roundGold(data, income * (event.first ? config.chest.first_gold : config.chest.gold), 'floor');
       }
       receiveLoot(data, game, run, loot);
       Object.assign(notice, loot);

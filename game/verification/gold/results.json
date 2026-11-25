@@ -1,0 +1,7775 @@
+{
+  "base": "72b13f28667390d0791aca44806ac5cce03898ed",
+  "conditions": {
+    "seed": 112501,
+    "trials": 64,
+    "successfulRunsPerTrial": 15,
+    "shopQuotes": 4775,
+    "otherQuotes": 288
+  },
+  "candidates": [
+    {
+      "name": "after",
+      "scale": 10,
+      "digits": 3,
+      "engineHash": "86c420b5be1ee2d433b9e3b9191ac46a805e21dbafb2f09486a89e4a6e50a49c",
+      "dataHash": "91d2c7364463ec163008858a560c329c7b82a92583081fdcbbdbaf8309cdd88e",
+      "harnessHash": "a0b76f5d71879654a22fd4c09901cde0b910b22465ed31a7f7de565a1396efa4",
+      "unchanged": true,
+      "shopRelativeError": [
+        -0.0036231884057971175,
+        0.004444444444444473
+      ],
+      "cashRelativeError": [
+        0.0,
+        0.0
+      ],
+      "differentAffordableCounts": 0,
+      "profitableResales": 120,
+      "newBuySellArbitrage": 0,
+      "otherQuotes": [
+        {
+          "type": "recipe",
+          "id": "iron_sword",
+          "before": 40,
+          "after": 400,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "steel_sword",
+          "before": 53,
+          "after": 530,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "windcutter_sword",
+          "before": 95,
+          "after": 950,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "tidal_sword",
+          "before": 168,
+          "after": 1680,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "obsidian_sword",
+          "before": 301,
+          "after": 3010,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "flame_sword",
+          "before": 53,
+          "after": 530,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "storm_sword",
+          "before": 95,
+          "after": 950,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "earth_sword",
+          "before": 95,
+          "after": 950,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "mirror_sword",
+          "before": 168,
+          "after": 1680,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "iron_scythe",
+          "before": 40,
+          "after": 400,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "steel_scythe",
+          "before": 53,
+          "after": 530,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "shadow_scythe",
+          "before": 95,
+          "after": 950,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "iron_fan",
+          "before": 40,
+          "after": 400,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "silver_fan",
+          "before": 53,
+          "after": 530,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "wind_fan",
+          "before": 95,
+          "after": 950,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_greatsword_s2",
+          "before": 105,
+          "after": 1050,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_greatsword_s4",
+          "before": 336,
+          "after": 3360,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_greatsword_s6",
+          "before": 938,
+          "after": 9380,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_greatsword_s8",
+          "before": 2240,
+          "after": 22400,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_greatsword_s10",
+          "before": 5390,
+          "after": 53900,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_greatsword_s12",
+          "before": 12936,
+          "after": 129000,
+          "deltaRatio": -0.002782931354359919
+        },
+        {
+          "type": "recipe",
+          "id": "craft_katana_s2",
+          "before": 105,
+          "after": 1050,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_katana_s4",
+          "before": 336,
+          "after": 3360,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_katana_s6",
+          "before": 938,
+          "after": 9380,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_katana_s8",
+          "before": 2240,
+          "after": 22400,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_katana_s10",
+          "before": 5390,
+          "after": 53900,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_katana_s12",
+          "before": 12936,
+          "after": 129000,
+          "deltaRatio": -0.002782931354359919
+        },
+        {
+          "type": "recipe",
+          "id": "craft_dagger_s2",
+          "before": 105,
+          "after": 1050,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_dagger_s4",
+          "before": 336,
+          "after": 3360,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_dagger_s6",
+          "before": 938,
+          "after": 9380,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_dagger_s8",
+          "before": 2240,
+          "after": 22400,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_dagger_s10",
+          "before": 5390,
+          "after": 53900,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_dagger_s12",
+          "before": 12936,
+          "after": 129000,
+          "deltaRatio": -0.002782931354359919
+        },
+        {
+          "type": "recipe",
+          "id": "craft_axe_s2",
+          "before": 105,
+          "after": 1050,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_axe_s4",
+          "before": 336,
+          "after": 3360,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_axe_s6",
+          "before": 938,
+          "after": 9380,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_axe_s8",
+          "before": 2240,
+          "after": 22400,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_axe_s10",
+          "before": 5390,
+          "after": 53900,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_axe_s12",
+          "before": 12936,
+          "after": 129000,
+          "deltaRatio": -0.002782931354359919
+        },
+        {
+          "type": "recipe",
+          "id": "craft_spear_s2",
+          "before": 105,
+          "after": 1050,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_spear_s4",
+          "before": 336,
+          "after": 3360,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_spear_s6",
+          "before": 938,
+          "after": 9380,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_spear_s8",
+          "before": 2240,
+          "after": 22400,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_spear_s10",
+          "before": 5390,
+          "after": 53900,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_spear_s12",
+          "before": 12936,
+          "after": 129000,
+          "deltaRatio": -0.002782931354359919
+        },
+        {
+          "type": "recipe",
+          "id": "craft_bow_s2",
+          "before": 105,
+          "after": 1050,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_bow_s4",
+          "before": 336,
+          "after": 3360,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_bow_s6",
+          "before": 938,
+          "after": 9380,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_bow_s8",
+          "before": 2240,
+          "after": 22400,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_bow_s10",
+          "before": 5390,
+          "after": 53900,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_bow_s12",
+          "before": 12936,
+          "after": 129000,
+          "deltaRatio": -0.002782931354359919
+        },
+        {
+          "type": "recipe",
+          "id": "craft_hammer_s2",
+          "before": 105,
+          "after": 1050,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_hammer_s4",
+          "before": 336,
+          "after": 3360,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_hammer_s6",
+          "before": 938,
+          "after": 9380,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_hammer_s8",
+          "before": 2240,
+          "after": 22400,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_hammer_s10",
+          "before": 5390,
+          "after": 53900,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_hammer_s12",
+          "before": 12936,
+          "after": 129000,
+          "deltaRatio": -0.002782931354359919
+        },
+        {
+          "type": "recipe",
+          "id": "craft_fist_s2",
+          "before": 105,
+          "after": 1050,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_fist_s4",
+          "before": 336,
+          "after": 3360,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_fist_s6",
+          "before": 938,
+          "after": 9380,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_fist_s8",
+          "before": 2240,
+          "after": 22400,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_fist_s10",
+          "before": 5390,
+          "after": 53900,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_fist_s12",
+          "before": 12936,
+          "after": 129000,
+          "deltaRatio": -0.002782931354359919
+        },
+        {
+          "type": "recipe",
+          "id": "craft_staff_s2",
+          "before": 105,
+          "after": 1050,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_staff_s4",
+          "before": 336,
+          "after": 3360,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_staff_s6",
+          "before": 938,
+          "after": 9380,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_staff_s8",
+          "before": 2240,
+          "after": 22400,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_staff_s10",
+          "before": 5390,
+          "after": 53900,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_staff_s12",
+          "before": 12936,
+          "after": 129000,
+          "deltaRatio": -0.002782931354359919
+        },
+        {
+          "type": "recipe",
+          "id": "craft_tome_s2",
+          "before": 105,
+          "after": 1050,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_tome_s4",
+          "before": 336,
+          "after": 3360,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_tome_s6",
+          "before": 938,
+          "after": 9380,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_tome_s8",
+          "before": 2240,
+          "after": 22400,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_tome_s10",
+          "before": 5390,
+          "after": 53900,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_tome_s12",
+          "before": 12936,
+          "after": 129000,
+          "deltaRatio": -0.002782931354359919
+        },
+        {
+          "type": "recipe",
+          "id": "craft_instrument_s2",
+          "before": 105,
+          "after": 1050,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_instrument_s4",
+          "before": 336,
+          "after": 3360,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_instrument_s6",
+          "before": 938,
+          "after": 9380,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_instrument_s8",
+          "before": 2240,
+          "after": 22400,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_instrument_s10",
+          "before": 5390,
+          "after": 53900,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_instrument_s12",
+          "before": 12936,
+          "after": 129000,
+          "deltaRatio": -0.002782931354359919
+        },
+        {
+          "type": "recipe",
+          "id": "craft_gun_s2",
+          "before": 105,
+          "after": 1050,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_gun_s4",
+          "before": 336,
+          "after": 3360,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_gun_s6",
+          "before": 938,
+          "after": 9380,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_gun_s8",
+          "before": 2240,
+          "after": 22400,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_gun_s10",
+          "before": 5390,
+          "after": 53900,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_gun_s12",
+          "before": 12936,
+          "after": 129000,
+          "deltaRatio": -0.002782931354359919
+        },
+        {
+          "type": "recipe",
+          "id": "craft_whip_s2",
+          "before": 105,
+          "after": 1050,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_whip_s4",
+          "before": 336,
+          "after": 3360,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_whip_s6",
+          "before": 938,
+          "after": 9380,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_whip_s8",
+          "before": 2240,
+          "after": 22400,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_whip_s10",
+          "before": 5390,
+          "after": 53900,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_whip_s12",
+          "before": 12936,
+          "after": 129000,
+          "deltaRatio": -0.002782931354359919
+        },
+        {
+          "type": "recipe",
+          "id": "craft_scythe_s6",
+          "before": 938,
+          "after": 9380,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_scythe_s9",
+          "before": 3472,
+          "after": 34700,
+          "deltaRatio": -0.0005760368663594306
+        },
+        {
+          "type": "recipe",
+          "id": "craft_scythe_s12",
+          "before": 12936,
+          "after": 129000,
+          "deltaRatio": -0.002782931354359919
+        },
+        {
+          "type": "recipe",
+          "id": "craft_fan_s6",
+          "before": 938,
+          "after": 9380,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_fan_s9",
+          "before": 3472,
+          "after": 34700,
+          "deltaRatio": -0.0005760368663594306
+        },
+        {
+          "type": "recipe",
+          "id": "craft_fan_s12",
+          "before": 12936,
+          "after": 129000,
+          "deltaRatio": -0.002782931354359919
+        },
+        {
+          "type": "recipe",
+          "id": "craft_heavy_head_s3",
+          "before": 151,
+          "after": 1510,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_heavy_head_s7",
+          "before": 1154,
+          "after": 11500,
+          "deltaRatio": -0.0034662045060658286
+        },
+        {
+          "type": "recipe",
+          "id": "craft_heavy_head_s11",
+          "before": 6675,
+          "after": 66800,
+          "deltaRatio": 0.0007490636704119424
+        },
+        {
+          "type": "recipe",
+          "id": "craft_heavy_body_s3",
+          "before": 151,
+          "after": 1510,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_heavy_body_s7",
+          "before": 1154,
+          "after": 11500,
+          "deltaRatio": -0.0034662045060658286
+        },
+        {
+          "type": "recipe",
+          "id": "craft_heavy_body_s11",
+          "before": 6675,
+          "after": 66800,
+          "deltaRatio": 0.0007490636704119424
+        },
+        {
+          "type": "recipe",
+          "id": "craft_heavy_arm_s3",
+          "before": 151,
+          "after": 1510,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_heavy_arm_s7",
+          "before": 1154,
+          "after": 11500,
+          "deltaRatio": -0.0034662045060658286
+        },
+        {
+          "type": "recipe",
+          "id": "craft_heavy_arm_s11",
+          "before": 6675,
+          "after": 66800,
+          "deltaRatio": 0.0007490636704119424
+        },
+        {
+          "type": "recipe",
+          "id": "craft_medium_head_s3",
+          "before": 151,
+          "after": 1510,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_medium_head_s7",
+          "before": 1154,
+          "after": 11500,
+          "deltaRatio": -0.0034662045060658286
+        },
+        {
+          "type": "recipe",
+          "id": "craft_medium_head_s11",
+          "before": 6675,
+          "after": 66800,
+          "deltaRatio": 0.0007490636704119424
+        },
+        {
+          "type": "recipe",
+          "id": "craft_medium_body_s3",
+          "before": 151,
+          "after": 1510,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_medium_body_s7",
+          "before": 1154,
+          "after": 11500,
+          "deltaRatio": -0.0034662045060658286
+        },
+        {
+          "type": "recipe",
+          "id": "craft_medium_body_s11",
+          "before": 6675,
+          "after": 66800,
+          "deltaRatio": 0.0007490636704119424
+        },
+        {
+          "type": "recipe",
+          "id": "craft_medium_arm_s3",
+          "before": 151,
+          "after": 1510,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_medium_arm_s7",
+          "before": 1154,
+          "after": 11500,
+          "deltaRatio": -0.0034662045060658286
+        },
+        {
+          "type": "recipe",
+          "id": "craft_medium_arm_s11",
+          "before": 6675,
+          "after": 66800,
+          "deltaRatio": 0.0007490636704119424
+        },
+        {
+          "type": "recipe",
+          "id": "craft_light_head_s3",
+          "before": 151,
+          "after": 1510,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_light_head_s7",
+          "before": 1154,
+          "after": 11500,
+          "deltaRatio": -0.0034662045060658286
+        },
+        {
+          "type": "recipe",
+          "id": "craft_light_head_s11",
+          "before": 6675,
+          "after": 66800,
+          "deltaRatio": 0.0007490636704119424
+        },
+        {
+          "type": "recipe",
+          "id": "craft_light_body_s3",
+          "before": 151,
+          "after": 1510,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_light_body_s7",
+          "before": 1154,
+          "after": 11500,
+          "deltaRatio": -0.0034662045060658286
+        },
+        {
+          "type": "recipe",
+          "id": "craft_light_body_s11",
+          "before": 6675,
+          "after": 66800,
+          "deltaRatio": 0.0007490636704119424
+        },
+        {
+          "type": "recipe",
+          "id": "craft_light_arm_s3",
+          "before": 151,
+          "after": 1510,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_light_arm_s7",
+          "before": 1154,
+          "after": 11500,
+          "deltaRatio": -0.0034662045060658286
+        },
+        {
+          "type": "recipe",
+          "id": "craft_light_arm_s11",
+          "before": 6675,
+          "after": 66800,
+          "deltaRatio": 0.0007490636704119424
+        },
+        {
+          "type": "recipe",
+          "id": "craft_cloak_1_s2",
+          "before": 105,
+          "after": 1050,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_cloak_2_s2",
+          "before": 105,
+          "after": 1050,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_cloak_3_s2",
+          "before": 105,
+          "after": 1050,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_cloak_4_s6",
+          "before": 938,
+          "after": 9380,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_cloak_5_s6",
+          "before": 938,
+          "after": 9380,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_cloak_6_s6",
+          "before": 938,
+          "after": 9380,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_cloak_7_s10",
+          "before": 5390,
+          "after": 53900,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_cloak_8_s10",
+          "before": 5390,
+          "after": 53900,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_cloak_9_s10",
+          "before": 5390,
+          "after": 53900,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_ring_1_s2",
+          "before": 105,
+          "after": 1050,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_necklace_2_s2",
+          "before": 105,
+          "after": 1050,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_charm_3_s2",
+          "before": 105,
+          "after": 1050,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_ring_4_s4",
+          "before": 336,
+          "after": 3360,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_necklace_5_s4",
+          "before": 336,
+          "after": 3360,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_charm_6_s4",
+          "before": 336,
+          "after": 3360,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_ring_7_s6",
+          "before": 938,
+          "after": 9380,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_necklace_8_s6",
+          "before": 938,
+          "after": 9380,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_charm_9_s6",
+          "before": 938,
+          "after": 9380,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_ring_10_s8",
+          "before": 2240,
+          "after": 22400,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_necklace_11_s8",
+          "before": 2240,
+          "after": 22400,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_charm_12_s8",
+          "before": 2240,
+          "after": 22400,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_ring_13_s10",
+          "before": 5390,
+          "after": 53900,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_necklace_14_s10",
+          "before": 5390,
+          "after": 53900,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_charm_15_s10",
+          "before": 5390,
+          "after": 53900,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_ring_16_s12",
+          "before": 12936,
+          "after": 129000,
+          "deltaRatio": -0.002782931354359919
+        },
+        {
+          "type": "recipe",
+          "id": "craft_necklace_17_s12",
+          "before": 12936,
+          "after": 129000,
+          "deltaRatio": -0.002782931354359919
+        },
+        {
+          "type": "recipe",
+          "id": "craft_charm_18_s12",
+          "before": 12936,
+          "after": 129000,
+          "deltaRatio": -0.002782931354359919
+        },
+        {
+          "type": "recipe",
+          "id": "craft_dreambreaker",
+          "before": 90,
+          "after": 900,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_frost_judgment",
+          "before": 160,
+          "after": 1600,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_thunder_claw",
+          "before": 90,
+          "after": 900,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_silent_tome",
+          "before": 160,
+          "after": 1600,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_illusion_katana",
+          "before": 90,
+          "after": 900,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_dawn_katana",
+          "before": 90,
+          "after": 900,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_cycling_blade",
+          "before": 160,
+          "after": 1600,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_siphon_tome",
+          "before": 90,
+          "after": 900,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_battle_mend_staff",
+          "before": 90,
+          "after": 900,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_life_barrier_staff",
+          "before": 160,
+          "after": 1600,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_toxic_needle",
+          "before": 160,
+          "after": 1600,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_binding_whip",
+          "before": 160,
+          "after": 1600,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_blood_reaper",
+          "before": 90,
+          "after": 900,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_riposte_hammer",
+          "before": 90,
+          "after": 900,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_warding_fan",
+          "before": 160,
+          "after": 1600,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_battle_mend_charm",
+          "before": 90,
+          "after": 900,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_cycle_ring",
+          "before": 90,
+          "after": 900,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_illusion_cloak",
+          "before": 90,
+          "after": 900,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_buff_str_1",
+          "before": 50,
+          "after": 500,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_buff_str_2",
+          "before": 500,
+          "after": 5000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_buff_str_3",
+          "before": 3000,
+          "after": 30000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_buff_str_4",
+          "before": 15000,
+          "after": 150000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_buff_mag_1",
+          "before": 50,
+          "after": 500,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_buff_mag_2",
+          "before": 500,
+          "after": 5000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_buff_mag_3",
+          "before": 3000,
+          "after": 30000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_buff_mag_4",
+          "before": 15000,
+          "after": 150000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_buff_def_1",
+          "before": 50,
+          "after": 500,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_buff_def_2",
+          "before": 500,
+          "after": 5000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_buff_def_3",
+          "before": 3000,
+          "after": 30000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_buff_def_4",
+          "before": 15000,
+          "after": 150000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_buff_res_1",
+          "before": 50,
+          "after": 500,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_buff_res_2",
+          "before": 500,
+          "after": 5000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_buff_res_3",
+          "before": 3000,
+          "after": 30000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_buff_res_4",
+          "before": 15000,
+          "after": 150000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_buff_spd_1",
+          "before": 50,
+          "after": 500,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_buff_spd_2",
+          "before": 500,
+          "after": 5000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_buff_spd_3",
+          "before": 3000,
+          "after": 30000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_buff_spd_4",
+          "before": 15000,
+          "after": 150000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_buff_crt_1",
+          "before": 50,
+          "after": 500,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_buff_crt_2",
+          "before": 500,
+          "after": 5000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_buff_crt_3",
+          "before": 3000,
+          "after": 30000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_buff_crt_4",
+          "before": 15000,
+          "after": 150000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_resist_fire_1",
+          "before": 200,
+          "after": 2000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_resist_fire_2",
+          "before": 2000,
+          "after": 20000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_resist_fire_3",
+          "before": 12000,
+          "after": 120000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_resist_ice_1",
+          "before": 200,
+          "after": 2000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_resist_ice_2",
+          "before": 2000,
+          "after": 20000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_resist_ice_3",
+          "before": 12000,
+          "after": 120000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_resist_wind_1",
+          "before": 200,
+          "after": 2000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_resist_wind_2",
+          "before": 2000,
+          "after": 20000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_resist_wind_3",
+          "before": 12000,
+          "after": 120000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_resist_earth_1",
+          "before": 200,
+          "after": 2000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_resist_earth_2",
+          "before": 2000,
+          "after": 20000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_resist_earth_3",
+          "before": 12000,
+          "after": 120000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_resist_thunder_1",
+          "before": 200,
+          "after": 2000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_resist_thunder_2",
+          "before": 2000,
+          "after": 20000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_resist_thunder_3",
+          "before": 12000,
+          "after": 120000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_resist_water_1",
+          "before": 200,
+          "after": 2000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_resist_water_2",
+          "before": 2000,
+          "after": 20000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_resist_water_3",
+          "before": 12000,
+          "after": 120000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_resist_light_1",
+          "before": 200,
+          "after": 2000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_resist_light_2",
+          "before": 2000,
+          "after": 20000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_resist_light_3",
+          "before": 12000,
+          "after": 120000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_resist_dark_1",
+          "before": 200,
+          "after": 2000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_resist_dark_2",
+          "before": 2000,
+          "after": 20000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_resist_dark_3",
+          "before": 12000,
+          "after": 120000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_sres_dot_1",
+          "before": 200,
+          "after": 2000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_sres_dot_2",
+          "before": 2000,
+          "after": 20000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_sres_dot_3",
+          "before": 12000,
+          "after": 120000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_sres_lock_1",
+          "before": 200,
+          "after": 2000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_sres_lock_2",
+          "before": 2000,
+          "after": 20000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_sres_lock_3",
+          "before": 12000,
+          "after": 120000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_sres_limit_1",
+          "before": 200,
+          "after": 2000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_sres_limit_2",
+          "before": 2000,
+          "after": 20000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_sres_limit_3",
+          "before": 12000,
+          "after": 120000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_sres_weak_1",
+          "before": 200,
+          "after": 2000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_sres_weak_2",
+          "before": 2000,
+          "after": 20000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_sres_weak_3",
+          "before": 12000,
+          "after": 120000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_sres_all_1",
+          "before": 50000,
+          "after": 500000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "enchant",
+          "id": "1",
+          "before": 100,
+          "after": 1000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "enchant",
+          "id": "2",
+          "before": 160,
+          "after": 1600,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "enchant",
+          "id": "3",
+          "before": 240,
+          "after": 2400,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "enchant",
+          "id": "4",
+          "before": 340,
+          "after": 3400,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "enchant",
+          "id": "5",
+          "before": 460,
+          "after": 4600,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "enchant",
+          "id": "6",
+          "before": 600,
+          "after": 6000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "enchant",
+          "id": "7",
+          "before": 760,
+          "after": 7600,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "enchant",
+          "id": "8",
+          "before": 940,
+          "after": 9400,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "enchant",
+          "id": "9",
+          "before": 1140,
+          "after": 11400,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "enchant",
+          "id": "10",
+          "before": 1360,
+          "after": 13600,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "enchant",
+          "id": "11",
+          "before": 1600,
+          "after": 16000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "enchant",
+          "id": "12",
+          "before": 1860,
+          "after": 18600,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "facility",
+          "id": "2",
+          "before": 300,
+          "after": 3000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "facility",
+          "id": "3",
+          "before": 600,
+          "after": 6000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "facility",
+          "id": "4",
+          "before": 1100,
+          "after": 11000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "facility",
+          "id": "5",
+          "before": 2000,
+          "after": 20000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "facility",
+          "id": "6",
+          "before": 3400,
+          "after": 34000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "facility",
+          "id": "7",
+          "before": 5780,
+          "after": 57800,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "facility",
+          "id": "8",
+          "before": 9830,
+          "after": 98300,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "facility",
+          "id": "9",
+          "before": 16700,
+          "after": 167000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "facility",
+          "id": "10",
+          "before": 28400,
+          "after": 284000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "facility",
+          "id": "11",
+          "before": 48280,
+          "after": 483000,
+          "deltaRatio": 0.00041425020712515526
+        },
+        {
+          "type": "facility",
+          "id": "12",
+          "before": 82070,
+          "after": 821000,
+          "deltaRatio": 0.00036554161082014147
+        },
+        {
+          "type": "backpack",
+          "id": 2,
+          "before": 500,
+          "after": 5000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "backpack",
+          "id": 3,
+          "before": 3000,
+          "after": 30000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "backpack",
+          "id": 4,
+          "before": 15000,
+          "after": 150000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "backpack",
+          "id": 5,
+          "before": 60000,
+          "after": 600000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "backpack",
+          "id": 6,
+          "before": 200000,
+          "after": 2000000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "backpack",
+          "id": 7,
+          "before": 600000,
+          "after": 6000000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "loanLimit",
+          "id": "R01",
+          "before": 1350,
+          "after": 13500,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "loanLimit",
+          "id": "R01+",
+          "before": 1518,
+          "after": 15200,
+          "deltaRatio": 0.0013175230566535578
+        },
+        {
+          "type": "loanLimit",
+          "id": "R02",
+          "before": 3037,
+          "after": 30400,
+          "deltaRatio": 0.0009878169245967072
+        },
+        {
+          "type": "loanLimit",
+          "id": "R02+",
+          "before": 3341,
+          "after": 33500,
+          "deltaRatio": 0.002693804250224474
+        },
+        {
+          "type": "loanLimit",
+          "id": "R03",
+          "before": 6480,
+          "after": 64800,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "loanLimit",
+          "id": "R03+",
+          "before": 7020,
+          "after": 70200,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "loanLimit",
+          "id": "R04",
+          "before": 13702,
+          "after": 138000,
+          "deltaRatio": 0.007152240548824906
+        },
+        {
+          "type": "loanLimit",
+          "id": "R04+",
+          "before": 14681,
+          "after": 147000,
+          "deltaRatio": 0.0012941897690892379
+        },
+        {
+          "type": "loanLimit",
+          "id": "R05",
+          "before": 27000,
+          "after": 270000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "loanLimit",
+          "id": "R05+",
+          "before": 28687,
+          "after": 287000,
+          "deltaRatio": 0.0004531669397287441
+        },
+        {
+          "type": "loanLimit",
+          "id": "R06",
+          "before": 46980,
+          "after": 470000,
+          "deltaRatio": 0.00042571306939120923
+        },
+        {
+          "type": "loanLimit",
+          "id": "R06+",
+          "before": 49590,
+          "after": 496000,
+          "deltaRatio": 0.000201653559185333
+        },
+        {
+          "type": "loanLimit",
+          "id": "R07",
+          "before": 81000,
+          "after": 810000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "loanLimit",
+          "id": "R07+",
+          "before": 85050,
+          "after": 851000,
+          "deltaRatio": 0.0005878894767783471
+        },
+        {
+          "type": "loanLimit",
+          "id": "R08",
+          "before": 138105,
+          "after": 1390000,
+          "deltaRatio": 0.006480576373049551
+        },
+        {
+          "type": "loanLimit",
+          "id": "R08+",
+          "before": 144382,
+          "after": 1450000,
+          "deltaRatio": 0.004280311950243032
+        },
+        {
+          "type": "loanLimit",
+          "id": "R09",
+          "before": 233820,
+          "after": 2340000,
+          "deltaRatio": 0.0007698229407235857
+        },
+        {
+          "type": "loanLimit",
+          "id": "R09+",
+          "before": 243562,
+          "after": 2440000,
+          "deltaRatio": 0.0017983100812113406
+        },
+        {
+          "type": "loanLimit",
+          "id": "R10",
+          "before": 392535,
+          "after": 3930000,
+          "deltaRatio": 0.0011846077419848111
+        },
+        {
+          "type": "loanLimit",
+          "id": "R10+",
+          "before": 407632,
+          "after": 4080000,
+          "deltaRatio": 0.0009027750520076427
+        },
+        {
+          "type": "loanLimit",
+          "id": "R11",
+          "before": 655200,
+          "after": 6560000,
+          "deltaRatio": 0.0012210012210012167
+        },
+        {
+          "type": "loanLimit",
+          "id": "R11+",
+          "before": 678600,
+          "after": 6790000,
+          "deltaRatio": 0.0005894488653108709
+        },
+        {
+          "type": "loanLimit",
+          "id": "R12",
+          "before": 1088100,
+          "after": 10900000,
+          "deltaRatio": 0.0017461630364856706
+        },
+        {
+          "type": "loanLimit",
+          "id": "R12+",
+          "before": 1124370,
+          "after": 11300000,
+          "deltaRatio": 0.005007248503606565
+        },
+        {
+          "type": "loanLimit",
+          "id": "S",
+          "before": 1160640,
+          "after": 11700000,
+          "deltaRatio": 0.008064516129032251
+        }
+      ],
+      "sample": {
+        "seed": 112501,
+        "ledger": [
+          {
+            "stage": "early",
+            "lap": 0,
+            "id": "sunlit_forest",
+            "upgradeCost": 0,
+            "before": 10000,
+            "after": 10470,
+            "supplies": 400,
+            "fee": 80,
+            "lootGold": 940,
+            "saleGold": 110,
+            "questGold": 0,
+            "inn": 100,
+            "weaponPrice": 570,
+            "affordableWeapons": 18
+          },
+          {
+            "stage": "early",
+            "lap": 0,
+            "id": "mossy_cave",
+            "upgradeCost": 0,
+            "before": 10470,
+            "after": 12020,
+            "supplies": 400,
+            "fee": 0,
+            "lootGold": 1440,
+            "saleGold": 380,
+            "questGold": 230,
+            "inn": 100,
+            "weaponPrice": 570,
+            "affordableWeapons": 21
+          },
+          {
+            "stage": "early",
+            "lap": 0,
+            "id": "goblin_quarry",
+            "upgradeCost": 0,
+            "before": 12020,
+            "after": 12880,
+            "supplies": 400,
+            "fee": 110,
+            "lootGold": 1280,
+            "saleGold": 190,
+            "questGold": 0,
+            "inn": 100,
+            "weaponPrice": 570,
+            "affordableWeapons": 22
+          },
+          {
+            "stage": "early",
+            "lap": 1,
+            "id": "sunlit_forest",
+            "upgradeCost": 0,
+            "before": 12880,
+            "after": 13990,
+            "supplies": 400,
+            "fee": 80,
+            "lootGold": 1090,
+            "saleGold": 370,
+            "questGold": 230,
+            "inn": 100,
+            "weaponPrice": 570,
+            "affordableWeapons": 24
+          },
+          {
+            "stage": "early",
+            "lap": 1,
+            "id": "mossy_cave",
+            "upgradeCost": 0,
+            "before": 13990,
+            "after": 15250,
+            "supplies": 400,
+            "fee": 0,
+            "lootGold": 1460,
+            "saleGold": 300,
+            "questGold": 0,
+            "inn": 100,
+            "weaponPrice": 570,
+            "affordableWeapons": 26
+          },
+          {
+            "stage": "early",
+            "lap": 1,
+            "id": "goblin_quarry",
+            "upgradeCost": 0,
+            "before": 15250,
+            "after": 16850,
+            "supplies": 400,
+            "fee": 110,
+            "lootGold": 1420,
+            "saleGold": 560,
+            "questGold": 230,
+            "inn": 100,
+            "weaponPrice": 570,
+            "affordableWeapons": 29
+          },
+          {
+            "stage": "early",
+            "lap": 2,
+            "id": "sunlit_forest",
+            "upgradeCost": 0,
+            "before": 16850,
+            "after": 17600,
+            "supplies": 400,
+            "fee": 80,
+            "lootGold": 1050,
+            "saleGold": 280,
+            "questGold": 0,
+            "inn": 100,
+            "weaponPrice": 570,
+            "affordableWeapons": 30
+          },
+          {
+            "stage": "early",
+            "lap": 2,
+            "id": "mossy_cave",
+            "upgradeCost": 0,
+            "before": 17600,
+            "after": 18870,
+            "supplies": 400,
+            "fee": 0,
+            "lootGold": 1470,
+            "saleGold": 300,
+            "questGold": 0,
+            "inn": 100,
+            "weaponPrice": 570,
+            "affordableWeapons": 33
+          },
+          {
+            "stage": "early",
+            "lap": 2,
+            "id": "goblin_quarry",
+            "upgradeCost": 0,
+            "before": 18870,
+            "after": 20330,
+            "supplies": 400,
+            "fee": 110,
+            "lootGold": 1360,
+            "saleGold": 480,
+            "questGold": 230,
+            "inn": 100,
+            "weaponPrice": 570,
+            "affordableWeapons": 35
+          },
+          {
+            "stage": "later",
+            "lap": 0,
+            "id": "ruined_fort",
+            "upgradeCost": 1250,
+            "before": 19080,
+            "after": 21770,
+            "supplies": 380,
+            "fee": 220,
+            "lootGold": 2580,
+            "saleGold": 400,
+            "questGold": 410,
+            "inn": 100,
+            "weaponPrice": 1250,
+            "affordableWeapons": 17
+          },
+          {
+            "stage": "later",
+            "lap": 0,
+            "id": "misty_marsh",
+            "upgradeCost": 0,
+            "before": 21770,
+            "after": 24240,
+            "supplies": 380,
+            "fee": 190,
+            "lootGold": 2360,
+            "saleGold": 350,
+            "questGold": 430,
+            "inn": 100,
+            "weaponPrice": 1250,
+            "affordableWeapons": 19
+          },
+          {
+            "stage": "later",
+            "lap": 1,
+            "id": "ruined_fort",
+            "upgradeCost": 0,
+            "before": 24240,
+            "after": 26680,
+            "supplies": 380,
+            "fee": 220,
+            "lootGold": 2940,
+            "saleGold": 200,
+            "questGold": 0,
+            "inn": 100,
+            "weaponPrice": 1250,
+            "affordableWeapons": 21
+          },
+          {
+            "stage": "later",
+            "lap": 1,
+            "id": "misty_marsh",
+            "upgradeCost": 0,
+            "before": 26680,
+            "after": 29310,
+            "supplies": 380,
+            "fee": 190,
+            "lootGold": 2520,
+            "saleGold": 350,
+            "questGold": 430,
+            "inn": 100,
+            "weaponPrice": 1250,
+            "affordableWeapons": 23
+          },
+          {
+            "stage": "later",
+            "lap": 2,
+            "id": "ruined_fort",
+            "upgradeCost": 0,
+            "before": 29310,
+            "after": 32400,
+            "supplies": 380,
+            "fee": 220,
+            "lootGold": 2970,
+            "saleGold": 820,
+            "questGold": 0,
+            "inn": 100,
+            "weaponPrice": 1250,
+            "affordableWeapons": 25
+          },
+          {
+            "stage": "later",
+            "lap": 2,
+            "id": "misty_marsh",
+            "upgradeCost": 0,
+            "before": 32400,
+            "after": 34840,
+            "supplies": 380,
+            "fee": 190,
+            "lootGold": 2650,
+            "saleGold": 460,
+            "questGold": 0,
+            "inn": 100,
+            "weaponPrice": 1250,
+            "affordableWeapons": 27
+          }
+        ]
+      },
+      "finalBalances": [
+        34840,
+        33630,
+        34330,
+        34030,
+        35900,
+        32910,
+        35210,
+        32350,
+        32860,
+        34690,
+        34470,
+        32930,
+        33730,
+        35320,
+        33370,
+        33930,
+        33360,
+        35960,
+        35150,
+        34580,
+        34660,
+        35610,
+        31470,
+        34120,
+        34510,
+        34860,
+        35920,
+        33990,
+        35850,
+        33660,
+        34310,
+        35030,
+        34130,
+        35640,
+        34330,
+        33850,
+        33760,
+        33680,
+        34230,
+        33910,
+        36560,
+        32940,
+        33630,
+        32820,
+        33880,
+        34230,
+        34560,
+        34210,
+        33360,
+        34500,
+        35330,
+        33070,
+        34040,
+        33940,
+        36090,
+        32140,
+        33750,
+        37820,
+        34990,
+        34020,
+        33590,
+        33250,
+        34650,
+        34590
+      ]
+    },
+    {
+      "name": "100",
+      "scale": 100,
+      "digits": 3,
+      "engineHash": "86c420b5be1ee2d433b9e3b9191ac46a805e21dbafb2f09486a89e4a6e50a49c",
+      "dataHash": "e411bbc63dc78034e6c5f38d052368fda3cbe89bc11c2d4037d83025f0a3e205",
+      "harnessHash": "a0b76f5d71879654a22fd4c09901cde0b910b22465ed31a7f7de565a1396efa4",
+      "unchanged": true,
+      "shopRelativeError": [
+        -0.0036231884057971175,
+        0.004444444444444473
+      ],
+      "cashRelativeError": [
+        0.0,
+        0.0
+      ],
+      "differentAffordableCounts": 0,
+      "profitableResales": 120,
+      "newBuySellArbitrage": 0,
+      "otherQuotes": [
+        {
+          "type": "recipe",
+          "id": "iron_sword",
+          "before": 40,
+          "after": 4000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "steel_sword",
+          "before": 53,
+          "after": 5300,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "windcutter_sword",
+          "before": 95,
+          "after": 9500,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "tidal_sword",
+          "before": 168,
+          "after": 16800,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "obsidian_sword",
+          "before": 301,
+          "after": 30100,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "flame_sword",
+          "before": 53,
+          "after": 5300,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "storm_sword",
+          "before": 95,
+          "after": 9500,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "earth_sword",
+          "before": 95,
+          "after": 9500,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "mirror_sword",
+          "before": 168,
+          "after": 16800,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "iron_scythe",
+          "before": 40,
+          "after": 4000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "steel_scythe",
+          "before": 53,
+          "after": 5300,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "shadow_scythe",
+          "before": 95,
+          "after": 9500,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "iron_fan",
+          "before": 40,
+          "after": 4000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "silver_fan",
+          "before": 53,
+          "after": 5300,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "wind_fan",
+          "before": 95,
+          "after": 9500,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_greatsword_s2",
+          "before": 105,
+          "after": 10500,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_greatsword_s4",
+          "before": 336,
+          "after": 33600,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_greatsword_s6",
+          "before": 938,
+          "after": 93800,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_greatsword_s8",
+          "before": 2240,
+          "after": 224000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_greatsword_s10",
+          "before": 5390,
+          "after": 539000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_greatsword_s12",
+          "before": 12936,
+          "after": 1290000,
+          "deltaRatio": -0.002782931354359919
+        },
+        {
+          "type": "recipe",
+          "id": "craft_katana_s2",
+          "before": 105,
+          "after": 10500,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_katana_s4",
+          "before": 336,
+          "after": 33600,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_katana_s6",
+          "before": 938,
+          "after": 93800,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_katana_s8",
+          "before": 2240,
+          "after": 224000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_katana_s10",
+          "before": 5390,
+          "after": 539000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_katana_s12",
+          "before": 12936,
+          "after": 1290000,
+          "deltaRatio": -0.002782931354359919
+        },
+        {
+          "type": "recipe",
+          "id": "craft_dagger_s2",
+          "before": 105,
+          "after": 10500,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_dagger_s4",
+          "before": 336,
+          "after": 33600,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_dagger_s6",
+          "before": 938,
+          "after": 93800,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_dagger_s8",
+          "before": 2240,
+          "after": 224000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_dagger_s10",
+          "before": 5390,
+          "after": 539000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_dagger_s12",
+          "before": 12936,
+          "after": 1290000,
+          "deltaRatio": -0.002782931354359919
+        },
+        {
+          "type": "recipe",
+          "id": "craft_axe_s2",
+          "before": 105,
+          "after": 10500,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_axe_s4",
+          "before": 336,
+          "after": 33600,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_axe_s6",
+          "before": 938,
+          "after": 93800,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_axe_s8",
+          "before": 2240,
+          "after": 224000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_axe_s10",
+          "before": 5390,
+          "after": 539000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_axe_s12",
+          "before": 12936,
+          "after": 1290000,
+          "deltaRatio": -0.002782931354359919
+        },
+        {
+          "type": "recipe",
+          "id": "craft_spear_s2",
+          "before": 105,
+          "after": 10500,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_spear_s4",
+          "before": 336,
+          "after": 33600,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_spear_s6",
+          "before": 938,
+          "after": 93800,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_spear_s8",
+          "before": 2240,
+          "after": 224000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_spear_s10",
+          "before": 5390,
+          "after": 539000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_spear_s12",
+          "before": 12936,
+          "after": 1290000,
+          "deltaRatio": -0.002782931354359919
+        },
+        {
+          "type": "recipe",
+          "id": "craft_bow_s2",
+          "before": 105,
+          "after": 10500,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_bow_s4",
+          "before": 336,
+          "after": 33600,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_bow_s6",
+          "before": 938,
+          "after": 93800,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_bow_s8",
+          "before": 2240,
+          "after": 224000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_bow_s10",
+          "before": 5390,
+          "after": 539000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_bow_s12",
+          "before": 12936,
+          "after": 1290000,
+          "deltaRatio": -0.002782931354359919
+        },
+        {
+          "type": "recipe",
+          "id": "craft_hammer_s2",
+          "before": 105,
+          "after": 10500,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_hammer_s4",
+          "before": 336,
+          "after": 33600,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_hammer_s6",
+          "before": 938,
+          "after": 93800,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_hammer_s8",
+          "before": 2240,
+          "after": 224000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_hammer_s10",
+          "before": 5390,
+          "after": 539000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_hammer_s12",
+          "before": 12936,
+          "after": 1290000,
+          "deltaRatio": -0.002782931354359919
+        },
+        {
+          "type": "recipe",
+          "id": "craft_fist_s2",
+          "before": 105,
+          "after": 10500,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_fist_s4",
+          "before": 336,
+          "after": 33600,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_fist_s6",
+          "before": 938,
+          "after": 93800,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_fist_s8",
+          "before": 2240,
+          "after": 224000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_fist_s10",
+          "before": 5390,
+          "after": 539000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_fist_s12",
+          "before": 12936,
+          "after": 1290000,
+          "deltaRatio": -0.002782931354359919
+        },
+        {
+          "type": "recipe",
+          "id": "craft_staff_s2",
+          "before": 105,
+          "after": 10500,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_staff_s4",
+          "before": 336,
+          "after": 33600,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_staff_s6",
+          "before": 938,
+          "after": 93800,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_staff_s8",
+          "before": 2240,
+          "after": 224000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_staff_s10",
+          "before": 5390,
+          "after": 539000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_staff_s12",
+          "before": 12936,
+          "after": 1290000,
+          "deltaRatio": -0.002782931354359919
+        },
+        {
+          "type": "recipe",
+          "id": "craft_tome_s2",
+          "before": 105,
+          "after": 10500,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_tome_s4",
+          "before": 336,
+          "after": 33600,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_tome_s6",
+          "before": 938,
+          "after": 93800,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_tome_s8",
+          "before": 2240,
+          "after": 224000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_tome_s10",
+          "before": 5390,
+          "after": 539000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_tome_s12",
+          "before": 12936,
+          "after": 1290000,
+          "deltaRatio": -0.002782931354359919
+        },
+        {
+          "type": "recipe",
+          "id": "craft_instrument_s2",
+          "before": 105,
+          "after": 10500,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_instrument_s4",
+          "before": 336,
+          "after": 33600,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_instrument_s6",
+          "before": 938,
+          "after": 93800,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_instrument_s8",
+          "before": 2240,
+          "after": 224000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_instrument_s10",
+          "before": 5390,
+          "after": 539000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_instrument_s12",
+          "before": 12936,
+          "after": 1290000,
+          "deltaRatio": -0.002782931354359919
+        },
+        {
+          "type": "recipe",
+          "id": "craft_gun_s2",
+          "before": 105,
+          "after": 10500,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_gun_s4",
+          "before": 336,
+          "after": 33600,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_gun_s6",
+          "before": 938,
+          "after": 93800,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_gun_s8",
+          "before": 2240,
+          "after": 224000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_gun_s10",
+          "before": 5390,
+          "after": 539000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_gun_s12",
+          "before": 12936,
+          "after": 1290000,
+          "deltaRatio": -0.002782931354359919
+        },
+        {
+          "type": "recipe",
+          "id": "craft_whip_s2",
+          "before": 105,
+          "after": 10500,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_whip_s4",
+          "before": 336,
+          "after": 33600,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_whip_s6",
+          "before": 938,
+          "after": 93800,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_whip_s8",
+          "before": 2240,
+          "after": 224000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_whip_s10",
+          "before": 5390,
+          "after": 539000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_whip_s12",
+          "before": 12936,
+          "after": 1290000,
+          "deltaRatio": -0.002782931354359919
+        },
+        {
+          "type": "recipe",
+          "id": "craft_scythe_s6",
+          "before": 938,
+          "after": 93800,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_scythe_s9",
+          "before": 3472,
+          "after": 347000,
+          "deltaRatio": -0.0005760368663594306
+        },
+        {
+          "type": "recipe",
+          "id": "craft_scythe_s12",
+          "before": 12936,
+          "after": 1290000,
+          "deltaRatio": -0.002782931354359919
+        },
+        {
+          "type": "recipe",
+          "id": "craft_fan_s6",
+          "before": 938,
+          "after": 93800,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_fan_s9",
+          "before": 3472,
+          "after": 347000,
+          "deltaRatio": -0.0005760368663594306
+        },
+        {
+          "type": "recipe",
+          "id": "craft_fan_s12",
+          "before": 12936,
+          "after": 1290000,
+          "deltaRatio": -0.002782931354359919
+        },
+        {
+          "type": "recipe",
+          "id": "craft_heavy_head_s3",
+          "before": 151,
+          "after": 15100,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_heavy_head_s7",
+          "before": 1154,
+          "after": 115000,
+          "deltaRatio": -0.0034662045060658286
+        },
+        {
+          "type": "recipe",
+          "id": "craft_heavy_head_s11",
+          "before": 6675,
+          "after": 668000,
+          "deltaRatio": 0.0007490636704119424
+        },
+        {
+          "type": "recipe",
+          "id": "craft_heavy_body_s3",
+          "before": 151,
+          "after": 15100,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_heavy_body_s7",
+          "before": 1154,
+          "after": 115000,
+          "deltaRatio": -0.0034662045060658286
+        },
+        {
+          "type": "recipe",
+          "id": "craft_heavy_body_s11",
+          "before": 6675,
+          "after": 668000,
+          "deltaRatio": 0.0007490636704119424
+        },
+        {
+          "type": "recipe",
+          "id": "craft_heavy_arm_s3",
+          "before": 151,
+          "after": 15100,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_heavy_arm_s7",
+          "before": 1154,
+          "after": 115000,
+          "deltaRatio": -0.0034662045060658286
+        },
+        {
+          "type": "recipe",
+          "id": "craft_heavy_arm_s11",
+          "before": 6675,
+          "after": 668000,
+          "deltaRatio": 0.0007490636704119424
+        },
+        {
+          "type": "recipe",
+          "id": "craft_medium_head_s3",
+          "before": 151,
+          "after": 15100,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_medium_head_s7",
+          "before": 1154,
+          "after": 115000,
+          "deltaRatio": -0.0034662045060658286
+        },
+        {
+          "type": "recipe",
+          "id": "craft_medium_head_s11",
+          "before": 6675,
+          "after": 668000,
+          "deltaRatio": 0.0007490636704119424
+        },
+        {
+          "type": "recipe",
+          "id": "craft_medium_body_s3",
+          "before": 151,
+          "after": 15100,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_medium_body_s7",
+          "before": 1154,
+          "after": 115000,
+          "deltaRatio": -0.0034662045060658286
+        },
+        {
+          "type": "recipe",
+          "id": "craft_medium_body_s11",
+          "before": 6675,
+          "after": 668000,
+          "deltaRatio": 0.0007490636704119424
+        },
+        {
+          "type": "recipe",
+          "id": "craft_medium_arm_s3",
+          "before": 151,
+          "after": 15100,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_medium_arm_s7",
+          "before": 1154,
+          "after": 115000,
+          "deltaRatio": -0.0034662045060658286
+        },
+        {
+          "type": "recipe",
+          "id": "craft_medium_arm_s11",
+          "before": 6675,
+          "after": 668000,
+          "deltaRatio": 0.0007490636704119424
+        },
+        {
+          "type": "recipe",
+          "id": "craft_light_head_s3",
+          "before": 151,
+          "after": 15100,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_light_head_s7",
+          "before": 1154,
+          "after": 115000,
+          "deltaRatio": -0.0034662045060658286
+        },
+        {
+          "type": "recipe",
+          "id": "craft_light_head_s11",
+          "before": 6675,
+          "after": 668000,
+          "deltaRatio": 0.0007490636704119424
+        },
+        {
+          "type": "recipe",
+          "id": "craft_light_body_s3",
+          "before": 151,
+          "after": 15100,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_light_body_s7",
+          "before": 1154,
+          "after": 115000,
+          "deltaRatio": -0.0034662045060658286
+        },
+        {
+          "type": "recipe",
+          "id": "craft_light_body_s11",
+          "before": 6675,
+          "after": 668000,
+          "deltaRatio": 0.0007490636704119424
+        },
+        {
+          "type": "recipe",
+          "id": "craft_light_arm_s3",
+          "before": 151,
+          "after": 15100,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_light_arm_s7",
+          "before": 1154,
+          "after": 115000,
+          "deltaRatio": -0.0034662045060658286
+        },
+        {
+          "type": "recipe",
+          "id": "craft_light_arm_s11",
+          "before": 6675,
+          "after": 668000,
+          "deltaRatio": 0.0007490636704119424
+        },
+        {
+          "type": "recipe",
+          "id": "craft_cloak_1_s2",
+          "before": 105,
+          "after": 10500,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_cloak_2_s2",
+          "before": 105,
+          "after": 10500,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_cloak_3_s2",
+          "before": 105,
+          "after": 10500,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_cloak_4_s6",
+          "before": 938,
+          "after": 93800,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_cloak_5_s6",
+          "before": 938,
+          "after": 93800,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_cloak_6_s6",
+          "before": 938,
+          "after": 93800,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_cloak_7_s10",
+          "before": 5390,
+          "after": 539000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_cloak_8_s10",
+          "before": 5390,
+          "after": 539000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_cloak_9_s10",
+          "before": 5390,
+          "after": 539000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_ring_1_s2",
+          "before": 105,
+          "after": 10500,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_necklace_2_s2",
+          "before": 105,
+          "after": 10500,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_charm_3_s2",
+          "before": 105,
+          "after": 10500,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_ring_4_s4",
+          "before": 336,
+          "after": 33600,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_necklace_5_s4",
+          "before": 336,
+          "after": 33600,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_charm_6_s4",
+          "before": 336,
+          "after": 33600,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_ring_7_s6",
+          "before": 938,
+          "after": 93800,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_necklace_8_s6",
+          "before": 938,
+          "after": 93800,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_charm_9_s6",
+          "before": 938,
+          "after": 93800,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_ring_10_s8",
+          "before": 2240,
+          "after": 224000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_necklace_11_s8",
+          "before": 2240,
+          "after": 224000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_charm_12_s8",
+          "before": 2240,
+          "after": 224000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_ring_13_s10",
+          "before": 5390,
+          "after": 539000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_necklace_14_s10",
+          "before": 5390,
+          "after": 539000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_charm_15_s10",
+          "before": 5390,
+          "after": 539000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_ring_16_s12",
+          "before": 12936,
+          "after": 1290000,
+          "deltaRatio": -0.002782931354359919
+        },
+        {
+          "type": "recipe",
+          "id": "craft_necklace_17_s12",
+          "before": 12936,
+          "after": 1290000,
+          "deltaRatio": -0.002782931354359919
+        },
+        {
+          "type": "recipe",
+          "id": "craft_charm_18_s12",
+          "before": 12936,
+          "after": 1290000,
+          "deltaRatio": -0.002782931354359919
+        },
+        {
+          "type": "recipe",
+          "id": "craft_dreambreaker",
+          "before": 90,
+          "after": 9000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_frost_judgment",
+          "before": 160,
+          "after": 16000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_thunder_claw",
+          "before": 90,
+          "after": 9000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_silent_tome",
+          "before": 160,
+          "after": 16000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_illusion_katana",
+          "before": 90,
+          "after": 9000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_dawn_katana",
+          "before": 90,
+          "after": 9000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_cycling_blade",
+          "before": 160,
+          "after": 16000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_siphon_tome",
+          "before": 90,
+          "after": 9000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_battle_mend_staff",
+          "before": 90,
+          "after": 9000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_life_barrier_staff",
+          "before": 160,
+          "after": 16000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_toxic_needle",
+          "before": 160,
+          "after": 16000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_binding_whip",
+          "before": 160,
+          "after": 16000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_blood_reaper",
+          "before": 90,
+          "after": 9000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_riposte_hammer",
+          "before": 90,
+          "after": 9000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_warding_fan",
+          "before": 160,
+          "after": 16000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_battle_mend_charm",
+          "before": 90,
+          "after": 9000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_cycle_ring",
+          "before": 90,
+          "after": 9000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_illusion_cloak",
+          "before": 90,
+          "after": 9000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_buff_str_1",
+          "before": 50,
+          "after": 5000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_buff_str_2",
+          "before": 500,
+          "after": 50000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_buff_str_3",
+          "before": 3000,
+          "after": 300000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_buff_str_4",
+          "before": 15000,
+          "after": 1500000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_buff_mag_1",
+          "before": 50,
+          "after": 5000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_buff_mag_2",
+          "before": 500,
+          "after": 50000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_buff_mag_3",
+          "before": 3000,
+          "after": 300000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_buff_mag_4",
+          "before": 15000,
+          "after": 1500000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_buff_def_1",
+          "before": 50,
+          "after": 5000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_buff_def_2",
+          "before": 500,
+          "after": 50000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_buff_def_3",
+          "before": 3000,
+          "after": 300000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_buff_def_4",
+          "before": 15000,
+          "after": 1500000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_buff_res_1",
+          "before": 50,
+          "after": 5000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_buff_res_2",
+          "before": 500,
+          "after": 50000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_buff_res_3",
+          "before": 3000,
+          "after": 300000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_buff_res_4",
+          "before": 15000,
+          "after": 1500000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_buff_spd_1",
+          "before": 50,
+          "after": 5000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_buff_spd_2",
+          "before": 500,
+          "after": 50000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_buff_spd_3",
+          "before": 3000,
+          "after": 300000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_buff_spd_4",
+          "before": 15000,
+          "after": 1500000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_buff_crt_1",
+          "before": 50,
+          "after": 5000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_buff_crt_2",
+          "before": 500,
+          "after": 50000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_buff_crt_3",
+          "before": 3000,
+          "after": 300000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_buff_crt_4",
+          "before": 15000,
+          "after": 1500000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_resist_fire_1",
+          "before": 200,
+          "after": 20000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_resist_fire_2",
+          "before": 2000,
+          "after": 200000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_resist_fire_3",
+          "before": 12000,
+          "after": 1200000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_resist_ice_1",
+          "before": 200,
+          "after": 20000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_resist_ice_2",
+          "before": 2000,
+          "after": 200000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_resist_ice_3",
+          "before": 12000,
+          "after": 1200000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_resist_wind_1",
+          "before": 200,
+          "after": 20000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_resist_wind_2",
+          "before": 2000,
+          "after": 200000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_resist_wind_3",
+          "before": 12000,
+          "after": 1200000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_resist_earth_1",
+          "before": 200,
+          "after": 20000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_resist_earth_2",
+          "before": 2000,
+          "after": 200000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_resist_earth_3",
+          "before": 12000,
+          "after": 1200000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_resist_thunder_1",
+          "before": 200,
+          "after": 20000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_resist_thunder_2",
+          "before": 2000,
+          "after": 200000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_resist_thunder_3",
+          "before": 12000,
+          "after": 1200000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_resist_water_1",
+          "before": 200,
+          "after": 20000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_resist_water_2",
+          "before": 2000,
+          "after": 200000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_resist_water_3",
+          "before": 12000,
+          "after": 1200000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_resist_light_1",
+          "before": 200,
+          "after": 20000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_resist_light_2",
+          "before": 2000,
+          "after": 200000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_resist_light_3",
+          "before": 12000,
+          "after": 1200000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_resist_dark_1",
+          "before": 200,
+          "after": 20000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_resist_dark_2",
+          "before": 2000,
+          "after": 200000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_resist_dark_3",
+          "before": 12000,
+          "after": 1200000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_sres_dot_1",
+          "before": 200,
+          "after": 20000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_sres_dot_2",
+          "before": 2000,
+          "after": 200000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_sres_dot_3",
+          "before": 12000,
+          "after": 1200000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_sres_lock_1",
+          "before": 200,
+          "after": 20000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_sres_lock_2",
+          "before": 2000,
+          "after": 200000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_sres_lock_3",
+          "before": 12000,
+          "after": 1200000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_sres_limit_1",
+          "before": 200,
+          "after": 20000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_sres_limit_2",
+          "before": 2000,
+          "after": 200000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_sres_limit_3",
+          "before": 12000,
+          "after": 1200000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_sres_weak_1",
+          "before": 200,
+          "after": 20000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_sres_weak_2",
+          "before": 2000,
+          "after": 200000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_sres_weak_3",
+          "before": 12000,
+          "after": 1200000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_sres_all_1",
+          "before": 50000,
+          "after": 5000000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "enchant",
+          "id": "1",
+          "before": 100,
+          "after": 10000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "enchant",
+          "id": "2",
+          "before": 160,
+          "after": 16000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "enchant",
+          "id": "3",
+          "before": 240,
+          "after": 24000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "enchant",
+          "id": "4",
+          "before": 340,
+          "after": 34000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "enchant",
+          "id": "5",
+          "before": 460,
+          "after": 46000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "enchant",
+          "id": "6",
+          "before": 600,
+          "after": 60000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "enchant",
+          "id": "7",
+          "before": 760,
+          "after": 76000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "enchant",
+          "id": "8",
+          "before": 940,
+          "after": 94000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "enchant",
+          "id": "9",
+          "before": 1140,
+          "after": 114000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "enchant",
+          "id": "10",
+          "before": 1360,
+          "after": 136000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "enchant",
+          "id": "11",
+          "before": 1600,
+          "after": 160000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "enchant",
+          "id": "12",
+          "before": 1860,
+          "after": 186000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "facility",
+          "id": "2",
+          "before": 300,
+          "after": 30000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "facility",
+          "id": "3",
+          "before": 600,
+          "after": 60000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "facility",
+          "id": "4",
+          "before": 1100,
+          "after": 110000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "facility",
+          "id": "5",
+          "before": 2000,
+          "after": 200000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "facility",
+          "id": "6",
+          "before": 3400,
+          "after": 340000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "facility",
+          "id": "7",
+          "before": 5780,
+          "after": 578000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "facility",
+          "id": "8",
+          "before": 9830,
+          "after": 983000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "facility",
+          "id": "9",
+          "before": 16700,
+          "after": 1670000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "facility",
+          "id": "10",
+          "before": 28400,
+          "after": 2840000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "facility",
+          "id": "11",
+          "before": 48280,
+          "after": 4830000,
+          "deltaRatio": 0.00041425020712515526
+        },
+        {
+          "type": "facility",
+          "id": "12",
+          "before": 82070,
+          "after": 8210000,
+          "deltaRatio": 0.00036554161082014147
+        },
+        {
+          "type": "backpack",
+          "id": 2,
+          "before": 500,
+          "after": 50000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "backpack",
+          "id": 3,
+          "before": 3000,
+          "after": 300000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "backpack",
+          "id": 4,
+          "before": 15000,
+          "after": 1500000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "backpack",
+          "id": 5,
+          "before": 60000,
+          "after": 6000000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "backpack",
+          "id": 6,
+          "before": 200000,
+          "after": 20000000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "backpack",
+          "id": 7,
+          "before": 600000,
+          "after": 60000000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "loanLimit",
+          "id": "R01",
+          "before": 1350,
+          "after": 135000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "loanLimit",
+          "id": "R01+",
+          "before": 1518,
+          "after": 152000,
+          "deltaRatio": 0.0013175230566535578
+        },
+        {
+          "type": "loanLimit",
+          "id": "R02",
+          "before": 3037,
+          "after": 304000,
+          "deltaRatio": 0.0009878169245967072
+        },
+        {
+          "type": "loanLimit",
+          "id": "R02+",
+          "before": 3341,
+          "after": 335000,
+          "deltaRatio": 0.002693804250224474
+        },
+        {
+          "type": "loanLimit",
+          "id": "R03",
+          "before": 6480,
+          "after": 648000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "loanLimit",
+          "id": "R03+",
+          "before": 7020,
+          "after": 702000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "loanLimit",
+          "id": "R04",
+          "before": 13702,
+          "after": 1380000,
+          "deltaRatio": 0.007152240548824906
+        },
+        {
+          "type": "loanLimit",
+          "id": "R04+",
+          "before": 14681,
+          "after": 1470000,
+          "deltaRatio": 0.0012941897690892379
+        },
+        {
+          "type": "loanLimit",
+          "id": "R05",
+          "before": 27000,
+          "after": 2700000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "loanLimit",
+          "id": "R05+",
+          "before": 28687,
+          "after": 2870000,
+          "deltaRatio": 0.0004531669397287441
+        },
+        {
+          "type": "loanLimit",
+          "id": "R06",
+          "before": 46980,
+          "after": 4700000,
+          "deltaRatio": 0.00042571306939120923
+        },
+        {
+          "type": "loanLimit",
+          "id": "R06+",
+          "before": 49590,
+          "after": 4960000,
+          "deltaRatio": 0.000201653559185333
+        },
+        {
+          "type": "loanLimit",
+          "id": "R07",
+          "before": 81000,
+          "after": 8100000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "loanLimit",
+          "id": "R07+",
+          "before": 85050,
+          "after": 8510000,
+          "deltaRatio": 0.0005878894767783471
+        },
+        {
+          "type": "loanLimit",
+          "id": "R08",
+          "before": 138105,
+          "after": 13900000,
+          "deltaRatio": 0.006480576373049551
+        },
+        {
+          "type": "loanLimit",
+          "id": "R08+",
+          "before": 144382,
+          "after": 14500000,
+          "deltaRatio": 0.004280311950243032
+        },
+        {
+          "type": "loanLimit",
+          "id": "R09",
+          "before": 233820,
+          "after": 23400000,
+          "deltaRatio": 0.0007698229407235857
+        },
+        {
+          "type": "loanLimit",
+          "id": "R09+",
+          "before": 243562,
+          "after": 24400000,
+          "deltaRatio": 0.0017983100812113406
+        },
+        {
+          "type": "loanLimit",
+          "id": "R10",
+          "before": 392535,
+          "after": 39300000,
+          "deltaRatio": 0.0011846077419848111
+        },
+        {
+          "type": "loanLimit",
+          "id": "R10+",
+          "before": 407632,
+          "after": 40800000,
+          "deltaRatio": 0.0009027750520076427
+        },
+        {
+          "type": "loanLimit",
+          "id": "R11",
+          "before": 655200,
+          "after": 65600000,
+          "deltaRatio": 0.0012210012210012167
+        },
+        {
+          "type": "loanLimit",
+          "id": "R11+",
+          "before": 678600,
+          "after": 67900000,
+          "deltaRatio": 0.0005894488653108709
+        },
+        {
+          "type": "loanLimit",
+          "id": "R12",
+          "before": 1088100,
+          "after": 109000000,
+          "deltaRatio": 0.0017461630364856706
+        },
+        {
+          "type": "loanLimit",
+          "id": "R12+",
+          "before": 1124370,
+          "after": 113000000,
+          "deltaRatio": 0.005007248503606565
+        },
+        {
+          "type": "loanLimit",
+          "id": "S",
+          "before": 1160640,
+          "after": 117000000,
+          "deltaRatio": 0.008064516129032251
+        }
+      ],
+      "sample": {
+        "seed": 112501,
+        "ledger": [
+          {
+            "stage": "early",
+            "lap": 0,
+            "id": "sunlit_forest",
+            "upgradeCost": 0,
+            "before": 100000,
+            "after": 104700,
+            "supplies": 4000,
+            "fee": 800,
+            "lootGold": 9400,
+            "saleGold": 1100,
+            "questGold": 0,
+            "inn": 1000,
+            "weaponPrice": 5700,
+            "affordableWeapons": 18
+          },
+          {
+            "stage": "early",
+            "lap": 0,
+            "id": "mossy_cave",
+            "upgradeCost": 0,
+            "before": 104700,
+            "after": 120200,
+            "supplies": 4000,
+            "fee": 0,
+            "lootGold": 14400,
+            "saleGold": 3800,
+            "questGold": 2300,
+            "inn": 1000,
+            "weaponPrice": 5700,
+            "affordableWeapons": 21
+          },
+          {
+            "stage": "early",
+            "lap": 0,
+            "id": "goblin_quarry",
+            "upgradeCost": 0,
+            "before": 120200,
+            "after": 128800,
+            "supplies": 4000,
+            "fee": 1100,
+            "lootGold": 12800,
+            "saleGold": 1900,
+            "questGold": 0,
+            "inn": 1000,
+            "weaponPrice": 5700,
+            "affordableWeapons": 22
+          },
+          {
+            "stage": "early",
+            "lap": 1,
+            "id": "sunlit_forest",
+            "upgradeCost": 0,
+            "before": 128800,
+            "after": 139900,
+            "supplies": 4000,
+            "fee": 800,
+            "lootGold": 10900,
+            "saleGold": 3700,
+            "questGold": 2300,
+            "inn": 1000,
+            "weaponPrice": 5700,
+            "affordableWeapons": 24
+          },
+          {
+            "stage": "early",
+            "lap": 1,
+            "id": "mossy_cave",
+            "upgradeCost": 0,
+            "before": 139900,
+            "after": 152500,
+            "supplies": 4000,
+            "fee": 0,
+            "lootGold": 14600,
+            "saleGold": 3000,
+            "questGold": 0,
+            "inn": 1000,
+            "weaponPrice": 5700,
+            "affordableWeapons": 26
+          },
+          {
+            "stage": "early",
+            "lap": 1,
+            "id": "goblin_quarry",
+            "upgradeCost": 0,
+            "before": 152500,
+            "after": 168500,
+            "supplies": 4000,
+            "fee": 1100,
+            "lootGold": 14200,
+            "saleGold": 5600,
+            "questGold": 2300,
+            "inn": 1000,
+            "weaponPrice": 5700,
+            "affordableWeapons": 29
+          },
+          {
+            "stage": "early",
+            "lap": 2,
+            "id": "sunlit_forest",
+            "upgradeCost": 0,
+            "before": 168500,
+            "after": 176000,
+            "supplies": 4000,
+            "fee": 800,
+            "lootGold": 10500,
+            "saleGold": 2800,
+            "questGold": 0,
+            "inn": 1000,
+            "weaponPrice": 5700,
+            "affordableWeapons": 30
+          },
+          {
+            "stage": "early",
+            "lap": 2,
+            "id": "mossy_cave",
+            "upgradeCost": 0,
+            "before": 176000,
+            "after": 188700,
+            "supplies": 4000,
+            "fee": 0,
+            "lootGold": 14700,
+            "saleGold": 3000,
+            "questGold": 0,
+            "inn": 1000,
+            "weaponPrice": 5700,
+            "affordableWeapons": 33
+          },
+          {
+            "stage": "early",
+            "lap": 2,
+            "id": "goblin_quarry",
+            "upgradeCost": 0,
+            "before": 188700,
+            "after": 203300,
+            "supplies": 4000,
+            "fee": 1100,
+            "lootGold": 13600,
+            "saleGold": 4800,
+            "questGold": 2300,
+            "inn": 1000,
+            "weaponPrice": 5700,
+            "affordableWeapons": 35
+          },
+          {
+            "stage": "later",
+            "lap": 0,
+            "id": "ruined_fort",
+            "upgradeCost": 12500,
+            "before": 190800,
+            "after": 217700,
+            "supplies": 3800,
+            "fee": 2200,
+            "lootGold": 25800,
+            "saleGold": 4000,
+            "questGold": 4100,
+            "inn": 1000,
+            "weaponPrice": 12500,
+            "affordableWeapons": 17
+          },
+          {
+            "stage": "later",
+            "lap": 0,
+            "id": "misty_marsh",
+            "upgradeCost": 0,
+            "before": 217700,
+            "after": 242400,
+            "supplies": 3800,
+            "fee": 1900,
+            "lootGold": 23600,
+            "saleGold": 3500,
+            "questGold": 4300,
+            "inn": 1000,
+            "weaponPrice": 12500,
+            "affordableWeapons": 19
+          },
+          {
+            "stage": "later",
+            "lap": 1,
+            "id": "ruined_fort",
+            "upgradeCost": 0,
+            "before": 242400,
+            "after": 266800,
+            "supplies": 3800,
+            "fee": 2200,
+            "lootGold": 29400,
+            "saleGold": 2000,
+            "questGold": 0,
+            "inn": 1000,
+            "weaponPrice": 12500,
+            "affordableWeapons": 21
+          },
+          {
+            "stage": "later",
+            "lap": 1,
+            "id": "misty_marsh",
+            "upgradeCost": 0,
+            "before": 266800,
+            "after": 293100,
+            "supplies": 3800,
+            "fee": 1900,
+            "lootGold": 25200,
+            "saleGold": 3500,
+            "questGold": 4300,
+            "inn": 1000,
+            "weaponPrice": 12500,
+            "affordableWeapons": 23
+          },
+          {
+            "stage": "later",
+            "lap": 2,
+            "id": "ruined_fort",
+            "upgradeCost": 0,
+            "before": 293100,
+            "after": 324000,
+            "supplies": 3800,
+            "fee": 2200,
+            "lootGold": 29700,
+            "saleGold": 8200,
+            "questGold": 0,
+            "inn": 1000,
+            "weaponPrice": 12500,
+            "affordableWeapons": 25
+          },
+          {
+            "stage": "later",
+            "lap": 2,
+            "id": "misty_marsh",
+            "upgradeCost": 0,
+            "before": 324000,
+            "after": 348400,
+            "supplies": 3800,
+            "fee": 1900,
+            "lootGold": 26500,
+            "saleGold": 4600,
+            "questGold": 0,
+            "inn": 1000,
+            "weaponPrice": 12500,
+            "affordableWeapons": 27
+          }
+        ]
+      },
+      "finalBalances": [
+        348400,
+        336300,
+        343300,
+        340300,
+        359000,
+        329100,
+        352100,
+        323500,
+        328600,
+        346900,
+        344700,
+        329300,
+        337300,
+        353200,
+        333700,
+        339300,
+        333600,
+        359600,
+        351500,
+        345800,
+        346600,
+        356100,
+        314700,
+        341200,
+        345100,
+        348600,
+        359200,
+        339900,
+        358500,
+        336600,
+        343100,
+        350300,
+        341300,
+        356400,
+        343300,
+        338500,
+        337600,
+        336800,
+        342300,
+        339100,
+        365600,
+        329400,
+        336300,
+        328200,
+        338800,
+        342300,
+        345600,
+        342100,
+        333600,
+        345000,
+        353300,
+        330700,
+        340400,
+        339400,
+        360900,
+        321400,
+        337500,
+        378200,
+        349900,
+        340200,
+        335900,
+        332500,
+        346500,
+        345900
+      ]
+    },
+    {
+      "name": "2digit",
+      "scale": 10,
+      "digits": 2,
+      "engineHash": "86c420b5be1ee2d433b9e3b9191ac46a805e21dbafb2f09486a89e4a6e50a49c",
+      "dataHash": "e2939944e9559a2dc578fc34e403eced649ebf927eaa3cffb7e11896e101a2d9",
+      "harnessHash": "a0b76f5d71879654a22fd4c09901cde0b910b22465ed31a7f7de565a1396efa4",
+      "unchanged": true,
+      "shopRelativeError": [
+        -0.04761904761904767,
+        0.04166666666666674
+      ],
+      "cashRelativeError": [
+        -0.0025974025974025983,
+        0.006603773584905603
+      ],
+      "differentAffordableCounts": 355,
+      "profitableResales": 120,
+      "newBuySellArbitrage": 0,
+      "otherQuotes": [
+        {
+          "type": "recipe",
+          "id": "iron_sword",
+          "before": 40,
+          "after": 400,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "steel_sword",
+          "before": 53,
+          "after": 530,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "windcutter_sword",
+          "before": 95,
+          "after": 950,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "tidal_sword",
+          "before": 168,
+          "after": 1700,
+          "deltaRatio": 0.011904761904761862
+        },
+        {
+          "type": "recipe",
+          "id": "obsidian_sword",
+          "before": 301,
+          "after": 3000,
+          "deltaRatio": -0.0033222591362126463
+        },
+        {
+          "type": "recipe",
+          "id": "flame_sword",
+          "before": 53,
+          "after": 530,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "storm_sword",
+          "before": 95,
+          "after": 950,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "earth_sword",
+          "before": 95,
+          "after": 950,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "mirror_sword",
+          "before": 168,
+          "after": 1700,
+          "deltaRatio": 0.011904761904761862
+        },
+        {
+          "type": "recipe",
+          "id": "iron_scythe",
+          "before": 40,
+          "after": 400,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "steel_scythe",
+          "before": 53,
+          "after": 530,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "shadow_scythe",
+          "before": 95,
+          "after": 950,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "iron_fan",
+          "before": 40,
+          "after": 400,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "silver_fan",
+          "before": 53,
+          "after": 530,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "wind_fan",
+          "before": 95,
+          "after": 950,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_greatsword_s2",
+          "before": 105,
+          "after": 1100,
+          "deltaRatio": 0.04761904761904767
+        },
+        {
+          "type": "recipe",
+          "id": "craft_greatsword_s4",
+          "before": 336,
+          "after": 3400,
+          "deltaRatio": 0.011904761904761862
+        },
+        {
+          "type": "recipe",
+          "id": "craft_greatsword_s6",
+          "before": 938,
+          "after": 9400,
+          "deltaRatio": 0.002132196162046851
+        },
+        {
+          "type": "recipe",
+          "id": "craft_greatsword_s8",
+          "before": 2240,
+          "after": 22000,
+          "deltaRatio": -0.017857142857142905
+        },
+        {
+          "type": "recipe",
+          "id": "craft_greatsword_s10",
+          "before": 5390,
+          "after": 54000,
+          "deltaRatio": 0.0018552875695732052
+        },
+        {
+          "type": "recipe",
+          "id": "craft_greatsword_s12",
+          "before": 12936,
+          "after": 130000,
+          "deltaRatio": 0.0049474335188621765
+        },
+        {
+          "type": "recipe",
+          "id": "craft_katana_s2",
+          "before": 105,
+          "after": 1100,
+          "deltaRatio": 0.04761904761904767
+        },
+        {
+          "type": "recipe",
+          "id": "craft_katana_s4",
+          "before": 336,
+          "after": 3400,
+          "deltaRatio": 0.011904761904761862
+        },
+        {
+          "type": "recipe",
+          "id": "craft_katana_s6",
+          "before": 938,
+          "after": 9400,
+          "deltaRatio": 0.002132196162046851
+        },
+        {
+          "type": "recipe",
+          "id": "craft_katana_s8",
+          "before": 2240,
+          "after": 22000,
+          "deltaRatio": -0.017857142857142905
+        },
+        {
+          "type": "recipe",
+          "id": "craft_katana_s10",
+          "before": 5390,
+          "after": 54000,
+          "deltaRatio": 0.0018552875695732052
+        },
+        {
+          "type": "recipe",
+          "id": "craft_katana_s12",
+          "before": 12936,
+          "after": 130000,
+          "deltaRatio": 0.0049474335188621765
+        },
+        {
+          "type": "recipe",
+          "id": "craft_dagger_s2",
+          "before": 105,
+          "after": 1100,
+          "deltaRatio": 0.04761904761904767
+        },
+        {
+          "type": "recipe",
+          "id": "craft_dagger_s4",
+          "before": 336,
+          "after": 3400,
+          "deltaRatio": 0.011904761904761862
+        },
+        {
+          "type": "recipe",
+          "id": "craft_dagger_s6",
+          "before": 938,
+          "after": 9400,
+          "deltaRatio": 0.002132196162046851
+        },
+        {
+          "type": "recipe",
+          "id": "craft_dagger_s8",
+          "before": 2240,
+          "after": 22000,
+          "deltaRatio": -0.017857142857142905
+        },
+        {
+          "type": "recipe",
+          "id": "craft_dagger_s10",
+          "before": 5390,
+          "after": 54000,
+          "deltaRatio": 0.0018552875695732052
+        },
+        {
+          "type": "recipe",
+          "id": "craft_dagger_s12",
+          "before": 12936,
+          "after": 130000,
+          "deltaRatio": 0.0049474335188621765
+        },
+        {
+          "type": "recipe",
+          "id": "craft_axe_s2",
+          "before": 105,
+          "after": 1100,
+          "deltaRatio": 0.04761904761904767
+        },
+        {
+          "type": "recipe",
+          "id": "craft_axe_s4",
+          "before": 336,
+          "after": 3400,
+          "deltaRatio": 0.011904761904761862
+        },
+        {
+          "type": "recipe",
+          "id": "craft_axe_s6",
+          "before": 938,
+          "after": 9400,
+          "deltaRatio": 0.002132196162046851
+        },
+        {
+          "type": "recipe",
+          "id": "craft_axe_s8",
+          "before": 2240,
+          "after": 22000,
+          "deltaRatio": -0.017857142857142905
+        },
+        {
+          "type": "recipe",
+          "id": "craft_axe_s10",
+          "before": 5390,
+          "after": 54000,
+          "deltaRatio": 0.0018552875695732052
+        },
+        {
+          "type": "recipe",
+          "id": "craft_axe_s12",
+          "before": 12936,
+          "after": 130000,
+          "deltaRatio": 0.0049474335188621765
+        },
+        {
+          "type": "recipe",
+          "id": "craft_spear_s2",
+          "before": 105,
+          "after": 1100,
+          "deltaRatio": 0.04761904761904767
+        },
+        {
+          "type": "recipe",
+          "id": "craft_spear_s4",
+          "before": 336,
+          "after": 3400,
+          "deltaRatio": 0.011904761904761862
+        },
+        {
+          "type": "recipe",
+          "id": "craft_spear_s6",
+          "before": 938,
+          "after": 9400,
+          "deltaRatio": 0.002132196162046851
+        },
+        {
+          "type": "recipe",
+          "id": "craft_spear_s8",
+          "before": 2240,
+          "after": 22000,
+          "deltaRatio": -0.017857142857142905
+        },
+        {
+          "type": "recipe",
+          "id": "craft_spear_s10",
+          "before": 5390,
+          "after": 54000,
+          "deltaRatio": 0.0018552875695732052
+        },
+        {
+          "type": "recipe",
+          "id": "craft_spear_s12",
+          "before": 12936,
+          "after": 130000,
+          "deltaRatio": 0.0049474335188621765
+        },
+        {
+          "type": "recipe",
+          "id": "craft_bow_s2",
+          "before": 105,
+          "after": 1100,
+          "deltaRatio": 0.04761904761904767
+        },
+        {
+          "type": "recipe",
+          "id": "craft_bow_s4",
+          "before": 336,
+          "after": 3400,
+          "deltaRatio": 0.011904761904761862
+        },
+        {
+          "type": "recipe",
+          "id": "craft_bow_s6",
+          "before": 938,
+          "after": 9400,
+          "deltaRatio": 0.002132196162046851
+        },
+        {
+          "type": "recipe",
+          "id": "craft_bow_s8",
+          "before": 2240,
+          "after": 22000,
+          "deltaRatio": -0.017857142857142905
+        },
+        {
+          "type": "recipe",
+          "id": "craft_bow_s10",
+          "before": 5390,
+          "after": 54000,
+          "deltaRatio": 0.0018552875695732052
+        },
+        {
+          "type": "recipe",
+          "id": "craft_bow_s12",
+          "before": 12936,
+          "after": 130000,
+          "deltaRatio": 0.0049474335188621765
+        },
+        {
+          "type": "recipe",
+          "id": "craft_hammer_s2",
+          "before": 105,
+          "after": 1100,
+          "deltaRatio": 0.04761904761904767
+        },
+        {
+          "type": "recipe",
+          "id": "craft_hammer_s4",
+          "before": 336,
+          "after": 3400,
+          "deltaRatio": 0.011904761904761862
+        },
+        {
+          "type": "recipe",
+          "id": "craft_hammer_s6",
+          "before": 938,
+          "after": 9400,
+          "deltaRatio": 0.002132196162046851
+        },
+        {
+          "type": "recipe",
+          "id": "craft_hammer_s8",
+          "before": 2240,
+          "after": 22000,
+          "deltaRatio": -0.017857142857142905
+        },
+        {
+          "type": "recipe",
+          "id": "craft_hammer_s10",
+          "before": 5390,
+          "after": 54000,
+          "deltaRatio": 0.0018552875695732052
+        },
+        {
+          "type": "recipe",
+          "id": "craft_hammer_s12",
+          "before": 12936,
+          "after": 130000,
+          "deltaRatio": 0.0049474335188621765
+        },
+        {
+          "type": "recipe",
+          "id": "craft_fist_s2",
+          "before": 105,
+          "after": 1100,
+          "deltaRatio": 0.04761904761904767
+        },
+        {
+          "type": "recipe",
+          "id": "craft_fist_s4",
+          "before": 336,
+          "after": 3400,
+          "deltaRatio": 0.011904761904761862
+        },
+        {
+          "type": "recipe",
+          "id": "craft_fist_s6",
+          "before": 938,
+          "after": 9400,
+          "deltaRatio": 0.002132196162046851
+        },
+        {
+          "type": "recipe",
+          "id": "craft_fist_s8",
+          "before": 2240,
+          "after": 22000,
+          "deltaRatio": -0.017857142857142905
+        },
+        {
+          "type": "recipe",
+          "id": "craft_fist_s10",
+          "before": 5390,
+          "after": 54000,
+          "deltaRatio": 0.0018552875695732052
+        },
+        {
+          "type": "recipe",
+          "id": "craft_fist_s12",
+          "before": 12936,
+          "after": 130000,
+          "deltaRatio": 0.0049474335188621765
+        },
+        {
+          "type": "recipe",
+          "id": "craft_staff_s2",
+          "before": 105,
+          "after": 1100,
+          "deltaRatio": 0.04761904761904767
+        },
+        {
+          "type": "recipe",
+          "id": "craft_staff_s4",
+          "before": 336,
+          "after": 3400,
+          "deltaRatio": 0.011904761904761862
+        },
+        {
+          "type": "recipe",
+          "id": "craft_staff_s6",
+          "before": 938,
+          "after": 9400,
+          "deltaRatio": 0.002132196162046851
+        },
+        {
+          "type": "recipe",
+          "id": "craft_staff_s8",
+          "before": 2240,
+          "after": 22000,
+          "deltaRatio": -0.017857142857142905
+        },
+        {
+          "type": "recipe",
+          "id": "craft_staff_s10",
+          "before": 5390,
+          "after": 54000,
+          "deltaRatio": 0.0018552875695732052
+        },
+        {
+          "type": "recipe",
+          "id": "craft_staff_s12",
+          "before": 12936,
+          "after": 130000,
+          "deltaRatio": 0.0049474335188621765
+        },
+        {
+          "type": "recipe",
+          "id": "craft_tome_s2",
+          "before": 105,
+          "after": 1100,
+          "deltaRatio": 0.04761904761904767
+        },
+        {
+          "type": "recipe",
+          "id": "craft_tome_s4",
+          "before": 336,
+          "after": 3400,
+          "deltaRatio": 0.011904761904761862
+        },
+        {
+          "type": "recipe",
+          "id": "craft_tome_s6",
+          "before": 938,
+          "after": 9400,
+          "deltaRatio": 0.002132196162046851
+        },
+        {
+          "type": "recipe",
+          "id": "craft_tome_s8",
+          "before": 2240,
+          "after": 22000,
+          "deltaRatio": -0.017857142857142905
+        },
+        {
+          "type": "recipe",
+          "id": "craft_tome_s10",
+          "before": 5390,
+          "after": 54000,
+          "deltaRatio": 0.0018552875695732052
+        },
+        {
+          "type": "recipe",
+          "id": "craft_tome_s12",
+          "before": 12936,
+          "after": 130000,
+          "deltaRatio": 0.0049474335188621765
+        },
+        {
+          "type": "recipe",
+          "id": "craft_instrument_s2",
+          "before": 105,
+          "after": 1100,
+          "deltaRatio": 0.04761904761904767
+        },
+        {
+          "type": "recipe",
+          "id": "craft_instrument_s4",
+          "before": 336,
+          "after": 3400,
+          "deltaRatio": 0.011904761904761862
+        },
+        {
+          "type": "recipe",
+          "id": "craft_instrument_s6",
+          "before": 938,
+          "after": 9400,
+          "deltaRatio": 0.002132196162046851
+        },
+        {
+          "type": "recipe",
+          "id": "craft_instrument_s8",
+          "before": 2240,
+          "after": 22000,
+          "deltaRatio": -0.017857142857142905
+        },
+        {
+          "type": "recipe",
+          "id": "craft_instrument_s10",
+          "before": 5390,
+          "after": 54000,
+          "deltaRatio": 0.0018552875695732052
+        },
+        {
+          "type": "recipe",
+          "id": "craft_instrument_s12",
+          "before": 12936,
+          "after": 130000,
+          "deltaRatio": 0.0049474335188621765
+        },
+        {
+          "type": "recipe",
+          "id": "craft_gun_s2",
+          "before": 105,
+          "after": 1100,
+          "deltaRatio": 0.04761904761904767
+        },
+        {
+          "type": "recipe",
+          "id": "craft_gun_s4",
+          "before": 336,
+          "after": 3400,
+          "deltaRatio": 0.011904761904761862
+        },
+        {
+          "type": "recipe",
+          "id": "craft_gun_s6",
+          "before": 938,
+          "after": 9400,
+          "deltaRatio": 0.002132196162046851
+        },
+        {
+          "type": "recipe",
+          "id": "craft_gun_s8",
+          "before": 2240,
+          "after": 22000,
+          "deltaRatio": -0.017857142857142905
+        },
+        {
+          "type": "recipe",
+          "id": "craft_gun_s10",
+          "before": 5390,
+          "after": 54000,
+          "deltaRatio": 0.0018552875695732052
+        },
+        {
+          "type": "recipe",
+          "id": "craft_gun_s12",
+          "before": 12936,
+          "after": 130000,
+          "deltaRatio": 0.0049474335188621765
+        },
+        {
+          "type": "recipe",
+          "id": "craft_whip_s2",
+          "before": 105,
+          "after": 1100,
+          "deltaRatio": 0.04761904761904767
+        },
+        {
+          "type": "recipe",
+          "id": "craft_whip_s4",
+          "before": 336,
+          "after": 3400,
+          "deltaRatio": 0.011904761904761862
+        },
+        {
+          "type": "recipe",
+          "id": "craft_whip_s6",
+          "before": 938,
+          "after": 9400,
+          "deltaRatio": 0.002132196162046851
+        },
+        {
+          "type": "recipe",
+          "id": "craft_whip_s8",
+          "before": 2240,
+          "after": 22000,
+          "deltaRatio": -0.017857142857142905
+        },
+        {
+          "type": "recipe",
+          "id": "craft_whip_s10",
+          "before": 5390,
+          "after": 54000,
+          "deltaRatio": 0.0018552875695732052
+        },
+        {
+          "type": "recipe",
+          "id": "craft_whip_s12",
+          "before": 12936,
+          "after": 130000,
+          "deltaRatio": 0.0049474335188621765
+        },
+        {
+          "type": "recipe",
+          "id": "craft_scythe_s6",
+          "before": 938,
+          "after": 9400,
+          "deltaRatio": 0.002132196162046851
+        },
+        {
+          "type": "recipe",
+          "id": "craft_scythe_s9",
+          "before": 3472,
+          "after": 35000,
+          "deltaRatio": 0.008064516129032251
+        },
+        {
+          "type": "recipe",
+          "id": "craft_scythe_s12",
+          "before": 12936,
+          "after": 130000,
+          "deltaRatio": 0.0049474335188621765
+        },
+        {
+          "type": "recipe",
+          "id": "craft_fan_s6",
+          "before": 938,
+          "after": 9400,
+          "deltaRatio": 0.002132196162046851
+        },
+        {
+          "type": "recipe",
+          "id": "craft_fan_s9",
+          "before": 3472,
+          "after": 35000,
+          "deltaRatio": 0.008064516129032251
+        },
+        {
+          "type": "recipe",
+          "id": "craft_fan_s12",
+          "before": 12936,
+          "after": 130000,
+          "deltaRatio": 0.0049474335188621765
+        },
+        {
+          "type": "recipe",
+          "id": "craft_heavy_head_s3",
+          "before": 151,
+          "after": 1500,
+          "deltaRatio": -0.0066225165562914245
+        },
+        {
+          "type": "recipe",
+          "id": "craft_heavy_head_s7",
+          "before": 1154,
+          "after": 12000,
+          "deltaRatio": 0.03986135181975747
+        },
+        {
+          "type": "recipe",
+          "id": "craft_heavy_head_s11",
+          "before": 6675,
+          "after": 67000,
+          "deltaRatio": 0.0037453183520599342
+        },
+        {
+          "type": "recipe",
+          "id": "craft_heavy_body_s3",
+          "before": 151,
+          "after": 1500,
+          "deltaRatio": -0.0066225165562914245
+        },
+        {
+          "type": "recipe",
+          "id": "craft_heavy_body_s7",
+          "before": 1154,
+          "after": 12000,
+          "deltaRatio": 0.03986135181975747
+        },
+        {
+          "type": "recipe",
+          "id": "craft_heavy_body_s11",
+          "before": 6675,
+          "after": 67000,
+          "deltaRatio": 0.0037453183520599342
+        },
+        {
+          "type": "recipe",
+          "id": "craft_heavy_arm_s3",
+          "before": 151,
+          "after": 1500,
+          "deltaRatio": -0.0066225165562914245
+        },
+        {
+          "type": "recipe",
+          "id": "craft_heavy_arm_s7",
+          "before": 1154,
+          "after": 12000,
+          "deltaRatio": 0.03986135181975747
+        },
+        {
+          "type": "recipe",
+          "id": "craft_heavy_arm_s11",
+          "before": 6675,
+          "after": 67000,
+          "deltaRatio": 0.0037453183520599342
+        },
+        {
+          "type": "recipe",
+          "id": "craft_medium_head_s3",
+          "before": 151,
+          "after": 1500,
+          "deltaRatio": -0.0066225165562914245
+        },
+        {
+          "type": "recipe",
+          "id": "craft_medium_head_s7",
+          "before": 1154,
+          "after": 12000,
+          "deltaRatio": 0.03986135181975747
+        },
+        {
+          "type": "recipe",
+          "id": "craft_medium_head_s11",
+          "before": 6675,
+          "after": 67000,
+          "deltaRatio": 0.0037453183520599342
+        },
+        {
+          "type": "recipe",
+          "id": "craft_medium_body_s3",
+          "before": 151,
+          "after": 1500,
+          "deltaRatio": -0.0066225165562914245
+        },
+        {
+          "type": "recipe",
+          "id": "craft_medium_body_s7",
+          "before": 1154,
+          "after": 12000,
+          "deltaRatio": 0.03986135181975747
+        },
+        {
+          "type": "recipe",
+          "id": "craft_medium_body_s11",
+          "before": 6675,
+          "after": 67000,
+          "deltaRatio": 0.0037453183520599342
+        },
+        {
+          "type": "recipe",
+          "id": "craft_medium_arm_s3",
+          "before": 151,
+          "after": 1500,
+          "deltaRatio": -0.0066225165562914245
+        },
+        {
+          "type": "recipe",
+          "id": "craft_medium_arm_s7",
+          "before": 1154,
+          "after": 12000,
+          "deltaRatio": 0.03986135181975747
+        },
+        {
+          "type": "recipe",
+          "id": "craft_medium_arm_s11",
+          "before": 6675,
+          "after": 67000,
+          "deltaRatio": 0.0037453183520599342
+        },
+        {
+          "type": "recipe",
+          "id": "craft_light_head_s3",
+          "before": 151,
+          "after": 1500,
+          "deltaRatio": -0.0066225165562914245
+        },
+        {
+          "type": "recipe",
+          "id": "craft_light_head_s7",
+          "before": 1154,
+          "after": 12000,
+          "deltaRatio": 0.03986135181975747
+        },
+        {
+          "type": "recipe",
+          "id": "craft_light_head_s11",
+          "before": 6675,
+          "after": 67000,
+          "deltaRatio": 0.0037453183520599342
+        },
+        {
+          "type": "recipe",
+          "id": "craft_light_body_s3",
+          "before": 151,
+          "after": 1500,
+          "deltaRatio": -0.0066225165562914245
+        },
+        {
+          "type": "recipe",
+          "id": "craft_light_body_s7",
+          "before": 1154,
+          "after": 12000,
+          "deltaRatio": 0.03986135181975747
+        },
+        {
+          "type": "recipe",
+          "id": "craft_light_body_s11",
+          "before": 6675,
+          "after": 67000,
+          "deltaRatio": 0.0037453183520599342
+        },
+        {
+          "type": "recipe",
+          "id": "craft_light_arm_s3",
+          "before": 151,
+          "after": 1500,
+          "deltaRatio": -0.0066225165562914245
+        },
+        {
+          "type": "recipe",
+          "id": "craft_light_arm_s7",
+          "before": 1154,
+          "after": 12000,
+          "deltaRatio": 0.03986135181975747
+        },
+        {
+          "type": "recipe",
+          "id": "craft_light_arm_s11",
+          "before": 6675,
+          "after": 67000,
+          "deltaRatio": 0.0037453183520599342
+        },
+        {
+          "type": "recipe",
+          "id": "craft_cloak_1_s2",
+          "before": 105,
+          "after": 1100,
+          "deltaRatio": 0.04761904761904767
+        },
+        {
+          "type": "recipe",
+          "id": "craft_cloak_2_s2",
+          "before": 105,
+          "after": 1100,
+          "deltaRatio": 0.04761904761904767
+        },
+        {
+          "type": "recipe",
+          "id": "craft_cloak_3_s2",
+          "before": 105,
+          "after": 1100,
+          "deltaRatio": 0.04761904761904767
+        },
+        {
+          "type": "recipe",
+          "id": "craft_cloak_4_s6",
+          "before": 938,
+          "after": 9400,
+          "deltaRatio": 0.002132196162046851
+        },
+        {
+          "type": "recipe",
+          "id": "craft_cloak_5_s6",
+          "before": 938,
+          "after": 9400,
+          "deltaRatio": 0.002132196162046851
+        },
+        {
+          "type": "recipe",
+          "id": "craft_cloak_6_s6",
+          "before": 938,
+          "after": 9400,
+          "deltaRatio": 0.002132196162046851
+        },
+        {
+          "type": "recipe",
+          "id": "craft_cloak_7_s10",
+          "before": 5390,
+          "after": 54000,
+          "deltaRatio": 0.0018552875695732052
+        },
+        {
+          "type": "recipe",
+          "id": "craft_cloak_8_s10",
+          "before": 5390,
+          "after": 54000,
+          "deltaRatio": 0.0018552875695732052
+        },
+        {
+          "type": "recipe",
+          "id": "craft_cloak_9_s10",
+          "before": 5390,
+          "after": 54000,
+          "deltaRatio": 0.0018552875695732052
+        },
+        {
+          "type": "recipe",
+          "id": "craft_ring_1_s2",
+          "before": 105,
+          "after": 1100,
+          "deltaRatio": 0.04761904761904767
+        },
+        {
+          "type": "recipe",
+          "id": "craft_necklace_2_s2",
+          "before": 105,
+          "after": 1100,
+          "deltaRatio": 0.04761904761904767
+        },
+        {
+          "type": "recipe",
+          "id": "craft_charm_3_s2",
+          "before": 105,
+          "after": 1100,
+          "deltaRatio": 0.04761904761904767
+        },
+        {
+          "type": "recipe",
+          "id": "craft_ring_4_s4",
+          "before": 336,
+          "after": 3400,
+          "deltaRatio": 0.011904761904761862
+        },
+        {
+          "type": "recipe",
+          "id": "craft_necklace_5_s4",
+          "before": 336,
+          "after": 3400,
+          "deltaRatio": 0.011904761904761862
+        },
+        {
+          "type": "recipe",
+          "id": "craft_charm_6_s4",
+          "before": 336,
+          "after": 3400,
+          "deltaRatio": 0.011904761904761862
+        },
+        {
+          "type": "recipe",
+          "id": "craft_ring_7_s6",
+          "before": 938,
+          "after": 9400,
+          "deltaRatio": 0.002132196162046851
+        },
+        {
+          "type": "recipe",
+          "id": "craft_necklace_8_s6",
+          "before": 938,
+          "after": 9400,
+          "deltaRatio": 0.002132196162046851
+        },
+        {
+          "type": "recipe",
+          "id": "craft_charm_9_s6",
+          "before": 938,
+          "after": 9400,
+          "deltaRatio": 0.002132196162046851
+        },
+        {
+          "type": "recipe",
+          "id": "craft_ring_10_s8",
+          "before": 2240,
+          "after": 22000,
+          "deltaRatio": -0.017857142857142905
+        },
+        {
+          "type": "recipe",
+          "id": "craft_necklace_11_s8",
+          "before": 2240,
+          "after": 22000,
+          "deltaRatio": -0.017857142857142905
+        },
+        {
+          "type": "recipe",
+          "id": "craft_charm_12_s8",
+          "before": 2240,
+          "after": 22000,
+          "deltaRatio": -0.017857142857142905
+        },
+        {
+          "type": "recipe",
+          "id": "craft_ring_13_s10",
+          "before": 5390,
+          "after": 54000,
+          "deltaRatio": 0.0018552875695732052
+        },
+        {
+          "type": "recipe",
+          "id": "craft_necklace_14_s10",
+          "before": 5390,
+          "after": 54000,
+          "deltaRatio": 0.0018552875695732052
+        },
+        {
+          "type": "recipe",
+          "id": "craft_charm_15_s10",
+          "before": 5390,
+          "after": 54000,
+          "deltaRatio": 0.0018552875695732052
+        },
+        {
+          "type": "recipe",
+          "id": "craft_ring_16_s12",
+          "before": 12936,
+          "after": 130000,
+          "deltaRatio": 0.0049474335188621765
+        },
+        {
+          "type": "recipe",
+          "id": "craft_necklace_17_s12",
+          "before": 12936,
+          "after": 130000,
+          "deltaRatio": 0.0049474335188621765
+        },
+        {
+          "type": "recipe",
+          "id": "craft_charm_18_s12",
+          "before": 12936,
+          "after": 130000,
+          "deltaRatio": 0.0049474335188621765
+        },
+        {
+          "type": "recipe",
+          "id": "craft_dreambreaker",
+          "before": 90,
+          "after": 900,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_frost_judgment",
+          "before": 160,
+          "after": 1600,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_thunder_claw",
+          "before": 90,
+          "after": 900,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_silent_tome",
+          "before": 160,
+          "after": 1600,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_illusion_katana",
+          "before": 90,
+          "after": 900,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_dawn_katana",
+          "before": 90,
+          "after": 900,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_cycling_blade",
+          "before": 160,
+          "after": 1600,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_siphon_tome",
+          "before": 90,
+          "after": 900,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_battle_mend_staff",
+          "before": 90,
+          "after": 900,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_life_barrier_staff",
+          "before": 160,
+          "after": 1600,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_toxic_needle",
+          "before": 160,
+          "after": 1600,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_binding_whip",
+          "before": 160,
+          "after": 1600,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_blood_reaper",
+          "before": 90,
+          "after": 900,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_riposte_hammer",
+          "before": 90,
+          "after": 900,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_warding_fan",
+          "before": 160,
+          "after": 1600,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_battle_mend_charm",
+          "before": 90,
+          "after": 900,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_cycle_ring",
+          "before": 90,
+          "after": 900,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "recipe",
+          "id": "craft_illusion_cloak",
+          "before": 90,
+          "after": 900,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_buff_str_1",
+          "before": 50,
+          "after": 500,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_buff_str_2",
+          "before": 500,
+          "after": 5000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_buff_str_3",
+          "before": 3000,
+          "after": 30000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_buff_str_4",
+          "before": 15000,
+          "after": 150000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_buff_mag_1",
+          "before": 50,
+          "after": 500,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_buff_mag_2",
+          "before": 500,
+          "after": 5000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_buff_mag_3",
+          "before": 3000,
+          "after": 30000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_buff_mag_4",
+          "before": 15000,
+          "after": 150000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_buff_def_1",
+          "before": 50,
+          "after": 500,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_buff_def_2",
+          "before": 500,
+          "after": 5000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_buff_def_3",
+          "before": 3000,
+          "after": 30000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_buff_def_4",
+          "before": 15000,
+          "after": 150000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_buff_res_1",
+          "before": 50,
+          "after": 500,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_buff_res_2",
+          "before": 500,
+          "after": 5000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_buff_res_3",
+          "before": 3000,
+          "after": 30000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_buff_res_4",
+          "before": 15000,
+          "after": 150000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_buff_spd_1",
+          "before": 50,
+          "after": 500,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_buff_spd_2",
+          "before": 500,
+          "after": 5000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_buff_spd_3",
+          "before": 3000,
+          "after": 30000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_buff_spd_4",
+          "before": 15000,
+          "after": 150000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_buff_crt_1",
+          "before": 50,
+          "after": 500,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_buff_crt_2",
+          "before": 500,
+          "after": 5000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_buff_crt_3",
+          "before": 3000,
+          "after": 30000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_buff_crt_4",
+          "before": 15000,
+          "after": 150000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_resist_fire_1",
+          "before": 200,
+          "after": 2000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_resist_fire_2",
+          "before": 2000,
+          "after": 20000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_resist_fire_3",
+          "before": 12000,
+          "after": 120000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_resist_ice_1",
+          "before": 200,
+          "after": 2000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_resist_ice_2",
+          "before": 2000,
+          "after": 20000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_resist_ice_3",
+          "before": 12000,
+          "after": 120000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_resist_wind_1",
+          "before": 200,
+          "after": 2000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_resist_wind_2",
+          "before": 2000,
+          "after": 20000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_resist_wind_3",
+          "before": 12000,
+          "after": 120000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_resist_earth_1",
+          "before": 200,
+          "after": 2000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_resist_earth_2",
+          "before": 2000,
+          "after": 20000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_resist_earth_3",
+          "before": 12000,
+          "after": 120000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_resist_thunder_1",
+          "before": 200,
+          "after": 2000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_resist_thunder_2",
+          "before": 2000,
+          "after": 20000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_resist_thunder_3",
+          "before": 12000,
+          "after": 120000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_resist_water_1",
+          "before": 200,
+          "after": 2000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_resist_water_2",
+          "before": 2000,
+          "after": 20000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_resist_water_3",
+          "before": 12000,
+          "after": 120000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_resist_light_1",
+          "before": 200,
+          "after": 2000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_resist_light_2",
+          "before": 2000,
+          "after": 20000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_resist_light_3",
+          "before": 12000,
+          "after": 120000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_resist_dark_1",
+          "before": 200,
+          "after": 2000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_resist_dark_2",
+          "before": 2000,
+          "after": 20000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_resist_dark_3",
+          "before": 12000,
+          "after": 120000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_sres_dot_1",
+          "before": 200,
+          "after": 2000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_sres_dot_2",
+          "before": 2000,
+          "after": 20000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_sres_dot_3",
+          "before": 12000,
+          "after": 120000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_sres_lock_1",
+          "before": 200,
+          "after": 2000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_sres_lock_2",
+          "before": 2000,
+          "after": 20000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_sres_lock_3",
+          "before": 12000,
+          "after": 120000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_sres_limit_1",
+          "before": 200,
+          "after": 2000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_sres_limit_2",
+          "before": 2000,
+          "after": 20000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_sres_limit_3",
+          "before": 12000,
+          "after": 120000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_sres_weak_1",
+          "before": 200,
+          "after": 2000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_sres_weak_2",
+          "before": 2000,
+          "after": 20000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_sres_weak_3",
+          "before": 12000,
+          "after": 120000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "alchemy",
+          "id": "rc_sres_all_1",
+          "before": 50000,
+          "after": 500000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "enchant",
+          "id": "1",
+          "before": 100,
+          "after": 1000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "enchant",
+          "id": "2",
+          "before": 160,
+          "after": 1600,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "enchant",
+          "id": "3",
+          "before": 240,
+          "after": 2400,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "enchant",
+          "id": "4",
+          "before": 340,
+          "after": 3400,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "enchant",
+          "id": "5",
+          "before": 460,
+          "after": 4600,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "enchant",
+          "id": "6",
+          "before": 600,
+          "after": 6000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "enchant",
+          "id": "7",
+          "before": 760,
+          "after": 7600,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "enchant",
+          "id": "8",
+          "before": 940,
+          "after": 9400,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "enchant",
+          "id": "9",
+          "before": 1140,
+          "after": 11000,
+          "deltaRatio": -0.03508771929824561
+        },
+        {
+          "type": "enchant",
+          "id": "10",
+          "before": 1360,
+          "after": 14000,
+          "deltaRatio": 0.02941176470588225
+        },
+        {
+          "type": "enchant",
+          "id": "11",
+          "before": 1600,
+          "after": 16000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "enchant",
+          "id": "12",
+          "before": 1860,
+          "after": 19000,
+          "deltaRatio": 0.021505376344086002
+        },
+        {
+          "type": "facility",
+          "id": "2",
+          "before": 300,
+          "after": 3000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "facility",
+          "id": "3",
+          "before": 600,
+          "after": 6000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "facility",
+          "id": "4",
+          "before": 1100,
+          "after": 11000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "facility",
+          "id": "5",
+          "before": 2000,
+          "after": 20000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "facility",
+          "id": "6",
+          "before": 3400,
+          "after": 34000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "facility",
+          "id": "7",
+          "before": 5780,
+          "after": 58000,
+          "deltaRatio": 0.0034602076124568004
+        },
+        {
+          "type": "facility",
+          "id": "8",
+          "before": 9830,
+          "after": 98000,
+          "deltaRatio": -0.003051881993896277
+        },
+        {
+          "type": "facility",
+          "id": "9",
+          "before": 16700,
+          "after": 170000,
+          "deltaRatio": 0.017964071856287456
+        },
+        {
+          "type": "facility",
+          "id": "10",
+          "before": 28400,
+          "after": 280000,
+          "deltaRatio": -0.014084507042253502
+        },
+        {
+          "type": "facility",
+          "id": "11",
+          "before": 48280,
+          "after": 480000,
+          "deltaRatio": -0.0057995028997513964
+        },
+        {
+          "type": "facility",
+          "id": "12",
+          "before": 82070,
+          "after": 820000,
+          "deltaRatio": -0.0008529304252467007
+        },
+        {
+          "type": "backpack",
+          "id": 2,
+          "before": 500,
+          "after": 5000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "backpack",
+          "id": 3,
+          "before": 3000,
+          "after": 30000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "backpack",
+          "id": 4,
+          "before": 15000,
+          "after": 150000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "backpack",
+          "id": 5,
+          "before": 60000,
+          "after": 600000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "backpack",
+          "id": 6,
+          "before": 200000,
+          "after": 2000000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "backpack",
+          "id": 7,
+          "before": 600000,
+          "after": 6000000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "loanLimit",
+          "id": "R01",
+          "before": 1350,
+          "after": 14000,
+          "deltaRatio": 0.03703703703703698
+        },
+        {
+          "type": "loanLimit",
+          "id": "R01+",
+          "before": 1518,
+          "after": 16000,
+          "deltaRatio": 0.05401844532279321
+        },
+        {
+          "type": "loanLimit",
+          "id": "R02",
+          "before": 3037,
+          "after": 31000,
+          "deltaRatio": 0.02074415541652952
+        },
+        {
+          "type": "loanLimit",
+          "id": "R02+",
+          "before": 3341,
+          "after": 34000,
+          "deltaRatio": 0.01765938341813822
+        },
+        {
+          "type": "loanLimit",
+          "id": "R03",
+          "before": 6480,
+          "after": 65000,
+          "deltaRatio": 0.0030864197530864335
+        },
+        {
+          "type": "loanLimit",
+          "id": "R03+",
+          "before": 7020,
+          "after": 71000,
+          "deltaRatio": 0.01139601139601143
+        },
+        {
+          "type": "loanLimit",
+          "id": "R04",
+          "before": 13702,
+          "after": 140000,
+          "deltaRatio": 0.02174864983214131
+        },
+        {
+          "type": "loanLimit",
+          "id": "R04+",
+          "before": 14681,
+          "after": 150000,
+          "deltaRatio": 0.021728765070499367
+        },
+        {
+          "type": "loanLimit",
+          "id": "R05",
+          "before": 27000,
+          "after": 270000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "loanLimit",
+          "id": "R05+",
+          "before": 28687,
+          "after": 290000,
+          "deltaRatio": 0.010910865548854787
+        },
+        {
+          "type": "loanLimit",
+          "id": "R06",
+          "before": 46980,
+          "after": 470000,
+          "deltaRatio": 0.00042571306939120923
+        },
+        {
+          "type": "loanLimit",
+          "id": "R06+",
+          "before": 49590,
+          "after": 500000,
+          "deltaRatio": 0.00826779592659821
+        },
+        {
+          "type": "loanLimit",
+          "id": "R07",
+          "before": 81000,
+          "after": 810000,
+          "deltaRatio": 0.0
+        },
+        {
+          "type": "loanLimit",
+          "id": "R07+",
+          "before": 85050,
+          "after": 860000,
+          "deltaRatio": 0.01116990005878904
+        },
+        {
+          "type": "loanLimit",
+          "id": "R08",
+          "before": 138105,
+          "after": 1400000,
+          "deltaRatio": 0.01372144382897078
+        },
+        {
+          "type": "loanLimit",
+          "id": "R08+",
+          "before": 144382,
+          "after": 1500000,
+          "deltaRatio": 0.038910667534734156
+        },
+        {
+          "type": "loanLimit",
+          "id": "R09",
+          "before": 233820,
+          "after": 2400000,
+          "deltaRatio": 0.026430587631511404
+        },
+        {
+          "type": "loanLimit",
+          "id": "R09+",
+          "before": 243562,
+          "after": 2500000,
+          "deltaRatio": 0.026432694755339492
+        },
+        {
+          "type": "loanLimit",
+          "id": "R10",
+          "before": 392535,
+          "after": 4000000,
+          "deltaRatio": 0.01901741246003552
+        },
+        {
+          "type": "loanLimit",
+          "id": "R10+",
+          "before": 407632,
+          "after": 4100000,
+          "deltaRatio": 0.005809161204223479
+        },
+        {
+          "type": "loanLimit",
+          "id": "R11",
+          "before": 655200,
+          "after": 6600000,
+          "deltaRatio": 0.0073260073260073
+        },
+        {
+          "type": "loanLimit",
+          "id": "R11+",
+          "before": 678600,
+          "after": 6800000,
+          "deltaRatio": 0.0020630710285882703
+        },
+        {
+          "type": "loanLimit",
+          "id": "R12",
+          "before": 1088100,
+          "after": 11000000,
+          "deltaRatio": 0.010936494807462616
+        },
+        {
+          "type": "loanLimit",
+          "id": "R12+",
+          "before": 1124370,
+          "after": 12000000,
+          "deltaRatio": 0.06726433469409532
+        },
+        {
+          "type": "loanLimit",
+          "id": "S",
+          "before": 1160640,
+          "after": 12000000,
+          "deltaRatio": 0.03391232423490487
+        }
+      ],
+      "sample": {
+        "seed": 112501,
+        "ledger": [
+          {
+            "stage": "early",
+            "lap": 0,
+            "id": "sunlit_forest",
+            "upgradeCost": 0,
+            "before": 10000,
+            "after": 10470,
+            "supplies": 400,
+            "fee": 80,
+            "lootGold": 940,
+            "saleGold": 110,
+            "questGold": 0,
+            "inn": 100,
+            "weaponPrice": 570,
+            "affordableWeapons": 18
+          },
+          {
+            "stage": "early",
+            "lap": 0,
+            "id": "mossy_cave",
+            "upgradeCost": 0,
+            "before": 10470,
+            "after": 12020,
+            "supplies": 400,
+            "fee": 0,
+            "lootGold": 1440,
+            "saleGold": 380,
+            "questGold": 230,
+            "inn": 100,
+            "weaponPrice": 570,
+            "affordableWeapons": 21
+          },
+          {
+            "stage": "early",
+            "lap": 0,
+            "id": "goblin_quarry",
+            "upgradeCost": 0,
+            "before": 12020,
+            "after": 12880,
+            "supplies": 400,
+            "fee": 110,
+            "lootGold": 1280,
+            "saleGold": 190,
+            "questGold": 0,
+            "inn": 100,
+            "weaponPrice": 570,
+            "affordableWeapons": 22
+          },
+          {
+            "stage": "early",
+            "lap": 1,
+            "id": "sunlit_forest",
+            "upgradeCost": 0,
+            "before": 12880,
+            "after": 13990,
+            "supplies": 400,
+            "fee": 80,
+            "lootGold": 1090,
+            "saleGold": 370,
+            "questGold": 230,
+            "inn": 100,
+            "weaponPrice": 570,
+            "affordableWeapons": 24
+          },
+          {
+            "stage": "early",
+            "lap": 1,
+            "id": "mossy_cave",
+            "upgradeCost": 0,
+            "before": 13990,
+            "after": 15250,
+            "supplies": 400,
+            "fee": 0,
+            "lootGold": 1460,
+            "saleGold": 300,
+            "questGold": 0,
+            "inn": 100,
+            "weaponPrice": 570,
+            "affordableWeapons": 26
+          },
+          {
+            "stage": "early",
+            "lap": 1,
+            "id": "goblin_quarry",
+            "upgradeCost": 0,
+            "before": 15250,
+            "after": 16850,
+            "supplies": 400,
+            "fee": 110,
+            "lootGold": 1420,
+            "saleGold": 560,
+            "questGold": 230,
+            "inn": 100,
+            "weaponPrice": 570,
+            "affordableWeapons": 29
+          },
+          {
+            "stage": "early",
+            "lap": 2,
+            "id": "sunlit_forest",
+            "upgradeCost": 0,
+            "before": 16850,
+            "after": 17600,
+            "supplies": 400,
+            "fee": 80,
+            "lootGold": 1050,
+            "saleGold": 280,
+            "questGold": 0,
+            "inn": 100,
+            "weaponPrice": 570,
+            "affordableWeapons": 30
+          },
+          {
+            "stage": "early",
+            "lap": 2,
+            "id": "mossy_cave",
+            "upgradeCost": 0,
+            "before": 17600,
+            "after": 18870,
+            "supplies": 400,
+            "fee": 0,
+            "lootGold": 1470,
+            "saleGold": 300,
+            "questGold": 0,
+            "inn": 100,
+            "weaponPrice": 570,
+            "affordableWeapons": 33
+          },
+          {
+            "stage": "early",
+            "lap": 2,
+            "id": "goblin_quarry",
+            "upgradeCost": 0,
+            "before": 18870,
+            "after": 20330,
+            "supplies": 400,
+            "fee": 110,
+            "lootGold": 1360,
+            "saleGold": 480,
+            "questGold": 230,
+            "inn": 100,
+            "weaponPrice": 570,
+            "affordableWeapons": 35
+          },
+          {
+            "stage": "later",
+            "lap": 0,
+            "id": "ruined_fort",
+            "upgradeCost": 1200,
+            "before": 19130,
+            "after": 21800,
+            "supplies": 380,
+            "fee": 220,
+            "lootGold": 2560,
+            "saleGold": 400,
+            "questGold": 410,
+            "inn": 100,
+            "weaponPrice": 1200,
+            "affordableWeapons": 18
+          },
+          {
+            "stage": "later",
+            "lap": 0,
+            "id": "misty_marsh",
+            "upgradeCost": 0,
+            "before": 21800,
+            "after": 24270,
+            "supplies": 380,
+            "fee": 190,
+            "lootGold": 2360,
+            "saleGold": 350,
+            "questGold": 430,
+            "inn": 100,
+            "weaponPrice": 1200,
+            "affordableWeapons": 20
+          },
+          {
+            "stage": "later",
+            "lap": 1,
+            "id": "ruined_fort",
+            "upgradeCost": 0,
+            "before": 24270,
+            "after": 26720,
+            "supplies": 380,
+            "fee": 220,
+            "lootGold": 2950,
+            "saleGold": 200,
+            "questGold": 0,
+            "inn": 100,
+            "weaponPrice": 1200,
+            "affordableWeapons": 22
+          },
+          {
+            "stage": "later",
+            "lap": 1,
+            "id": "misty_marsh",
+            "upgradeCost": 0,
+            "before": 26720,
+            "after": 29330,
+            "supplies": 380,
+            "fee": 190,
+            "lootGold": 2500,
+            "saleGold": 350,
+            "questGold": 430,
+            "inn": 100,
+            "weaponPrice": 1200,
+            "affordableWeapons": 24
+          },
+          {
+            "stage": "later",
+            "lap": 2,
+            "id": "ruined_fort",
+            "upgradeCost": 0,
+            "before": 29330,
+            "after": 32460,
+            "supplies": 380,
+            "fee": 220,
+            "lootGold": 3010,
+            "saleGold": 820,
+            "questGold": 0,
+            "inn": 100,
+            "weaponPrice": 1200,
+            "affordableWeapons": 27
+          },
+          {
+            "stage": "later",
+            "lap": 2,
+            "id": "misty_marsh",
+            "upgradeCost": 0,
+            "before": 32460,
+            "after": 34890,
+            "supplies": 380,
+            "fee": 190,
+            "lootGold": 2640,
+            "saleGold": 460,
+            "questGold": 0,
+            "inn": 100,
+            "weaponPrice": 1200,
+            "affordableWeapons": 29
+          }
+        ]
+      },
+      "finalBalances": [
+        34890,
+        33630,
+        34350,
+        34100,
+        35950,
+        33040,
+        35340,
+        32360,
+        32960,
+        34800,
+        34550,
+        32960,
+        33760,
+        35400,
+        33390,
+        34020,
+        33440,
+        36040,
+        35210,
+        34740,
+        34710,
+        35660,
+        31530,
+        34190,
+        34580,
+        34840,
+        35960,
+        34140,
+        35910,
+        33670,
+        34340,
+        35120,
+        34170,
+        35690,
+        34540,
+        33880,
+        33870,
+        33710,
+        34290,
+        34050,
+        36610,
+        32860,
+        33650,
+        32900,
+        33950,
+        34300,
+        34560,
+        34140,
+        33490,
+        34650,
+        35290,
+        33090,
+        34090,
+        33950,
+        36020,
+        32250,
+        33810,
+        37830,
+        34980,
+        34160,
+        33640,
+        33330,
+        34670,
+        34530
+      ]
+    }
+  ],
+  "sampleBefore": {
+    "seed": 112501,
+    "ledger": [
+      {
+        "stage": "early",
+        "lap": 0,
+        "id": "sunlit_forest",
+        "upgradeCost": 0,
+        "before": 1000,
+        "after": 1047,
+        "supplies": 40,
+        "fee": 8,
+        "lootGold": 94,
+        "saleGold": 11,
+        "questGold": 0,
+        "inn": 10,
+        "weaponPrice": 57,
+        "affordableWeapons": 18
+      },
+      {
+        "stage": "early",
+        "lap": 0,
+        "id": "mossy_cave",
+        "upgradeCost": 0,
+        "before": 1047,
+        "after": 1202,
+        "supplies": 40,
+        "fee": 0,
+        "lootGold": 144,
+        "saleGold": 38,
+        "questGold": 23,
+        "inn": 10,
+        "weaponPrice": 57,
+        "affordableWeapons": 21
+      },
+      {
+        "stage": "early",
+        "lap": 0,
+        "id": "goblin_quarry",
+        "upgradeCost": 0,
+        "before": 1202,
+        "after": 1288,
+        "supplies": 40,
+        "fee": 11,
+        "lootGold": 128,
+        "saleGold": 19,
+        "questGold": 0,
+        "inn": 10,
+        "weaponPrice": 57,
+        "affordableWeapons": 22
+      },
+      {
+        "stage": "early",
+        "lap": 1,
+        "id": "sunlit_forest",
+        "upgradeCost": 0,
+        "before": 1288,
+        "after": 1399,
+        "supplies": 40,
+        "fee": 8,
+        "lootGold": 109,
+        "saleGold": 37,
+        "questGold": 23,
+        "inn": 10,
+        "weaponPrice": 57,
+        "affordableWeapons": 24
+      },
+      {
+        "stage": "early",
+        "lap": 1,
+        "id": "mossy_cave",
+        "upgradeCost": 0,
+        "before": 1399,
+        "after": 1525,
+        "supplies": 40,
+        "fee": 0,
+        "lootGold": 146,
+        "saleGold": 30,
+        "questGold": 0,
+        "inn": 10,
+        "weaponPrice": 57,
+        "affordableWeapons": 26
+      },
+      {
+        "stage": "early",
+        "lap": 1,
+        "id": "goblin_quarry",
+        "upgradeCost": 0,
+        "before": 1525,
+        "after": 1685,
+        "supplies": 40,
+        "fee": 11,
+        "lootGold": 142,
+        "saleGold": 56,
+        "questGold": 23,
+        "inn": 10,
+        "weaponPrice": 57,
+        "affordableWeapons": 29
+      },
+      {
+        "stage": "early",
+        "lap": 2,
+        "id": "sunlit_forest",
+        "upgradeCost": 0,
+        "before": 1685,
+        "after": 1760,
+        "supplies": 40,
+        "fee": 8,
+        "lootGold": 105,
+        "saleGold": 28,
+        "questGold": 0,
+        "inn": 10,
+        "weaponPrice": 57,
+        "affordableWeapons": 30
+      },
+      {
+        "stage": "early",
+        "lap": 2,
+        "id": "mossy_cave",
+        "upgradeCost": 0,
+        "before": 1760,
+        "after": 1887,
+        "supplies": 40,
+        "fee": 0,
+        "lootGold": 147,
+        "saleGold": 30,
+        "questGold": 0,
+        "inn": 10,
+        "weaponPrice": 57,
+        "affordableWeapons": 33
+      },
+      {
+        "stage": "early",
+        "lap": 2,
+        "id": "goblin_quarry",
+        "upgradeCost": 0,
+        "before": 1887,
+        "after": 2033,
+        "supplies": 40,
+        "fee": 11,
+        "lootGold": 136,
+        "saleGold": 48,
+        "questGold": 23,
+        "inn": 10,
+        "weaponPrice": 57,
+        "affordableWeapons": 35
+      },
+      {
+        "stage": "later",
+        "lap": 0,
+        "id": "ruined_fort",
+        "upgradeCost": 125,
+        "before": 1908,
+        "after": 2177,
+        "supplies": 38,
+        "fee": 22,
+        "lootGold": 258,
+        "saleGold": 40,
+        "questGold": 41,
+        "inn": 10,
+        "weaponPrice": 125,
+        "affordableWeapons": 17
+      },
+      {
+        "stage": "later",
+        "lap": 0,
+        "id": "misty_marsh",
+        "upgradeCost": 0,
+        "before": 2177,
+        "after": 2424,
+        "supplies": 38,
+        "fee": 19,
+        "lootGold": 236,
+        "saleGold": 35,
+        "questGold": 43,
+        "inn": 10,
+        "weaponPrice": 125,
+        "affordableWeapons": 19
+      },
+      {
+        "stage": "later",
+        "lap": 1,
+        "id": "ruined_fort",
+        "upgradeCost": 0,
+        "before": 2424,
+        "after": 2668,
+        "supplies": 38,
+        "fee": 22,
+        "lootGold": 294,
+        "saleGold": 20,
+        "questGold": 0,
+        "inn": 10,
+        "weaponPrice": 125,
+        "affordableWeapons": 21
+      },
+      {
+        "stage": "later",
+        "lap": 1,
+        "id": "misty_marsh",
+        "upgradeCost": 0,
+        "before": 2668,
+        "after": 2931,
+        "supplies": 38,
+        "fee": 19,
+        "lootGold": 252,
+        "saleGold": 35,
+        "questGold": 43,
+        "inn": 10,
+        "weaponPrice": 125,
+        "affordableWeapons": 23
+      },
+      {
+        "stage": "later",
+        "lap": 2,
+        "id": "ruined_fort",
+        "upgradeCost": 0,
+        "before": 2931,
+        "after": 3240,
+        "supplies": 38,
+        "fee": 22,
+        "lootGold": 297,
+        "saleGold": 82,
+        "questGold": 0,
+        "inn": 10,
+        "weaponPrice": 125,
+        "affordableWeapons": 25
+      },
+      {
+        "stage": "later",
+        "lap": 2,
+        "id": "misty_marsh",
+        "upgradeCost": 0,
+        "before": 3240,
+        "after": 3484,
+        "supplies": 38,
+        "fee": 19,
+        "lootGold": 265,
+        "saleGold": 46,
+        "questGold": 0,
+        "inn": 10,
+        "weaponPrice": 125,
+        "affordableWeapons": 27
+      }
+    ]
+  },
+  "examplesBefore": {
+    "initial": 1000,
+    "board": [
+      {
+        "id": "q1_hunt",
+        "gold": 23,
+        "deposit": 0
+      },
+      {
+        "id": "q1_hunt",
+        "gold": 23,
+        "deposit": 0
+      },
+      {
+        "id": "q1_gather",
+        "gold": 0,
+        "deposit": 0
+      },
+      {
+        "id": "q1_gather",
+        "gold": 0,
+        "deposit": 0
+      },
+      {
+        "id": "q1_boss",
+        "gold": 53,
+        "deposit": 0
+      },
+      {
+        "id": "q_bounty_01_2",
+        "gold": 180,
+        "deposit": 18
+      }
+    ],
+    "economy": [
+      {
+        "dungeon_rank": 1,
+        "run_income": 150,
+        "guild_fee": 450,
+        "inn_cheap": 10,
+        "inn_good": 25,
+        "revive_per_person": 40,
+        "curse_cure": 30,
+        "craft_gold": 40
+      },
+      {
+        "dungeon_rank": 2,
+        "run_income": 270,
+        "guild_fee": 810,
+        "inn_cheap": 10,
+        "inn_good": 45,
+        "revive_per_person": 70,
+        "curse_cure": 50,
+        "craft_gold": 75
+      },
+      {
+        "dungeon_rank": 3,
+        "run_income": 490,
+        "guild_fee": 1440,
+        "inn_cheap": 10,
+        "inn_good": 80,
+        "revive_per_person": 130,
+        "curse_cure": 90,
+        "craft_gold": 135
+      },
+      {
+        "dungeon_rank": 4,
+        "run_income": 880,
+        "guild_fee": 2610,
+        "inn_cheap": 10,
+        "inn_good": 150,
+        "revive_per_person": 230,
+        "curse_cure": 160,
+        "craft_gold": 240
+      },
+      {
+        "dungeon_rank": 5,
+        "run_income": 1600,
+        "guild_fee": 4500,
+        "inn_cheap": 10,
+        "inn_good": 260,
+        "revive_per_person": 400,
+        "curse_cure": 280,
+        "craft_gold": 430
+      },
+      {
+        "dungeon_rank": 6,
+        "run_income": 2480,
+        "guild_fee": 6960,
+        "inn_cheap": 10,
+        "inn_good": 400,
+        "revive_per_person": 620,
+        "curse_cure": 430,
+        "craft_gold": 670
+      },
+      {
+        "dungeon_rank": 7,
+        "run_income": 3840,
+        "guild_fee": 10800,
+        "inn_cheap": 10,
+        "inn_good": 620,
+        "revive_per_person": 960,
+        "curse_cure": 670,
+        "craft_gold": 1030
+      },
+      {
+        "dungeon_rank": 8,
+        "run_income": 5960,
+        "guild_fee": 16740,
+        "inn_cheap": 10,
+        "inn_good": 970,
+        "revive_per_person": 1490,
+        "curse_cure": 1040,
+        "craft_gold": 1600
+      },
+      {
+        "dungeon_rank": 9,
+        "run_income": 9240,
+        "guild_fee": 25980,
+        "inn_cheap": 10,
+        "inn_good": 1500,
+        "revive_per_person": 2310,
+        "curse_cure": 1620,
+        "craft_gold": 2480
+      },
+      {
+        "dungeon_rank": 10,
+        "run_income": 14310,
+        "guild_fee": 40260,
+        "inn_cheap": 10,
+        "inn_good": 2330,
+        "revive_per_person": 3580,
+        "curse_cure": 2510,
+        "craft_gold": 3850
+      },
+      {
+        "dungeon_rank": 11,
+        "run_income": 22190,
+        "guild_fee": 62400,
+        "inn_cheap": 10,
+        "inn_good": 3610,
+        "revive_per_person": 5550,
+        "curse_cure": 3880,
+        "craft_gold": 5960
+      },
+      {
+        "dungeon_rank": 12,
+        "run_income": 34390,
+        "guild_fee": 96720,
+        "inn_cheap": 10,
+        "inn_good": 5590,
+        "revive_per_person": 8600,
+        "curse_cure": 6020,
+        "craft_gold": 9240
+      }
+    ],
+    "backpack": [
+      {
+        "tier": 1,
+        "gold": 0
+      },
+      {
+        "tier": 2,
+        "gold": 500
+      },
+      {
+        "tier": 3,
+        "gold": 3000
+      },
+      {
+        "tier": 4,
+        "gold": 15000
+      },
+      {
+        "tier": 5,
+        "gold": 60000
+      },
+      {
+        "tier": 6,
+        "gold": 200000
+      },
+      {
+        "tier": 7,
+        "gold": 600000
+      }
+    ],
+    "facility": [
+      {
+        "rank": "1",
+        "gold": "0"
+      },
+      {
+        "rank": "2",
+        "gold": "300"
+      },
+      {
+        "rank": "3",
+        "gold": "600"
+      },
+      {
+        "rank": "4",
+        "gold": "1100"
+      },
+      {
+        "rank": "5",
+        "gold": "2000"
+      },
+      {
+        "rank": "6",
+        "gold": "3400"
+      },
+      {
+        "rank": "7",
+        "gold": "5780"
+      },
+      {
+        "rank": "8",
+        "gold": "9830"
+      },
+      {
+        "rank": "9",
+        "gold": "16700"
+      },
+      {
+        "rank": "10",
+        "gold": "28400"
+      },
+      {
+        "rank": "11",
+        "gold": "48280"
+      },
+      {
+        "rank": "12",
+        "gold": "82070"
+      }
+    ],
+    "revive": [
+      {
+        "lv": 1,
+        "gold": 30
+      },
+      {
+        "lv": 10,
+        "gold": 300
+      },
+      {
+        "lv": 50,
+        "gold": 1500
+      },
+      {
+        "lv": 99,
+        "gold": 2970
+      }
+    ]
+  },
+  "baselineProfitableResales": 120,
+  "baselineEngineHash": "d988b6ea4e874b13f12778d699ac27d605090a9b8d30cd686a3fe9579a09cede",
+  "baselineDataHash": "d082fb6bc71f9dfdca3fe6e791579c82b6fdd9c2f795a5370c6f6b7162fdc822",
+  "examplesAfter": {
+    "initial": 10000,
+    "board": [
+      {
+        "id": "q1_hunt",
+        "gold": 230,
+        "deposit": 0
+      },
+      {
+        "id": "q1_hunt",
+        "gold": 230,
+        "deposit": 0
+      },
+      {
+        "id": "q1_gather",
+        "gold": 0,
+        "deposit": 0
+      },
+      {
+        "id": "q1_gather",
+        "gold": 0,
+        "deposit": 0
+      },
+      {
+        "id": "q1_boss",
+        "gold": 530,
+        "deposit": 0
+      },
+      {
+        "id": "q_bounty_01_2",
+        "gold": 1800,
+        "deposit": 180
+      }
+    ],
+    "economy": [
+      {
+        "dungeon_rank": 1,
+        "run_income": 1500,
+        "guild_fee": 4500,
+        "inn_cheap": 100,
+        "inn_good": 250,
+        "revive_per_person": 400,
+        "curse_cure": 300,
+        "craft_gold": 400
+      },
+      {
+        "dungeon_rank": 2,
+        "run_income": 2700,
+        "guild_fee": 8100,
+        "inn_cheap": 100,
+        "inn_good": 450,
+        "revive_per_person": 700,
+        "curse_cure": 500,
+        "craft_gold": 750
+      },
+      {
+        "dungeon_rank": 3,
+        "run_income": 4900,
+        "guild_fee": 14400,
+        "inn_cheap": 100,
+        "inn_good": 800,
+        "revive_per_person": 1300,
+        "curse_cure": 900,
+        "craft_gold": 1350
+      },
+      {
+        "dungeon_rank": 4,
+        "run_income": 8800,
+        "guild_fee": 26100,
+        "inn_cheap": 100,
+        "inn_good": 1500,
+        "revive_per_person": 2300,
+        "curse_cure": 1600,
+        "craft_gold": 2400
+      },
+      {
+        "dungeon_rank": 5,
+        "run_income": 16000,
+        "guild_fee": 45000,
+        "inn_cheap": 100,
+        "inn_good": 2600,
+        "revive_per_person": 4000,
+        "curse_cure": 2800,
+        "craft_gold": 4300
+      },
+      {
+        "dungeon_rank": 6,
+        "run_income": 24800,
+        "guild_fee": 69600,
+        "inn_cheap": 100,
+        "inn_good": 4000,
+        "revive_per_person": 6200,
+        "curse_cure": 4300,
+        "craft_gold": 6700
+      },
+      {
+        "dungeon_rank": 7,
+        "run_income": 38400,
+        "guild_fee": 108000,
+        "inn_cheap": 100,
+        "inn_good": 6200,
+        "revive_per_person": 9600,
+        "curse_cure": 6700,
+        "craft_gold": 10300
+      },
+      {
+        "dungeon_rank": 8,
+        "run_income": 59600,
+        "guild_fee": 167400,
+        "inn_cheap": 100,
+        "inn_good": 9700,
+        "revive_per_person": 14900,
+        "curse_cure": 10400,
+        "craft_gold": 16000
+      },
+      {
+        "dungeon_rank": 9,
+        "run_income": 92400,
+        "guild_fee": 259800,
+        "inn_cheap": 100,
+        "inn_good": 15000,
+        "revive_per_person": 23100,
+        "curse_cure": 16200,
+        "craft_gold": 24800
+      },
+      {
+        "dungeon_rank": 10,
+        "run_income": 143100,
+        "guild_fee": 402600,
+        "inn_cheap": 100,
+        "inn_good": 23300,
+        "revive_per_person": 35800,
+        "curse_cure": 25100,
+        "craft_gold": 38500
+      },
+      {
+        "dungeon_rank": 11,
+        "run_income": 221900,
+        "guild_fee": 624000,
+        "inn_cheap": 100,
+        "inn_good": 36100,
+        "revive_per_person": 55500,
+        "curse_cure": 38800,
+        "craft_gold": 59600
+      },
+      {
+        "dungeon_rank": 12,
+        "run_income": 343900,
+        "guild_fee": 967200,
+        "inn_cheap": 100,
+        "inn_good": 55900,
+        "revive_per_person": 86000,
+        "curse_cure": 60200,
+        "craft_gold": 92400
+      }
+    ],
+    "backpack": [
+      {
+        "tier": 1,
+        "gold": 0
+      },
+      {
+        "tier": 2,
+        "gold": 5000
+      },
+      {
+        "tier": 3,
+        "gold": 30000
+      },
+      {
+        "tier": 4,
+        "gold": 150000
+      },
+      {
+        "tier": 5,
+        "gold": 600000
+      },
+      {
+        "tier": 6,
+        "gold": 2000000
+      },
+      {
+        "tier": 7,
+        "gold": 6000000
+      }
+    ],
+    "facility": [
+      {
+        "rank": "1",
+        "gold": 0
+      },
+      {
+        "rank": "2",
+        "gold": 3000
+      },
+      {
+        "rank": "3",
+        "gold": 6000
+      },
+      {
+        "rank": "4",
+        "gold": 11000
+      },
+      {
+        "rank": "5",
+        "gold": 20000
+      },
+      {
+        "rank": "6",
+        "gold": 34000
+      },
+      {
+        "rank": "7",
+        "gold": 57800
+      },
+      {
+        "rank": "8",
+        "gold": 98300
+      },
+      {
+        "rank": "9",
+        "gold": 167000
+      },
+      {
+        "rank": "10",
+        "gold": 284000
+      },
+      {
+        "rank": "11",
+        "gold": 483000
+      },
+      {
+        "rank": "12",
+        "gold": 821000
+      }
+    ],
+    "revive": [
+      {
+        "lv": 1,
+        "gold": 300
+      },
+      {
+        "lv": 10,
+        "gold": 3000
+      },
+      {
+        "lv": 50,
+        "gold": 15000
+      },
+      {
+        "lv": 99,
+        "gold": 29700
+      }
+    ]
+  }
+}

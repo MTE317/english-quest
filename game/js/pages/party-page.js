@@ -1,7 +1,7 @@
 // パーティーの画面：キャラメイク・6人の一覧・能力値・装備8枠
-import { loadGameData } from '../gamedata.js?v=rune-study-1';
-import { GameSession } from '../save.js?v=rune-study-1';
-import { createNewGame, defaultPartySpecs, normalizeGame } from '../game-state.js?v=basic-skill-levels-1';
+import { loadGameData } from '../gamedata.js?v=gold-unit-1';
+import { GameSession } from '../save.js?v=gold-unit-1';
+import { createNewGame, defaultPartySpecs, normalizeGame } from '../game-state.js?v=gold-unit-1';
 import {
   computeStats, SLOTS, SLOT_LABEL, STAT_LABEL, canEquip, equipFromStorage, unequip, gearDef,
   aptitudeGrade, xpToNext, levelCap, gainXp, makeGear,

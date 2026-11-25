@@ -105,7 +105,7 @@ test('旧セーブのAP・装着・マスターは維持し、Lv未指定はLv1�
   assert.ok(isJobMastered(data,m,'warrior'));const saved=structuredClone(m);
   normalizeGame(data,game);assert.deepEqual(m.ap,saved.ap);assert.deepEqual(m.loadout,saved.loadout);assert.deepEqual(m.masteredJobs,saved.masteredJobs);
   for(const s of leveled.filter(s=>s.job==='warrior')) assert.equal(usedSkillLevel(m,s),1);
-  assert.equal(SAVE_VERSION,1);
+  assert.equal(SAVE_VERSION,2); // Gの単位移行後も技能の保存内容は維持
   m.skillLevels={warrior_p1_s1:99,missing:3};m.skillUseLevels={warrior_p1_s1:99,missing:3};normalizeGame(data,game);
   assert.deepEqual(m.skillLevels,{warrior_p1_s1:3});assert.deepEqual(m.skillUseLevels,{warrior_p1_s1:3});
 });

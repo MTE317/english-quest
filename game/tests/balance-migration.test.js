@@ -66,7 +66,7 @@ test('現ゲームと入場時の写しを独立した効果辞書で更新し�
   const snapshot = structuredClone(game);
   // 別々の装備が旧効果の辞書を共有していても、移行後は相互に影響しない。
   snapshot.party[0].equip.weapon.affixes = game.party[0].equip.weapon.affixes;
-  const run = { snapshot, dungeonId: 'mossy_cave', floor: 2, battleIndex: 1, battlesDone: 3,
+  const run = { snapshot, goldVersion: data.balance.gold_economy.version, dungeonId: 'mossy_cave', floor: 2, battleIndex: 1, battlesDone: 3,
     route: [{ floor: 1, battles: 2 }, { floor: 2, battles: 3 }], layoutVersion: 1,
     battle: { rng: 31415, round: 2, turn: { side: 'ally', i: 2 }, pending: { actor: 2, action: { type: 'attack', target: 1 } },
       enemies: [{ hp: 80, statuses: { poison: { turns: 2, n: 1 } } }] } };

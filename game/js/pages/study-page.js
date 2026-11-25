@@ -1,13 +1,13 @@
 // 英語学習は訓練場（単語・瞬間英作文・チャンク）と試験の間へ集約する。
-import { loadGameData } from '../gamedata.js?v=rune-study-1';
+import { loadGameData } from '../gamedata.js?v=gold-unit-1';
 import { loadJson } from '../data.js?v=features-2';
 import { loadLearningCatalog } from '../learning-catalog.js?v=learning-00-v1';
 import { Scheduler } from '../srs.js?v=stability-1';
 import { LearningStore, now } from '../storage.js?v=stability-1';
-import { GameSession } from '../save.js?v=rune-study-1';
-import { normalizeGame } from '../game-state.js?v=basic-skill-levels-1';
-import { currentRank } from '../dungeon.js?v=basic-skill-levels-1';
-import { nextRankStatus, checkRankUp } from '../town.js?v=basic-skill-levels-1';
+import { GameSession } from '../save.js?v=gold-unit-1';
+import { normalizeGame } from '../game-state.js?v=gold-unit-1';
+import { currentRank } from '../dungeon.js?v=gold-unit-1';
+import { nextRankStatus, checkRankUp } from '../town.js?v=gold-unit-1';
 import { promotionProgress, promotionExamState } from '../promotion.js?v=training-v2-1';
 import { learningStatistics } from '../learning-stats.js?v=stability-1';
 import { TRAINING_COUNTS, trainingChunksForSet, trainingWordsForSet,

@@ -1,3 +1,4 @@
+import { roundGold } from './gold.js?v=gold-unit-1';
 // 戦闘の報酬（お金・素材・装備）とバックパック。
 // 式が data にないものは sim/world.py と同じ値を LOOT_FORMULAS に置く（docs/requests.md で依頼済み）。
 import { evaluate } from './expr.js';
@@ -51,7 +52,7 @@ export function goldForEnemy(data, dungeonId, enemy, rng, route = null) {
     reward_budget: goldRewardBudget(data, dungeonId, route) });
   if (enemy.boss) g *= dt.bossGoldMul;
   if (enemy.eliteId) g *= data.elitePrefixes.find((p) => p.id === enemy.eliteId)?.rewardMul ?? 1;
-  return Math.max(1, Math.round(g * between(rng, LOOT_FORMULAS.gold_rand)));
+  return roundGold(data, g * between(rng, LOOT_FORMULAS.gold_rand));
 }
 
 /** 倒した敵1体ぶんの素材 → [{ id, count }] */

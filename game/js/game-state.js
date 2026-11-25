@@ -1,9 +1,10 @@
+import { migrateGold, goldVersion } from './gold.js?v=gold-unit-1';
 // 新しいゲームの進み具合（セーブの game の中身）
 import { createMember, maxHp, maxMp, levelCap } from './character.js?v=basic-skill-levels-1';
 import { ensureLoadout, jobSkills, isLearned, normalizeSkillLevels } from './growth.js?v=basic-skill-levels-1';
 import { parseAmounts } from './csv.js';
 import { recordStoredMaterials } from './temple.js';
-import { retireLegacyQuestChains } from './retired-quests.js';
+import { retireLegacyQuestChains } from './retired-quests.js?v=gold-unit-1';
 
 export const PARTY_SIZE = 6;
 
@@ -30,6 +31,7 @@ export function createNewGame(data, partySpecs, { partySize = PARTY_SIZE } = {})
   const game = {
     day: start.day ?? 1,
     gold: start.gold ?? 0,
+    goldVersion: goldVersion(data),
     nextUid: 1,
     party: [],
     storage: { gear: [], materials: {} },
@@ -49,6 +51,7 @@ export function createNewGame(data, partySpecs, { partySize = PARTY_SIZE } = {})
  */
 export function normalizeGame(data, game, run = null, { expandParty = true } = {}) {
   if (!game) return game;
+  migrateGold(data, game, run);
   game.storage = game.storage ?? { gear: [], materials: {} };
   game.storage.materials ??= {};
   recordStoredMaterials(game);
