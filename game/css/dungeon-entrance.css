@@ -11,10 +11,12 @@
 }
 .dungeon-entrance.closed { background: #03060c; }
 .dungeon-entrance-title {
+  box-sizing: border-box;
   max-width: calc(100vw - 48px);
+  overflow-wrap: anywhere;
   padding: 18px 24px;
   color: #f4e8c8;
-  font-size: clamp(1.1rem, 4.8vw, 1.65rem);
+  font-size: clamp(1.5rem, 6.2vw, 2.2rem);
   font-weight: 700;
   letter-spacing: .16em;
   text-align: center;

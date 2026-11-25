@@ -51,7 +51,7 @@ async function runEntrance(name, enter) {
     overlay.classList.add('named');
     await wait(130);
     await enter();
-    await wait(2260);
+    await wait(1260);
     overlay.classList.add('reveal');
     await wait(reduced ? 120 : 340);
   } finally {

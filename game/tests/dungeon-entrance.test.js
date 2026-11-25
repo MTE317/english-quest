@@ -48,8 +48,8 @@ test('入場は暗転後に一度だけ開始し、演出が終わると操作�
   await new Promise(resolve => setTimeout(resolve, 600));
   assert.equal(nodes[0].classList.contains('named'), true);
   assert.equal(nodes[0].classList.contains('reveal'), false);
-  await new Promise(resolve => setTimeout(resolve, 1700));
-  assert.equal(nodes[0].classList.contains('reveal'), false, 'ダンジョン名を約2秒長く表示する');
+  await new Promise(resolve => setTimeout(resolve, 700));
+  assert.equal(nodes[0].classList.contains('reveal'), false, 'ダンジョン名の短縮後も読み取る時間を確保する');
   await run;
   assert.equal(entered, 1);
   assert.equal(body.children.length, 2);
