@@ -1,20 +1,20 @@
 // 町をホームにして、施設カードから各施設を開く。
-import { loadGameData } from '../gamedata.js?v=rune-study-1';
-import { GameSession } from '../save.js?v=rune-study-1';
-import { normalizeGame } from '../game-state.js?v=basic-skill-levels-1';
-import { currentRank, seededRng } from '../dungeon.js?v=basic-skill-levels-1';
+import { loadGameData } from '../gamedata.js?v=gold-unit-1';
+import { GameSession } from '../save.js?v=gold-unit-1';
+import { normalizeGame } from '../game-state.js?v=gold-unit-1';
+import { currentRank, seededRng } from '../dungeon.js?v=gold-unit-1';
 import {
   calendarOf, fillBoard, boardSize, questAcceptLimit, acceptQuest, canAcceptQuest, abandonQuest, canReport, reportQuest, questText, questProgress, questDestination, questRewardGold, questRankPoints, questDepositTotal, questAbandonRefund, nextRankStatus, stayInn, revive, reviveCost, checkRankUp,
   canExpandBackpack, expandBackpack, feeTier,
   nextBackpackTier,
-} from '../town.js?v=basic-skill-levels-1';
-import { backpackSlots } from '../loot.js?v=basic-skill-levels-1';
+} from '../town.js?v=gold-unit-1';
+import { backpackSlots } from '../loot.js?v=gold-unit-1';
 import { maxHp, maxMp, gearDef } from '../character.js?v=basic-skill-levels-1';
 import { availableJobs, changeJob } from '../growth.js?v=basic-skill-levels-1';
-import { explorationStories, acceptExplorationStory, reportExplorationStory } from '../exploration-story.js?v=basic-skill-levels-1';
+import { explorationStories, acceptExplorationStory, reportExplorationStory } from '../exploration-story.js?v=gold-unit-1';
 import { cureAtTemple, recordStoredMaterials } from '../temple.js?v=systems-v1';
-import { workshopView, managementView, templeExtras } from '../ui/facility-view.js?v=mid-unlock-icons-1';
-import { itemShopView, gearShopView } from '../ui/town-shops.js?v=basic-skill-levels-1';
+import { workshopView, managementView, templeExtras } from '../ui/facility-view.js?v=gold-unit-1';
+import { itemShopView, gearShopView } from '../ui/town-shops.js?v=gold-unit-1';
 import { weaponIcon } from '../ui/weapon-icons.js';
 import { equipmentIcon } from '../ui/equipment-icons.js';
 import { storageView } from '../ui/storage-view.js?v=storage-tabs-1';

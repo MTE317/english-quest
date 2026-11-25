@@ -27,7 +27,7 @@ test('各人の必要XPで下限を計算し、戦闘不能者も既存どおり
   else {assert.equal(m.lv,levels[i]);assert.equal(m.xp,Math.floor(Math.max(.5,xpToNext(data,levels[i])*.001)*100+1e-7));}
   assert.equal(m.ap[m.job],4);assert.equal(m.ap.other_job,17);
  }
- assert.equal(g.day,1);assert.equal(g.gold,1000);assert.deepEqual(g.storage.materials,{});
+ assert.equal(g.day,1);assert.equal(g.gold,10000);assert.deepEqual(g.storage.materials,{});
 });
 
 test('期限正答のみ1.2倍、失敗にも従来の基礎報酬・同IDはモードをまたいでも1日1回',()=>{

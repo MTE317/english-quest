@@ -32,7 +32,7 @@ test('遠征費は出発時に払い、途中帰還で確定し、全滅時は�
   const session = newSession(storage);
   const options = { dungeonId: 'sunlit_forest', stoneId: 'rs_1_001', seed: 1 };
   const fee = expeditionFee(data, data.dungeons.get(options.dungeonId));
-  assert.equal(fee, 8);
+  assert.equal(fee, 80);
   const gold = session.game.gold;
   session.game.items.bounty_lure = 1;
   startRun(data, session, { ...options, bountyLure: true });

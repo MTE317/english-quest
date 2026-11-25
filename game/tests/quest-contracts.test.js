@@ -14,9 +14,9 @@ const party = ['warrior', 'knight', 'black_mage', 'white_mage', 'thief', 'bard']
 const fresh = () => createNewGame(data, party);
 const board = (g, seed = 17) => fillBoard(data, g, seededRng(seed));
 
-test('新規開始はパーティー共有1000G。旧セーブの所持金は書き換えない', () => {
+test('新規開始はパーティー共有10000G。換算済みセーブの所持金は再換算しない', () => {
   const g = fresh();
-  assert.equal(g.gold, 1000);
+  assert.equal(g.gold, 10000);
   g.gold = 37;
   normalizeGame(data, g);
   assert.equal(g.gold, 37);
@@ -102,7 +102,7 @@ test('自主放棄で保証金80%返還、同じ掲示は帰還まで再受注�
   const refund = questAbandonRefund(data, q);
   abandonQuest(data, g, q.uid, seededRng(2));
   assert.equal(g.gold, start - q.depositGold + refund);
-  assert.equal(refund, Math.floor(q.depositGold * 0.8));
+  assert.equal(refund, Math.floor(q.depositGold / 10 * 0.8) * 10);
   assert.ok(!g.board.some((offer) => questKey(offer) === questKey(q)));
   const gold = g.gold;
   assert.throws(() => abandonQuest(data, g, q.uid), /受注/);

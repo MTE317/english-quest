@@ -1,4 +1,5 @@
 {
+  "gold_economy": { "version": 1, "scale": 10, "minimum_step": 10, "significant_digits": 3 },
   "_note": "実ゲームのJSによる検証用。目標と測定結果はdocs/balance-report.md・sim/results参照。2026-11-23調整。",
   "enemy": {
     "hp": "(150 + 6.5*Lv) * hp_mul * 1.478 * dungeon.enemy_mul * hp_rank_mul[★]",

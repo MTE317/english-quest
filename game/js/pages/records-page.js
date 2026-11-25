@@ -1,5 +1,5 @@
-import { GameSession } from '../save.js?v=rune-study-1';
-import { loadGameData } from '../gamedata.js?v=rune-study-1';
+import { GameSession } from '../save.js?v=gold-unit-1';
+import { loadGameData } from '../gamedata.js?v=gold-unit-1';
 import { LearningStore, loadSettings, saveSettings, now } from '../storage.js?v=stability-1';
 import { loadLearningCatalog } from '../learning-catalog.js?v=learning-00-v1';
 import { learningStatistics } from '../learning-stats.js?v=stability-1';

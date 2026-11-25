@@ -1,3 +1,4 @@
+import { goldScale } from './gold.js?v=gold-unit-1';
 // 廃止された24件の連続クエストの旧セーブを一度だけ精算する。
 // 新規クエストや地域解放には使わず、受取済みの報酬は再付与しない。
 const stageCount = rank => rank <= 4 ? 3 : rank <= 8 ? 4 : 5;
@@ -18,7 +19,7 @@ export function retireLegacyQuestChains(data, game) {
       const completed = Math.min(stages, Math.max(0, Math.floor(Number(record?.step) || 0)));
       // 受付会話は除外し、探索・討伐などの達成段階を比例精算する。
       const ratio = Math.max(0, (completed - 1) / (stages - 1));
-      gold = Math.floor(Math.max(0, Number(data.economy?.get(rank)?.run_income) || 0) * incomeMultiplier(rank) * ratio);
+      gold = Math.floor(Math.max(0, Number(data.economy?.get(rank)?.run_income) || 0) / goldScale(data) * incomeMultiplier(rank) * ratio) * goldScale(data);
       points = Math.floor((rank + 4) * ratio);
       const rare = [...(data.materials?.values() ?? [])].filter(x => x.rank === rank && x.kind === 'rare' && !x.season)
         .sort((a, b) => a.id.localeCompare(b.id))[0];

@@ -63,7 +63,7 @@ test('7系統と状態別12種を合法付与でき、★12の通常制作にも
       const material = [...data.materials.values()].find((entry) => entry.rank <= 3 && enchantFamilies(data, def, entry).includes(family));
       assert.ok(material, `${family}: ${slot} の対応素材`);
       const game = fresh();
-      game.gold = 100000;
+      game.gold = 1000000;
       game.facilities[slot === 'weapon' ? 'weapon_workshop' : 'accessory_workshop'] = 12;
       const common = [...data.materials.values()].find((entry) => entry.rank === 12 && entry.kind === 'common');
       game.storage.materials[common.id] = 4;

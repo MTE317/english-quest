@@ -19,12 +19,13 @@
 // - 全員倒れたら、画面に出す前に wipe() を呼ぶ（その場で保存される）
 import { SAVE_KEY, safeStorage } from './storage.js?v=rune-study-1';
 
-export const SAVE_VERSION = 1;
+export const SAVE_VERSION = 2;
 const CHANT_BACKUP_KEY = 'englishQuest.chantBackup.v2';
 const BROKEN_KEY = `${SAVE_KEY}.broken`;
 
 // 古い版のセーブを新しい版に直す関数（版を上げたらここに足す）。MIGRATIONS[1] は 1 → 2
-const MIGRATIONS = {};
+// 金額は正式データ読込後のnormalizeGameで換算する。外側の版で旧クライアントの誤書込を防ぐ。
+const MIGRATIONS = { 1: data => ({ ...data }) };
 
 const clone = (x) => (x == null ? x : structuredClone(x));
 
@@ -152,6 +153,7 @@ export class GameSession {
     if (this.state.run) throw new Error('すでにダンジョンの中にいる');
     this.state.run = {
       dungeonId,
+      goldVersion: this.game.goldVersion,
       stoneId,
       ...rest,
       floor: 1,

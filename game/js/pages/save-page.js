@@ -1,8 +1,10 @@
+import { goldScale } from '../gold.js?v=gold-unit-1';
+import { normalizeGame } from '../game-state.js?v=gold-unit-1';
 // 動作確認用：自動保存・ダンジョンの途中からの再開・全滅で入る前に戻る、を試す画面
 // 戦闘とダンジョンはまだないので、報酬（お金・素材・装備・経験値）は「仮」の値を足すだけ
-import { GameSession } from '../save.js?v=rune-study-1';
+import { GameSession } from '../save.js?v=gold-unit-1';
 import { LearningStore } from '../storage.js?v=rune-study-1';
-import { loadGameData } from '../gamedata.js?v=rune-study-1';
+import { loadGameData } from '../gamedata.js?v=gold-unit-1';
 import { gainXp, makeGear } from '../character.js?v=basic-skill-levels-1';
 import { el, render } from '../dom.js';
 
@@ -81,7 +83,7 @@ function draw() {
           class: 'primary',
           onclick: () => {
             session.endBattle((g) => {
-              g.gold += 10;
+              g.gold += 10 * goldScale(data);
               g.storage.materials.trial_mat = (g.storage.materials.trial_mat ?? 0) + 1;
               g.storage.gear.push(makeGear(g, [...data.equipment.keys()][0]));
               for (const m of g.party) gainXp(data, m, 30);
@@ -89,13 +91,14 @@ function draw() {
             (async () => {
   try {
     data = await loadGameData();
+    if (session.game && !session.readOnly) { normalizeGame(data, session.game, session.run); session.save(); }
     draw();
   } catch (e) {
     render(view, el('p', { class: 'error' }, `読み込みに失敗：${e.message}`));
   }
 })();
           },
-        }, '戦闘に勝つ（お金+10・素材+1・装備+1・経験値+30 の仮の報酬）'),
+        }, `戦闘に勝つ（お金+${10 * goldScale(data)}・素材+1・装備+1・経験値+30 の仮の報酬）`),
       );
     }
     parts.push(el('button', { class: 'ghost error', onclick: () => { session.wipe(); draw(); } }, '全滅する（入る前に戻る）'));
@@ -121,6 +124,7 @@ function draw() {
 (async () => {
   try {
     data = await loadGameData();
+    if (session.game && !session.readOnly) { normalizeGame(data, session.game, session.run); session.save(); }
     draw();
   } catch (e) {
     render(view, el('p', { class: 'error' }, `読み込みに失敗：${e.message}`));
