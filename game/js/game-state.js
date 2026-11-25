@@ -1,7 +1,7 @@
 import { normalizeAp } from './ap.js?v=skill-growth-2';
 import { migrateGold, goldVersion } from './gold.js?v=skill-growth-2';
 // 新しいゲームの進み具合（セーブの game の中身）
-import { createMember, maxHp, maxMp, levelCap, starterGearIds, makeGear } from './character.js?v=skill-growth-2';
+import { createMember, maxHp, maxMp, levelCap } from './character.js?v=skill-growth-2';
 import { ensureLoadout, jobSkills, isLearned, normalizeSkillLevels, migrateInitialSkills } from './growth.js?v=skill-growth-2';
 import { parseAmounts } from './csv.js?v=skill-growth-2';
 import { recordStoredMaterials } from './temple.js?v=skill-growth-2';
@@ -44,16 +44,14 @@ export function createNewGame(data, partySpecs, { partySize = PARTY_SIZE } = {})
   };
   game.party = partySpecs.map((spec, i) => createMember(data, game, spec, i));
   if (data.basicJobRules) {
-    // 配給品は倉庫に置き、全員が無装備の状態から手動で装備を選べるようにする。
+    // 新規開始時は初期装備を配布せず、全員が無装備で始める。
     for (const member of game.party) {
       member.jobMasterVersion = JOB_MASTER_VERSION;
       member.skillGrowthVersion=2;
       member.ultimateGauge = 0;
-      for (const id of Object.values(starterGearIds(data, member.job))) if (id) game.storage.gear.push(makeGear(game, id));
     }
     game.jobMasterVersion = JOB_MASTER_VERSION;
-    game.starterSuppliesVersion = 1;
-    game.notices = ['初級装備を倉庫に用意しました。仲間の装備画面で装備を選び、技能画面でAPを使って最初の技能を修得できます。'];
+    game.notices = ['技能画面でAPを使って技能を修得し、支度金で装備を整えましょう。'];
   }
   return normalizeGame(data, game, null, { expandParty: partySize === PARTY_SIZE });
 }
