@@ -44,15 +44,15 @@ function battle(game, skill) {
   return state;
 }
 
-test('基本8職120技能すべてが5段階を持ち、各Lvの効果説明と固定装備コストを取得できる', () => {
+test('基本8職120技能が1・3・5段階を持ち、各Lvの効果説明と固定装備コストを取得できる', () => {
   assert.equal(basic.length, 8);
   assert.equal(leveled.length, 120);
   const pristine = JSON.stringify([...data.skills]);
   for (const skill of leveled) {
-    assert.equal(skillMaxLevel(skill), 5);
+    assert.ok([1,3,5].includes(skillMaxLevel(skill)));
     const member = fresh(skill.job).party[0];
     member.learned = [skill.id];
-    for (let level = 1; level <= 5; level += 1) {
+    for (let level = 1; level <= skillMaxLevel(skill); level += 1) {
       member.skillLevels = { [skill.id]: level };
       member.skillUseLevels = { [skill.id]: 1 }; // 旧選択Lvが残っていても最高Lvを使う。
       const effective = effectiveSkill(data, member, skill);

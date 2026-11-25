@@ -1,4 +1,4 @@
-import { el } from '../dom.js?v=jobs-master-1';
+import { el } from '../dom.js?v=skill-growth-2';
 
 // セーブに保存する appearance ID は従来のまま、表示だけをドット絵へ切り替える。
 const groups = [

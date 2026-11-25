@@ -1,9 +1,9 @@
-import { maxHp, maxMp } from '../character.js?v=jobs-master-1';
-import { expeditionScene } from './scenery.js?v=jobs-master-1';
-import { el } from '../dom.js?v=jobs-master-1';
-import { portraitIcon } from './portrait.js?v=jobs-master-1';
-import { equipmentIcon } from './equipment-icons.js?v=jobs-master-1';
-import { uiIcon } from './pixel-icons.js?v=jobs-master-1';
+import { maxHp, maxMp } from '../character.js?v=skill-growth-2';
+import { expeditionScene } from './scenery.js?v=skill-growth-2';
+import { el } from '../dom.js?v=skill-growth-2';
+import { portraitIcon } from './portrait.js?v=skill-growth-2';
+import { equipmentIcon } from './equipment-icons.js?v=skill-growth-2';
+import { uiIcon } from './pixel-icons.js?v=skill-growth-2';
 
 function resource(label, value, max) {
   const percent = max > 0 ? Math.min(100, Math.max(0, (value / max) * 100)) : 0;

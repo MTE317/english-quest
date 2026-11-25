@@ -1,19 +1,19 @@
 // 戦況を表示したまま、下段をコマンド・対象の案内・問題・結果に切り替える。
-import { now } from '../storage.js?v=jobs-master-1';
-import { QuestionPicker, REASON_LABEL } from '../picker.js?v=jobs-master-1';
-import { makePracticeQuestion, questionDirection, questionSpeech, DIRECTION } from '../quiz.js?v=jobs-master-1';
-import { speak, canSpeak, stopSpeech } from '../speech.js?v=jobs-master-1';
-import { nextTurn, actionOptions, setPending, prepareQuizAction, resolvePending, targetKind, skillMp, collectBattleHits, enemyIntent, enemyCanAct } from '../battle.js?v=jobs-master-1';
-import { skillMaxLevel, learnedSkillLevel, effectiveSkill } from '../growth.js?v=jobs-master-1';
-import { maxHp, maxMp } from '../character.js?v=jobs-master-1';
-import { el, render } from '../dom.js?v=jobs-master-1';
-import { expeditionScene } from './scenery.js?v=jobs-master-1';
-import { monsterKnowledge } from '../monster-knowledge.js?v=jobs-master-1';
-import { startBattleMusic, finishBattleMusic } from '../battle-music.js?v=jobs-master-1';
-import { unlockBattleSound, playBattleHitSound } from '../battle-sound.js?v=jobs-master-1';
-import { portraitIcon } from './portrait.js?v=jobs-master-1';
-import { ultimateGauge } from './skill-presentation.js?v=jobs-master-1';
-import { describeSkillEffect } from '../skill-effects.js?v=jobs-master-1';
+import { now } from '../storage.js?v=skill-growth-2';
+import { QuestionPicker, REASON_LABEL } from '../picker.js?v=skill-growth-2';
+import { makePracticeQuestion, questionDirection, questionSpeech, DIRECTION } from '../quiz.js?v=skill-growth-2';
+import { speak, canSpeak, stopSpeech } from '../speech.js?v=skill-growth-2';
+import { nextTurn, actionOptions, setPending, prepareQuizAction, resolvePending, targetKind, skillMp, collectBattleHits, enemyIntent, enemyCanAct } from '../battle.js?v=skill-growth-2';
+import { skillMaxLevel, learnedSkillLevel, effectiveSkill } from '../growth.js?v=skill-growth-2';
+import { maxHp, maxMp } from '../character.js?v=skill-growth-2';
+import { el, render } from '../dom.js?v=skill-growth-2';
+import { expeditionScene } from './scenery.js?v=skill-growth-2';
+import { monsterKnowledge } from '../monster-knowledge.js?v=skill-growth-2';
+import { startBattleMusic, finishBattleMusic } from '../battle-music.js?v=skill-growth-2';
+import { unlockBattleSound, playBattleHitSound } from '../battle-sound.js?v=skill-growth-2';
+import { portraitIcon } from './portrait.js?v=skill-growth-2';
+import { ultimateGauge } from './skill-presentation.js?v=skill-growth-2';
+import { describeSkillEffect } from '../skill-effects.js?v=skill-growth-2';
 
 const TARGET_PROMPT = {
   enemy: '攻撃する敵を選ぶ',

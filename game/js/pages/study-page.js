@@ -1,22 +1,22 @@
 // 英語学習は訓練場（単語・瞬間英作文・チャンク）と試験の間へ集約する。
-import { loadGameData } from '../gamedata.js?v=jobs-master-1';
-import { loadJson } from '../data.js?v=jobs-master-1';
-import { loadLearningCatalog } from '../learning-catalog.js?v=jobs-master-1';
-import { Scheduler } from '../srs.js?v=jobs-master-1';
-import { LearningStore, now } from '../storage.js?v=jobs-master-1';
-import { GameSession } from '../save.js?v=jobs-master-1';
-import { normalizeGame } from '../game-state.js?v=jobs-master-1';
-import { currentRank } from '../dungeon.js?v=jobs-master-1';
-import { nextRankStatus, checkRankUp } from '../town.js?v=jobs-master-1';
-import { promotionProgress, promotionExamState } from '../promotion.js?v=jobs-master-1';
-import { learningStatistics } from '../learning-stats.js?v=jobs-master-1';
+import { loadGameData } from '../gamedata.js?v=skill-growth-2';
+import { loadJson } from '../data.js?v=skill-growth-2';
+import { loadLearningCatalog } from '../learning-catalog.js?v=skill-growth-2';
+import { Scheduler } from '../srs.js?v=skill-growth-2';
+import { LearningStore, now } from '../storage.js?v=skill-growth-2';
+import { GameSession } from '../save.js?v=skill-growth-2';
+import { normalizeGame } from '../game-state.js?v=skill-growth-2';
+import { currentRank } from '../dungeon.js?v=skill-growth-2';
+import { nextRankStatus, checkRankUp } from '../town.js?v=skill-growth-2';
+import { promotionProgress, promotionExamState } from '../promotion.js?v=skill-growth-2';
+import { learningStatistics } from '../learning-stats.js?v=skill-growth-2';
 import { TRAINING_COUNTS, trainingChunksForSet, trainingWordsForSet,
-  trainingPhrasesForSet, resolveTrainingMode } from '../training.js?v=jobs-master-1';
-import { runTrainingSession } from '../ui/training-runner.js?v=jobs-master-1';
-import { runDualPromotionExam } from '../ui/learning-exams.js?v=jobs-master-1';
-import { el, render } from '../dom.js?v=jobs-master-1';
-import { setSceneMusic } from '../battle-music.js?v=jobs-master-1';
-import { installGameShell } from '../ui/game-shell.js?v=jobs-master-1';
+  trainingPhrasesForSet, resolveTrainingMode } from '../training.js?v=skill-growth-2';
+import { runTrainingSession } from '../ui/training-runner.js?v=skill-growth-2';
+import { runDualPromotionExam } from '../ui/learning-exams.js?v=skill-growth-2';
+import { el, render } from '../dom.js?v=skill-growth-2';
+import { setSceneMusic } from '../battle-music.js?v=skill-growth-2';
+import { installGameShell } from '../ui/game-shell.js?v=skill-growth-2';
 
 const view = document.getElementById('view');
 const session = new GameSession();

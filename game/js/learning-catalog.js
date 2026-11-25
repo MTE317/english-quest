@@ -1,6 +1,6 @@
 // English Quest 学習教材 v1.0 の正本ローダー。
 // 教材IDとカテゴリー/教材セットの所属を分離し、履歴・習熟度を項目IDに固定する。
-import { loadCsv } from './data.js?v=jobs-master-1';
+import { loadCsv } from './data.js?v=skill-growth-2';
 
 export const LEARNING_V1_FILES = Object.freeze({
   words: 'learning/v1/words.csv',

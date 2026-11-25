@@ -91,7 +91,7 @@ function inspectMaster() {
     assert.equal(list.filter(skill => skill.kind === 'passive').length, 5);
     assert.equal(list.filter(skill => skill.isFinal).length, 1);
     for (const skill of list) {
-      assert.equal(skill.effect.levels?.length, 4, `${skill.id}はLv1〜5`);
+      assert.ok([0,2,4].includes(skill.effect.levels?.length));
       assert.ok(skill.cost >= 0 && Number.isFinite(skill.mp) && Number.isFinite(skill.apToLearn));
       for (const prerequisite of skill.effect.prerequisites ?? []) {
         assert.ok(data.skills.has(prerequisite.id), `${skill.id}の前提が存在`);
@@ -107,7 +107,7 @@ function inspectMaster() {
     });
   }
   return { jobs: data.jobs.length, basicJobs: 8, additionalJobs: 36, legendaryJobs: 6, skills: skills.length,
-    skillLevelDefinitions: skills.length * 5, costs: rows };
+    skillLevelDefinitions: skills.reduce((n,s)=>n+1+s.effect.levels.length,0), costs: rows };
 }
 
 function gearFor(member, itemLevel, kindOverride) {

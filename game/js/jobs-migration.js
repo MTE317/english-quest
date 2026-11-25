@@ -1,6 +1,31 @@
-import { normalizeAp } from './ap.js?v=jobs-master-1';
+import { normalizeAp } from './ap.js?v=skill-growth-2';
 
 export const JOB_MASTER_VERSION = 1;
+
+export function migrateSkillGrowth(data, game) {
+  let changed=false;
+  for(const member of game?.party??[]) {
+    if(member.skillGrowthVersion===2)continue;
+    let refund=0;
+    for(const id of member.learned??[]) {
+      const skill=data.skills.get(id);
+      if(!skill?.effect?.master)continue;
+      const maximum=1+(skill.effect.levels?.length??0);
+      const old=Math.min(5,Math.max(1,Math.floor(Number(member.skillLevels?.[id])||1)));
+      if(old>maximum){
+        // Version 1 used this immutable upgrade schedule for every basic skill.
+        refund += [12,20,30,45].slice(maximum-1,old-1).reduce((a,b)=>a+b,0);
+        (member.skillLevels??={})[id]=maximum;
+      }
+    }
+    normalizeAp(data,member);
+    member.ap+=refund;
+    member.skillGrowthVersion=2;
+    member.skillGrowthRefund=refund;
+    changed=true;
+  }
+  return changed;
+}
 
 // 旧技能を持たない職へ自動で移して行動不能にしない。解放履歴は別途保持する。
 const BASE_FALLBACK = Object.freeze({
@@ -18,6 +43,7 @@ const validAmount = (n) => Number.isFinite(n) && n > 0 ? n : 0;
  * メンバーごとの版を保存し、遠征前の写しにも同じ処理を適用できる。
  */
 export function migrateJobMaster(data, game, run = null) {
+  if(data.basicJobRules?.version>=2){migrateSkillGrowth(data,game);if(run?.snapshot)migrateSkillGrowth(data,run.snapshot);}
   if (!data.skills || ![...data.skills.values()].some((s) => s.effect?.master)) return false;
   const retired = new Map((data.skillMigration?.retired_skills ?? []).map((s) => [s.id, s]));
   const fallback = { ...BASE_FALLBACK, ...(data.skillMigration?.job_fallbacks ?? {}) };

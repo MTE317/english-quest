@@ -7,14 +7,14 @@
 //   → 答えたら resolvePending(正解か) → また nextTurn()
 //
 // 式・効果の上限は data/balance.json から読む。BATTLE_FORMULAS は旧データ向けの既定値。
-import { evaluate } from './expr.js?v=jobs-master-1';
-import { computeStats, gearDef, weaponPower, spellPower, maxHp, maxMp, gearEffects, affixSum } from './character.js?v=jobs-master-1';
-import { actionSkills, ultimateSkill, memberMods, addMasteryKill, effectiveSkill } from './growth.js?v=jobs-master-1';
-import { encounterMonsters, learnMonsterElements, hitEffectiveness } from './monster-knowledge.js?v=jobs-master-1';
+import { evaluate } from './expr.js?v=skill-growth-2';
+import { computeStats, gearDef, weaponPower, spellPower, maxHp, maxMp, gearEffects, affixSum } from './character.js?v=skill-growth-2';
+import { actionSkills, ultimateSkill, memberMods, addMasteryKill, effectiveSkill } from './growth.js?v=skill-growth-2';
+import { encounterMonsters, learnMonsterElements, hitEffectiveness } from './monster-knowledge.js?v=skill-growth-2';
 import { masterTags, weaponSkill, songSkill, healingSkill, weaponAllowed, passiveRules, ruleNumber, matchesTag,
   masterDamageBonus, masterCritBonus, masterEvasionBonus, masterCutBonus, grantMasterEffect, masterBuff, masterMpSave,
   masterHealingBonus, masterStatusResist, masterStatusMultiplier, beginMasterAction, startMasterOpportunity, finishMasterOpportunity,
-  masterCoverTarget, onMasterCover } from './job-combat.js?v=jobs-master-1';
+  masterCoverTarget, onMasterCover } from './job-combat.js?v=skill-growth-2';
 
 /** balance.json にまだ式がないもの（sim と同じ） */
 export const BATTLE_FORMULAS = Object.freeze({
@@ -718,7 +718,7 @@ function forcedAllyAttack(data, game, b, i, charmed) {
   const st = battleStats(data, game, b, i);
   const magic = skill?.effect.base === 'mag';
   const power = magic ? st.mag + spellPower(data, member) : st.str + st.attack;
-  const victims = skill?.effect.tgt === 'all' ? allyTargets : [target];
+  const victims = skill?.effect.tgt === 'all' ? allyTargets.sort((a,c)=>Number(c===target)-Number(a===target)).slice(0,skill.effect.target_limit??8) : [target];
   for (const victim of victims) {
     const defense = battleStats(data, game, b, victim.i);
     const damage = power * (skill?.effect.m ?? 1) * f(data, 'confused_self_hit') * 100 / (100 + (magic ? defense.res : defense.def));
@@ -1282,7 +1282,7 @@ function doSkill(data, game, b, i, s, target, cm, normalSkillReady = false, acti
       log(b, `${m.name}の武器に${data.elements.get(a.imbue)?.name ?? ''}の力が宿った`);
       break;
     case 'debuff': {
-      const ts = e.tgt === 'all' ? livingEnemies(b) : attackTargets(b, 'enemy', target);
+      const ts = e.tgt === 'all' ? livingEnemies(b).sort((a,c)=>Number(c===target)-Number(a===target)).slice(0,e.target_limit??8) : attackTargets(b, 'enemy', target);
       for (const t of ts) {
         for (const [k, v] of Object.entries(e.deb ?? {})) putBuff(b.enemies[t].debuffs, k,
           Math.min(f(data, 'debuff_cap'), v * cm), (e.turns ?? 1) + 1);
@@ -1400,7 +1400,7 @@ function applyMasterSkillRules(data, game, b, actor, skill, target, cm) {
     : ['ally_buff', 'heal', 'cure', 'mp_give'].includes(skill.kind) ? [living.includes(target) ? target : actor] : [];
   const song = songSkill(skill);
   const passives = passiveRules(data, member);
-  const songCount = new Set(Object.values(ally.masterEffects ?? {}).filter(e => e.song).map(e => e.skillId)).size;
+  const songCount = new Set(Object.values(ally.masterEffects ?? {}).filter(e => e.song && e.skillId !== skill.id).map(e => e.skillId)).size;
   let support = 1;
   if (song) {
     support += passives.reduce((sum, p) => sum + (p.instrument?.song ?? 0) + (p.song_combo && songCount >= p.song_combo.count ? p.song_combo.rate : 0), 0);
@@ -1419,7 +1419,7 @@ function applyMasterSkillRules(data, game, b, actor, skill, target, cm) {
     grantMasterEffect(b, t, skill.id, { values, source: actor, skillId: skill.id, song, remaining: duration,
       ...(regen ? { regen: { amount, trigger: regen.trigger } } : {}), ...(rules.mp_save ? { mpSave: rules.mp_save } : {}) });
   }
-  if (rules.cover && (rules.cover.target !== 'selected' || target !== actor)) ally.masterCover = { ...rules.cover, targetIndex: target, remaining: rules.cover.turns, grantedClock: b.actionClock };
+  if (rules.cover && (rules.cover.target !== 'selected' || target !== actor)) { const key=rules.cover.target==='all'?'masterUltimateCover':'masterCover'; ally[key]={...rules.cover,targetIndex:target,remaining:rules.cover.turns,grantedClock:b.actionClock}; }
   if (rules.counter) ally.masterCounter = { ...rules.counter, remaining: rules.counter.turns, grantedClock: b.actionClock };
   if (rules.status_resist) for (const t of targets.length ? targets : [actor]) grantMasterEffect(b, t, skill.id, { statusResist: rules.status_resist, remaining: rules.status_resist.turns });
   if (rules.next_mp_save) grantMasterEffect(b, actor, `${skill.id}:mp`, { nextMpSave: rules.next_mp_save, remaining: rules.next_mp_save.turns });
@@ -1434,13 +1434,18 @@ function applyMasterSkillRules(data, game, b, actor, skill, target, cm) {
     log(b, `${b.enemies[target].name}への狩猟を解禁した`);
   }
   if (rules.trap && b.enemies[target]) {
-    const traps = (b.masterTraps ??= []), trap = rules.trap;
+    const trap = rules.trap;
+    const selected=[target,...livingEnemies(b).filter(t=>t!==target)].slice(0,trap.targets??1);
+    for(const target of selected){
+    b.masterTraps=(b.masterTraps??[]).filter(t=>t.actor!==actor||t.target!==target);
+    while(b.masterTraps.filter(t=>t.actor===actor).length >= trap.limit_total) b.masterTraps.splice(b.masterTraps.findIndex(t=>t.actor===actor),1);
+    const traps = b.masterTraps;
     const own = traps.filter(x => x.actor === actor);
     if (own.filter(x => x.target === target).length >= (trap.limit_per_target ?? 1) || own.length >= (trap.limit_total ?? 2)) log(b, 'これ以上は罠を設置できない');
     else {
       traps.push({ actor, target, cm, skill: { ...skill, kind: 'attack', elements: [trap.element], effect: { ...effect, rules: { no_weapon_power: true }, tags: ['trap'], base: trap.base ?? 'phys', m: trap.m, element: trap.element, st: trap.st, status_turns: trap.status_turns, hits: [1] } } });
       log(b, `${b.enemies[target].name}へ罠を仕掛けた`);
-    }
+    }}
   }
   if (rules.shield) for (const t of targets) {
     const value = Math.min(maxHp(data, game.party[t]) * (data.basicJobRules?.caps?.shield_hp ?? .5), masterBaseHealing(data, game, b, actor) * rules.shield.m * cm);
@@ -1572,6 +1577,7 @@ function finishEnemyTurn(enemy, data, b) {
 
 function enemyTurn(data, game, b, e) {
   const enemy = b.enemies[e];
+  const trapBlocked = ['sleep','freeze','stun','petrify'].some(id=>enemy.statuses[id]);
   b.enemyActionClock = (b.enemyActionClock ?? 0) + 1;
   // 罠は対象の行動機会に一度発動。反撃や資源蓄積を再帰させない。
   const triggered = (b.masterTraps ?? []).filter(trap => trap.target === e);
@@ -1582,6 +1588,7 @@ function enemyTurn(data, game, b, e) {
     hitEnemy(data, game, b, trap.actor, e, result.damage, { ...result, prefix: '仕掛け罠！' });
     if (result.landed && result.damage > 0) applyAttackStatuses(data, game, b, trap.actor, e, trap.skill.effect, trap.cm);
   }
+  if(enemy.hp<=0)return;
   enemy.maxMp ??= enemyMpCapacity(enemy.lv, enemy.boss);
   enemy.mp ??= enemy.maxMp;
   // 複数の継続ダメージを合わせた上限。特化は強いが割合ダメージだけの即殺を防ぐ。
@@ -1612,7 +1619,7 @@ function enemyTurn(data, game, b, e) {
   if (enemy.regen && enemy.hp > 0 && !enemy.statuses.petrify && !has(enemy, 'noheal', data)) {
     enemy.hp = Math.min(enemy.maxHp, Math.round(enemy.hp + enemy.maxHp * enemy.regen));
   }
-  const skip = enemy.hp > 0 && blockedAction(data, b, enemy);
+  const skip = enemy.hp > 0 && (blockedAction(data, b, enemy) || (trapBlocked ? {name:'行動不能'} : null));
   if (enemy.hp <= 0 || skip) {
     if (skip && enemy.boss) enemy.controlGuardUntil = b.round + 1;
     log(b, skip ? enemy.name + 'は' + skip.name + 'で動けない' : enemy.name + 'を倒した！');

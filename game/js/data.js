@@ -1,5 +1,5 @@
 // data/ の CSV と JSON を読み込む。
-import { parseCsv, stripBom } from './csv.js?v=jobs-master-1';
+import { parseCsv, stripBom } from './csv.js?v=skill-growth-2';
 
 // game/js/data.js から見た data/ の場所（GitHub Pages でもローカルでも同じ相対位置）
 const DATA_BASE = new URL('../../data/', import.meta.url);

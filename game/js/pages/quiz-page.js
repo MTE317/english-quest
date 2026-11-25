@@ -1,12 +1,12 @@
 // 動作確認用：ルーンストーンを選んで10問解く画面
-import { loadCsv, loadJson } from '../data.js?v=jobs-master-1';
-import { buildLexicon } from '../lexicon.js?v=jobs-master-1';
-import { Scheduler, STAGE_LABEL, dayToString } from '../srs.js?v=jobs-master-1';
-import { LearningStore, now, getDebugDayOffset, setDebugDayOffset } from '../storage.js?v=jobs-master-1';
-import { QuestionPicker, REASON_LABEL } from '../picker.js?v=jobs-master-1';
-import { makeQuestion, questionSpeech, DIRECTION, DIRECTION_LABEL } from '../quiz.js?v=jobs-master-1';
-import { speak, canSpeak, stopSpeech } from '../speech.js?v=jobs-master-1';
-import { el, render, stars } from '../dom.js?v=jobs-master-1';
+import { loadCsv, loadJson } from '../data.js?v=skill-growth-2';
+import { buildLexicon } from '../lexicon.js?v=skill-growth-2';
+import { Scheduler, STAGE_LABEL, dayToString } from '../srs.js?v=skill-growth-2';
+import { LearningStore, now, getDebugDayOffset, setDebugDayOffset } from '../storage.js?v=skill-growth-2';
+import { QuestionPicker, REASON_LABEL } from '../picker.js?v=skill-growth-2';
+import { makeQuestion, questionSpeech, DIRECTION, DIRECTION_LABEL } from '../quiz.js?v=skill-growth-2';
+import { speak, canSpeak, stopSpeech } from '../speech.js?v=skill-growth-2';
+import { el, render, stars } from '../dom.js?v=skill-growth-2';
 
 // この画面は動作確認用なので、問題数はユーザーの指定（10問）で固定
 const QUESTIONS_PER_TEST = 10;

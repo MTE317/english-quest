@@ -1,6 +1,9 @@
 // 基本8職の設計文書を技能マスタへ変換する。数値の変更点はこの定義と設計文書を合わせて更新する。
 import fs from 'node:fs';
-import { specs } from './parse-basic-spec.mjs';
+import { specs as originalSpecs } from './parse-basic-spec.mjs';
+import { revisedEffect } from './skill-growth-v2.mjs';
+const growth = new Map(['physical','magic'].flatMap(name=>JSON.parse(fs.readFileSync(new URL('../data/skill-growth-'+name+'.json',import.meta.url),'utf8')).skills).map(s=>[s.id,s]));
+const specs = originalSpecs.map(s=>({...s,meta:growth.get(s.id).metadata,levels:growth.get(s.id).effects}));
 import { parseCsv } from '../game/js/csv.js';
 
 const at = (values, i) => Array.isArray(values) ? values[i] : values;
@@ -174,7 +177,7 @@ function displayDescription(text){
 function prerequisites(spec){
   const t=spec.meta['修得前提'];
   if(/なし|同職/.test(t))return [];
-  return [...t.matchAll(/([^・]+?)\s+Lv(\d+)/g)].map(m=>({id:names.get(m[1].trim()),level:Number(m[2])}));
+  return [...t.matchAll(/([^・]+?)\s+(?:Lv(\d+)|修得)/g)].map(m=>({id:names.get(m[1].trim()),level:Number(m[2]??1)}));
 }
 function tagsFor(spec, entry){
   const tags=[];
@@ -192,7 +195,7 @@ function tagsFor(spec, entry){
 }
 
 const rules = {
-  version:1, master:'basic-jobs-skills-v1', provisional:true,
+  version:2, master:'basic-jobs-skills-v2', provisional:true,
   starting_ap:30,
   capacity:{actions:10,passives:10},
   ultimate:{gauge_max:100,gain_correct:20,gain_hit:5,carry_over:true,mp:0,once_per_battle:false,capacity_cost:0},
@@ -216,7 +219,7 @@ if(!fs.existsSync(migrationUrl)){
 const rows=[];
 for(const spec of specs){
   const entry=plan.get(spec.id);if(!entry)throw new Error(`未定義: ${spec.id}`);
-  if(spec.levels.length!==5)throw new Error(`Lv不足: ${spec.id}`);
+  if(![1,3,5].includes(spec.levels.length))throw new Error(`Lv不足: ${spec.id}`);
   const [mpBand,apBand]=spec.meta['MP帯・AP帯'].split('／');
   const final=spec.id.includes('_U');
   const mp=entry.kind==='passive'?0:final?0:rules.mp_bands[{'軽':'light','中':'medium','重':'heavy'}[mpBand]];
@@ -226,7 +229,8 @@ for(const spec of specs){
   const effects=spec.levels.map((description,i)=>({
     master:true,description:displayDescription(description),source_description:description,prerequisites:prerequisites(spec),weapons:requiredWeapons(spec),tags,
     target:spec.meta['対象'],reference:spec.meta['参照能力・基準'],
-    ...entry.effect(i),
+    ...revisedEffect(spec.id,i,entry.effect(spec.levels.length===5?i:spec.id.includes('_U')?4:2)),
+    growth_mode:spec.levels.length===1?'none':`lv${spec.levels.length}`,
     ...(final?{ultimate:true}:{}),
   }));
   const effect={...effects[0],levels:effects.slice(1).map((effect,i)=>({ap:rules.upgrade_ap[i],mp,effect}))};
@@ -237,4 +241,4 @@ const cols=['id','job','path','stage','name','kind','cost','mp','ap_to_learn','i
 const cell=v=>{const t=String(v??'');return /[",\n\r]/.test(t)?'"'+t.replaceAll('"','""')+'"':t};
 fs.writeFileSync(new URL('../data/skills.csv',import.meta.url),'\uFEFF'+cols.join(',')+'\n'+rows.map(r=>cols.map(c=>cell(r[c])).join(',')).join('\n')+'\n');
 fs.writeFileSync(new URL('../data/basic_job_rules.json',import.meta.url),JSON.stringify(rules,null,2)+'\n');
-console.log(`基本8職 ${specs.length}技能・${specs.length*5}段階を出力`);
+console.log(`基本8職 ${specs.length}技能・${specs.reduce((n,s)=>n+s.levels.length,0)}段階を出力`);

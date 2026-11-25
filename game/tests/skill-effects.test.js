@@ -10,11 +10,11 @@ const data = realGameData();
 
 test('基本職技能の説明に属性・倍率・基礎率と適用条件を残す', () => {
   const expected = [
-    ['monk_A07', ['封印', '35%', '攻撃ダメージはない', '耐性・免疫・ボス補正']],
-    ['thief_A03', ['敵全体', '暗闇', '25%', '消耗品の煙玉は要求しない']],
-    ['hunter_A08', ['獣・鳥・虫', '20%', '1回だけ適用', '他種族にも基本攻撃は成立']],
+    ['monk_A07', ['封印', '45%', '攻撃ダメージはない', '耐性・免疫・ボス補正']],
+    ['thief_A03', ['敵全体', '暗闇', '35%']],
+    ['hunter_A08', ['獣', '35%', '1回だけ適用', '基本攻撃は成立']],
     ['black_mage_A04', ['炎属性', 'MAG', '0.65倍', '火傷', '20%', '同じ攻撃の条件特効に使わない']],
-    ['warrior_A02', ['敵全体', '0.55倍', '武器に従う', '追加の英語回答は発生しない']],
+    ['warrior_A02', ['2体', '0.75倍', '武器に従う', '追加の英語回答は発生しない']],
   ];
   for (const [id, fragments] of expected) {
     const text = describeSkillEffect(data, data.skills.get(id));
@@ -53,10 +53,10 @@ test('治療・蘇生・歌の説明は対象と例外を区別する', () => {
   assert.match(describeSkillEffect(data, data.skills.get('bard_P01')), /奥義.*には適用しない/);
 });
 
-test('基本8職の全600段階が修得最高Lvの説明を表示できる', () => {
+test('基本8職の全396段階が修得最高Lvの説明を表示できる', () => {
   const skills = [...data.skills.values()].filter(skill => skill.effect.master);
   assert.equal(skills.length, 120);
-  for (const skill of skills) for (let level = 1; level <= 5; level += 1) {
+  for (const skill of skills) for (let level = 1; level <= 1+skill.effect.levels.length; level += 1) {
     const member = { learned: [skill.id], skillLevels: { [skill.id]: level }, skillUseLevels: { [skill.id]: 1 } };
     const effective = effectiveSkill(data, member, skill);
     const text = describeSkillEffect(data, effective);

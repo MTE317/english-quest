@@ -1,4 +1,4 @@
-import { parseAmounts } from './csv.js?v=jobs-master-1';
+import { parseAmounts } from './csv.js?v=skill-growth-2';
 
 export function recordStoredMaterials(game) {
   game.discoveredMaterials ??= {};

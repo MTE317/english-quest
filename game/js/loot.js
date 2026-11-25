@@ -1,9 +1,9 @@
-import { roundGold } from './gold.js?v=jobs-master-1';
+import { roundGold } from './gold.js?v=skill-growth-2';
 // 戦闘の報酬（お金・素材・装備）とバックパック。
 // 式が data にないものは sim/world.py と同じ値を LOOT_FORMULAS に置く（docs/requests.md で依頼済み）。
-import { evaluate } from './expr.js?v=jobs-master-1';
-import { makeGear } from './character.js?v=jobs-master-1';
-import { splitList } from './csv.js?v=jobs-master-1';
+import { evaluate } from './expr.js?v=skill-growth-2';
+import { makeGear } from './character.js?v=skill-growth-2';
+import { splitList } from './csv.js?v=skill-growth-2';
 
 export const LOOT_FORMULAS = Object.freeze({
   gold_per_enemy: 'run_income * income_mul * gold_share / reward_budget', // 実際の遠征経路へ一周の基準収入を分配

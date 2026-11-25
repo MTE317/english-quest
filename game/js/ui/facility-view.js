@@ -1,11 +1,11 @@
-import { el, render } from '../dom.js?v=jobs-master-1';
-import { parseAmounts } from '../csv.js?v=jobs-master-1';
-import { craft, brew, enhance, dismantle, reroll, enchant, enchantFamilies, facilityUpgrade } from '../workshop.js?v=jobs-master-1';
-import { borrow, repayLoan, loanLimit } from '../town.js?v=jobs-master-1';
-import { unlockJob, jobDiscoveryProgress, offeringRevealed } from '../temple.js?v=jobs-master-1';
-import { describeFixedEffects, effectLabel, describeEffect } from '../equipment-effects.js?v=jobs-master-1';
-import { equipmentIcon } from './equipment-icons.js?v=jobs-master-1';
-import { uiIcon } from './pixel-icons.js?v=jobs-master-1';
+import { el, render } from '../dom.js?v=skill-growth-2';
+import { parseAmounts } from '../csv.js?v=skill-growth-2';
+import { craft, brew, enhance, dismantle, reroll, enchant, enchantFamilies, facilityUpgrade } from '../workshop.js?v=skill-growth-2';
+import { borrow, repayLoan, loanLimit } from '../town.js?v=skill-growth-2';
+import { unlockJob, jobDiscoveryProgress, offeringRevealed } from '../temple.js?v=skill-growth-2';
+import { describeFixedEffects, effectLabel, describeEffect } from '../equipment-effects.js?v=skill-growth-2';
+import { equipmentIcon } from './equipment-icons.js?v=skill-growth-2';
+import { uiIcon } from './pixel-icons.js?v=skill-growth-2';
 
 const heading = (text) => el('h2', {}, text);
 const btn = (text, onclick, disabled = false) => el('button', { onclick, disabled }, text);

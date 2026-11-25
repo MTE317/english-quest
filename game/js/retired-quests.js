@@ -1,4 +1,4 @@
-import { goldScale } from './gold.js?v=jobs-master-1';
+import { goldScale } from './gold.js?v=skill-growth-2';
 // 廃止された24件の連続クエストの旧セーブを一度だけ精算する。
 // 新規クエストや地域解放には使わず、受取済みの報酬は再付与しない。
 const stageCount = rank => rank <= 4 ? 3 : rank <= 8 ? 4 : 5;

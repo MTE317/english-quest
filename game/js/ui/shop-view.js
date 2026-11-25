@@ -1,4 +1,4 @@
-import { el, render } from '../dom.js?v=jobs-master-1';
+import { el, render } from '../dom.js?v=skill-growth-2';
 
 export const goldText = (price) => `${price.toLocaleString('ja-JP')} G`;
 

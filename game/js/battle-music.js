@@ -1,5 +1,5 @@
-import { loadSettings } from './storage.js?v=jobs-master-1';
-import './battle-sound.js?v=jobs-master-1';
+import { loadSettings } from './storage.js?v=skill-growth-2';
+import './battle-sound.js?v=skill-growth-2';
 
 const tracks = {
   town: 'town-square', tavern: 'guild-tavern', facility: 'town-facility', dungeon: 'dungeon-depths',

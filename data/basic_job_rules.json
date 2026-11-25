@@ -1,6 +1,6 @@
 {
-  "version": 1,
-  "master": "basic-jobs-skills-v1",
+  "version": 2,
+  "master": "basic-jobs-skills-v2",
   "provisional": true,
   "starting_ap": 30,
   "capacity": {

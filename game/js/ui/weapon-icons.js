@@ -1,4 +1,4 @@
-import { el } from '../dom.js?v=jobs-master-1';
+import { el } from '../dom.js?v=skill-growth-2';
 
 // data/weapon_types.csv の武器種IDに対応する32×32pxの画像。
 const weaponTypes = new Set([

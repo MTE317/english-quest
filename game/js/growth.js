@@ -1,7 +1,7 @@
-import { availableAp, spendAp, normalizeAp, hasVisitedJob } from './ap.js?v=jobs-master-1';
+import { availableAp, spendAp, normalizeAp, hasVisitedJob } from './ap.js?v=skill-growth-2';
 // 成長：共通AP・技能の修得と強化・装備枠・武器熟練度・ジョブチェンジ。
 // data に数として書かれていないものは GROWTH_FORMULAS に置く（docs/requests.md で依頼済み）。
-import { gearDef, aptitudeMul, unequip, maxHp, maxMp } from './character.js?v=jobs-master-1';
+import { gearDef, aptitudeMul, unequip, maxHp, maxMp } from './character.js?v=skill-growth-2';
 
 export const GROWTH_FORMULAS = Object.freeze({
   action_capacity: 10, // 通常スキルの枠（スキルの cost の合計。sim の cap_a）
@@ -85,7 +85,7 @@ export function learnBlock(data, member, skill) {
     for (const prerequisite of skill.effect.prerequisites) {
       const prev = data.skills.get(prerequisite.id);
       if (!prev || learnedSkillLevel(member, prev) < prerequisite.level) {
-        return `「${prev?.name ?? prerequisite.id}」Lv${prerequisite.level}を修得`;
+        return `「${prev?.name ?? prerequisite.id}」${prev && skillMaxLevel(prev)>1?`Lv${prerequisite.level}`:""}を修得`;
       }
     }
   } else {

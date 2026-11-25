@@ -1,18 +1,18 @@
-import { GameSession } from '../save.js?v=jobs-master-1';
-import { loadGameData } from '../gamedata.js?v=jobs-master-1';
-import { LearningStore, loadSettings, saveSettings, now } from '../storage.js?v=jobs-master-1';
-import { loadLearningCatalog } from '../learning-catalog.js?v=jobs-master-1';
-import { learningStatistics } from '../learning-stats.js?v=jobs-master-1';
-import { loadJson } from '../data.js?v=jobs-master-1';
-import { Scheduler } from '../srs.js?v=jobs-master-1';
-import { dayToString } from '../srs.js?v=jobs-master-1';
-import { DIRECTION } from '../quiz.js?v=jobs-master-1';
-import { el, render } from '../dom.js?v=jobs-master-1';
-import { monsterKnowledge } from '../monster-knowledge.js?v=jobs-master-1';
-import { setSceneMusic } from '../battle-music.js?v=jobs-master-1';
+import { GameSession } from '../save.js?v=skill-growth-2';
+import { loadGameData } from '../gamedata.js?v=skill-growth-2';
+import { LearningStore, loadSettings, saveSettings, now } from '../storage.js?v=skill-growth-2';
+import { loadLearningCatalog } from '../learning-catalog.js?v=skill-growth-2';
+import { learningStatistics } from '../learning-stats.js?v=skill-growth-2';
+import { loadJson } from '../data.js?v=skill-growth-2';
+import { Scheduler } from '../srs.js?v=skill-growth-2';
+import { dayToString } from '../srs.js?v=skill-growth-2';
+import { DIRECTION } from '../quiz.js?v=skill-growth-2';
+import { el, render } from '../dom.js?v=skill-growth-2';
+import { monsterKnowledge } from '../monster-knowledge.js?v=skill-growth-2';
+import { setSceneMusic } from '../battle-music.js?v=skill-growth-2';
 
-import { installGameShell } from '../ui/game-shell.js?v=jobs-master-1';
-import { equipmentIcon } from '../ui/equipment-icons.js?v=jobs-master-1';
+import { installGameShell } from '../ui/game-shell.js?v=skill-growth-2';
+import { equipmentIcon } from '../ui/equipment-icons.js?v=skill-growth-2';
 
 const view = document.getElementById('view');
 const session = new GameSession();
