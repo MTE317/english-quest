@@ -13,11 +13,11 @@ const data = realGameData();
 const party = ['warrior', 'knight', 'black_mage', 'white_mage', 'thief', 'bard'].map((job) => ({ name: job, job, icon: 'x' }));
 const fresh = () => createNewGame(data, party);
 
-test('最初は1段目のスキルを覚えていて、枠についている', () => {
+test('新規開始では1段目も未習得で、スキル枠は空', () => {
   const w = fresh().party[0];
   const s1 = jobSkills(data, 'warrior').filter((s) => s.stage === 1);
-  assert.ok(s1.every((s) => isLearned(w, s)));
-  assert.ok(actionSkills(data, w).length > 0);
+  assert.ok(s1.every((s) => !isLearned(w, s) && s.apToLearn > 0));
+  assert.deepEqual(actionSkills(data, w), []);
   assert.ok(actionSkills(data, w).every((s) => s.job === 'warrior' && s.kind !== 'passive'));
 });
 
@@ -28,7 +28,7 @@ test('未経験ジョブの初期スキルは共有されず、装備枠はア�
 
   const active = jobSkills(data, 'warrior').find((s) => s.stage === 1 && s.kind !== 'passive');
   const passive = jobSkills(data, 'warrior').find((s) => s.kind === 'passive');
-  w.learned.push(passive.id);
+  w.learned.push(passive.id, active.id);
   w.loadout = { actions: [passive.id, active.id], passives: [active.id, passive.id] };
   ensureLoadout(data, w);
   assert.deepEqual(w.loadout.actions, [active.id]);
@@ -75,10 +75,13 @@ test('枠：cost の合計が上限まで。ほかのジョブのスキルも持
   const g = fresh(); const w = g.party[0];
   const cap = capacity(data, w);
   assert.equal(cap.actions, GROWTH_FORMULAS.action_capacity);
-  // 未経験ジョブの初期スキルは共有されない。転職経験があれば持ち出せる。
+  // 転職経験だけでは習得しない。APで覚えてから持ち出す。
   const fire = jobSkills(data, 'black_mage').find((s) => s.stage === 1 && s.kind === 'attack');
   assert.equal(equipBlock(data, w, fire), '覚えていない');
-  w.visitedJobs.push('black_mage'); // 一度そのジョブに就いた履歴
+  w.visitedJobs.push('black_mage');
+  assert.equal(equipBlock(data, w, fire), '覚えていない');
+  w.ap = fire.apToLearn;
+  learnSkill(data, w, fire.id);
   assert.equal(equipBlock(data, w, fire), '');
   equipSkill(data, w, fire.id);
   assert.ok(actionSkills(data, w).includes(fire));
@@ -145,7 +148,8 @@ test('ジョブチェンジ：基本ジョブは選べる。装備できない�
   assert.equal(w.equip.weapon, null);
   assert.equal(w.equip.body, null);
   assert.ok(g.storage.gear.length >= 4);
-  assert.ok(actionSkills(data, w).some((s) => s.job === 'black_mage'));
+  assert.deepEqual(actionSkills(data, w), []);
+  assert.ok(jobSkills(data, 'black_mage').every(s => !isLearned(w, s)));
   g.unlockedJobs = ['gunner'];
   assert.ok(availableJobs(data, g).some((j) => j.id === 'gunner'));
 });

@@ -1,4 +1,4 @@
-import { loadSettings } from './storage.js?v=unified-ap-1';
+import { loadSettings } from './storage.js?v=paid-skills-1';
 
 let context;
 let buffer;

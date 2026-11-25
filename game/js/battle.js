@@ -7,10 +7,10 @@
 //   → 答えたら resolvePending(正解か) → また nextTurn()
 //
 // 式・効果の上限は data/balance.json から読む。BATTLE_FORMULAS は旧データ向けの既定値。
-import { evaluate } from './expr.js?v=unified-ap-1';
-import { computeStats, gearDef, weaponPower, maxHp, maxMp, gearEffects, affixSum } from './character.js?v=unified-ap-1';
-import { actionSkills, memberMods, addMasteryKill, effectiveSkill } from './growth.js?v=unified-ap-1';
-import { encounterMonsters, learnMonsterElements, hitEffectiveness } from './monster-knowledge.js?v=unified-ap-1';
+import { evaluate } from './expr.js?v=paid-skills-1';
+import { computeStats, gearDef, weaponPower, maxHp, maxMp, gearEffects, affixSum } from './character.js?v=paid-skills-1';
+import { actionSkills, memberMods, addMasteryKill, effectiveSkill } from './growth.js?v=paid-skills-1';
+import { encounterMonsters, learnMonsterElements, hitEffectiveness } from './monster-knowledge.js?v=paid-skills-1';
 
 /** balance.json にまだ式がないもの（sim と同じ） */
 export const BATTLE_FORMULAS = Object.freeze({

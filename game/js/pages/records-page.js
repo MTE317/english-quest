@@ -1,18 +1,18 @@
-import { GameSession } from '../save.js?v=unified-ap-1';
-import { loadGameData } from '../gamedata.js?v=unified-ap-1';
-import { LearningStore, loadSettings, saveSettings, now } from '../storage.js?v=unified-ap-1';
-import { loadLearningCatalog } from '../learning-catalog.js?v=unified-ap-1';
-import { learningStatistics } from '../learning-stats.js?v=unified-ap-1';
-import { loadJson } from '../data.js?v=unified-ap-1';
-import { Scheduler } from '../srs.js?v=unified-ap-1';
-import { dayToString } from '../srs.js?v=unified-ap-1';
-import { DIRECTION } from '../quiz.js?v=unified-ap-1';
-import { el, render } from '../dom.js?v=unified-ap-1';
-import { monsterKnowledge } from '../monster-knowledge.js?v=unified-ap-1';
-import { setSceneMusic } from '../battle-music.js?v=unified-ap-1';
+import { GameSession } from '../save.js?v=paid-skills-1';
+import { loadGameData } from '../gamedata.js?v=paid-skills-1';
+import { LearningStore, loadSettings, saveSettings, now } from '../storage.js?v=paid-skills-1';
+import { loadLearningCatalog } from '../learning-catalog.js?v=paid-skills-1';
+import { learningStatistics } from '../learning-stats.js?v=paid-skills-1';
+import { loadJson } from '../data.js?v=paid-skills-1';
+import { Scheduler } from '../srs.js?v=paid-skills-1';
+import { dayToString } from '../srs.js?v=paid-skills-1';
+import { DIRECTION } from '../quiz.js?v=paid-skills-1';
+import { el, render } from '../dom.js?v=paid-skills-1';
+import { monsterKnowledge } from '../monster-knowledge.js?v=paid-skills-1';
+import { setSceneMusic } from '../battle-music.js?v=paid-skills-1';
 
-import { installGameShell } from '../ui/game-shell.js?v=unified-ap-1';
-import { equipmentIcon } from '../ui/equipment-icons.js?v=unified-ap-1';
+import { installGameShell } from '../ui/game-shell.js?v=paid-skills-1';
+import { equipmentIcon } from '../ui/equipment-icons.js?v=paid-skills-1';
 
 const view = document.getElementById('view');
 const session = new GameSession();

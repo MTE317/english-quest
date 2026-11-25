@@ -1,9 +1,9 @@
-import { maxHp, maxMp } from '../character.js?v=unified-ap-1';
-import { expeditionScene } from './scenery.js?v=unified-ap-1';
-import { el } from '../dom.js?v=unified-ap-1';
-import { portraitIcon } from './portrait.js?v=unified-ap-1';
-import { equipmentIcon } from './equipment-icons.js?v=unified-ap-1';
-import { uiIcon } from './pixel-icons.js?v=unified-ap-1';
+import { maxHp, maxMp } from '../character.js?v=paid-skills-1';
+import { expeditionScene } from './scenery.js?v=paid-skills-1';
+import { el } from '../dom.js?v=paid-skills-1';
+import { portraitIcon } from './portrait.js?v=paid-skills-1';
+import { equipmentIcon } from './equipment-icons.js?v=paid-skills-1';
+import { uiIcon } from './pixel-icons.js?v=paid-skills-1';
 
 function resource(label, value, max) {
   const percent = max > 0 ? Math.min(100, Math.max(0, (value / max) * 100)) : 0;

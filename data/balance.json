@@ -956,6 +956,52 @@
       "craft_battle_mend_charm",
       "craft_cycle_ring",
       "craft_illusion_cloak"
+    ],
+    "retired_initial_skills": [
+      "warrior_p1_s1",
+      "warrior_p2_s1",
+      "warrior_p3_s1",
+      "knight_p1_s1",
+      "knight_p2_s1",
+      "knight_p3_s1",
+      "black_mage_p1_s1",
+      "black_mage_p2_s1",
+      "black_mage_p3_s1",
+      "white_mage_p1_s1",
+      "white_mage_p2_s1",
+      "white_mage_p3_s1",
+      "thief_p1_s1",
+      "thief_p2_s1",
+      "thief_p3_s1",
+      "monk_p1_s1",
+      "monk_p2_s1",
+      "monk_p3_s1",
+      "hunter_p1_s1",
+      "hunter_p2_s1",
+      "hunter_p3_s1",
+      "bard_p1_s1",
+      "bard_p2_s1",
+      "bard_p3_s1",
+      "elementalist_p1_s1",
+      "elementalist_p2_s1",
+      "gunner_p1_s1",
+      "gunner_p2_s1",
+      "dancer_p1_s1",
+      "dancer_p2_s1",
+      "spellblade_p1_s1",
+      "spellblade_p2_s1",
+      "hexer_p1_s1",
+      "hexer_p2_s1",
+      "apothecary_p1_s1",
+      "apothecary_p2_s1",
+      "common_mana_afterglow",
+      "stormcaster_chain",
+      "venomist_venom",
+      "bloodblade_scorch",
+      "infernalist_art",
+      "seal_archer_art",
+      "neutralist_art",
+      "petrifier_shot"
     ]
   },
   "ap_system": {
@@ -963,4 +1009,3 @@
     "note": "APはキャラごとに全ジョブ・共通パッシブで共通。旧ジョブ別残高を合算し、未使用共通ポイントは1pt=10APで一度だけ換算。以後レベルによる共通ポイント付与は廃止。"
   }
 }
-

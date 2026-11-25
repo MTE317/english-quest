@@ -41,7 +41,7 @@ test('Dは銃士の成長・適性、独立4技能。既存ID・6人・1024体�
   assert.equal(data.jobs.length, 21);
   assert.equal(data.monsters.size, 1024);
   assert.equal(fresh().party.length, 6);
-  assert.deepEqual([...data.skills.values()].filter(s => s.job === 'petrifier').map(s => [s.apToLearn, s.cost]), [[0,2],[15,2],[18,2],[45,4]]);
+  assert.deepEqual([...data.skills.values()].filter(s => s.job === 'petrifier').map(s => [s.apToLearn, s.cost]), [[10,2],[15,2],[18,2],[45,4]]);
 });
 
 test('ボス素材の安全帰還で儀式を発見。全滅では未発見、奉納は必要数だけを消費', () => {
@@ -64,7 +64,7 @@ test('ボス素材の安全帰還で儀式を発見。全滅では未発見、�
   assert.ok(s.game.unlockedJobs.includes('petrifier'));
 });
 
-test('無料転職・AP78、保存再読込・持出し・重複装着禁止・現職限定奥義', () => {
+test('無料転職・AP88、保存再読込・持出し・重複装着禁止・現職限定奥義', () => {
   const game = fresh();
   const m = unlockAndTrain(data, game, 0);
   assert.equal(game.jp, undefined);

@@ -1,7 +1,7 @@
-import { denominateGoldData } from './gold.js?v=unified-ap-1';
+import { denominateGoldData } from './gold.js?v=paid-skills-1';
 // ゲームで使う data/ のファイルをまとめて読み、ID で引ける形にする。
-import { loadCsv, loadJson, loadOptional } from './data.js?v=unified-ap-1';
-import { toNumber, splitList } from './csv.js?v=unified-ap-1';
+import { loadCsv, loadJson, loadOptional } from './data.js?v=paid-skills-1';
+import { toNumber, splitList } from './csv.js?v=paid-skills-1';
 
 const FILES = {
   balance: 'balance.json',

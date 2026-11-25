@@ -21,6 +21,11 @@ function fixture(job,mode,cfg){
  game.items={};
  for(const [i,m] of game.party.entries()){
   m.lv=cfg.level;m.ap=i===5&&mode==='lv3_lore'?40:30;
+  // 比較の共通土台となる1段目技能も正式費用で購入。追加の30/40APとは別に費用を記録する。
+  const entrySkills=[...data.skills.values()].filter(s=>s.job===m.job&&s.stage===1);
+  m.entrySkillFixtureAp=entrySkills.reduce((sum,s)=>sum+s.apToLearn,0);
+  m.ap+=m.entrySkillFixtureAp;
+  for(const skill of entrySkills)growth.learnSkill(data,m,skill.id);
   if(i<5)for(const id of wide[m.job])growth.learnSkill(data,m,id);
   if(i===5){
    const level=Number(mode[2]);
@@ -66,7 +71,7 @@ const rows=[],fixtures={};const mean=xs=>xs.length?xs.reduce((a,b)=>a+b,0)/xs.le
 const summary=xs=>({battles:xs.length,wins:xs.filter(x=>x.win).length,questions:mean(xs.map(x=>x.questions)),mpSpent:mean(xs.map(x=>x.mpSpent)),actualSkillMp:mean(xs.map(x=>x.actualSkillMp)),attackActions:mean(xs.map(x=>x.attackActions)),partyAttackActions:mean(xs.map(x=>x.partyAttackActions)),kills:mean(xs.map(x=>x.kills)),skills:xs.reduce((o,x)=>{for(const [id,n]of Object.entries(x.skills))o[id]=(o[id]??0)+n;return o;},{})});
 for(const cfg of settings)for(const job of jobs)for(const mode of modes){
  const template=fixture(job,mode,cfg);const key=`${cfg.id}/${job}/${mode}`;
- fixtures[key]=template.party.map(m=>({job:m.job,ap:m.ap,learned:m.learned,loadout:m.loadout,skillLevels:m.skillLevels,skillUseLevels:m.skillUseLevels,equip:Object.fromEntries(Object.entries(m.equip).map(([slot,g])=>[slot,g&&{...g,uid:undefined}]))}));
+ fixtures[key]=template.party.map(m=>({job:m.job,ap:m.ap,entrySkillAp:m.entrySkillFixtureAp,learned:m.learned,loadout:m.loadout,skillLevels:m.skillLevels,skillUseLevels:m.skillUseLevels,equip:Object.fromEntries(Object.entries(m.equip).map(([slot,g])=>[slot,g&&{...g,uid:undefined}]))}));
  const trials=[],normal=[],boss=[];
  for(let i=0;i<runs;i++){
   const game=structuredClone(template),rseed=seed+i*7919,rng=rngFor(rseed),battles=[];let stop=false;

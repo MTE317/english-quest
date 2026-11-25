@@ -1,9 +1,9 @@
 // 4択を続けて出す部品（確認テスト・昇格試験・鍛錬で使う）。答えは学習記録にも入る。
-import { now } from '../storage.js?v=unified-ap-1';
-import { makePracticeQuestion, questionDirection, questionSpeech, DIRECTION } from '../quiz.js?v=unified-ap-1';
-import { speak, canSpeak, stopSpeech } from '../speech.js?v=unified-ap-1';
-import { REASON_LABEL } from '../picker.js?v=unified-ap-1';
-import { el, render } from '../dom.js?v=unified-ap-1';
+import { now } from '../storage.js?v=paid-skills-1';
+import { makePracticeQuestion, questionDirection, questionSpeech, DIRECTION } from '../quiz.js?v=paid-skills-1';
+import { speak, canSpeak, stopSpeech } from '../speech.js?v=paid-skills-1';
+import { REASON_LABEL } from '../picker.js?v=paid-skills-1';
+import { el, render } from '../dom.js?v=paid-skills-1';
 
 /**
  * @param opts.next () => { word, reason? } | null 次の単語

@@ -4,6 +4,7 @@ import {
   makeEnemy, createBattle, nextTurn, actionOptions, setPending, resolvePending, finishBattle, battleRewards,
   elementMul, fleeRate, knownSkills, targetKind, curedBy, collectBattleHits,
 } from '../js/battle.js';
+import { learnSkill, equipSkill } from '../js/growth.js';
 import { monsterKnowledge } from '../js/monster-knowledge.js';
 import { createNewGame } from '../js/game-state.js';
 import { evaluate } from '../js/expr.js';
@@ -124,6 +125,7 @@ test('不正解だと弱い行動になる（与えるダメージが減る）',
 
 test('弱点の属性は大きく、効きにくい属性は小さく', () => {
   const game = createNewGame(data, party);
+  game.party[2].ap = 10; learnSkill(data, game.party[2], 'black_mage_p1_s1'); equipSkill(data, game.party[2], 'black_mage_p1_s1');
   // スライムは炎が弱点・打撃が効きにくい。黒魔道士の炎弾（炎）
   const fire = knownSkills(data, game.party[2]).find((s) => s.elements.includes('fire'));
   assert.ok(fire, '黒魔道士の炎のスキル');
@@ -194,10 +196,15 @@ test('全問不正解で強い敵と戦うと全滅する（負けがある）',
   assert.equal(fight(game, b, () => false).result, 'lose');
 });
 
-test('すべてのジョブの1段目のスキルが使える（エラーにならない）', () => {
+test('APで習得・装着した各ジョブの1段目スキルを実行できる', () => {
   for (const job of data.jobs) {
     const game = createNewGame(data, [{ name: 'X', job: job.id, icon: 'x' }, ...party.slice(1)]);
-    for (const s of knownSkills(data, game.party[0])) {
+    const member=game.party[0]; member.ap=1000;
+    for (const skill of data.skills.values()) if(skill.job===job.id && skill.stage===1) {
+      learnSkill(data,member,skill.id); equipSkill(data,member,skill.id);
+    }
+    assert.ok(knownSkills(data,member).length > 0);
+    for (const s of knownSkills(data, member)) {
       const e = makeEnemy(data, 'slime', { lv: 1 }); e.spd = 0; e.hp = e.maxHp = 99999;
       const b = createBattle(data, game, { enemies: [e], seed: 1 });
       game.party[0].mp = 999;
@@ -279,3 +286,4 @@ test('複合属性は免疫と弱点のうち有利な倍率を採用する', ()
   assert.equal(damage(false), 0);
   assert.ok(damage(true) > 0);
 });
+

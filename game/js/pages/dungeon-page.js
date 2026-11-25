@@ -1,29 +1,29 @@
 // ダンジョンの画面：行き先とルーンストーンを選ぶ → 階を進む → 戦闘 → 帰還ポイント・ボス → 町へ
-import { loadGameData } from '../gamedata.js?v=unified-ap-1';
-import { loadJson } from '../data.js?v=unified-ap-1';
-import { loadLearningCatalog } from '../learning-catalog.js?v=unified-ap-1';
-import { Scheduler } from '../srs.js?v=unified-ap-1';
-import { LearningStore, now, loadSettings } from '../storage.js?v=unified-ap-1';
-import { QuestionPicker } from '../picker.js?v=unified-ap-1';
-import { GameSession } from '../save.js?v=unified-ap-1';
-import { normalizeGame } from '../game-state.js?v=unified-ap-1';
+import { loadGameData } from '../gamedata.js?v=paid-skills-1';
+import { loadJson } from '../data.js?v=paid-skills-1';
+import { loadLearningCatalog } from '../learning-catalog.js?v=paid-skills-1';
+import { Scheduler } from '../srs.js?v=paid-skills-1';
+import { LearningStore, now, loadSettings } from '../storage.js?v=paid-skills-1';
+import { QuestionPicker } from '../picker.js?v=paid-skills-1';
+import { GameSession } from '../save.js?v=paid-skills-1';
+import { normalizeGame } from '../game-state.js?v=paid-skills-1';
 import {
   allowedDungeons, allowedStones, expeditionFee, startRun, startNextBattle, afterBattle, returnToTown, continueRun, resolveLoot,
   isBossBattle, runFloorRow, runFloorCount, returnItems, currentRank, useItemOutsideBattle, FIELD_ITEM_EFFECTS,
-} from '../dungeon.js?v=unified-ap-1';
-import { backpackSlots, backpackUsed, addItem } from '../loot.js?v=unified-ap-1';
-import { maxHp, maxMp } from '../character.js?v=unified-ap-1';
-import { createBattleView } from '../ui/battle-view.js?v=unified-ap-1';
-import { createVictoryView, createLootIcons } from '../ui/victory-view.js?v=unified-ap-1';
-import { el, render, stars } from '../dom.js?v=unified-ap-1';
-import { buildWorldMap, newDiscoveries } from '../world-map.js?v=unified-ap-1';
-import { createWorldMapView } from '../ui/world-map-view.js?v=unified-ap-1';
-import { setSceneMusic } from '../battle-music.js?v=unified-ap-1';
+} from '../dungeon.js?v=paid-skills-1';
+import { backpackSlots, backpackUsed, addItem } from '../loot.js?v=paid-skills-1';
+import { maxHp, maxMp } from '../character.js?v=paid-skills-1';
+import { createBattleView } from '../ui/battle-view.js?v=paid-skills-1';
+import { createVictoryView, createLootIcons } from '../ui/victory-view.js?v=paid-skills-1';
+import { el, render, stars } from '../dom.js?v=paid-skills-1';
+import { buildWorldMap, newDiscoveries } from '../world-map.js?v=paid-skills-1';
+import { createWorldMapView } from '../ui/world-map-view.js?v=paid-skills-1';
+import { setSceneMusic } from '../battle-music.js?v=paid-skills-1';
 
-import { expeditionScene } from '../ui/scenery.js?v=unified-ap-1';
-import { installGameShell } from '../ui/game-shell.js?v=unified-ap-1';
-import { portraitIcon } from '../ui/portrait.js?v=unified-ap-1';
-import { playDungeonEntrance } from '../ui/dungeon-entrance.js?v=unified-ap-1';
+import { expeditionScene } from '../ui/scenery.js?v=paid-skills-1';
+import { installGameShell } from '../ui/game-shell.js?v=paid-skills-1';
+import { portraitIcon } from '../ui/portrait.js?v=paid-skills-1';
+import { playDungeonEntrance } from '../ui/dungeon-entrance.js?v=paid-skills-1';
 
 const view = document.getElementById('view');
 const session = new GameSession();

@@ -17,7 +17,7 @@
 // - 戦闘を始めたら setBattle() で保存する。1行動ごとにも setBattle() で保存する
 //   → 負けそうなときに閉じて開き直しても、同じ戦闘の同じところから続く
 // - 全員倒れたら、画面に出す前に wipe() を呼ぶ（その場で保存される）
-import { SAVE_KEY, safeStorage } from './storage.js?v=unified-ap-1';
+import { SAVE_KEY, safeStorage } from './storage.js?v=paid-skills-1';
 
 export const SAVE_VERSION = 2;
 const CHANT_BACKUP_KEY = 'englishQuest.chantBackup.v2';

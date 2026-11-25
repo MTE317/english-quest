@@ -12,12 +12,13 @@ const fresh = () => createNewGame(data, ['warrior','knight','black_mage','white_
 
 test('APを転職後の習得・強化・共通パッシブで使い、仲間とは共有しない', () => {
   const game=fresh(), m=game.party[0];
-  m.ap=60; m.lv=5;
+  m.ap=70; m.lv=5;
   assert.equal(isLearned(m,data.skills.get('black_mage_p1_s1')),false);
   assert.throws(()=>learnSkill(data,m,'black_mage_p1_s2'),/転職/);
   changeJob(data,game,0,'black_mage');
-  assert.equal(m.ap,60);
+  assert.equal(m.ap,70);
   learnSkill(data,m,'black_mage_p1_s2');
+  learnSkill(data,m,'black_mage_p1_s1');
   upgradeSkill(data,m,'black_mage_p1_s1');
   learnCommon(data,m,'vit1');
   assert.equal(m.ap,30);
@@ -45,7 +46,7 @@ test('AP不足・レベル不足・二重習得では残高を変えず、レベ
 
 test('旧残高・未使用共通ポイント・訓練の小数を一度だけ合算し、習得と転職経験を保持', () => {
   const game=fresh(), m=game.party[0];
-  delete m.apVersion; delete m.visitedJobs;
+  delete m.apVersion; delete m.visitedJobs; delete m.skillAcquisitionVersion;
   m.lv=5; m.ap={warrior:17,black_mage:0,thief:23};
   m.common=['vit1']; m.learned=['warrior_p1_s2'];
   m.trainingCredit={xp:.9,ap:{warrior:.8,thief:.7}};
@@ -54,7 +55,7 @@ test('旧残高・未使用共通ポイント・訓練の小数を一度だけ�
   assert.equal(m.ap,71); // 40AP + 未使用3pt×10 + 小数合算1AP
   assert.equal(m.trainingCredit.ap,.5);
   assert.equal(m.trainingCredit.xp,.9);
-  assert.deepEqual(m.common,['vit1']); assert.deepEqual(m.learned,['warrior_p1_s2']);
+  assert.deepEqual(m.common,['vit1']); assert.ok(m.learned.includes('warrior_p1_s2'));
   assert.equal(isLearned(m,data.skills.get('black_mage_p1_s1')),true);
   assert.equal(isLearned(m,data.skills.get('white_mage_p1_s1')),false);
   assert.equal(run.snapshot.party[0].ap,71);

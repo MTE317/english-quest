@@ -1,11 +1,11 @@
-import { el, render } from '../dom.js?v=unified-ap-1';
-import { parseAmounts } from '../csv.js?v=unified-ap-1';
-import { craft, brew, enhance, dismantle, reroll, enchant, enchantFamilies, facilityUpgrade } from '../workshop.js?v=unified-ap-1';
-import { borrow, repayLoan, loanLimit } from '../town.js?v=unified-ap-1';
-import { unlockJob, jobDiscoveryProgress, offeringRevealed } from '../temple.js?v=unified-ap-1';
-import { describeFixedEffects, effectLabel, describeEffect } from '../equipment-effects.js?v=unified-ap-1';
-import { equipmentIcon } from './equipment-icons.js?v=unified-ap-1';
-import { uiIcon } from './pixel-icons.js?v=unified-ap-1';
+import { el, render } from '../dom.js?v=paid-skills-1';
+import { parseAmounts } from '../csv.js?v=paid-skills-1';
+import { craft, brew, enhance, dismantle, reroll, enchant, enchantFamilies, facilityUpgrade } from '../workshop.js?v=paid-skills-1';
+import { borrow, repayLoan, loanLimit } from '../town.js?v=paid-skills-1';
+import { unlockJob, jobDiscoveryProgress, offeringRevealed } from '../temple.js?v=paid-skills-1';
+import { describeFixedEffects, effectLabel, describeEffect } from '../equipment-effects.js?v=paid-skills-1';
+import { equipmentIcon } from './equipment-icons.js?v=paid-skills-1';
+import { uiIcon } from './pixel-icons.js?v=paid-skills-1';
 
 const heading = (text) => el('h2', {}, text);
 const btn = (text, onclick, disabled = false) => el('button', { onclick, disabled }, text);

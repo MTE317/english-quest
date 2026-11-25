@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { loadData } from '../../sim/balance.mjs';
 import { createNewGame, normalizeGame } from '../js/game-state.js';
-import { equipSkill, learnCommon, isLearned, memberMods, ensureLoadout } from '../js/growth.js';
+import { equipSkill, learnSkill, learnCommon, isLearned, memberMods, ensureLoadout } from '../js/growth.js';
 import { maxHp, maxMp } from '../js/character.js';
 import { recoverAfterBattle } from '../js/dungeon.js';
 import { GameSession } from '../js/save.js';
@@ -10,10 +10,10 @@ import { MemoryStorage, T0 } from './helpers.js';
 const data = loadData();
 function setup(tree, passive, upper = false) {
   const game = createNewGame(data, ['warrior','knight','black_mage','white_mage','thief','bard'].map((job,i)=>({job,name:`検証${i}`,icon:'x'})));
-  const m = game.party[0]; m.lv=30; m.ap=30; m.hp=maxHp(data,m); m.mp=0;
+  const m = game.party[0]; m.lv=30; m.ap=40; m.hp=maxHp(data,m); m.mp=0;
   if(tree) learnCommon(data,m,'mana_afterglow');
   if(upper) learnCommon(data,m,'mana2');
-  if(passive) equipSkill(data,m,'common_mana_afterglow');
+  if(passive) { learnSkill(data,m,'common_mana_afterglow'); equipSkill(data,m,'common_mana_afterglow'); }
   return {game,m};
 }
 for(const upper of [false,true]) for(const [label,tree,passive] of [['なし',false,false],['ツリーのみ',true,false],['装着のみ',false,true],['両方',true,true]]) {
@@ -32,15 +32,15 @@ for(const upper of [false,true]) for(const [label,tree,passive] of [['なし',fa
     recoverAfterBattle(data,game); assert.equal(m.mp,restored.mp);
   });
 }
-test('共通パッシブだけを例外とし未経験職のAP0技能は使えない',()=>{
+test('共通パッシブも未経験職のスキルも無料習得せず、不正な装着を除く',()=>{
   const {m}=setup(false,false);
-  assert.equal(isLearned(m,data.skills.get('common_mana_afterglow')),true);
+  assert.equal(isLearned(m,data.skills.get('common_mana_afterglow')),false);
   assert.equal(isLearned(m,data.skills.get('black_mage_p1_s1')),false);
   assert.throws(()=>equipSkill(data,m,'black_mage_p1_s1'),/覚えていない/);
   m.loadout.passives.push('common_mana_afterglow');
   m.loadout.actions.push('black_mage_p1_s1');
   ensureLoadout(data,m);
-  assert.ok(m.loadout.passives.includes('common_mana_afterglow'));
+  assert.ok(!m.loadout.passives.includes('common_mana_afterglow'));
   assert.ok(!m.loadout.actions.includes('black_mage_p1_s1'));
 });
 test('他のMP回復要因には基本版の上限を課さない',()=>{

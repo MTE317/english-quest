@@ -1,17 +1,17 @@
 // 戦況を表示したまま、下段をコマンド・対象の案内・問題・結果に切り替える。
-import { now } from '../storage.js?v=unified-ap-1';
-import { QuestionPicker, REASON_LABEL } from '../picker.js?v=unified-ap-1';
-import { makePracticeQuestion, questionDirection, questionSpeech, DIRECTION } from '../quiz.js?v=unified-ap-1';
-import { speak, canSpeak, stopSpeech } from '../speech.js?v=unified-ap-1';
-import { nextTurn, actionOptions, setPending, prepareQuizAction, resolvePending, targetKind, canAct, skillMp, collectBattleHits, enemyIntent, enemyCanAct } from '../battle.js?v=unified-ap-1';
-import { skillMaxLevel, usedSkillLevel } from '../growth.js?v=unified-ap-1';
-import { maxHp, maxMp } from '../character.js?v=unified-ap-1';
-import { el, render } from '../dom.js?v=unified-ap-1';
-import { expeditionScene } from './scenery.js?v=unified-ap-1';
-import { monsterKnowledge } from '../monster-knowledge.js?v=unified-ap-1';
-import { startBattleMusic, finishBattleMusic } from '../battle-music.js?v=unified-ap-1';
-import { unlockBattleSound, playBattleHitSound } from '../battle-sound.js?v=unified-ap-1';
-import { portraitIcon } from './portrait.js?v=unified-ap-1';
+import { now } from '../storage.js?v=paid-skills-1';
+import { QuestionPicker, REASON_LABEL } from '../picker.js?v=paid-skills-1';
+import { makePracticeQuestion, questionDirection, questionSpeech, DIRECTION } from '../quiz.js?v=paid-skills-1';
+import { speak, canSpeak, stopSpeech } from '../speech.js?v=paid-skills-1';
+import { nextTurn, actionOptions, setPending, prepareQuizAction, resolvePending, targetKind, canAct, skillMp, collectBattleHits, enemyIntent, enemyCanAct } from '../battle.js?v=paid-skills-1';
+import { skillMaxLevel, usedSkillLevel } from '../growth.js?v=paid-skills-1';
+import { maxHp, maxMp } from '../character.js?v=paid-skills-1';
+import { el, render } from '../dom.js?v=paid-skills-1';
+import { expeditionScene } from './scenery.js?v=paid-skills-1';
+import { monsterKnowledge } from '../monster-knowledge.js?v=paid-skills-1';
+import { startBattleMusic, finishBattleMusic } from '../battle-music.js?v=paid-skills-1';
+import { unlockBattleSound, playBattleHitSound } from '../battle-sound.js?v=paid-skills-1';
+import { portraitIcon } from './portrait.js?v=paid-skills-1';
 
 const TARGET_PROMPT = {
   enemy: '攻撃する敵を選ぶ',
