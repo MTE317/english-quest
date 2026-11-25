@@ -161,6 +161,7 @@ function showDeparture(message = null) {
 function debugTools() {
   return el('details', { class: 'panel' },
     el('summary', {}, '動作確認用'),
+    el('a', { class: 'btn', href: 'status-debug.html' }, '全員の状態異常を試す'),
     el('p', { class: 'muted small' }, '本番のゲームにはないボタンです（町の宿屋・道具屋・昇格試験はチェックリスト8・10番で作る）。'),
     el('button', {
       onclick: () => {
@@ -389,4 +390,5 @@ function battleView() {
     console.error(e);
   }
 })();
+
 
