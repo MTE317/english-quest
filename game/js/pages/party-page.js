@@ -417,7 +417,7 @@ function showSkills(index, jobId, skillId, message = '') {
   const commonKey = `${index}:common`;
   const commonPassives = el('details', {
     class: 'skill-category common-passives',
-    open: skillCategoryOpen.get(commonKey) ?? Boolean(skillId?.startsWith('common:')),
+    open: skillCategoryOpen.get(commonKey) ?? false,
     ontoggle: event => skillCategoryOpen.set(commonKey, event.currentTarget.open),
   },
     el('summary', {}, `共通パッシブ`),
@@ -453,8 +453,7 @@ function showSkills(index, jobId, skillId, message = '') {
       el('div', { class: 'skill-branches', style: `--branches:${paths.length}` },
         paths.map(([path, branch]) => el('details', {
           class: 'skill-category',
-          open: skillCategoryOpen.get(`${index}:${job}:${path}`)
-            ?? (!skillId?.startsWith('common:') && branch.some(skill => skill.id === selected?.id)),
+          open: skillCategoryOpen.get(`${index}:${job}:${path}`) ?? false,
           ontoggle: event => skillCategoryOpen.set(`${index}:${job}:${path}`, event.currentTarget.open),
         },
           el('summary', {}, path),
