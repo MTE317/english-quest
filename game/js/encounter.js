@@ -1,7 +1,7 @@
 // 出てくる敵を決める（ダンジョンと階から）。
-import { makeEnemy } from './battle.js?v=basic-skill-levels-1';
-import { affixSum } from './character.js?v=basic-skill-levels-1';
-import { memberMods } from './growth.js?v=basic-skill-levels-1';
+import { makeEnemy } from './battle.js?v=unified-ap-1';
+import { affixSum } from './character.js?v=unified-ap-1';
+import { memberMods } from './growth.js?v=unified-ap-1';
 
 /** そのダンジョンにふだん出るモンスター */
 export function monsterPool(data, dungeonId, season) {
@@ -145,3 +145,4 @@ export function dungeonRouteUnlocked(data, game, dungeon) {
   const previousRegionEnd = Math.floor((dungeon.rank - 1) / 3) * 3;
   return [...data.dungeons.values()].some((entry) => entry.kind === '標準' && entry.rank >= previousRegionEnd && cleared[entry.id] > 0);
 }
+

@@ -1,5 +1,5 @@
-import { el } from '../dom.js';
-import { weaponIcon } from './weapon-icons.js';
+import { el } from '../dom.js?v=unified-ap-1';
+import { weaponIcon } from './weapon-icons.js?v=unified-ap-1';
 
 // 防具は装備の部位ごとに1枚を共用する。軽さ・レアリティ・個別IDでは分けない。
 const armorSlots = new Set(['head', 'arm', 'body', 'cloak']);
@@ -18,3 +18,4 @@ export function equipmentIcon(def) {
   if (!def) return null;
   return def.slot === 'weapon' ? weaponIcon(def.kind) : armorIcon(def.slot);
 }
+

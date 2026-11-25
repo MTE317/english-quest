@@ -1,4 +1,4 @@
-import { parseAmounts } from './csv.js';
+import { parseAmounts } from './csv.js?v=unified-ap-1';
 
 export function recordStoredMaterials(game) {
   game.discoveredMaterials ??= {};
@@ -84,3 +84,4 @@ export function cureAtTemple(data, game, member) {
   delete member.persistState;
   return `状態異常を治療した（${cost} G）。`;
 }
+

@@ -1,27 +1,28 @@
+import { availableAp } from '../ap.js?v=unified-ap-1';
 // パーティーの画面：キャラメイク・6人の一覧・能力値・装備8枠
-import { loadGameData } from '../gamedata.js?v=gold-unit-1';
-import { GameSession } from '../save.js?v=gold-unit-1';
-import { createNewGame, defaultPartySpecs, normalizeGame } from '../game-state.js?v=gold-unit-1';
+import { loadGameData } from '../gamedata.js?v=unified-ap-1';
+import { GameSession } from '../save.js?v=unified-ap-1';
+import { createNewGame, defaultPartySpecs, normalizeGame } from '../game-state.js?v=unified-ap-1';
 import {
   computeStats, SLOTS, SLOT_LABEL, STAT_LABEL, canEquip, equipFromStorage, unequip, gearDef,
   aptitudeGrade, xpToNext, levelCap, gainXp, makeGear,
-} from '../character.js?v=basic-skill-levels-1';
+} from '../character.js?v=unified-ap-1';
 import {
   jobPaths, isLearned, skillPrerequisite, learnBlock, learnSkill, equipBlock, equipSkill, unequipSkill, capacity, usedCapacity,
-  commonPoints, commonBlock, learnCommon, masteryLevel, isJobMastered,
+  commonApCost, commonBlock, learnCommon, masteryLevel, isJobMastered,
   skillMaxLevel, learnedSkillLevel, usedSkillLevel, effectiveSkill, upgradeSkillBlock, upgradeSkill, setSkillUseLevel,
-} from '../growth.js?v=basic-skill-levels-1';
-import { skillMp } from '../battle.js?v=basic-skill-levels-1';
-import { el, render, stars } from '../dom.js';
-import { describeFixedEffects } from '../equipment-effects.js?v=build36-1';
-import { describeSkillEffect } from '../skill-effects.js?v=build36-1';
+} from '../growth.js?v=unified-ap-1';
+import { skillMp } from '../battle.js?v=unified-ap-1';
+import { el, render, stars } from '../dom.js?v=unified-ap-1';
+import { describeFixedEffects } from '../equipment-effects.js?v=unified-ap-1';
+import { describeSkillEffect } from '../skill-effects.js?v=unified-ap-1';
 
-import { setSceneMusic } from '../battle-music.js?v=music-suite-1';
+import { setSceneMusic } from '../battle-music.js?v=unified-ap-1';
 
-import { installGameShell } from '../ui/game-shell.js?v=pixel-town-1';
-import { weaponIcon } from '../ui/weapon-icons.js';
-import { armorIcon, equipmentIcon } from '../ui/equipment-icons.js';
-import { portraitIcon, portraitLabel, PORTRAIT_GROUPS } from '../ui/portrait.js';
+import { installGameShell } from '../ui/game-shell.js?v=unified-ap-1';
+import { weaponIcon } from '../ui/weapon-icons.js?v=unified-ap-1';
+import { armorIcon, equipmentIcon } from '../ui/equipment-icons.js?v=unified-ap-1';
+import { portraitIcon, portraitLabel, PORTRAIT_GROUPS } from '../ui/portrait.js?v=unified-ap-1';
 
 const view = document.getElementById('view');
 setSceneMusic('facility');
@@ -368,7 +369,7 @@ function showSkills(index, jobId, skillId, message = '') {
   const member = session.game.party[index];
   const cap = capacity(data, member);
   const used = usedCapacity(data, member);
-  const jobs = [member.job, ...Object.keys(member.ap).filter((id) => id !== member.job && data.jobsById.has(id))];
+  const jobs = [member.job, ...(member.visitedJobs ?? []).filter((id) => id !== member.job && data.jobsById.has(id))];
   const job = jobs.includes(jobId) ? jobId : member.job;
   const basic = data.jobsById.get(job)?.tier === 'base';
   let paths = basic ? ['攻撃', '回復・防御', '妨害・支援', 'パッシブ'].map(name => [name, []]) : [...jobPaths(data, job).entries()];
@@ -412,7 +413,7 @@ function showSkills(index, jobId, skillId, message = '') {
         el('p', {}, `習得Lv ${level}/${skillMaxLevel(skill)}・使用Lv ${usedSkillLevel(member, skill)}（使用Lvは装備画面で選択）`),
         next ? el('p', {}, `次のLv: 基礎MP ${next.mp}・${describeSkillEffect(data, { ...skill, effect: { ...skill.effect, ...next.effect } })}`) : null,
         el('button', { disabled: session.inDungeon || !!upgradeReason, onclick: () => updateSkill((m) => upgradeSkill(data, m, skill.id)) },
-          upgradeReason || `Lv${level + 1}へ強化（${jobName(skill.job)} AP ${next.ap}）`)) : null,
+          upgradeReason || `Lv${level + 1}へ強化（AP ${next.ap}）`)) : null,
       !learned
         ? el('button', { class: 'primary', disabled: !!learnReason,
           onclick: () => updateSkill((m) => learnSkill(data, m, skill.id)) }, learnReason || `覚える（AP ${skill.apToLearn}）`)
@@ -428,12 +429,12 @@ function showSkills(index, jobId, skillId, message = '') {
       el('header', {}, skillIcon({ kind: 'passive' }), el('h2', {}, node.name)),
       el('p', { class: 'shop-description' }, '共通パッシブ'),
       el('p', {}, node.effect),
-      el('p', { class: 'small muted' }, `必要Lv ${node.level}・必要ポイント ${node.points}pt・残り ${commonPoints(data, member).left}pt`),
+      el('p', { class: 'small muted' }, `必要Lv ${node.level}・習得AP ${commonApCost(node)}・残りAP ${availableAp(data, member)}`),
       el('p', { class: 'small muted' }, '習得後はどのジョブでも常時有効です。装着は不要です。'),
       learned ? el('p', { class: 'skill-shop-equipped' }, '習得済み') : el('button', {
         class: 'primary', disabled: session.inDungeon || !!reason,
         onclick: () => updateSkill(target => learnCommon(data, target, node.id)),
-      }, reason || `覚える（${node.points}pt）`));
+      }, reason || `覚える（AP ${commonApCost(node)}）`));
   }
 
   const commonKey = `${index}:common`;
@@ -442,7 +443,7 @@ function showSkills(index, jobId, skillId, message = '') {
     open: skillCategoryOpen.get(commonKey) ?? Boolean(skillId?.startsWith('common:')),
     ontoggle: event => skillCategoryOpen.set(commonKey, event.currentTarget.open),
   },
-    el('summary', {}, `共通パッシブ（残り ${commonPoints(data, member).left}pt）`),
+    el('summary', {}, `共通パッシブ`),
     el('ol', { class: 'shop-grid skill-learning-grid' }, data.commonTree.map(node => {
       const learned = (member.common ?? []).includes(node.id);
       const available = !learned && !commonBlock(data, member, node);
@@ -453,7 +454,7 @@ function showSkills(index, jobId, skillId, message = '') {
         onclick: () => selectCommon(node),
       }, skillIcon({ kind: 'passive' }),
       el('span', { class: 'shop-slot-name' }, node.name),
-      el('span', { class: 'shop-slot-count' }, `Lv${node.level}・${node.points}pt`),
+      el('span', { class: 'shop-slot-count' }, `Lv${node.level}・AP ${commonApCost(node)}`),
       el('span', { class: 'skill-node-state' }, learned ? '習得済' : available ? '習得可' : '未習得'));
       nodes.set(id, button);
       return el('li', {}, button);
@@ -464,7 +465,7 @@ function showSkills(index, jobId, skillId, message = '') {
     el('h2', {}, 'スキル習得・強化'),
     detail,
     el('button', { class: 'ghost', onclick: () => showLoadout(index, selected?.kind === 'passive' ? 'passives' : 'actions', '', selected?.kind === 'common' ? '' : selected?.id) }, 'スキル装備・取り外しへ'),
-    el('p', { class: 'panel small' }, `残りAP ${member.ap[job] ?? 0}・共通ポイント ${commonPoints(data, member).left}pt・通常枠 ${used.actions}/${cap.actions}・パッシブ枠 ${used.passives}/${cap.passives}`),
+    el('p', { class: 'panel small' }, `残りAP ${availableAp(data, member)}（全ジョブ・共通パッシブ共通）・通常枠 ${used.actions}/${cap.actions}・パッシブ枠 ${used.passives}/${cap.passives}`),
     message ? el('p', { class: 'error', role: 'status' }, message) : null,
     jobs.length > 1 ? el('label', { class: 'small' }, 'ジョブ',
       el('select', { class: 'select', onchange: (event) => showSkills(index, event.target.value) },
@@ -606,3 +607,4 @@ function debugTools() {
     console.error(e);
   }
 })();
+

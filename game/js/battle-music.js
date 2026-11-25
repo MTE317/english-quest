@@ -1,4 +1,4 @@
-import { loadSettings } from './storage.js?v=rune-study-1';
+import { loadSettings } from './storage.js?v=unified-ap-1';
 import './battle-sound.js?v=rune-study-1';
 
 const tracks = {
@@ -125,3 +125,4 @@ export function setSpeechPlaying(playing) {
   // 英語音声と戦闘BGMは重ねて流す。その他の場面では従来のミュートを維持する。
   if (player) player.muted = speechPlaying && current !== 'battle';
 }
+

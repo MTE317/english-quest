@@ -31,7 +31,7 @@ test('追加前に極めた5職のボーナスを保ち、新技能・AP・回�
   const game = legacy();
   const member = game.party[0];
   const before = { mods: memberMods(oldData, member), stats: computeStats(oldData, member),
-    learned: [...member.learned], ap: { ...member.ap }, loadout: structuredClone(member.loadout),
+    learned: [...member.learned], ap: member.ap, loadout: structuredClone(member.loadout),
     resources: game.party.map(({ hp, mp }) => ({ hp, mp })) };
   normalizeGame(data, game);
   assert.equal(game.contentUpdates.build36, true);
@@ -67,11 +67,11 @@ test('新規ゲームは追加技能も習得して初めて極め、完成を�
   normalizeGame(data, game);
   assert.equal(isJobMastered(data, member, 'thief'), false);
   const newSkills = jobSkills(data, 'thief').filter((skill) => added.has(skill.id));
-  member.ap.thief = newSkills.reduce((total, skill) => total + skill.apToLearn, 0);
+  member.ap = newSkills.reduce((total, skill) => total + skill.apToLearn, 0);
   learnSkill(data, member, newSkills[0].id);
   assert.equal(isJobMastered(data, member, 'thief'), false);
   learnSkill(data, member, newSkills[1].id);
-  assert.equal(member.ap.thief, 0);
+  assert.equal(member.ap, 0);
   assert.equal(isJobMastered(data, member, 'thief'), true);
   assert.deepEqual(member.masteredJobs, ['thief']);
   const futureData = { ...data, skills: new Map(data.skills) };
@@ -95,3 +95,4 @@ test('遠征の復元元も移行し、再読込・全滅相当の復元で記�
   normalizeGame(data, restored);
   assert.deepEqual(restored, once.run.snapshot);
 });
+

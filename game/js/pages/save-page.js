@@ -1,12 +1,12 @@
-import { goldScale } from '../gold.js?v=gold-unit-1';
-import { normalizeGame } from '../game-state.js?v=gold-unit-1';
+import { goldScale } from '../gold.js?v=unified-ap-1';
+import { normalizeGame } from '../game-state.js?v=unified-ap-1';
 // 動作確認用：自動保存・ダンジョンの途中からの再開・全滅で入る前に戻る、を試す画面
 // 戦闘とダンジョンはまだないので、報酬（お金・素材・装備・経験値）は「仮」の値を足すだけ
-import { GameSession } from '../save.js?v=gold-unit-1';
-import { LearningStore } from '../storage.js?v=rune-study-1';
-import { loadGameData } from '../gamedata.js?v=gold-unit-1';
-import { gainXp, makeGear } from '../character.js?v=basic-skill-levels-1';
-import { el, render } from '../dom.js';
+import { GameSession } from '../save.js?v=unified-ap-1';
+import { LearningStore } from '../storage.js?v=unified-ap-1';
+import { loadGameData } from '../gamedata.js?v=unified-ap-1';
+import { gainXp, makeGear } from '../character.js?v=unified-ap-1';
+import { el, render } from '../dom.js?v=unified-ap-1';
 
 const view = document.getElementById('view');
 const session = new GameSession();
@@ -130,3 +130,4 @@ function draw() {
     render(view, el('p', { class: 'error' }, `読み込みに失敗：${e.message}`));
   }
 })();
+

@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 import { buildGameData, GAME_FILES } from '../js/gamedata.js';
 import { createBattle, makeEnemy } from '../js/battle.js';
 import { maxHp, maxMp, canEquip } from '../js/character.js';
-import { capacity, usedCapacity, commonPoints, isLearned, equipBlock } from '../js/growth.js';
+import { capacity, usedCapacity, isLearned, equipBlock } from '../js/growth.js';
 import { enchantFamilies } from '../js/workshop.js';
 import { PROFILES, prepareParty } from '../../sim/party-fixtures.mjs';
 import { chooseAction } from '../../sim/balance.mjs';
@@ -130,7 +130,7 @@ test('共通ポイント・技能枠・前提技能・奥義持ち出し制限�
   for (const sample of samples) for (const mode of ['standard', 'prepared']) {
     const game = sample[mode]; const stage = game.simulationFixture.stage;
     for (const m of game.party) {
-      assert.ok(commonPoints(data, m).left >= 0);
+      assert.ok(m.ap >= 0);
       for (const id of m.common) assert.ok(data.commonTree.find((n) => n.id === id).level <= m.lv);
       const cap = capacity(data, m); const used = usedCapacity(data, m);
       assert.ok(used.actions <= cap.actions && used.passives <= cap.passives);
@@ -183,3 +183,4 @@ test('最低★・無効な設定を拒否し、闘技場のボス差し替え�
   assert.ok(game.party.every((m) => m.lv === 99));
   assert.ok(game.simulationFixture.gear.every((g) => g.enhancement <= 3));
 });
+

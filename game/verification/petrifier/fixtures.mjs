@@ -16,9 +16,10 @@ export function unlockAndTrain(data, game, index, { level = 45 } = {}) {
   const member = game.party[index];
   member.lv = level;
   member.loadout = { actions: ['petrifier_shot'], passives: [] };
-  member.ap.petrifier = 78;
+  member.ap = 78;
   for (const id of PETRIFIER_SKILLS) if (!isLearned(member, data.skills.get(id))) learnSkill(data, member, id);
-  assert.equal(member.ap.petrifier, 0);
+  for (const id of PETRIFIER_SKILLS) if (!equipBlock(data, member, data.skills.get(id))) equipSkill(data, member, id);
+  assert.equal(member.ap, 0);
   member.equip.weapon = makeGear(game, 'gun_t1');
   member.hp = maxHp(data, member);
   member.mp = maxMp(data, member);
@@ -41,7 +42,7 @@ export function partyFixture(data, variant, { level = 45, itemCap = 54 } = {}) {
       if (variant === 'pierce_only') member.loadout = { actions: ['petrifier_pierce'], passives: [] };
       if (variant === 'no_passive') member.loadout.passives = [];
     } else {
-      member.ap[member.job] = 1000;
+      member.ap = 1000;
       const skills = [...data.skills.values()].filter(s => s.job === member.job && s.stage <= 3);
       for (const s of skills) if (!isLearned(member, s)) learnSkill(data, member, s.id);
       member.loadout = { actions: [], passives: [] };

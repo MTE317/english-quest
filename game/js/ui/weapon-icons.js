@@ -1,4 +1,4 @@
-import { el } from '../dom.js';
+import { el } from '../dom.js?v=unified-ap-1';
 
 // data/weapon_types.csv の武器種IDに対応する32×32pxの画像。
 const weaponTypes = new Set([
@@ -17,3 +17,4 @@ export function weaponIcon(kind) {
     width: 32, height: 32, alt: '', 'aria-hidden': 'true', draggable: 'false',
   });
 }
+

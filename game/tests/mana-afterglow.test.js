@@ -10,7 +10,7 @@ import { MemoryStorage, T0 } from './helpers.js';
 const data = loadData();
 function setup(tree, passive, upper = false) {
   const game = createNewGame(data, ['warrior','knight','black_mage','white_mage','thief','bard'].map((job,i)=>({job,name:`検証${i}`,icon:'x'})));
-  const m = game.party[0]; m.lv=30; m.hp=maxHp(data,m); m.mp=0;
+  const m = game.party[0]; m.lv=30; m.ap=30; m.hp=maxHp(data,m); m.mp=0;
   if(tree) learnCommon(data,m,'mana_afterglow');
   if(upper) learnCommon(data,m,'mana2');
   if(passive) equipSkill(data,m,'common_mana_afterglow');
@@ -52,3 +52,4 @@ test('他のMP回復要因には基本版の上限を課さない',()=>{
   assert.ok(Math.abs(memberMods(extra,m).mp_regen-.32)<1e-12);
   recoverAfterBattle(extra,game); assert.equal(m.mp,Math.round(maxMp(extra,m)*.32));
 });
+

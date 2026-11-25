@@ -1,4 +1,4 @@
-import { loadSettings } from './storage.js?v=rune-study-1';
+import { loadSettings } from './storage.js?v=unified-ap-1';
 
 let context;
 let resume;
@@ -103,3 +103,4 @@ if (typeof document !== 'undefined') {
     setTimeout(() => location.assign(control.href), 75);
   });
 }
+

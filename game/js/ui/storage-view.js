@@ -1,7 +1,7 @@
-import { el, render } from '../dom.js';
-import { equipmentIcon } from './equipment-icons.js';
-import { uiIcon } from './pixel-icons.js';
-import { describeFixedEffects, describeEffect } from '../equipment-effects.js?v=build36-1';
+import { el, render } from '../dom.js?v=unified-ap-1';
+import { equipmentIcon } from './equipment-icons.js?v=unified-ap-1';
+import { uiIcon } from './pixel-icons.js?v=unified-ap-1';
+import { describeFixedEffects, describeEffect } from '../equipment-effects.js?v=unified-ap-1';
 
 // 倉庫の表示順と選択状態だけを管理し、所持品の保存順は変更しない。
 export function storageView(data, game, state) {
@@ -102,3 +102,4 @@ export function storageView(data, game, state) {
   draw();
   return root;
 }
+

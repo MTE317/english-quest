@@ -1,8 +1,8 @@
 // 専用のテスト戦闘だけで使う。保存先はメモリ内に限定する。
-import { GameSession } from './save.js?v=gold-unit-1';
-import { createBattle } from './battle.js?v=basic-skill-levels-1';
-import { makeEncounter } from './encounter.js?v=basic-skill-levels-1';
-import { maxHp, maxMp } from './character.js?v=basic-skill-levels-1';
+import { GameSession } from './save.js?v=unified-ap-1';
+import { createBattle } from './battle.js?v=unified-ap-1';
+import { makeEncounter } from './encounter.js?v=unified-ap-1';
+import { maxHp, maxMp } from './character.js?v=unified-ap-1';
 
 export function applyPartyDebugStatus(data, game, battle, statusId) {
   const status = statusId ? data.statusEffects.get(statusId) : null;
@@ -44,3 +44,4 @@ export function createStatusDebugSession(data, sourceGame, { dungeonId, stoneId,
   session.setBattle(battle);
   return session;
 }
+

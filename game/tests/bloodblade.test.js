@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { loadData } from '../../sim/balance.mjs';
 import { createNewGame, defaultPartySpecs } from '../js/game-state.js';
-import { changeJob, availableJobs, learnSkill } from '../js/growth.js';
+import { changeJob, availableJobs, learnSkill, equipSkill } from '../js/growth.js';
 import { makeGear, canEquip, maxMp } from '../js/character.js';
 import { countKills, reportQuest } from '../js/town.js';
 import { GameSession } from '../js/save.js';
@@ -59,10 +59,10 @@ test('鎌の特効は状態ごとに乗り、奥義は1回の命中で両方を�
   const member = game.party[0];
   member.lv = 30;
   member.mp = maxMp(data, member);
-  member.ap[job] = 80;
+  member.ap = 80;
   assert.ok(member.loadout.actions.includes('bloodblade_scorch'));
   member.loadout.actions = ['bloodblade_scorch'];
-  for (const skill of ['bloodblade_rend', 'bloodblade_wounds', 'bloodblade_reaping']) learnSkill(data, member, skill);
+  for (const skill of ['bloodblade_rend', 'bloodblade_wounds', 'bloodblade_reaping']) { learnSkill(data, member, skill); equipSkill(data, member, skill); }
   const gear = kind => makeGear(game, [...data.equipment.values()].find(def => def.kind === kind && def.slot === 'weapon' && !def.unique).id);
   const scythe = gear('scythe');
   assert.ok(canEquip(data, member, 'weapon', scythe).ok);
@@ -103,3 +103,4 @@ test('鎌の特効は状態ごとに乗り、奥義は1回の命中で両方を�
   assert.equal(immune.enemy.statuses.burn, undefined);
   assert.ok(immune.enemy.statuses.bleed);
 });
+

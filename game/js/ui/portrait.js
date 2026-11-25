@@ -1,4 +1,4 @@
-import { el } from '../dom.js';
+import { el } from '../dom.js?v=unified-ap-1';
 
 // セーブに保存する appearance ID は従来のまま、表示だけをドット絵へ切り替える。
 const groups = [
@@ -41,3 +41,4 @@ export function portraitIcon(id, { small = false, className = '' } = {}) {
     style: `background-image:url("${new URL(`${group}.png`, portraitBase).href}");background-size:${columns * 100}% ${rows * 100}%;background-position:${x}% ${y}%;`,
   });
 }
+

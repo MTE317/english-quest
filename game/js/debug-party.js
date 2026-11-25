@@ -1,8 +1,9 @@
+import { normalizeAp } from './ap.js?v=unified-ap-1';
 // 開発用メニュー専用。通常の画面からは読み込まない。
-import { gainXp, xpToNext, levelCap } from './character.js?v=basic-skill-levels-1';
+import { gainXp, xpToNext, levelCap } from './character.js?v=unified-ap-1';
 
-export const DEBUG_PARTY_LABEL = '全員をLv99・現職AP999に設定';
-export const DEBUG_PARTY_CONFIRM = 'パーティ全員をLv99にし、各メンバーの現職APを999に設定します（加算ではありません）。他職APは変更しません。HP/MPは通常のレベルアップ規則に従い、全回復・復活はしません。現在のセーブに保存されます。ほかのゲームタブを閉じてから実行してください。よろしいですか？';
+export const DEBUG_PARTY_LABEL = '全員をLv99・AP999に設定';
+export const DEBUG_PARTY_CONFIRM = 'パーティ全員をLv99にし、各メンバーのAPを999に設定します（加算ではありません）。HP/MPは通常のレベルアップ規則に従い、全回復・復活はしません。現在のセーブに保存されます。ほかのゲームタブを閉じてから実行してください。よろしいですか？';
 
 export function canDebugParty(data, session) {
   return !!data && levelCap(data) === 99 && !session.readOnly && !session.inDungeon
@@ -21,9 +22,10 @@ export function confirmDebugParty(data, session, confirm) {
       let xp = 0;
       for (let lv = member.lv; lv < 99; lv++) xp += xpToNext(data, lv);
       gainXp(data, member, Math.max(0, xp - member.xp));
-      member.ap ??= {};
-      member.ap[member.job] = 999;
+      normalizeAp(data, member);
+      member.ap = 999;
     }
   });
-  return '全員をLv99・現職AP999に設定し、現在のセーブに保存しました。';
+  return '全員をLv99・AP999に設定し、現在のセーブに保存しました。';
 }
+

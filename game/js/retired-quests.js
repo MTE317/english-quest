@@ -1,4 +1,4 @@
-import { goldScale } from './gold.js?v=gold-unit-1';
+import { goldScale } from './gold.js?v=unified-ap-1';
 // 廃止された24件の連続クエストの旧セーブを一度だけ精算する。
 // 新規クエストや地域解放には使わず、受取済みの報酬は再付与しない。
 const stageCount = rank => rank <= 4 ? 3 : rank <= 8 ? 4 : 5;
@@ -43,3 +43,4 @@ export function retireLegacyQuestChains(data, game) {
     game.notices.push(`旧連続クエストの進行分を精算：+${totalGold} G・ポイント +${totalPoints}${totalMaterials ? `・素材 ×${totalMaterials}` : ''}。受領済みの報酬は保持しています。`);
   }
 }
+

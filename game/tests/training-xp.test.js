@@ -18,14 +18,14 @@ test('訓練XPの低Lvと高い直近遠征報酬は従来値を維持する',()
  }
 });
 
-test('各人の必要XPで下限を計算し、戦闘不能者も既存どおり対象・APは現職だけ',()=>{
+test('各人の必要XPで下限を計算し、戦闘不能者も既存どおり対象・APは全ジョブ共通',()=>{
  const g=fresh();const levels=[1,10,25,50,75,98];
- g.party.forEach((m,i)=>{m.lv=levels[i];m.ap.other_job=17;m.hp=0;});
+ g.party.forEach((m,i)=>{m.lv=levels[i];m.ap=17;m.hp=0;});
  for(let i=0;i<100;i++)answer(g,i,{passed:i%5!==0});
  for(const [i,m]of g.party.entries()){
   if(levels[i]===1){assert.equal(m.lv,2);assert.equal(m.xp,25);}
   else {assert.equal(m.lv,levels[i]);assert.equal(m.xp,Math.floor(Math.max(.5,xpToNext(data,levels[i])*.001)*100+1e-7));}
-  assert.equal(m.ap[m.job],4);assert.equal(m.ap.other_job,17);
+  assert.equal(m.ap,21);
  }
  assert.equal(g.day,1);assert.equal(g.gold,10000);assert.deepEqual(g.storage.materials,{});
 });
@@ -50,13 +50,13 @@ test('既存セーブの小数繰越・日内履歴・中断再開を変更せ�
  assert.deepEqual(reopened.game,before);
  const continuous=structuredClone(before);
  reopened.update(g=>answer(g,'second'));answer(continuous,'second');assert.deepEqual(reopened.game,continuous);
- assert.equal(reopened.game.party[0].trainingCredit.ap.knight,.75);
+ assert.equal(reopened.game.party[0].trainingCredit.ap,.82);
 });
 
 test('99上限とレベルアップHP/MP規則は既存gainXpに従う',()=>{
  const g=fresh(),m=g.party[0];m.lv=98;m.xp=xpToNext(data,98)-1;m.hp=maxHp(data,m)-10;m.mp=maxMp(data,m)-3;
  answer(g);assert.equal(m.lv,99);assert.equal(m.xp,0);assert.equal(m.hp,maxHp(data,m)-10);assert.equal(m.mp,maxMp(data,m)-3);
- for(let i=1;i<30;i++)answer(g,i);assert.equal(m.lv,99);assert.equal(m.xp,0);assert.ok(m.ap[m.job]>0);
+ for(let i=1;i<30;i++)answer(g,i);assert.equal(m.lv,99);assert.equal(m.xp,0);assert.ok(m.ap>0);
 });
 
 test('必要XP曲線の変更を反映し、報酬前の表示Lvや他メンバーLvを参照しない',()=>{
@@ -65,3 +65,4 @@ test('必要XP曲線の変更を反映し、報酬前の表示Lvや他メンバ�
  answer(g,0,{},d);assert.equal(g.party[0].xp,40);assert.equal(g.party[1].xp,0);
  assert.equal(g.party[1].trainingCredit.xp,.5);
 });
+

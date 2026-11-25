@@ -1,5 +1,5 @@
 // ルーンストーン（rune_stones.csv）とルーン（lexicon.csv）をゲームで使いやすい形にする。
-import { toNumber } from './csv.js';
+import { toNumber } from './csv.js?v=unified-ap-1';
 
 /**
  * @param stonesCsv rune_stones.csv の rows
@@ -42,3 +42,4 @@ export function buildLexicon(stonesCsv, lexiconCsv) {
   }
   return { stones, stonesById, words, wordsById, wordsByStone, problems };
 }
+

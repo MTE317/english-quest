@@ -35,7 +35,7 @@ test('町の旧4人セーブは育成・負傷・装備・学習記録を保持�
   const game = legacy();
   game.party.forEach((member, i) => { member.lv = 8 + i; member.xp = 10 + i; member.hp = i ? 12 : 0; member.mp = i; });
   game.party[0].name = '大切な仲間';
-  game.party[0].ap.warrior = 17;
+  game.party[0].ap = 17;
   game.party[0].persist = ['curse'];
   game.storage.gear.push({ ...structuredClone(game.party[0].equip.weapon), uid: 800 });
   game.nextUid = 2; // 古い/取り込み済みのカウンタでも既存UIDと重複しない。
@@ -124,3 +124,4 @@ test('6人全員に行動機会と報酬があり、5・6人目を回復対象�
   assert.equal(rewards.xp.length, 6);
   assert.equal(rewards.ap.length, 6);
 });
+

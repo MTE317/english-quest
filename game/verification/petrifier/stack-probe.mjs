@@ -19,7 +19,7 @@ for (const [job, targetId] of [['hexer', 'hexer_p2_s4'], ['apothecary', 'apothec
   unlockJob(data, synergy, job);
   const jp = data.jobsById.get(job).changeJp; synergy.jp = jp; changeJob(data, synergy, 5, job); costs.jp += jp;
   const target = data.skills.get(targetId);
-  m.ap[job] = 1000; costs.ap[job] = 0;
+  m.ap = 1000; costs.ap[job] = 0;
   for (const s of [...data.skills.values()].filter(s => s.job === job && s.path === target.path && s.stage <= target.stage).sort((a,b) => a.stage-b.stage)) {
     if (!isLearned(m, s)) { learnSkill(data, m, s.id); costs.ap[job] += s.apToLearn; }
   }

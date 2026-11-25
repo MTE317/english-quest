@@ -1,16 +1,16 @@
-import { loadGameData } from '../gamedata.js?v=gold-unit-1';
-import { loadJson } from '../data.js?v=features-2';
-import { loadLearningCatalog } from '../learning-catalog.js?v=learning-00-v1';
-import { Scheduler } from '../srs.js?v=stability-1';
-import { LearningStore, loadSettings } from '../storage.js?v=stability-1';
-import { GameSession } from '../save.js?v=gold-unit-1';
-import { normalizeGame } from '../game-state.js?v=gold-unit-1';
-import { allowedDungeons } from '../dungeon.js?v=gold-unit-1';
-import { createBattleView } from '../ui/battle-view.js?v=battle-field-1';
-import { createStatusDebugSession } from '../debug-status.js?v=gold-unit-1';
-import { stopSpeech } from '../speech.js?v=music-suite-1';
-import { setSceneMusic } from '../battle-music.js?v=music-suite-1';
-import { el, render } from '../dom.js';
+import { loadGameData } from '../gamedata.js?v=unified-ap-1';
+import { loadJson } from '../data.js?v=unified-ap-1';
+import { loadLearningCatalog } from '../learning-catalog.js?v=unified-ap-1';
+import { Scheduler } from '../srs.js?v=unified-ap-1';
+import { LearningStore, loadSettings } from '../storage.js?v=unified-ap-1';
+import { GameSession } from '../save.js?v=unified-ap-1';
+import { normalizeGame } from '../game-state.js?v=unified-ap-1';
+import { allowedDungeons } from '../dungeon.js?v=unified-ap-1';
+import { createBattleView } from '../ui/battle-view.js?v=unified-ap-1';
+import { createStatusDebugSession } from '../debug-status.js?v=unified-ap-1';
+import { stopSpeech } from '../speech.js?v=unified-ap-1';
+import { setSceneMusic } from '../battle-music.js?v=unified-ap-1';
+import { el, render } from '../dom.js?v=unified-ap-1';
 
 const controls = document.getElementById('debug-controls');
 const view = document.getElementById('view');
@@ -84,3 +84,4 @@ const view = document.getElementById('view');
     console.error(error);
   }
 })();
+

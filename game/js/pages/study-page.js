@@ -1,22 +1,22 @@
 // 英語学習は訓練場（単語・瞬間英作文・チャンク）と試験の間へ集約する。
-import { loadGameData } from '../gamedata.js?v=gold-unit-1';
-import { loadJson } from '../data.js?v=features-2';
-import { loadLearningCatalog } from '../learning-catalog.js?v=learning-00-v1';
-import { Scheduler } from '../srs.js?v=stability-1';
-import { LearningStore, now } from '../storage.js?v=stability-1';
-import { GameSession } from '../save.js?v=gold-unit-1';
-import { normalizeGame } from '../game-state.js?v=gold-unit-1';
-import { currentRank } from '../dungeon.js?v=gold-unit-1';
-import { nextRankStatus, checkRankUp } from '../town.js?v=gold-unit-1';
-import { promotionProgress, promotionExamState } from '../promotion.js?v=training-v2-1';
-import { learningStatistics } from '../learning-stats.js?v=stability-1';
+import { loadGameData } from '../gamedata.js?v=unified-ap-1';
+import { loadJson } from '../data.js?v=unified-ap-1';
+import { loadLearningCatalog } from '../learning-catalog.js?v=unified-ap-1';
+import { Scheduler } from '../srs.js?v=unified-ap-1';
+import { LearningStore, now } from '../storage.js?v=unified-ap-1';
+import { GameSession } from '../save.js?v=unified-ap-1';
+import { normalizeGame } from '../game-state.js?v=unified-ap-1';
+import { currentRank } from '../dungeon.js?v=unified-ap-1';
+import { nextRankStatus, checkRankUp } from '../town.js?v=unified-ap-1';
+import { promotionProgress, promotionExamState } from '../promotion.js?v=unified-ap-1';
+import { learningStatistics } from '../learning-stats.js?v=unified-ap-1';
 import { TRAINING_COUNTS, trainingChunksForSet, trainingWordsForSet,
-  trainingPhrasesForSet, resolveTrainingMode } from '../training.js?v=training-xp-curve-1';
-import { runTrainingSession } from '../ui/training-runner.js?v=training-xp-curve-1';
-import { runDualPromotionExam } from '../ui/learning-exams.js?v=training-v2-1';
-import { el, render } from '../dom.js';
-import { setSceneMusic } from '../battle-music.js?v=music-suite-1';
-import { installGameShell } from '../ui/game-shell.js?v=pixel-town-1';
+  trainingPhrasesForSet, resolveTrainingMode } from '../training.js?v=unified-ap-1';
+import { runTrainingSession } from '../ui/training-runner.js?v=unified-ap-1';
+import { runDualPromotionExam } from '../ui/learning-exams.js?v=unified-ap-1';
+import { el, render } from '../dom.js?v=unified-ap-1';
+import { setSceneMusic } from '../battle-music.js?v=unified-ap-1';
+import { installGameShell } from '../ui/game-shell.js?v=unified-ap-1';
 
 const view = document.getElementById('view');
 const session = new GameSession();
@@ -355,3 +355,4 @@ function draw() {
     console.error(e);
   }
 })();
+
