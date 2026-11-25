@@ -13,6 +13,7 @@ import {
   skillMaxLevel, learnedSkillLevel, effectiveSkill, upgradeSkillBlock, upgradeSkill, skillWeaponBlock,
 } from '../growth.js?v=skill-growth-2';
 import { skillMp } from '../battle.js?v=skill-growth-2';
+import { statusSusceptibilityPanel } from '../ui/status-susceptibility.js?v=ally-status-1';
 import { el, render, stars } from '../dom.js?v=skill-growth-2';
 import { describeFixedEffects } from '../equipment-effects.js?v=skill-growth-2';
 import { describeSkillEffect } from '../skill-effects.js?v=skill-growth-2';
@@ -292,6 +293,7 @@ function showMember(index, tab = 'skills') {
       el('details', { class: 'panel aptitude-toggle' },
         el('summary', {}, '能力適性'),
         jobAptitudeChart(data.jobsById.get(m.job))),
+      statusSusceptibilityPanel(data, session.game, index),
       weaponMasteryPanel(m),
     ]);
   window.scrollTo(0, 0);
