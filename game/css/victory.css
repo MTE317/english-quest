@@ -200,3 +200,28 @@ body:has(.victory-screen) { background: #10171e; }
   outline: 2px solid var(--result-gold);
   outline-offset: 2px;
 }
+
+/* 戦闘報酬と帰還時の持ち帰り品を共通のアイコンタイルで表示。 */
+.result-icon-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 80px), 1fr));
+  gap: 8px;
+  margin: 8px 0;
+  padding: 0;
+  list-style: none;
+}
+.result-icon-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  min-width: 0;
+  padding: 8px 4px;
+  border: 1px solid var(--line);
+  background: var(--panel-2);
+  text-align: center;
+}
+.result-item-icon { display: grid; place-items: center; min-height: 40px; }
+.result-item-name { font-size: .78rem; line-height: 1.4; overflow-wrap: anywhere; }
+.result-item-count { color: var(--accent); font-size: .8rem; font-variant-numeric: tabular-nums; }
+.result-icon-tile[data-rarity]:not([data-rarity="common"]) { border-color: #a293db; }

@@ -14,7 +14,7 @@ import {
 import { backpackSlots, backpackUsed, addItem } from '../loot.js?v=basic-skill-levels-1';
 import { maxHp, maxMp } from '../character.js?v=basic-skill-levels-1';
 import { createBattleView } from '../ui/battle-view.js?v=battle-field-1';
-import { createVictoryView } from '../ui/victory-view.js?v=basic-skill-levels-1';
+import { createVictoryView, createLootIcons } from '../ui/victory-view.js?v=result-icons-1';
 import { el, render, stars } from '../dom.js';
 import { buildWorldMap, newDiscoveries } from '../world-map.js?v=trial-five-1';
 import { createWorldMapView } from '../ui/world-map-view.js?v=destination-icons-1';
@@ -259,7 +259,8 @@ function showRun(result = null) {
 }
 
 function summary(run) {
-  return { gold: run.earned.gold, gear: run.backpack.gear.map(gearName), materials: Object.entries(run.backpack.materials).map(([id, n]) => `${data.materials.get(id)?.name ?? id}×${n}`) };
+  return { gold: run.earned.gold, gear: run.backpack.gear.map(gear => ({ ...gear })),
+    materials: Object.entries(run.backpack.materials).map(([id, count]) => ({ id, count })) };
 }
 
 function showReturned(pack) {
@@ -270,8 +271,10 @@ function showReturned(pack) {
     el('h2', {}, '町に帰った'),
     el('div', { class: 'panel small' },
       el('div', {}, `稼いだお金：${pack.gold}`),
-      el('div', {}, `持ち帰った装備：${pack.gear.join('、') || 'なし'}`),
-      el('div', {}, `持ち帰った素材：${pack.materials.join('、') || 'なし'}`),
+      el('h3', {}, '持ち帰った装備'),
+      createLootIcons(data, { gear: pack.gear }, gearName),
+      el('h3', {}, '持ち帰った素材'),
+      createLootIcons(data, { materials: pack.materials }, gearName),
       el('div', { class: 'muted' }, '拾った物は町の倉庫に入った。')),
     el('div', { class: 'row' },
       el('a', { class: 'btn primary', href: 'index.html' }, '町へ'),
