@@ -23,7 +23,7 @@ import { setSceneMusic } from '../battle-music.js?v=music-suite-1';
 import { expeditionScene } from '../ui/scenery.js';
 import { installGameShell } from '../ui/game-shell.js?v=pixel-town-1';
 import { portraitIcon } from '../ui/portrait.js';
-import { playDungeonEntrance } from '../ui/dungeon-entrance.js?v=entrance-2';
+import { playDungeonEntrance } from '../ui/dungeon-entrance.js?v=entrance-3';
 
 const view = document.getElementById('view');
 const session = new GameSession();

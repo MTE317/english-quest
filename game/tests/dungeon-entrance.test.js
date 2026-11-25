@@ -45,7 +45,7 @@ test('入場は暗転後に一度だけ開始し、演出が終わると操作�
   await new Promise(resolve => setTimeout(resolve, 800));
   assert.equal(entered, 0, '足音の途中ではまだ戦闘を開始しない');
   assert.equal(nodes[0].classList.contains('closed'), false);
-  await new Promise(resolve => setTimeout(resolve, 1600));
+  await new Promise(resolve => setTimeout(resolve, 600));
   assert.equal(nodes[0].classList.contains('named'), true);
   assert.equal(nodes[0].classList.contains('reveal'), false);
   await new Promise(resolve => setTimeout(resolve, 1700));
