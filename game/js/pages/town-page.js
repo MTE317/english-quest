@@ -48,9 +48,9 @@ const rng = () => seededRng({ rng: (Date.now() ^ (Math.random() * 2 ** 32)) >>> 
 const facilityGroups = [
   { title: '冒険の準備', cards: [
     { id: 'guild', name: 'ギルド酒場', icon: 'guild', detail: '依頼の受注・報告、昇格', show: guild },
-    { id: 'inn', name: '宿屋', icon: 'inn', detail: 'HP・MPを回復', show: inn },
-    { id: 'temple', name: '神殿', icon: 'temple', detail: '復活・治療、無料転職・ジョブ解放', show: temple },
     { href: 'party.html', name: 'パーティー', icon: 'party', detail: '仲間の装備・スキル' },
+    { id: 'temple', name: '神殿', icon: 'temple', detail: '復活・治療、無料転職・ジョブ解放', show: temple },
+    { id: 'inn', name: '宿屋', icon: 'inn', detail: 'HP・MPを回復', show: inn },
   ] },
   { title: '買い物・強化', cards: [
     { id: 'items', name: '道具屋', icon: 'items', detail: '道具を買う、荷物枠を広げる', show: items },
