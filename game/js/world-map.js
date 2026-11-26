@@ -1,9 +1,10 @@
-// 5ダンジョン先行版。地域ノード・接続線は再設計まで使わない。
+// 入門の原から踏破に応じて公開ルートを広げる。
 // データ本体は保持し、ここでは公開対象と解放条件だけを管理する。
 const TRIAL_DUNGEONS = Object.freeze([
-  { id: 'mossy_cave', clears: [] },
-  { id: 'sunlit_forest', clears: [] },
-  { id: 'goblin_quarry', clears: [] },
+  { id: 'windward_plain', clears: [] },
+  { id: 'mossy_cave', clears: ['windward_plain'] },
+  { id: 'sunlit_forest', clears: ['windward_plain'] },
+  { id: 'goblin_quarry', clears: ['sunlit_forest'] },
   { id: 'ruined_fort', clears: ['mossy_cave'] },
   { id: 'misty_marsh', clears: ['sunlit_forest'] },
 ]);
@@ -22,7 +23,8 @@ export function meetsDiscoveryRule(game, rule) {
 
 export function isTrialDungeonUnlocked(game, dungeonId) {
   const rule = TRIAL_DUNGEONS.find(({ id }) => id === dungeonId);
-  return Boolean(rule) && meetsDiscoveryRule(game, rule);
+  return Boolean(rule) && (meetsDiscoveryRule(game, rule)
+    || (game?.cleared?.[dungeonId] ?? 0) > 0 || game?.legacyRouteAccess?.includes(dungeonId));
 }
 
 export function buildWorldMap(dungeons, availableDungeons, game) {

@@ -1,3 +1,4 @@
+import { roundGold } from '../js/gold.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createNewGame, normalizeGame } from '../js/game-state.js';
@@ -11,7 +12,7 @@ import { realGameData, seededRng, MemoryStorage } from './helpers.js';
 
 const data = realGameData();
 const party = ['warrior', 'knight', 'black_mage', 'white_mage', 'thief', 'bard'].map((job) => ({ name: job, job, icon: 'x' }));
-const fresh = () => createNewGame(data, party);
+const fresh = () => { const game = createNewGame(data, party); game.cleared = { windward_plain: 1, sunlit_forest: 1 }; return game; };
 const board = (g, seed = 17) => fillBoard(data, g, seededRng(seed));
 
 test('新規開始はパーティー共有10000G。換算済みセーブの所持金は再換算しない', () => {
@@ -31,7 +32,7 @@ test('発見済みの冒険先だけで季節ごとに掲示6件を生成し、�
     assert.equal(g.board.length, 6);
     assert.equal(new Set(g.board.map(questKey)).size, 6);
     const season = calendarOf(data, g.day).season.id;
-    const initial = new Set(['mossy_cave', 'sunlit_forest', 'goblin_quarry']);
+    const initial = new Set(['windward_plain', 'mossy_cave', 'sunlit_forest', 'goblin_quarry', 'misty_marsh']);
     for (const q of g.board) {
       assert.ok(initial.has(q.dungeonId), q.dungeonId);
       const pool = monsterPool(data, q.dungeonId, season);
@@ -69,7 +70,7 @@ test('賞金首保証金は受注時に一度預け、達成時に報酬と分�
   const g = fresh(); board(g);
   const q = g.board.find((q) => q.type === 'bounty');
   const initial = g.gold;
-  assert.equal(q.depositGold, Math.ceil(q.rewardGold * 0.1));
+  assert.equal(q.depositGold, roundGold(data,q.rewardGold * 0.1,'ceil'));
   acceptQuest(data, g, q.uid, seededRng(3));
   assert.equal(g.gold, initial - q.depositGold);
   assert.equal(questDepositTotal(g), q.depositGold);

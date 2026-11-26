@@ -6,18 +6,18 @@ import { Scheduler } from '../srs.js?v=skill-growth-2';
 import { LearningStore, now, loadSettings } from '../storage.js?v=skill-growth-2';
 import { QuestionPicker } from '../picker.js?v=skill-growth-2';
 import { GameSession } from '../save.js?v=party-wipe-1';
-import { normalizeGame } from '../game-state.js?v=party-wipe-1';
+import { normalizeGame } from '../game-state.js?v=intro-route-1';
 import {
   allowedDungeons, allowedStones, expeditionFee, startRun, startNextBattle, afterBattle, returnToTown, continueRun, resolveLoot,
   isBossBattle, runFloorRow, runFloorCount, returnItems, currentRank, useItemOutsideBattle, FIELD_ITEM_EFFECTS,
-} from '../dungeon.js?v=party-wipe-1';
-import { backpackSlots, backpackUsed, addItem } from '../loot.js?v=advanced-jobs-1';
+} from '../dungeon.js?v=intro-route-1';
+import { backpackSlots, backpackUsed, addItem } from '../loot.js?v=intro-route-1';
 import { maxHp, maxMp, partyCanAct } from '../character.js?v=party-wipe-1';
 import { createBattleView } from '../ui/battle-view.js?v=party-wipe-1';
 import { createVictoryView, createLootIcons } from '../ui/victory-view.js?v=advanced-jobs-1';
 import { el, render, stars } from '../dom.js?v=skill-growth-2';
-import { buildWorldMap, newDiscoveries } from '../world-map.js?v=skill-growth-2';
-import { createWorldMapView } from '../ui/world-map-view.js?v=skill-growth-2';
+import { buildWorldMap, newDiscoveries } from '../world-map.js?v=intro-route-1';
+import { createWorldMapView } from '../ui/world-map-view.js?v=intro-route-1';
 import { setSceneMusic } from '../battle-music.js?v=skill-growth-2';
 
 import { expeditionScene } from '../ui/scenery.js?v=skill-growth-2';
@@ -68,12 +68,11 @@ function showDeparture(message = null) {
   const canDepart = partyCanAct(g);
   const rank = currentRank(data, g);
   const dungeons = allowedDungeons(data, g);
-  const nearby = dungeons.find(d => d.rank === 1 && d.kind === '近場');
-  const averageLevel = g.party.reduce((sum, member) => sum + member.lv, 0) / g.party.length;
-  const beginner = rank.maxDungeonRank === 1 && nearby && (g.cleared?.[nearby.id] ?? 0) < 3 && averageLevel < 5;
-  const suggested = beginner ? nearby : dungeons.find(d => d.rank === rank.maxDungeonRank && d.kind === '標準') ?? dungeons[0];
+  const nextIntro = Object.keys(data.balance.dungeon?.intro_routes ?? {})
+    .map(id => dungeons.find(d => d.id === id)).find(d => d && !(g.cleared?.[d.id] > 0));
+  const suggested = nextIntro ?? dungeons.find(d => d.rank === rank.maxDungeonRank && d.kind === '標準') ?? dungeons[0];
   const st = { dungeonId: suggested.id, stoneId: null };
-  // 地域の接続線とノードは再設計中。公開中の5か所だけを一覧で表示する。
+  // 地域の接続線とノードは再設計中。公開ルートだけを一覧で表示する。
   const dungeonLabel = (dungeon) => stars(dungeon.rank) + ' ' + dungeon.name
     + (g.cleared?.[dungeon.id] ? '（踏破済み）' : '');
   const world = buildWorldMap(data.dungeons, dungeons, g);
@@ -104,8 +103,9 @@ function showDeparture(message = null) {
     const fee = expeditionFee(data, dg);
     departure.disabled = !canDepart || !st.stoneId || g.gold < fee;
     render(info, el('div', { class: 'route-facts' },
-      [['階層', `${dg.floors}階`], ['所要日数', `${dg.days}日`], ['遠征費', fee ? `${fee} G` : '無料'], ['帰還地点', dg.returnPointFloor ? `${dg.returnPointFloor}階の後` : 'なし']]
+      [['階層', `${dg.floors}階`], ['所要日数', `${dg.days}日`], ['遠征費', fee ? `${fee} G` : '無料'], ['帰還', '最終戦後は無料']]
         .map(([key, value]) => el('div', {}, el('small', {}, key), el('strong', {}, value)))),
+      el('p', { class: 'muted small' }, '戦闘の間は帰還の羽で途中帰還できます（未踏破）。' + dg.character),
       !stones.length ? el('p', { class: 'error' }, '持ち込めるルーンストーンがありません。') : null,
       g.gold < fee ? el('p', { class: 'error' }, '遠征費が足りません。') : null);
   };
@@ -243,7 +243,7 @@ function showRun(result = null) {
     ];
   } else if (run.state === 'cleared') {
     actions = [
-      el('div', { class: 'panel small' }, run.training ? '育成探索を完了した！' : 'いちばん奥のボスを倒した！'),
+      el('div', { class: 'panel small' }, run.training ? '育成探索を完了した！' : '最後の戦闘を終えた！ 道具なしで町へ帰れます。'),
       el('button', { class: 'primary', onclick: () => { const pack = summary(run); returnToTown(data, session); showReturned(pack); } }, '町に帰る'),
     ];
   }

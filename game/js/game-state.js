@@ -38,7 +38,8 @@ export function createNewGame(data, partySpecs, { partySize = PARTY_SIZE } = {})
     nextUid: 1,
     party: [],
     storage: { gear: [], materials: {} },
-    items: {},
+    items: { ...(start.items ?? {}) },
+    introRouteVersion: 1,
     contentUpdates: { build36: true },
     rank: data.ranks?.[0]?.id ?? null, // 冒険者ランク（adventurer_ranks.csv の最初）
     backpackTier: data.backpackTiers?.[0]?.tier ?? 1,
@@ -65,6 +66,12 @@ export function createNewGame(data, partySpecs, { partySize = PARTY_SIZE } = {})
 export function normalizeGame(data, game, run = null, { expandParty = true } = {}) {
   if (!game) return game;
   migrateGold(data, game, run);
+  // 更新前は全員が森・洞窟・石切り場へ進めた。既得の行き先だけを保持する。
+  if (!game.introRouteVersion) {
+    game.legacyRouteAccess = [...new Set([...(game.legacyRouteAccess ?? []), 'mossy_cave', 'sunlit_forest', 'goblin_quarry',
+      ...(game.worldMapSeen ?? []), ...(run?.dungeonId ? [run.dungeonId] : [])])];
+    game.introRouteVersion = 1;
+  }
   game.storage = game.storage ?? { gear: [], materials: {} };
   game.storage.materials ??= {};
   recordStoredMaterials(game);

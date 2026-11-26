@@ -104,7 +104,7 @@ test('技能準備中の追加職には素材を消費しない', () => {
 
 test('季節の敵と賞金首は連続クエスト廃止後も出現する', () => {
   assert.ok(monsterPool(data, 'blooming_hill', 'spring').some(m => m.season === 'spring'));
-  const enemies = makeEncounter(data, 'mossy_cave', 1, () => 0, { bountyId: 'bounty_01_1', elites: true });
+  const enemies = makeEncounter(data, 'goblin_quarry', 1, () => 0, { bountyId: 'bounty_01_1', elites: true });
   assert.equal(enemies[0].bounty, true);
   assert.ok(enemies.every(e => !e.eliteId));
   const eligible = [...data.dungeons.values()].find(d => d.rank === data.balance.dungeon.elite_min_star);

@@ -63,18 +63,18 @@ function fightOut(session, acc = 1, seed = 1) {
   while (nextTurn(data, session.game, b)) { setPending(b, { type: 'attack', target: 0 }, {}); resolvePending(data, session.game, b, r() < acc); session.save(); }
 }
 
-test('先行5か所は踏破で解放され、ランクでは増えない', () => {
+test('入門から6か所は踏破で解放され、ランクでは増えない', () => {
   const game = createNewGame(data, party);
   assert.deepEqual(allowedDungeons(data, game).map(({ id }) => id).sort(),
-    ['mossy_cave', 'sunlit_forest', 'goblin_quarry'].sort());
+    ['windward_plain']);
   game.rank = 'S';
-  assert.equal(allowedDungeons(data, game).length, 3);
+  assert.equal(allowedDungeons(data, game).length, 1);
   game.rank = 'E';
   game.cleared.mossy_cave = 1;
   assert.ok(allowedDungeons(data, game).some(({ id }) => id === 'ruined_fort'));
   assert.ok(!allowedDungeons(data, game).some(({ id }) => id === 'misty_marsh'));
   game.cleared.sunlit_forest = 1;
-  assert.equal(allowedDungeons(data, game).length, 5);
+  assert.equal(allowedDungeons(data, game).length, 6);
 });
 
 test('★2の冒険先も踏破で発見すればR01のまま既存教材で遠征し、依頼を報告できる', () => {
@@ -211,7 +211,7 @@ test('規定ラウンド数による敗北は全滅扱いにせず、従来の�
   assert.equal(session.game.items.potion, 2);
 });
 
-test('いちばん奥まで：階を進み、帰還ポイント・ボス・クリア。帰るとバックパックは倉庫へ', () => {
+test('いちばん奥まで：階を進み、固定帰還地点なし・ボス・クリア。帰るとバックパックは倉庫へ', () => {
   const s = newSession();
   const initialStorage = structuredClone(s.game.storage);
   for (const m of s.game.party) { gainXp(data, m, 5000); m.hp = maxHp(data, m); m.mp = maxMp(data, m); }
@@ -231,7 +231,7 @@ test('いちばん奥まで：階を進み、帰還ポイント・ボス・ク�
     for (const m of s.game.party) { m.hp = maxHp(data, m); m.mp = maxMp(data, m); }
   }
   assert.equal(s.run.state, 'cleared');
-  assert.ok(sawReturnPoint && sawBoss);
+  assert.ok(!sawReturnPoint && sawBoss);
   const pack = structuredClone(s.run.backpack);
   returnToTown(data, s);
   assert.equal(s.inDungeon, false);
@@ -334,10 +334,12 @@ test('石化だけの勝利でも討伐依頼・経験値・ドロップを精�
   assert.ok(result.loot.gold > 0);
 });
 
-test('旧育成遠征を保存から再開して完走できる。新規遠征は同じ行き先でボスと戦う', () => {
+test('旧育成遠征を保存から再開して完走できる。旧経路の通常戦だけを継続する', () => {
   const storage = new MemoryStorage();
   const old = newSession(storage);
   startRun(data, old, { dungeonId: 'sunlit_forest', stoneId: 'rs_1_001', seed: 1 });
+  old.run.route = structuredClone(data.balance.dungeon.pre_intro_routes.sunlit_forest);
+  delete old.run.introRouteVersion;
   assert.ok(old.run.route.at(-1).lastBattleIsBoss);
   old.run.training = true;
   delete old.run.explorationPlan;
@@ -404,9 +406,10 @@ test('宝箱の同種道具と盗品は全滅で失い、再読込しても途�
   assert.equal(town.game.storage.materials[stolen], undefined);
 });
 
-test('全60経路は2・3・6戦で最奥だけがボス。前半に帰還地点がある', () => {
-  assert.equal(data.dungeons.size, 60);
+test('入門以外の既存58経路は2・3・6戦で最奥だけがボス', () => {
+  assert.equal(data.dungeons.size, 61);
   for (const dungeon of data.dungeons.values()) {
+    if (data.balance.dungeon.intro_routes[dungeon.id]) continue; // 入門3経路はintro-route.test.jsで全階検証
     const route = data.dungeonFloors.filter(({ dungeonId }) => dungeonId === dungeon.id);
     const length = dungeon.kind === '近場' ? 2 : dungeon.kind === '深層' ? 6 : 3;
     assert.equal(route.length, length, dungeon.id);
@@ -449,8 +452,9 @@ test('最奥のボス報酬は周回ごとに出る。逃走・途中帰還は�
     discardOverflow(data, session);
     finishWithoutTurns(data, session);
     discardOverflow(data, session);
-    assert.equal(session.run.state, 'return_point');
-    continueRun(session);
+    assert.equal(session.run.state, 'ready');
+    finishWithoutTurns(data, session);
+    discardOverflow(data, session);
     assert.ok(isBossBattle(data, session.run));
     const result = finishWithoutTurns(data, session, i === 0 ? 'fled' : 'win');
     discardOverflow(data, session);
@@ -496,7 +500,7 @@ test('固定箱は全滅で再試行でき、途中帰還で確定。調査・�
   assert.equal(session.run.explorationNotices[0].first, true);
   finishWithoutTurns(local, session);
   discardOverflow(local, session);
-  returnToTown(local, session);
+  returnToTown(local, session, 'return_feather');
   assert.equal(session.game.exploration.events['mossy_cave:first-cache'], true);
   assert.equal(session.game.exploration.discoveries['test-location'], true);
   assert.equal(session.game.worldFlags['SQ-1'], true);
@@ -509,6 +513,8 @@ test('固定箱は全滅で再試行でき、途中帰還で確定。調査・�
   assert.deepEqual(session.run.explorationNotices, []);
   discardOverflow(local, session);
   continueRun(session);
+  finishWithoutTurns(local, session);
+  discardOverflow(local, session);
   finishWithoutTurns(local, session);
   discardOverflow(local, session);
   returnToTown(local, session);
@@ -556,7 +562,7 @@ test('旧探索イベントは残すが、対象外のダンジョンはラン�
   finishWithoutTurns(data, session);
   discardOverflow(data, session);
   assert.equal(session.run.explorationNotices.find(({ type }) => type === 'discover').discovery, event.discovery);
-  returnToTown(data, session);
+  returnToTown(data, session, 'return_feather');
   assert.equal(session.game.exploration.discoveries[event.discovery], true);
   session.game.rank = 'S';
   assert.ok(!allowedDungeons(data, session.game).some(({ id }) => id === target));

@@ -21,6 +21,7 @@ export function withEngineSkillFixtures(data) {
 /** 新規ゲームを作り、その後に配給装備を手動で装着した状態を用意する。 */
 export function equippedGame(data, specs, options) {
   const game = createNewGame(data, specs, options);
+  game.cleared.windward_plain = 1; // 戦闘基盤テストは入門踏破後の状態から行う。
   for (const member of game.party) {
     for (const [slot, id] of Object.entries(starterGearIds(data, member.job))) {
       const index = game.storage.gear.findIndex((gear) => gear.id === id);

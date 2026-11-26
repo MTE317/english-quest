@@ -3,9 +3,9 @@ import { roundGold, goldScale, goldLimit } from './gold.js?v=skill-growth-2';
 // data に数や式として書かれていないものは、シミュレーター（sim/world.py）と同じ値を TOWN_FORMULAS に置く（docs/requests.md で依頼済み）。
 import { evaluate } from './expr.js?v=skill-growth-2';
 import { makeGear, maxHp, maxMp, gearDef } from './character.js?v=advanced-jobs-1';
-import { addItem } from './loot.js?v=advanced-jobs-1';
-import { currentRank, allowedDungeons } from './dungeon.js?v=specialist-jobs-1';
-import { monsterPool } from './encounter.js?v=specialist-jobs-1';
+import { addItem } from './loot.js?v=intro-route-1';
+import { currentRank, allowedDungeons } from './dungeon.js?v=intro-route-1';
+import { monsterPool } from './encounter.js?v=intro-route-1';
 import { unlockReportedHuntJobs } from './temple.js?v=skill-growth-2';
 
 export const TOWN_FORMULAS = Object.freeze({
@@ -119,7 +119,8 @@ function questCandidates(data, game) {
   const definitions = data.quests.filter((q) => ranks.has(q.rank) && data.questTypes.some((t) => t.id === q.type));
   const places = dungeons.map((dungeon) => {
     const available = monsterPool(data, dungeon.id, season);
-    const residents = [...data.monsters.values()].filter((m) => ['normal', 'season'].includes(m.role) && m.dungeons.includes(dungeon.id));
+    const residents = data.balance.dungeon?.intro_routes?.[dungeon.id]
+      ? available : [...data.monsters.values()].filter((m) => ['normal', 'season'].includes(m.role) && m.dungeons.includes(dungeon.id));
     const materialIds = [...new Set(residents.map((m) => m.materialCommon))]
       .filter((id) => data.materials.get(id)?.kind === 'common' && data.materials.get(id)?.rank === dungeon.rank).sort();
     return { dungeon, available, residents, materialIds };
@@ -128,7 +129,7 @@ function questCandidates(data, game) {
   for (const def of definitions) {
     if (def.type === 'bounty') {
       const monster = data.monsters.get(def.target);
-      const destinations = dungeons.filter((d) => d.rank === def.rank && monster?.role === 'bounty' && monster.dungeons.includes(d.id));
+      const destinations = dungeons.filter((d) => d.rank === def.rank && !data.balance.dungeon?.intro_routes?.[d.id] && monster?.role === 'bounty' && monster.dungeons.includes(d.id));
       if (destinations.length) candidates.push({ def, target: monster.id, dungeonId: destinations[0].id, destinationIds: destinations.map((d) => d.id) });
       continue;
     }
@@ -139,7 +140,8 @@ function questCandidates(data, game) {
         candidates.push({ ...base, target: dungeon.id, targetMode: 'dungeon', targetIds: residents.map((m) => m.id) });
       } else if (def.type === 'gather' && materialIds.length && available.some((m) => materialIds.includes(m.materialCommon))) {
         candidates.push({ ...base, target: dungeon.id, materialIds });
-      } else if (def.type === 'boss' && data.monsters.has(dungeon.bossId)) {
+      } else if (def.type === 'boss' && data.monsters.has(dungeon.bossId)
+        && data.dungeonFloors.some(row => row.dungeonId === dungeon.id && row.lastBattleIsBoss)) {
         candidates.push({ ...base, target: dungeon.bossId });
       }
     }

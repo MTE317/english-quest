@@ -1,4 +1,4 @@
-import { TRIAL_DUNGEON_IDS } from './world-map.js?v=monster-catalog-1';
+import { TRIAL_DUNGEON_IDS } from './world-map.js?v=intro-route-1';
 
 export function catalogMonsters(data) {
   const current = new Set(TRIAL_DUNGEON_IDS);
