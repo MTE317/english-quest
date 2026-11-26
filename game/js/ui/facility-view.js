@@ -1,6 +1,6 @@
 import { el, render } from '../dom.js?v=skill-growth-2';
 import { parseAmounts } from '../csv.js?v=skill-growth-2';
-import { craft, brew, enhance, dismantle, reroll, enchant, enchantFamilies, facilityUpgrade } from '../workshop.js?v=advanced-jobs-1';
+import { craft, brew, canCraft, canBrew, enhance, dismantle, reroll, enchant, enchantFamilies, facilityUpgrade } from '../workshop.js?v=advanced-jobs-1';
 import { borrow, repayLoan, loanLimit } from '../town.js?v=advanced-jobs-1';
 import { unlockJob, jobDiscoveryProgress, offeringRevealed } from '../temple.js?v=skill-growth-2';
 import { describeFixedEffects, effectLabel, describeEffect } from '../equipment-effects.js?v=skill-growth-2';
@@ -79,7 +79,7 @@ export function workshopView(data, g, act, rng, selection) {
         el('p', { class: 'small' }, `調合費：${recipe.gold} G（所持：${g.gold} G）`),
         el('p', { class: 'small muted' }, `必要素材：${recipe.materials}`),
         el('p', { class: 'small' }, `完成 ${recipe.qty}個 ／ 所持 ${g.items[recipe.result] ?? 0}個`),
-        btn('調合する', () => act(game => brew(data, game, recipe))),
+        btn('調合する', () => act(game => brew(data, game, recipe)), !canBrew(data, g, recipe)),
       ] : [], '作れるレシピがありません。'));
       return;
     }
@@ -96,10 +96,7 @@ export function workshopView(data, g, act, rng, selection) {
     const needs = recipe ? parseAmounts(recipe.materials).map(({ id, count }) => ({
       id, count, name: data.materials.get(id)?.name ?? id, have: g.storage.materials[id] ?? 0,
     })) : [];
-    const canMake = Boolean(selectedDef) && (recipe
-      ? g.gold >= Number(recipe.gold) && needs.every(m => m.have >= m.count)
-        && (!recipe.derive_from || g.storage.gear.some(it => it.id === recipe.derive_from && it.crafted))
-      : true);
+    const canMake = canCraft(data, g, selectedDef);
     render(deck, switcher,
       el('div', { class: 'workshop-filters' },
         select('制作方法', [['special', '専用レシピ'], ['standard', '通常制作']],
