@@ -1,0 +1,1123 @@
+{
+  "version": 1,
+  "language": "ja",
+  "status": "説明文案",
+  "source_commit": "0efabca6e2f41fe4bc85da62818abb61073e4925",
+  "rules": [
+    "説明は原則1〜2文で、対象・技の格・特徴や重要な発動条件を伝える。",
+    "威力倍率・能力参照式・効果量の細かな割合は表示文に入れない。攻撃の格は通常・強・極大を基本とし、技の役割に合わせて表現する。",
+    "強さの呼び方は技ごとに固定する。通常のレベルアップでは強や極大へ自動で呼び替えない。",
+    "対象数・連撃数・使用回数・追加MP・発動に必要なHPやMPの残量は、判断に必要な場合だけ残す。",
+    "成長で対象や発動条件が変わる場合はlevel_overridesの該当レベルの説明を使う。該当レベルがなければdescriptionを使う。",
+    "状態異常・弱体・挑発・盗みなどの成功は保証しない。状態異常や弱体には元データの耐性・免疫が適用され、盗みには盗品候補や取得済みかどうかによる制限もある。",
+    "防御を貫くという表現は、防御力の一部を無視する意味。防御力や属性耐性の完全無視を意味しない。",
+    "攻撃ダメージは直接攻撃によるダメージを指す。継続ダメージやHP消費まで軽減する表現にしない。",
+    "通常スキル・通常の武器技・通常の攻撃魔法は奥義を含まない。通常攻撃は通常スキルとは別。",
+    "支援の歌は守りの歌・力の歌・疾風の歌・癒しの旋律の4曲。子守歌・攻撃技・終曲・奥義は含まない。",
+    "対象ごとの効果時間、成功率や上限、装備条件、習得条件などの厳密な仕様は既存マスターを参照する。"
+  ],
+  "jobs": [
+    {
+      "id": "warrior",
+      "name": "戦士",
+      "skills": [
+        {
+          "id": "warrior_A01",
+          "name": "剛断ち",
+          "kind": "active",
+          "growth_mode": "lv5",
+          "max_level": 5,
+          "description": "敵1体に強力な武器攻撃。"
+        },
+        {
+          "id": "warrior_A02",
+          "name": "旋風斬",
+          "kind": "active",
+          "growth_mode": "lv3",
+          "max_level": 3,
+          "description": "敵2体までに武器攻撃。",
+          "level_overrides": {
+            "2": "敵3体までに武器攻撃。",
+            "3": "敵全体に武器攻撃。"
+          }
+        },
+        {
+          "id": "warrior_A03",
+          "name": "崩し打ち",
+          "kind": "active",
+          "growth_mode": "lv3",
+          "max_level": 3,
+          "description": "敵1体に武器攻撃。さらに防御力低下を狙う。"
+        },
+        {
+          "id": "warrior_A04",
+          "name": "牽制斬り",
+          "kind": "active",
+          "growth_mode": "lv3",
+          "max_level": 3,
+          "description": "敵1体に武器攻撃。さらに物理攻撃力低下を狙う。"
+        },
+        {
+          "id": "warrior_A05",
+          "name": "血風",
+          "kind": "active",
+          "growth_mode": "lv5",
+          "max_level": 5,
+          "description": "敵1体に武器攻撃。さらに出血を狙う。"
+        },
+        {
+          "id": "warrior_A06",
+          "name": "連斬",
+          "kind": "active",
+          "growth_mode": "lv5",
+          "max_level": 5,
+          "description": "敵1体に武器で2連撃。"
+        },
+        {
+          "id": "warrior_A07",
+          "name": "鉄壁",
+          "kind": "active",
+          "growth_mode": "lv3",
+          "max_level": 3,
+          "description": "しばらく、自分への攻撃ダメージを減らす。"
+        },
+        {
+          "id": "warrior_A08",
+          "name": "戦意集中",
+          "kind": "active",
+          "growth_mode": "lv5",
+          "max_level": 5,
+          "description": "しばらく、自分の物理攻撃力を上げる。"
+        },
+        {
+          "id": "warrior_A09",
+          "name": "破甲撃",
+          "kind": "active",
+          "growth_mode": "lv3",
+          "max_level": 3,
+          "description": "敵1体に、防御を貫く武器攻撃。"
+        },
+        {
+          "id": "warrior_P01",
+          "name": "戦技の心得",
+          "kind": "passive",
+          "growth_mode": "lv5",
+          "max_level": 5,
+          "description": "通常の武器スキルの消費MPが減る。"
+        },
+        {
+          "id": "warrior_P02",
+          "name": "武芸の基礎",
+          "kind": "passive",
+          "growth_mode": "lv5",
+          "max_level": 5,
+          "description": "自分の物理攻撃力が上がる。",
+          "level_overrides": {
+            "3": "自分の物理攻撃力と最大HPが上がる。",
+            "4": "自分の物理攻撃力と最大HPが上がる。",
+            "5": "自分の物理攻撃力と最大HPが上がる。"
+          }
+        },
+        {
+          "id": "warrior_P03",
+          "name": "手堅い攻め",
+          "kind": "passive",
+          "growth_mode": "lv3",
+          "max_level": 3,
+          "description": "防御力が下がっている敵への武器攻撃が強くなる。"
+        },
+        {
+          "id": "warrior_P04",
+          "name": "重心移動",
+          "kind": "passive",
+          "growth_mode": "none",
+          "max_level": 1,
+          "description": "通常攻撃や通常の武器技を使うと、次の行動開始まで防御力が上がる。"
+        },
+        {
+          "id": "warrior_P05",
+          "name": "突破の心得",
+          "kind": "passive",
+          "growth_mode": "lv3",
+          "max_level": 3,
+          "description": "防御力上昇か物理ダメージ軽減が付いた敵への武器攻撃が強くなる。"
+        },
+        {
+          "id": "warrior_U01",
+          "name": "天裂き",
+          "kind": "ultimate",
+          "growth_mode": "none",
+          "max_level": 1,
+          "description": "敵1体に防御を貫く極大の一撃。さらに防御力を下げる。"
+        }
+      ]
+    },
+    {
+      "id": "knight",
+      "name": "騎士",
+      "skills": [
+        {
+          "id": "knight_A01",
+          "name": "護衛",
+          "kind": "active",
+          "growth_mode": "none",
+          "max_level": 1,
+          "description": "指定した味方1人への単体攻撃を、毎巡1回までかばう。引き受けたダメージも軽減する。"
+        },
+        {
+          "id": "knight_A02",
+          "name": "守りの号令",
+          "kind": "active",
+          "growth_mode": "lv3",
+          "max_level": 3,
+          "description": "しばらく、味方全員の防御力を上げる。"
+        },
+        {
+          "id": "knight_A03",
+          "name": "盾打ち",
+          "kind": "active",
+          "growth_mode": "lv5",
+          "max_level": 5,
+          "description": "敵1体に打撃攻撃。さらにスタンを狙う。"
+        },
+        {
+          "id": "knight_A04",
+          "name": "反撃の構え",
+          "kind": "active",
+          "growth_mode": "lv3",
+          "max_level": 3,
+          "description": "しばらく、物理攻撃を受けると毎巡1回まで反撃する。"
+        },
+        {
+          "id": "knight_A05",
+          "name": "堅守",
+          "kind": "active",
+          "growth_mode": "lv5",
+          "max_level": 5,
+          "description": "しばらく、自分の防御力を大きく上げる。"
+        },
+        {
+          "id": "knight_A06",
+          "name": "挑発",
+          "kind": "active",
+          "growth_mode": "none",
+          "max_level": 1,
+          "description": "敵1体の注意を引き、単体攻撃を自分に向けさせる。"
+        },
+        {
+          "id": "knight_A07",
+          "name": "足止め突き",
+          "kind": "active",
+          "growth_mode": "lv3",
+          "max_level": 3,
+          "description": "敵1体に刺突攻撃。さらに束縛を狙う。"
+        },
+        {
+          "id": "knight_A08",
+          "name": "不退の覚悟",
+          "kind": "active",
+          "growth_mode": "lv3",
+          "max_level": 3,
+          "description": "しばらく、自分がスタン・恐怖にかかりにくくなる。"
+        },
+        {
+          "id": "knight_A09",
+          "name": "報復の一撃",
+          "kind": "active",
+          "growth_mode": "lv5",
+          "max_level": 5,
+          "description": "敵1体に武器攻撃。前の行動後に味方をかばっていると威力が上がる。"
+        },
+        {
+          "id": "knight_P01",
+          "name": "守護者",
+          "kind": "passive",
+          "growth_mode": "lv3",
+          "max_level": 3,
+          "description": "HPが半分以下の味方への単体物理攻撃を、ときどきかばう。",
+          "level_overrides": {
+            "2": "HPが6割以下の味方への単体物理攻撃を、ときどきかばう。",
+            "3": "HPが6割以下の味方への単体物理攻撃を、ときどきかばう。"
+          }
+        },
+        {
+          "id": "knight_P02",
+          "name": "守備の心得",
+          "kind": "passive",
+          "growth_mode": "lv5",
+          "max_level": 5,
+          "description": "自分の防御力が上がる。",
+          "level_overrides": {
+            "3": "自分の防御力と最大HPが上がる。",
+            "4": "自分の防御力と最大HPが上がる。",
+            "5": "自分の防御力と最大HPが上がる。"
+          }
+        },
+        {
+          "id": "knight_P03",
+          "name": "守勢",
+          "kind": "passive",
+          "growth_mode": "none",
+          "max_level": 1,
+          "description": "味方をかばうたびに防御力が上がる。3段階まで重なる。"
+        },
+        {
+          "id": "knight_P04",
+          "name": "救援の決意",
+          "kind": "passive",
+          "growth_mode": "lv3",
+          "max_level": 3,
+          "description": "自分以外の味方が状態異常中、自分への攻撃ダメージが減る。"
+        },
+        {
+          "id": "knight_P05",
+          "name": "不屈",
+          "kind": "passive",
+          "growth_mode": "none",
+          "max_level": 1,
+          "description": "一戦に一度、攻撃による致命傷を耐え、防御力を上げる。"
+        },
+        {
+          "id": "knight_U01",
+          "name": "万軍の守護",
+          "kind": "ultimate",
+          "growth_mode": "none",
+          "max_level": 1,
+          "description": "しばらく、味方全員への攻撃ダメージを大きく減らす。味方への単体物理攻撃を毎巡2回までかばう。"
+        }
+      ]
+    },
+    {
+      "id": "monk",
+      "name": "武闘家",
+      "skills": [
+        {
+          "id": "monk_A01",
+          "name": "発勁",
+          "kind": "active",
+          "growth_mode": "lv5",
+          "max_level": 5,
+          "description": "敵1体に、防御を貫く打撃攻撃。"
+        },
+        {
+          "id": "monk_A02",
+          "name": "連打",
+          "kind": "active",
+          "growth_mode": "lv5",
+          "max_level": 5,
+          "description": "敵1体に打撃で2連撃。"
+        },
+        {
+          "id": "monk_A03",
+          "name": "気功弾",
+          "kind": "active",
+          "growth_mode": "lv5",
+          "max_level": 5,
+          "description": "敵1体に無属性の気功攻撃。"
+        },
+        {
+          "id": "monk_A04",
+          "name": "練気",
+          "kind": "active",
+          "growth_mode": "lv3",
+          "max_level": 3,
+          "description": "しばらく物理攻撃力を上げ、次の武器技1回の消費MPを減らす。",
+          "level_overrides": {
+            "3": "しばらく物理攻撃力を上げ、次の武器技2回の消費MPを減らす。"
+          }
+        },
+        {
+          "id": "monk_A05",
+          "name": "受け流し",
+          "kind": "active",
+          "growth_mode": "none",
+          "max_level": 1,
+          "description": "次の行動開始まで、最初の物理攻撃を受け流し、ダメージを減らして反撃する。"
+        },
+        {
+          "id": "monk_A06",
+          "name": "崩し蹴り",
+          "kind": "active",
+          "growth_mode": "lv5",
+          "max_level": 5,
+          "description": "敵1体に打撃攻撃。さらに防御力を下げる。"
+        },
+        {
+          "id": "monk_A07",
+          "name": "封じ手",
+          "kind": "active",
+          "growth_mode": "none",
+          "max_level": 1,
+          "description": "敵1体に封印を狙い、物理スキルを封じる。"
+        },
+        {
+          "id": "monk_A08",
+          "name": "気合いの一喝",
+          "kind": "active",
+          "growth_mode": "lv3",
+          "max_level": 3,
+          "description": "味方1人の恐怖・混乱を治す。",
+          "level_overrides": {
+            "2": "味方1人の恐怖・混乱・睡眠を治す。",
+            "3": "味方全員の恐怖・混乱・睡眠を治す。"
+          }
+        },
+        {
+          "id": "monk_A09",
+          "name": "崩山拳",
+          "kind": "active",
+          "growth_mode": "lv5",
+          "max_level": 5,
+          "description": "敵1体に強力な打撃攻撃。別の武器技に続けると、さらに威力が上がる。"
+        },
+        {
+          "id": "monk_P01",
+          "name": "連携",
+          "kind": "passive",
+          "growth_mode": "none",
+          "max_level": 1,
+          "description": "異なる通常の武器技を続けると、3段階まで威力が上がる。同じ技の連続使用や他の行動で途切れる。"
+        },
+        {
+          "id": "monk_P02",
+          "name": "拳の心得",
+          "kind": "passive",
+          "growth_mode": "lv5",
+          "max_level": 5,
+          "description": "素手・拳による攻撃が強くなる。",
+          "level_overrides": {
+            "3": "素手・拳による攻撃が強くなり、素手・拳を使う間は素早さも上がる。",
+            "4": "素手・拳による攻撃が強くなり、素手・拳を使う間は素早さも上がる。",
+            "5": "素手・拳による攻撃が強くなり、素手・拳を使う間は素早さも上がる。"
+          }
+        },
+        {
+          "id": "monk_P03",
+          "name": "逆境の闘気",
+          "kind": "passive",
+          "growth_mode": "lv3",
+          "max_level": 3,
+          "description": "自分が状態異常中、通常の武器技と気功攻撃が強くなる。"
+        },
+        {
+          "id": "monk_P04",
+          "name": "気の節約",
+          "kind": "passive",
+          "growth_mode": "lv3",
+          "max_level": 3,
+          "description": "通常の気功スキルの消費MPが減る。"
+        },
+        {
+          "id": "monk_P05",
+          "name": "不屈の体",
+          "kind": "passive",
+          "growth_mode": "lv5",
+          "max_level": 5,
+          "description": "自分の最大HPが上がる。"
+        },
+        {
+          "id": "monk_U01",
+          "name": "百裂天衝",
+          "kind": "ultimate",
+          "growth_mode": "none",
+          "max_level": 1,
+          "description": "敵1体に極大威力の5連打。さらに封印を狙う。"
+        }
+      ]
+    },
+    {
+      "id": "thief",
+      "name": "盗賊",
+      "skills": [
+        {
+          "id": "thief_A01",
+          "name": "早業",
+          "kind": "active",
+          "growth_mode": "lv5",
+          "max_level": 5,
+          "description": "敵1体に武器攻撃。"
+        },
+        {
+          "id": "thief_A02",
+          "name": "盗む",
+          "kind": "active",
+          "growth_mode": "none",
+          "max_level": 1,
+          "description": "敵1体から素材や道具の盗みを試みる。成功は敵ごとに1回まで。"
+        },
+        {
+          "id": "thief_A03",
+          "name": "煙玉",
+          "kind": "active",
+          "growth_mode": "lv3",
+          "max_level": 3,
+          "description": "敵全体に煙を浴びせ、暗闇を狙う。"
+        },
+        {
+          "id": "thief_A04",
+          "name": "毒刃",
+          "kind": "active",
+          "growth_mode": "lv5",
+          "max_level": 5,
+          "description": "敵1体に武器攻撃。さらに毒を狙う。"
+        },
+        {
+          "id": "thief_A05",
+          "name": "影縫い",
+          "kind": "active",
+          "growth_mode": "lv3",
+          "max_level": 3,
+          "description": "敵1体に武器攻撃。さらに束縛を狙う。"
+        },
+        {
+          "id": "thief_A06",
+          "name": "眠り薬",
+          "kind": "active",
+          "growth_mode": "none",
+          "max_level": 1,
+          "description": "敵1体を眠りに誘う。"
+        },
+        {
+          "id": "thief_A07",
+          "name": "急所突き",
+          "kind": "active",
+          "growth_mode": "lv3",
+          "max_level": 3,
+          "description": "敵1体に会心を狙いやすい武器攻撃。"
+        },
+        {
+          "id": "thief_A08",
+          "name": "身かわし",
+          "kind": "active",
+          "growth_mode": "lv3",
+          "max_level": 3,
+          "description": "しばらく、自分の回避率と素早さを上げる。"
+        },
+        {
+          "id": "thief_A09",
+          "name": "強奪",
+          "kind": "active",
+          "growth_mode": "lv3",
+          "max_level": 3,
+          "description": "敵1体に強力な武器攻撃。さらに素材や道具の盗みを試みる。"
+        },
+        {
+          "id": "thief_P01",
+          "name": "機先",
+          "kind": "passive",
+          "growth_mode": "lv3",
+          "max_level": 3,
+          "description": "戦闘開始時の行動順が早くなりやすい。"
+        },
+        {
+          "id": "thief_P02",
+          "name": "盗賊の手並み",
+          "kind": "passive",
+          "growth_mode": "lv3",
+          "max_level": 3,
+          "description": "素材や道具を盗みやすくなる。"
+        },
+        {
+          "id": "thief_P03",
+          "name": "薄闇の利",
+          "kind": "passive",
+          "growth_mode": "lv3",
+          "max_level": 3,
+          "description": "暗闇の敵がいると、自分の攻撃が会心になりやすい。"
+        },
+        {
+          "id": "thief_P04",
+          "name": "逃げ足",
+          "kind": "passive",
+          "growth_mode": "lv3",
+          "max_level": 3,
+          "description": "自分の素早さが上がり、自分の逃走が成功しやすくなる。"
+        },
+        {
+          "id": "thief_P05",
+          "name": "軽業",
+          "kind": "passive",
+          "growth_mode": "lv5",
+          "max_level": 5,
+          "description": "自分の回避率が上がる。"
+        },
+        {
+          "id": "thief_U01",
+          "name": "千影の収奪",
+          "kind": "ultimate",
+          "growth_mode": "none",
+          "max_level": 1,
+          "description": "敵全体の強化を最大2種類ずつ消し、味方全員の回避率と素早さを上げる。強化を消せると、味方全員の次の通常スキルの消費MPも減る。"
+        }
+      ]
+    },
+    {
+      "id": "hunter",
+      "name": "狩人",
+      "skills": [
+        {
+          "id": "hunter_A01",
+          "name": "狙い撃ち",
+          "kind": "active",
+          "growth_mode": "lv5",
+          "max_level": 5,
+          "description": "敵1体に狙いを定めて射撃する。"
+        },
+        {
+          "id": "hunter_A02",
+          "name": "見極め",
+          "kind": "active",
+          "growth_mode": "lv3",
+          "max_level": 3,
+          "description": "敵1体の属性相性を1種類調べる。次の武器技が強くなる。",
+          "level_overrides": {
+            "2": "敵1体の属性相性を2種類調べる。次の武器技が強くなる。",
+            "3": "敵1体の属性相性を3種類調べる。次の武器技が強くなる。"
+          }
+        },
+        {
+          "id": "hunter_A03",
+          "name": "足止めの矢",
+          "kind": "active",
+          "growth_mode": "lv5",
+          "max_level": 5,
+          "description": "敵1体に射撃攻撃。さらに束縛を狙う。"
+        },
+        {
+          "id": "hunter_A04",
+          "name": "眠り矢",
+          "kind": "active",
+          "growth_mode": "none",
+          "max_level": 1,
+          "description": "敵1体に射撃攻撃。さらに睡眠を狙う。"
+        },
+        {
+          "id": "hunter_A05",
+          "name": "風切り矢",
+          "kind": "active",
+          "growth_mode": "lv5",
+          "max_level": 5,
+          "description": "敵1体に風属性の射撃攻撃。"
+        },
+        {
+          "id": "hunter_A06",
+          "name": "乱れ撃ち",
+          "kind": "active",
+          "growth_mode": "lv5",
+          "max_level": 5,
+          "description": "敵にランダムで3連射。同じ敵に複数回当たることもある。"
+        },
+        {
+          "id": "hunter_A07",
+          "name": "仕掛け罠",
+          "kind": "active",
+          "growth_mode": "lv3",
+          "max_level": 3,
+          "description": "敵1体に罠を仕掛ける。敵の次の行動時に攻撃し、束縛を狙う。",
+          "level_overrides": {
+            "2": "敵2体までに罠を仕掛ける。敵の次の行動時に攻撃し、束縛を狙う。",
+            "3": "敵3体までに罠を仕掛ける。敵の次の行動時に攻撃し、束縛を狙う。"
+          }
+        },
+        {
+          "id": "hunter_A08",
+          "name": "狩猟撃",
+          "kind": "active",
+          "growth_mode": "lv3",
+          "max_level": 3,
+          "description": "敵1体に武器攻撃。獣に強い。",
+          "level_overrides": {
+            "2": "敵1体に武器攻撃。獣・鳥に強い。",
+            "3": "敵1体に武器攻撃。獣・鳥・虫に強い。"
+          }
+        },
+        {
+          "id": "hunter_A09",
+          "name": "狩場の警戒",
+          "kind": "active",
+          "growth_mode": "lv5",
+          "max_level": 5,
+          "description": "しばらく、自分の素早さと回避率を上げる。"
+        },
+        {
+          "id": "hunter_P01",
+          "name": "野生の知識",
+          "kind": "passive",
+          "growth_mode": "lv3",
+          "max_level": 3,
+          "description": "獣への攻撃が強くなる。",
+          "level_overrides": {
+            "2": "獣・鳥への攻撃が強くなる。",
+            "3": "獣・鳥・虫への攻撃が強くなる。"
+          }
+        },
+        {
+          "id": "hunter_P02",
+          "name": "弱点の心得",
+          "kind": "passive",
+          "growth_mode": "lv5",
+          "max_level": 5,
+          "description": "弱点を突いた攻撃が強くなる。"
+        },
+        {
+          "id": "hunter_P03",
+          "name": "罠の追い打ち",
+          "kind": "passive",
+          "growth_mode": "lv3",
+          "max_level": 3,
+          "description": "束縛中の敵への武器攻撃と気功攻撃が強くなる。",
+          "level_overrides": {
+            "2": "束縛・睡眠中の敵への武器攻撃と気功攻撃が強くなる。",
+            "3": "束縛・睡眠・凍結中の敵への武器攻撃と気功攻撃が強くなる。"
+          }
+        },
+        {
+          "id": "hunter_P04",
+          "name": "狩場の余裕",
+          "kind": "passive",
+          "growth_mode": "none",
+          "max_level": 1,
+          "description": "束縛中か睡眠中の敵がいると、自分の回避率が上がる。"
+        },
+        {
+          "id": "hunter_P05",
+          "name": "狩猟の呼吸",
+          "kind": "passive",
+          "growth_mode": "none",
+          "max_level": 1,
+          "description": "通常攻撃で弱点を突くと、自分のMPが少し回復する。自分の手番ごとに1回まで。"
+        },
+        {
+          "id": "hunter_U01",
+          "name": "狩猟解禁",
+          "kind": "ultimate",
+          "growth_mode": "none",
+          "max_level": 1,
+          "description": "敵1体の属性相性を最大5種類見抜く。しばらく、その敵への味方全員の攻撃が強くなる。"
+        }
+      ]
+    },
+    {
+      "id": "black_mage",
+      "name": "黒魔道士",
+      "skills": [
+        {
+          "id": "black_mage_A01",
+          "name": "炎弾",
+          "kind": "active",
+          "growth_mode": "lv5",
+          "max_level": 5,
+          "description": "敵1体に炎魔法。"
+        },
+        {
+          "id": "black_mage_A02",
+          "name": "氷槍",
+          "kind": "active",
+          "growth_mode": "lv5",
+          "max_level": 5,
+          "description": "敵1体に氷魔法。"
+        },
+        {
+          "id": "black_mage_A03",
+          "name": "雷鳴",
+          "kind": "active",
+          "growth_mode": "lv5",
+          "max_level": 5,
+          "description": "敵1体に雷魔法。"
+        },
+        {
+          "id": "black_mage_A04",
+          "name": "焔の渦",
+          "kind": "active",
+          "growth_mode": "lv5",
+          "max_level": 5,
+          "description": "敵全体に炎魔法。さらに火傷を狙う。"
+        },
+        {
+          "id": "black_mage_A05",
+          "name": "吹雪",
+          "kind": "active",
+          "growth_mode": "lv5",
+          "max_level": 5,
+          "description": "敵全体に氷魔法。さらに凍結を狙う。"
+        },
+        {
+          "id": "black_mage_A06",
+          "name": "雷雲",
+          "kind": "active",
+          "growth_mode": "lv5",
+          "max_level": 5,
+          "description": "敵全体に雷魔法。さらに麻痺を狙う。"
+        },
+        {
+          "id": "black_mage_A07",
+          "name": "灼熱火球",
+          "kind": "active",
+          "growth_mode": "lv5",
+          "max_level": 5,
+          "description": "敵1体に強炎魔法。火傷中の敵に強い。"
+        },
+        {
+          "id": "black_mage_A08",
+          "name": "凍てつく枷",
+          "kind": "active",
+          "growth_mode": "none",
+          "max_level": 1,
+          "description": "敵1体に氷魔法。さらに凍結を狙う。"
+        },
+        {
+          "id": "black_mage_A09",
+          "name": "雷の追い打ち",
+          "kind": "active",
+          "growth_mode": "lv5",
+          "max_level": 5,
+          "description": "敵1体に雷魔法。状態異常中の敵に強い。"
+        },
+        {
+          "id": "black_mage_P01",
+          "name": "魔力集中",
+          "kind": "passive",
+          "growth_mode": "none",
+          "max_level": 1,
+          "description": "通常の攻撃魔法で、追加MP6と引き換えに威力を高められる。"
+        },
+        {
+          "id": "black_mage_P02",
+          "name": "炎氷雷の学理",
+          "kind": "passive",
+          "growth_mode": "lv5",
+          "max_level": 5,
+          "description": "炎・氷・雷の攻撃魔法が強くなる。"
+        },
+        {
+          "id": "black_mage_P03",
+          "name": "災禍との共鳴",
+          "kind": "passive",
+          "growth_mode": "lv3",
+          "max_level": 3,
+          "description": "火傷中の敵がいると、自分の攻撃魔法が強くなる。",
+          "level_overrides": {
+            "2": "火傷中か凍結中の敵がいると、自分の攻撃魔法が強くなる。",
+            "3": "火傷・凍結・麻痺の敵がいると、自分の攻撃魔法が強くなる。"
+          }
+        },
+        {
+          "id": "black_mage_P04",
+          "name": "魔法障壁の心得",
+          "kind": "passive",
+          "growth_mode": "lv3",
+          "max_level": 3,
+          "description": "MPが75%以上ある間、攻撃で受ける魔法ダメージが減る。",
+          "level_overrides": {
+            "2": "MPが半分以上ある間、攻撃で受ける魔法ダメージが減る。",
+            "3": "MPが25%以上ある間、攻撃で受ける魔法ダメージが減る。"
+          }
+        },
+        {
+          "id": "black_mage_P05",
+          "name": "逆境の魔力",
+          "kind": "passive",
+          "growth_mode": "lv3",
+          "max_level": 3,
+          "description": "自分が毒・猛毒・火傷・出血の間、攻撃魔法が強くなる。",
+          "level_overrides": {
+            "2": "自分が毒・猛毒・火傷・出血・魔力漏出・暗闇・束縛・恐怖の間、攻撃魔法が強くなる。",
+            "3": "自分が状態異常中、攻撃魔法が強くなる。"
+          }
+        },
+        {
+          "id": "black_mage_U01",
+          "name": "星墜とし",
+          "kind": "ultimate",
+          "growth_mode": "none",
+          "max_level": 1,
+          "description": "炎・氷・雷から選び、敵全体に極大魔法。属性に応じて火傷・凍結・麻痺を狙う。"
+        }
+      ]
+    },
+    {
+      "id": "white_mage",
+      "name": "白魔道士",
+      "skills": [
+        {
+          "id": "white_mage_A01",
+          "name": "癒しの光",
+          "kind": "active",
+          "growth_mode": "lv5",
+          "max_level": 5,
+          "description": "味方1人のHPを回復する。"
+        },
+        {
+          "id": "white_mage_A02",
+          "name": "祝福の雨",
+          "kind": "active",
+          "growth_mode": "lv5",
+          "max_level": 5,
+          "description": "味方全員のHPを回復する。"
+        },
+        {
+          "id": "white_mage_A03",
+          "name": "清めの光",
+          "kind": "active",
+          "growth_mode": "lv3",
+          "max_level": 3,
+          "description": "味方1人の毒・睡眠・暗闇・麻痺を治す。",
+          "level_overrides": {
+            "2": "味方1人の毒・睡眠・暗闇・麻痺・火傷・出血・凍結・束縛・恐怖・混乱を治す。",
+            "3": "味方1人の毒・睡眠・暗闇・麻痺・火傷・出血・凍結・束縛・恐怖・混乱・沈黙・封印・魔力漏出を治す。"
+          }
+        },
+        {
+          "id": "white_mage_A04",
+          "name": "目覚めの祈り",
+          "kind": "active",
+          "growth_mode": "lv5",
+          "max_level": 5,
+          "description": "戦闘不能の味方1人を蘇生する。"
+        },
+        {
+          "id": "white_mage_A05",
+          "name": "再生の祈り",
+          "kind": "active",
+          "growth_mode": "lv5",
+          "max_level": 5,
+          "description": "味方1人のHPを、行動のたびに少しずつ回復する。"
+        },
+        {
+          "id": "white_mage_A06",
+          "name": "守りの祝福",
+          "kind": "active",
+          "growth_mode": "lv3",
+          "max_level": 3,
+          "description": "味方1人に、攻撃ダメージを肩代わりする防護を張る。"
+        },
+        {
+          "id": "white_mage_A07",
+          "name": "聖弾",
+          "kind": "active",
+          "growth_mode": "lv5",
+          "max_level": 5,
+          "description": "敵1体に光魔法。"
+        },
+        {
+          "id": "white_mage_A08",
+          "name": "聖なる鎖",
+          "kind": "active",
+          "growth_mode": "none",
+          "max_level": 1,
+          "description": "敵1体に光魔法。さらに束縛を狙う。"
+        },
+        {
+          "id": "white_mage_A09",
+          "name": "退魔の光",
+          "kind": "active",
+          "growth_mode": "lv3",
+          "max_level": 3,
+          "description": "敵1体に光魔法。さらに解除できる強化を1個消す。",
+          "level_overrides": {
+            "2": "敵1体に光魔法。さらに解除できる強化を2個消す。",
+            "3": "敵1体に光魔法。さらに解除できる強化を3個消す。"
+          }
+        },
+        {
+          "id": "white_mage_P01",
+          "name": "回復術の心得",
+          "kind": "passive",
+          "growth_mode": "lv5",
+          "max_level": 5,
+          "description": "自分が使う回復スキルのHP回復量が増える。"
+        },
+        {
+          "id": "white_mage_P02",
+          "name": "清めの心得",
+          "kind": "passive",
+          "growth_mode": "none",
+          "max_level": 1,
+          "description": "治療スキルで味方の状態異常を治すと、その味方のHPも少し回復する。"
+        },
+        {
+          "id": "white_mage_P03",
+          "name": "救護の決意",
+          "kind": "passive",
+          "growth_mode": "lv3",
+          "max_level": 3,
+          "description": "毒・猛毒・火傷・出血の味方がいると、自分の回復スキルによる即時回復量が増える。",
+          "level_overrides": {
+            "2": "毒・猛毒・火傷・出血・睡眠・暗闇・麻痺・凍結・束縛・恐怖・混乱の味方がいると、自分の回復スキルによる即時回復量が増える。",
+            "3": "状態異常の味方がいると、自分の回復スキルによる即時回復量が増える。"
+          }
+        },
+        {
+          "id": "white_mage_P04",
+          "name": "祈りの守り",
+          "kind": "passive",
+          "growth_mode": "lv3",
+          "max_level": 3,
+          "description": "回復・治療・蘇生スキルを使うと、しばらく自分への攻撃ダメージが減る。"
+        },
+        {
+          "id": "white_mage_P05",
+          "name": "祈りの節約",
+          "kind": "passive",
+          "growth_mode": "lv3",
+          "max_level": 3,
+          "description": "通常のHP回復スキルの消費MPが減る。",
+          "level_overrides": {
+            "2": "通常のHP回復・状態異常治療スキルの消費MPが減る。",
+            "3": "通常のHP回復・状態異常治療・蘇生スキルの消費MPが減る。"
+          }
+        },
+        {
+          "id": "white_mage_U01",
+          "name": "再生の聖域",
+          "kind": "ultimate",
+          "growth_mode": "none",
+          "max_level": 1,
+          "description": "味方全員を大きく回復し、多くの状態異常を治す。さらに戦闘不能の味方1人を蘇生する。"
+        }
+      ]
+    },
+    {
+      "id": "bard",
+      "name": "吟遊詩人",
+      "skills": [
+        {
+          "id": "bard_A01",
+          "name": "守りの歌",
+          "kind": "active",
+          "growth_mode": "lv5",
+          "max_level": 5,
+          "description": "しばらく、味方全員の防御力と魔法防御力を上げる。"
+        },
+        {
+          "id": "bard_A02",
+          "name": "力の歌",
+          "kind": "active",
+          "growth_mode": "lv5",
+          "max_level": 5,
+          "description": "しばらく、味方全員の物理攻撃力と魔力を上げる。"
+        },
+        {
+          "id": "bard_A03",
+          "name": "疾風の歌",
+          "kind": "active",
+          "growth_mode": "lv5",
+          "max_level": 5,
+          "description": "しばらく、味方全員の素早さを上げる。"
+        },
+        {
+          "id": "bard_A04",
+          "name": "癒しの旋律",
+          "kind": "active",
+          "growth_mode": "lv5",
+          "max_level": 5,
+          "description": "味方全員のHPを、行動のたびに少しずつ回復する。"
+        },
+        {
+          "id": "bard_A05",
+          "name": "励まし",
+          "kind": "active",
+          "growth_mode": "none",
+          "max_level": 1,
+          "description": "自分のMPを分け与え、味方1人のMPを回復する。"
+        },
+        {
+          "id": "bard_A06",
+          "name": "子守歌",
+          "kind": "active",
+          "growth_mode": "none",
+          "max_level": 1,
+          "description": "敵全体を眠りに誘う。"
+        },
+        {
+          "id": "bard_A07",
+          "name": "不協和音",
+          "kind": "active",
+          "growth_mode": "lv3",
+          "max_level": 3,
+          "description": "敵全体に水魔法。さらに沈黙を狙う。"
+        },
+        {
+          "id": "bard_A08",
+          "name": "光の詩",
+          "kind": "active",
+          "growth_mode": "lv5",
+          "max_level": 5,
+          "description": "敵1体に光魔法。自分の支援の歌が続いていると威力が上がる。"
+        },
+        {
+          "id": "bard_A09",
+          "name": "終曲",
+          "kind": "active",
+          "growth_mode": "none",
+          "max_level": 1,
+          "description": "自分の支援の歌を終え、歌を受けていた味方の次の通常スキルの消費MPを減らす。"
+        },
+        {
+          "id": "bard_P01",
+          "name": "余韻",
+          "kind": "passive",
+          "growth_mode": "lv3",
+          "max_level": 3,
+          "description": "支援の歌が長続きし、その消費MPも減る。"
+        },
+        {
+          "id": "bard_P02",
+          "name": "合唱の心得",
+          "kind": "passive",
+          "growth_mode": "lv3",
+          "max_level": 3,
+          "description": "支援の歌を3種類以上受けていると、別の曲の支援効果が高まる。",
+          "level_overrides": {
+            "2": "支援の歌を2種類以上受けていると、別の曲の支援効果が高まる。",
+            "3": "支援の歌を1種類以上受けていると、別の曲の支援効果が高まる。"
+          }
+        },
+        {
+          "id": "bard_P03",
+          "name": "逆境の歌声",
+          "kind": "passive",
+          "growth_mode": "lv3",
+          "max_level": 3,
+          "description": "自分が毒か猛毒の間、支援の歌の効果が高まる。",
+          "level_overrides": {
+            "2": "自分が毒・猛毒・火傷・出血の間、支援の歌の効果が高まる。",
+            "3": "自分が毒・猛毒・火傷・出血・魔力漏出の間、支援の歌の効果が高まる。"
+          }
+        },
+        {
+          "id": "bard_P04",
+          "name": "支える声",
+          "kind": "passive",
+          "growth_mode": "lv3",
+          "max_level": 3,
+          "description": "毒・猛毒の味方への、自分の継続回復量が増える。",
+          "level_overrides": {
+            "2": "毒・猛毒・火傷の味方への、自分の継続回復量が増える。",
+            "3": "毒・猛毒・火傷・出血の味方への、自分の継続回復量が増える。"
+          }
+        },
+        {
+          "id": "bard_P05",
+          "name": "楽器の心得",
+          "kind": "passive",
+          "growth_mode": "lv3",
+          "max_level": 3,
+          "description": "楽器を装備すると、支援の歌の効果が高まる。",
+          "level_overrides": {
+            "2": "楽器を装備すると、支援の歌と光属性攻撃が強くなる。",
+            "3": "楽器を装備すると、支援の歌と光・水属性攻撃が強くなる。"
+          }
+        },
+        {
+          "id": "bard_U01",
+          "name": "英雄の凱歌",
+          "kind": "ultimate",
+          "growth_mode": "none",
+          "max_level": 1,
+          "description": "しばらく、味方全員の攻撃を大きく強め、攻撃で受けるダメージと通常スキルの消費MPを減らす。"
+        }
+      ]
+    }
+  ]
+}
