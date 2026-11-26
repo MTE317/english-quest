@@ -35,6 +35,34 @@ function typeMaterials(data, game, needs) {
   return picked;
 }
 
+/** 画面のボタン判定。実行処理と同じ素材の選び方を使う。 */
+export function canBrew(data, game, recipe) {
+  const item = data.items.get(recipe?.result);
+  const qty = Number(recipe?.qty);
+  if (!item || !Number.isInteger(qty) || qty <= 0 ||
+      (game.facilities.item_shop ?? 1) < Number(recipe.workshop_rank) ||
+      (game.items[item.id] ?? 0) + qty > 10 || game.gold < Number(recipe.gold)) return false;
+  try {
+    typeMaterials(data, game, parseMaterialNeed(data, recipe.materials));
+    return true;
+  } catch { return false; }
+}
+
+export function canCraft(data, game, def) {
+  if (!def) return false;
+  const recipe = data.recipes.find((r) => r.id === def.id);
+  if ((game.facilities[facilityFor(def)] ?? 1) < Number(recipe?.workshop_rank ?? def.star) ||
+      (!recipe && (!def.source?.includes('制作') || def.unique || def.setId)) ||
+      (recipe?.derive_from && !game.storage.gear.some((g) => g.id === recipe.derive_from && g.crafted))) return false;
+  const price = Number(recipe?.gold ?? data.economy.get(def.star)?.craft_gold);
+  if (!Number.isFinite(price) || game.gold < price) return false;
+  if (recipe) return parseAmounts(recipe.materials).every(({ id, count }) => (game.storage.materials[id] ?? 0) >= count);
+  try {
+    typeMaterials(data, game, [{ count: 4, minRank: def.star, kind: 'common', text: `★${def.star}以上の通常素材` }]);
+    return true;
+  } catch { return false; }
+}
+
 export function facilityUpgrade(data, game, id) {
   const rank = (game.facilities[id] ?? 1) + 1;
   const row = data.facilityRanks.find((r) => Number(r.rank) === rank);

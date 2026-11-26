@@ -366,7 +366,15 @@ export function reportQuest(data, game, uid, rng = Math.random) {
   if (refund) { game.gold += refund; lines.push(`保証金 ${refund} G を返還`); }
   if (def.rewardItem.startsWith('まれな素材')) {
     const n = Number(/(\d+)/.exec(def.rewardItem)?.[1] ?? 1);
-    const rares = [...data.materials.values()].filter((m) => m.kind === 'rare' && m.rank === q.rank && !m.season);
+    // 依頼先に棲む通常・季節モンスターの素材に限定する。
+    // 行き先を保存していない旧依頼も、現在行ける同ランクの地域だけを見る。
+    const destinations = q.dungeonId ? [q.dungeonId]
+      : allowedDungeons(data, game).filter((d) => d.rank === q.rank).map((d) => d.id);
+    const season = calendarOf(data, game.day).season?.id;
+    const rareIds = new Set(destinations.flatMap((id) => monsterPool(data, id, season)
+      .map((monster) => monster.materialRare)));
+    const rares = [...rareIds].map((id) => data.materials.get(id))
+      .filter((m) => m?.kind === 'rare' && m.rank === q.rank);
     const m = rares[Math.min(rares.length - 1, Math.floor(rng() * rares.length))];
     if (m) { game.storage.materials[m.id] = (game.storage.materials[m.id] ?? 0) + n; lines.push(`${m.name} ×${n}`); }
   }
@@ -509,8 +517,19 @@ export function sellGear(data, game, uid) {
 export function parseMaterialNeed(data, text) {
   const kinds = { 通常: 'common', まれな: 'rare', ボス: 'boss' };
   return String(text ?? '').split('|').filter(Boolean).map((part) => {
-    const m = /★(\d+)以上の(通常|まれな|ボス)素材(?:（(.+?)）)?:(\d+)/.exec(part);
-    if (!m) throw new Error(`素材の条件が読めない：${part}`);
+    const m = /^★(\d+)以上の(通常|まれな|ボス)素材(?:（(.+?)）)?:(\d+)$/.exec(part);
+    const element = /^★(\d+)以上の(.+?)属性の素材:(\d+)$/.exec(part);
+    const status = /^★(\d+)以上の、「(.+?)」系の状態異常を使うモンスターの素材:(\d+)$/.exec(part);
+    if (!m && !element && !status) throw new Error(`素材の条件が読めない：${part}`);
+    if (element) {
+      const id = [...data.elements.values()].find((entry) => entry.name === element[2])?.id;
+      if (!id) throw new Error(`属性が見つからない：${part}`);
+      return { text: part.split(':')[0], minRank: Number(element[1]), element: id, count: Number(element[3]) };
+    }
+    if (status) {
+      if (![...data.statusEffects.values()].some((entry) => entry.group === status[2])) throw new Error(`状態異常の系統が見つからない：${part}`);
+      return { text: part.split(':')[0], minRank: Number(status[1]), statusGroup: status[2], count: Number(status[3]) };
+    }
     const typeNames = m[3] ? m[3].split('・') : null;
     const types = typeNames ? [...data.monsterTypes.values()].filter((t) => typeNames.includes(t.name)).map((t) => t.id) : null;
     return { text: part.split(':')[0], minRank: Number(m[1]), kind: kinds[m[2]], types, count: Number(m[4]) };
@@ -518,7 +537,12 @@ export function parseMaterialNeed(data, text) {
 }
 export function matchesNeed(data, matId, need) {
   const mat = data.materials.get(matId);
-  if (!mat || mat.kind !== need.kind || mat.rank < need.minRank) return false;
+  if (!mat || mat.rank < need.minRank || (need.kind && mat.kind !== need.kind)) return false;
+  if (need.element) return mat.element?.split('|').includes(need.element) ?? false;
+  if (need.statusGroup) {
+    const monster = data.monsters.get(mat.sourceMonster);
+    return Boolean(monster?.status?.split('|').some((id) => data.statusEffects.get(id)?.group === need.statusGroup));
+  }
   if (!need.types) return true;
   return need.types.some((t) => data.monsters.get(mat.sourceMonster)?.types.includes(t));
 }

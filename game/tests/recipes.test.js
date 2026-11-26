@@ -2,7 +2,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { buildGameData, GAME_FILES } from '../js/gamedata.js';
 import { createNewGame } from '../js/game-state.js';
-import { craft } from '../js/workshop.js';
+import { craft, brew, canCraft, canBrew } from '../js/workshop.js';
+import { parseMaterialNeed, matchesNeed } from '../js/town.js';
 import { canEquip, computeStats, gearEffects, makeGear, maxHp } from '../js/character.js';
 import { createBattle, makeEnemy, setPending, resolvePending, skillMp, battleStats } from '../js/battle.js';
 import { readCsv, readJson } from './helpers.js';
@@ -70,6 +71,43 @@ test('専用制作レシピ171件、各武器6件以上、防具27件、マン�
     const n = data.recipes.filter((r) => r.weapon_type === type).length;
     assert.ok(n >= 6, `${type}: ${n}`);
   }
+});
+
+test('通常制作と調合の実行ボタンは費用・素材・持ち物上限を反映する', () => {
+  const g = fresh();
+  const def = data.equipment.get('sword_t1');
+  const recipe = data.alchemyRecipes.find((r) => r.id === 'rc_buff_str_1');
+  g.gold = 100000;
+  assert.equal(canCraft(data, g, def), false);
+  assert.equal(canBrew(data, g, recipe), false);
+  g.storage.materials.goblin_mat = 4;
+  g.storage.materials.cave_rat_mat = 4;
+  assert.equal(canCraft(data, g, def), true);
+  assert.equal(canBrew(data, g, recipe), true);
+  g.gold = 0;
+  assert.equal(canCraft(data, g, def), false);
+  assert.equal(canBrew(data, g, recipe), false);
+  g.gold = 100000;
+  craft(data, g, def);
+  brew(data, g, recipe);
+  assert.equal(g.storage.gear.at(-1).id, def.id);
+  g.items[recipe.result] = 9;
+  assert.equal(canBrew(data, g, recipe), false);
+});
+
+test('★2の属性素材を使う調合を完了できる', () => {
+  const g = fresh();
+  const recipe = data.alchemyRecipes.find((r) => r.id === 'rc_resist_fire_1');
+  const need = parseMaterialNeed(data, recipe.materials)[0];
+  const mat = [...data.materials.values()].find((m) => matchesNeed(data, m.id, need));
+  assert.ok(mat);
+  g.gold = 100000;
+  g.facilities.item_shop = 2;
+  g.storage.materials[mat.id] = need.count;
+  assert.equal(canBrew(data, g, recipe), true);
+  brew(data, g, recipe);
+  assert.equal(g.storage.materials[mat.id] ?? 0, 0);
+  assert.equal(g.items[recipe.result], Number(recipe.qty));
 });
 
 test('専用の毒短剣を制作すると固有効果が保存され、素材とお金を消費する', () => {
