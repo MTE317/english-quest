@@ -4,9 +4,9 @@ import { loadGameData } from '../gamedata.js?v=skill-growth-2';
 import { GameSession } from '../save.js?v=party-wipe-1';
 import { createNewGame, defaultPartySpecs, normalizeGame } from '../game-state.js?v=jobs-intro-1';
 import {
-  computeStats, SLOTS, SLOT_LABEL, STAT_LABEL, canEquip, equipFromStorage, unequip, gearDef,
+  computeStats, SLOTS, SLOT_LABEL, STAT_LABEL, canEquip, equipFromStorage, equipRecommended, unequip, gearDef,
   aptitudeGrade, xpToNext, levelCap, gainXp, makeGear,
-} from '../character.js?v=advanced-jobs-1';
+} from '../character.js?v=recommended-equipment-1';
 import {
   availableJobs, jobPaths, isLearned, learnBlock, learnSkill, equipBlock, equipSkill, unequipSkill, capacity, usedCapacity,
   commonApCost, commonBlock, learnCommon, masteryLevel, isJobMastered, GROWTH_FORMULAS,
@@ -307,6 +307,12 @@ function showMember(index, tab = 'skills', selectedSlot = null, { scroll = true 
         return el('li', {}, button);
       })),
     equipmentPanel,
+    el('button', { type: 'button', class: 'primary', disabled: session.inDungeon,
+      onclick: () => {
+        session.update(game => equipRecommended(data, game, game.party[index]));
+        showMember(index, 'equipment', null, { scroll: false });
+      },
+    }, 'おまかせ装備'),
     ] : [
       el('h2', {}, '能力'),
       el('p', { class: 'muted small' }, m.lv < cap ? `次のレベルまで ${xpToNext(data, m.lv) - m.xp}` : '最大レベル'),
