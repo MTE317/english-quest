@@ -41,6 +41,7 @@ let templeTab = 'recovery';
 let templeMember = 0;
 let templeJob = null;
 let guildTab = location.hash === '#guild-active' ? 'active' : 'board';
+let catalogTab = 'monsters';
 
 const requestedFacility = new URLSearchParams(window.location.search).get('facility');
 const rng = () => seededRng({ rng: (Date.now() ^ (Math.random() * 2 ** 32)) >>> 0 });
@@ -64,7 +65,7 @@ const facilityGroups = [
     { id: 'manage', name: '銀行・投資', icon: 'bank', detail: '融資・返済、施設の強化',
       show: () => managementView(data, session.game, act) },
     { id: 'catalog', name: '図鑑', icon: 'catalog', detail: '魔物・装備・収集記録',
-      show: () => el('section', { class: 'panel' }, el('p', { class: 'muted' }, '図鑑の内容は準備中です。')) },
+      show: catalog },
     { id: 'achievements', name: '実績・称号', icon: 'achievements', detail: '達成記録と称号',
       show: () => el('section', { class: 'panel' }, el('p', { class: 'muted' }, '実績・称号の内容は準備中です。')) },
   ] },
@@ -397,6 +398,29 @@ function temple() {
 
 function storage() {
   return storageView(data, session.game, storageSelection);
+}
+
+function catalog() {
+  const tabs = [
+    ['monsters', 'モンスター図鑑', '出会ったモンスターの記録は、ここに表示します。'],
+    ['items', 'アイテム図鑑', '武器・防具・道具・素材などの記録は、ここに表示します。'],
+  ];
+  const content = el('section', { class: 'panel', id: 'catalog-content', role: 'region', 'aria-label': '図鑑の内容' });
+  const nav = el('div', { class: 'district-switch', role: 'group', 'aria-label': '図鑑の種類' });
+  function select(id) {
+    catalogTab = id;
+    for (const button of nav.children) button.setAttribute('aria-pressed', String(button.dataset.catalog === id));
+    const [, title, description] = tabs.find(([key]) => key === id);
+    render(content, el('h2', {}, title), el('p', { class: 'muted' }, description));
+  }
+  for (const [id, label] of tabs) {
+    nav.append(el('button', {
+      type: 'button', 'data-catalog': id, 'aria-controls': content.id,
+      onclick: () => select(id),
+    }, label));
+  }
+  select(catalogTab);
+  return el('div', { class: 'catalog-view' }, nav, content);
 }
 
 function draw() {
