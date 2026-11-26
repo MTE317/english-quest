@@ -514,3 +514,18 @@
 .status-grade-normal { color: #ddd; }
 .status-grade-resist { color: #8edfc3; }
 .status-grade-immune { color: #ffd573; }
+
+/* 装備枠の下で現在の装備・倉庫・比較を続けて表示する。 */
+.equipment-slots button[aria-pressed="true"] {
+  border-color: var(--accent);
+  box-shadow: inset 0 0 0 1px var(--accent);
+}
+.equipment-picker { margin-top: 16px; min-width: 0; }
+.equipment-current h3 { margin: 0 0 8px; }
+.equipment-current button { margin-bottom: 0; }
+.equipment-picker .equipment-comparison {
+  position: static;
+  margin-top: 12px;
+}
+.equipment-comparison h3 { margin: 0 0 8px; }
+.equipment-picker .equipment-items { width: 100%; box-sizing: border-box; }
