@@ -5,6 +5,7 @@ import vm from 'node:vm';
 import { el } from '../js/dom.js';
 import { effectiveSkill, skillMaxLevel, learnedSkillLevel } from '../js/growth.js';
 import { describeSkillForUI } from '../js/skill-effects.js';
+import { skillIcon } from '../js/ui/skill-icons.js';
 
 class TestNode {
   constructor(tag, text = '') { this.tag = tag; this.text = text; this.attrs = {}; this.children = []; this.events = {}; }
@@ -18,7 +19,7 @@ test('戦闘スキル一覧に技名・習得Lvの簡易説明・消費MPと使�
   globalThis.Node = TestNode;
   globalThis.document = { createElement: tag => new TestNode(tag), createTextNode: text => new TestNode('', String(text)) };
   try {
-    const first = { id: 'warrior_A01', name: '剛断ち', mp: 3, effect: {} };
+    const first = { id: 'warrior_A01', name: '剛断ち', mp: 3, kind: 'attack', effect: { base: 'weapon' } };
     const second = { id: 'warrior_A02', name: '旋風斬', mp: 6, effect: { levels: [{ mp: 6, effect: {} }, { mp: 6, effect: {} }] } };
     const ultimate = { id: 'warrior_U01', name: '天裂き', mp: 12, isFinal: true, effect: {} };
     const member = { name: 'A', mp: 3, learned: [first.id, second.id], skillLevels: { [second.id]: 2 } };
@@ -29,7 +30,7 @@ test('戦闘スキル一覧に技名・習得Lvの簡易説明・消費MPと使�
     const source = readFileSync(new URL('../js/ui/battle-view.js', import.meta.url), 'utf8');
     const start = source.indexOf('  function showCommand('), end = source.indexOf('  function chooseSkill(', start);
     const context = vm.createContext({
-      el, effectiveSkill, skillMaxLevel, learnedSkillLevel, describeSkillForUI,
+      el, effectiveSkill, skillMaxLevel, learnedSkillLevel, describeSkillForUI, skillIcon,
       data: { skills: new Map([first, second, ultimate].map(skill => [skill.id, skill])) },
       g: { party: [member] }, b: { turn: { i: 0 } }, actionOptions: () => opts,
       drawField() {}, battleMp: skill => skill.mp, chooseTarget() {}, chooseSkill() {},
@@ -45,9 +46,15 @@ test('戦闘スキル一覧に技名・習得Lvの簡易説明・消費MPと使�
     assert.equal(choices[1].children[2].textContent, '敵3体までに武器攻撃。 ／ MPが足りない');
     assert.ok('disabled' in choices[1].attrs);
     assert.match(choices[2].children[1].textContent, /EX 20\/100・消費MP 12/);
+    const iconOf = choice => choice.children.find(node => node.className === 'battle-list-icon').children[0].children[0];
+    assert.equal(iconOf(choices[0]).attrs['data-skill-icon'], 'physical-blunt');
+    assert.equal(iconOf(choices[0]).attrs.width, '32');
+    assert.equal(iconOf(choices[0]).attrs.height, '32');
+    assert.equal(iconOf(choices[2]).attrs['data-skill-icon'], 'ultimate');
     context.showCommand('item');
     const items = panel.contents.find(node => node?.className === 'battle-action-list').children;
     assert.equal(items[0].children[1].textContent, '×2');
     assert.equal(items[0].children[2].textContent, 'HPを回復する。');
+    assert.ok(!items[0].children.some(node => node.className === 'battle-list-icon'));
   } finally { globalThis.document = oldDocument; globalThis.Node = oldNode; }
 });
