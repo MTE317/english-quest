@@ -111,7 +111,7 @@ test('武器条件は現職でなく現在の主武器を見て判定する', ()
 test('技能準備中の30職は解放記録があっても転職できない', () => {
   const game = fresh();
   game.unlockedJobs = data.jobs.map((job) => job.id);
-  assert.equal(availableJobs(data, game).length,23);
+  assert.equal(availableJobs(data, game).length,26);
   const pending = data.jobs.find((job) => job.skillsReady === false);
   assert.ok(pending);
   assert.throws(() => changeJob(data, game, 0, pending.id), /選べない/);

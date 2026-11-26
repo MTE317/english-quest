@@ -27,6 +27,8 @@ const TARGET_PROMPT = {
 /** 状態異常に加え、残っている障壁と次の行動に有効な準備を表示する。 */
 export function battleConditionLabels(data, unit) {
   const names = Object.keys(unit.statuses ?? {}).map((id) => data.statusEffects.get(id)?.name ?? id);
+  for(const mark of Object.values(unit.curseMarks??{}))if(mark.remaining>0&&mark.uses>0)
+    names.push(`${data.skills.get(mark.skillId)?.name??'呪印'} ${mark.uses}回・残り${mark.remaining}行動`);
   if (unit.hp != null && unit.hp <= 0) return names;
   const [barrier, turns] = unit.buffs?.barrier ?? [];
   if (Number.isFinite(barrier) && barrier > 0 && turns > 0) names.push(`障壁 ${barrier} HP`);
@@ -90,6 +92,8 @@ export function allyEffectEntries(data, game, battle, index) {
   if (member.hp <= 0) statuses.unshift(entry('戦闘不能', null));
 
   const party = timedBuffs(battle.partyBuffs, true), ongoing = [], special = [];
+  if(member.hp>0 && battle.field?.remaining>0 && game.party[battle.field.source]?.hp>0)
+    party.push(entry(`${data.elements.get(battle.field.element)?.name??battle.field.element}の場：直接ダメージ +${Math.round(battle.field.rate*100)}%（${game.party[battle.field.source].name}・残り${battle.field.remaining}行動）`));
   const groups = { [JOB_EFFECT_SECTIONS.party]: party, [JOB_EFFECT_SECTIONS.ongoing]: ongoing, [JOB_EFFECT_SECTIONS.special]: special };
   const passives = passiveRules(data, member);
   for (const [key, effect] of Object.entries(ally.masterEffects ?? {})) {
@@ -125,6 +129,8 @@ export function allyEffectEntries(data, game, battle, index) {
     if (effect.enchantGuard) values.push(`${data.elements.get(effect.enchantGuard.element)?.name??effect.enchantGuard.element}攻撃軽減 ${Math.round(effect.enchantGuard.rate*100)}%`);
     if (effect.switchMp) values.push(`次の付与対応技MP -${Math.round(effect.switchMp.rate*100)}%`);
     if (effect.enchantWeaponDamage) values.push(`付与対応技ダメージ +${Math.round(effect.enchantWeaponDamage*100)}%`);
+    if (effect.fieldGuard) values.push(`${data.elements.get(effect.fieldGuard.element)?.name??effect.fieldGuard.element}の被害 -${Math.round(effect.fieldGuard.rate*100)}%`);
+    if (effect.conditionalMagic) values.push(`次の${effect.conditionalMagic.elements.map(id=>data.elements.get(id)?.name??id).join('・')}魔法 +${Math.round(effect.conditionalMagic.rate*100)}%`);
     const coverRule = passives.find(rule => rule.skill.id === id)?.on_cover;
     if (coverRule && ally.coverStages > 0) values.push(`守勢 ${Math.min(coverRule.max, ally.coverStages)}/${coverRule.max}段階`);
     groups[jobEffectSection(skill, effect)].push(entry(`${name}${duration(effect.remaining)}${values.length ? '：' + values.join('・') : ''}`));
@@ -172,6 +178,7 @@ export function allyEffectEntries(data, game, battle, index) {
   if (ally.imbue) special.push(entry(`武器属性：${data.elements.get(ally.imbue)?.name ?? ally.imbue}`));
   if (member.hp>0 && (member.job==='gunner' || (ally.loaded??0)>0)) ongoing.push(entry(`装填 ${ally.loaded??0}/3`));
   if (member.hp>0 && ally.weaponEnchant?.remaining>0) ongoing.push(entry(`武器付与：${data.elements.get(ally.weaponEnchant.element)?.name??ally.weaponEnchant.element}${duration(ally.weaponEnchant.remaining)}`));
+  if(member.hp>0 && ally.familiar?.uses>0)ongoing.push(entry(`使い魔：${ally.familiar.mode==='pursuit'?'追撃型':'悪戯型'}・残り${ally.familiar.uses}回${duration(ally.familiar.remaining)}`));
   if (ally.normalSkillReady) special.push(entry('次の攻撃技能を強化'));
   const barrier = ally.buffs?.barrier;
   if (barrier?.[0] > 0 && barrier[1] > 0) special.push(entry(buffText(data, 'barrier', barrier[0]) + duration(barrier[1])));
@@ -508,7 +515,7 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
     if (!entry?.skill || entry.reason) return;
     const skill = entry.skill;
     const action = { type: 'skill', skillId: skill.id };
-    const elements = entry.elements ?? skill.effect.rules?.choose_element ?? [];
+    const elements = entry.elements ?? skill.effect.rules?.choose_element ?? skill.effect.rules?.choose_mode ?? [];
     const back = () => showCommand('skill');
     const chooseBoost = selected => {
       if (entry.optionalClone && selected.consumeClone==null) return showPanel(`${skill.name}の分身`,[
@@ -538,7 +545,7 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
     showPanel(`${skill.name}の属性`, [
       el('p', { class: 'battle-notice' }, describeSkillEffect(data, skill)),
       el('div', { class: 'battle-action-list' }, elements.map(element => listChoice(
-        data.elements.get(element)?.name ?? element, `MP ${battleMp(skill)}`, null,
+         ({pursuit:'追撃型',mischief:'悪戯型'}[element] ?? data.elements.get(element)?.name ?? element), `MP ${battleMp(skill)}`, null,
         () => chooseBoost({ ...action, element })))),
     ], { back });
   }

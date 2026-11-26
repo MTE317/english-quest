@@ -178,6 +178,14 @@ export function spellPower(data, member, gear = member.equip?.weapon) {
   return Math.max(0, base * (gear.quality ?? 1) * (1 + 0.05 * (gear.enh ?? 0))
     * (aptitudeMul(data, member.job, def) ?? 0));
 }
+/** 鎌術だけに使う術装備補助。通常の鎌の物理威力は加算しない。 */
+export function scytheSpellPower(data, member) {
+  const gear=member.equip?.weapon;
+  if (!gear || gearDef(data,gear).kind!=='scythe') return 0;
+  const def=gearDef(data,gear),rules=data.basicJobRules?.spell_equipment??{};
+  return Math.max(0,((rules.base??3)+(rules.per_level??1.8)*def.itemLv)
+    *(gear.quality??1)*(1+.05*(gear.enh??0))*(aptitudeMul(data,member.job,def)??0));
+}
 
 /** 装備・ジョブ・レベルを合わせた能力値と、派生の値 */
 export function computeStats(data, member) {

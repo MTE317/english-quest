@@ -20,6 +20,9 @@ export function passiveRules(data, member) {
     .map(skill => ({ skill, ...skill.effect.rules }));
 }
 export const ruleNumber = (data, member, key) => passiveRules(data, member).reduce((sum, rule) => sum + (Number(rule[key]) || 0), 0);
+export const activeField = (game,b) => b.field?.remaining>0 && game.party[b.field.source]?.hp>0 ? b.field : null;
+export const ownCurseMark = (b,actor,target) => b.enemies[target]?.curseMarks?.[actor]?.remaining>0
+  ? b.enemies[target].curseMarks[actor] : null;
 export function matchesTag(skill, tag) {
   if (!skill || skill.isFinal || reactionSkill(skill)) return false;
   if (tag === 'active' || !tag) return skill.kind !== 'passive';
@@ -69,6 +72,24 @@ export function scopeMatches(skill, scope) {
 export function masterDamageBonus(data, game, b, actor, target, skill, elements = skill?.elements ?? [], targetHp = null) {
   const member = game.party[actor], a = b.allies[actor];
   let rate = 0;
+  const field=activeField(game,b), state=a.advancedAction;
+  if (field && elements.includes(field.element) && (!skill || skill.kind==='attack')) rate+=field.rate;
+  if (directMagic(skill)) {
+    if (field && elements.includes(field.element)) rate+=ruleNumber(data,member,'matching_field_magic');
+    if (field?.source===actor && state?.fieldAtStart?.element===field.element
+      && skill.effect.rules?.own_matching_field_damage && elements.includes(field.element))
+      rate+=skill.effect.rules.own_matching_field_damage;
+    const hex=passiveRules(data,member).find(rule=>rule.hex_status_magic)?.hex_status_magic;
+    if (hex && hex.statuses.some(id=>b.enemies[target]?.statuses?.[id]))rate+=hex.rate;
+    for(const effect of Object.values(a.masterEffects??{}))if(effect.conditionalMagic?.elements.some(el=>elements.includes(el)))
+      rate+=effect.conditionalMagic.rate;
+  }
+  if(skill?.kind==='attack' && skill.effect?.base==='mag' && !reactionSkill(skill)) {
+    const elementRate=passiveRules(data,member).find(rule=>rule.witch_element_magic)?.witch_element_magic;
+    if(elementRate && elementRate.elements.some(el=>elements.includes(el)))rate+=elementRate.rate;
+  }
+  if (skill?.effect.rules?.familiar_start_damage && state?.familiarAtStart)rate+=skill.effect.rules.familiar_start_damage;
+  if (skill?.effect.rules?.own_curse_mark_damage && ownCurseMark(b,actor,target))rate+=skill.effect.rules.own_curse_mark_damage;
   for (const rule of [...passiveRules(data, member), skill?.effect?.rules ?? {}]) {
     for (const condition of rule.condition_damage ?? []) if (scopeMatches(skill, condition.scope)
       && (!condition.elements?.length || condition.elements.some(id => elements.includes(id)))
@@ -146,6 +167,11 @@ export function masterCutBonus(data, game, b, actor, magic, enemy = null) {
   if (duel && enemy != null) rate += duel.target === enemy ? -duel.received : ruleNumber(data, game.party[actor], 'outside_duel_cut');
   const source = b.enemies[enemy];
   const elements=Array.isArray(source?.attackElement)?source.attackElement:String(source?.attackElement??'').split('|');
+  const field=activeField(game,b);
+  if (magic && field?.source===actor)rate+=ruleNumber(data,game.party[actor],'own_field_magic_cut');
+  if (magic && b.allies[actor].familiar?.uses>0)rate+=ruleNumber(data,game.party[actor],'familiar_magic_cut');
+  for(const effect of Object.values(b.allies[actor].masterEffects??{}))
+    if(effect.fieldGuard && elements.includes(effect.fieldGuard.element))rate+=effect.fieldGuard.rate;
   if (elements.includes('water')) rate+=ruleNumber(data,game.party[actor],'water_cut');
   if (magic && b.allies[actor].weaponEnchant?.remaining>0) rate+=ruleNumber(data,game.party[actor],'enchanted_magic_cut');
   if (Object.values(b.allies[actor].masterEffects??{}).some(effect=>effect.enchantGuard && elements.includes(effect.enchantGuard.element)))
@@ -230,6 +256,9 @@ export function beginMasterAction(data, game, b, actor, skill) {
   const a = b.allies[actor];
   a.currentActionClock = b.actionClock;
   a.advancedAction = { paidHp: 0, damageBonus: 0, actualDamage: 0, executed: false, cloneCount: cloneCount(a) };
+  a.advancedAction.fieldAtStart=activeField(game,b)?{...b.field}:null;
+  a.advancedAction.familiarAtStart=Boolean(a.familiar?.uses>0 && a.familiar?.remaining>0);
+  a.advancedAction.familiarStatuses=b.enemies.map(enemy=>Object.keys(enemy.statuses??{}));
   a.advancedAction.enchantAtStart=Boolean(a.weaponEnchant?.remaining>0);
   a.advancedAction.enchantUltimateRate=a.masterEffects?.spellblade_U01?.enchantWeaponDamage??0;
   a.advancedAction.momentumRate=weaponSkill(skill)?a.masterEffects?.pirate_P01?.momentum?.rate??0:0;
@@ -288,6 +317,14 @@ export function finishMasterOpportunity(data, game, b, actor, ctx, skill = null,
   }
   if (a.weaponEnchant?.remaining>0 && (a.weaponEnchant.grantedClock!==b.actionClock || !voluntary)
     && --a.weaponEnchant.remaining<=0) delete a.weaponEnchant;
+  if (b.field?.source===actor && (b.field.grantedClock!==b.actionClock || !voluntary) && --b.field.remaining<=0)delete b.field;
+  if (a.familiar?.remaining>0 && (a.familiar.grantedClock!==b.actionClock || !voluntary)
+    && --a.familiar.remaining<=0)delete a.familiar;
+  if (voluntary && performed && directMagic(skill))
+    for(const [key,effect] of Object.entries(a.masterEffects??{}))
+      if(effect.conditionalMagic && effect.grantedClock!==b.actionClock
+        && (a.advancedAction?.elements??skill.elements??[]).some(el=>effect.conditionalMagic.elements.includes(el)))
+        delete a.masterEffects[key];
   a.jobOpportunities=(a.jobOpportunities??0)+1;
   if (usingWeapon && primaryKills && a.momentumRound!==b.round) {
     const rule=passiveRules(data,member).find(p=>p.kill_momentum)?.kill_momentum;
@@ -351,6 +388,12 @@ export function spendHpPayment(data, game, b, actor, skill) {
 }
 export function advancedSkillBlock(data, game, b, actor, skill) {
   const rules=skill.effect.rules??{}, ally=b.allies[actor];
+  if (rules.field_guard && !activeField(game,b))return '属性の場が必要';
+  if (rules.release_field && activeField(game,b)?.source!==actor)return '自分の属性の場が必要';
+  if ((rules.familiar_mode||rules.familiar_shield||rules.release_familiar) && !(ally.familiar?.uses>0&&ally.familiar?.remaining>0))
+    return '使い魔の残回数が必要';
+  if (rules.release_curse && !b.enemies.some((enemy,index)=>enemy.hp>0&&ownCurseMark(b,actor,index)))
+    return '自分の呪印が必要';
   if (rules.ammo && (ally.loaded??0)<rules.ammo) return '装填数が足りない';
   if (rules.reload && (ally.loaded??0)>=3) return '装填数が上限';
   if (rules.spend_momentum && !ally.masterEffects?.pirate_P01?.momentum) return '勝鬨の余勢が必要';
@@ -371,6 +414,8 @@ export function advancedSkillBlock(data, game, b, actor, skill) {
 export function advancedTargetBlock(data, game, b, actor, skill, target, action) {
   if (!skill.effect.additional) return '';
   const rule=skill.effect.rules??{};
+  if (rule.release_curse && !ownCurseMark(b,actor,target))return '自分の呪印がある敵を選んでください';
+  if (rule.familiar_mode && action.element===b.allies[actor].familiar?.mode)return '異なる使い魔の型を選んでください';
   if (rule.move_mark && target === activeMark(game, b, actor)?.target) return '現在の標的と別の敵を選んでください';
   if (skill.kind === 'jump' && !(b.enemies[target]?.hp > 0)) return '生存している敵を選んでください';
   if (skill.effect.tgt === 'selected_enemy' && !(b.enemies[target]?.hp > 0)) return '生存している敵を選んでください';
@@ -389,6 +434,16 @@ export function advancedTargetBlock(data, game, b, actor, skill, target, action)
 export function payAdvancedCosts(data, game, b, actor, skill, action) {
   const ally=b.allies[actor], rule=skill.effect.rules??{}, state=ally.advancedAction;
   state.executed=true;
+  if (rule.release_field) {state.releasedField=ally.advancedAction.fieldAtStart;delete b.field;}
+  if (rule.release_familiar) {state.releasedFamiliar=ally.familiar?.uses??0;delete ally.familiar;}
+  if (rule.familiar_shield && ally.familiar) {
+    ally.familiar.uses--;
+    if(ally.familiar.uses<=0)delete ally.familiar;
+  }
+  if (rule.release_curse) {
+    state.releasedMark=ownCurseMark(b,actor,action.target);
+    if(state.releasedMark)delete b.enemies[action.target].curseMarks[actor];
+  }
   if (rule.ammo) ally.loaded=Math.max(0,(ally.loaded??0)-rule.ammo);
   if (rule.spend_momentum) delete ally.masterEffects.pirate_P01;
   state.previousPreparation = Boolean(ally.previousPreparation);

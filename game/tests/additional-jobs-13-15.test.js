@@ -41,8 +41,8 @@ const reset=c=>{c.member.mp=maxMp(data,c.member);};
 const near=(x,y)=>assert.ok(Math.abs(x-y)<1e-8,`${x} != ${y}`);
 
 test('13〜15職は45技能・147段階を設計に沿って読み込み、転職と継承ができる',()=>{
-  assert.equal(data.jobs.filter(j=>j.skillsReady).length,23);
-  assert.equal([...data.skills.values()].filter(s=>s.effect.master).length,345);
+  assert.equal(data.jobs.filter(j=>j.skillsReady).length,26);
+  assert.equal([...data.skills.values()].filter(s=>s.effect.master).length,390);
   let stages=0;
   for(const j of spec.jobs.filter(j=>jobs.includes(j.id))){
     const c=fixture(j.id);

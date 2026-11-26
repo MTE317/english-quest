@@ -8,7 +8,7 @@
 //
 // 式・効果の上限は data/balance.json から読む。BATTLE_FORMULAS は旧データ向けの既定値。
 import { evaluate } from './expr.js?v=skill-growth-2';
-import { computeStats, gearDef, weaponPower, spellPower, maxHp, maxMp, gearEffects, affixSum, memberCanAct } from './character.js?v=party-wipe-1';
+import { computeStats, gearDef, weaponPower, spellPower, scytheSpellPower, maxHp, maxMp, gearEffects, affixSum, memberCanAct } from './character.js?v=party-wipe-1';
 import { actionSkills, ultimateSkill, memberMods, addMasteryKill, effectiveSkill } from './growth.js?v=advanced-jobs-1';
 import { encounterMonsters, learnMonsterElements, hitEffectiveness } from './monster-knowledge.js?v=monster-catalog-1';
 import { masterTags, weaponSkill, songSkill, healingSkill, weaponAllowed, passiveRules, ruleNumber, matchesTag,
@@ -22,7 +22,7 @@ import { masterTags, weaponSkill, songSkill, healingSkill, weaponAllowed, passiv
   notePrimaryKill, recordSelfSupport, applySpecialistRules,
   activeMark, preparePursuitAttack, pursuitAccuracy, conditionalTargetCrit, pursuitDefIgnore, pursuitStatusBonus,
   recordPrimaryHits, preparationSnapshot, recordPreparation, applyPursuitJumpRules, isAirborne, landingAction,
-  applyFirearmSeaArcaneRules } from './job-combat.js?v=jobs-intro-1';
+  applyFirearmSeaArcaneRules, activeField, ownCurseMark } from './job-combat.js?v=jobs-intro-1';
 
 /** balance.json にまだ式がないもの（sim と同じ） */
 export const BATTLE_FORMULAS = Object.freeze({
@@ -212,7 +212,7 @@ export function createBattle(data, game, { enemies, seed = Date.now(), canFlee =
       buffs: {}, masterEffects: {}, imbue: null, loaded: 0, weaponEnchant: null, jobOpportunities: 0, once: [], endured: false,
       firstAttackUsed: false, normalSkillReady: false, evadeCounterRound: -1, anger: 0,
     })),
-    enemies, partyBuffs: {}, delayed: [], pending: null, log: [], actionClock: 0,
+    enemies, partyBuffs: {}, delayed: [], pending: null, log: [], actionClock: 0, field: null,
   };
   const curse = partyPassive(data, game, b, 'open_curse');
   if (curse) for (const enemy of b.enemies) {
@@ -556,6 +556,9 @@ function koAlly(game, b, i) {
   delete m.persistState;
   b.allies[i].buffs = {};
   b.allies[i].masterEffects = {};
+  delete b.allies[i].familiar;
+  if(b.field?.source===i)delete b.field;
+  for(const enemy of b.enemies)if(enemy.curseMarks)delete enemy.curseMarks[i];
   b.allies[i].anger = 0;
   resetTacticalState(b.allies[i]);
   delete b.allies[i].advancedAction;
@@ -668,7 +671,7 @@ export function actionOptions(data, game, b, i) {
     return { skill: s, reason: skillBlock(data, game, b, i, s) || (noTarget ? '盗める通常物資を持つ敵がいない' : ''), targetReasons, boost: boost ? { mp: boost.mp, bonus: boost.damage } : null,
       hpCost: hpPayment(data,game,b,i,s), optionalBlessing: Boolean(s.effect.rules?.optional_blessing && ownedBlessing(b,i)),
       optionalClone: Boolean(s.effect.rules?.optional_clone && cloneCount(b.allies[i])),
-      elements: s.effect.rules?.choose_element ?? s.effect.choose_element ?? [] };
+      elements: s.effect.rules?.choose_element ?? s.effect.rules?.choose_mode ?? s.effect.choose_element ?? [] };
   };
   const skills = knownSkills(data, game.party[i]).map(entry);
   const ultimate = ultimateSkill(data, game.party[i]);
@@ -861,7 +864,7 @@ function attackDamage(data, game, b, i, e, skill, cm, { offhand = false, actionB
     ? (skill?.effect.beststat ? Math.max(st.str, st.mag) : st.str) * (qigong ? 1 : traits.str_mul ?? 1) + (qigong ? 0 : st.mag * (mods.mag2phys ?? 0))
       + st.mag*(skill?.effect.rules?.hybrid_mag_rate??0)
     : st.mag * (skill?.effect.master && base !== 'weapon' ? 1 : traits.mag_mul ?? 1) * (1 + bval(a.buffs, 'magb'));
-  const wpow = qigong ? 0 : skill && base === 'mag' ? spellPower(data, m)
+  const wpow = qigong ? 0 : skill && base === 'mag' ? spellPower(data, m) + (skill.effect.rules?.scythe_spell?scytheSpellPower(data,m):0)
     : weaponPower(data, m, weapon) + st.mag * (mods.mag_to_atk ?? 0);
   const bard = !data.basicJobRules && game.party.find((x, j) => x.job === 'bard' && canAct(game, b, j));
   const song = bard ? data.balance.battle.bard_song + (weaponTraits(data, bard.equip.weapon).song_bonus ?? 0) : 0;
@@ -904,6 +907,8 @@ function attackDamage(data, game, b, i, e, skill, cm, { offhand = false, actionB
   const df = defense * statModifier(data, bval(enemy.buffs ?? {}, kind === 'phys' ? 'def' : 'res'),
     enemyStatDebuff(data, enemy, kind === 'phys' ? 'def' : 'res'), enemy.boss);
   let em = els.length ? Math.max(...els.map((el) => elementMul(data, enemy, el))) : 1;
+  if(directMagic(skill) && em>1 && els.some(el=>['wind','earth','water'].includes(el)))
+    pm+=ruleNumber(data,m,'field_weak_magic');
   if (skill?.effect.noresist && em > 0) em = Math.max(1, em);
   if (em > 1) em *= skill?.effect.wb ?? 1;
   if (em > 1 && mods.weak_all) em *= 1 + mods.weak_all;
@@ -1050,7 +1055,8 @@ function doAttack(data, game, b, i, skill, target, cm, { normalSkillReady = fals
   };
   const finishAttack = () => {
     recordPrimaryHits(b,i,primaryHits);
-    specialistFollowups(data,game,b,i,skill,cm,primaryTarget,secondaryTarget,primaryHits);
+    const followupUsed=specialistFollowups(data,game,b,i,skill,cm,primaryTarget,secondaryTarget,primaryHits);
+    resolveFamiliar(data,game,b,i,skill,cm,primaryTarget,primaryHits,followupUsed);
     if (a.advancedAction) a.advancedAction.actualDamage += actualDamage;
     if (!skill && cm === 1 && actualDamage > 0 && affixSum(m, 'NORMAL_SKILL') > 0) {
       a.normalSkillReady = true;
@@ -1179,7 +1185,7 @@ function doAttack(data, game, b, i, skill, target, cm, { normalSkillReady = fals
 
 function specialistFollowups(data, game, b, actor, skill, cm, primaryTarget, secondaryTarget, hits) {
   const ally=b.allies[actor];
-  if (!skill || !ally.advancedAction?.executed || game.party[actor].hp<=0) return;
+  if (!skill || !ally.advancedAction?.executed || game.party[actor].hp<=0) return false;
   const strike=(target,base,m,elements,label)=>{
     const followup={id:'specialist_followup',kind:'attack',elements,
       effect:{master:true,base,m,tags:['reaction','followup'],hits:[1],...(elements.length===1?{element:elements[0]}:{})}};
@@ -1195,12 +1201,41 @@ function specialistFollowups(data, game, b, actor, skill, cm, primaryTarget, sec
   }
   if (directMagic(skill)) {
     const preparation=Object.entries(ally.masterEffects??{}).find(([,effect])=>effect.nextMagicEcho);
-    if (!preparation) return;
+    if (!preparation) return false;
     const [key,effect]=preparation;
     delete ally.masterEffects[key];
     const primary=hits.find(hit=>hit.target===primaryTarget&&hit.damage>0);
     if (primary && b.enemies[primaryTarget]?.hp>0) strike(primaryTarget,'mag',effect.nextMagicEcho.m,primary.elements,'影写しの追撃！');
+    return true;
   }
+  return Boolean(rule&&killed);
+}
+
+function arcaneReactionAllowed(game,b,actor){
+  return game.party[actor]?.hp>0 && !['petrify','sleep','freeze','stun','paralysis','confusion','charm']
+    .some(id=>b.allies[actor]?.statuses?.[id]);
+}
+function resolveFamiliar(data,game,b,actor,skill,cm,target,hits,followupUsed){
+  const ally=b.allies[actor],familiar=ally.familiar;
+  if(!familiar?.uses || !familiar.remaining || skill?.id==='witch_U01' || !ally.advancedAction?.executed
+    || followupUsed || !arcaneReactionAllowed(game,b,actor))return;
+  // 反応枠は主対象に固定し、全体攻撃でも追撃を複製しない。
+  if(!hits.some(hit=>hit.target===target&&hit.damage>0)||!(b.enemies[target]?.hp>0))return;
+  const enemy=b.enemies[target];
+  familiar.uses--;
+  if(familiar.mode==='pursuit'){
+    const bonus=passiveRules(data,game.party[actor]).find(p=>p.familiar_condition)?.familiar_condition;
+    const enhanced=bonus?.statuses.some(id=>ally.advancedAction.familiarStatuses?.[target]?.includes(id));
+    const defense=enemy.res*statModifier(data,bval(enemy.buffs??{},'res'),enemyStatDebuff(data,enemy,'res'),enemy.boss);
+    const damage=Math.max(0,Math.round(evaluate(f(data,'ally_damage'),{
+      atk:familiar.power*familiar.m*familiar.cm*cm*(1+(enhanced?bonus.rate:0)),em:1,df:defense,crit:1,r:between(b,f(data,'ally_rand'))})));
+    hitEnemy(data,game,b,actor,target,damage,{prefix:'使い魔の追撃！',elements:['none'],allowKillEffects:false});
+  }else if(chance(b,enemyStatusChance(data,enemy,b.round,'statdown',familiar.mischiefRate*familiar.cm*cm))){
+    enemy.masterDebuffs??={};const key='witch_familiar:'+actor,old=enemy.masterDebuffs[key];
+    if(!old||old.value<=.1)enemy.masterDebuffs[key]={stat:'res',value:.1,turns:Math.max(old?.turns??0,2)};
+    log(b,enemy.name+'のRESが下がった');
+  }
+  if(familiar.uses<=0)delete ally.familiar;
 }
 
 const CONTROL_KINDS = new Set(['skip_until_hit', 'skip_once', 'skip_chance', 'petrify', 'random_target', 'charm']);
@@ -1305,11 +1340,13 @@ function doSkill(data, game, b, i, s, target, cm, normalSkillReady = false, acti
   if ((s.kind === 'mp_give' && s.effect.transfer || s.effect.rules?.cover?.target === 'selected') && target === i) {
     log(b, '自分以外の味方を選んでください'); return;
   }
-  const choices = s.effect.rules?.choose_element ?? s.effect.choose_element;
+  const choices = s.effect.rules?.choose_element ?? s.effect.rules?.choose_mode ?? s.effect.choose_element;
   if (choices?.length) {
     if (!choices.includes(action.element)) { log(b, '属性を選んでください'); return; }
-    const state = s.effect.rules?.element_status?.[action.element];
-    s = { ...s, elements: [action.element], effect: { ...s.effect, element: action.element, ...(state ? { st: state } : {}) } };
+    if (!s.effect.rules?.choose_mode) {
+      const state = s.effect.rules?.element_status?.[action.element];
+      s = { ...s, elements: [action.element], effect: { ...s.effect, element: action.element, ...(state ? { st: state } : {}) } };
+    }
   }
   const boost = action.boost && !s.isFinal && s.kind === 'attack' && s.effect.base === 'mag'
     ? passiveRules(data, m).find(rule => rule.mp_boost)?.mp_boost : null;
@@ -1714,6 +1751,80 @@ function applyMasterSkillRules(data, game, b, actor, skill, target, cm, action =
   applySpecialistRules(data,game,b,actor,skill,target,cm);
   applyPursuitJumpRules(data,game,b,actor,skill,target,cm);
   applyFirearmSeaArcaneRules(data,game,b,actor,skill,cm,living);
+  applyArcaneSkillRules(data,game,b,actor,skill,target,cm,action,living);
+}
+function arcaneShield(data,game,b,actor,target,skill,rate,turns){
+  const stats=battleStats(data,game,b,actor),formula=data.basicJobRules.protection;
+  const base=Math.floor(formula.base+formula.per_level*game.party[actor].lv+formula.stat_scale*stats.res);
+  const amount=Math.min(masterShieldRoom(data,game,b,target,skill.id),Math.floor(base*rate));
+  if(amount>0)grantMasterEffect(b,target,skill.id,{skillId:skill.id,source:actor,shield:amount,remaining:turns});
+}
+function arcaneFamiliar(data,game,b,actor,skill,rule,cm,mode){
+  const member=game.party[actor],passive=passiveRules(data,member).find(p=>p.familiar_on_summon)?.familiar_on_summon;
+  const mag=battleStats(data,game,b,actor).mag,spell=spellPower(data,member)+scytheSpellPower(data,member);
+  b.allies[actor].familiar={mode,uses:rule.charges,remaining:rule.turns,grantedClock:b.actionClock,
+    skillId:skill.id,cm,power:mag+spell,m:rule.power+(passive?.powerAdd??0),
+    mischiefRate:.7+(passive?.statusRateAdd??0),mischiefBonus:passive?.statusRateAdd??0};
+}
+function arcaneMark(data,game,b,actor,target,skill,rule,cm){
+  const enemy=b.enemies[target];if(!enemy?.hp)return;
+  const power=rule.power??0,extra=rule.variant==='bitter'?ruleNumber(data,game.party[actor],'bitter_mark_power'):0;
+  const stats=battleStats(data,game,b,actor);
+  const next={variant:rule.variant,skillId:skill.id,source:actor,remaining:rule.turns,uses:rule.charges,
+    grantedEnemyClock:b.enemyActionClock??0,cm,power:stats.mag+spellPower(data,game.party[actor]),
+    m:power+extra,status:rule.status??null,
+    statRate:(memberMods(data,game.party[actor]).stat_rate??0)+affixSum(game.party[actor],'STATUS_RATE')/100};
+  enemy.curseMarks??={};const old=enemy.curseMarks[actor];
+  if(old?.variant===next.variant&&old.m*old.cm>next.m*next.cm)return;
+  if(old?.variant===next.variant&&old.m*old.cm===next.m*next.cm)next.remaining=Math.max(old.remaining,next.remaining);
+  enemy.curseMarks[actor]=next;
+}
+function applyArcaneSkillRules(data,game,b,actor,skill,target,cm,action,living){
+  const rules=skill.effect.rules??{},ally=b.allies[actor],state=ally.advancedAction;
+  if(rules.field||rules.after_field){
+    const rule=rules.field??rules.after_field,element=rules.field?.element??skill.effect.element;
+    const old=b.field,next={element,rate:rule.rate,remaining:rule.turns,source:actor,skillId:skill.id,grantedClock:b.actionClock};
+    if(old?.element===element&&old.rate>next.rate){} else {
+      if(old?.element===element&&old.rate===next.rate)next.remaining=Math.max(old.remaining,next.remaining);
+      b.field=next;
+    }
+  }
+  if(rules.field_guard){
+    const field=activeField(game,b);
+    for(const t of living)grantMasterEffect(b,t,skill.id,{skillId:skill.id,source:actor,party:true,
+      fieldGuard:{element:field.element,rate:rules.field_guard.snapshotFieldSourceCut*cm},remaining:rules.field_guard.turns});
+  }
+  if(rules.release_field && state.releasedField)grantMasterEffect(b,actor,skill.id,{skillId:skill.id,
+    conditionalMagic:{elements:[state.releasedField.element],rate:rules.release_field.nextMagicDamage.rate*cm},
+    remaining:rules.release_field.nextMagicDamage.turns});
+  if(rules.familiar||rules.after_familiar)arcaneFamiliar(data,game,b,actor,skill,rules.familiar??rules.after_familiar,
+    cm,rules.familiar?action.element:'pursuit');
+  if(rules.familiar_mode&&ally.familiar)ally.familiar.mode=action.element;
+  if(rules.familiar_shield)arcaneShield(data,game,b,actor,actor,skill,rules.familiar_shield.power*cm,rules.familiar_shield.turns);
+  if(rules.release_familiar&&state.releasedFamiliar>0)grantMasterEffect(b,actor,skill.id,{skillId:skill.id,
+    conditionalMagic:{elements:['none','fire','ice','wind','earth','thunder','water','light','dark'],
+      rate:Math.min(rules.release_familiar.nextMagicDamage.cap,
+        state.releasedFamiliar*rules.release_familiar.nextMagicDamage.perCharge)*cm},
+    remaining:rules.release_familiar.nextMagicDamage.turns});
+  if(rules.curse_mark){
+    const targets=(action.targets??[target]).slice(0,rules.curse_mark.targetLimit??1);
+    for(const t of targets)arcaneMark(data,game,b,actor,t,skill,rules.curse_mark,cm);
+  }
+  if(rules.hex_debuff && b.enemies[target]?.hp>0){
+    const rule=rules.hex_debuff,enemy=b.enemies[target];
+    if(chance(b,enemyStatusChance(data,enemy,b.round,'statdown',rule.rate*cm))){
+      enemy.masterDebuffs??={};const key=skill.id+':str',old=enemy.masterDebuffs[key];
+      if(!old||old.value<=rule.value)enemy.masterDebuffs[key]={stat:'str',value:rule.value,turns:Math.max(old?.turns??0,rule.turns)};
+      log(b,enemy.name+'のSTRが下がった');
+    }
+  }
+  if(rules.release_curse&&state.releasedMark)grantMasterEffect(b,actor,skill.id,{skillId:skill.id,
+    conditionalMagic:{elements:rules.release_curse.nextMagicDamage.elements,
+      rate:rules.release_curse.nextMagicDamage.rate*cm},remaining:rules.release_curse.nextMagicDamage.turns});
+  if(rules.after_curse)for(const t of state.primaryDamageTargets??[])
+    if(b.enemies[t]?.hp>0)arcaneMark(data,game,b,actor,t,skill,rules.after_curse,cm);
+  if(rules.after_party_shield)for(const t of living)
+    arcaneShield(data,game,b,actor,t,skill,rules.after_party_shield.power*cm,rules.after_party_shield.turns);
 }
 
 /** status_effects.csv の cure 列（「毒消し・万能薬・清めの光」）にその名前があるか */
@@ -1817,10 +1928,47 @@ function finishEnemyTurn(enemy, data, b) {
   }
 }
 
+function finishArcaneEnemy(data,game,b,index,{performed=false,magic=false,physical=false}={}){
+  const enemy=b.enemies[index];
+  for(const [owner,mark] of Object.entries(enemy.curseMarks??{})){
+    const actor=Number(owner),ready=performed && enemy.hp>0 && mark.uses>0
+      && arcaneReactionAllowed(game,b,actor) && b.allies[actor].counteredEnemyClock!==b.enemyActionClock;
+    const matches=mark.variant==='bitter'||mark.variant==='binding'&&physical||mark.variant==='silencing'&&magic;
+    if(ready&&matches){
+      mark.uses--;
+      let effective=false;
+      if(mark.variant==='bitter'){
+        const before=enemy.hp,defense=enemy.res*statModifier(data,bval(enemy.buffs??{},'res'),
+          enemyStatDebuff(data,enemy,'res'),enemy.boss);
+        const damage=Math.max(0,Math.round(evaluate(f(data,'ally_damage'),{
+          atk:mark.power*mark.m*mark.cm,em:1,df:defense,crit:1,r:between(b,f(data,'ally_rand'))})));
+        hitEnemy(data,game,b,actor,index,damage,{prefix:'苦呪印の反応！',elements:['none'],allowKillEffects:false});
+        effective=enemy.hp<before;
+      }else{
+        const id=mark.status.id,existed=Boolean(enemy.statuses[id]);
+        const applied=inflictEnemy(data,b,index,[id,mark.status.rate],mark.cm,mark.statRate??0,{actor});
+        if(applied&&enemy.statuses[id])
+          enemy.statuses[id].turns=enemy.boss&&CONTROL_KINDS.has(data.statusEffects.get(id)?.kind)
+            ?Math.min(1,mark.status.turns):mark.status.turns;
+        effective=applied&&!existed;
+      }
+      if(effective && b.allies[actor].curseBuffRound!==b.round){
+        const bonus=passiveRules(data,game.party[actor]).find(p=>p.after_effective_curse)?.after_effective_curse;
+        if(bonus){
+          b.allies[actor].curseBuffRound=b.round;
+          grantMasterEffect(b,actor,'hexer_P01',{skillId:'hexer_P01',values:bonus.values,remaining:bonus.turns});
+        }
+      }
+    }
+    if(--mark.remaining<=0||mark.uses<=0||enemy.hp<=0)delete enemy.curseMarks[owner];
+  }
+  finishEnemyTurn(enemy,data,b);
+}
 function enemyTurn(data, game, b, e) {
   const enemy = b.enemies[e];
   const trapBlocked = ['sleep','freeze','stun','petrify'].some(id=>enemy.statuses[id]);
   b.enemyActionClock = (b.enemyActionClock ?? 0) + 1;
+  const finish=(intent={})=>finishArcaneEnemy(data,game,b,e,intent);
   snapshotCloneDefense(b);
   // 罠は対象の行動機会に一度発動。反撃や資源蓄積を再帰させない。
   const triggered = (b.masterTraps ?? []).filter(trap => trap.target === e);
@@ -1866,7 +2014,7 @@ function enemyTurn(data, game, b, e) {
   if (enemy.hp <= 0 || skip) {
     if (skip && enemy.boss) enemy.controlGuardUntil = b.round + 1;
     log(b, skip ? enemy.name + 'は' + skip.name + 'で動けない' : enemy.name + 'を倒した！');
-    finishEnemyTurn(enemy, data, b);
+    finish();
     return;
   }
 
@@ -1877,7 +2025,7 @@ function enemyTurn(data, game, b, e) {
     game.party.forEach((_, i) => { if (canAct(game, b, i) && (enemy.sureHit || !isAirborne(b,i))) forcedTargets.push({ side: 'ally', i }); });
   }
   if (forcedTargets?.length === 0) {
-    finishEnemyTurn(enemy, data, b);
+    finish();
     return;
   }
   const bleed = data.statusEffects.get(statusOfKind(enemy, 'dot_on_action', data));
@@ -1897,9 +2045,11 @@ function enemyTurn(data, game, b, e) {
       spreadPoison(data, game, b, state.actor, enemy);
     }
   }
+  let forcedMagic=false;
   if (forced && enemy.hp > 0) {
     const target = pick(b, forcedTargets);
     const magic = forced.kind === 'charm' && (enemy.mp ?? 0) >= 2 && chance(b, enemy.magicRate);
+    forcedMagic=magic;
     if (magic) enemy.mp -= 2;
     const victim = target.side === 'ally' ? battleStats(data, game, b, target.i) : b.enemies[target.i];
     const damage = Math.max(1, Math.round((magic ? enemy.mag : enemy.str) * f(data, 'confused_self_hit') * 100 / (100 + (magic ? victim.res : victim.def))));
@@ -1909,12 +2059,12 @@ function enemyTurn(data, game, b, e) {
     if (enemy.boss) enemy.controlGuardUntil = b.round + 1;
   }
   if (forced || enemy.hp <= 0) {
-    finishEnemyTurn(enemy, data, b);
+    finish({performed:enemy.hp>0,magic:forcedMagic,physical:!forcedMagic});
     return;
   }
 
   const alive = game.party.map((x, j) => j).filter((j) => game.party[j].hp > 0);
-  if (!alive.length) { finishEnemyTurn(enemy, data, b); return; }
+  if (!alive.length) { finish(); return; }
   const intent = enemyIntent(data, enemy, b.round);
   if (!intent.sweep && enemy.tactics && (enemy.mp ?? 0) >= 3 && !enemy.statuses.silence && !enemy.statuses.fear) {
     const friend = enemy.tactics === 'heal' && b.enemies.find((unit) => enemyCanAct(unit) && !unit.statuses.curse && unit.hp <= unit.maxHp * 0.55);
@@ -1938,7 +2088,7 @@ function enemyTurn(data, game, b, e) {
         friend.hp = Math.min(friend.maxHp, friend.hp + Math.round(friend.maxHp * 0.2));
         log(b, enemy.name + 'は' + friend.name + 'を回復した');
       }
-      finishEnemyTurn(enemy, data, b);
+      finish({performed:true,magic:true});
       return;
     }
   }
@@ -1949,7 +2099,7 @@ function enemyTurn(data, game, b, e) {
   const eligible=alive.filter(index=>enemy.sureHit || !isAirborne(b,index));
   const tauntValid = eligible.includes(tauntedBy) && !['sleep', 'freeze', 'petrify', 'stun', 'paralysis'].some(id => b.allies[tauntedBy].statuses[id]);
   const targets = intent.sweep ? alive : eligible.length ? [tauntValid ? tauntedBy : weighted(b, eligible, (j) => 1 + bval(b.allies[j].buffs, 'taunt') * f(data, 'taunt_weight'))] : [];
-  if (!targets.length) {log(b,`${enemy.name}の攻撃は届かなかった`);finishEnemyTurn(enemy,data,b);return;}
+  if (!targets.length) {log(b,`${enemy.name}の攻撃は届かなかった`);finish();return;}
   const actionMagic = chance(b, enemy.magicRate) && !enemy.statuses.silence && (intent.sweep || (enemy.mp ?? Infinity) >= 2);
   if (actionMagic && !intent.sweep && Number.isFinite(enemy.mp)) enemy.mp -= 2;
   const stanceReactions = [], gearReactions = [];
@@ -1990,6 +2140,7 @@ function enemyTurn(data, game, b, e) {
         && ta.counterCount < sharedCounterCap && retaliation > 0 && chance(b, retaliation)) {
         ta.evadeCounterRound = b.round;
         ta.counterCount += 1;
+        ta.counteredEnemyClock=b.enemyActionClock;
         // 回避反撃は一巡一回。初撃・技能準備・追撃・吸収・MP回復を呼び出さない。
         const r = attackDamage(data, game, b, t, e, null,
           f(data, 'evade_counter_power') * (1 + (memberMods(data, target).counter_power ?? 0)));
@@ -2016,7 +2167,8 @@ function enemyTurn(data, game, b, e) {
       + (masterCover && t !== original ? masterCover.cover.cut ?? 0 : 0));
     const ecut = allyElementMultiplier(data, game, b, t, enemy.attackElement, magic);
     const dmg = evaluate(f(data, 'enemy_damage'), { atk, df, r: between(b, f(data, 'enemy_rand')) })
-      * Math.max(f(data, 'minimum_damage_share'), cover * cut * ecut);
+      * Math.max(f(data, 'minimum_damage_share'), cover * cut * ecut)
+      * (activeField(game,b) && incomingElements.includes(b.field.element)?1+b.field.rate:1);
     const elName = enemy.attackElement ? data.elements.get(enemy.attackElement)?.name : null;
     const beforeHp = target.hp;
     damageAlly(data, game, b, t, dmg, `${enemy.name}の${magic ? `${elName ?? ''}魔法` : '攻撃'}！ ${target.name}に`, { side: 'enemy', i: e });
@@ -2052,6 +2204,7 @@ function enemyTurn(data, game, b, e) {
       if (ta.counterRound !== b.round) { ta.counterRound = b.round; ta.counterCount = 0; }
       if ((ta.counterCount ?? 0) < Math.min(sharedCounterCap, counterStance.limit ?? 1)) {
         ta.counterCount = (ta.counterCount ?? 0) + 1;
+        ta.counteredEnemyClock=b.enemyActionClock;
         const skill = { id: 'reaction', kind: 'attack', elements: counterStance.element ? [counterStance.element] : [],
           effect: { master: true, base: 'weapon', m: counterStance.m, element: counterStance.element, hits: [1], tags: ['reaction'] } };
         const result = attackDamage(data, game, b, t, e, skill, 1);
@@ -2064,6 +2217,7 @@ function enemyTurn(data, game, b, e) {
     if (!magic && !isAirborne(b,t) && enemy.hp > 0 && canAct(game,b,t) && ta.counterCount < sharedCounterCap
       && (!counterStance || ta.counterCount < (counterStance.limit ?? 1)) && chance(b, counter)) {
       ta.counterCount += 1;
+      ta.counteredEnemyClock=b.enemyActionClock;
       const r = attackDamage(data, game, b, t, e, null, f(data, 'counter_power') * (1 + (memberMods(data, target).counter_power ?? 0)));
       hitEnemy(data, game, b, t, e, r.damage, { ...r, prefix: `${target.name}の反撃！${describeHit(r)}` });
     }
@@ -2084,7 +2238,7 @@ function enemyTurn(data, game, b, e) {
   });
   for (const react of gearReactions) react();
   finishReadGuards(b);
-  finishEnemyTurn(enemy, data, b);
+  finish({performed:true,magic:actionMagic,physical:!actionMagic});
 }
 
 // ---------------- 戦闘のあと ----------------
@@ -2099,6 +2253,7 @@ export function finishBattle(data, game, b) {
     ally.statuses = structuredClone(m.persistState);
     ally.buffs = {};
     ally.masterEffects = {};
+    delete ally.familiar;
     ally.anger = 0;
     resetTacticalState(ally);
     delete ally.advancedAction;
@@ -2109,6 +2264,8 @@ export function finishBattle(data, game, b) {
     if (ultimateRules(data).carry_over === false) m.ultimateGauge = 0;
   });
   b.partyBuffs = {};
+  delete b.field;
+  for(const enemy of b.enemies)delete enemy.curseMarks;
   b.delayed = [];
   return b.result;
 }
