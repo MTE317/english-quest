@@ -1,0 +1,255 @@
+{
+  "date": "2026-11-26",
+  "status": "design_review_only",
+  "assertions": 2229,
+  "structural": {
+    "status": "design_only",
+    "jobs": 9,
+    "skills": 135,
+    "counts": {
+      "none": 30,
+      "lv3": 58,
+      "lv5": 47
+    },
+    "stages": 439,
+    "prerequisiteEdges": 121,
+    "reachableNonUltimates": 126,
+    "perJob": [
+      {
+        "id": "assassin",
+        "name": "暗殺者",
+        "additionalNumber": 10,
+        "masterNumber": 18,
+        "none": 3,
+        "lv3": 6,
+        "lv5": 6,
+        "stages": 51,
+        "exampleActionCost": 9,
+        "examplePassiveCost": 9
+      },
+      {
+        "id": "bounty_hunter",
+        "name": "賞金稼ぎ",
+        "additionalNumber": 11,
+        "masterNumber": 19,
+        "none": 4,
+        "lv3": 7,
+        "lv5": 4,
+        "stages": 45,
+        "exampleActionCost": 8,
+        "examplePassiveCost": 9
+      },
+      {
+        "id": "dragoon",
+        "name": "竜騎士",
+        "additionalNumber": 12,
+        "masterNumber": 20,
+        "none": 3,
+        "lv3": 5,
+        "lv5": 7,
+        "stages": 53,
+        "exampleActionCost": 10,
+        "examplePassiveCost": 8
+      },
+      {
+        "id": "gunner",
+        "name": "銃士",
+        "additionalNumber": 13,
+        "masterNumber": 21,
+        "none": 3,
+        "lv3": 6,
+        "lv5": 6,
+        "stages": 51,
+        "exampleActionCost": 9,
+        "examplePassiveCost": 8
+      },
+      {
+        "id": "pirate",
+        "name": "海賊",
+        "additionalNumber": 14,
+        "masterNumber": 22,
+        "none": 3,
+        "lv3": 8,
+        "lv5": 4,
+        "stages": 47,
+        "exampleActionCost": 10,
+        "examplePassiveCost": 9
+      },
+      {
+        "id": "spellblade",
+        "name": "魔法剣士",
+        "additionalNumber": 15,
+        "masterNumber": 23,
+        "none": 3,
+        "lv3": 7,
+        "lv5": 5,
+        "stages": 49,
+        "exampleActionCost": 9,
+        "examplePassiveCost": 8
+      },
+      {
+        "id": "elementalist",
+        "name": "精霊術士",
+        "additionalNumber": 16,
+        "masterNumber": 24,
+        "none": 3,
+        "lv3": 7,
+        "lv5": 5,
+        "stages": 49,
+        "exampleActionCost": 9,
+        "examplePassiveCost": 8
+      },
+      {
+        "id": "witch",
+        "name": "魔女",
+        "additionalNumber": 17,
+        "masterNumber": 25,
+        "none": 5,
+        "lv3": 4,
+        "lv5": 6,
+        "stages": 47,
+        "exampleActionCost": 8,
+        "examplePassiveCost": 9
+      },
+      {
+        "id": "hexer",
+        "name": "呪術師",
+        "additionalNumber": 18,
+        "masterNumber": 26,
+        "none": 3,
+        "lv3": 8,
+        "lv5": 4,
+        "stages": 47,
+        "exampleActionCost": 10,
+        "examplePassiveCost": 8
+      }
+    ],
+    "checks": [
+      "各職A9/P5/U1・全135技能",
+      "既存256技能と名前・IDの重複なし",
+      "全段階の本文・短文・数値定義が一致",
+      "1/3/5成長・各段階の数値または条件に差",
+      "前提の参照・上限・非奥義・循環なし",
+      "非奥義126技能へ到達可能・奥義10種類条件を満たせる",
+      "固定cost・奥義専用枠・手動AP",
+      "9職の開発用装備例がA10/P10以内",
+      "全アクティブのphysical/magic分類",
+      "全体対象上限8・装填上限3・連撃合計倍率1"
+    ]
+  },
+  "budgets": [
+    {
+      "case": "跳躍槍（最大Lv）",
+      "actions": 2,
+      "baseMp": 6,
+      "rawPower": 2.9,
+      "perAction": 1.45,
+      "note": "準備1＋着地1。即時長槍突きは1行動1.70。跳躍の防御窓は別の価値。"
+    },
+    {
+      "case": "装弾3発→火薬弾3回（最大Lv）",
+      "actions": 4,
+      "baseMp": 15,
+      "rawPower": 5.25,
+      "perAction": 1.3125,
+      "note": "補充1行動を含む。属性相性・銃特性・軽減を省いた基礎倍率。"
+    },
+    {
+      "case": "通常使い魔1契約の追撃上限",
+      "actions": 1,
+      "baseMp": 6,
+      "rawPower": 1.08,
+      "perAction": null,
+      "note": "絆＋先読み成立時の反応3回分。別途3回の自発魔法とMPが必要。影写しと同時に出さない。"
+    },
+    {
+      "case": "通常苦呪印1回の反応総量",
+      "actions": 1,
+      "baseMp": 6,
+      "rawPower": 2.4,
+      "perAction": null,
+      "note": "最大Lvで3敵×2反応、苦呪の深さ最大を加算。敵の実行・生存・所有者生存等の条件が必要。"
+    }
+  ],
+  "equipment": [
+    {
+      "characterLevel": 1,
+      "item": "scythe_t1",
+      "itemLevel": 3,
+      "MAG": 32,
+      "physicalWeaponPower": 16.128,
+      "currentOrdinarySpellAux": 0,
+      "plannedMSAux": 10.08
+    },
+    {
+      "characterLevel": 20,
+      "item": "scythe_t4",
+      "itemLevel": 18,
+      "MAG": 154,
+      "physicalWeaponPower": 46.368,
+      "currentOrdinarySpellAux": 0,
+      "plannedMSAux": 42.48
+    },
+    {
+      "characterLevel": 50,
+      "item": "scythe_t10",
+      "itemLevel": 48,
+      "MAG": 346,
+      "physicalWeaponPower": 106.848,
+      "currentOrdinarySpellAux": 0,
+      "plannedMSAux": 107.28
+    },
+    {
+      "characterLevel": 80,
+      "item": "scythe_t16",
+      "itemLevel": 78,
+      "MAG": 538,
+      "physicalWeaponPower": 167.328,
+      "currentOrdinarySpellAux": 0,
+      "plannedMSAux": 172.08
+    }
+  ],
+  "statusCases": [
+    {
+      "id": "poison",
+      "normal": 0.7,
+      "boss": 0.5249999999999999,
+      "immune": 0
+    },
+    {
+      "id": "bind",
+      "normal": 0.7,
+      "boss": 0.5249999999999999,
+      "immune": 0
+    },
+    {
+      "id": "blind",
+      "normal": 0.7,
+      "boss": 0.5249999999999999,
+      "immune": 0
+    },
+    {
+      "id": "fear",
+      "normal": 0.7,
+      "boss": 0.5249999999999999,
+      "immune": 0
+    },
+    {
+      "id": "seal",
+      "normal": 0.7,
+      "boss": 0.5249999999999999,
+      "immune": 0
+    },
+    {
+      "id": "silence",
+      "normal": 0.7,
+      "boss": 0.5249999999999999,
+      "immune": 0
+    }
+  ],
+  "limits": [
+    "新技能を実戦闘エンジンへ登録・発動する検証ではない",
+    "倍率の概算は正誤・会心・乱数・属性・敵防御・6人編成を含まない",
+    "長期バランスと新機構の実動は個別実装後に検証する"
+  ]
+}
