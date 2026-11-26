@@ -607,3 +607,20 @@ body:has(.battle-screen) { background: #10171e; }
 .battle-effect-icon { display: block; width: 32px; height: 32px; min-width: 32px; flex: 0 0 32px; object-fit: contain; image-rendering: pixelated; }
 .battle-effect-copy { min-width: 0; line-height: 1.5; overflow-wrap: anywhere; }
 
+
+/* 戦闘スキルの32pxアイコンを技名・説明の左に配置する。 */
+.battle-screen .battle-skill-choice { grid-template-columns: 32px minmax(0, 1fr) auto; }
+.battle-skill-choice > strong { grid-column: 2; grid-row: 1; min-width: 0; overflow-wrap: anywhere; }
+.battle-skill-choice > .battle-list-amount { grid-column: 3; grid-row: 1; }
+.battle-skill-choice > small { grid-column: 2 / -1; grid-row: 2; }
+.battle-skill-choice > .battle-list-icon {
+  grid-column: 1;
+  grid-row: 1 / span 2;
+  align-self: center;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+}
+.battle-list-icon .skill-shop-icon { display: flex; line-height: 0; }
+.battle-list-icon .skill-pixel-icon { display: block; width: 32px; height: 32px; image-rendering: pixelated; }
