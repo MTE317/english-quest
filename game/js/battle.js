@@ -275,6 +275,15 @@ export function battleStats(data, game, b, i) {
   return st;
 }
 
+/** 味方が受ける属性ダメージの補正。能力画面と戦闘で共用する。 */
+export function allyElementMultiplier(data, game, b, index, element, magic = false) {
+  const target = game.party[index];
+  const resist = element
+    ? bval(b.partyBuffs, `eres:${element}`) + affixSum(target, `ELEM_RES:${element}`) / 100 + partyPassive(data, game, b, 'party_eres')
+    : 0;
+  return 1 - Math.min(f(data, 'element_resist_cap'), resist + (magic || element ? partyPassive(data, game, b, 'party_ecut') : 0));
+}
+
 export function elementMul(data, enemy, el) {
   if (el === 'none') return 1;
   const bt = data.balance.battle;
@@ -1827,10 +1836,7 @@ function enemyTurn(data, game, b, e) {
       + (memberMods(data, target).damage_cut ?? 0) + gearCut + (magic ? 0 : bval(ta.buffs, 'pcut'))
       + masterBuff(data, game, b, t, 'cut') + masterCutBonus(data, game, b, t, magic) + (counterStance?.cut ?? 0)
       + (masterCover && t !== original ? masterCover.cover.cut ?? 0 : 0));
-    const resist = enemy.attackElement
-      ? bval(b.partyBuffs, `eres:${enemy.attackElement}`) + affixSum(target, `ELEM_RES:${enemy.attackElement}`) / 100 + partyPassive(data, game, b, 'party_eres')
-      : 0;
-    const ecut = 1 - Math.min(f(data, 'element_resist_cap'), resist + (magic || enemy.attackElement ? partyPassive(data, game, b, 'party_ecut') : 0));
+    const ecut = allyElementMultiplier(data, game, b, t, enemy.attackElement, magic);
     const dmg = evaluate(f(data, 'enemy_damage'), { atk, df, r: between(b, f(data, 'enemy_rand')) })
       * Math.max(f(data, 'minimum_damage_share'), cover * cut * ecut);
     const elName = enemy.attackElement ? data.elements.get(enemy.attackElement)?.name : null;

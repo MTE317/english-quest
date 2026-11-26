@@ -13,6 +13,7 @@ import {
   skillMaxLevel, learnedSkillLevel, effectiveSkill, upgradeSkillBlock, upgradeSkill, skillWeaponBlock,
 } from '../growth.js?v=advanced-jobs-1';
 import { skillMp } from '../battle.js?v=advanced-jobs-1';
+import { elementResistancePanel } from '../ui/element-resistance.js?v=element-resistance-1';
 import { statusSusceptibilityPanel } from '../ui/status-susceptibility.js?v=advanced-jobs-1';
 import { el, render, stars } from '../dom.js?v=skill-growth-2';
 import { describeFixedEffects } from '../equipment-effects.js?v=skill-growth-2';
@@ -307,6 +308,7 @@ function showMember(index, tab = 'skills', selectedSlot = null, { scroll = true 
         el('summary', {}, '能力適性'),
         jobAptitudeChart(data.jobsById.get(m.job))),
       statusSusceptibilityPanel(data, session.game, index),
+      elementResistancePanel(data, session.game, index),
       weaponMasteryPanel(m),
     ]);
   if (tab === 'equipment' && selectedSlot) selectSlot(selectedSlot);
