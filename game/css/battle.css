@@ -599,3 +599,10 @@ body:has(.battle-screen) { background: #10171e; }
 
 /* 戦闘フィールドのHP・MPはバーのみで表示する。詳細画面の数値は残す。 */
 .battle-party .battle-resource:is(.hp, .mp) .battle-resource-value { display: none; }
+
+
+.battle-effect-section .battle-effect-list { list-style: none; padding: 0; }
+.battle-effect-row { display: flex; align-items: center; gap: 9px; min-width: 0; min-height: 36px; }
+.battle-effect-icon { display: block; width: 32px; height: 32px; min-width: 32px; flex: 0 0 32px; object-fit: contain; image-rendering: pixelated; }
+.battle-effect-copy { min-width: 0; line-height: 1.5; overflow-wrap: anywhere; }
+

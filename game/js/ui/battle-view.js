@@ -15,6 +15,7 @@ import { portraitIcon } from './portrait.js?v=skill-growth-2';
 import { ultimateGauge } from './skill-presentation.js?v=skill-growth-2';
 import { describeSkillEffect } from '../skill-effects.js?v=skill-growth-2';
 import { ownedBlessing } from '../job-combat.js?v=advanced-jobs-1';
+import { statusIconId, buffIconId, effectIcon, JOB_EFFECT_ICON } from './effect-icons.js?v=battle-effect-icons-1';
 
 const TARGET_PROMPT = {
   enemy: '攻撃する敵を選ぶ',
@@ -55,16 +56,17 @@ function buffText(data, key, value) {
   return `${label} ${number > 0 ? '+' : ''}${number}%`;
 }
 
-export function allyEffectSections(data, game, battle, index) {
+export function allyEffectEntries(data, game, battle, index) {
   const member = game.party[index], ally = battle.allies[index];
+  const entry = (label, icon = JOB_EFFECT_ICON) => ({ label, icon });
   const duration = value => Number.isFinite(value) ? `（残り${value}）` : '';
   const timedBuffs = buffs => Object.entries(buffs ?? {}).flatMap(([key, entry]) => {
     if (!Array.isArray(entry) || !(entry[1] > 0) || !entry[0]) return [];
-    return [buffText(data, key, entry[0]) + duration(entry[1])];
+    return [{ label: buffText(data, key, entry[0]) + duration(entry[1]), icon: buffIconId(key, entry[0]) }];
   });
   const statuses = Object.entries(ally.statuses ?? {}).map(([id, state]) =>
-    `${data.statusEffects.get(id)?.name ?? id}${state.n > 1 ? ' ×' + state.n : ''}${duration(state.turns)}`);
-  if (member.hp <= 0) statuses.unshift('戦闘不能');
+    entry(`${data.statusEffects.get(id)?.name ?? id}${state.n > 1 ? ' ×' + state.n : ''}${duration(state.turns)}`, statusIconId(id)));
+  if (member.hp <= 0) statuses.unshift(entry('戦闘不能', null));
   const ongoing = Object.entries(ally.masterEffects ?? {}).flatMap(([key, effect]) => {
     if (effect.remaining <= 0) return [];
     const id = effect.skillId ?? key.replace(/:(mp|damage)$/, '');
@@ -80,7 +82,7 @@ export function allyEffectSections(data, game, battle, index) {
     if (effect.nextHpCost) values.push('次のスキルのHP消費を変更');
     if (effect.lifesteal) values.push(`HP吸収 ${Math.round(effect.lifesteal * 100)}%`);
     if (effect.weaponDamage) values.push(`武器ダメージ +${Math.round(effect.weaponDamage * 100)}%`);
-    return [`${name}${duration(effect.remaining)}${values.length ? '：' + values.join('・') : ''}`];
+    return [entry(`${name}${duration(effect.remaining)}${values.length ? '：' + values.join('・') : ''}`)];
   });
   const special = [];
   if (ally.imbue) special.push(`武器属性：${data.elements.get(ally.imbue)?.name ?? ally.imbue}`);
@@ -100,8 +102,14 @@ export function allyEffectSections(data, game, battle, index) {
   });
   return [
     ['状態異常', statuses], ['自身の強化・弱体', timedBuffs(ally.buffs)],
-    ['全体の強化・弱体', timedBuffs(battle.partyBuffs)], ['スキルの継続効果', ongoing], ['その他の状態', special],
+    ['全体の強化・弱体', timedBuffs(battle.partyBuffs)], ['ジョブ固有の継続効果', ongoing], ['その他の特殊効果', special.map(label => entry(label))],
   ];
+}
+
+// 文字列を使う既存の呼び出しにも同じ詳細を提供する。
+export function allyEffectSections(data, game, battle, index) {
+  return allyEffectEntries(data, game, battle, index)
+    .map(([title, entries]) => [title, entries.map(entry => entry.label)]);
 }
 
 export function createBattleView({ view, data, lex, scheduler, store, session, onEnd: finishBattle, settings = {} }) {
@@ -241,12 +249,15 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
   function inspectAlly(index) {
     const member = g.party[index];
     render(allyDialog, el('div', { class: 'battle-encyclopedia-body' },
-      el('h3', { id: 'battle-ally-state-title' }, `${member.name}の状態`),
-      allyEffectSections(data, g, b, index).map(([title, lines]) => el('section', { class: 'battle-effect-section' },
+      el('h3', { id: 'battle-ally-state-title', tabindex: '-1' }, `${member.name}の状態`),
+      allyEffectEntries(data, g, b, index).map(([title, lines]) => el('section', { class: 'battle-effect-section' },
         el('h4', {}, title),
-        lines.length ? el('ul', {}, lines.map(line => el('li', {}, line))) : el('p', { class: 'muted small' }, 'なし'))),
-      el('button', { onclick: () => allyDialog.close(), autofocus: true }, '閉じる')));
+        lines.length ? el('ul', { class: 'battle-effect-list' }, lines.map(line => el('li', { class: 'battle-effect-row' },
+          effectIcon(line.icon), el('span', { class: 'battle-effect-copy' }, line.label)))) : el('p', { class: 'muted small' }, 'なし'))),
+      el('button', { onclick: () => allyDialog.close() }, '閉じる')));
     allyDialog.showModal();
+    allyDialog.querySelector('h3').focus({ preventScroll: true });
+    allyDialog.scrollTop = 0;
   }
 
   function inspectEnemy(enemy) {
@@ -579,5 +590,6 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
     },
   };
 }
+
 
 
