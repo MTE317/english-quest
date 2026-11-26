@@ -1,3 +1,4 @@
+import { publicMonsterReward } from '../monster-rewards.js?v=public-rewards-1';
 import { el, render } from '../dom.js?v=skill-growth-2';
 import { catalogMonsters, monsterUnlocks } from '../monster-catalog.js?v=jobs-intro-1';
 import { monsterKnowledge } from '../monster-knowledge.js?v=monster-catalog-1';
@@ -29,7 +30,8 @@ function detail(data, game, monster) {
   const stolen = monster.materialCommon ? data.materials.get(monster.materialCommon)?.name ?? monster.materialCommon : 'なし';
   const stats = sample ? `Lv ${sample.lv}での記録：MP ${sample.mp}・攻撃 ${Math.round(sample.str)}・魔力 ${Math.round(sample.mag)}・防御 ${Math.round(sample.def)}・魔防 ${Math.round(sample.res)}・素早さ ${Math.round(sample.spd)}`
     : '戦闘での記録なし';
-  const xp = sample ? `基礎経験値の目安 ${Math.round((6 + 3.2 * sample.lv) * (monster.isBoss ? 5 : 1))}（仲間のレベルなどで変動）` : '';
+  const reward = publicMonsterReward(data, monster);
+  const xp = reward ? `公開ダンジョンの基礎経験値 ${reward.exp}（冠・仲間のレベルなどで変動）` : sample ? `基礎経験値の目安 ${Math.round((6 + 3.2 * sample.lv) * (monster.isBoss ? 5 : 1))}（仲間のレベルなどで変動）` : '';
   return [
     el('header', {}, el('span', { class: 'shop-item-icon', 'aria-hidden': 'true' }, monster.icon), el('h2', {}, monster.name)),
     el('p', { class: 'shop-description' }, `討伐 ${count}体${monster.isBoss ? '・ボス' : ''}`),

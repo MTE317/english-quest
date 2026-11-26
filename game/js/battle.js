@@ -1,3 +1,4 @@
+import { fixedBattleRewards } from './monster-rewards.js?v=public-rewards-1';
 // 戦闘：行動順・通常攻撃とスキル・1行動ごとに1問・属性・状態異常・道具・逃げる。
 //
 // - 戦闘の状態（battle）はすべて JSON にできる形で持つ。乱数も battle.rng に入れておくので、
@@ -2271,15 +2272,16 @@ export function finishBattle(data, game, b) {
 }
 
 /** 勝ったときの経験値（1人あたり。倒れている人は0）と AP */
-export function battleRewards(data, game, b) {
+export function battleRewards(data, game, b, { dungeonId } = {}) {
+  const fixed = fixedBattleRewards(data, b.enemies, dungeonId);
   const R = data.balance.rewards;
   const boss = b.enemies.some((e) => e.boss);
-  const ap = boss ? R.ap_per_boss_battle : R.ap_per_battle;
+  const ap = fixed ? fixed.reduce((sum, r) => sum + r.ap, 0) : boss ? R.ap_per_boss_battle : R.ap_per_battle;
   const xp = game.party.map((m, i) => {
     if (!canAct(game, b, i)) return 0;
     let sum = 0;
-    for (const e of b.enemies) {
-      let x = evaluate(f(data, 'xp_per_enemy'), { enemyLv: e.lv }) * (e.boss ? f(data, 'boss_xp_mul') : 1);
+    for (const [index, e] of b.enemies.entries()) {
+      let x = fixed ? fixed[index].exp : evaluate(f(data, 'xp_per_enemy'), { enemyLv: e.lv }) * (e.boss ? f(data, 'boss_xp_mul') : 1);
       if (e.eliteId) x *= data.elitePrefixes.find((p) => p.id === e.eliteId)?.rewardMul ?? 1;
       x *= evaluate(f(data, 'overlevel'), { Lv: m.lv, enemyLv: e.lv });
       sum += x;

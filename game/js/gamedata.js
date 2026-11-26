@@ -1,3 +1,4 @@
+import { parseMonsterRewards } from './monster-rewards.js?v=public-rewards-1';
 import { denominateGoldData } from './gold.js?v=skill-growth-2';
 // ゲームで使う data/ のファイルをまとめて読み、ID で引ける形にする。
 import { loadCsv, loadJson, loadOptional } from './data.js?v=skill-growth-2';
@@ -214,6 +215,7 @@ function buildBattleData(raw) {
     attackElement: r.attack_element && r.attack_element !== 'none' ? r.attack_element : null,
     season: r.season, replaces: r.replaces || null, isBoss: r.is_boss === '1', role: r.role,
     materialCommon: r.material_common, materialRare: r.material_rare,
+    ...parseMonsterRewards(r),
   }));
   const skills = raw.skills.map((r) => ({
     id: r.id, job: r.job, path: r.path, stage: toNumber(r.stage, 1), name: r.name, kind: r.kind,

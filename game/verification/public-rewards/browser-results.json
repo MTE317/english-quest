@@ -1,0 +1,48 @@
+[
+  {
+    "width": 320,
+    "questions": 21,
+    "ap": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "xp": [
+      12,
+      12,
+      12,
+      12,
+      12,
+      12
+    ],
+    "reloadNoDoublePay": true,
+    "catalogThreshold": true,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "questions": 23,
+    "ap": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "xp": [
+      12,
+      12,
+      12,
+      12,
+      12,
+      12
+    ],
+    "reloadNoDoublePay": true,
+    "catalogThreshold": true,
+    "errors": []
+  }
+]

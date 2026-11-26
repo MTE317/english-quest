@@ -2,8 +2,8 @@ import { roundGold, goldScale } from './gold.js?v=skill-growth-2';
 import { parseAmounts, splitList } from './csv.js?v=skill-growth-2';
 import { makeGear } from './character.js?v=advanced-jobs-1';
 import { rollAffixes, affixVariants } from './loot.js?v=jobs-intro-1';
-import { matchesNeed, parseMaterialNeed } from './town.js?v=jobs-intro-1';
-import { currentRank } from './dungeon.js?v=jobs-intro-1';
+import { matchesNeed, parseMaterialNeed } from './town.js?v=public-rewards-1';
+import { currentRank } from './dungeon.js?v=public-rewards-1';
 import { consumeMaterials } from './temple.js?v=skill-growth-2';
 import { describeEffect } from './equipment-effects.js?v=skill-growth-2';
 
