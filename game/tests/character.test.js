@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
-  computeStats, gainXp, xpToNext, canEquip, equipFromStorage, unequip, makeGear, starterGearIds, SLOTS, maxHp,
+  computeStats, gainXp, xpToNext, canEquip, equipFromStorage, equipRecommended, unequip, makeGear, starterGearIds, SLOTS, maxHp,
 } from '../js/character.js';
 import { createNewGame, PARTY_SIZE } from '../js/game-state.js';
 import { realGameData, readJson } from './helpers.js';
@@ -16,6 +16,36 @@ const party = [
   { name: 'ファ', job: 'bard', icon: 'human_04' },
 ];
 const fresh = () => createNewGame(data, party);
+
+test('おまかせ装備は装備可能な最高Lvを選び、同じLvなら強化値を優先する', () => {
+  const game = fresh();
+  const member = game.party[0];
+  const sword = makeGear(game, 'sword_t2');
+  const enhanced = makeGear(game, 'sword_t2', { enh: 2 });
+  const body = makeGear(game, 'heavy_body_t2');
+  game.storage.gear.push(sword, enhanced, body);
+  assert.equal(equipRecommended(data, game, member), 3);
+  assert.equal(member.equip.weapon.uid, enhanced.uid);
+  assert.equal(member.equip.body.uid, body.uid);
+  assert.equal(member.equip.offhand.uid, sword.uid);
+  assert.equal(equipRecommended(data, game, member), 0);
+  assert.equal(game.party[1].equip.weapon, null);
+});
+
+test('おまかせ装備は両手武器に替えた場合サブ武器を倉庫へ戻す', () => {
+  const game = fresh();
+  const member = game.party[0];
+  member.equip.weapon = makeGear(game, 'sword_t1');
+  member.equip.offhand = makeGear(game, 'sword_t2');
+  const offhand = member.equip.offhand;
+  const greatsword = makeGear(game, 'greatsword_t3');
+  game.storage.gear.push(greatsword);
+  equipRecommended(data, game, member);
+  assert.equal(member.equip.weapon.uid, greatsword.uid);
+  assert.equal(member.equip.offhand, null);
+  assert.equal(game.storage.gear.some(gear => gear.uid === offhand.uid), true);
+});
+
 
 test('6人・装備8枠・Lv1・HP/MP満タン・無装備で開始する', () => {
   const g = fresh();
