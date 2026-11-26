@@ -11,7 +11,7 @@
 | `sim/` | 実ゲームのJSによるバランス計測と、旧Pythonモデル |
 | `docs/` | 仕様、バランス調整の結果、36ビルドの設計・検証資料 |
 
-Claude Code で作業するときの決まりは `CLAUDE.md` を参照。
+現在の仕様の入口は [仕様索引](docs/specs/README.md)。E〜Sの新ランクは[昇級・施設解放の設計](docs/specs/rank-promotion.md)を正本とする（ゲームへの実装はこれから）。Claude Code で作業するときの決まりは `CLAUDE.md` を参照。
 
 ## バランス調整とビルド
 
@@ -49,6 +49,6 @@ python3 base2.py 0.5 0.65   # 正答率50%と65%
 
 ## データの出典
 
-今の単語（`data/lexicon.csv`）はプロトタイプ用の自作の90語です。外部の単語リストを使うときは、ここに出典とライセンスを書きます。
+教材の正本は [基本版v1.0](data/learning/v1/README.md)（単語・熟語1,600件、瞬間英作文1,183件、チャンク215件）。
 
 技能成長方式v2の移行・AP返還は [実装詳細](docs/skill-growth-v2-implementation.md) を参照してください。
