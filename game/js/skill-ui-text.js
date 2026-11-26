@@ -169,8 +169,10 @@ export const SKILL_UI_TEXT = Object.freeze({
 });
 
 export function skillUIMessage(skill, level = skill.level ?? 1) {
+  const current = Math.max(1, Math.floor(Number(level) || 1));
+  const direct = (current > 1 ? skill.effect?.levels?.[current - 2]?.effect?.short_description : null) ?? skill.effect?.short_description;
+  if (direct) return direct;
   const text = SKILL_UI_TEXT[skill.id];
   if (!text) return null;
-  const current = Math.max(1, Math.floor(Number(level) || 1));
   return text.levels?.[current] ?? text.description;
 }

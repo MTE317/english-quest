@@ -1,4 +1,4 @@
-import { skillUIMessage } from './skill-ui-text.js?v=skill-ui-text-1';
+import { skillUIMessage } from './skill-ui-text.js?v=tactical-jobs-1';
 
 // スキル詳細用の説明。技能データの効果・属性・対象を共通の日本語へ変換する。
 const pct = (value) => `${Math.round(Number(value) * 1000) / 10}%`;

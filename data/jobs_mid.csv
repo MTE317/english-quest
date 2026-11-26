@@ -2,9 +2,9 @@
 paladin,聖騎士,事前防護・加護,additional,A,B,B,C,A,A,D,C,blunt|light,,hammer,sword|staff,攻撃STR／防護RES／回復MAG,消費型の加護を付け、消費時に回復や反撃を起こす,全体に大きな加護。破られると回復や反撃,1,,hammer,heavy,初期解放（条件は後日設定）,1
 dark_knight,暗黒騎士,HP消費・吸収攻撃,additional,A,C,A,C,B,C,D,C,slash|dark,,greatsword,scythe,STR／HP（消費）,HPを攻撃へ投資し、吸収のタイミングを選んで回収,強烈な吸収攻撃と一時的な吸収強化,1,,greatsword,heavy,初期解放（条件は後日設定）,1
 berserker,狂戦士,攻撃継続・短期火力,additional,A,D,A,D,C,D,B,C,slash,fire,axe,greatsword,STR・HP,攻撃継続で怒りを蓄え、火力と被ダメージが増す。鎮心も選べる,怒りを解放し、短期間の猛攻を大幅強化,1,,axe,medium,初期解放（条件は後日設定）,1
-samurai,侍,構え・先読み,additional,B,C,A,D,B,C,B,B,slash,thunder,katana,sword,STR／SPD・LUK,攻め・受け流しの構えを切り替え、次の展開に備える,現在の構えを活かす居合・反撃・防護の大技,0,,katana,medium,個別技能の実装待ち,1
-gladiator,剣闘士,決闘・受け流し・反撃,additional,B,C,A,D,A,C,C,B,slash,,greatsword,sword|spear,STR／DEF・LUK,敵1体を挑発し、その相手との攻防を有利に進める,標的との決闘で強力な見切りと反撃,0,,greatsword,medium,個別技能の実装待ち,1
-warrior_monk,僧兵,祈りと武器攻撃の往復,additional,B,B,A,C,B,A,C,D,pierce|light,earth,spear,hammer|staff,攻撃STR／防護RES,祈りや支援で力を蓄え、武器技で放つ,全体防護と祈りを込めた強力な槍撃,0,,spear,medium,個別技能の実装待ち,1
+samurai,侍,構え・先読み,additional,B,C,A,D,B,C,B,B,slash,thunder,katana,sword,STR／SPD・LUK,攻め・受け流しの構えを切り替え、次の展開に備える,現在の構えを活かす居合・反撃・防護の大技,1,,katana,medium,初期解放（条件は後日設定）,1
+gladiator,剣闘士,決闘・受け流し・反撃,additional,B,C,A,D,A,C,C,B,slash,,greatsword,sword|spear,STR／DEF・LUK,敵1体を挑発し、その相手との攻防を有利に進める,標的との決闘で強力な見切りと反撃,1,,greatsword,medium,初期解放（条件は後日設定）,1
+warrior_monk,僧兵,祈りと武器攻撃の往復,additional,B,B,A,C,B,A,C,D,pierce|light,earth,spear,hammer|staff,攻撃STR／防護RES,祈りや支援で力を蓄え、武器技で放つ,全体防護と祈りを込めた強力な槍撃,1,,spear,medium,初期解放（条件は後日設定）,1
 ascetic,修験者,自己維持・気功・逆境耐久,additional,A,C,A,D,C,A,B,D,blunt|none,earth,fist,staff,気功STR／自己維持HP・RES,攻撃と調息を交互に使い、異常や消耗の中でも粘る,自身を大きく立て直し、気功と耐久を強化,0,,fist,medium,個別技能の実装待ち,1
 executioner,処刑人,低HPの敵の仕留め,additional,B,C,A,D,B,D,C,A,slash,dark,axe,scythe,STR・LUK,出血などで削られた敵を見極め、重い一撃で仕留める,低HPほど強烈な裁断。撃破時は余勢を別の敵へ,0,,axe,medium,個別技能の実装待ち,1
 ninja,忍者,分身・回避・忍術,additional,C,B,B,B,D,C,A,B,slash|wind,dark,katana,dagger,武器技STR／忍術MAG／SPD,分身を回避・反撃・忍術強化にどう使うか選ぶ,複数の分身を展開し、忍術と回避を大幅強化,0,,katana,medium,個別技能の実装待ち,1

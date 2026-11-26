@@ -6,8 +6,8 @@ import { Scheduler } from '../srs.js?v=skill-growth-2';
 import { LearningStore, now } from '../storage.js?v=skill-growth-2';
 import { GameSession } from '../save.js?v=skill-growth-2';
 import { normalizeGame } from '../game-state.js?v=advanced-jobs-1';
-import { currentRank } from '../dungeon.js?v=advanced-jobs-1';
-import { nextRankStatus, checkRankUp } from '../town.js?v=advanced-jobs-1';
+import { currentRank } from '../dungeon.js?v=tactical-jobs-1';
+import { nextRankStatus, checkRankUp } from '../town.js?v=tactical-jobs-1';
 import { promotionProgress, promotionExamState } from '../promotion.js?v=skill-growth-2';
 import { learningStatistics } from '../learning-stats.js?v=skill-growth-2';
 import { TRAINING_COUNTS, trainingChunksForSet, trainingWordsForSet,

@@ -91,6 +91,14 @@ export function masterDamageBonus(data, game, b, actor, target, skill, elements 
     }
   }
   for (const effect of Object.values(b.enemies[target]?.masterMarks ?? {})) rate += effect.rate ?? 0;
+  if (!skill || skill.effect?.base === 'weapon') {
+    const duel = activeDuel(game, b, actor);
+    if (duel?.target === target) rate += duel.damage + (duel.focus ? ruleNumber(data, member, 'duel_focus_bonus') : 0)
+      + (skill?.effect.rules?.duel_finish_bonus ?? 0);
+    if (duel?.target === target && duel.wasHit) rate += skill?.effect.rules?.duel_retaliation_bonus ?? 0;
+    if (a.stance?.mode === 'attack') rate += skill?.effect.rules?.attack_stance_bonus ?? 0;
+    if (masterTags(skill).includes('reaction')) rate += ruleNumber(data, member, 'weapon_counter_bonus');
+  }
   return rate;
 }
 export function masterCritBonus(data, game, b, actor, skill) {
@@ -107,13 +115,15 @@ export function masterEvasionBonus(data, game, b, actor) {
   }
   return rate;
 }
-export function masterCutBonus(data, game, b, actor, magic) {
+export function masterCutBonus(data, game, b, actor, magic, enemy = null) {
   let rate = 0;
   for (const rule of passiveRules(data, game.party[actor])) for (const cond of rule.condition_cut ?? []) {
     if ((cond.scope !== 'magic' || magic) && (cond.scope !== 'physical' || !magic)
       && masterCondition(data, game, b, actor, null, cond)) rate += cond.rate ?? 0;
   }
   rate -= angerStage(data, game, b, actor) * (angerRule(data, game.party[actor])?.received ?? 0);
+  const duel = activeDuel(game, b, actor);
+  if (duel && enemy != null) rate += duel.target === enemy ? -duel.received : ruleNumber(data, game.party[actor], 'outside_duel_cut');
   return rate;
 }
 
@@ -139,7 +149,9 @@ function sourceSongBonus(data, game, b, effect) {
   return rate;
 }
 export function masterBuff(data, game, b, target, key) {
-  return Object.values(b.allies[target]?.masterEffects ?? {}).reduce((sum, effect) => sum + (effect.values?.[key] ?? 0) * (1 + sourceSongBonus(data, game, b, effect)), 0);
+  const ally = b.allies[target];
+  const stance = (ally?.stance?.values?.[key] ?? 0) + (key === 'res' && ally?.stance?.mode === 'guard' ? ruleNumber(data, game.party[target], 'guard_stance_res') : 0);
+  return Object.values(ally?.masterEffects ?? {}).reduce((sum, effect) => sum + (effect.values?.[key] ?? 0) * (1 + sourceSongBonus(data, game, b, effect)), stance);
 }
 export function masterMpSave(data, member, skill, b = null, actor = null) {
   if (skill.isFinal) return 0;
@@ -181,6 +193,7 @@ export function beginMasterAction(data, game, b, actor, skill) {
   a.currentActionClock = b.actionClock;
   a.advancedAction = { paidHp: 0, damageBonus: 0, actualDamage: 0, executed: false };
   if (!angerRule(data, game.party[actor])) a.anger = 0;
+  if (!prayerRule(data, game.party[actor])) a.prayer = 0;
   a.conditionSnapshot = { enemy: b.enemies.filter(unit => unit.hp > 0).map(unit => Object.keys(unit.statuses ?? {}).filter(id => id !== 'taunt')),
     ally: b.allies.filter((_, i) => game.party[i].hp > 0).map(unit => Object.keys(unit.statuses ?? {}).filter(id => id !== 'taunt')) };
   const combo = passiveRules(data, game.party[actor]).find(rule => rule.combo)?.combo;
@@ -189,6 +202,8 @@ export function beginMasterAction(data, game, b, actor, skill) {
 }
 export function startMasterOpportunity(data, game, b, actor, ctx) {
   const a = b.allies[actor];
+  delete a.readGuard;
+  clearDefeatedTacticalTargets(b);
   for (const [key, effect] of Object.entries(a.masterEffects ?? {})) if (effect.expire === 'start') delete a.masterEffects[key];
   if (a.masterCounter?.expire === 'start') delete a.masterCounter;
   for (const effect of Object.values(a.masterEffects ?? {})) if (effect.regen?.trigger === 'start' && game.party[actor].hp > 0 && !a.statuses.petrify) {
@@ -221,6 +236,7 @@ export function finishMasterOpportunity(data, game, b, actor, ctx, skill = null,
   }
   if (a.masterCounter && (a.masterCounter.grantedClock !== b.actionClock || !voluntary) && --a.masterCounter.remaining <= 0) delete a.masterCounter;
   a.lastOpportunityRound = b.round;
+  finishTacticalOpportunity(data, game, b, actor, skill, voluntary && performed, voluntary);
   finishAdvancedAction(data, game, b, actor, skill, voluntary);
   if (!voluntary || !performed) { a.previousWeaponSkill = null; a.comboStage = 0; delete a.conditionSnapshot; return; }
   for (const rule of passiveRules(data, member)) {
@@ -270,11 +286,13 @@ export function advancedSkillBlock(data, game, b, actor, skill) {
   if (game.party[actor].hp <= hpPayment(data,game,b,actor,skill)) return 'HPの支払い後に1以上残す必要がある';
   if (skill.effect.rules?.consume_blessing && !ownedBlessing(b,actor)) return '自分に自分の加護が必要';
   if (skill.effect.rules?.move_blessing && !b.allies.some((_,target)=>ownedBlessing(b,actor,target))) return '移せる自分の加護がない';
+  if (skill.effect.rules?.require_prayer && prayerStage(data, game, b, actor) <= 0) return '祈りの往還を装備して祈念をためてください';
   return '';
 }
 export function advancedTargetBlock(data, game, b, actor, skill, target, action) {
   if (!skill.effect.additional) return '';
   const rule=skill.effect.rules??{};
+  if (skill.effect.tgt === 'selected_enemy' && !(b.enemies[target]?.hp > 0)) return '生存している敵を選んでください';
   const partyTarget = ['ally_buff','heal','cure'].includes(skill.kind) && skill.effect.tgt!=='self';
   if (partyTarget && (!game.party[target] || game.party[target].hp<=0 || b.allies[target].statuses.petrify)) return '生存している対象を選んでください';
   if (rule.move_blessing && (!ownedBlessing(b,actor,action.sourceTarget) || action.sourceTarget===target
@@ -297,6 +315,14 @@ export function payAdvancedCosts(data, game, b, actor, skill, action) {
   if (rule.spend_anger) {
     state.damageBonus+=angerStage(data,game,b,actor)*rule.spend_anger;
     ally.anger=0;
+  }
+  const prayer = prayerStage(data, game, b, actor), devotion = prayerRule(data, game.party[actor]);
+  if (prayer > 0 && (rule.spend_prayer || weaponSkill(skill))) {
+    state.prayerSpent = rule.spend_prayer?.all ? prayer : 1;
+    state.damageBonus += state.prayerSpent * (rule.spend_prayer?.damage ?? devotion?.damage ?? 0);
+    // 支援の全消費は攻撃強化を生成しない。
+    if (rule.prayer_shield) state.damageBonus = 0;
+    ally.prayer = prayer - state.prayerSpent;
   }
 }
 function finishAdvancedAction(data, game, b, actor, skill, voluntary) {
@@ -408,4 +434,128 @@ export function onMasterCover(data, game, b, actor, received = false) {
     a.coverStages = Math.min(rule.on_cover.max, (a.coverStages ?? 0) + 1);
     grantMasterEffect(b, actor, rule.skill.id, { values: { def: rule.on_cover.def * a.coverStages }, remaining: rule.on_cover.turns });
   }
+}
+
+
+// 追加4〜6職。姿勢と反撃準備は別枠、資源・標的は戦闘内だけで保持する。
+export const prayerRule = (data, member) => passiveRules(data, member).find(rule => rule.prayer)?.prayer;
+export function prayerStage(data, game, b, actor) {
+  const rule = prayerRule(data, game.party[actor]);
+  return rule ? Math.max(0, Math.min(rule.max, Number(b.allies[actor].prayer) || 0)) : 0;
+}
+export function activeDuel(game, b, actor) {
+  const duel = b.allies[actor]?.duel;
+  return game.party[actor]?.hp > 0 && duel?.remaining > 0 && b.enemies[duel.target]?.hp > 0 ? duel : null;
+}
+export function tacticalDefIgnore(b, actor, skill) {
+  return b.allies[actor].stance?.mode === 'guard' ? skill?.effect.rules?.guard_stance_pierce ?? 0 : 0;
+}
+export function prepareDuelAttack(game, b, actor, targets) {
+  const duel = activeDuel(game, b, actor);
+  if (duel && targets.some(target => target !== duel.target)) duel.focus = false;
+}
+export function targetedEvasion(b, actor, enemy) {
+  const range = b.allies[actor].distance;
+  return range?.remaining > 0 && range.target === enemy ? range.evasion : 0;
+}
+export function readGuardCut(b, actor, magic, elements) {
+  const guard = b.allies[actor].readGuard;
+  if (magic || !guard || !elements.includes(guard.element)) return 0;
+  guard.usedAction = b.enemyActionClock;
+  return guard.rate;
+}
+export function finishReadGuards(b) {
+  for (const ally of b.allies) if (ally.readGuard?.usedAction != null && ally.readGuard.usedAction === b.enemyActionClock) delete ally.readGuard;
+}
+export function consumeStatusPreparation(b, actor, status) {
+  for (const [key, effect] of Object.entries(b.allies[actor].masterEffects ?? {})) {
+    if (effect.statusResist?.uses > 0 && effect.statusResist.statuses.includes(status)) {
+      if (--effect.statusResist.uses <= 0) delete b.allies[actor].masterEffects[key];
+    }
+  }
+}
+export function clearDefeatedTacticalTargets(b) {
+  for (const ally of b.allies) {
+    for (const key of ['duel', 'distance']) if (ally[key] && !(b.enemies[ally[key].target]?.hp > 0)) delete ally[key];
+    if (ally.masterCounter?.target != null && !(b.enemies[ally.masterCounter.target]?.hp > 0)) delete ally.masterCounter;
+  }
+}
+export function resetTacticalState(ally) {
+  for (const key of ['stance', 'duel', 'distance', 'readGuard']) delete ally[key];
+  ally.prayer = 0;
+  // 決着の余裕の一戦1回フラグは、蘇生しても戻さない。
+}
+export function duelVictory(data, game, b, actor, enemy, primary) {
+  const ally = b.allies[actor], duel = ally?.duel;
+  if (!primary || !ally.advancedAction?.executed || !duel || duel.target !== enemy || !(game.party[actor]?.hp > 0) || ally.duelRewardUsed) return 0;
+  const rate = ruleNumber(data, game.party[actor], 'duel_victory');
+  if (!rate) return 0;
+  ally.duelRewardUsed = true;
+  return Math.floor(maxHp(data, game.party[actor]) * rate);
+}
+export function noteDuelHit(game, b, actor, enemy) {
+  const duel = activeDuel(game, b, actor);
+  if (duel?.target === enemy) duel.wasHit = true;
+}
+export function grantProtection(data, game, b, actor, target, skill, rule, stats, cm) {
+  const formula = data.basicJobRules.protection;
+  const base = Math.floor(formula.base + formula.per_level * game.party[actor].lv + formula.stat_scale * stats[rule.stat]);
+  const shield = Math.max(0, Math.floor(Math.min(masterShieldRoom(data, game, b, target, skill.id), base * rule.m * cm)));
+  if (!shield) return;
+  grantMasterEffect(b, target, skill.id, { shield, values: {}, remaining: rule.turns, source: actor, skillId: skill.id });
+}
+export function applyTacticalRules(data, game, b, actor, skill, target, cm, action, stats) {
+  const ally = b.allies[actor], rules = skill.effect.rules ?? {}, passives = passiveRules(data, game.party[actor]);
+  if (rules.stance) {
+    const previous = ally.stance;
+    const switched = previous && previous.mode !== rules.stance.mode;
+    ally.stance = { mode: rules.stance.mode, skillId: skill.id, held: switched || !previous ? 0 : previous.held,
+      values: Object.fromEntries(Object.entries(rules.stance.values).map(([key, value]) => [key, value * cm])), grantedClock: b.actionClock };
+    if (switched) for (const p of passives) if (p.stance_switch && previous.held >= p.stance_switch.minimum_actions) {
+      grantMasterEffect(b, actor, p.skill.id, { nextDamage: { tag: 'weapon', rate: p.stance_switch.rate }, remaining: p.stance_switch.turns });
+    }
+  }
+  if (rules.duel) ally.duel = { ...rules.duel, target, remaining: rules.duel.turns, focus: true, wasHit: false, skillId: skill.id, grantedClock: b.actionClock };
+  if (rules.distance) ally.distance = { ...rules.distance, target, remaining: rules.distance.turns, skillId: skill.id, grantedClock: b.actionClock };
+  if (rules.read_guard) ally.readGuard = { ...rules.read_guard, element: action.element, skillId: skill.id };
+  if (rules.after_self_buff) grantMasterEffect(b, actor, skill.id, { values: rules.after_self_buff.values, remaining: rules.after_self_buff.turns });
+  if (rules.target_counter && b.enemies[target]?.hp > 0) ally.masterCounter = { ...rules.target_counter, target,
+    remaining: rules.target_counter.turns, skillId: skill.id, grantedClock: b.actionClock };
+  const living = game.party.flatMap((member, index) => member.hp > 0 && !b.allies[index].statuses.petrify ? [index] : []);
+  if (rules.protection) {
+    const recipients = skill.kind === 'self_buff' ? [actor] : [target];
+    for (const index of recipients) if (living.includes(index)) grantProtection(data, game, b, actor, index, skill, rules.protection, stats, cm);
+  }
+  if (rules.prayer_shield) {
+    const spent = ally.advancedAction?.prayerSpent ?? 0;
+    for (const index of living) grantProtection(data, game, b, actor, index, skill, { ...rules.prayer_shield, m: rules.prayer_shield.m * spent }, stats, cm);
+  }
+  if (rules.guard_party_buff && ally.stance?.mode === 'guard') {
+    for (const index of living) grantMasterEffect(b, index, skill.id, { values: Object.fromEntries(Object.entries(rules.guard_party_buff.values).map(([key,value])=>[key,value*cm])),
+      remaining: rules.guard_party_buff.turns, source: actor, skillId: skill.id, party: true });
+  }
+}
+function finishTacticalOpportunity(data, game, b, actor, skill, performed, voluntary) {
+  const ally = b.allies[actor], state = ally.advancedAction;
+  if (ally.stance && (ally.stance.grantedClock !== b.actionClock || !voluntary)) ally.stance.held++;
+  for (const key of ['duel', 'distance']) {
+    if (ally[key] && (ally[key].grantedClock !== b.actionClock || !voluntary) && --ally[key].remaining <= 0) delete ally[key];
+  }
+  clearDefeatedTacticalTargets(b);
+  if (!(game.party[actor].hp > 0)) { resetTacticalState(ally); return; }
+  if (!performed || !state?.executed) return;
+  const support = Boolean(skill && skill.kind !== 'attack' && !skill.effect.rules?.stance && state.effectiveSupport);
+  const passives = passiveRules(data, game.party[actor]);
+  if (support && !skill.isFinal && state.mpPaid > 0 && !skill.effect.rules?.no_prayer_gain) {
+    const rule = prayerRule(data, game.party[actor]);
+    if (rule) ally.prayer = Math.min(rule.max, prayerStage(data, game, b, actor) + 1);
+  }
+  for (const p of passives) {
+    if (support && p.on_effective_support) grantMasterEffect(b, actor, p.skill.id, { values: { mcut: p.on_effective_support.cut }, remaining: p.on_effective_support.turns });
+    if (state.prayerSpent > 0 && p.on_prayer_spend) grantMasterEffect(b, actor, p.skill.id, { values: { res: p.on_prayer_spend.res }, remaining: p.on_prayer_spend.turns });
+    if (weaponSkill(skill) && state.elements?.includes('thunder') && p.thunder_next_mp) grantMasterEffect(b, actor, p.skill.id,
+      { nextMpSave: { ...p.thunder_next_mp, uses: 1 }, remaining: p.thunder_next_mp.turns });
+  }
+  if (skill?.effect.rules?.end_duel) delete ally.duel;
+  if (ally.duel) ally.duel.wasHit = false;
 }

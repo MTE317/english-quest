@@ -12,12 +12,12 @@ import {
   commonApCost, commonBlock, learnCommon, masteryLevel, isJobMastered, GROWTH_FORMULAS,
   skillMaxLevel, learnedSkillLevel, effectiveSkill, upgradeSkillBlock, upgradeSkill, skillWeaponBlock,
 } from '../growth.js?v=advanced-jobs-1';
-import { skillMp } from '../battle.js?v=advanced-jobs-1';
-import { elementResistancePanel } from '../ui/element-resistance.js?v=element-resistance-1';
-import { statusSusceptibilityPanel } from '../ui/status-susceptibility.js?v=advanced-jobs-1';
+import { skillMp } from '../battle.js?v=tactical-jobs-1';
+import { elementResistancePanel } from '../ui/element-resistance.js?v=tactical-jobs-1';
+import { statusSusceptibilityPanel } from '../ui/status-susceptibility.js?v=tactical-jobs-1';
 import { el, render, stars } from '../dom.js?v=skill-growth-2';
 import { describeFixedEffects } from '../equipment-effects.js?v=skill-growth-2';
-import { describeSkillForUI } from '../skill-effects.js?v=skill-ui-text-1';
+import { describeSkillForUI } from '../skill-effects.js?v=tactical-jobs-1';
 import { SKILL_CATEGORIES, skillCategory, skillLoadoutKind, equippedSkillIds, isSkillEquipped, skillCostLabel, skillWeaponText, prerequisiteText } from '../ui/skill-presentation.js?v=skill-growth-2';
 
 import { setSceneMusic } from '../battle-music.js?v=skill-growth-2';
