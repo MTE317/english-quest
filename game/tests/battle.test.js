@@ -138,15 +138,33 @@ test('弱点の属性は大きく、効きにくい属性は小さく', () => {
   assert.ok(b.log.some((l) => l.includes('弱点！')), b.log.join('\n'));
 });
 
-test('ボスからは逃げられない。逃げられる戦闘は確率がある', () => {
+test('ボス戦でも通常戦と同じ計算で逃げられる', () => {
   const game = equippedGame(data, party);
-  const b = createBattle(data, game, { enemies: [makeEnemy(data, 'goblin', { lv: 1, boss: true })], seed: 1 });
-  assert.equal(fleeRate(data, game, b), 0);
-  const b2 = createBattle(data, game, { enemies: mossyEnemies(), seed: 1 });
-  const p = fleeRate(data, game, b2);
-  assert.ok(p > 0 && p <= 0.95);
-  nextTurn(data, game, b2);
-  assert.ok(actionOptions(data, game, b2, b2.turn.i).flee.rate > 0);
+  const enemy = makeEnemy(data, 'goblin', { lv: 1, boss: true });
+  const b = createBattle(data, game, { enemies: [enemy], seed: 1 });
+  const b2 = createBattle(data, game, { enemies: [{ ...enemy, boss: false }], seed: 1 });
+  assert.ok(fleeRate(data, game, b) > 0);
+  assert.equal(fleeRate(data, game, b), fleeRate(data, game, b2));
+  nextTurn(data, game, b);
+  const option = actionOptions(data, game, b, b.turn.i).flee;
+  assert.ok(option.rate > 0 && option.rate <= 0.95);
+  assert.equal(option.reason, '');
+  setPending(b, { type: 'flee' }, Q);
+  b.rng = 7; // 逃走判定が成功する乱数に固定する。
+  resolvePending(data, game, b, true);
+  assert.equal(b.result, 'fled');
+});
+
+test('明示的に逃走禁止の戦闘ではボスに関係なく逃げられない', () => {
+  for (const boss of [false, true]) {
+    const game = equippedGame(data, party);
+    const b = createBattle(data, game, {
+      enemies: [makeEnemy(data, 'goblin', { lv: 1, boss })], seed: 1, canFlee: false,
+    });
+    assert.equal(fleeRate(data, game, b), 0);
+    nextTurn(data, game, b);
+    assert.deepEqual(actionOptions(data, game, b, b.turn.i).flee, { rate: 0, reason: '逃げられない' });
+  }
 });
 
 test('道具：使うと減り、HP が回復する。戦闘不能の味方は気付け薬で起きる', () => {
