@@ -59,6 +59,11 @@
   outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
+.monster-catalog-grid .shop-slot:disabled { opacity: .6; cursor: default; }
+.monster-catalog-facts { margin: 0; }
+.monster-catalog-row { padding: 9px 0; border-top: 1px solid var(--line); }
+.monster-catalog-row dt { color: var(--muted); font-size: .8rem; }
+.monster-catalog-row dd { margin: 3px 0 0; line-height: 1.55; overflow-wrap: anywhere; }
 .shop-detail header { display: flex; align-items: center; gap: 9px; }
 .shop-detail h2, .shop-confirm h2 { margin: 0; }
 .shop-description { margin: 7px 0; color: var(--muted); }

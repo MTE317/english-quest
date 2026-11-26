@@ -2,6 +2,21 @@ export function encounterMonsters(game, enemies) {
   const catalog = (game.catalog ??= {});
   catalog.gear ??= [];
   catalog.monsters = [...new Set([...(catalog.monsters ?? []), ...enemies.map((enemy) => enemy.monsterId).filter(Boolean)])];
+  const sightings = (catalog.sightings ??= {});
+  for (const enemy of enemies) if (enemy.monsterId && Number.isFinite(enemy.maxHp) && !sightings[enemy.monsterId]) {
+    sightings[enemy.monsterId] = {
+      lv: enemy.lv, hp: enemy.maxHp, mp: enemy.maxMp,
+      str: enemy.str, mag: enemy.mag, def: enemy.def, res: enemy.res, spd: enemy.spd,
+    };
+  }
+}
+
+/** 戦闘を終えた時点で倒れていた個体だけを、種別ごとに数える。 */
+export function recordMonsterDefeats(game, enemies) {
+  const defeats = ((game.catalog ??= {}).defeats ??= {});
+  for (const enemy of enemies) if (enemy.monsterId && enemy.hp <= 0) {
+    defeats[enemy.monsterId] = (defeats[enemy.monsterId] ?? 0) + 1;
+  }
 }
 
 export function learnMonsterElements(game, enemy, elements, scanned = false) {

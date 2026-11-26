@@ -134,7 +134,9 @@ test('入ると日数を使い、全滅すると日数・お金・経験値・�
   startNextBattle(data, s); fightOut(s, 0);
   const r = afterBattle(data, s);
   assert.equal(r.result, 'lose');
-  assert.deepEqual(s.game, before);
+  const { catalog, ...rest } = s.game;
+  assert.deepEqual(rest, before);
+  assert.ok(catalog.monsters.length > 0);
   assert.equal(s.inDungeon, false);
 });
 
@@ -382,7 +384,9 @@ test('固定箱は全滅で再試行でき、途中帰還で確定。調査・�
   assert.deepEqual(session.run.quiz, expedition.quizState);
   assert.equal(session.game.exploration, undefined);
   finishWithoutTurns(local, session, 'lose');
-  assert.deepEqual(session.game, before);
+  const { catalog, ...rest } = session.game;
+  assert.deepEqual(rest, before);
+  assert.ok(catalog.monsters.length > 0);
   startRun(local, session, expedition);
   finishWithoutTurns(local, session);
   assert.equal(session.run.explorationNotices[0].first, true);

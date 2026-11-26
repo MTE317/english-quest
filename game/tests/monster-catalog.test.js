@@ -2,6 +2,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readCsv, realGameData } from './helpers.js';
 import { monsterPool, makeEncounter } from '../js/encounter.js';
+import { catalogMonsters, monsterUnlocks } from '../js/monster-catalog.js';
+import { encounterMonsters, recordMonsterDefeats } from '../js/monster-knowledge.js';
 const counts = (rows, key) => rows.reduce((a, row) => (a[row[key]] = (a[row[key]] ?? 0) + 1, a), {});
 test('モンスター図鑑は1,024体、既存のカテゴリと新闘技場ボスを保持', () => {
   const data = realGameData(), rows = readCsv('monsters.csv').rows;
@@ -50,4 +52,35 @@ test('新素材の参照元が有効',()=>{
   const data=realGameData(),rows=readCsv('materials.csv').rows;
   assert.ok(rows.length>=768);
   for(const row of rows)if(row.source_monster)assert.ok(data.monsters.has(row.source_monster),row.id+' -> '+row.source_monster);
+});
+
+test('先行5ダンジョンの図鑑は103種を収録する', () => {
+  const monsters = catalogMonsters(realGameData());
+  assert.equal(monsters.length, 103);
+  assert.equal(new Set(monsters.map(m => m.id)).size, 103);
+  assert.ok(monsters.some(m => m.id === 'goblin_boss'));
+});
+
+test('討伐数で順に開示し、ボスのドロップは5体で解放する', () => {
+  const data = realGameData();
+  for (const [monster, steps] of [
+    [data.monsters.get('slime'), [[3, 'elements'], [5, 'hp'], [10, 'types'], [10, 'statuses'], [20, 'stats'], [30, 'drops']]],
+    [data.monsters.get('goblin_boss'), [[2, 'elements'], [2, 'hp'], [3, 'types'], [3, 'statuses'], [4, 'stats'], [5, 'drops']]],
+  ]) for (const [count, key] of steps) {
+    assert.equal(monsterUnlocks(monster, count - 1)[key], false);
+    assert.equal(monsterUnlocks(monster, count)[key], true);
+  }
+});
+
+test('遭遇能力を記録し、倒した個体だけを数える', () => {
+  const game = {};
+  const enemies = [
+    { monsterId: 'slime', lv: 3, hp: 0, maxHp: 180, maxMp: 12, str: 8, mag: 8, def: 3, res: 3, spd: 4 },
+    { monsterId: 'slime', lv: 3, hp: 40 },
+    { monsterId: 'goblin_boss', lv: 5, hp: 0 },
+  ];
+  encounterMonsters(game, enemies);
+  recordMonsterDefeats(game, enemies);
+  assert.deepEqual(game.catalog.defeats, { slime: 1, goblin_boss: 1 });
+  assert.equal(game.catalog.sightings.slime.hp, 180);
 });

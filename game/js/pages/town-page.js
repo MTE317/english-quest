@@ -19,6 +19,7 @@ import { itemShopView, gearShopView } from '../ui/town-shops.js?v=advanced-jobs-
 import { weaponIcon } from '../ui/weapon-icons.js?v=skill-growth-2';
 import { equipmentIcon } from '../ui/equipment-icons.js?v=skill-growth-2';
 import { storageView } from '../ui/storage-view.js?v=skill-growth-2';
+import { monsterCatalogView } from '../ui/monster-catalog-view.js?v=monster-catalog-1';
 import { uiIcon } from '../ui/pixel-icons.js?v=skill-growth-2';
 import { portraitIcon } from '../ui/portrait.js?v=skill-growth-2';
 import { el, render } from '../dom.js?v=skill-growth-2';
@@ -42,6 +43,7 @@ let templeMember = 0;
 let templeJob = null;
 let guildTab = location.hash === '#guild-active' ? 'active' : 'board';
 let catalogTab = 'monsters';
+const monsterCatalogSelection = {};
 
 const requestedFacility = new URLSearchParams(window.location.search).get('facility');
 const rng = () => seededRng({ rng: (Date.now() ^ (Math.random() * 2 ** 32)) >>> 0 });
@@ -411,7 +413,9 @@ function catalog() {
     catalogTab = id;
     for (const button of nav.children) button.setAttribute('aria-pressed', String(button.dataset.catalog === id));
     const [, title, description] = tabs.find(([key]) => key === id);
-    render(content, el('h2', {}, title), el('p', { class: 'muted' }, description));
+    render(content, id === 'monsters'
+      ? monsterCatalogView(data, session.game, monsterCatalogSelection)
+      : [el('h2', {}, title), el('p', { class: 'muted' }, description)]);
   }
   for (const [id, label] of tabs) {
     nav.append(el('button', {

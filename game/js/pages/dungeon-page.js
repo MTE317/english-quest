@@ -10,7 +10,7 @@ import { normalizeGame } from '../game-state.js?v=advanced-jobs-1';
 import {
   allowedDungeons, allowedStones, expeditionFee, startRun, startNextBattle, afterBattle, returnToTown, continueRun, resolveLoot,
   isBossBattle, runFloorRow, runFloorCount, returnItems, currentRank, useItemOutsideBattle, FIELD_ITEM_EFFECTS,
-} from '../dungeon.js?v=advanced-jobs-1';
+} from '../dungeon.js?v=monster-catalog-1';
 import { backpackSlots, backpackUsed, addItem } from '../loot.js?v=advanced-jobs-1';
 import { maxHp, maxMp } from '../character.js?v=advanced-jobs-1';
 import { createBattleView } from '../ui/battle-view.js?v=battle-skill-icons-1';

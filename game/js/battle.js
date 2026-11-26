@@ -10,7 +10,7 @@
 import { evaluate } from './expr.js?v=skill-growth-2';
 import { computeStats, gearDef, weaponPower, spellPower, maxHp, maxMp, gearEffects, affixSum } from './character.js?v=advanced-jobs-1';
 import { actionSkills, ultimateSkill, memberMods, addMasteryKill, effectiveSkill } from './growth.js?v=advanced-jobs-1';
-import { encounterMonsters, learnMonsterElements, hitEffectiveness } from './monster-knowledge.js?v=skill-growth-2';
+import { encounterMonsters, learnMonsterElements, hitEffectiveness } from './monster-knowledge.js?v=monster-catalog-1';
 import { masterTags, weaponSkill, songSkill, healingSkill, weaponAllowed, passiveRules, ruleNumber, matchesTag,
   masterDamageBonus, masterCritBonus, masterEvasionBonus, masterCutBonus, grantMasterEffect, masterBuff, masterMpSave,
   masterHealingBonus, masterStatusResist, masterStatusMultiplier, beginMasterAction, startMasterOpportunity, finishMasterOpportunity,
