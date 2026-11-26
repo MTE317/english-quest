@@ -10,7 +10,7 @@ import { unlockReportedHuntJobs } from './temple.js?v=skill-growth-2';
 
 export const TOWN_FORMULAS = Object.freeze({
   days_per_month: 30, // balance.json の calendar.days_per_month があればそちらを使う
-  board_size: 3, // ランクの perk に「クエスト掲示板 N件」がなければ
+  board_size: 3, // quest_board.size が未設定の場合の既定値
   revive: '30 * Lv', // balance.json の temple.revive が文なので
   shop_item_lv: 'item_lv_min + 3', // balance.json の shop_gear_price.shop_item_lv が文なので
   sell_price: 'run_income * 0.04 * (1 + 0.8 * rarity_index)',
@@ -68,11 +68,6 @@ const finiteMoney = (n) => Number.isFinite(Number(n)) ? Math.max(0, Math.floor(N
 export function boardSize(data, game) {
   const configured = Number(questRules(data).size);
   if (Number.isSafeInteger(configured) && configured > 0) return configured;
-  const idx = data.ranks.findIndex((r) => r.id === game.rank);
-  for (let i = idx; i >= 0; i--) {
-    const m = /クエスト掲示板\s*(\d+)\s*件/.exec(data.ranks[i].perk ?? '');
-    if (m) return Number(m[1]);
-  }
   return TOWN_FORMULAS.board_size;
 }
 
@@ -80,7 +75,7 @@ export function questAcceptLimit(data, game) {
   const rules = questRules(data);
   let limit = Number(rules.max_accepted);
   if (!Number.isSafeInteger(limit) || limit < 1) limit = boardSize(data, game);
-  const star = currentRank(data, game).maxDungeonRank;
+  const star = currentRank(data, game).facilityCap;
   for (const step of rules.accepted_rank_steps ?? []) {
     if (star >= step.star && Number.isSafeInteger(step.limit)) limit = Math.max(limit, step.limit);
   }
@@ -319,10 +314,9 @@ export function canReport(data, game, q) {
 const onTime = q => q.completedDay != null && q.completedDay <= q.deadlineDay;
 
 export function questRankPoints(data, game, q) {
-  const points = data.quests.find(def => def.id === q.questId)?.rankPoints ?? 0;
-  const gap = currentRank(data, game).maxDungeonRank - q.rank;
-  const rules = data.balance.guild_points ?? {};
-  return points * (gap <= 0 ? rules.same_rank ?? 1 : gap === 1 ? rules.one_rank_lower ?? 0.5 : 0);
+  const base = data.balance.guild_points?.base_by_star?.[Number(q.rank) - 1] ?? 0;
+  return base * (q.type === 'bounty' ? data.balance.guild_points?.bounty_multiplier ?? 5
+    : q.type === 'boss' ? data.balance.guild_points?.boss_multiplier ?? 3 : 1);
 }
 
 /** 自主放棄。旧契約は預かり金0として扱う。 */
@@ -391,17 +385,25 @@ export function reportQuest(data, game, uid, rng = Math.random) {
 }
 
 /** ランクの次の段階（上がれるか・何が足りないか） */
+function offeringMaterial(data, game, star) {
+  const reachable = allowedDungeons(data, game).filter(dungeon => dungeon.rank === star);
+  const places = new Set(reachable.map(dungeon => dungeon.id));
+  const candidates = new Set([...data.monsters.values()]
+    .filter(monster => monster.dungeons.some(id => places.has(id)))
+    .flatMap(monster => [monster.materialCommon, monster.materialRare]));
+  return [...candidates].filter(id => id && data.materials.get(id)?.rank === star && (game.storage?.materials?.[id] ?? 0) > 0)
+    .sort((a, b) => Number(data.materials.get(a).kind !== 'common') - Number(data.materials.get(b).kind !== 'common') || a.localeCompare(b))[0] ?? null;
+}
+
 export function nextRankStatus(data, game) {
   const idx = data.ranks.findIndex((r) => r.id === game.rank);
   const next = data.ranks[idx + 1];
   if (!next) return null;
   const needs = [];
   if ((game.rankPoints ?? 0) < next.pointsRequired) needs.push(`ポイント ${game.rankPoints ?? 0} / ${next.pointsRequired}`);
-  // 現行5ダンジョンでは★3以上を公開していない。ランク試験は任意の冒険実績で判定する。
-  if (next.needsBossClear && !Object.keys(game.cleared ?? {}).some((id) => (game.cleared[id] ?? 0) > 0 && data.dungeons.has(id))) {
-    needs.push('いずれかのダンジョンを踏破する');
-  }
-  if (next.needsExam && !(game.examsPassed ?? []).includes(next.id)) needs.push('昇格試験で単語・英作文の両方に合格する');
+  if (next.materialStar && !offeringMaterial(data, game, next.materialStar)) needs.push(`★${next.materialStar}のモンスター素材が1個必要`);
+
+  if (next.needsExam && !(game.examsPassed ?? []).includes(next.id)) needs.push('要英語試験（内容は設計中）');
   return { next, needs, examOnly: needs.length === 1 && next.needsExam && !(game.examsPassed ?? []).includes(next.id) };
 }
 
@@ -409,6 +411,11 @@ export function nextRankStatus(data, game) {
 export function checkRankUp(data, game) {
   const lines = [];
   for (let st = nextRankStatus(data, game); st && st.needs.length === 0; st = nextRankStatus(data, game)) {
+    const material = st.next.materialStar && offeringMaterial(data, game, st.next.materialStar);
+    if (material) {
+      game.storage.materials[material] -= 1;
+      if (!game.storage.materials[material]) delete game.storage.materials[material];
+    }
     game.rank = st.next.id;
     game.board = []; // 受けていない枠は新しいランクのクエストに入れかえる（町の画面か報告のときに補充）
     lines.push(`冒険者ランクが「${st.next.title}」に上がった！`);
@@ -470,7 +477,7 @@ export function buyItem(data, game, itemId, count = 1) {
 
 /** 武器・防具屋の品ぞろえ：ランクで行ける★ごとに「その★の装備Lv下限+3」の、効果なしの武器・防具（頭・体・腕） */
 export function gearShopStock(data, game) {
-  const maxStar = currentRank(data, game).maxDungeonRank;
+  const maxStar = game.facilities?.equipment_shop ?? 1;
   const out = [];
   for (let star = 1; star <= maxStar; star++) {
     const ds = [...data.dungeons.values()].filter((d) => d.rank === star);

@@ -1,6 +1,7 @@
 ﻿id,name,role
-weapon_workshop,武器工房,武器の制作・強化
-armor_workshop,防具工房,防具の制作・強化
-accessory_workshop,装飾工房,アクセサリーの制作・付与
-item_shop,道具屋,消耗品の品ぞろえ
-inn,宿屋,良い部屋の効果
+equipment_shop,武器・防具屋,武器と防具の品ぞろえ
+workshop,制作・強化,装備制作・強化・エンチャント
+item_shop,道具屋,道具の品ぞろえ・バックパック拡張
+alchemy,調合所,調合レシピ
+temple,神殿,転職先（解放効果は未実装）
+warehouse,倉庫,保管容量（容量制限は未実装）

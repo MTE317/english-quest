@@ -65,7 +65,7 @@ test('先行5か所は踏破で解放され、ランクでは増えない', () =
     ['mossy_cave', 'sunlit_forest', 'goblin_quarry'].sort());
   game.rank = 'S';
   assert.equal(allowedDungeons(data, game).length, 3);
-  game.rank = 'R01';
+  game.rank = 'E';
   game.cleared.mossy_cave = 1;
   assert.ok(allowedDungeons(data, game).some(({ id }) => id === 'ruined_fort'));
   assert.ok(!allowedDungeons(data, game).some(({ id }) => id === 'misty_marsh'));
@@ -84,7 +84,7 @@ test('★2の冒険先も踏破で発見すればR01のまま既存教材で遠�
     member.hp = maxHp(data, member);
     member.mp = maxMp(data, member);
   }
-  assert.equal(game.rank, 'R01');
+  assert.equal(game.rank, 'E');
   const available = allowedDungeons(data, game);
   assert.ok(available.some(({ id }) => id === 'ruined_fort'));
   assert.equal(buildWorldMap(data.dungeons, available, game).dungeons.length, 4);

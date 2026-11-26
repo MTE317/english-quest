@@ -11,7 +11,6 @@ import { currentRank, useItemOutsideBattle, FIELD_ITEM_EFFECTS } from '../dungeo
 import { nextRankStatus, checkRankUp } from '../town.js?v=specialist-jobs-1';
 import { makeGear } from '../character.js?v=advanced-jobs-1';
 import { arenaReviewWords } from '../study.js?v=skill-growth-2';
-import { promotionProgress } from '../promotion.js?v=skill-growth-2';
 import { runDualPromotionExam } from '../ui/learning-exams.js?v=skill-growth-2';
 import { createBattleView } from '../ui/battle-view.js?v=specialist-jobs-1';
 import { runQuiz } from '../ui/quiz-runner.js?v=skill-growth-2';
@@ -50,10 +49,8 @@ function start(kind, label, battles, pool, extra = {}) {
 }
 
 function rankCanAttemptFinal() {
-  const st = nextRankStatus(data, session.game);
-  if (st?.next.id !== 'S' || !st.examOnly) return false;
-  const p = promotionProgress(catalog, store, session.game, 'S');
-  return p.wordMet && p.phraseMet;
+  // S昇級試験の内容は未決定。旧最終試験を新ランクの条件として流用しない。
+  return false;
 }
 
 function finalExam() {
@@ -195,13 +192,13 @@ function draw() {
   render(view, banner,
     el('h2', {}, 'Sランク最終試験'),
     button(retry ? '次の日に再挑戦' : '最終試験に挑む', finalExam, retry || !rankCanAttemptFinal()),
-    !rankCanAttemptFinal() && game.rank !== 'S' ? el('p', { class: 'muted small' }, '単語と瞬間英作文の累積習得条件、ギルドポイント、踏破条件を満たすと挑めます。') : null,
+    game.rank !== 'S' ? el('p', { class: 'muted small' }, 'Sランクの英語試験は内容を設計中です。') : null,
     el('h2', {}, '闘技場'),
     el('p', { class: 'muted small' }, '同じ階級の5連戦です。HP・MPは持ち越し、戦闘の合間に道具を使えます。回復薬とエーテルを用意し、最後のチャンピオンに合わせて装備を整えましょう。'),
     el('p', { class: 'muted small' }, '問題はこれまで学んだ単語を総復習。確認テストを受けていなくても挑戦できます。'),
     tiers.length ? [mode, tiers.map((tier) => {
-      const required = Number(tier.rank);
-      const locked = required > config.tiers - 1 ? game.rank !== 'S' : currentRank(data, game).maxDungeonRank < required;
+      const previous = tiers[tiers.indexOf(tier) - 1];
+      const locked = Boolean(previous && !(game.arenaClears?.[previous.id] > 0));
       const suggested = Number(tier.recommended_level) || 0;
       const label = `${tier.name}${suggested ? `（推奨Lv${suggested}〜）` : ''}`;
       return button(label, () => arena(tier, mode.value === 'ja2en' ? 'ja2en' : null, mode.value === 'timed'), locked);

@@ -22,7 +22,7 @@ test('追加18制作は対応工房と実在素材で作れ、専用効果を保
     const recipe = data.recipes.find((row) => row.id === id);
     const def = data.equipment.get(id);
     const rank = Number(recipe.workshop_rank);
-    const facility = def.slot === 'weapon' ? 'weapon_workshop' : 'accessory_workshop';
+    const facility = 'workshop';
     assert.ok([2, 3].includes(rank));
     assert.ok(!def.unique && !def.setId);
     assert.ok(def.itemLv <= Number(data.facilityRanks.find((row) => Number(row.rank) === rank).craft_item_lv));
@@ -64,7 +64,7 @@ test('7系統と状態別12種を合法付与でき、★12の通常制作にも
       assert.ok(material, `${family}: ${slot} の対応素材`);
       const game = fresh();
       game.gold = 1000000;
-      game.facilities[slot === 'weapon' ? 'weapon_workshop' : 'accessory_workshop'] = 12;
+      game.facilities['workshop'] = 12;
       const common = [...data.materials.values()].find((entry) => entry.rank === 12 && entry.kind === 'common');
       game.storage.materials[common.id] = 4;
       craft(data, game, def);

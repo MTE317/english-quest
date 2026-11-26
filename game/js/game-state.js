@@ -7,6 +7,7 @@ import { parseAmounts } from './csv.js?v=skill-growth-2';
 import { recordStoredMaterials } from './temple.js?v=skill-growth-2';
 import { retireLegacyQuestChains } from './retired-quests.js?v=skill-growth-2';
 import { migrateJobMaster, JOB_MASTER_VERSION } from './jobs-migration.js?v=skill-growth-2';
+import { migrateRankFacilities } from './rank-migration.js';
 
 export const PARTY_SIZE = 6;
 
@@ -68,6 +69,7 @@ export function normalizeGame(data, game, run = null, { expandParty = true } = {
   game.storage.materials ??= {};
   recordStoredMaterials(game);
   game.items = game.items ?? {};
+  migrateRankFacilities(data, game);
   game.rank = game.rank ?? data.ranks?.[0]?.id ?? null;
   game.rankPoints = game.rankPoints ?? 0;
   game.backpackTier = game.backpackTier ?? data.backpackTiers?.[0]?.tier ?? 1;

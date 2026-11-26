@@ -1,12 +1,8 @@
 // 英語学習の昇格資格・二分野試験をRPGの戦闘ランクから分離する。
 // しきい値は v1.0 基本教材だけでは上位ランクへ届かない長期目標（仮値）。
 export const PROMOTION_REQUIREMENTS = Object.freeze({
-  R02: { words: 18, phrases: 12 }, R03: { words: 48, phrases: 32 },
-  R04: { words: 90, phrases: 60 }, R05: { words: 180, phrases: 120 },
-  R06: { words: 300, phrases: 200 }, R07: { words: 480, phrases: 320 },
-  R08: { words: 780, phrases: 520 }, R09: { words: 1200, phrases: 800 },
-  R10: { words: 1920, phrases: 1280 }, R11: { words: 3000, phrases: 2000 },
-  R12: { words: 4800, phrases: 3200 }, S: { words: 7200, phrases: 4800 },
+  D: { words: 0, phrases: 0 }, C: { words: 0, phrases: 0 },
+  B: { words: 0, phrases: 0 }, A: { words: 0, phrases: 0 }, S: { words: 0, phrases: 0 },
 });
 export const EXAM_DEFAULTS = Object.freeze({ words: 20, phrases: 10, passRate: 0.8 });
 export const FINAL_DEFAULTS = Object.freeze({ words: 30, phrases: 20, passRate: 0.8 });

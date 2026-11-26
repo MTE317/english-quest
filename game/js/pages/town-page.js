@@ -242,7 +242,7 @@ function guild() {
   return [switcher,
     el('h2', {}, '冒険者ランク'),
     el('div', { class: 'panel small' },
-      el('div', {}, `${currentRank(data, g).title}（ポイント ${g.rankPoints}）　特典：${currentRank(data, g).perk || 'なし'}`),
+      el('div', {}, `${g.rank}・${currentRank(data, g).title}（累積ギルドポイント ${g.rankPoints}）　施設投資上限 Lv${currentRank(data, g).facilityCap}`),
       st ? el('div', { class: 'muted' }, `次は「${st.next.title}」：${st.needs.length ? st.needs.join('・') : '上がれる'}`) : el('div', {}, '最高のランク')),
     st ? el('a', { class: 'btn', href: 'study.html?tab=exam' }, '昇格条件・試験を確認') : null,
     el('a', { class: 'btn', href: 'study.html' }, 'ギルドの学び舎'),
@@ -279,7 +279,7 @@ function innPartyPanel(g) {
 function inn() {
   const g = session.game;
   const econ = data.economy.get(feeTier(data, g));
-  const fx = data.innRooms.find((r) => r.innRank === g.facilities.inn);
+  const fx = data.innRooms.find((r) => r.innRank === (g.facilities.inn ?? 1));
   return [
     innPartyPanel(g),
     el('button', { onclick: () => act((gg) => `ふつうの部屋に泊まった（-${stayInn(data, gg, false)}）`) }, `ふつうの部屋（${econ.inn_cheap}）：全回復`),

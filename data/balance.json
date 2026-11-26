@@ -721,7 +721,7 @@
       "conclusion": "目印の位置を記録に追記した。これで次の調査隊は迷わず進める。",
       "reward": {
         "gold": 60,
-        "points": 1,
+        "points": 10,
         "materials": {
           "slime_mat": 3
         }
@@ -738,7 +738,7 @@
       "conclusion": "石板と帳簿の紋様が一致した。調べた道筋を調査隊の記録に残した。",
       "reward": {
         "gold": 120,
-        "points": 2,
+        "points": 20,
         "materials": {
           "skeleton_mat": 4
         }
@@ -746,9 +746,9 @@
     }
   ],
   "guild_points": {
-    "same_rank": 1,
-    "one_rank_lower": 0.5,
-    "_note": "今の上限の★のクエストは満点、1つ下の★は半分のポイント"
+    "base_by_star": [10, 30, 50, 70, 100, 130, 170, 220, 280, 360, 460, 600],
+    "boss_multiplier": 3,
+    "bounty_multiplier": 5
   },
   "stars": 12,
   "elite": "★2以降の通常遭遇、1枠ごと6%の候補判定。1戦・1遠征とも最大1体。冠はappear_rateの重み。ボス/賞金首と同時出現しない。",

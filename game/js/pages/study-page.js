@@ -7,13 +7,11 @@ import { LearningStore, now } from '../storage.js?v=skill-growth-2';
 import { GameSession } from '../save.js?v=skill-growth-2';
 import { normalizeGame } from '../game-state.js?v=advanced-jobs-1';
 import { currentRank } from '../dungeon.js?v=specialist-jobs-1';
-import { nextRankStatus, checkRankUp } from '../town.js?v=specialist-jobs-1';
-import { promotionProgress, promotionExamState } from '../promotion.js?v=skill-growth-2';
+import { nextRankStatus } from '../town.js?v=specialist-jobs-1';
 import { learningStatistics } from '../learning-stats.js?v=skill-growth-2';
 import { TRAINING_COUNTS, trainingChunksForSet, trainingWordsForSet,
   trainingPhrasesForSet, resolveTrainingMode } from '../training.js?v=advanced-jobs-1';
 import { runTrainingSession } from '../ui/training-runner.js?v=advanced-jobs-1';
-import { runDualPromotionExam } from '../ui/learning-exams.js?v=skill-growth-2';
 import { el, render } from '../dom.js?v=skill-growth-2';
 import { setSceneMusic } from '../battle-music.js?v=skill-growth-2';
 import { installGameShell } from '../ui/game-shell.js?v=skill-growth-2';
@@ -270,54 +268,18 @@ function startTraining() {
 
 function exam() {
   const g = session.game;
-  const rank = currentRank(data, g);
   const status = nextRankStatus(data, g);
   const next = status?.next;
-  if (!next) return [el('p', {}, 'すべてのランクを達成しました！')];
-  const current = next.needsExam
-    ? promotionProgress(catalog, store, g, next.id) : null;
-  const passed = current ? promotionExamState(store, next.id) : null;
-  return [
-    el('div', { class: 'panel' },
-      el('h3', {}, '冒険者ランク：' + rank.title),
-      el('p', {}, '次の目標：' + next.title),
-      !next.needsExam ? el('p', { class: 'muted small' }, '「＋」ランクはギルドポイントで昇格します。') : null,
-      current ? el('div', { class: 'route-facts' },
-        [['単語の累積習得', current.words + ' / ' + current.required.words],
-          ['英作文の累積習得', current.phrases + ' / ' + current.required.phrases],
-          ['単語試験', passed.wordPassed ? '合格' : '未合格'],
-          ['英作文試験', passed.phrasePassed ? '合格' : '未合格']]
-          .map(([name, value]) => el('div', {}, el('small', {}, name), el('strong', {}, value)))) : null,
-      (status?.needs ?? []).length
-        ? el('p', { class: 'muted small' }, 'その他の昇格条件：' + status.needs.join('・')) : null),
-    next.id === 'S'
-      ? el('a', { class: 'btn primary', href: 'challenge.html' }, 'Sランク最終試験へ')
-      : next.needsExam
-        ? el('button', { class: 'primary',
-          disabled: !current.wordMet || !current.phraseMet || (g.examsPassed ?? []).includes(next.id),
-          onclick: () => startPromotion(next.id) },
-          (g.examsPassed ?? []).includes(next.id) ? '二分野とも合格済み' :
-            !current.wordMet || !current.phraseMet ? '累積習得条件を達成すると受験可能' : '単語・英作文の昇格試験に挑む') : null,
-    el('p', { class: 'muted small' },
-      '単語4択と瞬間英作文の両方で80%以上が必要です。各分野の合格履歴は保存し、合格済みの分野は再受験不要です。'),
+  if (!next) return [el('p', {}, '最高ランクに到達しました。')];
+  return [el('div', { class: 'panel' },
+    el('h3', {}, '現在のギルドランク：' + g.rank),
+    el('p', {}, '次のランク：' + next.id + '・' + next.title),
+    el('p', {}, '累積ギルドポイント：' + (g.rankPoints ?? 0) + ' / ' + next.pointsRequired),
+    el('p', {}, '施設投資上限：Lv' + next.facilityCap),
+    next.materialStar ? el('p', {}, '必要素材：★' + next.materialStar + 'のモンスター素材1個') : null,
+    next.needsExam ? el('p', { class: 'muted small' }, '要英語試験（内容と合格基準は設計中）') : null,
+    status.needs.length ? el('p', { class: 'muted small' }, '未達成：' + status.needs.join('・')) : null),
   ];
-}
-
-function startPromotion(rankId) {
-  runDualPromotionExam({ view, catalog, store, session, scheduler, chantConfig, rankId,
-    onFinish: ({ complete }) => {
-      if (complete) {
-        const updates = [];
-        session.update((g) => {
-          if (!g.examsPassed.includes(rankId)) g.examsPassed.push(rankId);
-          updates.push(...checkRankUp(data, g));
-        });
-        message = updates.length ? updates.join('　') :
-          '単語・瞬間英作文の両試験に合格しました！ その他の昇格条件を満たすとランクが上がります。';
-      } else message = '未合格の分野を復習してから再挑戦しましょう。合格済みの分野は保持されます。';
-      tab = 'exam'; draw();
-    },
-  });
 }
 
 function draw() {

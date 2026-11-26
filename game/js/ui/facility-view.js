@@ -20,11 +20,11 @@ function select(label, choices, onChange, state) {
 
 export function workshopView(data, g, act, rng, selection) {
   const usableDefs = [...data.equipment.values()].filter((def) => {
-    const facility = def.slot === 'weapon' ? 'weapon_workshop' : ['accessory', 'cloak'].includes(def.slot) ? 'accessory_workshop' : 'armor_workshop';
+    const facility = 'workshop';
     return def.source?.includes('制作') && !def.unique && !def.setId
       && Number(data.recipes.find((r) => r.id === def.id)?.workshop_rank ?? def.star) <= (g.facilities[facility] ?? 1);
   });
-  const alchemy = data.alchemyRecipes.filter((recipe) => Number(recipe.workshop_rank) <= g.facilities.item_shop);
+  const alchemy = data.alchemyRecipes.filter((recipe) => Number(recipe.workshop_rank) <= (g.facilities.alchemy ?? 1));
   const deck = el('section', { class: 'workshop-view' });
   const categoryOf = (def) => ['head', 'body', 'arm'].includes(def.slot) ? 'armor' : def.slot;
   const craftCategories = [['weapon', '武器'], ['armor', '防具'], ['cloak', 'マント'], ['accessory', 'アクセサリー']];
@@ -154,7 +154,7 @@ export function workshopView(data, g, act, rng, selection) {
     const materialSelect = el('select', { class: 'select', onchange: () => fill() }, mats.map((m) => option(m.name, m.id)));
     const fill = () => render(familySelect, enchantFamilies(data, def, data.materials.get(materialSelect.value) ?? mats[0]).map((id) => option(effectLabel(data, id), id)));
     fill();
-    const facility = def.slot === 'weapon' ? 'weapon_workshop' : ['accessory', 'cloak'].includes(def.slot) ? 'accessory_workshop' : 'armor_workshop';
+    const facility = 'workshop';
     const grades = el('select', { class: 'select' }, data.enchantGrades.filter((r) => Number(r.workshop_rank) <= g.facilities[facility]).map((row) => option(`グレード${row.grade}・${row.gold} G`, row.grade)));
     const slots = el('select', { class: 'select' }, option('枠1', '0'), item.enchants?.length ? option('枠2', '1') : null);
     return panel('エンチャント',
@@ -184,7 +184,7 @@ export function managementView(data, g, act) {
       const fx = data.facilityEffects.find((r) => r.facility === f.id && Number(r.rank) === current);
       return el('div', { class: 'panel small' }, `${f.name} Lv. ${current}`,
         fx ? el('p', { class: 'muted' }, fx.effect) : null,
-        next ? btn(`投資する（${next.invest_cost} G）`, () => act((game) => facilityUpgrade(data, game, f.id))) : null);
+        next ? btn(`投資する（${next.invest_cost} G）`, () => act((game) => facilityUpgrade(data, game, f.id)), current >= (data.ranks.find(r => r.id === g.rank)?.facilityCap ?? 1) || g.gold < Number(next.invest_cost)) : null);
     }),
   ];
 }
