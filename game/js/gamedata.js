@@ -254,7 +254,9 @@ function buildBattleData(raw) {
     rarityTable: raw.rarities.map((r) => ({ id: r.id, name: r.name, weight: toNumber(r.drop_weight_pct, 0), effects: toNumber(r.random_effects, 0) })),
     backpackTiers: raw.backpack.map((r) => ({ tier: toNumber(r.tier, 1), slots: toNumber(r.slots, 12), gold: toNumber(r.gold, 0), materials: r.materials, shopRank: toNumber(r.shop_rank, 1) })),
     ranks: raw.ranks.map((r) => ({
-      id: r.id, title: r.title, pointsRequired: toNumber(r.points_required, 0), maxDungeonRank: toNumber(r.max_dungeon_rank, 1),
+      id: r.id, title: r.title, pointsRequired: toNumber(r.points_required, 0),
+      facilityCap: toNumber(r.facility_cap, 1), materialStar: toNumber(r.material_star, 0),
+      maxDungeonRank: toNumber(r.facility_cap, 1), // 旧UIの推奨★と融資計算用。ダンジョン入場条件ではない。
       needsBossClear: r.needs_boss_clear === '1', needsExam: r.needs_exam === '1', questBonus: toNumber(r.quest_bonus, 0),
       shopDiscount: toNumber(r.shop_discount, 0), perk: r.perk,
     })),

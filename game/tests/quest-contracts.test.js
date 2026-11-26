@@ -60,8 +60,8 @@ test('受注枠は3件で候補は6件を維持。上位の★で受注枠だけ
   assert.throws(() => acceptQuest(data, g, g.board[0].uid), /同時受注/);
   assert.deepEqual(g, before);
   assert.equal(questAcceptLimit(data, g), 3);
-  g.rank = 'R04'; assert.equal(questAcceptLimit(data, g), 4);
-  g.rank = 'R08'; assert.equal(questAcceptLimit(data, g), 5);
+  g.rank = 'C'; assert.equal(questAcceptLimit(data, g), 4);
+  g.rank = 'B+'; assert.equal(questAcceptLimit(data, g), 5);
   assert.ok(g.board.every((q) => !accepted.some((a) => questKey(a) === questKey(q))));
 });
 

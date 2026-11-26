@@ -23,8 +23,7 @@ function supply(game, recipeId) {
   const row = data.recipes.find((r) => r.id === recipeId);
   assert.ok(row, recipeId);
   game.gold = Math.max(game.gold, 1000000);
-  const facility = row.slot === 'weapon' ? 'weapon_workshop'
-    : ['accessory', 'cloak'].includes(row.slot) ? 'accessory_workshop' : 'armor_workshop';
+  const facility = 'workshop';
   game.facilities[facility] = Math.max(game.facilities[facility] ?? 1, Number(row.workshop_rank));
   for (const entry of row.materials.split('|')) {
     const [id, qty] = entry.split(':');
@@ -102,7 +101,7 @@ test('★2の属性素材を使う調合を完了できる', () => {
   const mat = [...data.materials.values()].find((m) => matchesNeed(data, m.id, need));
   assert.ok(mat);
   g.gold = 100000;
-  g.facilities.item_shop = 2;
+  g.facilities.alchemy = 2;
   g.storage.materials[mat.id] = need.count;
   assert.equal(canBrew(data, g, recipe), true);
   brew(data, g, recipe);

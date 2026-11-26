@@ -45,7 +45,7 @@ test('地域を切り替えても掲示を引き直せず、同等以上の依�
   selectQuestBoardArea(data, g, '', rng());
   assert.deepEqual(g.board.map(q => q.uid), first);
   const q = g.board[0];
-  assert.equal(questRankPoints(data, g, { ...q, rank: q.rank + 1 }), questRankPoints(data, g, q));
+  assert.equal(questRankPoints(data, g, { ...q, rank: q.rank + 1 }), data.balance.guild_points.base_by_star[q.rank] * (q.type === 'boss' ? 3 : q.type === 'bounty' ? 5 : 1));
 });
 
 test('特別依頼は報告日ではなく討伐日で期限の返金と報酬を決める', () => {
@@ -75,7 +75,7 @@ test('クエスト：掲示6件から地域討伐を受け、指定場所で倒�
   assert.equal(canReport(data, g, q), true);
   const gold0 = g.gold;
   const lines = reportQuest(data, g, q.uid, rng());
-  assert.ok(g.gold > gold0 && g.rankPoints === 1, lines.join(','));
+  assert.ok(g.gold > gold0 && g.rankPoints === 10, lines.join(','));
 });
 
 test('採集：倉庫の★の通常素材を納品すると、まれな素材がもらえる', () => {
@@ -127,14 +127,15 @@ test('調合レシピの素材条件は全件読め、属性と状態異常の�
 
 test('ランク：ポイントがたまると「＋」に上がる。本ランクは踏破と昇格試験がいる', () => {
   const g = fresh();
-  g.rankPoints = 6;
+  g.rankPoints = 190;
+  g.storage.materials.slime_mat = 1;
   g.quests.push({ uid: 5, questId: 'q1_hunt', type: 'hunt', rank: 1, target: 'slime', count: 1, progress: 1 });
   reportQuest(data, g, 5, rng());
-  assert.equal(g.rank, 'R01+');
-  g.rankPoints = 100;
+  assert.equal(g.rank, 'E+');
+  g.rankPoints = 1200;
   const st = nextRankStatus(data, g);
-  assert.equal(st.next.id, 'R02');
-  assert.ok(st.needs.some((n) => n.includes('踏破')) && st.needs.some((n) => n.includes('昇格試験')));
+  assert.equal(st.next.id, 'D');
+  assert.ok(st.needs.some((n) => n.includes("素材")) && st.needs.some((n) => n.includes("試験")));
 });
 
 test('宿屋：HP・MP が全回復。良い部屋は最大HPが増える（倒れた人は起きない）', () => {
@@ -205,7 +206,7 @@ test('古いセーブに足りない項目を足す', () => {
   const g = fresh();
   delete g.facilities; delete g.quests; delete g.party[0].persist;
   normalizeGame(data, g);
-  assert.equal(g.facilities.inn, 1);
+  assert.equal(g.facilities.workshop, 1);
   assert.deepEqual(g.quests, []);
   assert.deepEqual(g.party[0].persist, []);
 });

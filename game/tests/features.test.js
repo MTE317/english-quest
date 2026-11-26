@@ -69,10 +69,10 @@ test('英作文の○△×はSRSを更新し、転職JPは発生せず、全滅�
 test('制作、分解、強化、調合と施設投資が在庫や資金に反映される', () => {
   const g = game();
   g.gold = 10000;
-  g.rank = 'R02';
+  g.rank = 'D';
   g.storage.materials = { goblin_mat: 3, cave_rat_mat: 8 };
-  facilityUpgrade(data, g, 'weapon_workshop');
-  assert.equal(g.facilities.weapon_workshop, 2);
+  facilityUpgrade(data, g, 'workshop');
+  assert.equal(g.facilities.workshop, 2);
   craft(data, g, data.equipment.get('iron_sword'));
   const gear = g.storage.gear.find((entry) => entry.id === 'iron_sword' && entry.crafted);
   assert.equal(gear.crafted, true);

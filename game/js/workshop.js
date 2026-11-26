@@ -7,8 +7,7 @@ import { currentRank } from './dungeon.js?v=specialist-jobs-1';
 import { consumeMaterials } from './temple.js?v=skill-growth-2';
 import { describeEffect } from './equipment-effects.js?v=skill-growth-2';
 
-const facilityFor = (def) => def.slot === 'weapon' ? 'weapon_workshop'
-  : ['cloak', 'accessory'].includes(def.slot) ? 'accessory_workshop' : 'armor_workshop';
+const facilityFor = () => 'workshop';
 const capFor = (data, game, facility) => data.facilityRanks.find((r) => Number(r.rank) === (game.facilities[facility] ?? 1));
 
 function pay(game, gold, materials = {}) {
@@ -40,7 +39,7 @@ export function canBrew(data, game, recipe) {
   const item = data.items.get(recipe?.result);
   const qty = Number(recipe?.qty);
   if (!item || !Number.isInteger(qty) || qty <= 0 ||
-      (game.facilities.item_shop ?? 1) < Number(recipe.workshop_rank) ||
+      (game.facilities.alchemy ?? 1) < Number(recipe.workshop_rank) ||
       (game.items[item.id] ?? 0) + qty > 10 || game.gold < Number(recipe.gold)) return false;
   try {
     typeMaterials(data, game, parseMaterialNeed(data, recipe.materials));
@@ -67,7 +66,7 @@ export function facilityUpgrade(data, game, id) {
   const rank = (game.facilities[id] ?? 1) + 1;
   const row = data.facilityRanks.find((r) => Number(r.rank) === rank);
   if (!row || !data.facilities.some((f) => f.id === id)) throw new Error('施設をこれ以上強化できません。');
-  if (rank > currentRank(data, game).maxDungeonRank) throw new Error('冒険者ランクが足りません。');
+  if (rank > currentRank(data, game).facilityCap) throw new Error('ギルドランクによる施設投資の上限です。');
   const cost = Number(row.invest_cost);
   const materialRule = row.materials ? parseMaterialNeed(data, row.materials) : [];
   pay(game, cost, typeMaterials(data, game, materialRule));
@@ -79,7 +78,7 @@ export function brew(data, game, recipe) {
   const item = data.items.get(recipe.result);
   const qty = Number(recipe.qty);
   if (!item || !Number.isInteger(qty) || qty <= 0) throw new Error('調合レシピを使用できません。');
-  if ((game.facilities.item_shop ?? 1) < Number(recipe.workshop_rank)) throw new Error('道具屋ランクが足りません。');
+  if ((game.facilities.alchemy ?? 1) < Number(recipe.workshop_rank)) throw new Error('調合所Lvが足りません。');
   if ((game.items[item.id] ?? 0) + qty > 10) throw new Error('持てる道具は1種類10個までです。');
   pay(game, Number(recipe.gold), typeMaterials(data, game, parseMaterialNeed(data, recipe.materials)));
   game.items[item.id] = (game.items[item.id] ?? 0) + qty;
