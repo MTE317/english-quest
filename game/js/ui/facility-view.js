@@ -1,7 +1,7 @@
 import { el, render } from '../dom.js?v=skill-growth-2';
 import { parseAmounts } from '../csv.js?v=skill-growth-2';
-import { craft, brew, enhance, dismantle, reroll, enchant, enchantFamilies, facilityUpgrade } from '../workshop.js?v=skill-growth-2';
-import { borrow, repayLoan, loanLimit } from '../town.js?v=skill-growth-2';
+import { craft, brew, enhance, dismantle, reroll, enchant, enchantFamilies, facilityUpgrade } from '../workshop.js?v=advanced-jobs-1';
+import { borrow, repayLoan, loanLimit } from '../town.js?v=advanced-jobs-1';
 import { unlockJob, jobDiscoveryProgress, offeringRevealed } from '../temple.js?v=skill-growth-2';
 import { describeFixedEffects, effectLabel, describeEffect } from '../equipment-effects.js?v=skill-growth-2';
 import { equipmentIcon } from './equipment-icons.js?v=skill-growth-2';

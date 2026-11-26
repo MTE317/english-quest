@@ -13,7 +13,7 @@ import { MemoryStorage, realGameData } from './helpers.js';
 
 const data = realGameData();
 const basic = data.jobs.filter((job) => job.tier === 'base');
-const leveled = [...data.skills.values()].filter((skill) => skill.effect.master);
+const leveled = [...data.skills.values()].filter((skill) => skill.effect.master && data.jobsById.get(skill.job)?.tier === 'base');
 const fresh = (job = 'warrior') => createNewGame(data, [job, 'knight', 'black_mage', 'white_mage', 'thief', job]
   .map((id) => ({ job: id, name: id, icon: 'x' })));
 function trained(skill, level = 1) {

@@ -1,8 +1,8 @@
 import { normalizeAp } from './ap.js?v=skill-growth-2';
 import { migrateGold, goldVersion } from './gold.js?v=skill-growth-2';
 // 新しいゲームの進み具合（セーブの game の中身）
-import { createMember, maxHp, maxMp, levelCap } from './character.js?v=skill-growth-2';
-import { ensureLoadout, jobSkills, isLearned, normalizeSkillLevels, migrateInitialSkills } from './growth.js?v=skill-growth-2';
+import { createMember, maxHp, maxMp, levelCap } from './character.js?v=advanced-jobs-1';
+import { ensureLoadout, jobSkills, isLearned, normalizeSkillLevels, migrateInitialSkills } from './growth.js?v=advanced-jobs-1';
 import { parseAmounts } from './csv.js?v=skill-growth-2';
 import { recordStoredMaterials } from './temple.js?v=skill-growth-2';
 import { retireLegacyQuestChains } from './retired-quests.js?v=skill-growth-2';
@@ -83,6 +83,8 @@ export function normalizeGame(data, game, run = null, { expandParty = true } = {
   delete game.jp; // 転職費用のJPは廃止。教材は学習記録へ統一。
   game.titles ??= [];
   game.unlockedJobs = game.unlockedJobs ?? [];
+  for (const job of data.jobs ?? []) if (job.skillsReady && data.jobUnlocks?.get(job.id)?.method === '初期'
+    && !game.unlockedJobs.includes(job.id)) game.unlockedJobs.push(job.id);
   game.examsPassed = game.examsPassed ?? [];
   const masterChangedMembers = new Set((game.party ?? []).filter((member) => member.jobMasterVersion !== JOB_MASTER_VERSION));
   const masterChanged = migrateJobMaster(data, game, run);

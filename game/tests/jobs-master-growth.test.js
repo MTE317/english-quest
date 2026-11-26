@@ -14,7 +14,7 @@ const specs = ['warrior', 'knight', 'monk', 'hunter', 'black_mage', 'white_mage'
   .map((job) => ({ job, name: job, icon: 'x' }));
 const fresh = () => createNewGame(data, specs);
 
-test('新しい冒険は全員無装備・自動修得なし。初期APと手動装備用の配給を用意する', () => {
+test('新しい冒険は全員無装備・自動修得なし。初期APを用意し、装備は配給しない', () => {
   const game = fresh();
   assert.equal(game.party.length, 6);
   for (const member of game.party) {
@@ -23,7 +23,7 @@ test('新しい冒険は全員無装備・自動修得なし。初期APと手動
     assert.equal(member.ap, data.basicJobRules.starting_ap);
     assert.equal(member.ultimateGauge, 0);
   }
-  assert.ok(game.storage.gear.length >= 6);
+  assert.equal(game.storage.gear.length, 0);
   const count = game.storage.gear.length;
   normalizeGame(data, game);
   assert.equal(game.storage.gear.length, count);
@@ -111,7 +111,7 @@ test('武器条件は現職でなく現在の主武器を見て判定する', ()
 test('技能準備中の42職は解放記録があっても転職できない', () => {
   const game = fresh();
   game.unlockedJobs = data.jobs.map((job) => job.id);
-  assert.equal(availableJobs(data, game).length, 8);
+  assert.equal(availableJobs(data, game).length, 11);
   const pending = data.jobs.find((job) => job.skillsReady === false);
   assert.ok(pending);
   assert.throws(() => changeJob(data, game, 0, pending.id), /選べない/);

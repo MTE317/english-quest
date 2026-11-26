@@ -3,9 +3,9 @@ import { now } from '../storage.js?v=skill-growth-2';
 import { QuestionPicker, REASON_LABEL } from '../picker.js?v=skill-growth-2';
 import { makePracticeQuestion, questionDirection, questionSpeech, DIRECTION } from '../quiz.js?v=skill-growth-2';
 import { speak, canSpeak, stopSpeech } from '../speech.js?v=skill-growth-2';
-import { nextTurn, actionOptions, setPending, prepareQuizAction, resolvePending, targetKind, skillMp, collectBattleHits, enemyIntent, enemyCanAct } from '../battle.js?v=skill-growth-2';
-import { skillMaxLevel, learnedSkillLevel, effectiveSkill } from '../growth.js?v=skill-growth-2';
-import { maxHp, maxMp } from '../character.js?v=skill-growth-2';
+import { nextTurn, actionOptions, setPending, prepareQuizAction, resolvePending, targetKind, skillMp, collectBattleHits, enemyIntent, enemyCanAct } from '../battle.js?v=advanced-jobs-1';
+import { skillMaxLevel, learnedSkillLevel, effectiveSkill } from '../growth.js?v=advanced-jobs-1';
+import { maxHp, maxMp } from '../character.js?v=advanced-jobs-1';
 import { el, render } from '../dom.js?v=skill-growth-2';
 import { expeditionScene } from './scenery.js?v=skill-growth-2';
 import { monsterKnowledge } from '../monster-knowledge.js?v=skill-growth-2';
@@ -14,6 +14,7 @@ import { unlockBattleSound, playBattleHitSound } from '../battle-sound.js?v=skil
 import { portraitIcon } from './portrait.js?v=skill-growth-2';
 import { ultimateGauge } from './skill-presentation.js?v=skill-growth-2';
 import { describeSkillEffect } from '../skill-effects.js?v=skill-growth-2';
+import { ownedBlessing } from '../job-combat.js?v=advanced-jobs-1';
 
 const TARGET_PROMPT = {
   enemy: '攻撃する敵を選ぶ',
@@ -28,6 +29,11 @@ export function battleConditionLabels(data, unit) {
   const [barrier, turns] = unit.buffs?.barrier ?? [];
   if (Number.isFinite(barrier) && barrier > 0 && turns > 0) names.push(`障壁 ${barrier} HP`);
   if (unit.normalSkillReady) names.push('次の攻撃技能を強化');
+  if (unit.anger > 0) names.push(`怒気 ${unit.anger}/3`);
+  const blessing=unit.masterEffects?.blessing;
+  if (blessing?.shield>0) names.push(`加護 ${blessing.shield}・残り${blessing.remaining}行動`);
+  const shield=Object.values(unit.masterEffects??{}).reduce((sum,effect)=>sum+(!effect.blessing?(effect.shield??0):0),0);
+  if (shield>0) names.push(`防護 ${shield}`);
   return names;
 }
 
@@ -271,7 +277,7 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
     if (sub === 'skill' || sub === 'item') {
       const isSkill = sub === 'skill';
       const choices = isSkill
-        ? opts.skills.map(entry => listChoice(skillMaxLevel(entry.skill) > 1 ? `${entry.skill.name} Lv${learnedSkillLevel(member, entry.skill)}` : entry.skill.name, `MP ${battleMp(entry.skill)}`, entry.reason,
+        ? opts.skills.map(entry => listChoice(skillMaxLevel(entry.skill) > 1 ? `${entry.skill.name} Lv${learnedSkillLevel(member, entry.skill)}` : entry.skill.name, `MP ${battleMp(entry.skill)}${entry.hpCost ? `・HP ${entry.hpCost}` : ''}`, entry.reason,
           () => chooseSkill(entry), entry.reason))
         : opts.items.map(({ item, count, reason }) => listChoice(item.name, `×${count}`, reason || item.description,
           () => choose({ type: 'item', itemId: item.id }), reason));
@@ -307,6 +313,12 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
     const elements = entry.elements ?? skill.effect.rules?.choose_element ?? [];
     const back = () => showCommand(skill.isFinal ? null : 'skill');
     const chooseBoost = selected => {
+      if (entry.optionalBlessing && selected.consumeBlessing == null) return showPanel(`${skill.name}の加護`,[
+        el('p',{class:'battle-notice'},'自分の加護を消費すると、今回の直接ダメージが増えます。'),
+        el('div',{class:'battle-action-list'},
+          listChoice('加護を残す',`MP ${battleMp(skill)}`,null,()=>chooseBoost({...selected,consumeBlessing:false})),
+          listChoice('加護を消費する',`MP ${battleMp(skill)}`,`直接ダメージ +${Math.round(skill.effect.rules.optional_blessing*100)}%`,()=>chooseBoost({...selected,consumeBlessing:true}))),
+      ],{back});
       if (!entry.boost) return chooseTarget(selected, skill.isFinal ? null : 'skill', entry.targetReasons);
       const baseMp = battleMp(skill);
       const extraMp = entry.boost.mp;
@@ -331,6 +343,32 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
     const member = g.party[b.turn.i];
     const skill = action.type === 'skill' ? effectiveSkill(data, member, data.skills.get(action.skillId)) : null;
     const kind = targetKind(data, action, member);
+    if (skill?.effect.rules?.move_blessing && action.sourceTarget == null) {
+      const indices=g.party.flatMap((m,index)=>m.hp>0&&!b.allies[index].statuses.petrify&&ownedBlessing(b,b.turn.i,index)?[index]:[]);
+      if (!indices.length) return showCommand(sub,'移せる自分の加護がありません。');
+      const select=sourceTarget=>chooseTarget({...action,sourceTarget},sub,targetReasons);
+      if (indices.length===1) return select(indices[0]);
+      drawField(b.turn.i,{kind:'ally',indices,select});
+      showPanel(skill.name,[el('p',{class:'battle-target-prompt'},'移動する加護が付いた味方を選ぶ')],{back:()=>showCommand(sub)});
+      return;
+    }
+    if (skill?.effect.select_targets) {
+      const indices=b.enemies.flatMap((enemy,index)=>enemy.hp>0?[index]:[]);
+      const limit=Math.min(skill.effect.target_limit,indices.length);
+      if (!limit) return showCommand(sub,'選べる敵がいません。');
+      if (limit===indices.length) return ask({...action,targets:indices});
+      const selected=new Set();
+      const select=index=>{if(selected.has(index))selected.delete(index);else if(selected.size<limit)selected.add(index);drawSelection();};
+      const drawSelection=()=>{
+        drawField(b.turn.i,{kind:'enemy',indices,select});
+        showPanel(skill.name,[el('p',{class:'battle-target-prompt'},`敵を最大${limit}体選ぶ（${selected.size}/${limit}）`),
+          el('div',{class:'battle-targets'},indices.map(index=>el('button',{'aria-pressed':String(selected.has(index)),
+            disabled:!selected.has(index)&&selected.size>=limit,onclick:()=>select(index)},`${selected.has(index)?'✓ ':''}${b.enemies[index].name}`))),
+          el('button',{disabled:!selected.size,onclick:()=>ask({...action,targets:[...selected]})},'この対象で攻撃する'),
+        ],{back:()=>showCommand(sub)});
+      };
+      return drawSelection();
+    }
     if (!TARGET_PROMPT[kind]) return ask({ ...action, target: null });
 
     let indices;
@@ -341,6 +379,7 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
     } else {
       indices = g.party.flatMap((target, index) => target.hp > 0
         && !(skill?.effect.master && b.allies[index].statuses?.petrify)
+        && !(skill?.effect.rules?.move_blessing && index===action.sourceTarget)
         && !(skill?.effect.rules?.cover?.target === 'selected' && index === b.turn.i) ? [index] : []);
     }
 
@@ -357,7 +396,7 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
       return el('button', { disabled: !!reason, onclick: () => select(index) }, `${enemy.icon} ${enemy.name}${reason ? `・${reason}` : ''}`);
     })) : null;
     showPanel(actionLabel(action), [
-      el('p', { class: 'battle-target-prompt' }, TARGET_PROMPT[kind]),
+      el('p', { class: 'battle-target-prompt' }, skill?.effect.rules?.move_blessing ? '加護の移動先を選ぶ' : TARGET_PROMPT[kind]),
       enemyTargets,
     ], { back: () => showCommand(sub), focus: !!enemyTargets });
     if (!enemyTargets) screen.querySelector('button.targetable').focus({ preventScroll: true });

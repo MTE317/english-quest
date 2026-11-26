@@ -1,5 +1,5 @@
 import { normalizeAp, gainAp } from './ap.js?v=skill-growth-2';
-import { gainXp, xpToNext, levelCap } from './character.js?v=skill-growth-2';
+import { gainXp, xpToNext, levelCap } from './character.js?v=advanced-jobs-1';
 
 // 短時間で学べる訓練場。問題の種類と教材カテゴリーの選択はUIと共通で扱う。
 export const TRAINING_COUNTS = Object.freeze([5, 10, 15]);

@@ -2,7 +2,7 @@
 // 式は data/balance.json から読む。balance.json に式として書かれていないもの（説明の文だけのもの）は、
 // シミュレーター（sim/core.py）と同じ式を下の SIM_FORMULAS に置いて使う。docs/requests.md で balance.json への追加を依頼済み。
 import { evaluate, isFormula } from './expr.js?v=skill-growth-2';
-import { memberMods, masteryMul, ensureLoadout } from './growth.js?v=skill-growth-2';
+import { memberMods, masteryMul, ensureLoadout } from './growth.js?v=advanced-jobs-1';
 
 export const STATS = ['hp', 'mp', 'str', 'mag', 'def', 'res', 'spd', 'luk'];
 export const STAT_LABEL = { hp: 'HP', mp: 'MP', str: 'STR', mag: 'MAG', def: 'DEF', res: 'RES', spd: 'SPD', luk: 'LUK' };

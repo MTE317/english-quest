@@ -908,7 +908,7 @@
     "minimum_damage_share": 0.08,
     "debuff_cap": 0.5,
     "lifesteal_rate_cap": 0.25,
-    "lifesteal_action_cap": 0.15,
+    "lifesteal_action_cap": 0.1,
     "on_hit_mp_cap": 0.05,
     "extra_hit_cap": 0.4,
     "counter_affix_cap": 0.35,

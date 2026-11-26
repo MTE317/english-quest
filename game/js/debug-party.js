@@ -1,6 +1,6 @@
 import { normalizeAp } from './ap.js?v=skill-growth-2';
 // 開発用メニュー専用。通常の画面からは読み込まない。
-import { gainXp, xpToNext, levelCap } from './character.js?v=skill-growth-2';
+import { gainXp, xpToNext, levelCap } from './character.js?v=advanced-jobs-1';
 
 export const DEBUG_PARTY_LABEL = '全員をLv99・AP999に設定';
 export const DEBUG_PARTY_CONFIRM = 'パーティ全員をLv99にし、各メンバーのAPを999に設定します（加算ではありません）。HP/MPは通常のレベルアップ規則に従い、全回復・復活はしません。現在のセーブに保存されます。ほかのゲームタブを閉じてから実行してください。よろしいですか？';

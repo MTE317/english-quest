@@ -3,8 +3,8 @@
 英単語とフレーズを覚えるためのファンタジーRPG。4択の英語の問題に答えると、パーティが行動する。
 仕様のまとめは `docs/game-overview.md`、データの形は `data/README.md` にある。
 
-職業・技能の現行マスターは `docs/jobs-baseline-v1.md`、`docs/basic-jobs-skills-v1.md`、`docs/jobs-master-implementation.md`。
-競合する旧職・旧技能はこのマスターへ置き換える。追加36職と伝説6職のメタデータは公開し、個別技能の実装前は転職させない。
+職業・技能の現行マスターは `docs/jobs-baseline-v2.md`、`docs/basic-jobs-skills-v2.md`、`docs/jobs-master-implementation.md`。追加1〜3職の実装は `docs/additional-jobs-01-03-implementation.md` を参照する。
+競合する旧職・旧技能はこのマスターへ置き換える。聖騎士・暗黒騎士・狂戦士は基本8職とともに初期から利用可能。残る追加33職・伝説6職は個別技能の実装前に転職させない。
 
 ## 返答と画面の言語
 

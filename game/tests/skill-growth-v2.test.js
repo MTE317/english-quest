@@ -7,7 +7,7 @@ import {prerequisiteText} from '../js/ui/skill-presentation.js';
 const data=realGameData();
 const fresh=()=>createNewGame(data,['warrior','knight','monk','thief','hunter','bard'].map(job=>({job,name:job,icon:'x'})));
 test('成長方式28/46/46、全奥義固定、前提は参照先の上限以内',()=>{
- const list=[...data.skills.values()].filter(s=>s.effect.master);
+ const list=[...data.skills.values()].filter(s=>s.effect.master&&data.jobsById.get(s.job)?.tier==='base');
  assert.deepEqual([1,3,5].map(n=>list.filter(s=>skillMaxLevel(s)===n).length),[28,46,46]);
  for(const s of list){if(s.isFinal)assert.equal(skillMaxLevel(s),1);for(const p of s.effect.prerequisites)assert.ok(p.level<=skillMaxLevel(data.skills.get(p.id)));}
 });

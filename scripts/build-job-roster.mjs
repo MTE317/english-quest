@@ -66,6 +66,8 @@ const armorProfiles = {
 };
 const magical = new Set(['staff','tome','instrument','fan']);
 const oldApt = new Map(parseCsv(read('data/job_weapon_aptitude.csv')).rows.map(row => [row.job_id,row]));
+const implemented = new Set(parseCsv(read('data/skills.csv')).rows.filter(row=>JSON.parse(row.effect_json||'{}').master).map(row=>row.job));
+const previousUnlocks = new Map(parseCsv(read('data/job_unlocks.csv')).rows.map(row=>[row.job_id,row]));
 const rows = baseline.map((row, index) => {
   const [, section, name, role, s, a, main, support, reference, style, ultimate] = row;
   const id = ids[index];
@@ -74,9 +76,9 @@ const rows = baseline.map((row, index) => {
   const grades = Object.fromEntries(gradeKeys.map((key,i) => [key,profiles[id].split(' ')[i]]));
   return { id,name,role,tier,...grades,main_elements:split(main,elements).join('|'),support_elements:split(support,elements).join('|'),
     s_weapons:sWeapons.join('|'),a_weapons:aWeapons.join('|'),stat_reference:reference,style,ultimate_concept:ultimate,
-    skills_ready:tier === 'base' ? 1 : 0,weakness:'',start_weapon:sWeapons[0],
+    skills_ready:tier === 'base' || implemented.has(id) ? 1 : 0,weakness:'',start_weapon:sWeapons[0],
     start_armor_weight:['heavy','medium','light'][armorProfiles[id].indexOf('S')],
-    unlock:tier === 'base' ? '' : '個別技能の実装待ち',dmg_mul:1.0 };
+    unlock:tier === 'base' ? '' : implemented.has(id) ? '初期解放（条件は後日設定）' : '個別技能の実装待ち',dmg_mul:1.0 };
 });
 const header = ['id','name','role','tier',...gradeKeys,'main_elements','support_elements','s_weapons','a_weapons','stat_reference','style','ultimate_concept','skills_ready','weakness','start_weapon','start_armor_weight','unlock','dmg_mul'];
 writeCsv('jobs.csv',header,rows.filter(row=>row.tier==='base'));
@@ -92,10 +94,12 @@ writeCsv('job_weapon_aptitude.csv',['job_id',...Object.values(weapons)],rows.map
 }))})));
 writeCsv('job_armor_aptitude.csv',['job_id','heavy','medium','light'],rows.map(row=>({job_id:row.id,...Object.fromEntries(['heavy','medium','light'].map((weight,i)=>[weight,armorProfiles[row.id][i]]))})));
 writeCsv('aptitude.csv',['grade','multiplier'],[{grade:'S',multiplier:1.2},{grade:'A',multiplier:1.0},{grade:'B',multiplier:0.85},{grade:'C',multiplier:0.7},{grade:'D',multiplier:0.55}]);
-// 未実装の42職は職業カタログとして保持し、従来の素材納品等では解放しない。
-writeCsv('job_unlocks.csv',['job_id','method','materials','discover_dungeon','discover_chance_after_boss','discover_guarantee_clears','report_enemy_status'],rows.filter(row=>row.tier!=='base').map(row=>({job_id:row.id,method:'実装待ち',discover_chance_after_boss:0})));
+// 個別実装した職の初期解放を保持し、未実装の職はカタログのみに残す。
+writeCsv('job_unlocks.csv',['job_id','method','materials','discover_dungeon','discover_chance_after_boss','discover_guarantee_clears','report_enemy_status'],rows.filter(row=>row.tier!=='base').map(row=>
+  implemented.has(row.id) ? previousUnlocks.get(row.id)??{job_id:row.id,method:'初期',discover_chance_after_boss:0}
+    : {job_id:row.id,method:'実装待ち',discover_chance_after_boss:0}));
 // 修得完了の記録は残せるが、装備枠外の恒常能力ボーナスはない。
-writeCsv('job_mastery.csv',['job','condition','bonus_all_jobs'],rows.filter(row=>row.tier==='base').map(row=>({job:row.id,condition:'この職の15種類の技能を修得（強化回数は種類数に含めない）',bonus_all_jobs:''})));
+writeCsv('job_mastery.csv',['job','condition','bonus_all_jobs'],rows.filter(row=>row.skills_ready).map(row=>({job:row.id,condition:'この職の15種類の技能を修得（強化回数は種類数に含めない）',bonus_all_jobs:''})));
 const weaponTypes = parseCsv(read('data/weapon_types.csv'));
 const instrument = weaponTypes.rows.find(row=>row.id==='instrument');
 instrument.elements = 'none';

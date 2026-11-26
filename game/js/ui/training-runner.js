@@ -1,5 +1,5 @@
 import { makeQuestion } from '../quiz.js?v=skill-growth-2';
-import { makeTrainingPicker, applyTrainingAnswer, shouldShowChunkHint } from '../training.js?v=skill-growth-2';
+import { makeTrainingPicker, applyTrainingAnswer, shouldShowChunkHint } from '../training.js?v=advanced-jobs-1';
 import { recordChant } from '../chant.js?v=skill-growth-2';
 import { now } from '../storage.js?v=skill-growth-2';
 import { speak, canSpeak, stopSpeech } from '../speech.js?v=skill-growth-2';

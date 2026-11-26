@@ -2,10 +2,10 @@ import { roundGold, goldScale, goldLimit } from './gold.js?v=skill-growth-2';
 // 町の基本：暦と銀行融資・ギルドのクエストと冒険者ランク・各施設。
 // data に数や式として書かれていないものは、シミュレーター（sim/world.py）と同じ値を TOWN_FORMULAS に置く（docs/requests.md で依頼済み）。
 import { evaluate } from './expr.js?v=skill-growth-2';
-import { makeGear, maxHp, maxMp, gearDef } from './character.js?v=skill-growth-2';
-import { addItem } from './loot.js?v=skill-growth-2';
-import { currentRank, allowedDungeons } from './dungeon.js?v=skill-growth-2';
-import { monsterPool } from './encounter.js?v=skill-growth-2';
+import { makeGear, maxHp, maxMp, gearDef } from './character.js?v=advanced-jobs-1';
+import { addItem } from './loot.js?v=advanced-jobs-1';
+import { currentRank, allowedDungeons } from './dungeon.js?v=advanced-jobs-1';
+import { monsterPool } from './encounter.js?v=advanced-jobs-1';
 import { unlockReportedHuntJobs } from './temple.js?v=skill-growth-2';
 
 export const TOWN_FORMULAS = Object.freeze({
