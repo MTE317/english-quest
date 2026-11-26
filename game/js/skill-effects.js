@@ -1,3 +1,5 @@
+import { skillUIMessage } from './skill-ui-text.js?v=skill-ui-text-1';
+
 // スキル詳細用の説明。技能データの効果・属性・対象を共通の日本語へ変換する。
 const pct = (value) => `${Math.round(Number(value) * 1000) / 10}%`;
 const names = (value) => (Array.isArray(value) ? value : [value]).join('・');
@@ -151,4 +153,9 @@ export function describeSkillEffect(data, skill) {
   }
   if (effect.once) parts.push('一戦に一回まで');
   return parts.length ? `${parts.join('。')}。` : '効果の説明はありません。';
+}
+
+/** ゲーム画面用の簡素説明。文面未定義の技能は既存の説明を利用する。 */
+export function describeSkillForUI(data, skill, level = skill.level ?? 1) {
+  return skillUIMessage(skill, level) ?? describeSkillEffect(data, skill);
 }

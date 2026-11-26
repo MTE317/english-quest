@@ -17,7 +17,7 @@ import { elementResistancePanel } from '../ui/element-resistance.js?v=element-re
 import { statusSusceptibilityPanel } from '../ui/status-susceptibility.js?v=advanced-jobs-1';
 import { el, render, stars } from '../dom.js?v=skill-growth-2';
 import { describeFixedEffects } from '../equipment-effects.js?v=skill-growth-2';
-import { describeSkillEffect } from '../skill-effects.js?v=skill-growth-2';
+import { describeSkillForUI } from '../skill-effects.js?v=skill-ui-text-1';
 import { SKILL_CATEGORIES, skillCategory, skillLoadoutKind, equippedSkillIds, isSkillEquipped, skillCostLabel, skillWeaponText, prerequisiteText } from '../ui/skill-presentation.js?v=skill-growth-2';
 
 import { setSceneMusic } from '../battle-music.js?v=skill-growth-2';
@@ -370,7 +370,7 @@ function showLoadout(index, kind = 'actions', message = '', skillId = '') {
       el('header', {}, skillIcon(skill, member),
         el('div', {}, el('h2', {}, `${skill.name}${skillMaxLevel(skill)>1?` Lv${level}`:""}`),
           equipped ? el('span', { class: 'skill-shop-equipped' }, '装着中') : null)),
-      el('p', { class: 'skill-shop-effect' }, describeSkillEffect(data, skill)),
+      el('p', { class: 'skill-shop-effect' }, describeSkillForUI(data, skill, level)),
       el('p', { class: 'shop-description' }, [jobName(skill.job), skillCategory(skill), skillCostLabel(skill)].join(' ／ ')),
       el('dl', { class: 'shop-facts' },
         el('div', {}, el('dt', {}, '装備枠'), el('dd', {}, skill.isFinal ? '奥義 1枠' : String(skill.cost))),
@@ -458,14 +458,14 @@ function showSkills(index, jobId, skillId, message = '') {
     const next = skill.effect.levels?.[level - 1];
     const effective = effectiveSkill(data, member, skill);
     render(detail, el('header', {}, skillIcon(skill, member), el('h2', {}, `${skill.name}${learned && skillMaxLevel(skill)>1 ? ` Lv${level}` : ''}`)),
-      el('p', { class: 'skill-shop-effect' }, describeSkillEffect(data, effective)),
+      el('p', { class: 'skill-shop-effect' }, describeSkillForUI(data, effective, level)),
       el('p', { class: 'muted small' }, [skill.path, skill.kind === 'passive' ? 'パッシブ' : `MP ${skillMp(data, member, skill)}`,
         skillCostLabel(skill), skill.isFinal && 'ゲージ満タンで使用'].filter(Boolean).join('・')),
       el('p', { class: 'small muted' }, `習得AP ${skill.apToLearn}・前提：${prerequisiteText(data, member, skill)}`),
       el('p', { class: 'small muted' }, `武器条件：${skillWeaponText(data, skill)}`),
       learned && skillMaxLevel(skill) > 1 ? el('section', {},
         el('p', {}, `習得Lv ${level}/${skillMaxLevel(skill)}（習得済みの最高Lvで発動）`),
-        next ? el('p', {}, `次のLv: 基礎MP ${next.mp}・${describeSkillEffect(data, { ...skill, effect: { ...skill.effect, ...next.effect } })}`) : null,
+        next ? el('p', {}, `次のLv: MP ${next.mp}・${describeSkillForUI(data, { ...skill, effect: { ...skill.effect, ...next.effect } }, level + 1)}`) : null,
         next ? el('button', { disabled: session.inDungeon || !!upgradeReason, onclick: () => updateSkill((m) => upgradeSkill(data, m, skill.id)) },
           upgradeReason || `Lv${level + 1}へ強化（AP ${next.ap}）`) : el('p', { class: 'small muted' }, '最大Lvです。')) : null,
       !learned
