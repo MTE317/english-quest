@@ -431,8 +431,6 @@ function showLoadout(index, kind = 'actions', message = '', skillId = '') {
 // ---------------- スキルツリー ----------------
 function showSkills(index, jobId, skillId, message = '') {
   const member = session.game.party[index];
-  const cap = capacity(data, member);
-  const used = usedCapacity(data, member);
   const jobs = [member.job, ...(member.visitedJobs ?? []).filter((id) => id !== member.job && data.jobsById.has(id))];
   const job = jobs.includes(jobId) ? jobId : member.job;
   const basic = [...jobPaths(data,job).values()].flat().every(skill=>skill.effect.master);
@@ -529,7 +527,6 @@ function showSkills(index, jobId, skillId, message = '') {
     }),
     el('h2', {}, 'スキル習得・強化'),
     detail,
-    el('p', { class: 'panel small' }, `残りAP ${availableAp(data, member)}（全ジョブ・共通パッシブ共通）・通常枠 ${used.actions}/${cap.actions}・パッシブ枠 ${used.passives}/${cap.passives}・奥義 ${member.loadout?.ultimate ? 1 : 0}/1`),
     message ? el('p', { class: 'error', role: 'status' }, message) : null,
     jobs.length > 1 ? el('label', { class: 'small' }, 'ジョブ',
       el('select', { class: 'select', onchange: (event) => showSkills(index, event.target.value) },
