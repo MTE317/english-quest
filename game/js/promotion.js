@@ -1,11 +1,15 @@
-// 英語学習の昇格資格・二分野試験をRPGの戦闘ランクから分離する。
-// しきい値は v1.0 基本教材だけでは上位ランクへ届かない長期目標（仮値）。
+// 単語30問と瞬間英作文15問の昇級試験。習得数ではなく実際の学習履歴から出題する。
 export const PROMOTION_REQUIREMENTS = Object.freeze({
-  D: { words: 0, phrases: 0 }, C: { words: 0, phrases: 0 },
-  B: { words: 0, phrases: 0 }, A: { words: 0, phrases: 0 }, S: { words: 0, phrases: 0 },
+  D: { words: 30, phrases: 15 }, C: { words: 30, phrases: 15 },
+  B: { words: 30, phrases: 15 }, A: { words: 30, phrases: 15 }, S: { words: 30, phrases: 15 },
 });
-export const EXAM_DEFAULTS = Object.freeze({ words: 20, phrases: 10, passRate: 0.8 });
-export const FINAL_DEFAULTS = Object.freeze({ words: 30, phrases: 20, passRate: 0.8 });
+export const EXAM_RULES = Object.freeze({
+  D: { words: 30, phrases: 15, wordPool: 60, phrasePool: 30, passRate: 0.8 },
+  C: { words: 30, phrases: 15, wordPool: 60, phrasePool: 30, passRate: 0.8 },
+  B: { words: 30, phrases: 15, passRate: 0.8 },
+  A: { words: 30, phrases: 15, passRate: 0.9 },
+  S: { words: 30, phrases: 15, passRate: 1 },
+});
 export const PHRASE_GRADE_SCORES = Object.freeze({ o: 1, t: 0.5, x: 0 });
 
 export function masteredWordIds(store) {
@@ -20,8 +24,8 @@ export function masteredPhraseIds(game) {
 
 export function promotionProgress(catalog, store, game, rankId) {
   const required = PROMOTION_REQUIREMENTS[rankId] ?? { words: 0, phrases: 0 };
-  const wordIds = masteredWordIds(store);
-  const phraseIds = masteredPhraseIds(game);
+  const wordIds = new Set([...store.entries()].map(([id]) => id));
+  const phraseIds = new Set(Object.keys(game?.chants?.records ?? {}));
   const words = catalog.words.filter((item) => wordIds.has(item.id)).length;
   const phrases = catalog.phrases.filter((item) => phraseIds.has(item.id)).length;
   return { required, words, phrases, wordMet: words >= required.words,
@@ -44,18 +48,29 @@ function sample(items, count, rng) {
   return selected;
 }
 
+function recentPool(items, records, limit, rng) {
+  if (!limit) return items;
+  // 同日の学習項目が教材の並び順へ偏らないよう、抽出前に順序を混ぜる。
+  return sample(items, items.length, rng)
+    .sort((a, b) => (Number(records[b.id]?.last) || 0) - (Number(records[a.id]?.last) || 0))
+    .slice(0, limit);
+}
+
 export function makePromotionExam(catalog, store, game, rankId, rng = Math.random) {
-  const config = rankId === 'S' ? FINAL_DEFAULTS : EXAM_DEFAULTS;
-  const wordRecords = [...store.entries()].map(([id]) => id);
-  const phraseRecords = Object.keys(game.chants?.records ?? {});
+  const config = EXAM_RULES[rankId];
+  if (!config) throw new Error('このランクに昇級試験はありません。');
   // 未学習の高難度教材をむやみに選ばず、実際に取り組んだ範囲から均等に出題する。
-  const wordPool = catalog.words.filter((word) => wordRecords.includes(word.id));
-  const phrasePool = catalog.phrases.filter((phrase) => phraseRecords.includes(phrase.id));
-  if (!wordPool.length || !phrasePool.length) throw new Error('単語と英作文の両方を学習してください。');
+  const wordRecords = Object.fromEntries(store.entries());
+  const phraseRecords = game?.chants?.records ?? {};
+  const wordPool = catalog.words.filter(word => wordRecords[word.id]);
+  const phrasePool = catalog.phrases.filter(phrase => phraseRecords[phrase.id]);
+  if (wordPool.length < config.words || phrasePool.length < config.phrases) {
+    throw new Error(`受験には異なる単語${config.words}件と英作文${config.phrases}件の学習履歴が必要です。`);
+  }
   return {
     rankId,
-    words: sample(wordPool, config.words, rng),
-    phrases: sample(phrasePool, config.phrases, rng),
+    words: sample(recentPool(wordPool, wordRecords, config.wordPool, rng), config.words, rng),
+    phrases: sample(recentPool(phrasePool, phraseRecords, config.phrasePool, rng), config.phrases, rng),
     passRate: config.passRate,
   };
 }
@@ -68,7 +83,7 @@ export function recordPromotionPart(store, rankId, kind, score, total, day, pass
   if (!['word', 'phrase'].includes(kind) || !Number.isFinite(score) || !Number.isInteger(total) || total <= 0 || score < 0 || score > total) {
     throw new Error('昇格試験の採点値が不正です。');
   }
-  const passed = score >= Math.ceil(total * passRate - 1e-9);
+  const passed = score >= total * passRate - 1e-9;
   const key = `promotion:${rankId}`;
   const prior = store.exams[key] ?? {};
   store.setExam(key, {

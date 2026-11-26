@@ -5,7 +5,7 @@ import { now } from '../storage.js?v=skill-growth-2';
 import { speak, canSpeak, stopSpeech } from '../speech.js?v=skill-growth-2';
 import { recordChant } from '../chant.js?v=skill-growth-2';
 import { makePromotionExam, promotionExamState, recordPromotionPart,
-  scorePhraseGrades, PHRASE_GRADE_SCORES } from '../promotion.js?v=skill-growth-2';
+  scorePhraseGrades, PHRASE_GRADE_SCORES } from '../promotion.js?v=promotion-exam-1';
 
 export function runDualPromotionExam({ view, catalog, store, session, scheduler, rankId,
   chantConfig, onFinish }) {
@@ -47,7 +47,7 @@ export function runDualPromotionExam({ view, catalog, store, session, scheduler,
           scheduler.dayOf(now()), passRate);
         render(view, el('section', { class: 'panel' },
           el('h2', {}, result.passed ? '第2試験合格！' : '英作文試験は不合格'),
-          el('p', {}, String(score) + ' / ' + String(grades.length) + '点（80%以上で合格）'),
+          el('p', {}, String(score) + ' / ' + String(grades.length) + `点（${Math.round(passRate * 100)}%以上で合格）`),
           el('p', { class: 'muted small' }, '○＝1点、△＝0.5点、×＝0点。自己評価した成績を保存しました。'),
           el('button', { class: 'primary',
             onclick: () => finish({ complete: result.complete, rankId, section: 'phrase' }) },

@@ -254,23 +254,23 @@ test('昇格には単語・英作文両方の習得実績が必要。二分野�
   const store = new LearningStore(new MemoryStorage());
   const game = fresh();
   const record = learnedRec();
-  for (const word of catalog.words.slice(0, 18)) store.set(word.id, record);
+  for (const word of catalog.words.slice(0, 30)) store.set(word.id, record);
   game.chants = {
-    records: Object.fromEntries(catalog.phrases.slice(0, 12).map((p) => [p.id, record])),
-    masteredIds: catalog.phrases.slice(0, 12).map((p) => p.id),
+    records: Object.fromEntries(catalog.phrases.slice(0, 15).map((p) => [p.id, record])),
+    masteredIds: catalog.phrases.slice(0, 15).map((p) => p.id),
   };
-  const progress = promotionProgress(catalog, store, game, 'R02');
+  const progress = promotionProgress(catalog, store, game, 'D');
   assert.equal(progress.wordMet, true);
   assert.equal(progress.phraseMet, true);
-  const plan = makePromotionExam(catalog, store, game, 'R02', seededRng(7));
-  assert.equal(plan.words.length, 18);
-  assert.equal(plan.phrases.length, 10);
+  const plan = makePromotionExam(catalog, store, game, 'D', seededRng(7));
+  assert.equal(plan.words.length, 30);
+  assert.equal(plan.phrases.length, 15);
   assert.equal(new Set(plan.words.map((x) => x.id)).size, plan.words.length);
-  assert.equal(recordPromotionPart(store, 'R02', 'word', 15, 18, d0).complete, false);
-  assert.equal(promotionExamState(store, 'R02').wordPassed, true);
-  assert.equal(recordPromotionPart(store, 'R02', 'phrase', 7.5, 10, d0).complete, false);
-  assert.equal(recordPromotionPart(store, 'R02', 'phrase', 8.5, 10, d0 + 1).complete, true);
-  assert.equal(promotionExamState(new LearningStore(store.storage), 'R02').phrasePassed, true);
+  assert.equal(recordPromotionPart(store, 'D', 'word', 24, 30, d0).complete, false);
+  assert.equal(promotionExamState(store, 'D').wordPassed, true);
+  assert.equal(recordPromotionPart(store, 'D', 'phrase', 11.5, 15, d0).complete, false);
+  assert.equal(recordPromotionPart(store, 'D', 'phrase', 12, 15, d0 + 1).complete, true);
+  assert.equal(promotionExamState(new LearningStore(store.storage), 'D').phrasePassed, true);
   assert.equal(scorePhraseGrades(['o', 't', 'x']), 1.5);
 });
 

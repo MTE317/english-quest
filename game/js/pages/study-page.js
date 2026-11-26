@@ -6,8 +6,9 @@ import { Scheduler } from '../srs.js?v=skill-growth-2';
 import { LearningStore, now } from '../storage.js?v=skill-growth-2';
 import { GameSession } from '../save.js?v=party-wipe-1';
 import { normalizeGame } from '../game-state.js?v=party-wipe-1';
-import { currentRank } from '../dungeon.js?v=specialist-jobs-1';
-import { nextRankStatus } from '../town.js?v=specialist-jobs-1';
+import { nextRankStatus, checkRankUp, promotionMaterialStatus, offerPromotionMaterials } from '../town.js?v=promotion-exam-1';
+import { EXAM_RULES, promotionProgress, promotionExamState } from '../promotion.js?v=promotion-exam-1';
+import { runDualPromotionExam } from '../ui/learning-exams.js?v=promotion-exam-1';
 import { learningStatistics } from '../learning-stats.js?v=skill-growth-2';
 import { TRAINING_COUNTS, trainingChunksForSet, trainingWordsForSet,
   trainingPhrasesForSet, resolveTrainingMode } from '../training.js?v=advanced-jobs-1';
@@ -271,15 +272,59 @@ function exam() {
   const status = nextRankStatus(data, g);
   const next = status?.next;
   if (!next) return [el('p', {}, '最高ランクに到達しました。')];
+  const material = promotionMaterialStatus(data, g, next);
+  const progress = next.needsExam ? promotionProgress(catalog, store, g, next.id) : null;
+  const result = next.needsExam ? promotionExamState(store, next.id) : null;
+  const rule = EXAM_RULES[next.id];
+  const ready = next.needsExam && !session.readOnly && !g.examsPassed?.includes(next.id) &&
+    g.rankPoints >= next.pointsRequired && material.ready && progress.wordMet && progress.phraseMet;
   return [el('div', { class: 'panel' },
     el('h3', {}, '現在のギルドランク：' + g.rank),
     el('p', {}, '次のランク：' + next.id + '・' + next.title),
     el('p', {}, '累積ギルドポイント：' + (g.rankPoints ?? 0) + ' / ' + next.pointsRequired),
     el('p', {}, '施設投資上限：Lv' + next.facilityCap),
-    next.materialStar ? el('p', {}, '必要素材：★' + next.materialStar + 'のモンスター素材1個') : null,
-    next.needsExam ? el('p', { class: 'muted small' }, '要英語試験（内容と合格基準は設計中）') : null,
-    status.needs.length ? el('p', { class: 'muted small' }, '未達成：' + status.needs.join('・')) : null),
+    material.offered ? el('p', {}, '昇級素材：納品済み') : material.needs.length
+      ? material.needs.map(row => el('p', {},
+        '必要素材：' + row.name + ' ' + row.have + '/' + row.count + '（崩れた砦）'))
+      : next.materialStar ? el('p', {}, '必要素材：★' + next.materialStar + 'のモンスター素材1個（種類は仮）') : null,
+    progress ? el('p', {}, '学習履歴：単語 ' + progress.words + '/30件・英作文 ' + progress.phrases + '/15件') : null,
+    rule ? el('p', {}, '試験：単語30問＋英作文15問・各' + Math.round(rule.passRate * 100) + '%以上で合格') : null,
+    rule ? el('p', { class: 'small muted' }, rule.wordPool
+      ? '最近学んだ単語60件・英作文30件から抽選。候補が少ない場合は学習履歴全体を使用します。'
+      : '学習履歴全体から抽選します。') : null,
+    result ? el('p', {}, '合格記録：単語 ' + (result.wordPassed ? '合格' : '未合格') +
+      '・英作文 ' + (result.phrasePassed ? '合格' : '未合格')) : null,
+    status.needs.length ? el('p', { class: 'muted small' }, '未達成：' + status.needs.join('・')) : null,
+    next.needsExam ? el('button', { class: 'primary', disabled: !ready,
+      onclick: () => startPromotion(next.id) },
+      material.offered ? '昇級試験に再挑戦' : '素材を納品して昇級試験を受ける') : null),
   ];
+}
+
+function startPromotion(rankId) {
+  const status = nextRankStatus(data, session.game);
+  const progress = promotionProgress(catalog, store, session.game, rankId);
+  if (status?.next.id !== rankId || !progress.wordMet || !progress.phraseMet ||
+      session.game.rankPoints < status.next.pointsRequired ||
+      !promotionMaterialStatus(data, session.game, status.next).ready) {
+    message = '受験条件を確認してください。'; draw(); return;
+  }
+  try {
+    session.update(game => offerPromotionMaterials(data, game, rankId));
+    runDualPromotionExam({ view, catalog, store, session, scheduler, chantConfig, rankId,
+      onFinish: ({ complete }) => {
+        if (complete) {
+          const updates = [];
+          session.update(game => {
+            if (!game.examsPassed.includes(rankId)) game.examsPassed.push(rankId);
+            updates.push(...checkRankUp(data, game));
+          });
+          message = updates.length ? updates.join(' ') : '両部門の試験に合格しました。';
+        } else message = '未合格の部門を復習して再挑戦しましょう。合格済みの部門は保持されます。';
+        tab = 'exam'; draw();
+      },
+    });
+  } catch (error) { message = error.message; draw(); }
 }
 
 function draw() {
