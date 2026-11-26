@@ -529,3 +529,6 @@
 }
 .equipment-comparison h3 { margin: 0 0 8px; }
 .equipment-picker .equipment-items { width: 100%; box-sizing: border-box; }
+
+.element-resistance h4 { margin: 12px 0 0; }
+.element-resistance-multiplier { display: block; font-size: .7rem; font-weight: normal; color: var(--muted); }
