@@ -2,18 +2,18 @@ import { availableAp } from '../ap.js?v=skill-growth-2';
 // パーティーの画面：キャラメイク・6人の一覧・能力値・装備8枠
 import { loadGameData } from '../gamedata.js?v=skill-growth-2';
 import { GameSession } from '../save.js?v=skill-growth-2';
-import { createNewGame, defaultPartySpecs, normalizeGame } from '../game-state.js?v=no-starter-gear-1';
+import { createNewGame, defaultPartySpecs, normalizeGame } from '../game-state.js?v=advanced-jobs-1';
 import {
   computeStats, SLOTS, SLOT_LABEL, STAT_LABEL, canEquip, equipFromStorage, unequip, gearDef,
   aptitudeGrade, xpToNext, levelCap, gainXp, makeGear,
-} from '../character.js?v=skill-growth-2';
+} from '../character.js?v=advanced-jobs-1';
 import {
-  jobPaths, isLearned, learnBlock, learnSkill, equipBlock, equipSkill, unequipSkill, capacity, usedCapacity,
+  availableJobs, jobPaths, isLearned, learnBlock, learnSkill, equipBlock, equipSkill, unequipSkill, capacity, usedCapacity,
   commonApCost, commonBlock, learnCommon, masteryLevel, isJobMastered, GROWTH_FORMULAS,
   skillMaxLevel, learnedSkillLevel, effectiveSkill, upgradeSkillBlock, upgradeSkill, skillWeaponBlock,
-} from '../growth.js?v=skill-growth-2';
-import { skillMp } from '../battle.js?v=skill-growth-2';
-import { statusSusceptibilityPanel } from '../ui/status-susceptibility.js?v=ally-status-1';
+} from '../growth.js?v=advanced-jobs-1';
+import { skillMp } from '../battle.js?v=advanced-jobs-1';
+import { statusSusceptibilityPanel } from '../ui/status-susceptibility.js?v=advanced-jobs-1';
 import { el, render, stars } from '../dom.js?v=skill-growth-2';
 import { describeFixedEffects } from '../equipment-effects.js?v=skill-growth-2';
 import { describeSkillEffect } from '../skill-effects.js?v=skill-growth-2';
@@ -39,7 +39,7 @@ const jobName = (id) => data.jobsById.get(id)?.name ?? id;
 
 // ---------------- キャラメイク（仮） ----------------
 function showCreate() {
-  const baseJobs = data.jobs.filter((j) => j.tier === 'base');
+  const baseJobs = availableJobs(data, {});
   const specs = defaultPartySpecs(data);
   const roster = el('div', { class: 'recruit-roster', role: 'group', 'aria-label': '編集する仲間' });
   const editor = el('div', { class: 'recruit-editor panel', id: 'recruit-editor' });
@@ -411,7 +411,7 @@ function showSkills(index, jobId, skillId, message = '') {
   const used = usedCapacity(data, member);
   const jobs = [member.job, ...(member.visitedJobs ?? []).filter((id) => id !== member.job && data.jobsById.has(id))];
   const job = jobs.includes(jobId) ? jobId : member.job;
-  const basic = data.jobsById.get(job)?.tier === 'base';
+  const basic = [...jobPaths(data,job).values()].flat().every(skill=>skill.effect.master);
   let paths = basic ? SKILL_CATEGORIES.map(name => [name, []]) : [...jobPaths(data, job).entries()];
   if (basic) for (const skill of [...jobPaths(data, job).values()].flat()) {
     paths.find(([name]) => name === skillCategory(skill))[1].push(skill);

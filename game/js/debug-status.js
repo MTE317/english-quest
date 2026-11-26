@@ -1,8 +1,8 @@
 // 専用のテスト戦闘だけで使う。保存先はメモリ内に限定する。
 import { GameSession } from './save.js?v=skill-growth-2';
-import { createBattle } from './battle.js?v=skill-growth-2';
-import { makeEncounter } from './encounter.js?v=skill-growth-2';
-import { maxHp, maxMp } from './character.js?v=skill-growth-2';
+import { createBattle } from './battle.js?v=advanced-jobs-1';
+import { makeEncounter } from './encounter.js?v=advanced-jobs-1';
+import { maxHp, maxMp } from './character.js?v=advanced-jobs-1';
 
 export function applyPartyDebugStatus(data, game, battle, statusId) {
   const status = statusId ? data.statusEffects.get(statusId) : null;

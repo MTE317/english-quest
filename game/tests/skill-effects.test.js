@@ -54,7 +54,7 @@ test('治療・蘇生・歌の説明は対象と例外を区別する', () => {
 });
 
 test('基本8職の全396段階が修得最高Lvの説明を表示できる', () => {
-  const skills = [...data.skills.values()].filter(skill => skill.effect.master);
+  const skills = [...data.skills.values()].filter(skill => skill.effect.master && data.jobsById.get(skill.job)?.tier === 'base');
   assert.equal(skills.length, 120);
   for (const skill of skills) for (let level = 1; level <= 1+skill.effect.levels.length; level += 1) {
     const member = { learned: [skill.id], skillLevels: { [skill.id]: level }, skillUseLevels: { [skill.id]: 1 } };

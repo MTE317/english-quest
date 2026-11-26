@@ -6,15 +6,15 @@ import { Scheduler } from '../srs.js?v=skill-growth-2';
 import { LearningStore, now, loadSettings } from '../storage.js?v=skill-growth-2';
 import { QuestionPicker } from '../picker.js?v=skill-growth-2';
 import { GameSession } from '../save.js?v=skill-growth-2';
-import { normalizeGame } from '../game-state.js?v=skill-growth-2';
+import { normalizeGame } from '../game-state.js?v=advanced-jobs-1';
 import {
   allowedDungeons, allowedStones, expeditionFee, startRun, startNextBattle, afterBattle, returnToTown, continueRun, resolveLoot,
   isBossBattle, runFloorRow, runFloorCount, returnItems, currentRank, useItemOutsideBattle, FIELD_ITEM_EFFECTS,
-} from '../dungeon.js?v=skill-growth-2';
-import { backpackSlots, backpackUsed, addItem } from '../loot.js?v=skill-growth-2';
-import { maxHp, maxMp } from '../character.js?v=skill-growth-2';
-import { createBattleView } from '../ui/battle-view.js?v=skill-growth-2';
-import { createVictoryView, createLootIcons } from '../ui/victory-view.js?v=skill-growth-2';
+} from '../dungeon.js?v=advanced-jobs-1';
+import { backpackSlots, backpackUsed, addItem } from '../loot.js?v=advanced-jobs-1';
+import { maxHp, maxMp } from '../character.js?v=advanced-jobs-1';
+import { createBattleView } from '../ui/battle-view.js?v=advanced-jobs-1';
+import { createVictoryView, createLootIcons } from '../ui/victory-view.js?v=advanced-jobs-1';
 import { el, render, stars } from '../dom.js?v=skill-growth-2';
 import { buildWorldMap, newDiscoveries } from '../world-map.js?v=skill-growth-2';
 import { createWorldMapView } from '../ui/world-map-view.js?v=skill-growth-2';

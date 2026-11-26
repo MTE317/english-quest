@@ -136,6 +136,6 @@ test('基本職への転職は無料で武器を保持し、未実装の追加�
   assert.equal(game.gold, gold);
   assert.deepEqual(member.learned, []);
   game.unlockedJobs = ['gunner'];
-  assert.ok(availableJobs(data, game).every((job) => job.tier === 'base'));
+  assert.ok(availableJobs(data, game).every((job) => job.tier === 'base'||['paladin','dark_knight','berserker'].includes(job.id)));
   assert.throws(() => changeJob(data, game, 0, 'gunner'), /選べない/);
 });

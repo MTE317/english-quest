@@ -236,9 +236,12 @@ for(const spec of specs){
   const effect={...effects[0],levels:effects.slice(1).map((effect,i)=>({ap:rules.upgrade_ap[i],mp,effect}))};
   rows.push({id:spec.id,job:spec.id.replace(/_[APU]\d+$/,''),path:final?'奥義':entry.kind==='passive'?'パッシブ':'アクティブ',stage:Number(spec.id.match(/\d+$/)[0]),name:spec.name,kind:entry.kind,cost:final?0:Number(spec.meta['固定装備コスト']),mp,ap_to_learn:ap,is_final:final?1:0,element:effect.element??'',effect_json:JSON.stringify(effect)});
 }
-for(const r of current.filter(r=>r.job==='common'))rows.push(r);
+// 個別実装済みの追加職を、基本職の再生成で消さない。
+for(const r of current.filter(r=>r.job==='common'||JSON.parse(r.effect_json||'{}').additional))rows.push(r);
 const cols=['id','job','path','stage','name','kind','cost','mp','ap_to_learn','is_final','element','effect_json'];
 const cell=v=>{const t=String(v??'');return /[",\n\r]/.test(t)?'"'+t.replaceAll('"','""')+'"':t};
 fs.writeFileSync(new URL('../data/skills.csv',import.meta.url),'\uFEFF'+cols.join(',')+'\n'+rows.map(r=>cols.map(c=>cell(r[c])).join(',')).join('\n')+'\n');
+const previousRules=JSON.parse(fs.readFileSync(new URL('../data/basic_job_rules.json',import.meta.url),'utf8'));
+if(previousRules.protection)rules.protection=previousRules.protection;
 fs.writeFileSync(new URL('../data/basic_job_rules.json',import.meta.url),JSON.stringify(rules,null,2)+'\n');
 console.log(`基本8職 ${specs.length}技能・${specs.reduce((n,s)=>n+s.levels.length,0)}段階を出力`);

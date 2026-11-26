@@ -1,4 +1,4 @@
-import { allowedDungeons } from './dungeon.js?v=skill-growth-2';
+import { allowedDungeons } from './dungeon.js?v=advanced-jobs-1';
 
 function availableStories(data, game) {
   const reachable = new Set(allowedDungeons(data, game).map(d => d.id));

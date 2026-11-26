@@ -5,7 +5,8 @@ import { parseCsv } from '../js/csv.js';
 const specs=['physical','magic'].flatMap(name=>JSON.parse(readFileSync(new URL('../../data/skill-growth-'+name+'.json',import.meta.url),'utf8')).skills).map(s=>({id:s.id,name:s.name,meta:s.metadata,levels:s.effects}));
 
 const read = name => readFileSync(new URL(`../../data/${name}`,import.meta.url),'utf8').replace(/^\uFEFF/,'');
-const rows = parseCsv(read('skills.csv')).rows.filter(s=>s.job!=='common');
+const basicIds=new Set(specs.map(skill=>skill.id));
+const rows = parseCsv(read('skills.csv')).rows.filter(s=>basicIds.has(s.id));
 const skills = new Map(rows.map(s=>[s.id,{...s,effect:JSON.parse(s.effect_json)}]));
 const levels = s => [s.effect,...s.effect.levels.map(e=>e.effect)];
 const weapons = new Set(parseCsv(read('weapon_types.csv')).rows.map(w=>w.id).concat('none'));

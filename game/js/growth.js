@@ -1,7 +1,7 @@
 import { availableAp, spendAp, normalizeAp, hasVisitedJob } from './ap.js?v=skill-growth-2';
 // 成長：共通AP・技能の修得と強化・装備枠・武器熟練度・ジョブチェンジ。
 // data に数として書かれていないものは GROWTH_FORMULAS に置く（docs/requests.md で依頼済み）。
-import { gearDef, aptitudeMul, unequip, maxHp, maxMp } from './character.js?v=skill-growth-2';
+import { gearDef, aptitudeMul, unequip, maxHp, maxMp } from './character.js?v=advanced-jobs-1';
 
 export const GROWTH_FORMULAS = Object.freeze({
   action_capacity: 10, // 通常スキルの枠（スキルの cost の合計。sim の cap_a）
@@ -391,10 +391,11 @@ export function addMasteryKill(data, member) {
 }
 
 // ---------------- ジョブチェンジ（神殿） ----------------
-/** 選べるジョブ：基本ジョブと、解放したジョブ */
+/** 基本職・初期解放に指定した実装済み職・解放済みの職を選べる。 */
 export function availableJobs(data, game) {
   const unlocked = new Set(game.unlockedJobs ?? []);
-  return data.jobs.filter((j) => j.skillsReady !== false && (j.tier === 'base' || unlocked.has(j.id)));
+  return data.jobs.filter((j) => j.skillsReady !== false && (j.tier === 'base'
+    || data.jobUnlocks?.get(j.id)?.method === '初期' || unlocked.has(j.id)));
 }
 
 /**

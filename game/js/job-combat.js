@@ -1,6 +1,6 @@
-// 基本8職の技能効果。数値は技能マスタ、蓄積は戦闘オブジェクトへ保存する。
-import { effectiveSkill } from './growth.js?v=skill-growth-2';
-import { gearDef, maxHp, maxMp } from './character.js?v=skill-growth-2';
+// 職業の技能効果。数値は技能マスタ、蓄積は戦闘オブジェクトへ保存する。
+import { effectiveSkill } from './growth.js?v=advanced-jobs-1';
+import { gearDef, maxHp, maxMp } from './character.js?v=advanced-jobs-1';
 
 export const masterTags = (skill) => skill?.effect?.tags ?? [];
 export const weaponSkill = (skill) => Boolean(skill && !skill.isFinal
@@ -51,6 +51,7 @@ export function masterCondition(data, game, b, actor, target, condition = {}, sk
     case 'own_song': return b.allies.some(unit => Object.values(unit.masterEffects ?? {}).some(e => e.song && e.source === actor));
     case 'mp_threshold': return member.mp >= maxMp(data, member) * (condition.threshold ?? .5);
     case 'mp_half': return member.mp >= maxMp(data, member) * .5;
+    case 'hp_below': return member.hp <= maxHp(data, member) * condition.threshold;
     default: return !condition.when;
   }
 }
@@ -63,11 +64,13 @@ export function scopeMatches(skill, scope) {
   if (scope === 'magic') return skill?.effect?.base === 'mag' && skill.kind === 'attack';
   return masterTags(skill).includes(scope);
 }
-export function masterDamageBonus(data, game, b, actor, target, skill) {
+export function masterDamageBonus(data, game, b, actor, target, skill, elements = skill?.elements ?? []) {
   const member = game.party[actor], a = b.allies[actor];
   let rate = 0;
   for (const rule of [...passiveRules(data, member), skill?.effect?.rules ?? {}]) {
-    for (const condition of rule.condition_damage ?? []) if (scopeMatches(skill, condition.scope) && masterCondition(data, game, b, actor, target, condition, skill)) rate += condition.rate ?? 0;
+    for (const condition of rule.condition_damage ?? []) if (scopeMatches(skill, condition.scope)
+      && (!condition.elements?.length || condition.elements.some(id => elements.includes(id)))
+      && masterCondition(data, game, b, actor, target, condition, { ...skill, elements })) rate += condition.rate ?? 0;
     if (rule.combo && weaponSkill(skill)) rate += (a.comboStage ?? 0) * rule.combo.step;
     if (rule.instrument && member.equip?.weapon && gearDef(data, member.equip.weapon).kind === 'instrument'
       && skill?.elements?.some(el => rule.instrument.elements?.includes(el))) rate += rule.instrument.damage ?? 0;
@@ -78,6 +81,15 @@ export function masterDamageBonus(data, game, b, actor, target, skill) {
     if (effect.nextDamage && matchesTag(skill, effect.nextDamage.tag)) rate += effect.nextDamage.rate;
   }
   rate += masterBuff(data, game, b, actor, 'dmg');
+  if (!skill || skill.effect?.base === 'weapon') {
+    const anger = angerRule(data, member);
+    rate += angerStage(data, game, b, actor) * (anger?.damage ?? 0);
+    rate += Object.values(a.masterEffects ?? {}).reduce((sum,effect)=>sum+(effect.weaponDamage??0),0);
+    if (!masterTags(skill).includes('reaction') && !masterTags(skill).includes('trap')) {
+      rate += a.advancedAction?.damageBonus ?? 0;
+      if (a.advancedAction?.paidHp > 0) rate += ruleNumber(data, member, 'paid_weapon_damage');
+    }
+  }
   for (const effect of Object.values(b.enemies[target]?.masterMarks ?? {})) rate += effect.rate ?? 0;
   return rate;
 }
@@ -101,6 +113,7 @@ export function masterCutBonus(data, game, b, actor, magic) {
     if ((cond.scope !== 'magic' || magic) && (cond.scope !== 'physical' || !magic)
       && masterCondition(data, game, b, actor, null, cond)) rate += cond.rate ?? 0;
   }
+  rate -= angerStage(data, game, b, actor) * (angerRule(data, game.party[actor])?.received ?? 0);
   return rate;
 }
 
@@ -111,7 +124,7 @@ export function grantMasterEffect(b, target, key, effect) {
   if (old) {
     // 同名の弱い効果で強い値や長い期間を延長しない。
     const strength = e => Object.values(e.values ?? {}).reduce((sum, value) => sum + Math.abs(value), 0) + (e.regen?.amount ?? 0) + (e.shield ?? 0)
-      + (e.nextMpSave?.rate ?? 0) + (e.nextDamage?.rate ?? 0) + (e.statusResist?.rate ?? 0);
+      + (e.nextMpSave?.rate ?? 0) + (e.nextDamage?.rate ?? 0) + (e.statusResist?.rate ?? 0) + (e.weaponDamage ?? 0);
     if (strength(old) > strength(next)) return old;
     if (strength(old) === strength(next)) next.remaining = Math.max(old.remaining, next.remaining);
   }
@@ -134,6 +147,8 @@ export function masterMpSave(data, member, skill, b = null, actor = null) {
   for (const rule of passiveRules(data, member)) {
     for (const entry of rule.mp_save ?? []) if (matchesTag(skill, entry.tag)) rate += entry.rate;
     if (b && actor != null && !b.allies[actor].firstActiveUsed) rate += rule.first_mp_save ?? 0;
+    if (b && actor != null && weaponSkill(skill) && rule.anger_mp_save
+      && currentAnger(data, member, b.allies[actor]) >= rule.anger_mp_save.threshold) rate += rule.anger_mp_save.rate;
   }
   if (b && actor != null) {
     for (const effect of Object.values(b.allies[actor].masterEffects ?? {})) {
@@ -164,6 +179,8 @@ export function beginMasterAction(data, game, b, actor, skill) {
   b.actionClock = (b.actionClock ?? 0) + 1;
   const a = b.allies[actor];
   a.currentActionClock = b.actionClock;
+  a.advancedAction = { paidHp: 0, damageBonus: 0, actualDamage: 0, executed: false };
+  if (!angerRule(data, game.party[actor])) a.anger = 0;
   a.conditionSnapshot = { enemy: b.enemies.filter(unit => unit.hp > 0).map(unit => Object.keys(unit.statuses ?? {}).filter(id => id !== 'taunt')),
     ally: b.allies.filter((_, i) => game.party[i].hp > 0).map(unit => Object.keys(unit.statuses ?? {}).filter(id => id !== 'taunt')) };
   const combo = passiveRules(data, game.party[actor]).find(rule => rule.combo)?.combo;
@@ -187,10 +204,14 @@ function masterRegenAmount(data, game, b, target, effect) {
 }
 export function finishMasterOpportunity(data, game, b, actor, ctx, skill = null, voluntary = true) {
   const a = b.allies[actor], member = game.party[actor];
+  const performed = a.advancedAction?.executed ?? true;
   for (const [key, effect] of Object.entries(a.masterEffects ?? {})) {
     if (effect.grantedClock === b.actionClock && voluntary) continue;
     if (effect.regen?.trigger === 'end' && member.hp > 0 && !a.statuses.petrify) ctx.heal(actor, masterRegenAmount(data, game, b, actor, effect));
-    if (--effect.remaining <= 0) delete a.masterEffects[key];
+    if (--effect.remaining <= 0) {
+      delete a.masterEffects[key];
+      if (effect.blessing && effect.shield > 0) expireBlessing(data, game, b, actor, effect);
+    }
   }
   for (const [index, covering] of b.allies.entries()) {
     const cover = covering.masterCover;
@@ -200,7 +221,8 @@ export function finishMasterOpportunity(data, game, b, actor, ctx, skill = null,
   }
   if (a.masterCounter && (a.masterCounter.grantedClock !== b.actionClock || !voluntary) && --a.masterCounter.remaining <= 0) delete a.masterCounter;
   a.lastOpportunityRound = b.round;
-  if (!voluntary) { a.previousWeaponSkill = null; a.comboStage = 0; delete a.conditionSnapshot; return; }
+  finishAdvancedAction(data, game, b, actor, skill, voluntary);
+  if (!voluntary || !performed) { a.previousWeaponSkill = null; a.comboStage = 0; delete a.conditionSnapshot; return; }
   for (const rule of passiveRules(data, member)) {
     if ((!skill || weaponSkill(skill)) && rule.on_attack) grantMasterEffect(b, actor, rule.skill.id, { values: rule.on_attack.buff, remaining: rule.on_attack.turns, expire: rule.on_attack.expire });
     if (healingSkill(skill) && rule.on_healing) grantMasterEffect(b, actor, rule.skill.id, { values: { cut: rule.on_healing.cut }, remaining: rule.on_healing.turns });
@@ -215,6 +237,145 @@ export function finishMasterOpportunity(data, game, b, actor, ctx, skill = null,
   a.previousActionClock = a.currentActionClock ?? b.actionClock;
   delete a.currentBoost;
   delete a.conditionSnapshot;
+}
+
+// 追加職も現在の職名には依存させず、装着した技能と保存可能な状態で判定する。
+export const angerRule = (data, member) => passiveRules(data, member).find(rule=>rule.anger)?.anger;
+function currentAnger(data, member, ally) {
+  const rule=angerRule(data,member);
+  return rule ? Math.max(0,Math.min(rule.max,Number(ally.anger)||0)) : 0;
+}
+export function angerStage(data, game, b, actor) {
+  return currentAnger(data,game.party[actor],b.allies[actor]);
+}
+export function ownedBlessing(b, actor, target = actor) {
+  const effect = b.allies[target]?.masterEffects?.blessing;
+  return effect?.source === actor && effect.shield > 0 ? effect : null;
+}
+export function hpPayment(data, game, b, actor, skill) {
+  const rate = skill?.effect.rules?.hp_cost;
+  if (!rate || skill.isFinal) return 0;
+  const preparation = Object.values(b.allies[actor].masterEffects ?? {}).find(effect=>effect.nextHpCost);
+  return Math.max(1,Math.ceil(maxHp(data,game.party[actor])*rate*(preparation?.nextHpCost.rate??1)));
+}
+export function spendHpPayment(data, game, b, actor, skill) {
+  const cost=hpPayment(data,game,b,actor,skill);
+  if (cost>0) {
+    game.party[actor].hp-=cost;
+    for (const [key,effect] of Object.entries(b.allies[actor].masterEffects??{})) if (effect.nextHpCost) delete b.allies[actor].masterEffects[key];
+  }
+  return cost;
+}
+export function advancedSkillBlock(data, game, b, actor, skill) {
+  if (game.party[actor].hp <= hpPayment(data,game,b,actor,skill)) return 'HPの支払い後に1以上残す必要がある';
+  if (skill.effect.rules?.consume_blessing && !ownedBlessing(b,actor)) return '自分に自分の加護が必要';
+  if (skill.effect.rules?.move_blessing && !b.allies.some((_,target)=>ownedBlessing(b,actor,target))) return '移せる自分の加護がない';
+  return '';
+}
+export function advancedTargetBlock(data, game, b, actor, skill, target, action) {
+  if (!skill.effect.additional) return '';
+  const rule=skill.effect.rules??{};
+  const partyTarget = ['ally_buff','heal','cure'].includes(skill.kind) && skill.effect.tgt!=='self';
+  if (partyTarget && (!game.party[target] || game.party[target].hp<=0 || b.allies[target].statuses.petrify)) return '生存している対象を選んでください';
+  if (rule.move_blessing && (!ownedBlessing(b,actor,action.sourceTarget) || action.sourceTarget===target
+    || !game.party[action.sourceTarget]?.hp || b.allies[action.sourceTarget].statuses.petrify)) return '加護の移動元と別の移動先を選んでください';
+  if (action.consumeBlessing && rule.optional_blessing && !ownedBlessing(b,actor)) return '消費できる自分の加護がない';
+  if (skill.kind==='attack' && !b.enemies.some(enemy=>enemy.hp>0)) return '生存している敵を選んでください';
+  if (skill.kind==='attack' && !['all','random'].includes(skill.effect.tgt) && !(b.enemies[target]?.hp>0)) return '生存している敵を選んでください';
+  if (action.targets && (!Array.isArray(action.targets) || !action.targets.length || new Set(action.targets).size!==action.targets.length
+    || action.targets.length>(skill.effect.target_limit??b.enemies.length) || action.targets.some(i=>!(b.enemies[i]?.hp>0)))) return '異なる生存敵を上限内で選んでください';
+  return '';
+}
+export function payAdvancedCosts(data, game, b, actor, skill, action) {
+  const ally=b.allies[actor], rule=skill.effect.rules??{}, state=ally.advancedAction;
+  state.executed=true;
+  state.paidHp=spendHpPayment(data,game,b,actor,skill);
+  if (rule.consume_blessing || rule.optional_blessing && action.consumeBlessing) {
+    delete ally.masterEffects.blessing;
+    if (rule.optional_blessing) state.damageBonus+=rule.optional_blessing;
+  }
+  if (rule.spend_anger) {
+    state.damageBonus+=angerStage(data,game,b,actor)*rule.spend_anger;
+    ally.anger=0;
+  }
+}
+function finishAdvancedAction(data, game, b, actor, skill, voluntary) {
+  const ally=b.allies[actor], rule=angerRule(data,game.party[actor]);
+  if (game.party[actor].hp<=0 || !rule) ally.anger=0;
+  else if (voluntary && ally.advancedAction?.executed) {
+    if ((!skill || weaponSkill(skill)) && !skill?.isFinal && !skill?.effect.rules?.spend_anger && ally.advancedAction.actualDamage>0)
+      ally.anger=Math.min(rule.max,angerStage(data,game,b,actor)+1);
+    else if (skill && skill.kind!=='attack') ally.anger=Math.max(0,angerStage(data,game,b,actor)-1);
+  }
+  delete ally.advancedAction;
+}
+
+export function masterShieldRoom(data, game, b, target, replaceKey = null) {
+  const used=Object.entries(b.allies[target].masterEffects??{}).reduce((sum,[key,effect])=>sum+(key!==replaceKey?Math.max(0,effect.shield??0):0),0)
+    + Math.max(0,b.allies[target].buffs?.barrier?.[0]??0);
+  return Math.max(0,Math.floor(maxHp(data,game.party[target])*(data.basicJobRules?.caps?.shield_hp??.5))-used);
+}
+export function grantBlessing(data, game, b, actor, target, skill, stats, cm) {
+  const rule=skill.effect.rules.blessing, formula=data.basicJobRules.protection;
+  const base=Math.floor(formula.base+formula.per_level*game.party[actor].lv+formula.stat_scale*stats.res);
+  const shield=Math.max(0,Math.min(masterShieldRoom(data,game,b,target,'blessing'),Math.floor(base*rule.m*cm)));
+  if (!shield) return;
+  const old=b.allies[target].masterEffects.blessing;
+  if (old?.skillId===skill.id && old.source===actor && old.shield>shield) return;
+  const passives=passiveRules(data,game.party[actor]);
+  const effect={blessing:true,source:actor,skillId:skill.id,shield,remaining:rule.turns,grantedClock:b.actionClock,
+    createdClock:b.actionClock,counter:rule.counter?structuredClone(rule.counter):null,
+    breakHeal:Math.max(rule.break_heal??0,ruleNumber(data,game.party[actor],'blessing_break_heal')),
+    healLimit:rule.heal_limit??1,expireBonus:structuredClone(passives.find(p=>p.blessing_expire)?.blessing_expire??null)};
+  // 加護は使用者・技能にかかわらず対象に1枚。同名の弱い上書きで延長しない。
+  if (old?.skillId===skill.id && old.source===actor && old.shield===shield) effect.remaining=Math.max(old.remaining,effect.remaining);
+  b.allies[target].masterEffects.blessing=effect;
+}
+function expireBlessing(data, game, b, target, effect) {
+  const source=b.allies[effect.source], bonus=effect.expireBonus;
+  if (!bonus || !(game.party[target].hp>0) || !(game.party[effect.source]?.hp>0) || source.blessingExpireRound===b.round) return;
+  source.blessingExpireRound=b.round;
+  grantMasterEffect(b,target,'paladin_P03',{values:{cut:bonus.cut},remaining:bonus.turns,source:effect.source});
+}
+/** 敵1行動の全対象・全打撃後に反応させるため、破壊記録だけを残す。 */
+export function absorbMasterShields(b, target, damage, source, notify) {
+  const shields=Object.entries(b.allies[target].masterEffects??{}).filter(([,effect])=>effect.shield>0)
+    .sort(([ak,a],[bk,c])=>a.remaining-c.remaining || (a.createdClock??a.grantedClock)-(c.createdClock??c.grantedClock)||ak.localeCompare(bk));
+  for (const [key,effect] of shields) {
+    const absorbed=Math.min(damage,effect.shield);
+    effect.shield-=absorbed; damage-=absorbed;
+    notify(absorbed);
+    if (effect.shield<=0) {
+      delete b.allies[target].masterEffects[key];
+      if (effect.blessing) (b.brokenBlessings??=[]).push({target,effect,enemy:source.i});
+    }
+    if (damage<=0) break;
+  }
+  return damage;
+}
+export function resolveBrokenBlessings(data, game, b, ctx) {
+  const records=b.brokenBlessings??[];
+  b.brokenBlessings=[];
+  for (const {target,effect,enemy} of records) {
+    const actor=effect.source, source=b.allies[actor];
+    if (!(game.party[actor]?.hp>0) || !(game.party[target]?.hp>0)) continue;
+    if (effect.breakHeal>0) {
+      if (source.blessingHealRound!==b.round) {source.blessingHealRound=b.round;source.blessingHealCount=0;source.blessingNormalHealCount=0;source.blessingHealLimit=1;}
+      source.blessingHealLimit=Math.max(source.blessingHealLimit,effect.healLimit);
+      if (source.blessingHealCount<source.blessingHealLimit && (effect.healLimit>1 || source.blessingNormalHealCount<1)) {
+        source.blessingHealCount++;
+        if (effect.healLimit===1) source.blessingNormalHealCount++;
+        ctx.heal(target,Math.floor(maxHp(data,game.party[target])*effect.breakHeal));
+      }
+    }
+    if (effect.counter && b.enemies[enemy]?.hp>0 && ctx.canReact(actor)) {
+      if (source.counterRound!==b.round) {source.counterRound=b.round;source.counterCount=0;}
+      if (source.counterCount<(data.basicJobRules?.caps?.counter_per_round??1)) {
+        source.counterCount++;
+        ctx.react(actor,enemy,effect.counter);
+      }
+    }
+  }
 }
 
 export function masterCoverTarget(data, game, b, original, magic) {

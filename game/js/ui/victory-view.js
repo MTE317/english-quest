@@ -1,4 +1,4 @@
-import { maxHp, maxMp } from '../character.js?v=skill-growth-2';
+import { maxHp, maxMp } from '../character.js?v=advanced-jobs-1';
 import { expeditionScene } from './scenery.js?v=skill-growth-2';
 import { el } from '../dom.js?v=skill-growth-2';
 import { portraitIcon } from './portrait.js?v=skill-growth-2';

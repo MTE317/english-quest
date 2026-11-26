@@ -1,7 +1,7 @@
 ﻿job_id,method,materials,discover_dungeon,discover_chance_after_boss,discover_guarantee_clears,report_enemy_status
-paladin,実装待ち,,,0,,
-dark_knight,実装待ち,,,0,,
-berserker,実装待ち,,,0,,
+paladin,初期,,,0,,
+dark_knight,初期,,,0,,
+berserker,初期,,,0,,
 samurai,実装待ち,,,0,,
 gladiator,実装待ち,,,0,,
 warrior_monk,実装待ち,,,0,,

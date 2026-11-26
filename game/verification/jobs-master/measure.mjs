@@ -25,7 +25,8 @@ const samples = Math.max(1, Number(args.get('samples') ?? 8));
 const output = args.get('output') ?? fileURLToPath(new URL('./results.json', import.meta.url));
 const data = realGameData();
 const basicJobs = data.jobs.filter(job => job.tier === 'base');
-const skills = [...data.skills.values()].filter(skill => skill.effect.master);
+// この比較器は基本8職を対象に保つ。追加職は専用の戦闘テストで検証する。
+const skills = [...data.skills.values()].filter(skill => skill.effect.master && data.jobsById.get(skill.job)?.tier === 'base');
 const PREFERRED = {
   warrior: ['A01', 'A03', 'P02', 'P03', 'A06', 'P04', 'A07'],
   knight: ['A01', 'A03', 'P02', 'P01', 'A02', 'P03', 'A04'],
@@ -83,7 +84,8 @@ function inspectMaster() {
   assert.equal(basicJobs.length, 8);
   assert.equal(data.jobs.filter(job => job.tier === 'additional').length, 36);
   assert.equal(data.jobs.filter(job => job.tier === 'legendary').length, 6);
-  assert.equal(skills.length, 120, '基本8職の技能は120種類');
+  const basicSkills=skills.filter(skill=>data.jobsById.get(skill.job)?.tier==='base');
+  assert.equal(basicSkills.length, 120, '基本8職の技能は120種類');
   const rows = [];
   for (const job of basicJobs) {
     const list = jobSkills(data, job.id).filter(skill => skill.effect.master);
@@ -106,8 +108,8 @@ function inspectMaster() {
       initialSkillMp: list.filter(skill => skill.kind !== 'passive' && !skill.isFinal).map(skill => ({ id: skill.id, mp: skill.mp })),
     });
   }
-  return { jobs: data.jobs.length, basicJobs: 8, additionalJobs: 36, legendaryJobs: 6, skills: skills.length,
-    skillLevelDefinitions: skills.reduce((n,s)=>n+1+s.effect.levels.length,0), costs: rows };
+  return { jobs: data.jobs.length, basicJobs: 8, additionalJobs: 36, legendaryJobs: 6, skills: basicSkills.length,
+    skillLevelDefinitions: basicSkills.reduce((n,s)=>n+1+s.effect.levels.length,0), costs: rows };
 }
 
 function gearFor(member, itemLevel, kindOverride) {

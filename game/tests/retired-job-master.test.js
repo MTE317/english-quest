@@ -7,7 +7,7 @@ import { realGameData } from './helpers.js';
 const retiredJobs = ['stormcaster','venomist','bloodblade','infernalist','seal_archer','neutralist','petrifier'];
 const data=realGameData();
 
-test('現行マスターは基本8・追加36・伝説6と基本職120技能に統一する',()=>{
+test('現行マスターは基本8・追加36・伝説6、基本120技能と追加3職45技能に統一する',()=>{
   assert.equal(data.jobs.length,50);
   assert.equal(data.jobs.filter(j=>j.tier==='base').length,8);
   assert.equal(data.jobs.filter(j=>j.tier==='additional').length,36);
@@ -15,8 +15,8 @@ test('現行マスターは基本8・追加36・伝説6と基本職120技能に�
   assert.equal(new Set(data.jobs.map(j=>j.id)).size,50);
   for(const id of retiredJobs)assert.ok(!data.jobsById.has(id),id);
   const skills=[...data.skills.values()].filter(s=>s.job!=='common');
-  assert.equal(skills.length,120);
-  assert.ok(skills.every(s=>s.effect.master&&data.jobsById.get(s.job)?.tier==='base'));
+  assert.equal(skills.length,165);
+  assert.ok(skills.every(s=>s.effect.master&&data.jobsById.get(s.job)?.skillsReady));
   assert.ok(skills.every(s=>!/_p\d+_s\d+$/.test(s.id)));
 });
 

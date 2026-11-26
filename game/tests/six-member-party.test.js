@@ -12,7 +12,7 @@ const data = realGameData();
 const fresh = () => createNewGame(data, defaultPartySpecs(data));
 const legacy = () => equippedGame(data, defaultPartySpecs(data).slice(0, 4), { partySize: 4 });
 
-test('新規作成は6人を要求し、全員無装備・技能なしと配給装備の一意なIDを用意する', () => {
+test('新規作成は6人を要求し、全員無装備・技能なしで装備を配給しない', () => {
   const specs = defaultPartySpecs(data);
   const game = fresh();
   assert.equal(PARTY_SIZE, 6);
@@ -20,7 +20,7 @@ test('新規作成は6人を要求し、全員無装備・技能なしと配給�
   assert.deepEqual(specs.map((member) => member.job), data.balance.new_game.party_jobs);
   assert.equal(new Set(game.party.map((member) => member.id)).size, 6);
   const gear = [...game.storage.gear, ...game.party.flatMap((member) => Object.values(member.equip).filter(Boolean))];
-  assert.ok(game.storage.gear.length > 0);
+  assert.equal(game.storage.gear.length, 0);
   assert.equal(new Set(gear.map((item) => item.uid)).size, gear.length);
   for (const member of game.party) {
     assert.ok(Object.values(member.equip).every(item => item === null));

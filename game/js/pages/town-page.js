@@ -2,20 +2,20 @@ import { availableAp } from '../ap.js?v=skill-growth-2';
 // 町をホームにして、施設カードから各施設を開く。
 import { loadGameData } from '../gamedata.js?v=skill-growth-2';
 import { GameSession } from '../save.js?v=skill-growth-2';
-import { normalizeGame } from '../game-state.js?v=skill-growth-2';
-import { currentRank, seededRng } from '../dungeon.js?v=skill-growth-2';
+import { normalizeGame } from '../game-state.js?v=advanced-jobs-1';
+import { currentRank, seededRng } from '../dungeon.js?v=advanced-jobs-1';
 import {
   calendarOf, fillBoard, boardSize, questAcceptLimit, acceptQuest, canAcceptQuest, abandonQuest, canReport, reportQuest, questText, questProgress, questDestination, questRewardGold, questRankPoints, questDepositTotal, questAbandonRefund, nextRankStatus, stayInn, revive, reviveCost, checkRankUp,
   canExpandBackpack, expandBackpack, feeTier,
   nextBackpackTier,
-} from '../town.js?v=skill-growth-2';
-import { backpackSlots } from '../loot.js?v=skill-growth-2';
-import { maxHp, maxMp, gearDef } from '../character.js?v=skill-growth-2';
-import { availableJobs, changeJob } from '../growth.js?v=skill-growth-2';
-import { explorationStories, acceptExplorationStory, reportExplorationStory } from '../exploration-story.js?v=skill-growth-2';
+} from '../town.js?v=advanced-jobs-1';
+import { backpackSlots } from '../loot.js?v=advanced-jobs-1';
+import { maxHp, maxMp, gearDef } from '../character.js?v=advanced-jobs-1';
+import { availableJobs, changeJob } from '../growth.js?v=advanced-jobs-1';
+import { explorationStories, acceptExplorationStory, reportExplorationStory } from '../exploration-story.js?v=advanced-jobs-1';
 import { cureAtTemple, recordStoredMaterials } from '../temple.js?v=skill-growth-2';
-import { workshopView, managementView, templeExtras } from '../ui/facility-view.js?v=skill-growth-2';
-import { itemShopView, gearShopView } from '../ui/town-shops.js?v=skill-growth-2';
+import { workshopView, managementView, templeExtras } from '../ui/facility-view.js?v=advanced-jobs-1';
+import { itemShopView, gearShopView } from '../ui/town-shops.js?v=advanced-jobs-1';
 import { weaponIcon } from '../ui/weapon-icons.js?v=skill-growth-2';
 import { equipmentIcon } from '../ui/equipment-icons.js?v=skill-growth-2';
 import { storageView } from '../ui/storage-view.js?v=skill-growth-2';
