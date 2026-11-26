@@ -185,7 +185,9 @@ function memberSwitcher(index, select = showMember) {
     }, portraitIcon(member.icon, { small: true }), el('span', {}, member.name))));
 }
 
-function memberNavigation(index, active, switchMember) {
+function memberNavigation(index, active, switchMember, {
+  skillMode = 'learn', onSkillLearn = () => showSkills(index), onSkillSet = () => showLoadout(index),
+} = {}) {
   return [
     el('button', { class: 'ghost', onclick: showParty }, '← パーティーの一覧へ'),
     memberSwitcher(index, switchMember ?? (next => showMember(next, active))),
@@ -193,6 +195,11 @@ function memberNavigation(index, active, switchMember) {
     el('div', { class: 'member-main-tabs', role: 'group', 'aria-label': 'キャラクターのメニュー' },
       [['skills', 'スキル'], ['equipment', '装備'], ['abilities', '能力']].map(([id, title]) =>
         el('button', { type: 'button', 'aria-pressed': String(active === id), onclick: () => showMember(index, id) }, title))),
+    active === 'skills' ? el('div', { class: 'member-skill-tabs', role: 'group', 'aria-label': 'スキルのメニュー' },
+      el('button', { type: 'button', 'aria-pressed': String(skillMode === 'learn'),
+        onclick: () => { if (skillMode !== 'learn') onSkillLearn(); } }, '習得'),
+      el('button', { type: 'button', 'aria-pressed': String(skillMode === 'set'),
+        onclick: () => { if (skillMode !== 'set') onSkillSet(); } }, 'セット')) : null,
   ];
 }
 
@@ -404,8 +411,10 @@ function showLoadout(index, kind = 'actions', message = '', skillId = '') {
     ['ultimate', `奥義（${member.loadout?.ultimate ? 1 : 0}/1）`],
   ];
   render(view,
-    memberNavigation(index, 'skills', next => showLoadout(next, kind)),
-    el('h2', {}, 'スキル装備'),
+    memberNavigation(index, 'skills', next => showLoadout(next, kind), {
+      skillMode: 'set', onSkillLearn: () => showSkills(index, selected?.job, selected?.id),
+    }),
+    el('h2', {}, 'スキルセット'),
     el('p', { class: 'muted small' }, '習得済みスキルを選び、詳細を確認して装着・取り外しできます。転職前に覚えた技能と奥義も持ち出せます。'),
     message ? el('p', { class: 'error', role: 'status' }, message) : null,
     el('div', { class: 'skill-loadout-tabs', role: 'tablist', 'aria-label': 'スキルの種類' }, tabs.map(([key, label]) =>
@@ -414,8 +423,7 @@ function showLoadout(index, kind = 'actions', message = '', skillId = '') {
     skills.length ? el('div', { class: 'shop-layout skill-shop-layout skill-loadout-layout' }, detail, grid)
       : el('section', { class: 'shop-detail skill-shop-empty' },
         el('p', { class: 'muted' }, isUltimateKind ? '習得済みの奥義はありません。同じ職の非奥義10種類を覚えると解禁されます。' : '習得済みのスキルはありません。'),
-        el('button', { class: 'ghost', onclick: () => showSkills(index) }, 'スキル習得・強化を見る')),
-    el('button', { class: 'ghost skill-loadout-tree-link', onclick: () => showSkills(index) }, 'スキル習得・強化を見る'));
+        el('p', { class: 'small muted' }, '上の「習得」からスキルを覚えられます。')));
   if (selected) selectSkill(selected);
   window.scrollTo(0, 0);
 }
@@ -515,10 +523,12 @@ function showSkills(index, jobId, skillId, message = '') {
     })));
 
   render(view,
-    memberNavigation(index, 'skills', next => showSkills(next)),
+    memberNavigation(index, 'skills', next => showSkills(next), {
+      onSkillSet: () => showLoadout(index, selected?.kind === 'common' ? 'passives' : skillLoadoutKind(selected ?? {}),
+        '', selected?.kind === 'common' ? '' : selected?.id),
+    }),
     el('h2', {}, 'スキル習得・強化'),
     detail,
-    el('button', { class: 'ghost', onclick: () => showLoadout(index, selected?.kind === 'common' ? 'passives' : skillLoadoutKind(selected ?? {}), '', selected?.kind === 'common' ? '' : selected?.id) }, 'スキル装備・取り外しへ'),
     el('p', { class: 'panel small' }, `残りAP ${availableAp(data, member)}（全ジョブ・共通パッシブ共通）・通常枠 ${used.actions}/${cap.actions}・パッシブ枠 ${used.passives}/${cap.passives}・奥義 ${member.loadout?.ultimate ? 1 : 0}/1`),
     message ? el('p', { class: 'error', role: 'status' }, message) : null,
     jobs.length > 1 ? el('label', { class: 'small' }, 'ジョブ',
