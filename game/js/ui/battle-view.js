@@ -3,7 +3,7 @@ import { now } from '../storage.js?v=skill-growth-2';
 import { QuestionPicker, REASON_LABEL } from '../picker.js?v=skill-growth-2';
 import { makePracticeQuestion, questionDirection, questionSpeech, DIRECTION } from '../quiz.js?v=skill-growth-2';
 import { speak, canSpeak, stopSpeech } from '../speech.js?v=skill-growth-2';
-import { nextTurn, actionOptions, setPending, prepareQuizAction, resolvePending, targetKind, skillMp, collectBattleHits, enemyIntent, enemyCanAct } from '../battle.js?v=advanced-jobs-1';
+import { nextTurn, actionOptions, setPending, prepareQuizAction, resolvePending, targetKind, skillMp, collectBattleHits, enemyIntent, enemyCanAct } from '../battle.js?v=tactical-jobs-1';
 import { skillMaxLevel, learnedSkillLevel, effectiveSkill } from '../growth.js?v=advanced-jobs-1';
 import { maxHp, maxMp } from '../character.js?v=advanced-jobs-1';
 import { el, render } from '../dom.js?v=skill-growth-2';
@@ -14,8 +14,8 @@ import { unlockBattleSound, playBattleHitSound } from '../battle-sound.js?v=skil
 import { portraitIcon } from './portrait.js?v=skill-growth-2';
 import { ultimateGauge } from './skill-presentation.js?v=skill-growth-2';
 import { skillIcon } from './skill-icons.js?v=skill-icons-1';
-import { describeSkillEffect, describeSkillForUI } from '../skill-effects.js?v=skill-ui-text-1';
-import { ownedBlessing, passiveRules } from '../job-combat.js?v=advanced-jobs-1';
+import { describeSkillEffect, describeSkillForUI } from '../skill-effects.js?v=tactical-jobs-1';
+import { ownedBlessing, passiveRules, activeDuel, prayerRule, prayerStage } from '../job-combat.js?v=tactical-jobs-1';
 import { statusIconId, buffIconId, effectIcon, JOB_EFFECT_ICON } from './effect-icons.js?v=battle-effect-icons-1';
 
 const TARGET_PROMPT = {
@@ -55,11 +55,12 @@ export const JOB_EFFECT_SECTIONS = Object.freeze({
 
 // 付与元の職名ではなく、実際に保持している効果の性質で分類する。
 function jobEffectSection(skill, effect) {
+  if (effect.statusResist?.uses > 0) return JOB_EFFECT_SECTIONS.special;
   const continuous = Object.values(effect.values ?? {}).some(value => value !== 0)
     || effect.shield > 0 || effect.regen || effect.statusResist || effect.lifesteal || effect.weaponDamage || effect.mpSave?.length;
   if (!continuous && (effect.nextDamage || effect.nextMpSave || effect.nextHpCost)) return JOB_EFFECT_SECTIONS.special;
   if (effect.shield > 0 || effect.blessing) return JOB_EFFECT_SECTIONS.ongoing;
-  if (effect.song || skill?.kind === 'party_buff'
+  if (effect.party || effect.song || skill?.kind === 'party_buff'
     || skill?.kind === 'ally_buff' && skill.effect?.tgt === 'all') return JOB_EFFECT_SECTIONS.party;
   return JOB_EFFECT_SECTIONS.ongoing;
 }
@@ -99,6 +100,7 @@ export function allyEffectEntries(data, game, battle, index) {
     if (effect.blessing) values.push('加護');
     if (effect.regen) values.push(`HP継続回復 ${Math.round(effect.regen.amount ?? 0)}`);
     if (effect.statusResist) values.push(`状態異常耐性：${(effect.statusResist.statuses ?? []).map(id => data.statusEffects.get(id)?.name ?? id).join('・') || '対象状態異常'} ${Math.round(effect.statusResist.rate * 100)}%`);
+    if (effect.statusResist?.uses > 0) values.push(`残り${effect.statusResist.uses}判定`);
     if (effect.nextDamage) values.push(`次の攻撃ダメージ +${Math.round(effect.nextDamage.rate * 100)}%`);
     if (effect.nextMpSave) values.push(`次のスキル消費MP -${Math.round(effect.nextMpSave.rate * 100)}%・残り${effect.nextMpSave.uses ?? 1}回`);
     for (const save of effect.mpSave ?? []) values.push(`スキル消費MP -${Math.round(save.rate * 100)}%`);
@@ -114,6 +116,18 @@ export function allyEffectEntries(data, game, battle, index) {
   if (member.hp > 0 && (anger || ally.anger > 0)) ongoing.push(entry(`怒気 ${Math.min(anger?.max ?? 3, Math.max(0, ally.anger ?? 0))}/${anger?.max ?? 3}`));
   const combo = passives.find(rule => rule.combo)?.combo;
   if (member.hp > 0 && combo) ongoing.push(entry(`連携 ${Math.min(combo.max, Math.max(0, ally.comboStage ?? 0))}/${combo.max}段階`));
+  if (member.hp > 0 && ally.stance) {
+    const values = {...ally.stance.values};
+    if (ally.stance.mode === 'guard') values.res = (values.res ?? 0) + passives.reduce((sum,p)=>sum+(p.guard_stance_res??0),0);
+    ongoing.push(entry(`${data.skills.get(ally.stance.skillId)?.name ?? '構え'}：${Object.entries(values).filter(([,value])=>value!==0).map(([key,value])=>buffText(data,key,value)).join('・')}`));
+  }
+  const duel = activeDuel(game, battle, index);
+  if (duel) ongoing.push(entry(`決闘の指名${duration(duel.remaining)}：相手 ${battle.enemies[duel.target].name}・武器ダメージ +${Math.round(duel.damage*100)}%・被ダメージ +${Math.round(duel.received*100)}%${passives.some(p=>p.duel_focus_bonus)?'・集中'+(duel.focus?'継続':'解除'):''}`));
+  if (member.hp > 0 && ally.distance?.remaining > 0 && battle.enemies[ally.distance.target]?.hp > 0) {
+    ongoing.push(entry(`間合いの支配${duration(ally.distance.remaining)}：${battle.enemies[ally.distance.target].name}からの攻撃に回避率 +${Math.round(ally.distance.evasion*100)}%`));
+  }
+  const prayer = prayerRule(data, member);
+  if (member.hp > 0 && prayer) ongoing.push(entry(`祈念 ${prayerStage(data,game,battle,index)}/${prayer.max}`));
   const traps = new Map();
   for (const trap of battle.masterTraps ?? []) {
     if (trap.actor !== index || member.hp <= 0 || !(battle.enemies?.[trap.target]?.hp > 0)) continue;
@@ -131,7 +145,12 @@ export function allyEffectEntries(data, game, battle, index) {
   if (ally.normalSkillReady) special.push(entry('次の攻撃技能を強化'));
   const barrier = ally.buffs?.barrier;
   if (barrier?.[0] > 0 && barrier[1] > 0) special.push(entry(buffText(data, 'barrier', barrier[0]) + duration(barrier[1])));
-  if (ally.masterCounter?.remaining > 0) special.push(entry('反撃の構え' + duration(ally.masterCounter.remaining)));
+  if (ally.masterCounter?.remaining > 0 && (ally.masterCounter.target == null || battle.enemies[ally.masterCounter.target]?.hp > 0)) {
+    const counter = ally.masterCounter;
+    special.push(entry((data.skills.get(counter.skillId)?.name ?? '反撃の構え') + duration(counter.remaining)
+      + (counter.target != null ? `：対象 ${battle.enemies[counter.target].name}` : '')));
+  }
+  if (member.hp > 0 && ally.readGuard) special.push(entry(`見切りの間：${data.elements.get(ally.readGuard.element)?.name ?? ally.readGuard.element}の物理攻撃1回を${Math.round(ally.readGuard.rate*100)}%軽減・次の行動開始まで`));
   for (const cover of [ally.masterCover, ally.masterUltimateCover]) if (cover?.remaining > 0) {
     const target = cover.target === 'selected' ? game.party[cover.targetIndex]?.name ?? '味方' : '味方全員';
     special.push(entry(`${target}をかばう${duration(cover.remaining)}`));

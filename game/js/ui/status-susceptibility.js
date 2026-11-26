@@ -1,5 +1,5 @@
 import { el } from '../dom.js?v=skill-growth-2';
-import { allyStatusSusceptibilities, STATUS_SUSCEPTIBILITY } from '../status-susceptibility.js?v=advanced-jobs-1';
+import { allyStatusSusceptibilities, STATUS_SUSCEPTIBILITY } from '../status-susceptibility.js?v=tactical-jobs-1';
 
 export function statusSusceptibilityPanel(data, game, index) {
   const rows = allyStatusSusceptibilities(data, game, index);

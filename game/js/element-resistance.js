@@ -1,5 +1,5 @@
 // 通常時の属性耐性。戦闘と同じ属性ダメージ補正を表示する。
-import { allyElementMultiplier } from './battle.js?v=element-resistance-1';
+import { allyElementMultiplier } from './battle.js?v=tactical-jobs-1';
 
 export const ELEMENT_RESISTANCE = Object.freeze([
   { symbol: '▲', label: '弱点', kind: 'weak' },

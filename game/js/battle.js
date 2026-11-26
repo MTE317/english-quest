@@ -15,7 +15,9 @@ import { masterTags, weaponSkill, songSkill, healingSkill, weaponAllowed, passiv
   masterDamageBonus, masterCritBonus, masterEvasionBonus, masterCutBonus, grantMasterEffect, masterBuff, masterMpSave,
   masterHealingBonus, masterStatusResist, masterStatusMultiplier, beginMasterAction, startMasterOpportunity, finishMasterOpportunity,
   masterCoverTarget, onMasterCover, hpPayment, spendHpPayment, ownedBlessing, advancedSkillBlock, advancedTargetBlock, payAdvancedCosts,
-  masterShieldRoom, grantBlessing, absorbMasterShields, resolveBrokenBlessings } from './job-combat.js?v=advanced-jobs-1';
+  masterShieldRoom, grantBlessing, absorbMasterShields, resolveBrokenBlessings,
+  activeDuel, tacticalDefIgnore, prepareDuelAttack, targetedEvasion, readGuardCut, finishReadGuards,
+  consumeStatusPreparation, clearDefeatedTacticalTargets, resetTacticalState, duelVictory, noteDuelHit, applyTacticalRules } from './job-combat.js?v=tactical-jobs-1';
 
 /** balance.json にまだ式がないもの（sim と同じ） */
 export const BATTLE_FORMULAS = Object.freeze({
@@ -266,7 +268,7 @@ export function battleStats(data, game, b, i) {
   for (const k of ABILITY_KEYS) {
     const buff = bval(b.partyBuffs, k) + bval(a.buffs, k) + masterBuff(data, game, b, i, k)
       + (k === 'res' && b.round <= 3 ? partyPassive(data, game, b, 'start_res') : 0);
-    const debuff = bval(a.buffs, 'down:' + k) + (down ? OLD_DOWN_RATE : 0)
+    const debuff = bval(a.buffs, 'down:' + k) + masterBuff(data, game, b, i, 'down:' + k) + (down ? OLD_DOWN_RATE : 0)
       + (k === 'str' && has(a, 'dot_strdown', data) ? OLD_DOWN_RATE : 0);
     st[k] *= statModifier(data, buff, debuff);
   }
@@ -534,6 +536,7 @@ function koAlly(game, b, i) {
   b.allies[i].buffs = {};
   b.allies[i].masterEffects = {};
   b.allies[i].anger = 0;
+  resetTacticalState(b.allies[i]);
   delete b.allies[i].advancedAction;
   delete b.allies[i].masterCover;
   delete b.allies[i].masterCounter;
@@ -667,6 +670,7 @@ export function targetKind(data, action, member = null) {
   }
   const s = member ? effectiveSkill(data, member, data.skills.get(action.skillId)) : data.skills.get(action.skillId);
   const tgt = s.effect.tgt;
+  if (tgt === 'selected_enemy') return 'enemy';
   if (tgt === 'self') return 'self';
   if (s.effect.rules?.revive && s.kind === 'heal_all') return 'ko_ally';
   switch (s.kind) {
@@ -855,7 +859,8 @@ function attackDamage(data, game, b, i, e, skill, cm, { offhand = false, actionB
   if (mods.lowhp_dmg && m.hp < maxHp(data, m) * 0.5) pm += mods.lowhp_dmg;
   const atk = (statVal + (base === 'weapon' || kind === 'mag' ? wpow : wpow * 0.8)) * mult * cm * dm * imb * pm;
   const pierce = kind === 'phys'
-    ? Math.min(data.basicJobRules?.caps?.def_ignore ?? .9, (qigong ? 0 : wt?.defPierce ?? 0) + (skill?.effect.defign ?? 0) + affixSum(m, 'DEF_PIERCE') / 100) : 0;
+    ? Math.min(data.basicJobRules?.caps?.def_ignore ?? .9, (qigong ? 0 : wt?.defPierce ?? 0) + (skill?.effect.defign ?? 0)
+      + tacticalDefIgnore(b, i, skill) + affixSum(m, 'DEF_PIERCE') / 100) : 0;
   const defense = kind === 'phys' ? enemy.def * (1 - pierce) : enemy.res;
   const df = defense * statModifier(data, bval(enemy.buffs ?? {}, kind === 'phys' ? 'def' : 'res'),
     enemyStatDebuff(data, enemy, kind === 'phys' ? 'def' : 'res'), enemy.boss);
@@ -881,10 +886,11 @@ function attackDamage(data, game, b, i, e, skill, cm, { offhand = false, actionB
         + (mods.crit_damage ?? 0) + affixSum(m, 'CRIT_DMG') / 100) : 1, r: between(b, f(data, 'ally_rand')),
     });
   }
+  if (a.advancedAction && !masterTags(skill).some(tag => ['reaction','trap'].includes(tag))) a.advancedAction.elements = [...new Set([...(a.advancedAction.elements ?? []), ...els])];
   return { damage: Math.round(total), crits, misses, landed: misses < hits.length, em, elements: els };
 }
 
-function hitEnemy(data, game, b, i, e, damage, { prefix = '', em = 1, elements = [], landed = damage > 0 } = {}) {
+function hitEnemy(data, game, b, i, e, damage, { prefix = '', em = 1, elements = [], landed = damage > 0, primaryAction = false } = {}) {
   const enemy = b.enemies[e];
   if (!landed || enemy.hp <= 0) return;
   const wasAlive = enemy.hp > 0;
@@ -903,6 +909,9 @@ function hitEnemy(data, game, b, i, e, damage, { prefix = '', em = 1, elements =
   enemy.hp = Math.max(0, enemy.hp - damage);
   if (wasAlive && enemy.hp <= 0 && game.party[i]) {
     const m = game.party[i];
+    const recovery = duelVictory(data, game, b, i, e, primaryAction);
+    if (recovery) healAlly(data, game, b, i, recovery);
+    clearDefeatedTacticalTargets(b);
     addMasteryKill(data, m); // 武器の熟練度
     const km = memberMods(data, m).kill_mp;
     if (km) m.mp = Math.min(maxMp(data, m), m.mp + km);
@@ -1014,6 +1023,7 @@ function doAttack(data, game, b, i, skill, target, cm, { normalSkillReady = fals
     if (healed > 0) log(b, `${m.name}の攻撃が癒しとなり、${weakest.member.name}のHPが ${healed} 回復`);
   };
   if (skill?.effect.tgt === 'random') {
+    if (a.advancedAction?.executed) prepareDuelAttack(game, b, i, livingEnemies(b));
     const randomHits = skill.effect.master && skill.effect.hits?.length ? skill.effect.hits : null;
     const statusTargets = new Set();
     for (let n = 0; n < (randomHits?.length ?? skill.effect.n ?? 1); n++) {
@@ -1023,7 +1033,7 @@ function doAttack(data, game, b, i, skill, target, cm, { normalSkillReady = fals
       const strike = randomHits ? { ...skill, effect: { ...skill.effect, hits: [randomHits[n]] } } : skill;
       const r = attackDamage(data, game, b, i, e, strike, cm, { actionBonus });
       const before = b.enemies[e].hp;
-      hitEnemy(data, game, b, i, e, r.damage, { ...r, prefix: describeHit(r) });
+      hitEnemy(data, game, b, i, e, r.damage, { ...r, prefix: describeHit(r), primaryAction: true });
       if (!statusTargets.has(e) && (!skill.effect.status_once_action || statusTargets.size === 0)) {
         if (r.landed && r.damage > 0) applyAttackStatuses(data, game, b, i, e, skill.effect, cm);
         applyMasterAttackAfter(data, game, b, i, e, skill, cm, r);
@@ -1035,11 +1045,12 @@ function doAttack(data, game, b, i, skill, target, cm, { normalSkillReady = fals
     return;
   }
   const targets = (allMul ? livingEnemies(b) : selectedTargets ?? attackTargets(b, kind, target)).slice(0,skill?.effect.target_limit??b.enemies.length);
+  if (a.advancedAction?.executed) prepareDuelAttack(game, b, i, targets);
   for (const e of targets) {
     const r = attackDamage(data, game, b, i, e, skill, cm, { actionBonus });
     const before = b.enemies[e].hp;
     const primaryDamage = Math.round(r.damage * (allMul ?? 1));
-    hitEnemy(data, game, b, i, e, primaryDamage, { ...r, prefix: describeHit(r) });
+    hitEnemy(data, game, b, i, e, primaryDamage, { ...r, prefix: describeHit(r), primaryAction: true });
     const dealt = Math.max(0, before - b.enemies[e].hp);
     const hits = [[dealt, r]];
     // 追撃は通常攻撃1行動につき最大1回。追加ヒットからの再発動はなし。
@@ -1054,7 +1065,7 @@ function doAttack(data, game, b, i, skill, target, cm, { normalSkillReady = fals
       const r2 = attackDamage(data, game, b, i, e, null, cm, { offhand: true, actionBonus });
       const secondDamage = Math.round(r2.damage * data.balance.battle.dual_wield_second_hit);
       const beforeSecond = b.enemies[e].hp;
-      hitEnemy(data, game, b, i, e, secondDamage, { ...r2, prefix: `二刀目！${describeHit(r2)}` });
+      hitEnemy(data, game, b, i, e, secondDamage, { ...r2, prefix: `二刀目！${describeHit(r2)}`, primaryAction: true });
       const secondDealt = Math.max(0, beforeSecond - b.enemies[e].hp);
       hits.push([secondDealt, r2]);
       // サブ武器の通常攻撃固有効果も命中時に発動する（例：鎚のスタン）
@@ -1210,14 +1221,22 @@ function doSkill(data, game, b, i, s, target, cm, normalSkillReady = false, acti
     ? passiveRules(data, m).find(rule => rule.mp_boost)?.mp_boost : null;
   const spentMp = skillMp(data, m, s, { battle: b, actor: i }) + (boost?.mp ?? 0);
   if (m.mp < spentMp) { log(b, '追加分のMPが足りない'); return; }
+  const supportBefore = s.kind !== 'attack' && !s.effect.rules?.stance ? supportSnapshot(data, game, b) : null;
   if (boost) a.currentBoost = boost;
   payAdvancedCosts(data,game,b,i,s,action);
   if (a.advancedAction.paidHp > 0) log(b, `${m.name}はHPを${a.advancedAction.paidHp}支払った`);
   m.mp -= spentMp;
+  a.advancedAction.mpPaid = spentMp;
   if (s.isFinal) { m.ultimateGauge = 0; if (ultimateRules(data).once_per_battle) a.once.push(s.id); }
   if (s.effect.once) a.once.push(s.id);
   log(b, `${m.name}の${s.name}！`);
   const e = s.effect;
+  if (e.rules?.before_party_buff) {
+    const rule = e.rules.before_party_buff;
+    for (let j = 0; j < game.party.length; j++) if (game.party[j].hp > 0 && !isPetrified(b, j)) {
+      grantMasterEffect(b, j, s.id, { values: Object.fromEntries(Object.entries(rule.values).map(([key,value])=>[key,value*cm])), remaining: rule.turns, source: i, skillId: s.id, party: true });
+    }
+  }
   const shieldRate = cm === 1 ? Math.min(f(data, 'overheal_shield_rate_cap'), affixSum(m, 'OVERHEAL_SHIELD') / 100) : 0;
   const allies = (pred = (j) => game.party[j].hp > 0) => game.party.map((x, j) => j).filter(pred);
   const healAmt = () => {
@@ -1374,7 +1393,7 @@ function doSkill(data, game, b, i, s, target, cm, normalSkillReady = false, acti
     default:
       log(b, 'しかし何も起こらなかった');
   }
-  if (e.master) applyMasterSkillRules(data, game, b, i, s, target, cm);
+  if (e.master) applyMasterSkillRules(data, game, b, i, s, target, cm, action);
   if (e.rules?.move_blessing) {
     const blessing = ownedBlessing(b,i,action.sourceTarget);
     const moved = { ...blessing, shield: Math.min(blessing.shield,masterShieldRoom(data,game,b,target,'blessing')), grantedClock:b.actionClock };
@@ -1383,9 +1402,33 @@ function doSkill(data, game, b, i, s, target, cm, normalSkillReady = false, acti
     if (moved.shield>0) b.allies[target].masterEffects.blessing=moved;
     log(b, `${game.party[target].name}へ加護を移した`);
   }
+  if (supportBefore) a.advancedAction.effectiveSupport = supportImproved(supportBefore, supportSnapshot(data, game, b));
 }
 
 // ---------------- 基本職の構造化された追加効果 ----------------
+// 時間の更新だけを支援の成功として数えず、実際の改善を比較する。
+function supportSnapshot(data, game, b) {
+  return game.party.map((member, index) => {
+    const ally = b.allies[index], stats = battleStats(data, game, b, index);
+    const effects = Object.values(ally.masterEffects ?? {});
+    return { hp: member.hp, statuses: Object.keys(ally.statuses),
+      shield: effects.reduce((sum,effect)=>sum+Math.max(0,effect.shield??0),0) + Math.max(0,ally.buffs.barrier?.[0]??0),
+      regeneration: effects.reduce((sum,effect)=>sum+(effect.regen?.amount??0),0),
+      values: [...ABILITY_KEYS.map(key=>stats[key]), stats.crit, stats.evasion,
+        ...b.enemies.map((enemy,target)=>enemy.hp>0 && ally.distance?.remaining>0 && ally.distance.target===target ? ally.distance.evasion : 0),
+        ...['cut','pcut','mcut'].map(key=>masterBuff(data,game,b,index,key)+bval(ally.buffs,key)+bval(b.partyBuffs,key))],
+      statusChances: [...data.statusEffects.keys()].map(id=>allyStatusChance(data,game,b,index,id,1,stats)) };
+  });
+}
+function supportImproved(before, after) {
+  return after.some((next,index)=>{
+    const old=before[index];
+    return next.hp>old.hp || next.shield>old.shield || next.regeneration>old.regeneration
+      || old.statuses.some(id=>!next.statuses.includes(id))
+      || next.values.some((value,i)=>value>old.values[i]+1e-8)
+      || next.statusChances.some((chance,i)=>chance<old.statusChances[i]-1e-8);
+  });
+}
 function masterBaseHealing(data, game, b, actor) {
   const member = game.party[actor];
   return battleStats(data, game, b, actor).mag + spellPower(data, member);
@@ -1433,6 +1476,13 @@ function applyMasterAttackAfter(data, game, b, actor, target, skill, cm, result)
   const rules = skill?.effect?.rules;
   if (!skill?.effect.master || !rules || !b.enemies[target]) return;
   const enemy = b.enemies[target];
+  if (rules.cleanse_defense && result.landed) {
+    const keys = Object.entries(enemy.buffs ?? {}).map(([key,state],index)=>({key,state,index}))
+      .filter(({key,state})=>['def','pcut','cut'].includes(key) && Array.isArray(state) && state[0] > 0 && state[1] > 0)
+      .sort((a,c)=>a.state[1]-c.state[1] || a.index-c.index).slice(0,rules.cleanse_defense.count);
+    for (const {key} of keys) delete enemy.buffs[key];
+    if (keys.length) log(b, `${enemy.name}の防御強化を崩した`);
+  }
   if (rules.cleanse_buffs && (!rules.cleanse_buffs.requires_damage || result.landed && result.damage > 0)) {
     const n = masterCleanseEnemy(enemy, rules.cleanse_buffs.count);
     if (n) log(b, `${enemy.name}の強化を解除した`);
@@ -1452,7 +1502,7 @@ function applyMasterAttackAfter(data, game, b, actor, target, skill, cm, result)
     log(b, `${enemy.name}の能力を崩した`);
   }
 }
-function applyMasterSkillRules(data, game, b, actor, skill, target, cm) {
+function applyMasterSkillRules(data, game, b, actor, skill, target, cm, action = {}) {
   const member = game.party[actor], ally = b.allies[actor], effect = skill.effect, rules = effect.rules ?? {};
   const living = game.party.map((m, i) => i).filter(i => game.party[i].hp > 0 && !isPetrified(b, i));
   const targets = skill.kind === 'party_buff' || effect.tgt === 'all' ? living : skill.kind === 'self_buff' ? [actor]
@@ -1479,8 +1529,9 @@ function applyMasterSkillRules(data, game, b, actor, skill, target, cm) {
       ...(regen ? { regen: { amount, trigger: regen.trigger } } : {}), ...(rules.mp_save ? { mpSave: rules.mp_save } : {}) });
   }
   if (rules.cover && (rules.cover.target !== 'selected' || target !== actor)) { const key=rules.cover.target==='all'?'masterUltimateCover':'masterCover'; ally[key]={...rules.cover,targetIndex:target,remaining:rules.cover.turns,grantedClock:b.actionClock}; }
-  if (rules.counter) ally.masterCounter = { ...rules.counter, remaining: rules.counter.turns, grantedClock: b.actionClock };
-  if (rules.status_resist) for (const t of targets.length ? targets : [actor]) grantMasterEffect(b, t, skill.id, { statusResist: rules.status_resist, remaining: rules.status_resist.turns });
+  if (rules.counter) ally.masterCounter = { ...rules.counter, remaining: rules.counter.turns, grantedClock: b.actionClock, skillId: skill.id,
+    ...(rules.counter.targeted ? {target} : {}) };
+  if (rules.status_resist) for (const t of targets.length ? targets : [actor]) grantMasterEffect(b, t, skill.id, { statusResist: {...rules.status_resist}, remaining: rules.status_resist.turns });
   if (rules.next_mp_save) grantMasterEffect(b, actor, `${skill.id}:mp`, { nextMpSave: rules.next_mp_save, remaining: rules.next_mp_save.turns });
   if (rules.next_damage) grantMasterEffect(b, actor, `${skill.id}:damage`, { nextDamage: rules.next_damage, remaining: rules.next_damage.turns });
   if (rules.inspect && chance(b, cm)) masterInspect(data, game, b, target, rules.inspect.count);
@@ -1546,6 +1597,7 @@ function applyMasterSkillRules(data, game, b, actor, skill, target, cm) {
     for (const key of owned) delete effects[key];
     grantMasterEffect(b, t, `${skill.id}:mp`, { nextMpSave: { tag: 'active', rate: rules.song_end.next_mp_save }, remaining: rules.song_end.turns });
   }
+  applyTacticalRules(data, game, b, actor, skill, target, cm, action, battleStats(data, game, b, actor));
 }
 
 /** status_effects.csv の cure 列（「毒消し・万能薬・清めの光」）にその名前があるか */
@@ -1807,7 +1859,7 @@ function enemyTurn(data, game, b, e) {
     if (ta.counterRound !== b.round) { ta.counterRound = b.round; ta.counterCount = 0; }
     const sharedCounterCap = data.basicJobRules?.caps?.counter_per_round ?? Infinity;
     if (!magic && enemy.statuses.blind && chance(b, data.statusEffects.get('blind').value)) { log(b, `${enemy.name}の攻撃ははずれた`); continue; }
-    if (!has(ta, 'noevade_noflee', data) && chance(b, ts.evasion)) {
+    if (!has(ta, 'noevade_noflee', data) && chance(b, Math.min(f(data, 'evasion_cap'), ts.evasion + targetedEvasion(b, t, e)))) {
       log(b, `${target.name}はひらりとかわした`);
       const retaliation = Math.min(f(data, 'evade_counter_cap'), affixSum(target, 'EVA_COUNTER') / 100);
       gearReactions.push(() => {
@@ -1831,10 +1883,13 @@ function enemyTurn(data, game, b, e) {
       * (enemy.statuses.fear ? 0.8 : 1);
     const df = magic ? ts.res : ts.def;
     const gearCut = affixSum(target, magic ? 'MAGIC_CUT' : 'PHYS_CUT') / 100;
-    const counterStance = !magic && ta.masterCounter && !ta.masterCounterUsed ? ta.masterCounter : null;
+    const counterStance = !magic && ta.masterCounter && !ta.masterCounterUsed
+      && (ta.masterCounter.target == null || ta.masterCounter.target === e) ? ta.masterCounter : null;
+    const incomingElements = Array.isArray(enemy.attackElement) ? enemy.attackElement : String(enemy.attackElement ?? '').split('|');
     const cut = 1 - Math.min(f(data, 'damage_cut_cap'), bval(b.partyBuffs, 'cut') + bval(ta.buffs, 'cut')
       + (memberMods(data, target).damage_cut ?? 0) + gearCut + (magic ? 0 : bval(ta.buffs, 'pcut'))
-      + masterBuff(data, game, b, t, 'cut') + masterCutBonus(data, game, b, t, magic) + (counterStance?.cut ?? 0)
+      + masterBuff(data, game, b, t, 'cut') + masterBuff(data, game, b, t, magic ? 'mcut' : 'pcut')
+      + masterCutBonus(data, game, b, t, magic, e) + (counterStance?.cut ?? 0) + readGuardCut(b, t, magic, incomingElements)
       + (masterCover && t !== original ? masterCover.cover.cut ?? 0 : 0));
     const ecut = allyElementMultiplier(data, game, b, t, enemy.attackElement, magic);
     const dmg = evaluate(f(data, 'enemy_damage'), { atk, df, r: between(b, f(data, 'enemy_rand')) })
@@ -1842,6 +1897,7 @@ function enemyTurn(data, game, b, e) {
     const elName = enemy.attackElement ? data.elements.get(enemy.attackElement)?.name : null;
     const beforeHp = target.hp;
     damageAlly(data, game, b, t, dmg, `${enemy.name}の${magic ? `${elName ?? ''}魔法` : '攻撃'}！ ${target.name}に`, { side: 'enemy', i: e });
+    if (target.hp < beforeHp) noteDuelHit(game, b, t, e);
     if (masterCover && t !== original && target.hp < beforeHp) onMasterCover(data, game, b, t, true);
     for (const id of Object.keys(ta.statuses)) if (data.statusEffects.get(id)?.kind === 'skip_until_hit') delete ta.statuses[id];
     if (target.hp <= 0) continue;
@@ -1854,7 +1910,9 @@ function enemyTurn(data, game, b, e) {
         log(b, target.name + 'の能力が下がった');
       }
       if (st) {
-        if (chance(b, allyStatusChance(data, game, b, t, st.id, enemy.statusRate, ts))) {
+        const inflicted = chance(b, allyStatusChance(data, game, b, t, st.id, enemy.statusRate, ts));
+        consumeStatusPreparation(b, t, st.id);
+        if (inflicted) {
           const cur = ta.statuses[st.id];
           if (cur && st.kind === 'dot') { cur.n = Math.min(3, cur.n + 1); cur.turns = st.turns; } else ta.statuses[st.id] = { turns: st.turns, n: 1 };
           if (st.persists && !target.persist.includes(st.id)) {
@@ -1902,6 +1960,7 @@ function enemyTurn(data, game, b, e) {
     },
   });
   for (const react of gearReactions) react();
+  finishReadGuards(b);
   finishEnemyTurn(enemy, data, b);
 }
 
@@ -1918,6 +1977,7 @@ export function finishBattle(data, game, b) {
     ally.buffs = {};
     ally.masterEffects = {};
     ally.anger = 0;
+    resetTacticalState(ally);
     delete ally.advancedAction;
     delete ally.masterCover;
     delete ally.masterCounter;
