@@ -5,7 +5,7 @@ import { GameSession } from '../save.js?v=party-wipe-1';
 import { normalizeGame } from '../game-state.js?v=jobs-intro-1';
 import { currentRank, seededRng } from '../dungeon.js?v=jobs-intro-1';
 import {
-  calendarOf, fillBoard, boardSize, questAcceptLimit, acceptQuest, canAcceptQuest, abandonQuest, canReport, reportQuest, questText, questProgress, questDestination, questRewardGold, questRankPoints, questDepositTotal, questAbandonRefund, nextRankStatus, stayInn, revive, reviveCost, checkRankUp,
+  calendarOf, fillBoard, boardSize, acceptQuest, canAcceptQuest, abandonQuest, canReport, reportQuest, questText, questProgress, questDestination, questRewardGold, questRankPoints, questDepositTotal, questAbandonRefund, nextRankStatus, stayInn, revive, reviveCost, checkRankUp,
   canExpandBackpack, expandBackpack, feeTier,
   nextBackpackTier,
 } from '../town.js?v=jobs-intro-1';
@@ -223,7 +223,7 @@ function guild() {
     const stories = explorationStories(data, g).filter(story => !story.accepted);
     return [switcher, el('section', { class: 'guild-board', 'aria-labelledby': 'guild-board-title' },
     el('header', {}, el('h2', { id: 'guild-board-title' }, '依頼掲示板'),
-      el('span', {}, `掲示 ${g.board.length}件・受注 ${g.quests.length} / ${questAcceptLimit(data, g)}件`)),
+      el('span', {}, `掲示 ${g.board.length}件・受注中 ${g.quests.length}件`)),
     el('p', { class: 'small muted' }, '発見済みの冒険先に関する依頼だけを掲示しています。'),
     el('p', { class: 'small muted' }, `所持金 ${g.gold} G・預けている保証金 ${questDepositTotal(g)} G。`),
     g.specialQuest ? el('ul', { class: 'guild-contracts' }, card(g.specialQuest, false)) : null,
@@ -232,7 +232,7 @@ function guild() {
       : el('p', {}, 'この掲示分の依頼は出そろいました。遠征から戻ると新しい依頼が届きます。'))];
   }
   if (guildTab === 'active') return [switcher, el('section', { class: 'guild-board', id: 'guild-active' },
-    el('header', {}, el('h2', {}, '受けている依頼'), el('span', {}, `報告可 ${pending}件・受注 ${g.quests.length} / ${questAcceptLimit(data, g)}件`)),
+    el('header', {}, el('h2', {}, '受けている依頼'), el('span', {}, `報告可 ${pending}件・受注中 ${g.quests.length}件`)),
     el('p', { class: 'small muted' }, `預かり保証金 ${questDepositTotal(g)} G。`),
     explorationStories(data, g).some(story => story.accepted)
       ? el('ul', { class: 'guild-contracts' }, explorationStories(data, g).filter(story => story.accepted).map(storyCard)) : null,
