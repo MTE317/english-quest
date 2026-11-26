@@ -3,8 +3,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createNewGame, normalizeGame } from '../js/game-state.js';
 import {
-  fillBoard, refreshBoard, acceptQuest, abandonQuest, reportQuest, canReport, countKills,
-  questAcceptLimit, questKey, questDepositTotal, questAbandonRefund, questProgress, calendarOf,
+  fillBoard, refreshBoard, acceptQuest, canAcceptQuest, abandonQuest, reportQuest, canReport, countKills,
+  questKey, questDepositTotal, questAbandonRefund, questProgress, calendarOf,
 } from '../js/town.js';
 import { monsterPool } from '../js/encounter.js';
 import { GameSession } from '../js/save.js';
@@ -49,21 +49,19 @@ test('発見済みの冒険先だけで季節ごとに掲示6件を生成し、�
   }
 });
 
-test('受注枠は3件で候補は6件を維持。上位の★で受注枠だけが増える', () => {
+test('受注数に上限はなく、掲示6件と同じ依頼の重複防止は維持する', () => {
   const g = fresh(); board(g);
   const accepted = [];
-  for (let i = 0; i < 3; i++) {
-    const q = g.board.find((q) => q.type === 'hunt' || q.type === 'gather');
+  for (let i = 0; i < 6; i++) {
+    const q = g.board[0];
     acceptQuest(data, g, q.uid, seededRng(i + 10)); accepted.push(q);
     assert.equal(g.board.length, 6);
   }
-  const before = structuredClone(g);
-  assert.throws(() => acceptQuest(data, g, g.board[0].uid), /同時受注/);
-  assert.deepEqual(g, before);
-  assert.equal(questAcceptLimit(data, g), 3);
-  g.rank = 'C'; assert.equal(questAcceptLimit(data, g), 4);
-  g.rank = 'B+'; assert.equal(questAcceptLimit(data, g), 5);
+  assert.equal(g.quests.length, 6);
   assert.ok(g.board.every((q) => !accepted.some((a) => questKey(a) === questKey(q))));
+  g.board.push({ ...accepted[0], uid: -1 });
+  assert.equal(canAcceptQuest(data, g, g.board.at(-1)).ok, false);
+  assert.throws(() => acceptQuest(data, g, -1), /同じ依頼/);
 });
 
 test('賞金首保証金は受注時に一度預け、達成時に報酬と分けて全額返還する', () => {
