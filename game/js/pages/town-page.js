@@ -53,8 +53,8 @@ const facilityGroups = [
     { id: 'inn', name: '宿屋', icon: 'inn', detail: 'HP・MPを回復', show: inn },
   ] },
   { title: '買い物・強化', cards: [
-    { id: 'items', name: '道具屋', icon: 'items', detail: '道具を買う、荷物枠を広げる', show: items },
     { id: 'gear', name: '武器・防具屋', icon: 'gear', detail: '装備の購入・売却', show: gearShop },
+    { id: 'items', name: '道具屋', icon: 'items', detail: '道具を買う、荷物枠を広げる', show: items },
     { id: 'workshop', name: '工房・調合', icon: 'workshop', detail: '装備の作成・強化、道具の調合',
       show: () => workshopView(data, session.game, act, rng, workshopSelection) },
     { id: 'storage', name: '倉庫', icon: 'storage', detail: '装備・道具・素材を確認', show: storage },
