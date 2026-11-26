@@ -299,9 +299,15 @@
 }
 
 .skill-shop-icon {
-  color: #f1cf82;
-  font-size: 1.35rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  flex: 0 0 32px;
 }
+.skill-pixel-icon { display: block; width: 32px; height: 32px; flex: 0 0 32px; object-fit: contain; image-rendering: pixelated; }
 
 .quest-ui .skill-shop-slot[aria-pressed='true'] {
   border-color: #e4c16f;
