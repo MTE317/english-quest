@@ -1,13 +1,13 @@
-import { loadGameData } from '../gamedata.js?v=skill-growth-2';
+import { loadGameData } from '../gamedata.js?v=public-rewards-1';
 import { loadJson } from '../data.js?v=skill-growth-2';
 import { loadLearningCatalog } from '../learning-catalog.js?v=skill-growth-2';
 import { Scheduler } from '../srs.js?v=skill-growth-2';
 import { LearningStore, loadSettings } from '../storage.js?v=skill-growth-2';
 import { GameSession } from '../save.js?v=skill-growth-2';
 import { normalizeGame } from '../game-state.js?v=jobs-intro-1';
-import { allowedDungeons } from '../dungeon.js?v=jobs-intro-1';
-import { createBattleView } from '../ui/battle-view.js?v=jobs-intro-1';
-import { createStatusDebugSession } from '../debug-status.js?v=jobs-intro-1';
+import { allowedDungeons } from '../dungeon.js?v=public-rewards-1';
+import { createBattleView } from '../ui/battle-view.js?v=public-rewards-1';
+import { createStatusDebugSession } from '../debug-status.js?v=public-rewards-1';
 import { stopSpeech } from '../speech.js?v=skill-growth-2';
 import { setSceneMusic } from '../battle-music.js?v=skill-growth-2';
 import { el, render } from '../dom.js?v=skill-growth-2';

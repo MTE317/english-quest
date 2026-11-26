@@ -86,6 +86,7 @@
     "xp_to_next": "25 * Lv^1.5"
   },
   "rewards": {
+    "fixed_monster_dungeons": ["windward_plain", "sunlit_forest", "mossy_cave", "goblin_quarry", "ruined_fort", "misty_marsh"],
     "xp_per_enemy": "6 + 3.2*enemyLv (boss x5)",
     "overlevel_penalty_per_level": "経験値 × max(0, 1 - 0.25 × max(0, (自分のLv - 敵のLv) - 1))。敵より2レベル高いと減り始め、5レベル高いと0",
     "overlevel_min": 0,
