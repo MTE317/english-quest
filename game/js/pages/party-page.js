@@ -23,6 +23,7 @@ import { setSceneMusic } from '../battle-music.js?v=skill-growth-2';
 
 import { installGameShell } from '../ui/game-shell.js?v=skill-growth-2';
 import { weaponIcon } from '../ui/weapon-icons.js?v=skill-growth-2';
+import { uiIcon } from '../ui/pixel-icons.js?v=skill-growth-2';
 import { armorIcon, equipmentIcon } from '../ui/equipment-icons.js?v=skill-growth-2';
 import { portraitIcon, portraitLabel, PORTRAIT_GROUPS } from '../ui/portrait.js?v=skill-growth-2';
 
@@ -155,7 +156,7 @@ function gearLabel(gear, jobId) {
 function gearNameWithIcon(gear, jobId, tag = 'span') {
   const def = gearDef(data, gear);
   return el(tag, { class: 'equipment-gear-name' },
-    equipmentIcon(def),
+    equipmentIcon(def) ?? uiIcon('gear'),
     el('span', {}, gearLabel(gear, jobId)));
 }
 
@@ -257,9 +258,19 @@ function weaponMasteryPanel(member) {
     })));
 }
 
-function showMember(index, tab = 'skills') {
+function showMember(index, tab = 'skills', selectedSlot = null, { scroll = true } = {}) {
   if (tab === 'skills') return showSkills(index);
+  const scrollY = window.scrollY;
   const m = session.game.party[index];
+  const equipmentPanel = el('section', { class: 'equipment-picker', id: 'equipment-picker', hidden: true });
+  const slotButtons = new Map();
+  function selectSlot(slot) {
+    if (session.inDungeon) return;
+    selectedSlot = slot;
+    for (const [id, button] of slotButtons) button.setAttribute('aria-pressed', String(id === slot));
+    equipmentPanel.hidden = false;
+    showSlot(index, slot, equipmentPanel, () => showMember(index, 'equipment', slot, { scroll: false }));
+  }
   const st = computeStats(data, m);
   const cap = levelCap(data);
   const statRows = [
@@ -277,14 +288,16 @@ function showMember(index, tab = 'skills') {
         const gear = m.equip[slot];
         const def = gear ? gearDef(data, gear) : null;
         const icon = equipmentIcon(def) ?? armorIcon(slot);
-        return el('li', {},
-          el('button', { disabled: session.inDungeon, onclick: () => showSlot(index, slot) },
-            el('span', { class: 'equipment-slot-label' },
-              icon ?? el('span', { 'aria-hidden': 'true' }, slotIcons[slot]),
-              SLOT_LABEL[slot]),
-            el('span', { class: 'equipment-slot-name' }, gear ? gearLabel(gear, m.job) : '未装備')));
+        const button = el('button', { type: 'button', disabled: session.inDungeon,
+          'aria-pressed': 'false', 'aria-controls': equipmentPanel.id, onclick: () => selectSlot(slot) },
+          el('span', { class: 'equipment-slot-label' },
+            icon ?? el('span', { 'aria-hidden': 'true' }, slotIcons[slot]),
+            SLOT_LABEL[slot]),
+          el('span', { class: 'equipment-slot-name' }, gear ? gearLabel(gear, m.job) : '未装備'));
+        slotButtons.set(slot, button);
+        return el('li', {}, button);
       })),
-
+    equipmentPanel,
     ] : [
       el('h2', {}, '能力'),
       el('p', { class: 'muted small' }, m.lv < cap ? `次のレベルまで ${xpToNext(data, m.lv) - m.xp}` : '最大レベル'),
@@ -296,7 +309,8 @@ function showMember(index, tab = 'skills') {
       statusSusceptibilityPanel(data, session.game, index),
       weaponMasteryPanel(m),
     ]);
-  window.scrollTo(0, 0);
+  if (tab === 'equipment' && selectedSlot) selectSlot(selectedSlot);
+  window.scrollTo(0, scroll ? 0 : scrollY);
 }
 
 function skillIcon(skill) {
@@ -549,7 +563,8 @@ function equipmentChanges(before, after) {
     ...['str', 'mag', 'def', 'res', 'spd', 'luk'].map((key) => [key, STAT_LABEL[key]])];
   const changes = stats.filter(([key]) => before[key] !== after[key]).map(([key, label]) => {
     const delta = Number((after[key] - before[key]).toFixed(2));
-    return el('span', { class: delta > 0 ? 'gain' : 'loss' }, `${label} ${delta > 0 ? '+' : ''}${delta}`);
+    return el('span', { class: delta > 0 ? 'gain' : 'loss' },
+      `${label} ${before[key]} → ${after[key]}（${delta > 0 ? '+' : ''}${delta}）`);
   });
   return changes.length ? changes : el('span', { class: 'muted' }, '能力値の変化なし');
 }
@@ -560,7 +575,7 @@ function previewWith(member, slot, gear) {
   return { stats: computeStats(data, preview), offhandRemoved: member.equip.offhand && !preview.equip.offhand };
 }
 
-function showSlot(index, slot) {
+function showSlot(index, slot, container, refresh) {
   const g = session.game;
   const m = g.party[index];
   const before = computeStats(data, m);
@@ -568,7 +583,7 @@ function showSlot(index, slot) {
   const cands = g.storage.gear.filter((x) => gearDef(data, x).slot === kind)
     .map((gear) => ({ gear, check: canEquip(data, m, slot, gear) }))
     .sort((a, b) => Number(b.check.ok) - Number(a.check.ok) || gearDef(data, b.gear).itemLv - gearDef(data, a.gear).itemLv);
-  const confirmation = el('section', { class: 'equipment-confirm', hidden: true, 'aria-label': '装備の比較' });
+  const confirmation = el('section', { class: 'equipment-confirm equipment-comparison', hidden: true, 'aria-label': '装備の比較' });
   const selectedButtons = [];
   function select(gear, source) {
     for (const button of selectedButtons) button.setAttribute('aria-pressed', String(button === source));
@@ -576,6 +591,8 @@ function showSlot(index, slot) {
     confirmation.hidden = false;
     render(confirmation,
       el('div', { role: 'status' },
+        el('h3', {}, '装備の比較'),
+        el('p', { class: 'small' }, `現在：${m.equip[slot] ? gearLabel(m.equip[slot], m.job) : '未装備'}`),
         gearNameWithIcon(gear, m.job, 'strong'),
         gearDef(data, gear).slot === 'weapon' ? el('p', { class: 'muted small' },
           `武器特性：${data.weaponTypes.get(gearDef(data, gear).kind)?.feature ?? 'なし'}`) : null,
@@ -585,31 +602,40 @@ function showSlot(index, slot) {
         offhandRemoved && slot === 'weapon' ? el('p', { class: 'small' }, 'サブ武器も倉庫へ戻ります。') : null),
       el('button', { class: 'primary', onclick: () => {
         session.update((game) => equipFromStorage(data, game, game.party[index], slot, gear.uid));
-        showMember(index, 'equipment');
+        refresh();
       } }, 'この装備に替える'));
   }
-  render(view,
-    memberNavigation(index, 'equipment', next => showSlot(next, slot)),
-    el('h2', {}, SLOT_LABEL[slot]),
-    el('div', { class: 'panel small' }, el('span', { class: 'equipment-slot-label' }, '装備中'),
-      m.equip[slot] ? gearNameWithIcon(m.equip[slot], m.job) : '未装備'),
-    m.equip[slot] ? el('button', {
-      onclick: () => { session.update((game) => unequip(data, game, game.party[index], slot)); showMember(index, 'equipment'); },
-    }, '外して倉庫へ') : null,
-    el('h2', {}, '倉庫から選ぶ'),
+  render(container,
+    el('h2', {}, `${SLOT_LABEL[slot]}の装備`),
+    el('section', { class: 'panel equipment-current', 'aria-label': '装備中の装備' },
+      el('h3', {}, '装備中'),
+      m.equip[slot] ? gearNameWithIcon(m.equip[slot], m.job) : el('p', { class: 'muted' }, '未装備'),
+      m.equip[slot] ? el('button', { type: 'button', onclick: () => {
+        session.update((game) => unequip(data, game, game.party[index], slot));
+        refresh();
+      } }, '外して倉庫へ') : null),
+    el('h3', {}, '倉庫の装備'),
+    el('p', { class: 'small muted' }, 'アイコンを選ぶと、装備中のものと比較できます。'),
     cands.length === 0 ? el('p', { class: 'muted' }, 'この枠につけられる装備は倉庫にありません。') : null,
-    el('ul', { class: 'choice-list equipment-items' },
+    el('div', { class: 'shop-grid storage-grid equipment-items', role: 'group', 'aria-label': '倉庫の装備一覧' },
       cands.map(({ gear, check }) => {
-        const button = el('button', { disabled: !check.ok, 'aria-pressed': 'false',
+        const def = gearDef(data, gear);
+        const rarity = def.unique ? 'unique' : def.setId ? 'set' : gear.rarity || 'common';
+        const rarityName = data.rarityTable.find(entry => entry.id === rarity)?.name
+          ?? ({ set: 'セット', unique: 'ユニーク' }[rarity]) ?? rarity;
+        const button = el('button', { type: 'button', class: 'shop-slot', 'data-rarity': rarity,
+          disabled: !check.ok, 'aria-pressed': 'false',
+          'aria-label': `${gearLabel(gear, m.job)}、${rarityName}、${check.ok ? '比較する' : check.reason}`,
           onclick: () => select(gear, button) },
-          gearNameWithIcon(gear, m.job, 'strong'),
-          el('span', { class: 'stats' }, check.ok ? '比較する' : check.reason));
+          el('span', { class: 'shop-item-icon', 'aria-hidden': 'true' }, equipmentIcon(def) ?? uiIcon('gear')),
+          el('span', { class: 'shop-slot-name' }, gearLabel(gear, m.job)),
+          el('span', { class: 'shop-slot-count' }, rarityName),
+          el('span', { class: 'shop-slot-count' }, check.ok ? `装備Lv ${def.itemLv}` : check.reason));
         selectedButtons.push(button);
-        return el('li', {}, button);
+        return button;
       })),
     confirmation,
   );
-  window.scrollTo(0, 0);
 }
 
 // ---------------- 動作確認用 ----------------
