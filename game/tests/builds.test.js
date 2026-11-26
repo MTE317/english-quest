@@ -357,7 +357,7 @@ test('逃走率付与は行動者だけに反映し、表示と実際の逃走�
   const difficult = { ...rules, balance: { ...rules.balance, battle_formulas: { ...rules.balance.battle_formulas, flee: '-1' } } };
   assert.equal(fleeRate(difficult, ctx.game, ctx.battle, 1), .1);
   ctx.enemy.boss = true;
-  assert.equal(fleeRate(rules, ctx.game, ctx.battle, 0), 0);
+  assert.equal(fleeRate(rules, ctx.game, ctx.battle, 0), .95, 'ボスも通常戦と同じ逃走上限を使う');
   ctx.enemy.boss = false; ctx.battle.allies[0].statuses.bind = { turns: 2 };
   assert.equal(fleeRate(rules, ctx.game, ctx.battle, 0), 0);
 });

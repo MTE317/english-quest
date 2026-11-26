@@ -14,7 +14,7 @@ import { unlockBattleSound, playBattleHitSound } from '../battle-sound.js?v=skil
 import { portraitIcon } from './portrait.js?v=skill-growth-2';
 import { ultimateGauge } from './skill-presentation.js?v=skill-growth-2';
 import { describeSkillEffect } from '../skill-effects.js?v=skill-growth-2';
-import { ownedBlessing } from '../job-combat.js?v=advanced-jobs-1';
+import { ownedBlessing, passiveRules } from '../job-combat.js?v=advanced-jobs-1';
 import { statusIconId, buffIconId, effectIcon, JOB_EFFECT_ICON } from './effect-icons.js?v=battle-effect-icons-1';
 
 const TARGET_PROMPT = {
@@ -45,6 +45,23 @@ const BUFF_NAMES = {
   regen: 'HP継続回復', mp_regen: 'MP継続回復', immune: '状態異常無効',
   barrier: '障壁', heal: '回復効果', healp: '回復効果',
 };
+
+export const JOB_EFFECT_SECTIONS = Object.freeze({
+  party: '全体の強化・弱化',
+  ongoing: 'ジョブの固有継続効果',
+  special: 'その他の特殊効果',
+});
+
+// 付与元の職名ではなく、実際に保持している効果の性質で分類する。
+function jobEffectSection(skill, effect) {
+  const continuous = Object.values(effect.values ?? {}).some(value => value !== 0)
+    || effect.shield > 0 || effect.regen || effect.statusResist || effect.lifesteal || effect.weaponDamage || effect.mpSave?.length;
+  if (!continuous && (effect.nextDamage || effect.nextMpSave || effect.nextHpCost)) return JOB_EFFECT_SECTIONS.special;
+  if (effect.shield > 0 || effect.blessing) return JOB_EFFECT_SECTIONS.ongoing;
+  if (effect.song || skill?.kind === 'party_buff'
+    || skill?.kind === 'ally_buff' && skill.effect?.tgt === 'all') return JOB_EFFECT_SECTIONS.party;
+  return JOB_EFFECT_SECTIONS.ongoing;
+}
 function buffText(data, key, value) {
   const down = key.startsWith('down:');
   const name = down ? key.slice(5) : key;
@@ -60,49 +77,74 @@ export function allyEffectEntries(data, game, battle, index) {
   const member = game.party[index], ally = battle.allies[index];
   const entry = (label, icon = JOB_EFFECT_ICON) => ({ label, icon });
   const duration = value => Number.isFinite(value) ? `（残り${value}）` : '';
-  const timedBuffs = buffs => Object.entries(buffs ?? {}).flatMap(([key, entry]) => {
-    if (!Array.isArray(entry) || !(entry[1] > 0) || !entry[0]) return [];
-    return [{ label: buffText(data, key, entry[0]) + duration(entry[1]), icon: buffIconId(key, entry[0]) }];
+  const timedBuffs = (buffs, commonIcon = false) => Object.entries(buffs ?? {}).flatMap(([key, state]) => {
+    if (!Array.isArray(state) || !(state[1] > 0) || !state[0]) return [];
+    return [entry(buffText(data, key, state[0]) + duration(state[1]), commonIcon ? JOB_EFFECT_ICON : buffIconId(key, state[0]))];
   });
   const statuses = Object.entries(ally.statuses ?? {}).map(([id, state]) =>
     entry(`${data.statusEffects.get(id)?.name ?? id}${state.n > 1 ? ' ×' + state.n : ''}${duration(state.turns)}`, statusIconId(id)));
   if (member.hp <= 0) statuses.unshift(entry('戦闘不能', null));
-  const ongoing = Object.entries(ally.masterEffects ?? {}).flatMap(([key, effect]) => {
-    if (effect.remaining <= 0) return [];
+
+  const party = timedBuffs(battle.partyBuffs, true), ongoing = [], special = [];
+  const groups = { [JOB_EFFECT_SECTIONS.party]: party, [JOB_EFFECT_SECTIONS.ongoing]: ongoing, [JOB_EFFECT_SECTIONS.special]: special };
+  const passives = passiveRules(data, member);
+  for (const [key, effect] of Object.entries(ally.masterEffects ?? {})) {
+    if (effect.remaining <= 0) continue;
     const id = effect.skillId ?? key.replace(/:(mp|damage)$/, '');
-    const name = data.skills.get(id)?.name ?? key;
-    const values = Object.entries(effect.values ?? {}).map(([stat, value]) => buffText(data, stat, value));
+    const skill = data.skills.get(id);
+    const name = skill?.name ?? (effect.blessing ? '加護' : key);
+    const values = Object.entries(effect.values ?? {}).filter(([, value]) => value !== 0).map(([stat, value]) => buffText(data, stat, value));
     if (effect.shield > 0) values.push(`防護 ${effect.shield} HP`);
     if (effect.blessing) values.push('加護');
     if (effect.regen) values.push(`HP継続回復 ${Math.round(effect.regen.amount ?? 0)}`);
     if (effect.statusResist) values.push(`状態異常耐性：${(effect.statusResist.statuses ?? []).map(id => data.statusEffects.get(id)?.name ?? id).join('・') || '対象状態異常'} ${Math.round(effect.statusResist.rate * 100)}%`);
     if (effect.nextDamage) values.push(`次の攻撃ダメージ +${Math.round(effect.nextDamage.rate * 100)}%`);
-    if (effect.nextMpSave) values.push(`次のスキル消費MP -${Math.round(effect.nextMpSave.rate * 100)}%`);
+    if (effect.nextMpSave) values.push(`次のスキル消費MP -${Math.round(effect.nextMpSave.rate * 100)}%・残り${effect.nextMpSave.uses ?? 1}回`);
     for (const save of effect.mpSave ?? []) values.push(`スキル消費MP -${Math.round(save.rate * 100)}%`);
-    if (effect.nextHpCost) values.push('次のスキルのHP消費を変更');
+    if (effect.nextHpCost) values.push(`次のスキルのHP消費 -${Math.round((1 - effect.nextHpCost.rate) * 100)}%・残り1回`);
     if (effect.lifesteal) values.push(`HP吸収 ${Math.round(effect.lifesteal * 100)}%`);
     if (effect.weaponDamage) values.push(`武器ダメージ +${Math.round(effect.weaponDamage * 100)}%`);
-    return [entry(`${name}${duration(effect.remaining)}${values.length ? '：' + values.join('・') : ''}`)];
-  });
-  const special = [];
-  if (ally.imbue) special.push(`武器属性：${data.elements.get(ally.imbue)?.name ?? ally.imbue}`);
-  if (ally.normalSkillReady) special.push('次の攻撃技能を強化');
-  if (ally.anger > 0) special.push(`怒気 ${ally.anger}/3`);
-  if (ally.masterCounter?.remaining > 0) special.push('反撃の構え' + duration(ally.masterCounter.remaining));
+    const coverRule = passives.find(rule => rule.skill.id === id)?.on_cover;
+    if (coverRule && ally.coverStages > 0) values.push(`守勢 ${Math.min(coverRule.max, ally.coverStages)}/${coverRule.max}段階`);
+    groups[jobEffectSection(skill, effect)].push(entry(`${name}${duration(effect.remaining)}${values.length ? '：' + values.join('・') : ''}`));
+  }
+
+  const anger = passives.find(rule => rule.anger)?.anger;
+  if (member.hp > 0 && (anger || ally.anger > 0)) ongoing.push(entry(`怒気 ${Math.min(anger?.max ?? 3, Math.max(0, ally.anger ?? 0))}/${anger?.max ?? 3}`));
+  const combo = passives.find(rule => rule.combo)?.combo;
+  if (member.hp > 0 && combo) ongoing.push(entry(`連携 ${Math.min(combo.max, Math.max(0, ally.comboStage ?? 0))}/${combo.max}段階`));
+  const traps = new Map();
+  for (const trap of battle.masterTraps ?? []) {
+    if (trap.actor !== index || member.hp <= 0 || !(battle.enemies?.[trap.target]?.hp > 0)) continue;
+    const id = trap.skill.id;
+    if (!traps.has(id)) traps.set(id, []);
+    traps.get(id).push(battle.enemies[trap.target].name);
+  }
+  for (const [id, targets] of traps) {
+    const skill = data.skills.get(id);
+    const limit = skill && effectiveSkill(data, member, skill).effect.rules?.trap?.limit_total;
+    ongoing.push(entry(`${skill?.name ?? '罠'}：設置${targets.length}${limit ? '/' + limit : ''}個・対象 ${targets.join('・')}`));
+  }
+
+  if (ally.imbue) special.push(entry(`武器属性：${data.elements.get(ally.imbue)?.name ?? ally.imbue}`));
+  if (ally.normalSkillReady) special.push(entry('次の攻撃技能を強化'));
+  const barrier = ally.buffs?.barrier;
+  if (barrier?.[0] > 0 && barrier[1] > 0) special.push(entry(buffText(data, 'barrier', barrier[0]) + duration(barrier[1])));
+  if (ally.masterCounter?.remaining > 0) special.push(entry('反撃の構え' + duration(ally.masterCounter.remaining)));
   for (const cover of [ally.masterCover, ally.masterUltimateCover]) if (cover?.remaining > 0) {
     const target = cover.target === 'selected' ? game.party[cover.targetIndex]?.name ?? '味方' : '味方全員';
-    special.push(`${target}をかばう${duration(cover.remaining)}`);
+    special.push(entry(`${target}をかばう${duration(cover.remaining)}`));
   }
   battle.allies.forEach((other, source) => {
     if (source === index) return;
     for (const cover of [other.masterCover, other.masterUltimateCover]) if (cover?.remaining > 0
       && game.party[source].hp > 0 && (cover.target === 'all' || cover.targetIndex === index)) {
-      special.push(`${game.party[source].name}がかばう${duration(cover.remaining)}`);
+      special.push(entry(`${game.party[source].name}がかばう${duration(cover.remaining)}`));
     }
   });
   return [
-    ['状態異常', statuses], ['自身の強化・弱体', timedBuffs(ally.buffs)],
-    ['全体の強化・弱体', timedBuffs(battle.partyBuffs)], ['ジョブ固有の継続効果', ongoing], ['その他の特殊効果', special.map(label => entry(label))],
+    ['状態異常', statuses], ['自身の強化・弱化', timedBuffs(Object.fromEntries(Object.entries(ally.buffs ?? {}).filter(([key]) => key !== 'barrier')))],
+    [JOB_EFFECT_SECTIONS.party, party], [JOB_EFFECT_SECTIONS.ongoing, ongoing], [JOB_EFFECT_SECTIONS.special, special],
   ];
 }
 
