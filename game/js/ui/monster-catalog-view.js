@@ -1,5 +1,5 @@
 import { el, render } from '../dom.js?v=skill-growth-2';
-import { catalogMonsters, monsterUnlocks } from '../monster-catalog.js?v=monster-catalog-2';
+import { catalogMonsters, monsterUnlocks } from '../monster-catalog.js?v=intro-route-1';
 import { monsterKnowledge } from '../monster-knowledge.js?v=monster-catalog-1';
 
 const waiting = (count, threshold) => `未解放（討伐 ${count}/${threshold}）`;

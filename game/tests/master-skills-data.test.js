@@ -130,7 +130,7 @@ test('仮仕様と旧技能の返還カタログを独立データとして保�
   const rules=JSON.parse(read('basic_job_rules.json'));
   assert.equal(rules.version,2);
   assert.equal(rules.provisional,true);
-  assert.equal(rules.starting_ap,30);
+  assert.equal(rules.starting_ap,20);
   assert.deepEqual(rules.capacity,{actions:10,passives:10});
   assert.equal(rules.ultimate.gauge_max,100);
   assert.equal(rules.ultimate.capacity_cost,0);

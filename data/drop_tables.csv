@@ -1,4 +1,5 @@
 ﻿dungeon_id,gear_drop_rate_per_battle,material_rate_per_enemy,rare_material_rate,gold_share_of_run_income,boss_gold_mul,boss_gear_drop,bounty_chance_per_run
+windward_plain,0.25,0.70,0.07,1.0,4,1.0,0
 mossy_cave,0.30,0.70,0.08,1.0,4,1.0,0.08
 sunlit_forest,0.25,0.70,0.07,1.0,4,1.0,0.08
 ruined_fort,0.30,0.70,0.08,1.0,4,1.0,0.08

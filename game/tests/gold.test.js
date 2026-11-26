@@ -61,7 +61,7 @@ test('既存未受注53Gは530G、新規掲示も同じ単位。換算済みの�
  const g=fresh();delete g.goldVersion;g.gold=37;g.board=[{uid:1,rewardGold:53}];normalizeGame(data,g);
  assert.equal(g.board[0].rewardGold,530);assert.equal(g.gold,370);
  g.gold=3;normalizeGame(data,g);assert.equal(g.gold,3);
- const n=fresh();fillBoard(data,n,()=>.3);assert.ok(n.board.every(q=>q.rewardGold>=0&&q.rewardGold%10===0));
+ const n=fresh();n.cleared.sunlit_forest=1;fillBoard(data,n,()=>.3);assert.ok(n.board.every(q=>q.rewardGold>=0&&q.rewardGold%10===0));
  const q=n.board.find(q=>q.type==='bounty');const start=n.gold;acceptQuest(data,n,q.uid,()=>.3);assert.equal(start-n.gold,q.depositPaid);
 });
 

@@ -196,7 +196,8 @@
     "bounty_chance_cap": 0.8,
     "expedition_fee_rate": 0.08,
     "free_expeditions": [
-      "mossy_cave"
+      "mossy_cave",
+      "windward_plain"
     ],
     "legacy_layout": {
       "mossy_cave": {
@@ -679,6 +680,122 @@
         "first_floor_enemies": 2,
         "other_floor_enemies": 3
       }
+    },
+    "intro_routes": {
+      "windward_plain": {
+        "hp_mul": 0.5,
+        "formations": [
+          [
+            "slime"
+          ],
+          [
+            "slime",
+            "slime"
+          ],
+          [
+            "slime",
+            "slime",
+            "slime"
+          ]
+        ]
+      },
+      "sunlit_forest": {
+        "hp_mul": 0.58,
+        "formations": [
+          [
+            "nut_squirrel",
+            "nut_squirrel"
+          ],
+          [
+            "nut_squirrel",
+            "poison_cap"
+          ],
+          [
+            "poison_cap",
+            "nut_squirrel",
+            "nut_squirrel"
+          ]
+        ]
+      },
+      "mossy_cave": {
+        "hp_mul": 0.67,
+        "boss_hp_mul": 0.82,
+        "formations": [
+          [
+            "cave_rat",
+            "cave_rat"
+          ],
+          [
+            "cave_rat",
+            "$season"
+          ],
+          [
+            "cave_rat",
+            "cave_rat",
+            "$season"
+          ],
+          [
+            "goblin_boss"
+          ]
+        ],
+        "seasonal": {
+          "spring": "pollen_bug",
+          "summer": "glowmoss_sprite",
+          "autumn": "mushroom_soldier",
+          "winter": "cave_bat"
+        }
+      }
+    },
+    "pre_intro_routes": {
+      "mossy_cave": [
+        {
+          "dungeonId": "mossy_cave",
+          "floor": 1,
+          "enemyLevel": 1,
+          "battles": 1,
+          "enemiesPerBattle": 2,
+          "lastBattleIsBoss": false,
+          "returnPointAfter": false
+        },
+        {
+          "dungeonId": "mossy_cave",
+          "floor": 2,
+          "enemyLevel": 3,
+          "battles": 1,
+          "enemiesPerBattle": 3,
+          "lastBattleIsBoss": false,
+          "returnPointAfter": true
+        },
+        {
+          "dungeonId": "mossy_cave",
+          "floor": 3,
+          "enemyLevel": 5,
+          "battles": 1,
+          "enemiesPerBattle": 1,
+          "lastBattleIsBoss": true,
+          "returnPointAfter": false
+        }
+      ],
+      "sunlit_forest": [
+        {
+          "dungeonId": "sunlit_forest",
+          "floor": 1,
+          "enemyLevel": 2,
+          "battles": 1,
+          "enemiesPerBattle": 2,
+          "lastBattleIsBoss": false,
+          "returnPointAfter": true
+        },
+        {
+          "dungeonId": "sunlit_forest",
+          "floor": 2,
+          "enemyLevel": 5,
+          "battles": 1,
+          "enemiesPerBattle": 1,
+          "lastBattleIsBoss": true,
+          "returnPointAfter": false
+        }
+      ]
     }
   },
   "shop_gear_price": {
@@ -746,7 +863,20 @@
     }
   ],
   "guild_points": {
-    "base_by_star": [10, 30, 50, 70, 100, 130, 170, 220, 280, 360, 460, 600],
+    "base_by_star": [
+      10,
+      30,
+      50,
+      70,
+      100,
+      130,
+      170,
+      220,
+      280,
+      360,
+      460,
+      600
+    ],
     "boss_multiplier": 3,
     "bounty_multiplier": 5
   },
@@ -836,7 +966,10 @@
       "white_mage",
       "thief",
       "bard"
-    ]
+    ],
+    "items": {
+      "return_feather": 1
+    }
   },
   "balance_targets": {
     "version": "2026-11-23-builds",

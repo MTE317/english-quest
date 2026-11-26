@@ -1,5 +1,5 @@
 ﻿id,name,icon,dungeon_rank,dungeons,types,weak,resist,hp_mul,atk_mul,def_mul,res_mul,spd_mul,magic_rate,status,status_rate,attack_element,season,replaces,is_boss,material_common,material_rare,role,strong_weak,immune,status_affinity,tactics
-slime,スライム,🟢,1,mossy_cave|twisted_tunnel|blooming_hill,amorphous,fire,blunt,0.935,0.68,1.2,0.6,0.7,0.0,,,,all,,0,slime_mat,slime_rare,normal,,,,
+slime,スライム,🟢,1,mossy_cave|twisted_tunnel|blooming_hill|windward_plain,amorphous,fire,blunt,0.935,0.68,1.2,0.6,0.7,0.0,,,,all,,0,slime_mat,slime_rare,normal,,,,
 cave_rat,ラットル,🐀,1,mossy_cave,beast,ice|pierce,,0.76,0.84,1.0,1.0,1.4,0.0,,,,all,,0,cave_rat_mat,cave_rat_rare,normal,,,,
 goblin,ゴブリン,👺,1,mossy_cave|goblin_quarry,humanoid,slash,dark,0.85,0.935,1.0,1.0,1.0,0.0,,,,all,,0,goblin_mat,goblin_rare,normal,,,,
 cave_bat,洞窟コウモリ,🦇,1,mossy_cave|blooming_hill,bird,pierce|light,dark,0.595,0.765,1.0,1.0,1.5,0.4,blind,0.15,,all,,0,cave_bat_mat,cave_bat_rare,normal,,,,

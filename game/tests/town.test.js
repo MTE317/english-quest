@@ -15,7 +15,7 @@ import { realGameData, readCsv, readJson } from './helpers.js';
 
 const data = realGameData();
 const party = ['warrior', 'knight', 'black_mage', 'white_mage', 'thief', 'bard'].map((job) => ({ name: job, job, icon: 'x' }));
-const fresh = () => createNewGame(data, party);
+const fresh = () => { const game = createNewGame(data, party); game.cleared = { windward_plain: 1, sunlit_forest: 1 }; return game; };
 const rng = () => seededRng({ rng: 9 });
 
 test('旧会費の滞納だけを清算し、月末は銀行融資の利息だけが増える', () => {

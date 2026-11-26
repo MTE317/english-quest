@@ -76,7 +76,7 @@ test('旧職業技能は費用相当APを返し、保存再開・全滅復元で
   const storage = new MemoryStorage();
   const session = new GameSession({ storage });
   session.startNew(game);
-  session.enterDungeon({ dungeonId: 'mossy_cave' });
+  session.enterDungeon({ dungeonId: 'windward_plain' });
   const resumed = new GameSession({ storage });
   normalizeGame(data, resumed.game, resumed.run);
   resumed.wipe();
@@ -104,7 +104,7 @@ test('配給装備を手動で装備すれば、技能なしでも最初の戦�
     }
     const session = new GameSession({ storage: new MemoryStorage() });
     session.startNew(game);
-    startRun(data, session, { dungeonId: 'mossy_cave', stoneId: 'rs_1_001', seed });
+    startRun(data, session, { dungeonId: 'windward_plain', stoneId: 'rs_1_001', seed });
     startNextBattle(data, session);
     const state = session.run.battle;
     let count = 0;

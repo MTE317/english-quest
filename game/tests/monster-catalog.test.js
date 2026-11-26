@@ -20,11 +20,11 @@ test('モンスター図鑑は1,024体、既存のカテゴリと新闘技場ボ
     for (const mid of [row.material_common, row.material_rare].filter(Boolean)) assert.ok(data.materials.has(mid),row.id + ': ' + mid);
   }
 });
-test('60ダンジョンで通常・季節エンカウントし、闘技場専用ボスは登場しない', () => {
+test('入門を含む61ダンジョンで通常・季節エンカウントし、闘技場専用ボスは登場しない', () => {
   const data = realGameData();
   for (const d of data.dungeons.values()) for (const season of ['spring','summer','autumn','winter']) {
     const pool = monsterPool(data, d.id, season);
-    assert.ok(pool.length >= 10, d.id + ': ' + season);
+    assert.ok(pool.length >= (data.balance.dungeon.intro_routes[d.id] ? 1 : 10), d.id + ': ' + season);
     assert.ok(pool.every(m=>m.role==='normal'||(m.role==='season'&&m.season===season)));
     assert.ok(!pool.some(m=>m.role==='arena'));
     const battle = makeEncounter(data,d.id,1,()=>.24,{season});

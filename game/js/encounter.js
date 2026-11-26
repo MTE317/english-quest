@@ -4,7 +4,13 @@ import { affixSum } from './character.js?v=advanced-jobs-1';
 import { memberMods } from './growth.js?v=advanced-jobs-1';
 
 /** そのダンジョンにふだん出るモンスター */
-export function monsterPool(data, dungeonId, season) {
+export function monsterPool(data, dungeonId, season, { legacy = false } = {}) {
+  const intro = !legacy && data.balance.dungeon?.intro_routes?.[dungeonId];
+  if (intro) {
+    const ids = intro.formations.flat().filter(id => id !== data.dungeons.get(dungeonId)?.bossId)
+      .map(id => id === '$season' ? intro.seasonal[season] : id);
+    return [...new Set(ids)].map(id => data.monsters.get(id)).filter(Boolean);
+  }
   const pool = [...data.monsters.values()].filter((m) => m.dungeons.includes(dungeonId));
   const seasonal = pool.filter((m) => m.role === 'season' && m.season === season);
   const removed = new Set(seasonal.flatMap((m) => (m.replaces ?? '').split('|')));
@@ -12,8 +18,8 @@ export function monsterPool(data, dungeonId, season) {
 }
 
 /** 地域の常連と珍しい敵を分ける。候補を消さず、すべての種に遭遇できる重みを残す。 */
-export function encounterWeights(data, dungeonId, season, { quests = [] } = {}) {
-  const pool = monsterPool(data, dungeonId, season);
+export function encounterWeights(data, dungeonId, season, { quests = [], legacy = false } = {}) {
+  const pool = monsterPool(data, dungeonId, season, { legacy });
   const config = data.balance.encounters ?? {};
   const count = Math.min(pool.length, Math.max(1, Math.floor(config.common_count ?? pool.length)));
   const seasonal = pool.filter((m) => m.role === 'season');
@@ -65,6 +71,7 @@ export function bountyProbability(data, game, dungeonId, accepted, lure = false)
 }
 
 export function planBounty(data, game, dungeonId, rng, { lure = false } = {}) {
+  if (data.balance.dungeon?.intro_routes?.[dungeonId]) return null;
   const pool = [...data.monsters.values()].filter((m) => m.role === 'bounty' && m.dungeons.includes(dungeonId));
   if (!pool.length) return null;
   const active = pool.filter((m) => game.quests.some((q) => q.type === 'bounty' && q.target === m.id && q.progress < q.count));
@@ -98,7 +105,20 @@ export function makeEncounter(data, dungeonId, floor, rng, {
   boss = false, season, bountyId, elites = false, quests = [], maxElites = Infinity, rowOverride = null,
 } = {}) {
   const row = rowOverride ?? floorRow(data, dungeonId, floor);
-  const choices = encounterWeights(data, dungeonId, season, { quests });
+  // 保存済みの旧経路には introEncounter がないため、更新前の抽選を維持する。
+  const intro = rowOverride ? rowOverride.introEncounter : data.balance.dungeon?.intro_routes?.[dungeonId];
+  if (intro) {
+    const ids = intro.formations[floor - 1];
+    const enemies = ids.map(id => {
+      const monsterId = id === '$season' ? intro.seasonal[season] : id;
+      const enemy = makeEnemy(data, monsterId, { lv: row.enemyLevel, dungeonId, boss });
+      enemy.maxHp = Math.max(1, Math.floor(enemy.maxHp * (boss ? intro.boss_hp_mul : intro.hp_mul)));
+      enemy.hp = enemy.maxHp;
+      return enemy;
+    });
+    return distinguishNames(enemies);
+  }
+  const choices = encounterWeights(data, dungeonId, season, { quests, legacy: true });
   if (!choices.length) throw new Error(`${dungeonId} に出るモンスターがいない`);
   const enemies = [];
   if (boss) {
@@ -125,6 +145,10 @@ export function makeEncounter(data, dungeonId, floor, rng, {
     if (boss) enemies.push({ ...enemy, bounty: true });
     else enemies[0] = { ...enemy, bounty: true };
   }
+  return distinguishNames(enemies);
+}
+
+function distinguishNames(enemies) {
   // 同じ名前が並ぶときは A・B… をつける
   const names = {};
   for (const e of enemies) names[e.name] = (names[e.name] ?? 0) + 1;

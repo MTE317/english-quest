@@ -1,6 +1,7 @@
 ﻿id,rank,name,kind,days,floors,enemy_lv_floor1,item_lv_min,item_lv_max,return_point_floor,boss_id,enemy_mul,income_mul,character
-mossy_cave,1,苔むした洞窟,標準,2,3,1,1,15,2,goblin_boss,0.90,1.00,標準。物理の敵が多い
-sunlit_forest,1,木漏れ日の森,近場,1,2,2,1,15,1,grove_guardian,0.90,0.65,短い。毒・睡眠を使う敵が多い
+windward_plain,1,風渡りの原,近場,1,3,1,1,15,0,,0.70,0.65,無料の入門。スライムとの3戦を終えると森と洞窟へ進める
+mossy_cave,1,苔むした洞窟,標準,2,4,1,1,15,0,goblin_boss,0.90,1.00,通常3戦と岩窟のグラム。炎・斬撃を準備しよう
+sunlit_forest,1,木漏れ日の森,近場,1,3,2,1,15,0,grove_guardian,0.90,0.65,毒を使う敵は1戦に1体まで。3戦を終えると踏破
 ruined_fort,2,崩れた砦,標準,2,3,6,11,25,2,stone_giant,0.93,1.00,標準。硬い敵が多い
 misty_marsh,2,霧の湿原,素材の宝庫,2,3,7,11,25,2,marsh_hydra,0.90,0.90,毒・猛毒が多い。素材が多めに出る
 howling_canyon,3,風鳴りの峡谷,標準,2,3,15,21,35,2,storm_eagle,1.02,1.00,標準。素早い敵が多い

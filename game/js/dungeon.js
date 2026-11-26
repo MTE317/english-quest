@@ -9,14 +9,14 @@ import { roundGold } from './gold.js?v=skill-growth-2';
 //   'cleared'      … いちばん奥のボスを倒した（町に帰るだけ）
 import { createBattle, finishBattle, battleRewards, curedBy } from './battle.js?v=party-wipe-1';
 import { recordMonsterDefeats } from './monster-knowledge.js?v=monster-catalog-1';
-import { makeEncounter, floorRow, planBounty } from './encounter.js?v=specialist-jobs-1';
-import { rollBattleLoot, addToBackpack, swapIntoBackpack, unloadBackpack } from './loot.js?v=advanced-jobs-1';
+import { makeEncounter, floorRow, planBounty } from './encounter.js?v=intro-route-1';
+import { rollBattleLoot, addToBackpack, swapIntoBackpack, unloadBackpack } from './loot.js?v=intro-route-1';
 import { gainXp, maxHp, maxMp, affixSum, partyCanAct } from './character.js?v=party-wipe-1';
-import { advanceDays, calendarOf, countKills, refreshBoard } from './town.js?v=specialist-jobs-1';
+import { advanceDays, calendarOf, countKills, refreshBoard } from './town.js?v=intro-route-1';
 import { discoverJobs, recordStoredMaterials } from './temple.js?v=skill-growth-2';
 import { memberMods } from './growth.js?v=advanced-jobs-1';
-import { planExploration, resolveExploration, commitExploration, explorationEntryAllowed } from './exploration.js?v=party-wipe-1';
-import { isTrialDungeonUnlocked } from './world-map.js?v=skill-growth-2';
+import { planExploration, resolveExploration, commitExploration, explorationEntryAllowed } from './exploration.js?v=intro-route-1';
+import { isTrialDungeonUnlocked, TRIAL_DUNGEON_IDS } from './world-map.js?v=intro-route-1';
 
 /** 乱数の種から 0〜1 の乱数を返す関数（状態は obj[key] に入れて保存できる） */
 export function seededRng(obj, key = 'rng') {
@@ -82,6 +82,12 @@ export function startRun(data, session, { dungeonId, stoneId, quizState, seed, b
     run.layoutVersion = data.balance.dungeon?.layout_version ?? 2;
     run.route = data.dungeonFloors.filter((row) => row.dungeonId === dungeonId)
       .sort((a, b) => a.floor - b.floor).map((row) => ({ ...row }));
+    run.introRouteVersion = 1;
+    if (TRIAL_DUNGEON_IDS.includes(dungeonId)) {
+      for (const row of run.route) row.returnPointAfter = false;
+    }
+    const intro = data.balance.dungeon?.intro_routes?.[dungeonId];
+    if (intro) for (const row of run.route) row.introEncounter = structuredClone(intro);
     // Keep exploration draws independent of battle, bounty and battle-loot draws.
     const explorationRng = seededRng({ rng: Math.imul(seed ^ (seed >>> 16), 0x45d9f3b) });
     run.explorationPlan = planExploration(data.balance.dungeon?.exploration, dungeonId, run.route, explorationRng);
@@ -94,7 +100,7 @@ export function startRun(data, session, { dungeonId, stoneId, quizState, seed, b
     run.quiz = quizState;
     run.rng = seed >>> 0;
     run.notices = advanceDays(data, game, dg.days);
-    run.bounty = planBounty(data, game, dungeonId, seededRng(run), { lure: bountyLure });
+    run.bounty = intro ? null : planBounty(data, game, dungeonId, seededRng(run), { lure: bountyLure });
   });
 }
 
@@ -110,6 +116,8 @@ export function runRoute(data, run) {
       lastBattleIsBoss: i + 1 === legacy.floors, returnPointAfter: i + 1 === legacy.return_point_floor,
     }));
     run.layoutVersion = 1;
+  } else if (!run.introRouteVersion && data.balance.dungeon?.pre_intro_routes?.[run.dungeonId]) {
+    run.route = structuredClone(data.balance.dungeon.pre_intro_routes[run.dungeonId]);
   } else {
     run.route = data.dungeonFloors.filter((row) => row.dungeonId === run.dungeonId)
       .sort((a, b) => a.floor - b.floor).map((row) => ({ ...row }));
@@ -230,7 +238,12 @@ export function afterBattle(data, session, updateTown) {
         run.bossDefeated = true;
       }
     }
-    if (b.result === 'fled' && b.enemies.some((enemy) => enemy.boss && !enemy.bounty)) {
+    if (b.result === 'fled' && run.introRouteVersion === 1 && run.floor === runFloorCount(data, run)
+      && !b.enemies.some(enemy => enemy.boss && !enemy.bounty)) {
+      // ボスのいない最終戦も勝利が踏破条件。逃走時は同じ階へ戻す。
+      run.state = 'ready';
+      run.cleared = false;
+    } else if (b.result === 'fled' && b.enemies.some((enemy) => enemy.boss && !enemy.bounty)) {
       // ボスを倒さず逃げた場合は、帰還するか同じボスへ再挑戦する。踏破扱いにはしない。
       run.state = 'return_point';
       run.cleared = false;
@@ -290,7 +303,7 @@ export function returnToTown(data, session, useItem = null) {
     const asked = run.quiz?.asked ?? 0;
     if (asked > 0 && run.earned.xp > 0) game.xpPerQuestion = run.earned.xp / asked; // 鍛錬の経験値の目安（sim と同じ考え方）
     // Completed saves from before bossDefeated was introduced already used the boss route.
-    if (run.state === 'cleared' && !run.training && (run.bossDefeated || (!run.explorationPlan && run.cleared))) {
+    if (run.state === 'cleared' && !run.training && (run.introRouteVersion === 1 || run.bossDefeated || (!run.explorationPlan && run.cleared))) {
       game.cleared = game.cleared ?? {};
       game.cleared[run.dungeonId] = (game.cleared[run.dungeonId] ?? 0) + 1;
     }

@@ -1,3 +1,4 @@
+import { TRIAL_DUNGEON_IDS } from '../world-map.js?v=intro-route-1';
 import { el } from '../dom.js?v=skill-growth-2';
 import { expeditionScene } from './scenery.js?v=skill-growth-2';
 
@@ -37,7 +38,7 @@ export function createWorldMapView({ world, discoveries, selectedDungeon, onDung
   return el('section', { class: 'atlas', 'aria-labelledby': 'world-map-heading' },
     el('div', { class: 'atlas-header' },
       el('h2', { class: 'chapter-title', id: 'world-map-heading' }, '冒険先'),
-      el('span', { class: 'atlas-count' }, `発見済み ${dungeons.length} / 5`)),
+      el('span', { class: 'atlas-count' }, `発見済み ${dungeons.length} / ${TRIAL_DUNGEON_IDS.length}`)),
     discoveries.length
       ? el('p', { class: 'atlas-status', role: 'status' }, `新しい冒険先を発見：${discoveries.map((d) => d.name).join('、')}`)
       : null,
