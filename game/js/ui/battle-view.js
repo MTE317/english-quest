@@ -119,6 +119,12 @@ export function allyEffectEntries(data, game, battle, index) {
     if (effect.qigongDamage) values.push(`気功ダメージ +${Math.round(effect.qigongDamage*100)}%`);
     if (effect.cloneEvasion) values.push(`分身の回避補助 +${Math.round(effect.cloneEvasion*100)}ポイント`);
     if (effect.magicDamage) values.push(`${effect.magicDamage.elements.map(id=>data.elements.get(id)?.name??id).join('・')}の通常攻撃魔法 +${Math.round(effect.magicDamage.rate*100)}%`);
+    if (effect.momentum) values.push(`次の武器技ダメージ +${Math.round(effect.momentum.rate*100)}%`);
+    if (effect.gunAccuracy) values.push(`次の銃技命中 +${Math.round(effect.gunAccuracy*100)}ポイント`);
+    if (effect.gunCrit) values.push(`次の銃技会心 +${Math.round(effect.gunCrit*100)}ポイント`);
+    if (effect.enchantGuard) values.push(`${data.elements.get(effect.enchantGuard.element)?.name??effect.enchantGuard.element}攻撃軽減 ${Math.round(effect.enchantGuard.rate*100)}%`);
+    if (effect.switchMp) values.push(`次の付与対応技MP -${Math.round(effect.switchMp.rate*100)}%`);
+    if (effect.enchantWeaponDamage) values.push(`付与対応技ダメージ +${Math.round(effect.enchantWeaponDamage*100)}%`);
     const coverRule = passives.find(rule => rule.skill.id === id)?.on_cover;
     if (coverRule && ally.coverStages > 0) values.push(`守勢 ${Math.min(coverRule.max, ally.coverStages)}/${coverRule.max}段階`);
     groups[jobEffectSection(skill, effect)].push(entry(`${name}${duration(effect.remaining)}${values.length ? '：' + values.join('・') : ''}`));
@@ -164,6 +170,8 @@ export function allyEffectEntries(data, game, battle, index) {
   }
 
   if (ally.imbue) special.push(entry(`武器属性：${data.elements.get(ally.imbue)?.name ?? ally.imbue}`));
+  if (member.hp>0 && (member.job==='gunner' || (ally.loaded??0)>0)) ongoing.push(entry(`装填 ${ally.loaded??0}/3`));
+  if (member.hp>0 && ally.weaponEnchant?.remaining>0) ongoing.push(entry(`武器付与：${data.elements.get(ally.weaponEnchant.element)?.name??ally.weaponEnchant.element}${duration(ally.weaponEnchant.remaining)}`));
   if (ally.normalSkillReady) special.push(entry('次の攻撃技能を強化'));
   const barrier = ally.buffs?.barrier;
   if (barrier?.[0] > 0 && barrier[1] > 0) special.push(entry(buffText(data, 'barrier', barrier[0]) + duration(barrier[1])));

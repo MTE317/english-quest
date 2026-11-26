@@ -12,20 +12,20 @@ const master = buildGameData(Object.fromEntries(Object.entries(GAME_FILES).map((
   [key, name.endsWith('.json') ? readJson(name) : readCsv(name).rows])));
 // 発見処理は制御データで検証する。個別技能が未実装の30職は準備中のまま。
 const data = { ...master, jobsById: new Map(master.jobsById), jobUnlocks: new Map() };
-for (const [id, dungeon] of [['spellblade', 'ruined_fort'], ['elementalist', 'howling_canyon']]) {
+for (const [id, dungeon] of [['witch', 'ruined_fort'], ['elementalist', 'howling_canyon']]) {
   data.jobsById.set(id, { ...master.jobsById.get(id), skillsReady: true });
   data.jobUnlocks.set(id, { job_id: id, method: '発見', discover_dungeon: dungeon,
     discover_chance_after_boss: '0.1', discover_guarantee_clears: '3' });
 }
 const specs = ['warrior', 'knight', 'black_mage', 'white_mage', 'thief', 'bard'].map((job) => ({ name: job, job, icon: 'x' }));
-const discoveries = [['spellblade', 'ruined_fort'], ['elementalist', 'howling_canyon']];
+const discoveries = [['witch', 'ruined_fort'], ['elementalist', 'howling_canyon']];
 const fresh = () => createNewGame(data, specs);
 
 test('新マスターの準備中30職は踏破しても解放せず、初期解放12職と旧職を混同しない', () => {
   const game = createNewGame(master, specs);
   for (const dungeon of master.dungeons.values()) discoverJobs(master, game, dungeon.id, () => 0);
-  assert.deepEqual(game.unlockedJobs, ['paladin','dark_knight','berserker','samurai','gladiator','warrior_monk','ascetic','executioner','ninja','assassin','bounty_hunter','dragoon']);
-  assert.equal(master.jobs.filter((job) => job.skillsReady === false).length,30);
+  assert.deepEqual(game.unlockedJobs, ['paladin','dark_knight','berserker','samurai','gladiator','warrior_monk','ascetic','executioner','ninja','assassin','bounty_hunter','dragoon','gunner','pirate','spellblade']);
+  assert.equal(master.jobs.filter((job) => job.skillsReady === false).length,27);
 });
 
 test('公開の発見2職だけ3踏破保証を持ち、元の10%抽選を維持する', () => {
@@ -73,31 +73,31 @@ test('違うダンジョンの踏破・既に解放済みの職では追加の�
   game.cleared.howling_canyon = 10;
   discoverJobs(data, game, 'mossy_cave', () => { throw new Error('関係ない地域で抽選しない'); });
   assert.deepEqual(game.unlockedJobs, []);
-  game.unlockedJobs.push('spellblade');
+  game.unlockedJobs.push('witch');
   const notices = [...game.notices];
   discoverJobs(data, game, 'ruined_fort', () => { throw new Error('既解放なら抽選しない'); });
-  assert.deepEqual(game.unlockedJobs, ['spellblade']);
+  assert.deepEqual(game.unlockedJobs, ['witch']);
   assert.deepEqual(game.notices, notices);
 });
 
 test('旧セーブの既踏破数を使い、未解放なら次の対象ボス撃破で追いつく', () => {
   const game = { cleared: { ruined_fort: 8 } };
-  assert.deepEqual(jobDiscoveryProgress(data, game, 'spellblade'), { dungeonId: 'ruined_fort', clears: 8, guarantee: 3 });
+  assert.deepEqual(jobDiscoveryProgress(data, game, 'witch'), { dungeonId: 'ruined_fort', clears: 8, guarantee: 3 });
   discoverJobs(data, game, 'ruined_fort', () => 0.99);
-  assert.deepEqual(game.unlockedJobs, ['spellblade']);
+  assert.deepEqual(game.unlockedJobs, ['witch']);
   assert.equal(game.cleared.ruined_fort, 8);
   assert.equal(jobDiscoveryProgress(data, {}, 'elementalist').clears, 0);
 });
 
 test('保証列がないデータは従来の確率だけで判定し、非公開上級職へ保証を広げない', () => {
   for (const value of [undefined, '', '0']) {
-    const rule = { ...data.jobUnlocks.get('spellblade'), discover_guarantee_clears: value };
-    const legacy = { ...data, jobUnlocks: new Map([['spellblade', rule]]) };
+    const rule = { ...data.jobUnlocks.get('witch'), discover_guarantee_clears: value };
+    const legacy = { ...data, jobUnlocks: new Map([['witch', rule]]) };
     const game = { cleared: { ruined_fort: 20 } };
     discoverJobs(legacy, game, 'ruined_fort', () => 0.99);
     assert.deepEqual(game.unlockedJobs, []);
     discoverJobs(legacy, game, 'ruined_fort', () => 0.05);
-    assert.deepEqual(game.unlockedJobs, ['spellblade']);
+    assert.deepEqual(game.unlockedJobs, ['witch']);
   }
   const hidden = { ...data, jobsById: new Map(data.jobsById), jobUnlocks: new Map() };
   hidden.jobsById.set('private_test', { id: 'private_test', name: '非公開', tier: 'advanced' });
@@ -123,12 +123,12 @@ test('実遠征のボス撃破時は未加算の踏破数を使い、帰還で�
   battle.result = 'win';
   session.setBattle(battle);
   afterBattle(data, session);
-  assert.ok(session.game.unlockedJobs.includes('spellblade'));
+  assert.ok(session.game.unlockedJobs.includes('witch'));
   assert.equal(session.game.cleared.ruined_fort, 2);
   assert.equal(session.run.cleared, true);
   returnToTown(data, session);
   assert.equal(session.game.cleared.ruined_fort, 3);
-  assert.equal(session.game.notices.filter((note) => note.includes('魔法剣士を発見')).length, 1);
+  assert.equal(session.game.notices.filter((note) => note.includes(data.jobsById.get('witch').name + 'を発見')).length, 1);
 });
 
 test('全滅や途中帰還を繰り返しても発見の踏破回数を増やさない', () => {
@@ -148,4 +148,3 @@ test('全滅や途中帰還を繰り返しても発見の踏破回数を増や�
   assert.equal(session.game.cleared.ruined_fort, 1);
   assert.deepEqual(session.game.unlockedJobs, []);
 });
-

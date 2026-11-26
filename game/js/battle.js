@@ -21,7 +21,8 @@ import { masterTags, weaponSkill, songSkill, healingSkill, weaponAllowed, passiv
   directMagic, cloneCount, snapshotCloneDefense, cloneDefense, specialistAccuracy, specialistCrit,
   notePrimaryKill, recordSelfSupport, applySpecialistRules,
   activeMark, preparePursuitAttack, pursuitAccuracy, conditionalTargetCrit, pursuitDefIgnore, pursuitStatusBonus,
-  recordPrimaryHits, preparationSnapshot, recordPreparation, applyPursuitJumpRules, isAirborne, landingAction } from './job-combat.js?v=jobs-intro-1';
+  recordPrimaryHits, preparationSnapshot, recordPreparation, applyPursuitJumpRules, isAirborne, landingAction,
+  applyFirearmSeaArcaneRules } from './job-combat.js?v=jobs-intro-1';
 
 /** balance.json にまだ式がないもの（sim と同じ） */
 export const BATTLE_FORMULAS = Object.freeze({
@@ -208,7 +209,7 @@ export function createBattle(data, game, { enemies, seed = Date.now(), canFlee =
     allies: game.party.map((m) => ({
       statuses: Object.fromEntries((m.persist ?? []).filter((id) => data.statusEffects.has(id) && id !== 'stun' && id !== 'taunt').map((id) => [id, { turns: data.statusEffects.get(id).turns, n: 1, ...m.persistState?.[id],
         ...(id === 'weaken' && m.persistState?.[id]?.turns === 99 ? { turns: data.statusEffects.get(id).turns } : {}) }])),
-      buffs: {}, masterEffects: {}, imbue: null, once: [], endured: false,
+      buffs: {}, masterEffects: {}, imbue: null, loaded: 0, weaponEnchant: null, jobOpportunities: 0, once: [], endured: false,
       firstAttackUsed: false, normalSkillReady: false, evadeCounterRound: -1, anger: 0,
     })),
     enemies, partyBuffs: {}, delayed: [], pending: null, log: [], actionClock: 0,
@@ -850,12 +851,15 @@ function attackDamage(data, game, b, i, e, skill, cm, { offhand = false, actionB
     const choices = skill.elements?.length ? skill.elements : ['wind', 'earth', 'water'];
     els = [choices.reduce((best, el) => elementMul(data, enemy, el) > elementMul(data, enemy, best) ? el : best, choices[0])];
   } else if (skill?.effect.element) els = [skill.effect.element];
+  if (a.weaponEnchant?.remaining>0 && kind==='phys' && (!skill || skill.effect?.rules?.adaptive_enchant))
+    els=[a.weaponEnchant.element];
   if (!els.length && kind === 'mag') els = ['none'];
   if (skill?.effect.hits) hits = skill.effect.hits;
   const mult = (skill?.effect.m ?? 1) * (skill && base === 'weapon' ? traits.weapon_skill_mul ?? 1 : 1);
   const qigong = masterTags(skill).includes('qigong') || skill?.effect.rules?.no_weapon_power;
   const statVal = kind === 'phys'
     ? (skill?.effect.beststat ? Math.max(st.str, st.mag) : st.str) * (qigong ? 1 : traits.str_mul ?? 1) + (qigong ? 0 : st.mag * (mods.mag2phys ?? 0))
+      + st.mag*(skill?.effect.rules?.hybrid_mag_rate??0)
     : st.mag * (skill?.effect.master && base !== 'weapon' ? 1 : traits.mag_mul ?? 1) * (1 + bval(a.buffs, 'magb'));
   const wpow = qigong ? 0 : skill && base === 'mag' ? spellPower(data, m)
     : weaponPower(data, m, weapon) + st.mag * (mods.mag_to_atk ?? 0);
@@ -894,7 +898,8 @@ function attackDamage(data, game, b, i, e, skill, cm, { offhand = false, actionB
   const attackBase = (statVal + (base === 'weapon' || kind === 'mag' ? wpow : wpow * 0.8)) * mult * cm * dm * imb;
   const pierce = kind === 'phys'
     ? Math.min(data.basicJobRules?.caps?.def_ignore ?? .9, (qigong ? 0 : wt?.defPierce ?? 0) + (skill?.effect.defign ?? 0)
-      + tacticalDefIgnore(b, i, skill) + pursuitDefIgnore(b,i,e,skill) + affixSum(m, 'DEF_PIERCE') / 100) : 0;
+      + tacticalDefIgnore(b, i, skill) + pursuitDefIgnore(b,i,e,skill) + affixSum(m, 'DEF_PIERCE') / 100
+      + (base==='weapon' && wt?.id==='gun' ? ruleNumber(data,m,'gun_def_ignore') : 0)) : 0;
   const defense = kind === 'phys' ? enemy.def * (1 - pierce) : enemy.res;
   const df = defense * statModifier(data, bval(enemy.buffs ?? {}, kind === 'phys' ? 'def' : 'res'),
     enemyStatDebuff(data, enemy, kind === 'phys' ? 'def' : 'res'), enemy.boss);
@@ -1588,6 +1593,13 @@ function applyMasterAttackAfter(data, game, b, actor, target, skill, cm, result)
     const n = masterCleanseEnemy(enemy, rules.cleanse_buffs.count);
     if (n) log(b, `${enemy.name}の強化を解除した`);
   }
+  if (rules.remove_attack_buffs && result.landed && result.damage > 0) {
+    const keys=Object.entries(enemy.buffs??{}).map(([key,state],index)=>({key,state,index}))
+      .filter(({key,state})=>['str','spd','crt'].includes(key) && Array.isArray(state) && state[0]>0 && state[1]>0)
+      .sort((a,c)=>a.state[1]-c.state[1]||a.index-c.index).slice(0,rules.remove_attack_buffs);
+    for(const {key} of keys)delete enemy.buffs[key];
+    if(keys.length)log(b,`${enemy.name}の攻撃強化を解除した`);
+  }
   if (!result.landed || result.damage <= 0) return;
   if (rules.steal) masterSteal(data, game, b, actor, target, rules.steal, cm);
   if (enemy.hp <= 0) return;
@@ -1701,6 +1713,7 @@ function applyMasterSkillRules(data, game, b, actor, skill, target, cm, action =
   applyTacticalRules(data, game, b, actor, skill, target, cm, action, battleStats(data, game, b, actor));
   applySpecialistRules(data,game,b,actor,skill,target,cm);
   applyPursuitJumpRules(data,game,b,actor,skill,target,cm);
+  applyFirearmSeaArcaneRules(data,game,b,actor,skill,cm,living);
 }
 
 /** status_effects.csv の cure 列（「毒消し・万能薬・清めの光」）にその名前があるか */

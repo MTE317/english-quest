@@ -94,6 +94,16 @@ export function masterDamageBonus(data, game, b, actor, target, skill, elements 
     const anger = angerRule(data, member);
     rate += angerStage(data, game, b, actor) * (anger?.damage ?? 0);
     rate += Object.values(a.masterEffects ?? {}).reduce((sum,effect)=>sum+(effect.weaponDamage??0),0);
+    if (weaponSkill(skill) && !skill.isFinal) {
+      rate += a.advancedAction?.momentumRate ?? (a.masterEffects?.pirate_P01?.momentum?.rate ?? 0);
+      const opening=passiveRules(data,member).find(rule=>rule.opening_weapon)?.opening_weapon;
+      if ((a.jobOpportunities??0)<(opening?.opportunities??0)) rate+=opening.rate;
+      if (a.advancedAction?.enchantAtStart && skill.effect?.rules?.enchant_start_bonus) rate+=skill.effect.rules.enchant_start_bonus;
+      if (a.advancedAction?.enchantUltimateRate && skill.effect?.rules?.adaptive_enchant) rate+=a.advancedAction.enchantUltimateRate;
+    }
+    if (skill?.effect?.rules?.hybrid_mag_rate) rate+=ruleNumber(data,member,'hybrid_damage');
+    if (skill?.effect?.base==='weapon' && masterTags(skill).includes('gunshot') && b.enemies[target]?.statuses?.bind)
+      rate+=ruleNumber(data,member,'bound_gun_damage');
     if (!masterTags(skill).includes('reaction') && !masterTags(skill).includes('trap')) {
       rate += a.advancedAction?.damageBonus ?? 0;
       if (a.advancedAction?.paidHp > 0) rate += ruleNumber(data, member, 'paid_weapon_damage');
@@ -135,6 +145,11 @@ export function masterCutBonus(data, game, b, actor, magic, enemy = null) {
   const duel = activeDuel(game, b, actor);
   if (duel && enemy != null) rate += duel.target === enemy ? -duel.received : ruleNumber(data, game.party[actor], 'outside_duel_cut');
   const source = b.enemies[enemy];
+  const elements=Array.isArray(source?.attackElement)?source.attackElement:String(source?.attackElement??'').split('|');
+  if (elements.includes('water')) rate+=ruleNumber(data,game.party[actor],'water_cut');
+  if (magic && b.allies[actor].weaponEnchant?.remaining>0) rate+=ruleNumber(data,game.party[actor],'enchanted_magic_cut');
+  if (Object.values(b.allies[actor].masterEffects??{}).some(effect=>effect.enchantGuard && elements.includes(effect.enchantGuard.element)))
+    rate+=Object.values(b.allies[actor].masterEffects).reduce((sum,effect)=>sum+(effect.enchantGuard && elements.includes(effect.enchantGuard.element)?effect.enchantGuard.rate:0),0);
   for (const rule of passiveRules(data, game.party[actor])) {
     if (source && rule.low_hp_source_cut && source.hp <= source.maxHp * rule.low_hp_source_cut.threshold) rate += rule.low_hp_source_cut.rate;
     if (magic && aCloneSnapshot(b, actor)) rate += rule.clone_magic_cut ?? 0;
@@ -183,6 +198,9 @@ export function masterMpSave(data, member, skill, b = null, actor = null) {
       && currentAnger(data, member, b.allies[actor]) >= rule.anger_mp_save.threshold) rate += rule.anger_mp_save.rate;
   }
   if (b && actor != null) {
+    const a=b.allies[actor];
+    if (weaponSkill(skill) && a.masterEffects?.pirate_P01?.momentum) rate+=ruleNumber(data,member,'momentum_mp_save');
+    if (skill?.effect?.rules?.adaptive_enchant && a.masterEffects?.spellblade_P01?.switchMp) rate+=a.masterEffects.spellblade_P01.switchMp.rate;
     for (const effect of Object.values(b.allies[actor].masterEffects ?? {})) {
       if (effect.nextMpSave && matchesTag(skill, effect.nextMpSave.tag)) rate += effect.nextMpSave.rate;
       for (const entry of effect.mpSave ?? []) if (matchesTag(skill, entry.tag)) rate += entry.rate;
@@ -212,6 +230,9 @@ export function beginMasterAction(data, game, b, actor, skill) {
   const a = b.allies[actor];
   a.currentActionClock = b.actionClock;
   a.advancedAction = { paidHp: 0, damageBonus: 0, actualDamage: 0, executed: false, cloneCount: cloneCount(a) };
+  a.advancedAction.enchantAtStart=Boolean(a.weaponEnchant?.remaining>0);
+  a.advancedAction.enchantUltimateRate=a.masterEffects?.spellblade_U01?.enchantWeaponDamage??0;
+  a.advancedAction.momentumRate=weaponSkill(skill)?a.masterEffects?.pirate_P01?.momentum?.rate??0:0;
   if (!pursuitRule(data, game.party[actor])) a.pursuit = 0;
   a.advancedAction.startPursuit = pursuitStage(data, game, b, actor);
   a.advancedAction.markTarget = activeMark(game,b,actor)?.target;
@@ -247,6 +268,16 @@ function masterRegenAmount(data, game, b, target, effect) {
 export function finishMasterOpportunity(data, game, b, actor, ctx, skill = null, voluntary = true) {
   const a = b.allies[actor], member = game.party[actor];
   const performed = a.advancedAction?.executed ?? true;
+  const beforeMomentum=a.masterEffects?.pirate_P01?.momentum;
+  const usingWeapon=voluntary&&performed&&weaponSkill(skill)&&!skill?.isFinal;
+  const primaryKills=a.advancedAction?.primaryKills?.length??0;
+  if (usingWeapon && beforeMomentum) delete a.masterEffects.pirate_P01;
+  if (usingWeapon && skill.effect?.rules?.adaptive_enchant && a.masterEffects?.spellblade_P01?.switchMp)
+    delete a.masterEffects.spellblade_P01;
+  if (usingWeapon && masterTags(skill).includes('gunshot')) {
+    delete a.masterEffects.gunner_P01;
+    delete a.masterEffects.gunner_A07;
+  }
   for (const [key, effect] of Object.entries(a.masterEffects ?? {})) {
     if (effect.grantedClock === b.actionClock && voluntary) continue;
     if (effect.regen?.trigger === 'end' && member.hp > 0 && !a.statuses.petrify) ctx.heal(actor, masterRegenAmount(data, game, b, actor, effect));
@@ -254,6 +285,13 @@ export function finishMasterOpportunity(data, game, b, actor, ctx, skill = null,
       delete a.masterEffects[key];
       if (effect.blessing && effect.shield > 0) expireBlessing(data, game, b, actor, effect);
     }
+  }
+  if (a.weaponEnchant?.remaining>0 && (a.weaponEnchant.grantedClock!==b.actionClock || !voluntary)
+    && --a.weaponEnchant.remaining<=0) delete a.weaponEnchant;
+  a.jobOpportunities=(a.jobOpportunities??0)+1;
+  if (usingWeapon && primaryKills && a.momentumRound!==b.round) {
+    const rule=passiveRules(data,member).find(p=>p.kill_momentum)?.kill_momentum;
+    if (rule) { a.momentumRound=b.round;grantMasterEffect(b,actor,'pirate_P01',{skillId:'pirate_P01',momentum:{rate:rule.rate},remaining:rule.turns}); }
   }
   for (const [index, covering] of b.allies.entries()) {
     const cover = covering.masterCover;
@@ -312,6 +350,11 @@ export function spendHpPayment(data, game, b, actor, skill) {
   return cost;
 }
 export function advancedSkillBlock(data, game, b, actor, skill) {
+  const rules=skill.effect.rules??{}, ally=b.allies[actor];
+  if (rules.ammo && (ally.loaded??0)<rules.ammo) return '装填数が足りない';
+  if (rules.reload && (ally.loaded??0)>=3) return '装填数が上限';
+  if (rules.spend_momentum && !ally.masterEffects?.pirate_P01?.momentum) return '勝鬨の余勢が必要';
+  if ((rules.enchant_guard || rules.release_enchant) && !(ally.weaponEnchant?.remaining>0)) return '武器属性付与が必要';
   if (skill.effect.rules?.requires_mark && !activeMark(game, b, actor)) return '自分の追跡札が付いた生存敵が必要';
   if (skill.effect.rules?.move_mark && !b.enemies.some((enemy, i) => enemy.hp > 0 && i !== activeMark(game, b, actor)?.target)) return '追跡を移せる別の敵がいない';
   if (game.party[actor].hp <= hpPayment(data,game,b,actor,skill)) return 'HPの支払い後に1以上残す必要がある';
@@ -346,6 +389,8 @@ export function advancedTargetBlock(data, game, b, actor, skill, target, action)
 export function payAdvancedCosts(data, game, b, actor, skill, action) {
   const ally=b.allies[actor], rule=skill.effect.rules??{}, state=ally.advancedAction;
   state.executed=true;
+  if (rule.ammo) ally.loaded=Math.max(0,(ally.loaded??0)-rule.ammo);
+  if (rule.spend_momentum) delete ally.masterEffects.pirate_P01;
   state.previousPreparation = Boolean(ally.previousPreparation);
   state.previousLanding = Boolean(ally.previousLanding);
   delete ally.previousPreparation;
@@ -397,6 +442,35 @@ export function masterShieldRoom(data, game, b, target, replaceKey = null) {
   const used=Object.entries(b.allies[target].masterEffects??{}).reduce((sum,[key,effect])=>sum+(key!==replaceKey?Math.max(0,effect.shield??0):0),0)
     + Math.max(0,b.allies[target].buffs?.barrier?.[0]??0);
   return Math.max(0,Math.floor(maxHp(data,game.party[target])*(data.basicJobRules?.caps?.shield_hp??.5))-used);
+}
+export function applyFirearmSeaArcaneRules(data, game, b, actor, skill, cm, living) {
+  const ally=b.allies[actor], rule=skill.effect?.rules??{};
+  if (rule.reload) {
+    const previous=ally.loaded??0;
+    ally.loaded=Math.min(3,previous+rule.reload);
+    if (ally.loaded>previous && ruleNumber(data,game.party[actor],'reload_accuracy'))
+      grantMasterEffect(b,actor,'gunner_P01',{skillId:'gunner_P01',gunAccuracy:ruleNumber(data,game.party[actor],'reload_accuracy'),remaining:2});
+  }
+  if (rule.aim) grantMasterEffect(b,actor,skill.id,{skillId:skill.id,gunCrit:rule.aim.rate*cm,remaining:rule.aim.turns});
+  if (rule.enchant || rule.ultimate_enchant) {
+    const incoming=rule.enchant?.element??skill.effect.element;
+    const previous=ally.weaponEnchant?.remaining>0?ally.weaponEnchant.element:null;
+    ally.weaponEnchant={element:incoming,remaining:(rule.enchant??rule.ultimate_enchant).turns,grantedClock:b.actionClock};
+    if (rule.enchant && previous && previous!==incoming && ruleNumber(data,game.party[actor],'switch_enchant_mp'))
+      grantMasterEffect(b,actor,'spellblade_P01',{skillId:'spellblade_P01',
+        switchMp:{rate:ruleNumber(data,game.party[actor],'switch_enchant_mp')},remaining:2});
+    if (rule.ultimate_enchant) grantMasterEffect(b,actor,'spellblade_U01',{skillId:'spellblade_U01',
+      enchantWeaponDamage:rule.ultimate_enchant.rate,remaining:rule.ultimate_enchant.turns});
+  }
+  if (rule.enchant_guard) grantMasterEffect(b,actor,skill.id,{skillId:skill.id,
+    enchantGuard:{element:ally.weaponEnchant.element,rate:rule.enchant_guard.rate*cm},remaining:rule.enchant_guard.turns});
+  if (rule.release_enchant) {
+    delete ally.weaponEnchant;
+    grantMasterEffect(b,actor,skill.id,{skillId:skill.id,nextDamage:{tag:'weapon',rate:rule.release_enchant.rate*cm},remaining:rule.release_enchant.turns});
+  }
+  if (rule.fill_ammo) ally.loaded=rule.fill_ammo;
+  if (rule.after_party_buff) for (const target of living) grantMasterEffect(b,target,skill.id,{
+    skillId:skill.id,source:actor,party:true,values:rule.after_party_buff.values,remaining:rule.after_party_buff.turns});
 }
 export function grantBlessing(data, game, b, actor, target, skill, stats, cm) {
   const rule=skill.effect.rules.blessing, formula=data.basicJobRules.protection;
@@ -655,13 +729,15 @@ export function cloneDefense(b, actor, {single=true,sureHit=false}={}) {
 }
 export function specialistAccuracy(b, actor, skill) {
   if (!weaponSkill(skill)) return 0;
-  return Object.values(b.allies[actor].masterEffects??{}).reduce((sum,effect)=>sum+(effect.nextAccuracy?.rate??0),0);
+  return Object.values(b.allies[actor].masterEffects??{}).reduce((sum,effect)=>sum+(effect.nextAccuracy?.rate??0)
+    +(masterTags(skill).includes('gunshot')?(effect.gunAccuracy??0):0),0);
 }
 export function specialistCrit(b, actor, target, skill, targetHp = null) {
   if (!weaponSkill(skill)) return 0;
   const enemy=b.enemies[target];
   return Object.values(b.allies[actor].masterEffects??{}).reduce((sum,effect)=>sum
-    +(effect.targetCrit?.target===target && (targetHp??enemy.hp)<=enemy.maxHp*effect.targetCrit.threshold ? effect.targetCrit.rate : 0),0);
+    +(effect.targetCrit?.target===target && (targetHp??enemy.hp)<=enemy.maxHp*effect.targetCrit.threshold ? effect.targetCrit.rate : 0)
+    +(masterTags(skill).includes('gunshot')?(effect.gunCrit??0):0),0);
 }
 export function notePrimaryKill(b, actor, enemy, primary) {
   const state=b.allies[actor]?.advancedAction;

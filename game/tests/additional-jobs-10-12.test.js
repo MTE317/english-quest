@@ -52,8 +52,8 @@ const damage=c=>1e7-c.enemies[0].hp;
 const mpReset=c=>{c.member.mp=maxMp(data,c.member);};
 
 test('追加10〜12職の45技能・149段階・簡素説明・前提と成長方式がマスターへ反映される',()=>{
-  assert.equal(data.jobs.filter(job=>job.skillsReady).length,20);
-  assert.equal([...data.skills.values()].filter(skill=>skill.effect.master).length,300);
+  assert.equal(data.jobs.filter(job=>job.skillsReady).length,23);
+  assert.equal([...data.skills.values()].filter(skill=>skill.effect.master).length,345);
   let stages=0;const modes={};
   for(const job of spec.jobs){const list=[...data.skills.values()].filter(skill=>skill.job===job.id);
     assert.deepEqual([list.filter(s=>!s.isFinal&&s.kind!=='passive').length,list.filter(s=>s.kind==='passive').length,list.filter(s=>s.isFinal).length],[9,5,1]);
@@ -83,7 +83,7 @@ test('3職は最初から選べ、既存セーブでもAPで手動修得し、�
     assert.equal(learnBlock(data,c.member,ultimate),'');learnSkill(data,c.member,ultimate.id);equipSkill(data,c.member,ultimate.id);
     changeJob(data,c.game,0,'warrior');assert.equal(c.member.loadout.ultimate,ultimate.id);
   }
-  assert.equal(data.jobs.filter(job=>!job.skillsReady).length,30);
+  assert.equal(data.jobs.filter(job=>!job.skillsReady).length,27);
 });
 
 test('暗殺者の異常・能力低下条件は対象ごとで、標的・属性耐性・別の敵の状態では成立しない',()=>{

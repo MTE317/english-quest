@@ -10,7 +10,7 @@
 | 入門ルート（実装PR・旧依頼の特殊移行は対象外） | [風渡りの原と初回進行](intro-route.md) |
 | 従来5ダンジョンの公開・入場 | [5ダンジョン先行版](trial-five-dungeons.md) |
 | 教材の中身 | [教材基本版v1.0](../../data/learning/v1/README.md) |
-| 職業・技能 | [50職の設計基準v2](../jobs-baseline-v2.md)、[基本8職の技能v2](../basic-jobs-skills-v2.md)。追加10〜18職は[135技能の設計](../additional-jobs-10-18-skills-v1.md)（追加10〜12の45技能は[実装済み](../additional-jobs-10-12-implementation.md)、追加13〜18は未実装）。実装状況はmainのコード・データで確認 |
+| 職業・技能 | [50職の設計基準v2](../jobs-baseline-v2.md)、[基本8職の技能v2](../basic-jobs-skills-v2.md)、追加10〜18職の[135技能の設計](../additional-jobs-10-18-skills-v1.md)。追加10〜12の[実装](../additional-jobs-10-12-implementation.md)、追加13〜15の[実装](../additional-jobs-13-15-implementation.md)を参照。追加16〜18は設計のみ |
 | データ数値と実際の処理 | `data/` と `game/js/`。設計との差分がある間は「実装済み」と読み替えない |
 
 ## 関連設計・履歴
