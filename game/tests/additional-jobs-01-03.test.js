@@ -49,11 +49,11 @@ function enemyActs(c,{power=80,target=0,sweep=false}={}) {
   nextTurn(data,c.game,c.b);
 }
 
-test('追加1〜3職45技能は設計の全段階・前提・cost・MP/APに一致し、未実装の33職は閉じたまま',()=>{
+test('追加1〜3職45技能は設計の全段階・前提・cost・MP/APに一致し、未実装の30職は閉じたまま',()=>{
   const added=[...data.skills.values()].filter(skill=>ids.includes(skill.job));
   assert.equal(added.length,45);
-  assert.equal([...data.skills.values()].filter(skill=>skill.effect.master).length,255);
-  assert.equal(data.jobs.filter(job=>job.skillsReady).length,17);
+  assert.equal([...data.skills.values()].filter(skill=>skill.effect.master).length,300);
+  assert.equal(data.jobs.filter(job=>job.skillsReady).length,20);
   for(const job of spec.jobs.filter(job=>ids.includes(job.id))) {
     const list=added.filter(skill=>skill.job===job.id);
     assert.deepEqual([list.filter(s=>s.kind==='passive').length,list.filter(s=>s.isFinal).length],[5,1]);
@@ -70,7 +70,7 @@ test('追加1〜3職45技能は設計の全段階・前提・cost・MP/APに一�
       for(const prerequisite of source.prerequisites) assert.ok(prerequisite.level<=skillMaxLevel(data.skills.get(prerequisite.id)));
     }
   }
-  assert.equal(data.jobsById.get('assassin').skillsReady,false);
+  assert.equal(data.jobsById.get('gunner').skillsReady,false);
 });
 
 test('新規・既存セーブは3職を初期から選べ、転職で技能・APを配布せず負傷も回復させない',()=>{
@@ -82,7 +82,7 @@ test('新規・既存セーブは3職を初期から選べ、転職で技能・A
   normalizeGame(data,c.game);normalizeGame(data,c.game);
   assert.ok(ids.every(id=>c.game.unlockedJobs.includes(id)));
   assert.equal(new Set(c.game.unlockedJobs).size,c.game.unlockedJobs.length);
-  assert.throws(()=>changeJob(data,c.game,0,'assassin'),/まだ選べない/);
+  assert.throws(()=>changeJob(data,c.game,0,'gunner'),/まだ選べない/);
 });
 
 test('実際のAP習得・成長・奥義10種類条件・他職継承を利用できる',()=>{

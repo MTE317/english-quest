@@ -2,7 +2,7 @@ import { availableAp } from '../ap.js?v=skill-growth-2';
 // パーティーの画面：キャラメイク・6人の一覧・能力値・装備8枠
 import { loadGameData } from '../gamedata.js?v=skill-growth-2';
 import { GameSession } from '../save.js?v=party-wipe-1';
-import { createNewGame, defaultPartySpecs, normalizeGame } from '../game-state.js?v=intro-route-1';
+import { createNewGame, defaultPartySpecs, normalizeGame } from '../game-state.js?v=jobs-intro-1';
 import {
   computeStats, SLOTS, SLOT_LABEL, STAT_LABEL, canEquip, equipFromStorage, unequip, gearDef,
   aptitudeGrade, xpToNext, levelCap, gainXp, makeGear,
@@ -12,9 +12,9 @@ import {
   commonApCost, commonBlock, learnCommon, masteryLevel, isJobMastered, GROWTH_FORMULAS,
   skillMaxLevel, learnedSkillLevel, effectiveSkill, upgradeSkillBlock, upgradeSkill, skillWeaponBlock,
 } from '../growth.js?v=advanced-jobs-1';
-import { skillMp } from '../battle.js?v=specialist-jobs-1';
-import { elementResistancePanel } from '../ui/element-resistance.js?v=specialist-jobs-1';
-import { statusSusceptibilityPanel } from '../ui/status-susceptibility.js?v=specialist-jobs-1';
+import { skillMp } from '../battle.js?v=jobs-intro-1';
+import { elementResistancePanel } from '../ui/element-resistance.js?v=jobs-intro-1';
+import { statusSusceptibilityPanel } from '../ui/status-susceptibility.js?v=jobs-intro-1';
 import { el, render, stars } from '../dom.js?v=skill-growth-2';
 import { describeFixedEffects } from '../equipment-effects.js?v=skill-growth-2';
 import { describeSkillForUI } from '../skill-effects.js?v=tactical-jobs-1';

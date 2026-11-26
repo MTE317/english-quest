@@ -1,6 +1,6 @@
 # English Quest：50職の設計基準表 v2
 
-2026-11-26実装状況：基本8職と追加1〜9職の17職・255技能を実装済み。追加10〜18職の135技能は[スキル設計v1](additional-jobs-10-18-skills-v1.md)へ整理した（設計のみ・ゲーム未実装）。実装記録は[追加1〜3職](additional-jobs-01-03-implementation.md)、[追加4〜6職](additional-jobs-04-06-implementation.md)、[追加7〜9職](additional-jobs-07-09-implementation.md)を参照。
+2026-11-26実装状況：基本8職と追加1〜12職の20職・300技能を実装済み。追加10〜18職の設計のうち、暗殺者・賞金稼ぎ・竜騎士は[追加10〜12職の実装](additional-jobs-10-12-implementation.md)へ反映した。追加13〜18職の90技能は[スキル設計v1](additional-jobs-10-18-skills-v1.md)の設計のみ。既存の実装記録は[追加1〜3職](additional-jobs-01-03-implementation.md)、[追加4〜6職](additional-jobs-04-06-implementation.md)、[追加7〜9職](additional-jobs-07-09-implementation.md)を参照。
 
 作成・改訂日：2026-11-25（日本時間）。50職の役割基準を維持し、技能を成長方式別に設計するための改訂版。基本8職の120技能を具体化した。基本8職v2はコードへ反映済み。追加職の個別技能は別紙で設計を進め、数値バランスは継続して検証する。
 

@@ -8,9 +8,9 @@ warrior_monk,僧兵,祈りと武器攻撃の往復,additional,B,B,A,C,B,A,C,D,pi
 ascetic,修験者,自己維持・気功・逆境耐久,additional,A,C,A,D,C,A,B,D,blunt|none,earth,fist,staff,気功STR／自己維持HP・RES,攻撃と調息を交互に使い、異常や消耗の中でも粘る,自身を大きく立て直し、気功と耐久を強化,1,,fist,medium,初期解放（条件は後日設定）,1
 executioner,処刑人,低HPの敵の仕留め,additional,B,C,A,D,B,D,C,A,slash,dark,axe,scythe,STR・LUK,出血などで削られた敵を見極め、重い一撃で仕留める,低HPほど強烈な裁断。撃破時は余勢を別の敵へ,1,,axe,medium,初期解放（条件は後日設定）,1
 ninja,忍者,分身・回避・忍術,additional,C,B,B,B,D,C,A,B,slash|wind,dark,katana,dagger,武器技STR／忍術MAG／SPD,分身を回避・反撃・忍術強化にどう使うか選ぶ,複数の分身を展開し、忍術と回避を大幅強化,1,,katana,medium,初期解放（条件は後日設定）,1
-assassin,暗殺者,状態異常・隙への一撃,additional,C,C,A,D,D,C,A,A,slash|pierce,dark,dagger,bow,STR／SPD・LUK,仲間の妨害や状態異常が作った好機を利用,強烈な急所攻撃。対象の状態異常や弱体で追加強化,0,,dagger,medium,個別技能の実装待ち,1
-bounty_hunter,賞金稼ぎ,特定標的の追跡・拘束,additional,B,C,A,D,B,C,B,B,pierce,ice,bow,gun|dagger,STR・武器威力,標的を指定し、追い続けるほど攻撃や拘束を強化,標的への集中射撃と強力な拘束。追跡蓄積で追加強化,0,,bow,medium,個別技能の実装待ち,1
-dragoon,竜騎士,跳躍・槍・対竜,additional,A,C,A,D,B,C,B,D,pierce,thunder|wind,spear,sword,STR・HP,跳躍で大技を避け、着地で強襲。竜特攻と対竜防御も持つ,強烈な落下槍撃。竜特攻と着地後の防護,0,,spear,medium,個別技能の実装待ち,1
+assassin,暗殺者,状態異常・隙への一撃,additional,C,C,A,D,D,C,A,A,slash|pierce,dark,dagger,bow,STR／SPD・LUK,仲間の妨害や状態異常が作った好機を利用,強烈な急所攻撃。対象の状態異常や弱体で追加強化,1,,dagger,medium,初期解放（条件は後日設定）,1
+bounty_hunter,賞金稼ぎ,特定標的の追跡・拘束,additional,B,C,A,D,B,C,B,B,pierce,ice,bow,gun|dagger,STR・武器威力,標的を指定し、追い続けるほど攻撃や拘束を強化,標的への集中射撃と強力な拘束。追跡蓄積で追加強化,1,,bow,medium,初期解放（条件は後日設定）,1
+dragoon,竜騎士,跳躍・槍・対竜,additional,A,C,A,D,B,C,B,D,pierce,thunder|wind,spear,sword,STR・HP,跳躍で大技を避け、着地で強襲。竜特攻と対竜防御も持つ,強烈な落下槍撃。竜特攻と着地後の防護,1,,spear,medium,初期解放（条件は後日設定）,1
 gunner,銃士,特殊弾・物理射撃,additional,B,C,B,D,B,C,A,A,pierce,fire|thunder,gun,dagger,武器威力中心／STR・LUK,通常射撃と限られた属性・妨害用の特殊弾を撃ち分ける,特殊弾の一斉射撃と弾の補充,0,,gun,medium,個別技能の実装待ち,1
 pirate,海賊,開幕強襲・撃破の勢い,additional,A,C,A,D,B,D,B,B,slash,water,axe,sword|gun,STR／武器威力・LUK,開幕や撃破直後の勢いを利用して攻め続ける,全体への斬り込みと味方への攻勢支援,0,,axe,medium,個別技能の実装待ち,1
 spellblade,魔法剣士,属性付与・物理魔法複合,additional,B,B,A,B,C,C,B,C,slash,fire|ice|thunder,sword,katana,STR＋MAG,武器へ1属性を付与し、相性を読んで武器技を強化,付与属性の強力な武器攻撃と属性付与の一時強化,0,,sword,medium,個別技能の実装待ち,1

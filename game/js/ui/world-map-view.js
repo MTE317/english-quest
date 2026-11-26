@@ -1,4 +1,4 @@
-import { TRIAL_DUNGEON_IDS } from '../world-map.js?v=intro-route-1';
+import { TRIAL_DUNGEON_IDS } from '../world-map.js?v=jobs-intro-1';
 import { el } from '../dom.js?v=skill-growth-2';
 import { expeditionScene } from './scenery.js?v=skill-growth-2';
 
