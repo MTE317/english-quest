@@ -200,8 +200,10 @@ body:has(.battle-screen) { background: #10171e; }
 .battle-enemy .battle-resource.hp { --meter-fill: #ed9d86; }
 .battle-resource.mp { --meter-fill: var(--battle-mp); }
 .battle-resource.ultimate { --meter-fill: #d5ae61; }
-.battle-resource.ultimate.ready { color: #f2d186; }
-.battle-resource.ultimate.ready .battle-meter { box-shadow: 0 0 5px #e5c57a80; }
+.battle-resource.ultimate.ready { --meter-fill: #fff0a6; color: #fff0a6; }
+.battle-resource.ultimate.ready .battle-meter {
+  box-shadow: 0 0 6px #ffe18a99, 0 0 2px #fff0a6;
+}
 .battle-conditions {
   display: block;
   color: #f2b2a3;
@@ -586,7 +588,9 @@ body:has(.battle-screen) { background: #10171e; }
 
 /* MPの下に置く必殺ゲージ。 */
 .battle-resource.ultimate { --meter-fill: #f2cc4d; }
-.battle-resource.ultimate .battle-resource-name { color: #f2cc4d; }
+.battle-resource.ultimate .battle-resource-name { color: var(--meter-fill); }
+.battle-resource.ultimate .battle-resource-value { display: none; }
+.battle-resource.ultimate.ready .battle-resource-name { text-shadow: 0 0 5px #ffe18a80; }
 .battle-screen .battle-ally[aria-haspopup="dialog"] { cursor: pointer; }
 .battle-effect-section { border-top: 1px solid var(--battle-line); padding-top: 8px; margin-top: 10px; }
 .battle-effect-section h4 { margin: 0 0 5px; color: var(--battle-gold); font-size: .9rem; }
