@@ -27,7 +27,7 @@ export function createWorldMapView({ world, discoveries, selectedDungeon, onDung
     el('span', { class: `atlas-destination-icon scene-${expeditionScene(dungeon.id)}`, 'aria-hidden': 'true' }),
     el('strong', { class: 'atlas-destination-name' }, dungeon.name),
     el('span', { class: 'atlas-destination-meta' },
-      el('span', {}, `★${dungeon.rank} ・ ${dungeon.kind}`),
+      el('span', {}, `★${dungeon.rank}`),
       el('span', { class: 'atlas-destination-status' }, dungeon.state === 'cleared' ? '踏破済み' : newIds.has(dungeon.id) ? '新発見' : '遠征可能')),
     );
     buttons.set(dungeon.id, button);
