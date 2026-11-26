@@ -1,6 +1,6 @@
 # ゲームシステム
 
-> 職業・技能の現行仕様は [50職基準](../jobs-baseline-v1.md)、[基本8職技能](../basic-jobs-skills-v1.md)、[共通実装仕様](../jobs-master-implementation.md) を優先します。以下に残る旧職階級・マスター常時ボーナス等は旧仕様の記録です。
+> **旧時点の設計整理。** 冒険者ランクは [E〜Sの設計正本](rank-promotion.md)、職業・技能は [50職基準v2](../jobs-baseline-v2.md) と [基本8職技能v2](../basic-jobs-skills-v2.md) を優先。以下の実装済み職数・旧技能記述は執筆当時の記録であり、mainの実装状況はコード・データで確認する。
 
 
 [仕様索引](README.md) · [装備・制作](equipment-crafting.md) · [学習・ランク](learning-rank.md)
