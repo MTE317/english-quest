@@ -1,5 +1,4 @@
 import { GameSession } from '../save.js?v=skill-growth-2';
-import { loadGameData } from '../gamedata.js?v=skill-growth-2';
 import { LearningStore, loadSettings, saveSettings, now } from '../storage.js?v=skill-growth-2';
 import { loadLearningCatalog } from '../learning-catalog.js?v=skill-growth-2';
 import { learningStatistics } from '../learning-stats.js?v=skill-growth-2';
@@ -8,27 +7,18 @@ import { Scheduler } from '../srs.js?v=skill-growth-2';
 import { dayToString } from '../srs.js?v=skill-growth-2';
 import { DIRECTION } from '../quiz.js?v=skill-growth-2';
 import { el, render } from '../dom.js?v=skill-growth-2';
-import { monsterKnowledge } from '../monster-knowledge.js?v=monster-catalog-1';
 import { setSceneMusic } from '../battle-music.js?v=skill-growth-2';
 
 import { installGameShell } from '../ui/game-shell.js?v=skill-growth-2';
-import { equipmentIcon } from '../ui/equipment-icons.js?v=skill-growth-2';
 
 const view = document.getElementById('view');
 const session = new GameSession();
 installGameShell('records', session);
 const store = new LearningStore();
 
-function section(title, ...body) {
-  return el('details', { class: 'panel small' }, el('summary', {}, title), body);
-}
-
 async function show() {
-  const [data, learningCatalog, srs] = await Promise.all([loadGameData(), loadLearningCatalog(), loadJson('srs.json')]);
+  const [learningCatalog, srs] = await Promise.all([loadLearningCatalog(), loadJson('srs.json')]);
   const game = session.game;
-  const equipped = (game?.party ?? []).flatMap((member) => Object.values(member.equip).filter(Boolean));
-  const owned = new Set([...(game?.catalog?.gear ?? []), ...(game?.storage?.gear ?? []).map((x) => x.id), ...equipped.map((x) => x.id)]);
-  const monsters = new Set(game?.catalog?.monsters ?? []);
   const settings = loadSettings();
   const change = (key, value) => {
     settings[key] = value;
@@ -38,7 +28,7 @@ async function show() {
   const control = (label, key, options) => el('label', { class: 'small' }, label,
     el('select', { class: 'select', onchange: (event) => change(key, event.target.value) },
       options.map(([id, name]) => el('option', { value: id, selected: settings[key] === id }, name))));
-  const pages = [['log', '学習記録'], ['catalog', '図鑑・称号'], ['settings', '設定']];
+  const pages = [['log', '学習記録'], ['settings', '設定']];
   const tabQuery = new URLSearchParams(location.search).get('tab');
   const initialPage = pages.find(([id]) => id === tabQuery)?.[0] ?? 'log';
   const settingsPanel = () => el('section', { class: 'panel journal-panel' },
@@ -48,24 +38,6 @@ async function show() {
     el('h2', {}, '音の設定'),
     control('BGM・勝利ファンファーレ', 'music', [['on', 'オン'], ['off', 'オフ']]),
     control('ボタン・戦闘の効果音', 'effects', [['on', 'オン'], ['off', 'オフ']]));
-  function catalog() {
-    const encountered = [...data.monsters.values()].filter((m) => monsters.has(m.id));
-    const gear = [...data.equipment.values()].filter((d) => owned.has(d.id));
-    return [
-      section(`モンスター図鑑（${encountered.length} / ${data.monsters.size}）`, encountered.length
-        ? encountered.map((m) => {
-          const { weak, resist, normal, scanned } = monsterKnowledge(data, game, m);
-          return section(`${m.icon} ${m.name}`, el('div', {}, '弱点　', weak.join('・') || (scanned ? 'なし' : '未判明')),
-            el('div', {}, '耐性　', resist.join('・') || '未判明'),
-            normal.length ? el('div', {}, '通常　', normal.join('・')) : null);
-        }) : el('p', { class: 'muted' }, 'ダンジョンで出会った敵がここに記録されます。')),
-      section(`装備図鑑（${gear.length} / ${data.equipment.size}）`, gear.length
-        ? gear.map((d) => {
-          const icon = equipmentIcon(d);
-          return icon ? el('div', { class: 'gear-with-icon' }, icon, el('span', {}, d.name)) : el('div', {}, d.name);
-        }) : el('p', { class: 'muted' }, '手に入れた装備がここに記録されます。')),
-      section('称号', game?.titles?.length ? game.titles.map((title) => el('div', {}, title)) : el('p', {}, 'まだ称号を獲得していません。'))];
-  }
   function log() {
     const scheduler = new Scheduler(srs.data);
     const stats = learningStatistics(learningCatalog, store, game, scheduler, scheduler.dayOf(now()));
@@ -117,7 +89,7 @@ async function show() {
   const body = el('div');
   function open(id) {
     Array.from(nav.children).forEach((button, i) => button.setAttribute('aria-pressed', String(pages[i][0] === id)));
-    render(body, { log, catalog, settings: settingsPanel }[id]());
+    render(body, { log, settings: settingsPanel }[id]());
   }
   pages.forEach(([id, name]) => nav.append(el('button', { onclick: () => {
     const url = new URL(location.href); url.searchParams.set('tab', id); history.replaceState(null, '', url);
