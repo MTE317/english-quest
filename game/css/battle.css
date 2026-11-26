@@ -583,3 +583,12 @@ body:has(.battle-screen) { background: #10171e; }
 .battle-stage .battle-enemy-marks { text-shadow: 0 1px 3px #000; }
 .battle-stage .battle-conditions { background: #101e30e8; border-radius: 3px; padding: 1px 3px; }
 
+
+/* MPの下に置く必殺ゲージ。 */
+.battle-resource.ultimate { --meter-fill: #f2cc4d; }
+.battle-resource.ultimate .battle-resource-name { color: #f2cc4d; }
+.battle-screen .battle-ally[aria-haspopup="dialog"] { cursor: pointer; }
+.battle-effect-section { border-top: 1px solid var(--battle-line); padding-top: 8px; margin-top: 10px; }
+.battle-effect-section h4 { margin: 0 0 5px; color: var(--battle-gold); font-size: .9rem; }
+.battle-effect-section ul { margin: 0 0 8px; padding-left: 20px; font-size: .84rem; overflow-wrap: anywhere; }
+.battle-effect-section li + li { margin-top: 5px; }

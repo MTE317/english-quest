@@ -13,7 +13,7 @@ import {
 } from '../dungeon.js?v=advanced-jobs-1';
 import { backpackSlots, backpackUsed, addItem } from '../loot.js?v=advanced-jobs-1';
 import { maxHp, maxMp } from '../character.js?v=advanced-jobs-1';
-import { createBattleView } from '../ui/battle-view.js?v=advanced-jobs-1';
+import { createBattleView } from '../ui/battle-view.js?v=ex-ally-effects-1';
 import { createVictoryView, createLootIcons } from '../ui/victory-view.js?v=advanced-jobs-1';
 import { el, render, stars } from '../dom.js?v=skill-growth-2';
 import { buildWorldMap, newDiscoveries } from '../world-map.js?v=skill-growth-2';
