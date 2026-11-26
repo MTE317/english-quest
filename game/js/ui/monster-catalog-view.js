@@ -1,5 +1,5 @@
 import { el, render } from '../dom.js?v=skill-growth-2';
-import { catalogMonsters, monsterUnlocks } from '../monster-catalog.js?v=monster-catalog-1';
+import { catalogMonsters, monsterUnlocks } from '../monster-catalog.js?v=monster-catalog-2';
 import { monsterKnowledge } from '../monster-knowledge.js?v=monster-catalog-1';
 
 const waiting = (count, threshold) => `未解放（討伐 ${count}/${threshold}）`;
@@ -8,8 +8,8 @@ const row = (label, value) => el('div', { class: 'monster-catalog-row' }, el('dt
 function detail(data, game, monster) {
   const count = game.catalog?.defeats?.[monster.id] ?? 0;
   const known = monsterUnlocks(monster, count);
-  const threshold = monster.isBoss ? { elements: 2, hp: 2, types: 3, statuses: 3, stats: 4, drops: 5 }
-    : { elements: 3, hp: 5, types: 10, statuses: 10, stats: 20, drops: 30 };
+  const threshold = monster.isBoss ? { elements: 2, hp: 1, types: 1, statuses: 3, stats: 4, drops: 5 }
+    : { elements: 3, hp: 1, types: 2, statuses: 10, stats: 20, drops: 30 };
   const unlock = (key, value) => known[key] ? value : waiting(count, threshold[key]);
   const sample = game.catalog?.sightings?.[monster.id];
   const affinity = monsterKnowledge(data, game, { ...monster, monsterId: monster.id });
@@ -26,6 +26,7 @@ function detail(data, game, monster) {
     .filter(Boolean).map(id => data.materials.get(id)?.name ?? id);
   const unique = [...data.equipment.values()].filter(gear => gear.unique && gear.source === monster.id);
   drops.push(...unique.map(gear => gear.name));
+  const stolen = monster.materialCommon ? data.materials.get(monster.materialCommon)?.name ?? monster.materialCommon : 'なし';
   const stats = sample ? `Lv ${sample.lv}での記録：MP ${sample.mp}・攻撃 ${Math.round(sample.str)}・魔力 ${Math.round(sample.mag)}・防御 ${Math.round(sample.def)}・魔防 ${Math.round(sample.res)}・素早さ ${Math.round(sample.spd)}`
     : '戦闘での記録なし';
   const xp = sample ? `基礎経験値の目安 ${Math.round((6 + 3.2 * sample.lv) * (monster.isBoss ? 5 : 1))}（仲間のレベルなどで変動）` : '';
@@ -33,12 +34,12 @@ function detail(data, game, monster) {
     el('header', {}, el('span', { class: 'shop-item-icon', 'aria-hidden': 'true' }, monster.icon), el('h2', {}, monster.name)),
     el('p', { class: 'shop-description' }, `討伐 ${count}体${monster.isBoss ? '・ボス' : ''}`),
     el('dl', { class: 'monster-catalog-facts' },
-      row('属性相性', known.elements ? elementText : seenElements.length ? `判明済み：${seenElements.join('・')} ／ ${waiting(count, threshold.elements)}` : waiting(count, threshold.elements)),
+      row('攻撃属性相性', known.elements ? elementText : seenElements.length ? `判明済み：${seenElements.join('・')} ／ ${waiting(count, threshold.elements)}` : waiting(count, threshold.elements)),
       row('最大HP', unlock('hp', sample ? `${sample.hp}（記録したLv ${sample.lv}での値）` : '戦闘での記録なし')),
       row('種族', unlock('types', monster.types.map(id => data.monsterTypes.get(id)?.name ?? id).join('・'))),
       row('状態異常相性', unlock('statuses', statusText)),
-      row('その他の能力・経験値', unlock('stats', `${stats}${xp ? ` ／ ${xp}` : ''}`)),
-      row('ドロップ', unlock('drops', drops.join('・') || 'なし')),
+      row('HP以外の能力・取得経験値', unlock('stats', `${stats}${xp ? ` ／ ${xp}` : ''}`)),
+      row('ドロップ・盗品候補', unlock('drops', `ドロップ：${drops.join('・') || 'なし'} ／ 盗品候補：${stolen}`)),
     ),
   ];
 }
