@@ -135,7 +135,7 @@ test('基本職への転職は無料で武器を保持し、未実装の追加�
   assert.equal(member.equip.weapon.id, 'sword_t1');
   assert.equal(game.gold, gold);
   assert.deepEqual(member.learned, []);
-  game.unlockedJobs = ['elementalist'];
-  assert.ok(availableJobs(data, game).every((job) => job.tier === 'base'||['paladin','dark_knight','berserker','samurai','gladiator','warrior_monk','ascetic','executioner','ninja','assassin','bounty_hunter','dragoon','gunner','pirate','spellblade'].includes(job.id)));
-  assert.throws(() => changeJob(data, game, 0, 'elementalist'), /選べない/);
+  game.unlockedJobs = ['necromancer'];
+  assert.ok(availableJobs(data, game).every((job) => job.tier === 'base'||['paladin','dark_knight','berserker','samurai','gladiator','warrior_monk','ascetic','executioner','ninja','assassin','bounty_hunter','dragoon','gunner','pirate','spellblade','elementalist','witch','hexer'].includes(job.id)));
+  assert.throws(() => changeJob(data, game, 0, 'necromancer'), /選べない/);
 });

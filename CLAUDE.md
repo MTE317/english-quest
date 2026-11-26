@@ -4,8 +4,8 @@
 仕様の入口は `docs/specs/README.md`。冒険者ランク・昇級・施設解放の設計正本は `docs/specs/rank-promotion.md`（E〜S表・施設投資・英語試験は実装済み。職業解放条件等は未実装）。`docs/game-overview.md` は旧時点の履歴資料。現行の実装値・データ形式は `game/js/` と `data/` を確認する。
 
 職業・技能の現行マスターは `docs/jobs-baseline-v2.md`、`docs/basic-jobs-skills-v2.md`、`docs/jobs-master-implementation.md`。追加1〜3職は `docs/additional-jobs-01-03-implementation.md`、追加4〜6職は `docs/additional-jobs-04-06-implementation.md`、追加7〜9職は `docs/additional-jobs-07-09-implementation.md` を参照する。
-競合する旧職・旧技能はこのマスターへ置き換える。基本8職と追加1〜15職は初期から利用可能。残る追加21職・伝説6職は個別技能の実装前に転職させない。
-追加10〜18職の技能は `docs/additional-jobs-10-18-skills-v1.md` と同名の仕様JSONに設計済み。追加10〜12の45技能は `docs/additional-jobs-10-12-implementation.md`、追加13〜15の45技能は `docs/additional-jobs-13-15-implementation.md` を参照する。追加16〜18の45技能は設計のみ。
+競合する旧職・旧技能はこのマスターへ置き換える。基本8職と追加1〜18職は初期から利用可能。残る追加18職・伝説6職は個別技能の実装前に転職させない。
+追加10〜18職の技能は `docs/additional-jobs-10-18-skills-v1.md` と同名の仕様JSONに設計済み。追加10〜12の45技能は `docs/additional-jobs-10-12-implementation.md`、追加13〜15の45技能は `docs/additional-jobs-13-15-implementation.md`、追加16〜18の45技能は `docs/additional-jobs-16-18-implementation.md` を参照する。
 
 ## 返答と画面の言語
 
