@@ -1,4 +1,5 @@
 // 戦況を表示したまま、下段をコマンド・対象の案内・問題・結果に切り替える。
+import { cancelBattleQuestion } from '../battle-question.js?v=battle-cancel-1';
 import { now } from '../storage.js?v=skill-growth-2';
 import { QuestionPicker, REASON_LABEL } from '../picker.js?v=skill-growth-2';
 import { makePracticeQuestion, questionDirection, questionSpeech, DIRECTION } from '../quiz.js?v=skill-growth-2';
@@ -441,14 +442,14 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
     render(history, b.log.map((line) => el('li', {}, line)));
   }
 
-  function showPanel(title, content, { back, detail, question = false, focus = true } = {}) {
+  function showPanel(title, content, { back, backLabel = '← 戻る', detail, question = false, focus = true } = {}) {
     screen.classList.toggle('answering', question);
     partyToggle.setAttribute('aria-expanded', 'false');
     partyToggle.textContent = partyToggleLabel;
     const heading = el('h3', { id: 'battle-controls-title', tabindex: '-1' }, title);
     render(panel,
       el('div', { class: 'battle-controls-head' }, heading, detail,
-        back ? el('button', { class: 'battle-back', onclick: back }, '← 戻る') : null),
+        back ? el('button', { class: 'battle-back', onclick: back }, backLabel) : null),
       content);
     if (focus) heading.focus({ preventScroll: true });
     if (question && panel.getBoundingClientRect().bottom > window.innerHeight) {
@@ -630,16 +631,21 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
     let ready;
     const hits = collectBattleHits(b, () => { ready = prepareQuizAction(data, g, b); });
     if (!ready) return loop(hits);
-    const review = run.questionPool?.length ? run.questionPool : null;
-    const next = review?.length
-      ? { word: lex.wordsById.get(review[(run.challengeQuestions ?? 0) % review.length]), reason: 'practice' }
-      : picker.next();
-    if (review?.length) run.challengeQuestions = (run.challengeQuestions ?? 0) + 1;
-    const dir = questionDirection(run.direction ?? settings.direction ?? DIRECTION.EN_JA);
-    const q = makePracticeQuestion(next.word, lex, { direction: dir, format: run.challenge ? 'meaning' : settings.format ?? 'meaning', familiar: scheduler.isFamiliar(store.get(next.word.id)) });
-    setPending(b, action, {
-      wordId: next.word.id, reason: next.reason, format: q.format, deadline: run.timeLimit ? Date.now() + 1000 * run.timeLimit : null, direction: q.direction, prompt: q.prompt, choices: q.choices, answerIndex: q.answerIndex,
-    });
+    let question = b.reservedQuestion;
+    if (!question) {
+      const review = run.questionPool?.length ? run.questionPool : null;
+      const next = review?.length
+        ? { word: lex.wordsById.get(review[(run.challengeQuestions ?? 0) % review.length]), reason: 'practice' }
+        : picker.next();
+      if (review?.length) run.challengeQuestions = (run.challengeQuestions ?? 0) + 1;
+      const dir = questionDirection(run.direction ?? settings.direction ?? DIRECTION.EN_JA);
+      const q = makePracticeQuestion(next.word, lex, { direction: dir, format: run.challenge ? 'meaning' : settings.format ?? 'meaning', familiar: scheduler.isFamiliar(store.get(next.word.id)) });
+      question = {
+        wordId: next.word.id, reason: next.reason, format: q.format, deadline: run.timeLimit ? Date.now() + 1000 * run.timeLimit : null, direction: q.direction, prompt: q.prompt, choices: q.choices, answerIndex: q.answerIndex,
+      };
+    }
+    setPending(b, action, question);
+    delete b.reservedQuestion;
     run.quiz = picker.toState();
     session.save();
     showQuestion();
@@ -666,8 +672,20 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
     drawField(actor, {}, action);
 
     let timeout;
+    let active = true;
+    function cancel() {
+      if (!active || b.pending?.question !== q || !panel.isConnected) return;
+      if (q.deadline && Date.now() >= q.deadline) return answer(-1);
+      if (!cancelBattleQuestion(b)) return;
+      active = false;
+      clearTimeout(timeout);
+      stopSpeech();
+      session.save();
+      showCommand();
+    }
     function answer(index) {
-      if (!b.pending || !panel.isConnected) return;
+      if (!active || b.pending?.question !== q || !panel.isConnected) return;
+      active = false;
       clearTimeout(timeout);
       const timedOut = index < 0 || (q.deadline && Date.now() >= q.deadline);
       if (timedOut) run.timedOut = true;
@@ -705,7 +723,7 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
         pronounce(voice.prompt)),
       el('div', { class: 'battle-answers' }, q.choices.map((choice, index) =>
         el('button', { onclick: () => answer(index), lang: isEn ? 'ja' : 'en' }, el('span', { class: 'choice-letter', 'aria-hidden': 'true' }, String.fromCharCode(65 + index)), el('span', {}, choice.text)))),
-    ], { detail: el('span', { class: `tag ${q.reason}` }, run.timeLimit ? `${run.timeLimit}秒` : REASON_LABEL[q.reason]), question: true });
+    ], { back: cancel, backLabel: '← 取り消し', detail: el('span', { class: `tag ${q.reason}` }, run.timeLimit ? `${run.timeLimit}秒` : REASON_LABEL[q.reason]), question: true });
     if (q.deadline) timeout = setTimeout(() => answer(-1), Math.max(0, q.deadline - Date.now()));
     if (!q.deadline || Date.now() < q.deadline) speak(voice.prompt);
   }
