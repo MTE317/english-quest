@@ -8,6 +8,8 @@ const TRIAL_DUNGEONS = Object.freeze([
   { id: 'misty_marsh', clears: ['sunlit_forest'] },
 ]);
 
+export const TRIAL_DUNGEON_IDS = Object.freeze(TRIAL_DUNGEONS.map(({ id }) => id));
+
 export const INITIAL_DUNGEON_IDS = Object.freeze(
   TRIAL_DUNGEONS.filter(({ clears }) => !clears.length).map(({ id }) => id),
 );

@@ -8,7 +8,7 @@ import { Scheduler } from '../srs.js?v=skill-growth-2';
 import { dayToString } from '../srs.js?v=skill-growth-2';
 import { DIRECTION } from '../quiz.js?v=skill-growth-2';
 import { el, render } from '../dom.js?v=skill-growth-2';
-import { monsterKnowledge } from '../monster-knowledge.js?v=skill-growth-2';
+import { monsterKnowledge } from '../monster-knowledge.js?v=monster-catalog-1';
 import { setSceneMusic } from '../battle-music.js?v=skill-growth-2';
 
 import { installGameShell } from '../ui/game-shell.js?v=skill-growth-2';

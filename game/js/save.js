@@ -4,7 +4,7 @@
 // - 自動保存は1つ。戦闘が1つ終わるたびに保存し、ダンジョンの途中で閉じても再開できる
 // - 読み込み直して全滅をなかったことにはできない
 // - 全滅したら、ゲームの進み具合はダンジョンに入る前に戻す。学習記録（storage.js の LearningStore）は別の場所なので残る
-// - 遭遇・属性相性・討伐数は、ダンジョンに入る前の状態に戻す
+// - 遭遇・属性相性・討伐数は、全滅しても図鑑に残す
 //
 // 中身
 //   { version, savedAt, game, run }
@@ -204,14 +204,19 @@ export class GameSession {
   /**
    * 全滅：ゲームの進み具合をダンジョンに入る前に戻して、すぐ保存する。
    * 学習記録は別の場所にあるので、ここでは触らない（残る）。
-   * 図鑑・討伐数・報酬は入場時に戻す。詠唱の記録は残す。
+   * 報酬は入場時に戻す。図鑑と詠唱の記録は残す。
    */
   wipe() {
     this.#needRun();
     const run = this.state.run;
-    const { chants } = this.state.game;
+    const { chants, catalog } = this.state.game;
     this.state.game = clone(run.snapshot);
     if (chants != null) this.state.game.chants = chants;
+    if (catalog) this.state.game.catalog = {
+      ...this.state.game.catalog,
+      monsters: catalog.monsters ?? [], affinities: catalog.affinities ?? {},
+      defeats: catalog.defeats ?? {}, sightings: catalog.sightings ?? {},
+    };
 
     this.state.run = null;
     this.state.lastWipe = { at: this.now(), dungeonId: run.dungeonId, floor: run.floor, battlesDone: run.battlesDone };

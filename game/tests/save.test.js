@@ -94,7 +94,7 @@ test('全滅しても学習記録は残る', () => {
   assert.ok(mem.getItem(LEARNING_KEY));
 });
 
-test('全滅すると図鑑・討伐数・依頼進捗を入場時に戻す', () => {
+test('全滅しても図鑑は残り、報酬と依頼進捗は入場時に戻す', () => {
   const mem = new MemoryStorage();
   const s = reopen(mem);
   const before = {
@@ -124,14 +124,23 @@ test('全滅すると図鑑・討伐数・依頼進捗を入場時に戻す', ()
     game.items.potion -= 2;
     game.quests[0].progress = 1;
     game.kills.goblin += 1;
+    game.catalog.defeats = { goblin: 3 };
   });
   const resumed = reopen(mem);
   resumed.wipe();
-  assert.deepEqual(resumed.game, before);
-  assert.deepEqual(reopen(mem).game, before);
+  const expectedCatalog = {
+    gear: ['wood_sword'], monsters: ['goblin', 'owl_boss', 'unexamined_slime'],
+    affinities: {
+      goblin: { elements: ['slash', 'fire', 'dark', 'none'], scanned: false },
+      owl_boss: { elements: ['ice', 'wind'], scanned: true },
+    },
+    defeats: { goblin: 3 }, sightings: {},
+  };
+  assert.deepEqual(resumed.game, { ...before, catalog: expectedCatalog });
+  assert.deepEqual(reopen(mem).game, { ...before, catalog: expectedCatalog });
 });
 
-test('旧セーブでも遠征中の初遭遇と相性調査は全滅で戻る', () => {
+test('旧セーブでも遠征中の初遭遇と相性調査は全滅後に残る', () => {
   const mem = new MemoryStorage();
   const s = reopen(mem);
   s.startNew(newGame()); // 旧セーブには catalog 自体がない
@@ -148,7 +157,8 @@ test('旧セーブでも遠征中の初遭遇と相性調査は全滅で戻る',
     learnMonsterElements(game, enemy, ['fire', 'ice'], true);
   });
   s.wipe();
-  assert.deepEqual(reopen(mem).game, newGame());
+  assert.deepEqual(reopen(mem).game.catalog.monsters, ['slime']);
+  assert.deepEqual(reopen(mem).game.catalog.affinities.slime, { elements: ['fire', 'ice'], scanned: true });
 });
 
 test('町に帰ると run がなくなり、ダンジョンで得たものは残る', () => {

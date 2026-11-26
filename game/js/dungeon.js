@@ -9,6 +9,7 @@ import { roundGold } from './gold.js?v=skill-growth-2';
 //   'return_point' … 帰還ポイント（帰るか先へ進むかを選ぶ）
 //   'cleared'      … いちばん奥のボスを倒した（町に帰るだけ）
 import { createBattle, finishBattle, battleRewards, curedBy } from './battle.js?v=advanced-jobs-1';
+import { recordMonsterDefeats } from './monster-knowledge.js?v=monster-catalog-1';
 import { makeEncounter, floorRow, planBounty } from './encounter.js?v=advanced-jobs-1';
 import { rollBattleLoot, addToBackpack, swapIntoBackpack, unloadBackpack } from './loot.js?v=advanced-jobs-1';
 import { gainXp, maxHp, maxMp, affixSum } from './character.js?v=advanced-jobs-1';
@@ -175,6 +176,7 @@ export function afterBattle(data, session) {
   const game = session.game;
   finishBattle(data, game, b);
   if (b.result === 'lose') {
+    recordMonsterDefeats(game, b.enemies);
     session.wipe();
     return { result: 'lose', growth: [], loot: null };
   }
@@ -182,6 +184,7 @@ export function afterBattle(data, session) {
   let loot = null;
   session.endBattle((g, run) => {
     if (b.result === 'win') {
+      recordMonsterDefeats(g, b.enemies);
       countKills(g, b.enemies, run.dungeonId);
       const r = battleRewards(data, g, b);
       const practice = b.learningRewards;
