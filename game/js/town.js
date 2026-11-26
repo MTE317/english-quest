@@ -370,10 +370,9 @@ export function reportQuest(data, game, uid, rng = Math.random) {
     // 行き先を保存していない旧依頼も、現在行ける同ランクの地域だけを見る。
     const destinations = q.dungeonId ? [q.dungeonId]
       : allowedDungeons(data, game).filter((d) => d.rank === q.rank).map((d) => d.id);
-    const rareIds = new Set([...data.monsters.values()]
-      .filter((monster) => ['normal', 'season'].includes(monster.role)
-        && monster.dungeons.some((id) => destinations.includes(id)))
-      .map((monster) => monster.materialRare));
+    const season = calendarOf(data, game.day).season?.id;
+    const rareIds = new Set(destinations.flatMap((id) => monsterPool(data, id, season)
+      .map((monster) => monster.materialRare)));
     const rares = [...rareIds].map((id) => data.materials.get(id))
       .filter((m) => m?.kind === 'rare' && m.rank === q.rank);
     const m = rares[Math.min(rares.length - 1, Math.floor(rng() * rares.length))];
