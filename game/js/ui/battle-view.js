@@ -37,6 +37,73 @@ export function battleConditionLabels(data, unit) {
   return names;
 }
 
+const BUFF_NAMES = {
+  str: 'STR', mag: 'MAG', def: 'DEF', res: 'RES', spd: 'SPD', luk: 'LUK',
+  atk: '攻撃力', dmg: '与ダメージ', cut: '被ダメージ軽減', pcut: '物理ダメージ軽減',
+  mcut: '魔法ダメージ軽減', eva: '回避率', crt: '会心率', crit: '会心率',
+  regen: 'HP継続回復', mp_regen: 'MP継続回復', immune: '状態異常無効',
+  barrier: '障壁', heal: '回復効果', healp: '回復効果',
+};
+function buffText(data, key, value) {
+  const down = key.startsWith('down:');
+  const name = down ? key.slice(5) : key;
+  const label = name.startsWith('eres:') ? `${data.elements.get(name.slice(5))?.name ?? name.slice(5)}耐性`
+    : name.startsWith('sres:') ? `${name.slice(5)}の状態異常耐性`
+    : BUFF_NAMES[name] ?? name;
+  if (name === 'barrier') return `${label} ${Math.round(value)} HP`;
+  const number = Math.round((down ? -value : value) * 1000) / 10;
+  return `${label} ${number > 0 ? '+' : ''}${number}%`;
+}
+
+export function allyEffectSections(data, game, battle, index) {
+  const member = game.party[index], ally = battle.allies[index];
+  const duration = value => Number.isFinite(value) ? `（残り${value}）` : '';
+  const timedBuffs = buffs => Object.entries(buffs ?? {}).flatMap(([key, entry]) => {
+    if (!Array.isArray(entry) || !(entry[1] > 0) || !entry[0]) return [];
+    return [buffText(data, key, entry[0]) + duration(entry[1])];
+  });
+  const statuses = Object.entries(ally.statuses ?? {}).map(([id, state]) =>
+    `${data.statusEffects.get(id)?.name ?? id}${state.n > 1 ? ' ×' + state.n : ''}${duration(state.turns)}`);
+  if (member.hp <= 0) statuses.unshift('戦闘不能');
+  const ongoing = Object.entries(ally.masterEffects ?? {}).flatMap(([key, effect]) => {
+    if (effect.remaining <= 0) return [];
+    const id = effect.skillId ?? key.replace(/:(mp|damage)$/, '');
+    const name = data.skills.get(id)?.name ?? key;
+    const values = Object.entries(effect.values ?? {}).map(([stat, value]) => buffText(data, stat, value));
+    if (effect.shield > 0) values.push(`防護 ${effect.shield} HP`);
+    if (effect.blessing) values.push('加護');
+    if (effect.regen) values.push(`HP継続回復 ${Math.round(effect.regen.amount ?? 0)}`);
+    if (effect.statusResist) values.push(`状態異常耐性：${(effect.statusResist.statuses ?? []).map(id => data.statusEffects.get(id)?.name ?? id).join('・') || '対象状態異常'} ${Math.round(effect.statusResist.rate * 100)}%`);
+    if (effect.nextDamage) values.push(`次の攻撃ダメージ +${Math.round(effect.nextDamage.rate * 100)}%`);
+    if (effect.nextMpSave) values.push(`次のスキル消費MP -${Math.round(effect.nextMpSave.rate * 100)}%`);
+    for (const save of effect.mpSave ?? []) values.push(`スキル消費MP -${Math.round(save.rate * 100)}%`);
+    if (effect.nextHpCost) values.push('次のスキルのHP消費を変更');
+    if (effect.lifesteal) values.push(`HP吸収 ${Math.round(effect.lifesteal * 100)}%`);
+    if (effect.weaponDamage) values.push(`武器ダメージ +${Math.round(effect.weaponDamage * 100)}%`);
+    return [`${name}${duration(effect.remaining)}${values.length ? '：' + values.join('・') : ''}`];
+  });
+  const special = [];
+  if (ally.imbue) special.push(`武器属性：${data.elements.get(ally.imbue)?.name ?? ally.imbue}`);
+  if (ally.normalSkillReady) special.push('次の攻撃技能を強化');
+  if (ally.anger > 0) special.push(`怒気 ${ally.anger}/3`);
+  if (ally.masterCounter?.remaining > 0) special.push('反撃の構え' + duration(ally.masterCounter.remaining));
+  for (const cover of [ally.masterCover, ally.masterUltimateCover]) if (cover?.remaining > 0) {
+    const target = cover.target === 'selected' ? game.party[cover.targetIndex]?.name ?? '味方' : '味方全員';
+    special.push(`${target}をかばう${duration(cover.remaining)}`);
+  }
+  battle.allies.forEach((other, source) => {
+    if (source === index) return;
+    for (const cover of [other.masterCover, other.masterUltimateCover]) if (cover?.remaining > 0
+      && game.party[source].hp > 0 && (cover.target === 'all' || cover.targetIndex === index)) {
+      special.push(`${game.party[source].name}がかばう${duration(cover.remaining)}`);
+    }
+  });
+  return [
+    ['状態異常', statuses], ['自身の強化・弱体', timedBuffs(ally.buffs)],
+    ['全体の強化・弱体', timedBuffs(battle.partyBuffs)], ['スキルの継続効果', ongoing], ['その他の状態', special],
+  ];
+}
+
 export function createBattleView({ view, data, lex, scheduler, store, session, onEnd: finishBattle, settings = {} }) {
   const run = session.run;
   const b = run.battle;
@@ -67,6 +134,8 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
   const panel = el('section', { class: 'battle-controls', 'aria-labelledby': 'battle-controls-title' });
   const encyclopedia = el('dialog', { class: 'battle-encyclopedia', 'aria-labelledby': 'battle-monster-name' });
   encyclopedia.addEventListener('click', (event) => { if (event.target === encyclopedia) encyclopedia.close(); });
+  const allyDialog = el('dialog', { class: 'battle-encyclopedia battle-ally-dialog', 'aria-labelledby': 'battle-ally-state-title' });
+  allyDialog.addEventListener('click', event => { if (event.target === allyDialog) allyDialog.close(); });
   const screen = el('div', { class: `battle-screen scene-${expeditionScene(run.dungeonId, run.challenge)}` },
     el('section', { class: 'battle-stage', 'aria-label': '戦場' },
       el('div', { class: 'battle-location' },
@@ -76,7 +145,7 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
     log,
     panel,
     partyToggle, party,
-    encyclopedia, logDialog);
+    encyclopedia, logDialog, allyDialog);
   screen.addEventListener('click', unlockBattleSound, { capture: true });
 
   function onEnd(result) {
@@ -163,11 +232,21 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
     return names.length ? el('span', { class: 'battle-conditions' }, names.join('・')) : null;
   }
 
-  function unitCard(className, chosen, label, select, ...children) {
+  function unitCard(className, chosen, label, select, inspect, ...children) {
     const cls = `${className}${select ? ' targetable' : ''}${chosen ? ' chosen' : ''}`;
-    return select
-      ? el('button', { class: cls, 'aria-label': label, onclick: select }, children)
-      : el('div', { class: cls, role: 'group', 'aria-label': label }, children);
+    return el('button', { type: 'button', class: cls, 'aria-label': label,
+      'aria-haspopup': select ? null : 'dialog', onclick: select ?? inspect }, children);
+  }
+
+  function inspectAlly(index) {
+    const member = g.party[index];
+    render(allyDialog, el('div', { class: 'battle-encyclopedia-body' },
+      el('h3', { id: 'battle-ally-state-title' }, `${member.name}の状態`),
+      allyEffectSections(data, g, b, index).map(([title, lines]) => el('section', { class: 'battle-effect-section' },
+        el('h4', {}, title),
+        lines.length ? el('ul', {}, lines.map(line => el('li', {}, line))) : el('p', { class: 'muted small' }, 'なし'))),
+      el('button', { onclick: () => allyDialog.close(), autofocus: true }, '閉じる')));
+    allyDialog.showModal();
   }
 
   function inspectEnemy(enemy) {
@@ -227,15 +306,15 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
       const status = member.hp <= 0 ? '戦闘不能' : `HP ${member.hp}/${hp}、MP ${member.mp}/${mp}`;
       const conditionNames = battleConditionLabels(data, { ...b.allies[index], hp: member.hp });
       const gauge = ultimateGauge(data, member);
-      const label = [member.name, index === actor ? '行動中' : '', status, ...conditionNames, targetable ? '対象に選ぶ' : ''].filter(Boolean).join('、');
-      return unitCard(classes, chosen, label, targetable ? () => select(index) : null,
+      const label = [member.name, index === actor ? '行動中' : '', status, ...conditionNames, targetable ? '対象に選ぶ' : '状態を見る'].filter(Boolean).join('、');
+      return unitCard(classes, chosen, label, targetable ? () => select(index) : null, () => inspectAlly(index),
         el('span', { class: 'battle-ally-heading' },
           el('span', { class: 'battle-ally-icon', 'aria-hidden': 'true' }, portraitIcon(member.icon, { small: true })),
           el('span', { class: 'battle-unit-name', title: member.name }, member.name)),
         el('span', { class: 'battle-ally-info' },
           resource('HP', member.hp, hp, 'hp'),
           resource('MP', member.mp, mp, 'mp'),
-          member.loadout?.ultimate ? resource('奥義', gauge.value, gauge.max, `ultimate${gauge.ready ? ' ready' : ''}`) : null,
+          resource('EX', gauge.value, gauge.max, `ultimate${gauge.ready ? ' ready' : ''}`),
           conditions(conditionNames)));
     }));
     render(latest, b.log.slice(-3).map((line) => el('span', { class: 'battle-log-line' }, line)));
@@ -276,8 +355,9 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
 
     if (sub === 'skill' || sub === 'item') {
       const isSkill = sub === 'skill';
+      const skillEntries = [...new Map([...opts.skills, ...(opts.ultimate?.skill ? [opts.ultimate] : [])].map(entry => [entry.skill.id, entry])).values()];
       const choices = isSkill
-        ? opts.skills.map(entry => listChoice(skillMaxLevel(entry.skill) > 1 ? `${entry.skill.name} Lv${learnedSkillLevel(member, entry.skill)}` : entry.skill.name, `MP ${battleMp(entry.skill)}${entry.hpCost ? `・HP ${entry.hpCost}` : ''}`, entry.reason,
+        ? skillEntries.map(entry => listChoice(`${entry.skill.isFinal ? '★ ' : ''}${entry.skill.name}${skillMaxLevel(entry.skill) > 1 ? ` Lv${learnedSkillLevel(member, entry.skill)}` : ''}`, `${entry.skill.isFinal ? `EX ${opts.ultimate?.gauge ?? member.ultimateGauge ?? 0}/${opts.ultimate?.max ?? 100}・` : ''}MP ${battleMp(entry.skill)}${entry.hpCost ? `・HP ${entry.hpCost}` : ''}`, entry.reason,
           () => chooseSkill(entry), entry.reason))
         : opts.items.map(({ item, count, reason }) => listChoice(item.name, `×${count}`, reason || item.description,
           () => choose({ type: 'item', itemId: item.id }), reason));
@@ -293,8 +373,6 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
     showPanel(`${member.name}の番`, [notice, el('div', { class: 'battle-commands' },
       command('⚔', '通常攻撃', () => choose({ type: 'attack' })),
       command('✦', 'スキル', () => showCommand('skill')),
-      command('★', '奥義', () => chooseSkill(opts.ultimate), opts.ultimate?.skill
-        ? `${opts.ultimate.skill.name}・${opts.ultimate.gauge}/${opts.ultimate.max}${opts.ultimate.reason ? `・${opts.ultimate.reason}` : ''}` : '奥義未装備', !opts.ultimate?.skill || !!opts.ultimate.reason),
       command('✚', 'アイテム', () => showCommand('item')),
       command('↪', '逃げる', () => choose({ type: 'flee' }),
         opts.flee.reason || `成功率 ${Math.round(opts.flee.rate * 100)}%`, !!opts.flee.reason))]);
@@ -311,7 +389,7 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
     const skill = entry.skill;
     const action = { type: 'skill', skillId: skill.id };
     const elements = entry.elements ?? skill.effect.rules?.choose_element ?? [];
-    const back = () => showCommand(skill.isFinal ? null : 'skill');
+    const back = () => showCommand('skill');
     const chooseBoost = selected => {
       if (entry.optionalBlessing && selected.consumeBlessing == null) return showPanel(`${skill.name}の加護`,[
         el('p',{class:'battle-notice'},'自分の加護を消費すると、今回の直接ダメージが増えます。'),
@@ -319,7 +397,7 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
           listChoice('加護を残す',`MP ${battleMp(skill)}`,null,()=>chooseBoost({...selected,consumeBlessing:false})),
           listChoice('加護を消費する',`MP ${battleMp(skill)}`,`直接ダメージ +${Math.round(skill.effect.rules.optional_blessing*100)}%`,()=>chooseBoost({...selected,consumeBlessing:true}))),
       ],{back});
-      if (!entry.boost) return chooseTarget(selected, skill.isFinal ? null : 'skill', entry.targetReasons);
+      if (!entry.boost) return chooseTarget(selected, 'skill', entry.targetReasons);
       const baseMp = battleMp(skill);
       const extraMp = entry.boost.mp;
       showPanel(`${skill.name}のMP投入`, [
