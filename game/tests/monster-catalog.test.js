@@ -64,8 +64,8 @@ test('先行5ダンジョンの図鑑は103種を収録する', () => {
 test('討伐数で順に開示し、ボスのドロップは5体で解放する', () => {
   const data = realGameData();
   for (const [monster, steps] of [
-    [data.monsters.get('slime'), [[3, 'elements'], [5, 'hp'], [10, 'types'], [10, 'statuses'], [20, 'stats'], [30, 'drops']]],
-    [data.monsters.get('goblin_boss'), [[2, 'elements'], [2, 'hp'], [3, 'types'], [3, 'statuses'], [4, 'stats'], [5, 'drops']]],
+    [data.monsters.get('slime'), [[1, 'hp'], [2, 'types'], [3, 'elements'], [10, 'statuses'], [20, 'stats'], [30, 'drops']]],
+    [data.monsters.get('goblin_boss'), [[1, 'hp'], [1, 'types'], [2, 'elements'], [3, 'statuses'], [4, 'stats'], [5, 'drops']]],
   ]) for (const [count, key] of steps) {
     assert.equal(monsterUnlocks(monster, count - 1)[key], false);
     assert.equal(monsterUnlocks(monster, count)[key], true);
