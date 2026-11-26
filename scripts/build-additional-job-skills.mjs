@@ -1,18 +1,20 @@
-// 追加1〜12職の設計を、本文の推測ではなく明示した実行データへ変換する。
+// 追加1〜15職の設計を、本文の推測ではなく明示した実行データへ変換する。
 import fs from 'node:fs';
 import assert from 'node:assert/strict';
 import { parseCsv } from '../game/js/csv.js';
 import { tacticalJobs, tacticalPlans } from './additional-jobs-04-06-plans.mjs';
 import { specialistJobs, specialistPlans } from './additional-jobs-07-09-plans.mjs';
 import { pursuitJumpJobs, pursuitJumpPlans } from './additional-jobs-10-12-plans.mjs';
+import { firearmSeaArcaneJobs, firearmSeaArcanePlans } from './additional-jobs-13-15-plans.mjs';
 
 const root = new URL('../', import.meta.url);
 const read = path => fs.readFileSync(new URL(path, root), 'utf8').replace(/^\uFEFF/, '');
 const spec = JSON.parse(read('docs/specs/additional-jobs-01-09-skills-v1.json'));
-export const implementedJobs = ['paladin', 'dark_knight', 'berserker', ...tacticalJobs, ...specialistJobs, ...pursuitJumpJobs];
+export const implementedJobs = ['paladin', 'dark_knight', 'berserker', ...tacticalJobs, ...specialistJobs, ...pursuitJumpJobs, ...firearmSeaArcaneJobs];
 const tacticalSpec = JSON.parse(read('docs/specs/additional-jobs-04-06-skills-v1.json'));
 const specialistSpec = JSON.parse(read('docs/specs/additional-jobs-07-09-skills-v1.json'));
 const pursuitJumpSpec = JSON.parse(read('docs/specs/additional-jobs-10-12-skills-v1.json'));
+const firearmSeaArcaneSpec = JSON.parse(read('docs/specs/additional-jobs-10-18-skills-v1.json'));
 const rules = JSON.parse(read('data/basic_job_rules.json'));
 const physical = ['sword','greatsword','katana','dagger','axe','spear','bow','hammer','fist','gun','whip','scythe'];
 const plans = new Map();
@@ -77,10 +79,10 @@ const writeCsv = (path, header, rows) => {
 };
 const current = csv('data/skills.csv');
 const rows = current.rows.filter(row => !implementedJobs.includes(row.job));
-const selected = [...spec.jobs.filter(job => implementedJobs.includes(job.id) && !tacticalJobs.includes(job.id) && !specialistJobs.includes(job.id)), ...tacticalSpec.jobs, ...specialistSpec.jobs, ...pursuitJumpSpec.jobs];
+const selected = [...spec.jobs.filter(job => implementedJobs.includes(job.id) && !tacticalJobs.includes(job.id) && !specialistJobs.includes(job.id)), ...tacticalSpec.jobs, ...specialistSpec.jobs, ...pursuitJumpSpec.jobs, ...firearmSeaArcaneSpec.jobs.filter(job => firearmSeaArcaneJobs.includes(job.id))];
 const weaponNames = { '刀':'katana', '剣':'sword', '大剣':'greatsword', '槍':'spear', '斧':'axe', '鎌':'scythe', '短剣':'dagger' };
 for (const job of selected) for (const s of job.skills) {
-  const plan = plans.get(s.id) ?? tacticalPlans.get(s.id) ?? specialistPlans.get(s.id) ?? pursuitJumpPlans.get(s.id);
+  const plan = plans.get(s.id) ?? tacticalPlans.get(s.id) ?? specialistPlans.get(s.id) ?? pursuitJumpPlans.get(s.id) ?? firearmSeaArcanePlans.get(s.id);
   assert.ok(plan, `実行定義なし: ${s.id}`);
   const weapons = plan.weapons ?? s.weapons ?? (s.weaponCondition.includes('12種') ? physical
     : s.weaponCondition.startsWith('武器条件なし') ? [] : s.weaponCondition.split('・').map(name => weaponNames[name]));
@@ -90,7 +92,7 @@ for (const job of selected) for (const s of job.skills) {
   const ap = rules.ap_bands[{'導入':'intro','標準':'standard','発展':'advanced','奥義':'ultimate'}[s.apBand]];
   const tags = [...new Set([s.type === 'active' ? 'active' : s.type,...s.tags])];
   const effects = s.effects.map((description,i)=>({master:true,additional:true,description,source_description:description,
-    prerequisites:s.prerequisites,weapons,tags,target:s.target,reference:spec.formulas[s.reference],
+    prerequisites:s.prerequisites,weapons,tags,target:s.target,reference:(firearmSeaArcaneJobs.includes(job.id)?firearmSeaArcaneSpec:spec).formulas[s.reference],
     ...(s.simpleDescriptions ? {short_description:s.simpleDescriptions[i]} : {}),
     growth_mode:s.growthMode,...(final?{ultimate:true}:{}),...plan.build(i)}));
   assert.equal(effects.length,s.maxLevel);
@@ -114,4 +116,4 @@ fs.writeFileSync(new URL('data/basic_job_rules.json',root),JSON.stringify(rules,
 const balance=fs.readFileSync(new URL('data/balance.json',root),'utf8');
 assert.match(balance,/"lifesteal_action_cap":\s*[\d.]+/);
 fs.writeFileSync(new URL('data/balance.json',root),balance.replace(/"lifesteal_action_cap":\s*[\d.]+/,'"lifesteal_action_cap": 0.1'));
-console.log(`追加1〜12職: ${selected.reduce((n,j)=>n+j.skills.length,0)}技能、最初から選択可能`);
+console.log(`追加1〜15職: ${selected.reduce((n,j)=>n+j.skills.length,0)}技能、最初から選択可能`);

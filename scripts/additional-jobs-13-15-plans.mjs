@@ -1,0 +1,53 @@
+export const firearmSeaArcaneJobs = ['gunner','pirate','spellblade'];
+export const firearmSeaArcanePlans = new Map();
+const add=(id,kind,build)=>firearmSeaArcanePlans.set(id,{kind,build});
+const weapon=(m,element,extra={})=>({base:'weapon',m,element,...extra});
+const stat=[.04,.06,.08,.10,.12],growth=[.05,.07,.09,.11,.13];
+add('gunner_A01','attack',i=>weapon([1.1,1.25,1.4,1.55,1.7][i],'pierce'));
+add('gunner_A02','self_buff',i=>({rules:{reload:i+1}}));
+add('gunner_A03','attack',i=>weapon([1.15,1.3,1.45,1.6,1.75][i],'fire',{rules:{ammo:1}}));
+add('gunner_A04','attack',i=>weapon([1.05,1.2,1.35,1.5,1.65][i],'thunder',{rules:{ammo:1}}));
+add('gunner_A05','attack',i=>weapon(.9,'pierce',{st:['blind',.4],status_turns:i+2,rules:{ammo:1}}));
+add('gunner_A06','attack',i=>weapon([1.5,1.7,1.9,2.1,2.3][i],'pierce',{defign:.2,rules:{ammo:2}}));
+add('gunner_A07','self_buff',()=>({rules:{aim:{rate:.2,turns:2}}}));
+add('gunner_A08','attack',i=>weapon(.65,'pierce',{tgt:'all',select_targets:true,target_limit:[2,3,8][i],
+  rules:{ammo:1,attack_after:{rate:.8,debuff:{spd:.1},turns:2}}}));
+add('gunner_A09','attack',i=>weapon([1.6,1.8,2,2.2,2.4][i],'pierce',{hits:[.5,.5],rules:{ammo:2}}));
+add('gunner_P01','passive',()=>({rules:{reload_accuracy:.15}}));
+add('gunner_P02','passive',i=>({mod:{str:stat[i]}}));
+add('gunner_P03','passive',i=>({rules:{mp_save:[{tag:'gunshot',rate:[.2,.35,.5][i]}]}}));
+add('gunner_P04','passive',i=>({rules:{gun_def_ignore:[.05,.10,.15][i]}}));
+add('gunner_P05','passive',i=>({rules:{bound_gun_damage:[.1,.15,.2][i]}}));
+add('gunner_U01','attack',()=>weapon(2.5,'pierce',{tgt:'all',rules:{fill_ammo:3}}));
+
+add('pirate_A01','attack',i=>weapon([1.15,1.3,1.45,1.6,1.75][i],'slash'));
+add('pirate_A02','party_buff',i=>({buff:{spd:.1},turns:i+1}));
+add('pirate_A03','attack',i=>weapon([1,1.15,1.3,1.45,1.6][i],'water'));
+add('pirate_A04','attack',i=>weapon(.9,'pierce',{tgt:'all',select_targets:true,target_limit:i+1,st:['fear',.35],status_turns:2}));
+add('pirate_A05','attack',i=>weapon(1,'slash',{defign:[.1,.2,.3][i]}));
+add('pirate_A06','self_buff',i=>({buff:{spd:.1,eva:.1},turns:i+1}));
+add('pirate_A07','party_buff',()=>({buff:{str:.1},turns:2,rules:{spend_momentum:true}}));
+add('pirate_A08','attack',i=>weapon(1.1,'slash',{rules:{remove_attack_buffs:i+1}}));
+add('pirate_A09','attack',i=>weapon([.8,.95,1.1,1.25,1.4][i],'slash',{tgt:'all'}));
+add('pirate_P01','passive',()=>({rules:{kill_momentum:{rate:.15,turns:2}}}));
+add('pirate_P02','passive',i=>({mod:{str:stat[i]}}));
+add('pirate_P03','passive',i=>({rules:{opening_weapon:{opportunities:i+1,rate:.15}}}));
+add('pirate_P04','passive',i=>({rules:{water_cut:[.06,.09,.12][i]}}));
+add('pirate_P05','passive',i=>({rules:{momentum_mp_save:[.2,.35,.5][i]}}));
+add('pirate_U01','attack',()=>weapon(2.7,'slash',{tgt:'all',rules:{after_party_buff:{values:{str:.2},turns:2}}}));
+
+const hybrid=(m,adaptive=true,extra={})=>weapon(m,adaptive?'slash':'slash',{rules:{hybrid_mag_rate:.35,...(adaptive?{adaptive_enchant:true}:{})},...extra});
+for(const [id,element] of [['spellblade_A01','fire'],['spellblade_A02','ice'],['spellblade_A03','thunder']])
+  add(id,'self_buff',i=>({rules:{enchant:{element,turns:i+2}}}));
+add('spellblade_A04','attack',i=>hybrid([1,1.15,1.3,1.45,1.6][i]));
+add('spellblade_A05','attack',i=>hybrid(1,false,{rules:{hybrid_mag_rate:.35,attack_after:{rate:.8,debuff:{res:.1},turns:i+2}}}));
+add('spellblade_A06','self_buff',i=>({rules:{enchant_guard:{rate:[.1,.15,.2][i],turns:3}}}));
+add('spellblade_A07','self_buff',()=>({rules:{release_enchant:{rate:.25,turns:2}}}));
+add('spellblade_A08','attack',i=>hybrid([1.3,1.5,1.7,1.9,2.1][i],true,{hits:[.5,.5]}));
+add('spellblade_A09','attack',i=>hybrid([1.6,1.8,2,2.2,2.4][i],true,{rules:{hybrid_mag_rate:.35,adaptive_enchant:true,enchant_start_bonus:.2}}));
+add('spellblade_P01','passive',()=>({rules:{switch_enchant_mp:.2}}));
+add('spellblade_P02','passive',i=>({mod:{mag:stat[i]}}));
+add('spellblade_P03','passive',i=>({rules:{hybrid_damage:growth[i]}}));
+add('spellblade_P04','passive',i=>({rules:{mp_save:[{tag:'enchant',rate:[.2,.35,.5][i]}]}}));
+add('spellblade_P05','passive',i=>({rules:{enchanted_magic_cut:[.06,.09,.12][i]}}));
+add('spellblade_U01','attack',()=>hybrid(4.6,false,{rules:{hybrid_mag_rate:.35,choose_element:['fire','ice','thunder'],ultimate_enchant:{turns:3,rate:.25}}}));

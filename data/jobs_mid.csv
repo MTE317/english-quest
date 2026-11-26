@@ -11,9 +11,9 @@ ninja,忍者,分身・回避・忍術,additional,C,B,B,B,D,C,A,B,slash|wind,dark
 assassin,暗殺者,状態異常・隙への一撃,additional,C,C,A,D,D,C,A,A,slash|pierce,dark,dagger,bow,STR／SPD・LUK,仲間の妨害や状態異常が作った好機を利用,強烈な急所攻撃。対象の状態異常や弱体で追加強化,1,,dagger,medium,初期解放（条件は後日設定）,1
 bounty_hunter,賞金稼ぎ,特定標的の追跡・拘束,additional,B,C,A,D,B,C,B,B,pierce,ice,bow,gun|dagger,STR・武器威力,標的を指定し、追い続けるほど攻撃や拘束を強化,標的への集中射撃と強力な拘束。追跡蓄積で追加強化,1,,bow,medium,初期解放（条件は後日設定）,1
 dragoon,竜騎士,跳躍・槍・対竜,additional,A,C,A,D,B,C,B,D,pierce,thunder|wind,spear,sword,STR・HP,跳躍で大技を避け、着地で強襲。竜特攻と対竜防御も持つ,強烈な落下槍撃。竜特攻と着地後の防護,1,,spear,medium,初期解放（条件は後日設定）,1
-gunner,銃士,特殊弾・物理射撃,additional,B,C,B,D,B,C,A,A,pierce,fire|thunder,gun,dagger,武器威力中心／STR・LUK,通常射撃と限られた属性・妨害用の特殊弾を撃ち分ける,特殊弾の一斉射撃と弾の補充,0,,gun,medium,個別技能の実装待ち,1
-pirate,海賊,開幕強襲・撃破の勢い,additional,A,C,A,D,B,D,B,B,slash,water,axe,sword|gun,STR／武器威力・LUK,開幕や撃破直後の勢いを利用して攻め続ける,全体への斬り込みと味方への攻勢支援,0,,axe,medium,個別技能の実装待ち,1
-spellblade,魔法剣士,属性付与・物理魔法複合,additional,B,B,A,B,C,C,B,C,slash,fire|ice|thunder,sword,katana,STR＋MAG,武器へ1属性を付与し、相性を読んで武器技を強化,付与属性の強力な武器攻撃と属性付与の一時強化,0,,sword,medium,個別技能の実装待ち,1
+gunner,銃士,特殊弾・物理射撃,additional,B,C,B,D,B,C,A,A,pierce,fire|thunder,gun,dagger,武器威力中心／STR・LUK,通常射撃と限られた属性・妨害用の特殊弾を撃ち分ける,特殊弾の一斉射撃と弾の補充,1,,gun,medium,初期解放（条件は後日設定）,1
+pirate,海賊,開幕強襲・撃破の勢い,additional,A,C,A,D,B,D,B,B,slash,water,axe,sword|gun,STR／武器威力・LUK,開幕や撃破直後の勢いを利用して攻め続ける,全体への斬り込みと味方への攻勢支援,1,,axe,medium,初期解放（条件は後日設定）,1
+spellblade,魔法剣士,属性付与・物理魔法複合,additional,B,B,A,B,C,C,B,C,slash,fire|ice|thunder,sword,katana,STR＋MAG,武器へ1属性を付与し、相性を読んで武器技を強化,付与属性の強力な武器攻撃と属性付与の一時強化,1,,sword,medium,初期解放（条件は後日設定）,1
 elementalist,精霊術士,属性の場・継続的な優位,additional,C,A,D,A,C,A,B,C,wind|earth|water,,staff,tome|fan,MAG・MP,属性の場を1つ展開し、敵味方への影響を読んで切り替える,場を展開し、同属性の全体攻撃と味方への防護,0,,staff,light,個別技能の実装待ち,1
 witch,魔女,使い魔・氷闇の術・妨害,additional,C,A,D,A,D,B,B,A,ice|dark,,scythe,tome|staff,MAG（鎌術・使い魔）,自分の魔法に使い魔が反応し、妨害や追撃を行う,強化使い魔を呼び、魔法連携と妨害を大幅強化,0,,scythe,light,個別技能の実装待ち,1
 hexer,呪術師,敵行動への呪印・弱体,additional,C,A,D,A,D,A,B,B,dark,earth,tome,scythe|whip,MAG・MP,敵行動を条件に呪印を発動。敵側の状態異常も活用,敵全体に強力な呪印を刻み、行動に応じて災厄を起こす,0,,tome,light,個別技能の実装待ち,1
