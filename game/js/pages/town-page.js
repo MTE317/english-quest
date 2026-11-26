@@ -283,7 +283,8 @@ function inn() {
   return [
     innPartyPanel(g),
     el('p', { class: 'muted small' }, '死亡・石化の治療は', el('a', { href: facilityLink('temple') }, '神殿'), 'で受けられます。'),
-    el('button', { onclick: () => act((gg) => `ふつうの部屋に泊まった（-${stayInn(data, gg, false)}）`) }, `ふつうの部屋（${econ.inn_cheap}）：全回復`),
+    el('button', { class: 'primary', onclick: () => act((gg) => `ふつうの部屋に泊まった（-${stayInn(data, gg, false)}）`) },
+      el('div', {}, `ふつうの部屋（${econ.inn_cheap}）`), el('div', { class: 'tiny' }, 'HP・MP全回復')),
     el('button', { class: 'primary', onclick: () => act((gg) => `良い部屋に泊まった（-${stayInn(data, gg, true)}）`) },
       el('div', {}, `良い部屋（${econ.inn_good}）`), el('div', { class: 'tiny' }, fx?.description ?? '')),
   ];
