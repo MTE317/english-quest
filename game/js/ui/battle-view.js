@@ -3,7 +3,7 @@ import { now } from '../storage.js?v=skill-growth-2';
 import { QuestionPicker, REASON_LABEL } from '../picker.js?v=skill-growth-2';
 import { makePracticeQuestion, questionDirection, questionSpeech, DIRECTION } from '../quiz.js?v=skill-growth-2';
 import { speak, canSpeak, stopSpeech } from '../speech.js?v=skill-growth-2';
-import { nextTurn, actionOptions, setPending, prepareQuizAction, resolvePending, targetKind, skillMp, collectBattleHits, enemyIntent, enemyCanAct } from '../battle.js?v=specialist-jobs-1';
+import { nextTurn, actionOptions, setPending, prepareQuizAction, resolvePending, targetKind, skillMp, collectBattleHits, enemyIntent, enemyCanAct } from '../battle.js?v=party-wipe-1';
 import { skillMaxLevel, learnedSkillLevel, effectiveSkill } from '../growth.js?v=advanced-jobs-1';
 import { maxHp, maxMp } from '../character.js?v=advanced-jobs-1';
 import { el, render } from '../dom.js?v=skill-growth-2';
@@ -185,7 +185,7 @@ export function allyEffectSections(data, game, battle, index) {
     .map(([title, entries]) => [title, entries.map(entry => entry.label)]);
 }
 
-export function createBattleView({ view, data, lex, scheduler, store, session, onEnd: finishBattle, settings = {} }) {
+export function createBattleView({ view, data, lex, scheduler, store, session, onDefeat, onEnd: finishBattle, settings = {} }) {
   const run = session.run;
   const b = run.battle;
   const g = session.game;
@@ -234,13 +234,23 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
     finishBattle(result);
   }
 
+  let defeatSaved = false;
+  function saveProgress() {
+    if (b.result === 'lose' && onDefeat) {
+      if (!defeatSaved) {
+        onDefeat();
+        defeatSaved = true;
+      }
+    } else session.save();
+  }
+
   async function loop(previousHits = []) {
     stopSpeech();
     const nextHits = !b.pending && !b.turn && !b.result
       ? collectBattleHits(b, () => nextTurn(data, g, b))
       : [];
     const hits = Array.isArray(previousHits) ? [...previousHits, ...nextHits] : nextHits;
-    session.save();
+    saveProgress();
     if (b.result) {
       if (hits.length) {
         drawField(null);
@@ -640,7 +650,7 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
       rewards.answers += 1;
       rewards.total += correct ? weights[q.reason] ?? 1 : 1;
       const hits = collectBattleHits(b, () => resolvePending(data, g, b, correct));
-      session.save();
+      saveProgress();
 
       drawField(actor, {}, action);
       showPanel(title, [

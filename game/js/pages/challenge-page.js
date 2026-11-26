@@ -4,15 +4,15 @@ import { splitList } from '../csv.js?v=skill-growth-2';
 import { loadLearningCatalog } from '../learning-catalog.js?v=skill-growth-2';
 import { Scheduler } from '../srs.js?v=skill-growth-2';
 import { LearningStore, now } from '../storage.js?v=skill-growth-2';
-import { GameSession } from '../save.js?v=skill-growth-2';
-import { normalizeGame } from '../game-state.js?v=advanced-jobs-1';
-import { createBattle, makeEnemy, finishBattle } from '../battle.js?v=specialist-jobs-1';
-import { currentRank, useItemOutsideBattle, FIELD_ITEM_EFFECTS } from '../dungeon.js?v=specialist-jobs-1';
+import { GameSession } from '../save.js?v=party-wipe-1';
+import { normalizeGame } from '../game-state.js?v=party-wipe-1';
+import { createBattle, makeEnemy, finishBattle } from '../battle.js?v=party-wipe-1';
+import { currentRank, returnAfterDefeat, useItemOutsideBattle, FIELD_ITEM_EFFECTS } from '../dungeon.js?v=party-wipe-1';
 import { nextRankStatus, checkRankUp } from '../town.js?v=specialist-jobs-1';
-import { makeGear } from '../character.js?v=advanced-jobs-1';
+import { makeGear, partyCanAct } from '../character.js?v=party-wipe-1';
 import { arenaReviewWords } from '../study.js?v=skill-growth-2';
 import { runDualPromotionExam } from '../ui/learning-exams.js?v=skill-growth-2';
-import { createBattleView } from '../ui/battle-view.js?v=specialist-jobs-1';
+import { createBattleView } from '../ui/battle-view.js?v=party-wipe-1';
 import { runQuiz } from '../ui/quiz-runner.js?v=skill-growth-2';
 import { el, render } from '../dom.js?v=skill-growth-2';
 import { setSceneMusic } from '../battle-music.js?v=skill-growth-2';
@@ -42,7 +42,7 @@ function shuffled(values) {
 function start(kind, label, battles, pool, extra = {}) {
   if (!pool.length) throw new Error('教材を学習してから挑戦してください。');
   if (!battles.length || battles.some((row) => !row.length || row.some((e) => !data.monsters.has(e.id) || !Number.isFinite(e.lv)))) throw new Error('対戦相手のデータを確認してください。');
-  if (session.game.party.every((member) => member.hp <= 0)) throw new Error('先にパーティーを回復してください。');
+  if (!partyCanAct(session.game)) throw new Error('全員が死亡または石化しています。神殿で治療してください。');
   const stoneId = lex.wordsById.get(pool[0]).stoneId;
   session.enterDungeon({ challenge: kind, label, battles, questionPool: shuffled(pool), stoneId, ...extra });
   draw();
@@ -106,18 +106,20 @@ function completeArena() {
   draw();
 }
 
-function endBattle(result) {
-  if (result !== 'win') {
-    const final = session.run.challenge === 'final';
-    session.wipe();
+function settleDefeat() {
+  const final = session.run.challenge === 'final';
+  const wiped = returnAfterDefeat(data, session, (game) => {
     if (final) {
       const spec = data.exams.find((e) => e.id === 'final');
-      session.update((game) => { game.finalRetryDay = scheduler.dayOf(now()) + spec.retryAfterDays; });
+      game.finalRetryDay = scheduler.dayOf(now()) + spec.retryAfterDays;
     }
-    message = '敗退。挑戦前の状態に戻りました。';
-    draw();
-    return;
-  }
+    normalizeGame(data, game);
+  });
+  message = wiped ? '全滅した状態で町に帰還しました。仲間は神殿で治療できます。' : '敗退。挑戦前の状態に戻りました。';
+}
+
+function endBattle(result) {
+  if (result === 'lose') { draw(); return; }
   session.endBattle((game, run) => { finishBattle(data, game, run.battle); });
   if (session.run.challenge === 'arena' && session.run.battlesDone >= session.run.battles.length) {
     completeArena();
@@ -130,8 +132,7 @@ function finalReview() {
   runDualPromotionExam({
     view, catalog, store, session, scheduler, chantConfig, rankId: 'S',
     onFinish: ({ complete }) => {
-      session.wipe();
-      session.update((game) => {
+      session.rollbackRun((game) => {
         if (complete) {
           if (!game.examsPassed.includes('S')) game.examsPassed.push('S');
           checkRankUp(data, game);
@@ -174,7 +175,7 @@ function draw() {
       el('a', { href: game?.party ? 'dungeon.html' : 'party.html', class: 'btn' }, game?.party ? 'ダンジョンへ' : 'パーティーを作る'));
     return;
   }
-  if (run?.battle) { createBattleView({ view, data, lex, store, scheduler, session, onEnd: endBattle }).start(); return; }
+  if (run?.battle) { createBattleView({ view, data, lex, store, scheduler, session, onDefeat: settleDefeat, onEnd: endBattle }).start(); return; }
   setSceneMusic(run ? 'dungeon' : 'facility');
   const banner = message ? el('p', { role: 'status' }, message) : null;
   if (run) {
@@ -183,15 +184,18 @@ function draw() {
       : button(`第${run.battlesDone + 1}戦へ`, startBattle);
     render(view, banner, el('h2', {}, run.label), action,
       run.battlesDone ? button('道具を使う', showItems) : null,
-      button('挑戦を中止', () => { session.wipe(); message = '挑戦を中止しました。'; draw(); }));
+      button('挑戦を中止', () => { session.rollbackRun(); message = '挑戦を中止しました。'; draw(); }));
     return;
   }
   const mode = el('select', { class: 'select', 'aria-label': '挑戦条件' },
     el('option', { value: '' }, '通常'), el('option', { value: 'ja2en' }, '日→英だけ'), el('option', { value: 'timed' }, '1問10秒'));
   const retry = (game.finalRetryDay ?? 0) > scheduler.dayOf(now());
+  const canChallenge = partyCanAct(game);
   render(view, banner,
+    !canChallenge ? el('p', { class: 'error' }, '全員が死亡または石化しています。', '　',
+      el('a', { href: 'index.html?facility=temple' }, '神殿へ')) : null,
     el('h2', {}, 'Sランク最終試験'),
-    button(retry ? '次の日に再挑戦' : '最終試験に挑む', finalExam, retry || !rankCanAttemptFinal()),
+    button(retry ? '次の日に再挑戦' : '最終試験に挑む', finalExam, !canChallenge || retry || !rankCanAttemptFinal()),
     game.rank !== 'S' ? el('p', { class: 'muted small' }, 'Sランクの英語試験は内容を設計中です。') : null,
     el('h2', {}, '闘技場'),
     el('p', { class: 'muted small' }, '同じ階級の5連戦です。HP・MPは持ち越し、戦闘の合間に道具を使えます。回復薬とエーテルを用意し、最後のチャンピオンに合わせて装備を整えましょう。'),
@@ -201,7 +205,7 @@ function draw() {
       const locked = Boolean(previous && !(game.arenaClears?.[previous.id] > 0));
       const suggested = Number(tier.recommended_level) || 0;
       const label = `${tier.name}${suggested ? `（推奨Lv${suggested}〜）` : ''}`;
-      return button(label, () => arena(tier, mode.value === 'ja2en' ? 'ja2en' : null, mode.value === 'timed'), locked);
+      return button(label, () => arena(tier, mode.value === 'ja2en' ? 'ja2en' : null, mode.value === 'timed'), !canChallenge || locked);
     })] : el('p', { class: 'muted' }, '対戦データが登録された階級から遊べます。'),
     el('h2', {}, `メダル交換（所持 ${game.medals ?? 0}枚）`),
     shop.filter((row) => data.equipment.has(row.gear_id)).map((row) => button(`${data.equipment.get(row.gear_id).name}（${row.medals}枚）`, () => {

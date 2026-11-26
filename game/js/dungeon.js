@@ -1,22 +1,21 @@
 import { gainAp } from './ap.js?v=skill-growth-2';
 import { roundGold } from './gold.js?v=skill-growth-2';
-// ダンジョンの遠征：行き先とルーンストーンを選ぶ・階層・帰還ポイント・ドロップ・バックパック・全滅で入る前に戻る。
-// 進み具合は session.run に入れる（1戦ごとに保存。全滅したら session.wipe() で入る前に戻る）。
+// ダンジョンの遠征：行き先・階層・戦利品・帰還を扱う。遠征の進み具合は session.run に保存する。
 //
 // run.state
 //   'ready'        … 次の戦闘の前
 //   'loot'         … 拾ったものがバックパックに入りきらない（入れ替えるかあきらめるかを選ぶ）
 //   'return_point' … 帰還ポイント（帰るか先へ進むかを選ぶ）
 //   'cleared'      … いちばん奥のボスを倒した（町に帰るだけ）
-import { createBattle, finishBattle, battleRewards, curedBy } from './battle.js?v=specialist-jobs-1';
+import { createBattle, finishBattle, battleRewards, curedBy } from './battle.js?v=party-wipe-1';
 import { recordMonsterDefeats } from './monster-knowledge.js?v=monster-catalog-1';
 import { makeEncounter, floorRow, planBounty } from './encounter.js?v=specialist-jobs-1';
 import { rollBattleLoot, addToBackpack, swapIntoBackpack, unloadBackpack } from './loot.js?v=advanced-jobs-1';
-import { gainXp, maxHp, maxMp, affixSum } from './character.js?v=advanced-jobs-1';
+import { gainXp, maxHp, maxMp, affixSum, partyCanAct } from './character.js?v=party-wipe-1';
 import { advanceDays, calendarOf, countKills, refreshBoard } from './town.js?v=specialist-jobs-1';
 import { discoverJobs, recordStoredMaterials } from './temple.js?v=skill-growth-2';
 import { memberMods } from './growth.js?v=advanced-jobs-1';
-import { planExploration, resolveExploration, commitExploration, explorationEntryAllowed } from './exploration.js?v=specialist-jobs-1';
+import { planExploration, resolveExploration, commitExploration, explorationEntryAllowed } from './exploration.js?v=party-wipe-1';
 import { isTrialDungeonUnlocked } from './world-map.js?v=skill-growth-2';
 
 /** 乱数の種から 0〜1 の乱数を返す関数（状態は obj[key] に入れて保存できる） */
@@ -66,6 +65,7 @@ export function allowedStones(lex) {
  * @param quizState QuestionPicker の toState()（出題の状態）
  */
 export function startRun(data, session, { dungeonId, stoneId, quizState, seed, bountyLure = false }) {
+  if (!partyCanAct(session.game)) throw new Error('全員が死亡または石化しています。神殿で治療してください。');
   const dg = data.dungeons.get(dungeonId);
   if (!dg) throw new Error(`ダンジョン ${dungeonId} がない`);
   if (!allowedDungeons(data, session.game).includes(dg)) throw new Error('この冒険先はまだ発見していません。');
@@ -148,7 +148,7 @@ export function startNextBattle(data, session) {
 }
 
 /**
- * 戦闘が終わったあと（勝った・逃げた）。全滅なら入る前に戻す。
+ * 戦闘が終わったあと（勝った・逃げた・敗北した）。
  * @returns 戦闘結果と、勝利時のメンバーごとの成長・ドロップ
  */
 /** 勝利後の回復。検証ツールも実ゲームと同じ処理を使う。 */
@@ -171,15 +171,27 @@ function receiveLoot(data, game, run, loot) {
   game.catalog.gear = [...new Set([...game.catalog.gear, ...loot.gear.map((item) => item.id)])];
 }
 
-export function afterBattle(data, session) {
+export function returnAfterDefeat(data, session, updateTown) {
+  const game = session.game;
+  const battle = session.run.battle;
+  finishBattle(data, game, battle);
+  if (partyCanAct(game)) {
+    session.rollbackRun(updateTown); // 戦闘の規定ラウンド数を超えた場合
+    return false;
+  }
+  session.wipe(updateTown);
+  return true;
+}
+
+export function afterBattle(data, session, updateTown) {
   const b = session.run.battle;
   const game = session.game;
-  finishBattle(data, game, b);
   if (b.result === 'lose') {
     recordMonsterDefeats(game, b.enemies);
-    session.wipe();
-    return { result: 'lose', growth: [], loot: null };
+    const wiped = returnAfterDefeat(data, session, updateTown);
+    return { result: 'lose', wiped, growth: [], loot: null };
   }
+  finishBattle(data, game, b);
   const growth = [];
   let loot = null;
   session.endBattle((g, run) => {

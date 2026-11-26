@@ -1,8 +1,8 @@
 import { availableAp } from '../ap.js?v=skill-growth-2';
 // 町をホームにして、施設カードから各施設を開く。
 import { loadGameData } from '../gamedata.js?v=skill-growth-2';
-import { GameSession } from '../save.js?v=skill-growth-2';
-import { normalizeGame } from '../game-state.js?v=advanced-jobs-1';
+import { GameSession } from '../save.js?v=party-wipe-1';
+import { normalizeGame } from '../game-state.js?v=party-wipe-1';
 import { currentRank, seededRng } from '../dungeon.js?v=specialist-jobs-1';
 import {
   calendarOf, fillBoard, boardSize, questAcceptLimit, acceptQuest, canAcceptQuest, abandonQuest, canReport, reportQuest, questText, questProgress, questDestination, questRewardGold, questRankPoints, questDepositTotal, questAbandonRefund, nextRankStatus, stayInn, revive, reviveCost, checkRankUp,
@@ -282,6 +282,7 @@ function inn() {
   const fx = data.innRooms.find((r) => r.innRank === (g.facilities.inn ?? 1));
   return [
     innPartyPanel(g),
+    el('p', { class: 'muted small' }, '死亡・石化の治療は', el('a', { href: facilityLink('temple') }, '神殿'), 'で受けられます。'),
     el('button', { onclick: () => act((gg) => `ふつうの部屋に泊まった（-${stayInn(data, gg, false)}）`) }, `ふつうの部屋（${econ.inn_cheap}）：全回復`),
     el('button', { class: 'primary', onclick: () => act((gg) => `良い部屋に泊まった（-${stayInn(data, gg, true)}）`) },
       el('div', {}, `良い部屋（${econ.inn_good}）`), el('div', { class: 'tiny' }, fx?.description ?? '')),

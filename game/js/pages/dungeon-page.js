@@ -5,15 +5,15 @@ import { loadLearningCatalog } from '../learning-catalog.js?v=skill-growth-2';
 import { Scheduler } from '../srs.js?v=skill-growth-2';
 import { LearningStore, now, loadSettings } from '../storage.js?v=skill-growth-2';
 import { QuestionPicker } from '../picker.js?v=skill-growth-2';
-import { GameSession } from '../save.js?v=skill-growth-2';
-import { normalizeGame } from '../game-state.js?v=advanced-jobs-1';
+import { GameSession } from '../save.js?v=party-wipe-1';
+import { normalizeGame } from '../game-state.js?v=party-wipe-1';
 import {
   allowedDungeons, allowedStones, expeditionFee, startRun, startNextBattle, afterBattle, returnToTown, continueRun, resolveLoot,
   isBossBattle, runFloorRow, runFloorCount, returnItems, currentRank, useItemOutsideBattle, FIELD_ITEM_EFFECTS,
-} from '../dungeon.js?v=specialist-jobs-1';
+} from '../dungeon.js?v=party-wipe-1';
 import { backpackSlots, backpackUsed, addItem } from '../loot.js?v=advanced-jobs-1';
-import { maxHp, maxMp } from '../character.js?v=advanced-jobs-1';
-import { createBattleView } from '../ui/battle-view.js?v=specialist-jobs-1';
+import { maxHp, maxMp, partyCanAct } from '../character.js?v=party-wipe-1';
+import { createBattleView } from '../ui/battle-view.js?v=party-wipe-1';
 import { createVictoryView, createLootIcons } from '../ui/victory-view.js?v=advanced-jobs-1';
 import { el, render, stars } from '../dom.js?v=skill-growth-2';
 import { buildWorldMap, newDiscoveries } from '../world-map.js?v=skill-growth-2';
@@ -65,6 +65,7 @@ function showDeparture(message = null) {
     render(view, el('p', {}, 'まだパーティーがいません。'), el('a', { class: 'btn primary', href: 'party.html' }, 'パーティーを作る'));
     return;
   }
+  const canDepart = partyCanAct(g);
   const rank = currentRank(data, g);
   const dungeons = allowedDungeons(data, g);
   const nearby = dungeons.find(d => d.rank === 1 && d.kind === '近場');
@@ -101,7 +102,7 @@ function showDeparture(message = null) {
     ];
     render(stoneSel, groups);
     const fee = expeditionFee(data, dg);
-    departure.disabled = !st.stoneId || g.gold < fee;
+    departure.disabled = !canDepart || !st.stoneId || g.gold < fee;
     render(info, el('div', { class: 'route-facts' },
       [['階層', `${dg.floors}階`], ['所要日数', `${dg.days}日`], ['遠征費', fee ? `${fee} G` : '無料'], ['帰還地点', dg.returnPointFloor ? `${dg.returnPointFloor}階の後` : 'なし']]
         .map(([key, value]) => el('div', {}, el('small', {}, key), el('strong', {}, value)))),
@@ -112,7 +113,6 @@ function showDeparture(message = null) {
     class: 'primary',
     onclick: async () => {
       if (!st.stoneId || departure.disabled || session.inDungeon) return;
-      if (session.game.party.every((m) => m.hp <= 0)) { showDeparture('全員倒れている。宿屋や神殿で回復してから出発しよう。'); return; }
       departure.disabled = true;
       try {
         const picker = new QuestionPicker({ lex, store, scheduler, stoneId: st.stoneId, nowMs: now() });
@@ -141,7 +141,9 @@ function showDeparture(message = null) {
   render(view,
     el('section', { class: 'departure' },
       el('h2', { class: 'chapter-title' }, '遠征の準備'),
-      message ? el('p', { class: 'panel error', role: 'alert' }, message, '　', el('a', { href: 'index.html?facility=temple' }, '神殿へ')) : null,
+      !canDepart ? el('p', { class: 'panel error', role: 'alert' }, '全員が死亡または石化しています。', '　',
+        el('a', { href: 'index.html?facility=temple' }, '神殿へ')) : null,
+      message ? el('p', { class: 'panel error', role: 'alert' }, message) : null,
       atlas,
       el('div', { class: 'panel departure-plan' },
         destinationHeading,
@@ -344,25 +346,25 @@ function beginBattle() {
 }
 
 function battleView() {
+  let defeat;
   return createBattleView({
     view, data, lex, scheduler, store, session,
     settings: loadSettings(),
-    onEnd: () => {
-      const { dungeonId, floor, battleIndex } = session.run;
-      const dg = data.dungeons.get(dungeonId);
-      const r = afterBattle(data, session);
-      if (r.result === 'lose') {
-        normalizeGame(data, session.game);
-        session.save();
+    onDefeat: () => { defeat = afterBattle(data, session, (game) => normalizeGame(data, game)); },
+    onEnd: (result) => {
+      if (result === 'lose') {
         render(view,
-          el('h2', {}, '全滅…'),
-          el('p', {}, 'ダンジョンに入る前の状態に戻った（お金・素材・拾った装備・経験値・日数）。'),
-          el('p', { class: 'muted small' }, '図鑑と依頼の進捗も入場時に戻ります。学習記録・詠唱の記録・JPは残ります。'),
-          el('div', { class: 'panel small' }, `ヒント：図鑑を見て属性耐性や状態異常対策を準備しよう。育成が必要なら、${dg.rank > 1 ? '★を1つ下げたダンジョン' : '近場のダンジョン'}がおすすめ。`),
-          el('a', { class: 'btn', href: 'party.html' }, '編成を見直す'),
+          el('h2', {}, defeat.wiped ? 'パーティーは全滅した…' : '遠征に失敗した…'),
+          defeat.wiped ? [
+            el('p', {}, '今回の遠征で手に入れたアイテムとゴールドを失い、全滅した状態で町に帰還しました。'),
+            el('p', { class: 'muted small' }, '経験値・AP・図鑑・学習の記録は残ります。仲間は神殿で治療できます。'),
+            el('a', { class: 'btn', href: 'index.html?facility=temple' }, '神殿へ'),
+          ] : el('p', {}, '戦闘が長引いたため、遠征前の状態に戻りました。'),
           el('a', { class: 'btn primary', href: 'index.html' }, '町へ'));
         return;
       }
+      const { dungeonId, floor, battleIndex } = session.run;
+      const r = afterBattle(data, session);
       const battleCount = runFloorRow(data, { ...session.run, dungeonId, floor }).battles;
       showRun({ ...r, floor, battleNumber: battleIndex + 1, battleCount });
     },

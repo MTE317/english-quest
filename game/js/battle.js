@@ -8,7 +8,7 @@
 //
 // 式・効果の上限は data/balance.json から読む。BATTLE_FORMULAS は旧データ向けの既定値。
 import { evaluate } from './expr.js?v=skill-growth-2';
-import { computeStats, gearDef, weaponPower, spellPower, maxHp, maxMp, gearEffects, affixSum } from './character.js?v=advanced-jobs-1';
+import { computeStats, gearDef, weaponPower, spellPower, maxHp, maxMp, gearEffects, affixSum, memberCanAct } from './character.js?v=party-wipe-1';
 import { actionSkills, ultimateSkill, memberMods, addMasteryKill, effectiveSkill } from './growth.js?v=advanced-jobs-1';
 import { encounterMonsters, learnMonsterElements, hitEffectiveness } from './monster-knowledge.js?v=monster-catalog-1';
 import { masterTags, weaponSkill, songSkill, healingSkill, weaponAllowed, passiveRules, ruleNumber, matchesTag,
@@ -252,7 +252,7 @@ function isPetrified(b, i) {
   return Object.keys(b.allies[i].statuses).includes('petrify');
 }
 export function canAct(game, b, i) {
-  return game.party[i].hp > 0 && !isPetrified(b, i);
+  return memberCanAct(game.party[i], isPetrified(b, i));
 }
 export const enemyCanAct = (enemy) => enemy.hp > 0 && !enemy.statuses?.petrify;
 const livingEnemies = (b) => b.enemies.map((e, i) => i).filter((i) => enemyCanAct(b.enemies[i]));
@@ -358,10 +358,16 @@ function tick(buffs) {
   }
 }
 
+function checkDefeat(game, b) {
+  if (b.result || game.party.some((_, i) => canAct(game, b, i))) return false;
+  b.result = 'lose';
+  log(b, 'パーティは全滅した…');
+  return true;
+}
+
 function checkEnd(game, b) {
-  if (b.result) return true;
-  if (!game.party.some((m, i) => canAct(game, b, i))) { b.result = 'lose'; log(b, 'パーティは全滅した…'); }
-  else if (!b.enemies.some(enemyCanAct)) {
+  if (b.result || checkDefeat(game, b)) return true;
+  if (!b.enemies.some(enemyCanAct)) {
     b.result = 'win';
     log(b, b.enemies.some((enemy) => enemy.hp > 0) ? '残りの敵はすべて石化した！' : '敵をすべて倒した！');
   }
@@ -377,6 +383,7 @@ export function nextTurn(data, game, b) {
   for (let guard = 0; guard < 1000; guard++) {
     if (b.result) return null;
     if (b.queue.length === 0) {
+      if (checkDefeat(game, b)) return null;
       if (b.round > 0) endRound(data, game, b);
       if (checkEnd(game, b)) return null;
       if (b.round >= f(data, 'max_rounds')) { b.result = 'lose'; log(b, '戦いが長引き、力尽きた…'); return null; }
@@ -721,6 +728,7 @@ export function resolvePending(data, game, b, correct) {
     tickStatuses(data, b, a, m.name);
     finishMasterOpportunity(data, game, b, i, masterContext(data, game, b), null, false);
     if (b.queue.length) checkEnd(game, b);
+    else checkDefeat(game, b);
     return { cm };
   }
 
@@ -746,6 +754,7 @@ export function resolvePending(data, game, b, correct) {
   finishMasterOpportunity(data, game, b, i, masterContext(data, game, b), chosenSkill ?? (act.type === 'attack' ? null : { kind: 'utility', effect: {} }));
   if (performed && correct && act.type !== 'flee' && !chosenSkill?.isFinal) gainUltimate(data, m, ultimateRules(data).gain_correct ?? 20);
   if (b.queue.length) checkEnd(game, b);
+  else checkDefeat(game, b);
   return { cm };
 }
 

@@ -93,8 +93,12 @@ export function resolveExploration(data, game, run, floor, season, rngForEvent, 
         const id = materials.includes(event.material) ? event.material : materials[Math.floor(rng() * materials.length)];
         loot.materials.push({ id, count: event.first ? config.chest.first_materials : 1 });
       }
-      if (reward === 'item' && data.items.has(config.chest.item)
-          && addItem(game, config.chest.item, 1) === 0) notice.item = config.chest.item;
+      const item = config.chest.item;
+      if (reward === 'item' && data.items.has(item) && addItem(game, item, 1) === 0) {
+        notice.item = item;
+        run.acquiredItems ??= {};
+        run.acquiredItems[item] = (run.acquiredItems[item] ?? 0) + 1;
+      }
       if (reward === 'gear') {
         const gear = rollGearDrop(data, game, dungeon.id, floor, rng, { commonOnly: true });
         if (gear) loot.gear.push(gear);

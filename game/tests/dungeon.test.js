@@ -1,10 +1,11 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { GameSession } from '../js/save.js';
-import { createNewGame } from '../js/game-state.js';
-import { nextTurn, setPending, resolvePending } from '../js/battle.js';
+import { createNewGame, normalizeGame } from '../js/game-state.js';
+import { createBattle, nextTurn, setPending, resolvePending } from '../js/battle.js';
 import {
   startRun, expeditionFee, startNextBattle, afterBattle, returnToTown, continueRun, resolveLoot, allowedDungeons, allowedStones, isBossBattle, seededRng,
+  returnAfterDefeat, useItemOutsideBattle,
 } from '../js/dungeon.js';
 import { backpackSlots, backpackUsed, addToBackpack, rollBattleLoot, rollGearDrop, addItem } from '../js/loot.js';
 import { makeEnemy } from '../js/battle.js';
@@ -12,7 +13,8 @@ import { maxHp, maxMp, gainXp, computeStats } from '../js/character.js';
 import { realGameData, realLexicon, readJson, readCsv, MemoryStorage, T0 } from './helpers.js';
 import { planExploration } from '../js/exploration.js';
 import { buildWorldMap } from '../js/world-map.js';
-import { acceptQuest, canReport, checkRankUp, makeBoard, reportQuest } from '../js/town.js';
+import { acceptQuest, borrow, canReport, checkRankUp, makeBoard, reportQuest, revive, reviveCost, stayInn } from '../js/town.js';
+import { cureAtTemple } from '../js/temple.js';
 import { QuestionPicker } from '../js/picker.js';
 import { Scheduler } from '../js/srs.js';
 import { LearningStore } from '../js/storage.js';
@@ -28,7 +30,7 @@ function newSession(storage = new MemoryStorage()) {
   return s;
 }
 
-test('遠征費は出発時に払い、途中帰還で確定し、全滅時は香とともに戻る', () => {
+test('全滅では遠征費が戻り、出発時に使った香は戻らない。途中帰還では遠征費が確定する', () => {
   const storage = new MemoryStorage();
   const session = newSession(storage);
   const options = { dungeonId: 'sunlit_forest', stoneId: 'rs_1_001', seed: 1 };
@@ -40,13 +42,15 @@ test('遠征費は出発時に払い、途中帰還で確定し、全滅時は�
   assert.equal(session.game.gold, gold - fee);
   assert.equal(session.game.items.bounty_lure, undefined);
   const resumed = new GameSession({ storage });
-  resumed.wipe();
+  finishWithoutTurns(data, resumed, 'lose');
   assert.equal(resumed.game.gold, gold);
-  assert.equal(resumed.game.items.bounty_lure, 1);
+  assert.equal(resumed.game.items.bounty_lure, undefined);
+  revive(data, resumed.game, 0);
+  const goldAfterRevive = resumed.game.gold;
   startRun(data, resumed, options);
   resumed.updateRun(run => { run.state = 'return_point'; });
   returnToTown(data, resumed);
-  assert.equal(resumed.game.gold, gold - fee);
+  assert.equal(resumed.game.gold, goldAfterRevive - fee);
   resumed.game.gold = 0;
   assert.throws(() => startRun(data, resumed, options), /遠征費/);
   assert.equal(resumed.run, null);
@@ -121,23 +125,90 @@ test('★2の冒険先も踏破で発見すればR01のまま既存教材で遠�
   assert.ok(!session.game.quests.some(active => active.uid === quest.uid));
 });
 
-test('入ると日数を使い、全滅すると日数・お金・経験値・拾った物がすべて戻る', () => {
-  const s = newSession();
+test('全滅して再読込すると、HP0で町に戻り、戦利品を失っても経験値・APは残る', () => {
+  const storage = new MemoryStorage();
+  const s = newSession(storage);
   const before = structuredClone(s.game);
   startRun(data, s, { dungeonId: 'mossy_cave', stoneId: 'rs_1_001', quizState: null, seed: 1 });
   assert.equal(s.game.day, before.day + data.dungeons.get('mossy_cave').days);
   startNextBattle(data, s); fightOut(s, 1);
   afterBattle(data, s);
   assert.ok(s.game.gold > before.gold);
+  const growth = s.game.party.map(({ lv, xp, ap }) => ({ lv, xp, ap }));
+  assert.notDeepEqual(growth, before.party.map(({ lv, xp, ap }) => ({ lv, xp, ap })));
   // 強い敵で負ける
   for (const m of s.game.party) m.hp = 1;
   startNextBattle(data, s); fightOut(s, 0);
   const r = afterBattle(data, s);
-  assert.equal(r.result, 'lose');
-  const { catalog, ...rest } = s.game;
-  assert.deepEqual(rest, before);
-  assert.ok(catalog.monsters.length > 0);
-  assert.equal(s.inDungeon, false);
+  assert.equal(r.wiped, true);
+  const resumed = new GameSession({ storage });
+  assert.equal(resumed.inDungeon, false);
+  assert.equal(resumed.game.day, before.day);
+  assert.equal(resumed.game.gold, before.gold);
+  assert.deepEqual(resumed.game.storage, before.storage);
+  assert.deepEqual(resumed.game.party.map(({ equip }) => equip), before.party.map(({ equip }) => equip));
+  assert.deepEqual(resumed.game.party.map(({ lv, xp, ap }) => ({ lv, xp, ap })), growth);
+  assert.ok(resumed.game.party.every(({ hp }) => hp === 0));
+  assert.ok(resumed.game.catalog.monsters.length > 0);
+});
+
+test('最終試験で死亡と石化が混在すると全滅。宿屋に泊まっても治療が必要で、融資を受けて再出発できる', () => {
+  const storage = new MemoryStorage();
+  const session = newSession(storage);
+  session.game.jp = 42;
+  session.enterDungeon({ challenge: 'final', label: 'Sランク最終試験' });
+  const enemies = [makeEnemy(data, 'slime', { lv: 3 })];
+  const battle = createBattle(data, session.game, { enemies, canFlee: false });
+  session.game.party[0].hp = 0;
+  for (const ally of battle.allies.slice(1)) ally.statuses.petrify = { turns: 99, n: 1 };
+  assert.equal(nextTurn(data, session.game, battle), null);
+  assert.equal(battle.result, 'lose');
+  session.setBattle(battle);
+  const resumed = new GameSession({ storage });
+  assert.equal(returnAfterDefeat(data, resumed, (game) => {
+    game.finalRetryDay = 20;
+    normalizeGame(data, game);
+  }), true);
+
+  const town = new GameSession({ storage });
+  const game = town.game;
+  assert.equal(town.run, null);
+  assert.equal(game.finalRetryDay, 20);
+  assert.equal(game.jp, 42);
+  assert.equal(game.party[0].hp, 0);
+  assert.ok(game.party.slice(1).every((member) => member.hp > 0 && member.persist.includes('petrify')));
+  stayInn(data, game, false);
+  assert.equal(game.party[0].hp, 0);
+  assert.deepEqual(game.party[1].persistState.petrify, { turns: 99, n: 1 });
+  assert.throws(() => startRun(data, town, expedition), /神殿/);
+  assert.equal(town.run, null);
+
+  game.gold = 0;
+  assert.throws(() => revive(data, game, 0), /足りない/);
+  assert.throws(() => cureAtTemple(data, game, game.party[1]), /必要/);
+  borrow(data, game, reviveCost(data, game.party[0]));
+  revive(data, game, 0);
+  assert.equal(game.gold, 0);
+  const gameForCure = { ...structuredClone(game), gold: data.balance.new_game.gold };
+  cureAtTemple(data, gameForCure, gameForCure.party[1]);
+  assert.ok(!gameForCure.party[1].persist.includes('petrify'));
+  startRun(data, town, expedition);
+  assert.ok(town.inDungeon);
+});
+
+test('規定ラウンド数による敗北は全滅扱いにせず、従来の遠征前状態に戻す', () => {
+  const session = newSession();
+  const before = structuredClone(session.game.party);
+  session.game.items.potion = 2;
+  startRun(data, session, expedition);
+  startNextBattle(data, session);
+  session.game.party[0].hp = 1;
+  useItemOutsideBattle(data, session.game, 'potion', 0);
+  session.run.battle.result = 'lose';
+  assert.equal(afterBattle(data, session).wiped, false);
+  assert.equal(session.state.lastWipe, null);
+  assert.deepEqual(session.game.party, before);
+  assert.equal(session.game.items.potion, 2);
 });
 
 test('いちばん奥まで：階を進み、帰還ポイント・ボス・クリア。帰るとバックパックは倉庫へ', () => {
@@ -294,6 +365,7 @@ function finishWithoutTurns(local, session, result = 'win') {
   const battle = session.run.battle;
   battle.result = result;
   if (result === 'win') battle.enemies.forEach((enemy) => { enemy.hp = 0; });
+  if (result === 'lose') session.game.party.forEach((member) => { member.hp = 0; });
   return afterBattle(local, session);
 }
 
@@ -302,6 +374,35 @@ function discardOverflow(local, session) {
 }
 
 const expedition = { dungeonId: 'mossy_cave', stoneId: 'rs_1_001', quizState: { asked: 3 }, seed: 12345 };
+
+test('宝箱の同種道具と盗品は全滅で失い、再読込しても途中で消費した道具は返らない', () => {
+  const local = structuredClone(data);
+  const config = local.balance.dungeon.exploration;
+  config.slots = {};
+  config.fixed.mossy_cave = [{ id: 'item-chest', floor: 1, type: 'chest' }];
+  config.chest.weights = { item: 100 };
+  const storage = new MemoryStorage();
+  const session = newSession(storage);
+  session.game.items = { potion: 3, ether: 1 };
+  const stolen = local.materials.keys().next().value;
+  startRun(local, session, expedition);
+  startNextBattle(local, session);
+  session.run.battle.stolen = [stolen];
+  const win = finishWithoutTurns(local, session);
+  assert.ok(win.loot.materials.some(({ id }) => id === stolen));
+  assert.equal(session.game.items.potion, 4);
+  session.update((game) => useItemOutsideBattle(local, game, 'potion', 0));
+  assert.equal(session.game.items.potion, 3);
+  assert.equal(session.run.acquiredItems.potion, 1);
+
+  const resumed = new GameSession({ storage });
+  discardOverflow(local, resumed);
+  continueRun(resumed);
+  assert.equal(finishWithoutTurns(local, resumed, 'lose').wiped, true);
+  const town = new GameSession({ storage });
+  assert.deepEqual(town.game.items, { potion: 2, ether: 1 });
+  assert.equal(town.game.storage.materials[stolen], undefined);
+});
 
 test('全60経路は2・3・6戦で最奥だけがボス。前半に帰還地点がある', () => {
   assert.equal(data.dungeons.size, 60);
@@ -384,9 +485,12 @@ test('固定箱は全滅で再試行でき、途中帰還で確定。調査・�
   assert.deepEqual(session.run.quiz, expedition.quizState);
   assert.equal(session.game.exploration, undefined);
   finishWithoutTurns(local, session, 'lose');
-  const { catalog, ...rest } = session.game;
-  assert.deepEqual(rest, before);
-  assert.ok(catalog.monsters.length > 0);
+  assert.equal(session.game.exploration, before.exploration);
+  assert.equal(session.game.worldFlags, before.worldFlags);
+  assert.equal(session.game.gold, before.gold);
+  assert.deepEqual(session.game.storage, before.storage);
+  assert.ok(session.game.catalog.monsters.length > 0);
+  revive(local, session.game, 0);
   startRun(local, session, expedition);
   finishWithoutTurns(local, session);
   assert.equal(session.run.explorationNotices[0].first, true);

@@ -121,6 +121,14 @@ export function baseStat(data, member, stat) {
 }
 
 /** 戦闘のあとも残る状態異常（衰弱など maxhp_down）による最大HPの割合 */
+export function memberCanAct(member, petrified = member.persist?.includes('petrify')) {
+  return member.hp > 0 && !petrified;
+}
+
+export function partyCanAct(game) {
+  return game.party.some((member) => memberCanAct(member));
+}
+
 function persistHpFactor(data, member) {
   let f = 1;
   for (const id of member.persist ?? []) {
