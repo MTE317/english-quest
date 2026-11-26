@@ -2,6 +2,8 @@ import { el, stars } from '../dom.js?v=skill-growth-2';
 import { aptitudeGrade, canEquip, computeStats, equipFromStorage, gearDef, makeGear, SLOT_LABEL } from '../character.js?v=advanced-jobs-1';
 import { LOOT_FORMULAS } from '../loot.js?v=advanced-jobs-1';
 import { buyGear, buyItem, gearShopStock, itemShopStock, sellGear, sellPrice } from '../town.js?v=specialist-jobs-1';
+import { stackSellStock, sellStack } from '../shop-selling.js?v=sell-all-stock-1';
+import { uiIcon } from './pixel-icons.js?v=skill-growth-2';
 import { goldText, shopView } from './shop-view.js?v=skill-growth-2';
 import { equipmentIcon } from './equipment-icons.js?v=skill-growth-2';
 import { portraitIcon } from './portrait.js?v=skill-growth-2';
@@ -145,9 +147,26 @@ export function gearShopView(data, game, state, act) {
       }],
     };
   });
+  const sellingStacks = stackSellStock(data, game).map(({ kind, id, count: owned, def, price }) => {
+    const material = kind === 'material';
+    const materialKind = { common: '通常素材', rare: 'まれな素材', boss: 'ボス素材' }[def.kind] ?? '素材';
+    return {
+      id: `${kind}:${id}`, name: def.name, owned, price,
+      category: material ? 'materials' : 'items',
+      icon: () => uiIcon(material ? 'storage' : 'items'),
+      description: material ? `${stars(def.rank)} ／ ${materialKind}` : def.description,
+      actions: [...new Set([1, ...(owned >= 5 ? [5] : []), owned])].map(count => ({
+        title: '売却を確認', count, total: price * count,
+        label: count === owned && count > 1 ? `全部売る（${count}個）` : `${count}個売る`,
+        run: () => act(g => `${def.name}を${count}個売った（+${goldText(sellStack(data, g, kind, id, count))}）`),
+      })),
+    };
+  });
   return shopView(state, [
     { id: 'buy', label: '買う', entries: buying, categories: gearCategories, priceLabel: '購入価格', empty: '販売中の装備はありません。' },
-    { id: 'sell', label: '倉庫の装備を売る', entries: selling, categories: gearCategories, priceLabel: '売却価格', empty: '倉庫に売却できる装備がありません。' },
+    { id: 'sell', label: '売る', entries: [...selling, ...sellingStacks],
+      categories: [...gearCategories, { id: 'materials', label: '素材' }, { id: 'items', label: '道具' }],
+      priceLabel: '売却単価', empty: '売却できる装備・素材・道具がありません。' },
   ]);
 }
 
