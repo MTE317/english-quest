@@ -1,8 +1,11 @@
 ﻿# English Quest データ（★12・バランス／ビルド調整版）
 
+新しいE〜Sランクと施設解放は [設計正本](../docs/specs/rank-promotion.md) を参照（未実装）。このファイルの旧Rランク・月会費への言及は履歴であり、新仕様の根拠にしない。
+
+
 シミュレーションとゲームの両方が読む「正」のデータです。バランス目標は検証条件により変わるため、実測結果は [バランス調整レポート](../docs/balance-report.md) で条件とともに確認してください。
 
-> 2026-11-25：職業・技能を [50職の設計基準](../docs/jobs-baseline-v1.md) と [基本8職120技能](../docs/basic-jobs-skills-v1.md) に統一しました。
+> 2026-11-25：職業・技能を [50職の設計基準](../docs/jobs-baseline-v2.md) と [基本8職120技能](../docs/basic-jobs-skills-v2.md) に統一しました。
 > `jobs.csv` は基本8職、`jobs_mid.csv` は追加36職、`jobs_advanced.csv` は伝説6職です。ファイル名は読込互換のため維持し、階級の中級・上級は廃止しました。
 > MPは独立適性、武器適性は全職S〜D（武器に装備禁止はなし）。`basic_job_rules.json` が共通の仮値、`skill_migration.json` が旧技能のAP返還情報です。
 > 旧職業・技能・マスター常時報酬の説明より上記資料と現行CSV/JSONを優先します。
