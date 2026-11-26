@@ -288,6 +288,24 @@ export function unequip(data, game, member, slot) {
   clampHpMp(data, member);
 }
 
+/** 倉庫と現在の装備から、各枠の最高アイテムレベル（同点なら強化値）を選ぶ。 */
+export function equipRecommended(data, game, member) {
+  let changed = 0;
+  for (const slot of SLOTS) {
+    const current = member.equip[slot];
+    const kind = SLOT_KIND[slot];
+    const candidates = [current, ...game.storage.gear].filter(gear => gear && gearDef(data, gear).slot === kind);
+    const eligible = candidates.filter(gear => canEquip(data, member, slot, gear).ok);
+    eligible.sort((a, b) => gearDef(data, b).itemLv - gearDef(data, a).itemLv || (b.enh ?? 0) - (a.enh ?? 0));
+    const best = eligible[0];
+    if (best && best.uid !== current?.uid) {
+      equipFromStorage(data, game, member, slot, best.uid);
+      changed++;
+    }
+  }
+  return changed;
+}
+
 function clampHpMp(data, member) {
   member.hp = Math.min(member.hp, maxHp(data, member));
   member.mp = Math.min(member.mp, maxMp(data, member));
