@@ -13,7 +13,7 @@ import { startBattleMusic, finishBattleMusic } from '../battle-music.js?v=skill-
 import { unlockBattleSound, playBattleHitSound } from '../battle-sound.js?v=skill-growth-2';
 import { portraitIcon } from './portrait.js?v=skill-growth-2';
 import { ultimateGauge } from './skill-presentation.js?v=skill-growth-2';
-import { describeSkillEffect } from '../skill-effects.js?v=skill-growth-2';
+import { describeSkillEffect, describeSkillForUI } from '../skill-effects.js?v=skill-ui-text-1';
 import { ownedBlessing, passiveRules } from '../job-combat.js?v=advanced-jobs-1';
 import { statusIconId, buffIconId, effectIcon, JOB_EFFECT_ICON } from './effect-icons.js?v=battle-effect-icons-1';
 
@@ -410,7 +410,8 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
       const isSkill = sub === 'skill';
       const skillEntries = [...new Map([...opts.skills, ...(opts.ultimate?.skill ? [opts.ultimate] : [])].map(entry => [entry.skill.id, entry])).values()];
       const choices = isSkill
-        ? skillEntries.map(entry => listChoice(`${entry.skill.isFinal ? '★ ' : ''}${entry.skill.name}${skillMaxLevel(entry.skill) > 1 ? ` Lv${learnedSkillLevel(member, entry.skill)}` : ''}`, `${entry.skill.isFinal ? `EX ${opts.ultimate?.gauge ?? member.ultimateGauge ?? 0}/${opts.ultimate?.max ?? 100}・` : ''}MP ${battleMp(entry.skill)}${entry.hpCost ? `・HP ${entry.hpCost}` : ''}`, entry.reason,
+        ? skillEntries.map(entry => listChoice(`${entry.skill.isFinal ? '★ ' : ''}${entry.skill.name}${skillMaxLevel(entry.skill) > 1 ? ` Lv${learnedSkillLevel(member, entry.skill)}` : ''}`, `${entry.skill.isFinal ? `EX ${opts.ultimate?.gauge ?? member.ultimateGauge ?? 0}/${opts.ultimate?.max ?? 100}・` : ''}消費MP ${battleMp(entry.skill)}${entry.hpCost ? `・HP ${entry.hpCost}` : ''}`,
+          [describeSkillForUI(data, effectiveSkill(data, member, entry.skill)), entry.reason].filter(Boolean).join(' ／ '),
           () => chooseSkill(entry), entry.reason))
         : opts.items.map(({ item, count, reason }) => listChoice(item.name, `×${count}`, reason || item.description,
           () => choose({ type: 'item', itemId: item.id }), reason));
