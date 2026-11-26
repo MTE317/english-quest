@@ -395,15 +395,53 @@ function offeringMaterial(data, game, star) {
     .sort((a, b) => Number(data.materials.get(a).kind !== 'common') - Number(data.materials.get(b).kind !== 'common') || a.localeCompare(b))[0] ?? null;
 }
 
+// ★2「崩れた砦」の野盗（通常敵）が落とす素材。後続ランクの個別素材は未決定。
+export const D_PROMOTION_MATERIALS = Object.freeze([{ id: 'fort_bandit_mat', count: 2, dungeonId: 'ruined_fort' }]);
+
+export function promotionMaterialStatus(data, game, rank) {
+  if (!rank?.materialStar) return { ready: true, offered: true, needs: [], selected: [] };
+  const offered = Boolean(game.promotionOfferings?.[rank.id]);
+  if (rank.id === 'D') {
+    const discovered = allowedDungeons(data, game).some(dungeon => dungeon.id === 'ruined_fort');
+    const needs = D_PROMOTION_MATERIALS.map(row => ({ ...row,
+      name: data.materials.get(row.id)?.name ?? row.id,
+      have: game.storage?.materials?.[row.id] ?? 0 }));
+    return { ready: offered || (discovered && needs.every(row => row.have >= row.count)),
+      offered, needs, selected: offered ? [] : D_PROMOTION_MATERIALS };
+  }
+  const id = offered ? null : offeringMaterial(data, game, rank.materialStar);
+  return { ready: offered || Boolean(id), offered, needs: [],
+    selected: id ? [{ id, count: 1 }] : [] };
+}
+
+/** 受験前に一度だけ納品。失敗や再受験では消費しない。 */
+export function offerPromotionMaterials(data, game, rankId) {
+  const rank = data.ranks.find(row => row.id === rankId);
+  if (!rank || data.ranks[data.ranks.findIndex(row => row.id === game.rank) + 1]?.id !== rankId ||
+      (game.rankPoints ?? 0) < rank.pointsRequired) throw new Error('昇級条件を満たしていません。');
+  const status = promotionMaterialStatus(data, game, rank);
+  if (status.offered) return;
+  if (!status.ready) throw new Error('昇級試験に必要な素材が足りません。');
+  for (const { id, count } of status.selected) {
+    game.storage.materials[id] -= count;
+    if (!game.storage.materials[id]) delete game.storage.materials[id];
+  }
+  game.promotionOfferings ??= {};
+  game.promotionOfferings[rankId] = true;
+}
+
 export function nextRankStatus(data, game) {
   const idx = data.ranks.findIndex((r) => r.id === game.rank);
   const next = data.ranks[idx + 1];
   if (!next) return null;
   const needs = [];
   if ((game.rankPoints ?? 0) < next.pointsRequired) needs.push(`ポイント ${game.rankPoints ?? 0} / ${next.pointsRequired}`);
-  if (next.materialStar && !offeringMaterial(data, game, next.materialStar)) needs.push(`★${next.materialStar}のモンスター素材が1個必要`);
+  const material = promotionMaterialStatus(data, game, next);
+  if (!material.ready) needs.push(next.id === 'D'
+    ? `崩れた砦の素材：${material.needs.map(row => `${row.name} ${row.have}/${row.count}`).join('・')}`
+    : `★${next.materialStar}のモンスター素材が1個必要`);
 
-  if (next.needsExam && !(game.examsPassed ?? []).includes(next.id)) needs.push('要英語試験（内容は設計中）');
+  if (next.needsExam && !(game.examsPassed ?? []).includes(next.id)) needs.push('英語試験に合格する');
   return { next, needs, examOnly: needs.length === 1 && next.needsExam && !(game.examsPassed ?? []).includes(next.id) };
 }
 
@@ -411,11 +449,7 @@ export function nextRankStatus(data, game) {
 export function checkRankUp(data, game) {
   const lines = [];
   for (let st = nextRankStatus(data, game); st && st.needs.length === 0; st = nextRankStatus(data, game)) {
-    const material = st.next.materialStar && offeringMaterial(data, game, st.next.materialStar);
-    if (material) {
-      game.storage.materials[material] -= 1;
-      if (!game.storage.materials[material]) delete game.storage.materials[material];
-    }
+    if (st.next.materialStar) offerPromotionMaterials(data, game, st.next.id);
     game.rank = st.next.id;
     game.board = []; // 受けていない枠は新しいランクのクエストに入れかえる（町の画面か報告のときに補充）
     lines.push(`冒険者ランクが「${st.next.title}」に上がった！`);

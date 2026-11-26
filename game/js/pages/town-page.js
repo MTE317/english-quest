@@ -8,7 +8,7 @@ import {
   calendarOf, fillBoard, boardSize, questAcceptLimit, acceptQuest, canAcceptQuest, abandonQuest, canReport, reportQuest, questText, questProgress, questDestination, questRewardGold, questRankPoints, questDepositTotal, questAbandonRefund, nextRankStatus, stayInn, revive, reviveCost, checkRankUp,
   canExpandBackpack, expandBackpack, feeTier,
   nextBackpackTier,
-} from '../town.js?v=specialist-jobs-1';
+} from '../town.js?v=promotion-exam-1';
 import { backpackSlots } from '../loot.js?v=advanced-jobs-1';
 import { maxHp, maxMp, gearDef } from '../character.js?v=advanced-jobs-1';
 import { availableJobs, changeJob } from '../growth.js?v=advanced-jobs-1';

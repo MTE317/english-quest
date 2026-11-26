@@ -189,14 +189,10 @@ function draw() {
   }
   const mode = el('select', { class: 'select', 'aria-label': '挑戦条件' },
     el('option', { value: '' }, '通常'), el('option', { value: 'ja2en' }, '日→英だけ'), el('option', { value: 'timed' }, '1問10秒'));
-  const retry = (game.finalRetryDay ?? 0) > scheduler.dayOf(now());
   const canChallenge = partyCanAct(game);
   render(view, banner,
     !canChallenge ? el('p', { class: 'error' }, '全員が死亡または石化しています。', '　',
       el('a', { href: 'index.html?facility=temple' }, '神殿へ')) : null,
-    el('h2', {}, 'Sランク最終試験'),
-    button(retry ? '次の日に再挑戦' : '最終試験に挑む', finalExam, !canChallenge || retry || !rankCanAttemptFinal()),
-    game.rank !== 'S' ? el('p', { class: 'muted small' }, 'Sランクの英語試験は内容を設計中です。') : null,
     el('h2', {}, '闘技場'),
     el('p', { class: 'muted small' }, '同じ階級の5連戦です。HP・MPは持ち越し、戦闘の合間に道具を使えます。回復薬とエーテルを用意し、最後のチャンピオンに合わせて装備を整えましょう。'),
     el('p', { class: 'muted small' }, '問題はこれまで学んだ単語を総復習。確認テストを受けていなくても挑戦できます。'),
