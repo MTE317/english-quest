@@ -103,3 +103,48 @@ test('装備一覧を保って枠・倉庫アイコン・比較・変更・取�
     globalThis.document = oldDocument; globalThis.Node = oldNode;
   }
 });
+
+test('スキル選択時だけ習得・セットを主メニュー直下に表示し、各画面へ切り替える', () => {
+  const oldDocument = globalThis.document, oldNode = globalThis.Node;
+  globalThis.Node = TestNode;
+  globalThis.document = { createElement: tag => new TestNode(tag), createTextNode: text => new TestNode('', text) };
+  try {
+    const calls = [], view = el('main');
+    const source = readFileSync(new URL('../js/pages/party-page.js', import.meta.url), 'utf8');
+    const code = source.slice(source.indexOf('function memberNavigation('), source.indexOf('function jobAptitudeChart('));
+    const context = vm.createContext({
+      el, session: { game: { party: [{ name: 'A' }, { name: 'B' }] } },
+      showParty() {}, memberBanner: member => el('header', {}, member.name),
+      memberSwitcher: (_index, select) => el('button', { onclick: () => select(1) }, '次の仲間'),
+      showSkills: index => calls.push(['learn', index]),
+      showLoadout: index => calls.push(['set', index]),
+      showMember: (index, tab) => calls.push([tab, index]),
+    });
+    vm.runInContext(code, context);
+    render(view, context.memberNavigation(0, 'skills'));
+    const main = one(view, hasClass('member-main-tabs'));
+    const sub = one(view, hasClass('member-skill-tabs'));
+    assert.equal(view.children.indexOf(sub), view.children.indexOf(main) + 1);
+    assert.deepEqual(sub.children.map(node => node.textContent), ['習得', 'セット']);
+    assert.equal(sub.children[0].getAttribute('aria-pressed'), 'true');
+    assert.equal(sub.children[1].getAttribute('aria-pressed'), 'false');
+    sub.children[0].click();
+    assert.equal(calls.length, 0, '同じ画面の再選択では選択状態をリセットしない');
+    sub.children[1].click();
+    assert.deepEqual(calls.pop(), ['set', 0]);
+    render(view, context.memberNavigation(0, 'skills', index => calls.push(['set-member', index]), { skillMode: 'set' }));
+    const setSub = one(view, hasClass('member-skill-tabs'));
+    assert.equal(setSub.children[1].getAttribute('aria-pressed'), 'true');
+    setSub.children[0].click();
+    assert.deepEqual(calls.pop(), ['learn', 0]);
+    one(view, buttonText('次の仲間')).click();
+    assert.deepEqual(calls.pop(), ['set-member', 1]);
+    render(view, context.memberNavigation(0, 'skills', undefined, { onSkillSet: () => calls.push(['selected-skill']) }));
+    one(view, hasClass('member-skill-tabs')).children[1].click();
+    assert.deepEqual(calls.pop(), ['selected-skill'], '選んでいたスキルをセット画面へ渡せる');
+    for (const tab of ['equipment', 'abilities']) {
+      render(view, context.memberNavigation(0, tab));
+      assert.equal(all(view, hasClass('member-skill-tabs')).length, 0);
+    }
+  } finally { globalThis.document = oldDocument; globalThis.Node = oldNode; }
+});
