@@ -9,8 +9,8 @@ export function monsterUnlocks(monster, defeats = 0) {
   const boss = monster.isBoss;
   return {
     elements: defeats >= (boss ? 2 : 3),
-    hp: defeats >= (boss ? 2 : 5),
-    types: defeats >= (boss ? 3 : 10),
+    hp: defeats >= 1,
+    types: defeats >= (boss ? 1 : 2),
     statuses: defeats >= (boss ? 3 : 10),
     stats: defeats >= (boss ? 4 : 20),
     drops: defeats >= (boss ? 5 : 30),
