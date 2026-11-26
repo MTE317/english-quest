@@ -8,6 +8,7 @@ import {
   parseMaterialNeed, matchesNeed, questRankPoints, questBoardAreas, selectQuestBoardArea, TOWN_FORMULAS,
 } from '../js/town.js';
 import { makeEnemy } from '../js/battle.js';
+import { monsterPool } from '../js/encounter.js';
 import { seededRng } from '../js/dungeon.js';
 import { maxHp, maxMp, computeStats, gearDef } from '../js/character.js';
 import { realGameData, readCsv, readJson } from './helpers.js';
@@ -95,9 +96,7 @@ test('採集報酬のまれな素材は依頼先の通常・季節モンスタ�
     const dungeon = data.dungeons.get(dungeonId);
     const resident = [...data.monsters.values()].find((m) => m.dungeons.includes(dungeonId)
       && m.role === 'normal' && data.materials.has(m.materialCommon));
-    const eligible = new Set([...data.monsters.values()]
-      .filter((m) => m.dungeons.includes(dungeonId) && ['normal', 'season'].includes(m.role))
-      .map((m) => m.materialRare));
+    const eligible = new Set(monsterPool(data, dungeonId, 'spring').map((m) => m.materialRare));
     for (const draw of [0, 0.5, 0.999]) {
       const g = fresh();
       const q = { uid: 999, questId: `q${dungeon.rank}_gather`, type: 'gather', rank: dungeon.rank,
