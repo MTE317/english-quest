@@ -8,15 +8,15 @@ import { roundGold } from './gold.js?v=skill-growth-2';
 //   'loot'         … 拾ったものがバックパックに入りきらない（入れ替えるかあきらめるかを選ぶ）
 //   'return_point' … 帰還ポイント（帰るか先へ進むかを選ぶ）
 //   'cleared'      … いちばん奥のボスを倒した（町に帰るだけ）
-import { createBattle, finishBattle, battleRewards, curedBy } from './battle.js?v=tactical-jobs-1';
+import { createBattle, finishBattle, battleRewards, curedBy } from './battle.js?v=specialist-jobs-1';
 import { recordMonsterDefeats } from './monster-knowledge.js?v=monster-catalog-1';
-import { makeEncounter, floorRow, planBounty } from './encounter.js?v=tactical-jobs-1';
+import { makeEncounter, floorRow, planBounty } from './encounter.js?v=specialist-jobs-1';
 import { rollBattleLoot, addToBackpack, swapIntoBackpack, unloadBackpack } from './loot.js?v=advanced-jobs-1';
 import { gainXp, maxHp, maxMp, affixSum } from './character.js?v=advanced-jobs-1';
-import { advanceDays, calendarOf, countKills, refreshBoard } from './town.js?v=tactical-jobs-1';
+import { advanceDays, calendarOf, countKills, refreshBoard } from './town.js?v=specialist-jobs-1';
 import { discoverJobs, recordStoredMaterials } from './temple.js?v=skill-growth-2';
 import { memberMods } from './growth.js?v=advanced-jobs-1';
-import { planExploration, resolveExploration, commitExploration, explorationEntryAllowed } from './exploration.js?v=tactical-jobs-1';
+import { planExploration, resolveExploration, commitExploration, explorationEntryAllowed } from './exploration.js?v=specialist-jobs-1';
 import { isTrialDungeonUnlocked } from './world-map.js?v=skill-growth-2';
 
 /** 乱数の種から 0〜1 の乱数を返す関数（状態は obj[key] に入れて保存できる） */

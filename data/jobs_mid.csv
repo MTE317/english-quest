@@ -5,9 +5,9 @@ berserker,狂戦士,攻撃継続・短期火力,additional,A,D,A,D,C,D,B,C,slash
 samurai,侍,構え・先読み,additional,B,C,A,D,B,C,B,B,slash,thunder,katana,sword,STR／SPD・LUK,攻め・受け流しの構えを切り替え、次の展開に備える,現在の構えを活かす居合・反撃・防護の大技,1,,katana,medium,初期解放（条件は後日設定）,1
 gladiator,剣闘士,決闘・受け流し・反撃,additional,B,C,A,D,A,C,C,B,slash,,greatsword,sword|spear,STR／DEF・LUK,敵1体を挑発し、その相手との攻防を有利に進める,標的との決闘で強力な見切りと反撃,1,,greatsword,medium,初期解放（条件は後日設定）,1
 warrior_monk,僧兵,祈りと武器攻撃の往復,additional,B,B,A,C,B,A,C,D,pierce|light,earth,spear,hammer|staff,攻撃STR／防護RES,祈りや支援で力を蓄え、武器技で放つ,全体防護と祈りを込めた強力な槍撃,1,,spear,medium,初期解放（条件は後日設定）,1
-ascetic,修験者,自己維持・気功・逆境耐久,additional,A,C,A,D,C,A,B,D,blunt|none,earth,fist,staff,気功STR／自己維持HP・RES,攻撃と調息を交互に使い、異常や消耗の中でも粘る,自身を大きく立て直し、気功と耐久を強化,0,,fist,medium,個別技能の実装待ち,1
-executioner,処刑人,低HPの敵の仕留め,additional,B,C,A,D,B,D,C,A,slash,dark,axe,scythe,STR・LUK,出血などで削られた敵を見極め、重い一撃で仕留める,低HPほど強烈な裁断。撃破時は余勢を別の敵へ,0,,axe,medium,個別技能の実装待ち,1
-ninja,忍者,分身・回避・忍術,additional,C,B,B,B,D,C,A,B,slash|wind,dark,katana,dagger,武器技STR／忍術MAG／SPD,分身を回避・反撃・忍術強化にどう使うか選ぶ,複数の分身を展開し、忍術と回避を大幅強化,0,,katana,medium,個別技能の実装待ち,1
+ascetic,修験者,自己維持・気功・逆境耐久,additional,A,C,A,D,C,A,B,D,blunt|none,earth,fist,staff,気功STR／自己維持HP・RES,攻撃と調息を交互に使い、異常や消耗の中でも粘る,自身を大きく立て直し、気功と耐久を強化,1,,fist,medium,初期解放（条件は後日設定）,1
+executioner,処刑人,低HPの敵の仕留め,additional,B,C,A,D,B,D,C,A,slash,dark,axe,scythe,STR・LUK,出血などで削られた敵を見極め、重い一撃で仕留める,低HPほど強烈な裁断。撃破時は余勢を別の敵へ,1,,axe,medium,初期解放（条件は後日設定）,1
+ninja,忍者,分身・回避・忍術,additional,C,B,B,B,D,C,A,B,slash|wind,dark,katana,dagger,武器技STR／忍術MAG／SPD,分身を回避・反撃・忍術強化にどう使うか選ぶ,複数の分身を展開し、忍術と回避を大幅強化,1,,katana,medium,初期解放（条件は後日設定）,1
 assassin,暗殺者,状態異常・隙への一撃,additional,C,C,A,D,D,C,A,A,slash|pierce,dark,dagger,bow,STR／SPD・LUK,仲間の妨害や状態異常が作った好機を利用,強烈な急所攻撃。対象の状態異常や弱体で追加強化,0,,dagger,medium,個別技能の実装待ち,1
 bounty_hunter,賞金稼ぎ,特定標的の追跡・拘束,additional,B,C,A,D,B,C,B,B,pierce,ice,bow,gun|dagger,STR・武器威力,標的を指定し、追い続けるほど攻撃や拘束を強化,標的への集中射撃と強力な拘束。追跡蓄積で追加強化,0,,bow,medium,個別技能の実装待ち,1
 dragoon,竜騎士,跳躍・槍・対竜,additional,A,C,A,D,B,C,B,D,pierce,thunder|wind,spear,sword,STR・HP,跳躍で大技を避け、着地で強襲。竜特攻と対竜防御も持つ,強烈な落下槍撃。竜特攻と着地後の防護,0,,spear,medium,個別技能の実装待ち,1
