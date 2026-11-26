@@ -5,7 +5,7 @@ import { createNewGame, normalizeGame } from '../js/game-state.js';
 import {
   advanceDays, calendarOf, makeBoard, fillBoard, refreshBoard, acceptQuest, countKills, canReport, reportQuest, boardSize, nextRankStatus,
   stayInn, revive, reviveCost, itemShopStock, buyItem, gearShopStock, buyGear, sellGear, sellPrice, canExpandBackpack, expandBackpack,
-  parseMaterialNeed, questRankPoints, questBoardAreas, selectQuestBoardArea, TOWN_FORMULAS,
+  parseMaterialNeed, matchesNeed, questRankPoints, questBoardAreas, selectQuestBoardArea, TOWN_FORMULAS,
 } from '../js/town.js';
 import { makeEnemy } from '../js/battle.js';
 import { seededRng } from '../js/dungeon.js';
@@ -88,6 +88,42 @@ test('採集：倉庫の★の通常素材を納品すると、まれな素材�
   const left = (g.storage.materials.slime_mat ?? 0) + (g.storage.materials.goblin_mat ?? 0);
   assert.equal(left, 1);
   assert.ok(Object.keys(g.storage.materials).some((id) => data.materials.get(id).kind === 'rare'));
+});
+
+test('採集報酬のまれな素材は依頼先の通常・季節モンスター由来に限定する', () => {
+  for (const dungeonId of ['mossy_cave', 'sunlit_forest', 'goblin_quarry', 'ruined_fort', 'misty_marsh']) {
+    const dungeon = data.dungeons.get(dungeonId);
+    const resident = [...data.monsters.values()].find((m) => m.dungeons.includes(dungeonId)
+      && m.role === 'normal' && data.materials.has(m.materialCommon));
+    const eligible = new Set([...data.monsters.values()]
+      .filter((m) => m.dungeons.includes(dungeonId) && ['normal', 'season'].includes(m.role))
+      .map((m) => m.materialRare));
+    for (const draw of [0, 0.5, 0.999]) {
+      const g = fresh();
+      const q = { uid: 999, questId: `q${dungeon.rank}_gather`, type: 'gather', rank: dungeon.rank,
+        dungeonId, materialIds: [resident.materialCommon], count: 1, progress: 0 };
+      g.quests.push(q);
+      g.storage.materials[resident.materialCommon] = 1;
+      reportQuest(data, g, q.uid, () => draw);
+      const [reward] = Object.keys(g.storage.materials).filter((id) => data.materials.get(id)?.kind === 'rare');
+      assert.ok(eligible.has(reward), `${dungeonId}: ${reward}`);
+    }
+  }
+});
+
+test('調合レシピの素材条件は全件読め、属性と状態異常の一致を判定する', () => {
+  for (const recipe of data.alchemyRecipes) assert.doesNotThrow(() => parseMaterialNeed(data, recipe.materials), recipe.id);
+  const fire = parseMaterialNeed(data, '★2以上の炎属性の素材:3')[0];
+  const fireMaterial = [...data.materials.values()].find((m) => m.rank >= 2 && m.element === 'fire');
+  assert.ok(fireMaterial);
+  assert.equal(matchesNeed(data, fireMaterial.id, fire), true);
+  assert.equal(matchesNeed(data, 'slime_mat', fire), false);
+  const poison = parseMaterialNeed(data, '★2以上の、「継続ダメージ」系の状態異常を使うモンスターの素材:3')[0];
+  const poisonMaterial = [...data.materials.values()].find((m) => m.rank >= 2
+    && data.statusEffects.get(data.monsters.get(m.sourceMonster)?.status)?.group === '継続ダメージ');
+  assert.ok(poisonMaterial);
+  assert.equal(matchesNeed(data, poisonMaterial.id, poison), true);
+  assert.equal(matchesNeed(data, 'slime_mat', poison), false);
 });
 
 test('ランク：ポイントがたまると「＋」に上がる。本ランクは踏破と昇格試験がいる', () => {
