@@ -596,3 +596,6 @@ body:has(.battle-screen) { background: #10171e; }
 .battle-effect-section h4 { margin: 0 0 5px; color: var(--battle-gold); font-size: .9rem; }
 .battle-effect-section ul { margin: 0 0 8px; padding-left: 20px; font-size: .84rem; overflow-wrap: anywhere; }
 .battle-effect-section li + li { margin-top: 5px; }
+
+/* 戦闘フィールドのHP・MPはバーのみで表示する。詳細画面の数値は残す。 */
+.battle-party .battle-resource:is(.hp, .mp) .battle-resource-value { display: none; }
