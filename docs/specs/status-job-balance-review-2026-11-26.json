@@ -1,0 +1,1575 @@
+{
+  "date": "2026-11-26",
+  "sourceCommit": "969a84ff1d12f71d7fee298aa1145dbc72b1343c",
+  "previousCommit": "e2c7461b76b31d9efa7ee7d9029b8fa1462184e8",
+  "method": "latest probability helper functions extracted from source and executed with controlled inputs; not full battle replay",
+  "nativeEnvironmentAvailable": false,
+  "implementedJobCount": 8,
+  "implementedSkillCount": 120,
+  "implementedEffectStages": 396,
+  "additionalStatus": "design_only",
+  "additionalJobCount": 9,
+  "additionalSkills": 135,
+  "enemySources": 73,
+  "enemyProbabilityCases": 17520,
+  "enemyChangedCases": 0,
+  "maxEnemyProbabilityDifference": 0,
+  "allyProbabilityCases": 2940,
+  "allyMatrix": [
+    {
+      "additiveResistance": 0,
+      "noPrevention": 0.5,
+      "prevention20": 0.4,
+      "prevention30": 0.35,
+      "prevention50": 0.25,
+      "stack20and30": 0.27999999999999997,
+      "previousNoPrevention": 0.5
+    },
+    {
+      "additiveResistance": 0.25,
+      "noPrevention": 0.375,
+      "prevention20": 0.30000000000000004,
+      "prevention30": 0.26249999999999996,
+      "prevention50": 0.1875,
+      "stack20and30": 0.20999999999999996,
+      "previousNoPrevention": 0.375
+    },
+    {
+      "additiveResistance": 0.5,
+      "noPrevention": 0.25,
+      "prevention20": 0.2,
+      "prevention30": 0.175,
+      "prevention50": 0.125,
+      "stack20and30": 0.13999999999999999,
+      "previousNoPrevention": 0.25
+    },
+    {
+      "additiveResistance": 0.8,
+      "noPrevention": 0.09999999999999998,
+      "prevention20": 0.07999999999999999,
+      "prevention30": 0.06999999999999998,
+      "prevention50": 0.04999999999999999,
+      "stack20and30": 0.05599999999999998,
+      "previousNoPrevention": 0.09999999999999998
+    },
+    {
+      "additiveResistance": 0.9,
+      "noPrevention": 0.04999999999999999,
+      "prevention20": 0.039999999999999994,
+      "prevention30": 0.03499999999999999,
+      "prevention50": 0.024999999999999994,
+      "stack20and30": 0.02799999999999999,
+      "previousNoPrevention": 0.04999999999999999
+    },
+    {
+      "additiveResistance": 0.95,
+      "noPrevention": 0.025000000000000022,
+      "prevention20": 0.020000000000000018,
+      "prevention30": 0.017500000000000016,
+      "prevention50": 0.012500000000000011,
+      "stack20and30": 0.01400000000000001,
+      "previousNoPrevention": 0.04999999999999999
+    },
+    {
+      "additiveResistance": 1,
+      "noPrevention": 0,
+      "prevention20": 0,
+      "prevention30": 0,
+      "prevention50": 0,
+      "stack20and30": 0,
+      "previousNoPrevention": 0.04999999999999999
+    }
+  ],
+  "passiveChecks": [
+    {
+      "skill": "monk_P05",
+      "level": 1,
+      "additiveResistance": 0,
+      "atBaseResistance80": 0.09999999999999998
+    },
+    {
+      "skill": "monk_P05",
+      "level": 2,
+      "additiveResistance": 0,
+      "atBaseResistance80": 0.09999999999999998
+    },
+    {
+      "skill": "monk_P05",
+      "level": 3,
+      "additiveResistance": 0.1,
+      "atBaseResistance80": 0.04999999999999999
+    },
+    {
+      "skill": "monk_P05",
+      "level": 4,
+      "additiveResistance": 0.15,
+      "atBaseResistance80": 0.024999999999999967
+    },
+    {
+      "skill": "monk_P05",
+      "level": 5,
+      "additiveResistance": 0.2,
+      "atBaseResistance80": 0
+    },
+    {
+      "skill": "knight_A08",
+      "level": 1,
+      "atBaseResistance": 0,
+      "turns": 2,
+      "rate": 0.3,
+      "chance": 0.35
+    },
+    {
+      "skill": "knight_A08",
+      "level": 1,
+      "atBaseResistance": 0.5,
+      "turns": 2,
+      "rate": 0.3,
+      "chance": 0.175
+    },
+    {
+      "skill": "knight_A08",
+      "level": 1,
+      "atBaseResistance": 0.8,
+      "turns": 2,
+      "rate": 0.3,
+      "chance": 0.06999999999999998
+    },
+    {
+      "skill": "knight_A08",
+      "level": 1,
+      "atBaseResistance": 1,
+      "turns": 2,
+      "rate": 0.3,
+      "chance": 0
+    },
+    {
+      "skill": "knight_A08",
+      "level": 2,
+      "atBaseResistance": 0,
+      "turns": 2,
+      "rate": 0.5,
+      "chance": 0.25
+    },
+    {
+      "skill": "knight_A08",
+      "level": 2,
+      "atBaseResistance": 0.5,
+      "turns": 2,
+      "rate": 0.5,
+      "chance": 0.125
+    },
+    {
+      "skill": "knight_A08",
+      "level": 2,
+      "atBaseResistance": 0.8,
+      "turns": 2,
+      "rate": 0.5,
+      "chance": 0.04999999999999999
+    },
+    {
+      "skill": "knight_A08",
+      "level": 2,
+      "atBaseResistance": 1,
+      "turns": 2,
+      "rate": 0.5,
+      "chance": 0
+    },
+    {
+      "skill": "knight_A08",
+      "level": 3,
+      "atBaseResistance": 0,
+      "turns": 3,
+      "rate": 0.5,
+      "chance": 0.25
+    },
+    {
+      "skill": "knight_A08",
+      "level": 3,
+      "atBaseResistance": 0.5,
+      "turns": 3,
+      "rate": 0.5,
+      "chance": 0.125
+    },
+    {
+      "skill": "knight_A08",
+      "level": 3,
+      "atBaseResistance": 0.8,
+      "turns": 3,
+      "rate": 0.5,
+      "chance": 0.04999999999999999
+    },
+    {
+      "skill": "knight_A08",
+      "level": 3,
+      "atBaseResistance": 1,
+      "turns": 3,
+      "rate": 0.5,
+      "chance": 0
+    }
+  ],
+  "naturalResistanceProfiles": [
+    {
+      "job": "warrior",
+      "name": "戦士",
+      "level": 1,
+      "luk": 20,
+      "naturalResistance": 0.19230769230769232,
+      "totals": [
+        {
+          "gearResistance": 0,
+          "sharedPassive": 0,
+          "total": 0.19230769230769232
+        },
+        {
+          "gearResistance": 0.3,
+          "sharedPassive": 0,
+          "total": 0.49230769230769234
+        },
+        {
+          "gearResistance": 0.6,
+          "sharedPassive": 0,
+          "total": 0.7923076923076923
+        },
+        {
+          "gearResistance": 0.87,
+          "sharedPassive": 0,
+          "total": 1
+        }
+      ]
+    },
+    {
+      "job": "warrior",
+      "name": "戦士",
+      "level": 10,
+      "luk": 49,
+      "naturalResistance": 0.153125,
+      "totals": [
+        {
+          "gearResistance": 0,
+          "sharedPassive": 0,
+          "total": 0.153125
+        },
+        {
+          "gearResistance": 0.3,
+          "sharedPassive": 0,
+          "total": 0.453125
+        },
+        {
+          "gearResistance": 0.6,
+          "sharedPassive": 0,
+          "total": 0.753125
+        },
+        {
+          "gearResistance": 0.87,
+          "sharedPassive": 0,
+          "total": 1
+        }
+      ]
+    },
+    {
+      "job": "warrior",
+      "name": "戦士",
+      "level": 30,
+      "luk": 113,
+      "naturalResistance": 0.14125,
+      "totals": [
+        {
+          "gearResistance": 0,
+          "sharedPassive": 0.1,
+          "total": 0.24125
+        },
+        {
+          "gearResistance": 0.3,
+          "sharedPassive": 0.1,
+          "total": 0.54125
+        },
+        {
+          "gearResistance": 0.6,
+          "sharedPassive": 0.1,
+          "total": 0.8412499999999999
+        },
+        {
+          "gearResistance": 0.87,
+          "sharedPassive": 0.1,
+          "total": 1
+        }
+      ]
+    },
+    {
+      "job": "warrior",
+      "name": "戦士",
+      "level": 60,
+      "luk": 209,
+      "naturalResistance": 0.1375,
+      "totals": [
+        {
+          "gearResistance": 0,
+          "sharedPassive": 0.1,
+          "total": 0.23750000000000002
+        },
+        {
+          "gearResistance": 0.3,
+          "sharedPassive": 0.1,
+          "total": 0.5375
+        },
+        {
+          "gearResistance": 0.6,
+          "sharedPassive": 0.1,
+          "total": 0.8375
+        },
+        {
+          "gearResistance": 0.87,
+          "sharedPassive": 0.1,
+          "total": 1
+        }
+      ]
+    },
+    {
+      "job": "warrior",
+      "name": "戦士",
+      "level": 99,
+      "luk": 334,
+      "naturalResistance": 0.13599348534201955,
+      "totals": [
+        {
+          "gearResistance": 0,
+          "sharedPassive": 0.1,
+          "total": 0.23599348534201955
+        },
+        {
+          "gearResistance": 0.3,
+          "sharedPassive": 0.1,
+          "total": 0.5359934853420195
+        },
+        {
+          "gearResistance": 0.6,
+          "sharedPassive": 0.1,
+          "total": 0.8359934853420196
+        },
+        {
+          "gearResistance": 0.87,
+          "sharedPassive": 0.1,
+          "total": 1
+        }
+      ]
+    },
+    {
+      "job": "knight",
+      "name": "騎士",
+      "level": 1,
+      "luk": 20,
+      "naturalResistance": 0.19230769230769232,
+      "totals": [
+        {
+          "gearResistance": 0,
+          "sharedPassive": 0,
+          "total": 0.19230769230769232
+        },
+        {
+          "gearResistance": 0.3,
+          "sharedPassive": 0,
+          "total": 0.49230769230769234
+        },
+        {
+          "gearResistance": 0.6,
+          "sharedPassive": 0,
+          "total": 0.7923076923076923
+        },
+        {
+          "gearResistance": 0.87,
+          "sharedPassive": 0,
+          "total": 1
+        }
+      ]
+    },
+    {
+      "job": "knight",
+      "name": "騎士",
+      "level": 10,
+      "luk": 49,
+      "naturalResistance": 0.153125,
+      "totals": [
+        {
+          "gearResistance": 0,
+          "sharedPassive": 0,
+          "total": 0.153125
+        },
+        {
+          "gearResistance": 0.3,
+          "sharedPassive": 0,
+          "total": 0.453125
+        },
+        {
+          "gearResistance": 0.6,
+          "sharedPassive": 0,
+          "total": 0.753125
+        },
+        {
+          "gearResistance": 0.87,
+          "sharedPassive": 0,
+          "total": 1
+        }
+      ]
+    },
+    {
+      "job": "knight",
+      "name": "騎士",
+      "level": 30,
+      "luk": 113,
+      "naturalResistance": 0.14125,
+      "totals": [
+        {
+          "gearResistance": 0,
+          "sharedPassive": 0.1,
+          "total": 0.24125
+        },
+        {
+          "gearResistance": 0.3,
+          "sharedPassive": 0.1,
+          "total": 0.54125
+        },
+        {
+          "gearResistance": 0.6,
+          "sharedPassive": 0.1,
+          "total": 0.8412499999999999
+        },
+        {
+          "gearResistance": 0.87,
+          "sharedPassive": 0.1,
+          "total": 1
+        }
+      ]
+    },
+    {
+      "job": "knight",
+      "name": "騎士",
+      "level": 60,
+      "luk": 209,
+      "naturalResistance": 0.1375,
+      "totals": [
+        {
+          "gearResistance": 0,
+          "sharedPassive": 0.1,
+          "total": 0.23750000000000002
+        },
+        {
+          "gearResistance": 0.3,
+          "sharedPassive": 0.1,
+          "total": 0.5375
+        },
+        {
+          "gearResistance": 0.6,
+          "sharedPassive": 0.1,
+          "total": 0.8375
+        },
+        {
+          "gearResistance": 0.87,
+          "sharedPassive": 0.1,
+          "total": 1
+        }
+      ]
+    },
+    {
+      "job": "knight",
+      "name": "騎士",
+      "level": 99,
+      "luk": 334,
+      "naturalResistance": 0.13599348534201955,
+      "totals": [
+        {
+          "gearResistance": 0,
+          "sharedPassive": 0.1,
+          "total": 0.23599348534201955
+        },
+        {
+          "gearResistance": 0.3,
+          "sharedPassive": 0.1,
+          "total": 0.5359934853420195
+        },
+        {
+          "gearResistance": 0.6,
+          "sharedPassive": 0.1,
+          "total": 0.8359934853420196
+        },
+        {
+          "gearResistance": 0.87,
+          "sharedPassive": 0.1,
+          "total": 1
+        }
+      ]
+    },
+    {
+      "job": "monk",
+      "name": "武闘家",
+      "level": 1,
+      "luk": 20,
+      "naturalResistance": 0.19230769230769232,
+      "totals": [
+        {
+          "gearResistance": 0,
+          "sharedPassive": 0,
+          "total": 0.19230769230769232
+        },
+        {
+          "gearResistance": 0.3,
+          "sharedPassive": 0,
+          "total": 0.49230769230769234
+        },
+        {
+          "gearResistance": 0.6,
+          "sharedPassive": 0,
+          "total": 0.7923076923076923
+        },
+        {
+          "gearResistance": 0.87,
+          "sharedPassive": 0,
+          "total": 1
+        }
+      ]
+    },
+    {
+      "job": "monk",
+      "name": "武闘家",
+      "level": 10,
+      "luk": 49,
+      "naturalResistance": 0.153125,
+      "totals": [
+        {
+          "gearResistance": 0,
+          "sharedPassive": 0,
+          "total": 0.153125
+        },
+        {
+          "gearResistance": 0.3,
+          "sharedPassive": 0,
+          "total": 0.453125
+        },
+        {
+          "gearResistance": 0.6,
+          "sharedPassive": 0,
+          "total": 0.753125
+        },
+        {
+          "gearResistance": 0.87,
+          "sharedPassive": 0,
+          "total": 1
+        }
+      ]
+    },
+    {
+      "job": "monk",
+      "name": "武闘家",
+      "level": 30,
+      "luk": 113,
+      "naturalResistance": 0.14125,
+      "totals": [
+        {
+          "gearResistance": 0,
+          "sharedPassive": 0.1,
+          "total": 0.24125
+        },
+        {
+          "gearResistance": 0.3,
+          "sharedPassive": 0.1,
+          "total": 0.54125
+        },
+        {
+          "gearResistance": 0.6,
+          "sharedPassive": 0.1,
+          "total": 0.8412499999999999
+        },
+        {
+          "gearResistance": 0.87,
+          "sharedPassive": 0.1,
+          "total": 1
+        }
+      ]
+    },
+    {
+      "job": "monk",
+      "name": "武闘家",
+      "level": 60,
+      "luk": 209,
+      "naturalResistance": 0.1375,
+      "totals": [
+        {
+          "gearResistance": 0,
+          "sharedPassive": 0.1,
+          "total": 0.23750000000000002
+        },
+        {
+          "gearResistance": 0.3,
+          "sharedPassive": 0.1,
+          "total": 0.5375
+        },
+        {
+          "gearResistance": 0.6,
+          "sharedPassive": 0.1,
+          "total": 0.8375
+        },
+        {
+          "gearResistance": 0.87,
+          "sharedPassive": 0.1,
+          "total": 1
+        }
+      ]
+    },
+    {
+      "job": "monk",
+      "name": "武闘家",
+      "level": 99,
+      "luk": 334,
+      "naturalResistance": 0.13599348534201955,
+      "totals": [
+        {
+          "gearResistance": 0,
+          "sharedPassive": 0.1,
+          "total": 0.23599348534201955
+        },
+        {
+          "gearResistance": 0.3,
+          "sharedPassive": 0.1,
+          "total": 0.5359934853420195
+        },
+        {
+          "gearResistance": 0.6,
+          "sharedPassive": 0.1,
+          "total": 0.8359934853420196
+        },
+        {
+          "gearResistance": 0.87,
+          "sharedPassive": 0.1,
+          "total": 1
+        }
+      ]
+    },
+    {
+      "job": "thief",
+      "name": "盗賊",
+      "level": 1,
+      "luk": 32,
+      "naturalResistance": 0.3076923076923077,
+      "totals": [
+        {
+          "gearResistance": 0,
+          "sharedPassive": 0,
+          "total": 0.3076923076923077
+        },
+        {
+          "gearResistance": 0.3,
+          "sharedPassive": 0,
+          "total": 0.6076923076923078
+        },
+        {
+          "gearResistance": 0.6,
+          "sharedPassive": 0,
+          "total": 0.9076923076923077
+        },
+        {
+          "gearResistance": 0.87,
+          "sharedPassive": 0,
+          "total": 1
+        }
+      ]
+    },
+    {
+      "job": "thief",
+      "name": "盗賊",
+      "level": 10,
+      "luk": 90,
+      "naturalResistance": 0.28125,
+      "totals": [
+        {
+          "gearResistance": 0,
+          "sharedPassive": 0,
+          "total": 0.28125
+        },
+        {
+          "gearResistance": 0.3,
+          "sharedPassive": 0,
+          "total": 0.58125
+        },
+        {
+          "gearResistance": 0.6,
+          "sharedPassive": 0,
+          "total": 0.88125
+        },
+        {
+          "gearResistance": 0.87,
+          "sharedPassive": 0,
+          "total": 1
+        }
+      ]
+    },
+    {
+      "job": "thief",
+      "name": "盗賊",
+      "level": 30,
+      "luk": 218,
+      "naturalResistance": 0.2725,
+      "totals": [
+        {
+          "gearResistance": 0,
+          "sharedPassive": 0.1,
+          "total": 0.37250000000000005
+        },
+        {
+          "gearResistance": 0.3,
+          "sharedPassive": 0.1,
+          "total": 0.6725
+        },
+        {
+          "gearResistance": 0.6,
+          "sharedPassive": 0.1,
+          "total": 0.9725
+        },
+        {
+          "gearResistance": 0.87,
+          "sharedPassive": 0.1,
+          "total": 1
+        }
+      ]
+    },
+    {
+      "job": "thief",
+      "name": "盗賊",
+      "level": 60,
+      "luk": 410,
+      "naturalResistance": 0.26973684210526316,
+      "totals": [
+        {
+          "gearResistance": 0,
+          "sharedPassive": 0.1,
+          "total": 0.36973684210526314
+        },
+        {
+          "gearResistance": 0.3,
+          "sharedPassive": 0.1,
+          "total": 0.6697368421052631
+        },
+        {
+          "gearResistance": 0.6,
+          "sharedPassive": 0.1,
+          "total": 0.9697368421052631
+        },
+        {
+          "gearResistance": 0.87,
+          "sharedPassive": 0.1,
+          "total": 1
+        }
+      ]
+    },
+    {
+      "job": "thief",
+      "name": "盗賊",
+      "level": 99,
+      "luk": 659,
+      "naturalResistance": 0.2683224755700326,
+      "totals": [
+        {
+          "gearResistance": 0,
+          "sharedPassive": 0.1,
+          "total": 0.3683224755700326
+        },
+        {
+          "gearResistance": 0.3,
+          "sharedPassive": 0.1,
+          "total": 0.6683224755700325
+        },
+        {
+          "gearResistance": 0.6,
+          "sharedPassive": 0.1,
+          "total": 0.9683224755700325
+        },
+        {
+          "gearResistance": 0.87,
+          "sharedPassive": 0.1,
+          "total": 1
+        }
+      ]
+    },
+    {
+      "job": "hunter",
+      "name": "狩人",
+      "level": 1,
+      "luk": 20,
+      "naturalResistance": 0.19230769230769232,
+      "totals": [
+        {
+          "gearResistance": 0,
+          "sharedPassive": 0,
+          "total": 0.19230769230769232
+        },
+        {
+          "gearResistance": 0.3,
+          "sharedPassive": 0,
+          "total": 0.49230769230769234
+        },
+        {
+          "gearResistance": 0.6,
+          "sharedPassive": 0,
+          "total": 0.7923076923076923
+        },
+        {
+          "gearResistance": 0.87,
+          "sharedPassive": 0,
+          "total": 1
+        }
+      ]
+    },
+    {
+      "job": "hunter",
+      "name": "狩人",
+      "level": 10,
+      "luk": 49,
+      "naturalResistance": 0.153125,
+      "totals": [
+        {
+          "gearResistance": 0,
+          "sharedPassive": 0,
+          "total": 0.153125
+        },
+        {
+          "gearResistance": 0.3,
+          "sharedPassive": 0,
+          "total": 0.453125
+        },
+        {
+          "gearResistance": 0.6,
+          "sharedPassive": 0,
+          "total": 0.753125
+        },
+        {
+          "gearResistance": 0.87,
+          "sharedPassive": 0,
+          "total": 1
+        }
+      ]
+    },
+    {
+      "job": "hunter",
+      "name": "狩人",
+      "level": 30,
+      "luk": 113,
+      "naturalResistance": 0.14125,
+      "totals": [
+        {
+          "gearResistance": 0,
+          "sharedPassive": 0.1,
+          "total": 0.24125
+        },
+        {
+          "gearResistance": 0.3,
+          "sharedPassive": 0.1,
+          "total": 0.54125
+        },
+        {
+          "gearResistance": 0.6,
+          "sharedPassive": 0.1,
+          "total": 0.8412499999999999
+        },
+        {
+          "gearResistance": 0.87,
+          "sharedPassive": 0.1,
+          "total": 1
+        }
+      ]
+    },
+    {
+      "job": "hunter",
+      "name": "狩人",
+      "level": 60,
+      "luk": 209,
+      "naturalResistance": 0.1375,
+      "totals": [
+        {
+          "gearResistance": 0,
+          "sharedPassive": 0.1,
+          "total": 0.23750000000000002
+        },
+        {
+          "gearResistance": 0.3,
+          "sharedPassive": 0.1,
+          "total": 0.5375
+        },
+        {
+          "gearResistance": 0.6,
+          "sharedPassive": 0.1,
+          "total": 0.8375
+        },
+        {
+          "gearResistance": 0.87,
+          "sharedPassive": 0.1,
+          "total": 1
+        }
+      ]
+    },
+    {
+      "job": "hunter",
+      "name": "狩人",
+      "level": 99,
+      "luk": 334,
+      "naturalResistance": 0.13599348534201955,
+      "totals": [
+        {
+          "gearResistance": 0,
+          "sharedPassive": 0.1,
+          "total": 0.23599348534201955
+        },
+        {
+          "gearResistance": 0.3,
+          "sharedPassive": 0.1,
+          "total": 0.5359934853420195
+        },
+        {
+          "gearResistance": 0.6,
+          "sharedPassive": 0.1,
+          "total": 0.8359934853420196
+        },
+        {
+          "gearResistance": 0.87,
+          "sharedPassive": 0.1,
+          "total": 1
+        }
+      ]
+    },
+    {
+      "job": "black_mage",
+      "name": "黒魔道士",
+      "level": 1,
+      "luk": 20,
+      "naturalResistance": 0.19230769230769232,
+      "totals": [
+        {
+          "gearResistance": 0,
+          "sharedPassive": 0,
+          "total": 0.19230769230769232
+        },
+        {
+          "gearResistance": 0.3,
+          "sharedPassive": 0,
+          "total": 0.49230769230769234
+        },
+        {
+          "gearResistance": 0.6,
+          "sharedPassive": 0,
+          "total": 0.7923076923076923
+        },
+        {
+          "gearResistance": 0.87,
+          "sharedPassive": 0,
+          "total": 1
+        }
+      ]
+    },
+    {
+      "job": "black_mage",
+      "name": "黒魔道士",
+      "level": 10,
+      "luk": 49,
+      "naturalResistance": 0.153125,
+      "totals": [
+        {
+          "gearResistance": 0,
+          "sharedPassive": 0,
+          "total": 0.153125
+        },
+        {
+          "gearResistance": 0.3,
+          "sharedPassive": 0,
+          "total": 0.453125
+        },
+        {
+          "gearResistance": 0.6,
+          "sharedPassive": 0,
+          "total": 0.753125
+        },
+        {
+          "gearResistance": 0.87,
+          "sharedPassive": 0,
+          "total": 1
+        }
+      ]
+    },
+    {
+      "job": "black_mage",
+      "name": "黒魔道士",
+      "level": 30,
+      "luk": 113,
+      "naturalResistance": 0.14125,
+      "totals": [
+        {
+          "gearResistance": 0,
+          "sharedPassive": 0.1,
+          "total": 0.24125
+        },
+        {
+          "gearResistance": 0.3,
+          "sharedPassive": 0.1,
+          "total": 0.54125
+        },
+        {
+          "gearResistance": 0.6,
+          "sharedPassive": 0.1,
+          "total": 0.8412499999999999
+        },
+        {
+          "gearResistance": 0.87,
+          "sharedPassive": 0.1,
+          "total": 1
+        }
+      ]
+    },
+    {
+      "job": "black_mage",
+      "name": "黒魔道士",
+      "level": 60,
+      "luk": 209,
+      "naturalResistance": 0.1375,
+      "totals": [
+        {
+          "gearResistance": 0,
+          "sharedPassive": 0.1,
+          "total": 0.23750000000000002
+        },
+        {
+          "gearResistance": 0.3,
+          "sharedPassive": 0.1,
+          "total": 0.5375
+        },
+        {
+          "gearResistance": 0.6,
+          "sharedPassive": 0.1,
+          "total": 0.8375
+        },
+        {
+          "gearResistance": 0.87,
+          "sharedPassive": 0.1,
+          "total": 1
+        }
+      ]
+    },
+    {
+      "job": "black_mage",
+      "name": "黒魔道士",
+      "level": 99,
+      "luk": 334,
+      "naturalResistance": 0.13599348534201955,
+      "totals": [
+        {
+          "gearResistance": 0,
+          "sharedPassive": 0.1,
+          "total": 0.23599348534201955
+        },
+        {
+          "gearResistance": 0.3,
+          "sharedPassive": 0.1,
+          "total": 0.5359934853420195
+        },
+        {
+          "gearResistance": 0.6,
+          "sharedPassive": 0.1,
+          "total": 0.8359934853420196
+        },
+        {
+          "gearResistance": 0.87,
+          "sharedPassive": 0.1,
+          "total": 1
+        }
+      ]
+    },
+    {
+      "job": "white_mage",
+      "name": "白魔道士",
+      "level": 1,
+      "luk": 26,
+      "naturalResistance": 0.25,
+      "totals": [
+        {
+          "gearResistance": 0,
+          "sharedPassive": 0,
+          "total": 0.25
+        },
+        {
+          "gearResistance": 0.3,
+          "sharedPassive": 0,
+          "total": 0.55
+        },
+        {
+          "gearResistance": 0.6,
+          "sharedPassive": 0,
+          "total": 0.85
+        },
+        {
+          "gearResistance": 0.87,
+          "sharedPassive": 0,
+          "total": 1
+        }
+      ]
+    },
+    {
+      "job": "white_mage",
+      "name": "白魔道士",
+      "level": 10,
+      "luk": 69,
+      "naturalResistance": 0.215625,
+      "totals": [
+        {
+          "gearResistance": 0,
+          "sharedPassive": 0,
+          "total": 0.215625
+        },
+        {
+          "gearResistance": 0.3,
+          "sharedPassive": 0,
+          "total": 0.515625
+        },
+        {
+          "gearResistance": 0.6,
+          "sharedPassive": 0,
+          "total": 0.815625
+        },
+        {
+          "gearResistance": 0.87,
+          "sharedPassive": 0,
+          "total": 1
+        }
+      ]
+    },
+    {
+      "job": "white_mage",
+      "name": "白魔道士",
+      "level": 30,
+      "luk": 165,
+      "naturalResistance": 0.20625,
+      "totals": [
+        {
+          "gearResistance": 0,
+          "sharedPassive": 0.1,
+          "total": 0.30625
+        },
+        {
+          "gearResistance": 0.3,
+          "sharedPassive": 0.1,
+          "total": 0.60625
+        },
+        {
+          "gearResistance": 0.6,
+          "sharedPassive": 0.1,
+          "total": 0.9062499999999999
+        },
+        {
+          "gearResistance": 0.87,
+          "sharedPassive": 0.1,
+          "total": 1
+        }
+      ]
+    },
+    {
+      "job": "white_mage",
+      "name": "白魔道士",
+      "level": 60,
+      "luk": 309,
+      "naturalResistance": 0.20328947368421052,
+      "totals": [
+        {
+          "gearResistance": 0,
+          "sharedPassive": 0.1,
+          "total": 0.30328947368421055
+        },
+        {
+          "gearResistance": 0.3,
+          "sharedPassive": 0.1,
+          "total": 0.6032894736842105
+        },
+        {
+          "gearResistance": 0.6,
+          "sharedPassive": 0.1,
+          "total": 0.9032894736842104
+        },
+        {
+          "gearResistance": 0.87,
+          "sharedPassive": 0.1,
+          "total": 1
+        }
+      ]
+    },
+    {
+      "job": "white_mage",
+      "name": "白魔道士",
+      "level": 99,
+      "luk": 496,
+      "naturalResistance": 0.20195439739413681,
+      "totals": [
+        {
+          "gearResistance": 0,
+          "sharedPassive": 0.1,
+          "total": 0.3019543973941368
+        },
+        {
+          "gearResistance": 0.3,
+          "sharedPassive": 0.1,
+          "total": 0.6019543973941368
+        },
+        {
+          "gearResistance": 0.6,
+          "sharedPassive": 0.1,
+          "total": 0.9019543973941367
+        },
+        {
+          "gearResistance": 0.87,
+          "sharedPassive": 0.1,
+          "total": 1
+        }
+      ]
+    },
+    {
+      "job": "bard",
+      "name": "吟遊詩人",
+      "level": 1,
+      "luk": 26,
+      "naturalResistance": 0.25,
+      "totals": [
+        {
+          "gearResistance": 0,
+          "sharedPassive": 0,
+          "total": 0.25
+        },
+        {
+          "gearResistance": 0.3,
+          "sharedPassive": 0,
+          "total": 0.55
+        },
+        {
+          "gearResistance": 0.6,
+          "sharedPassive": 0,
+          "total": 0.85
+        },
+        {
+          "gearResistance": 0.87,
+          "sharedPassive": 0,
+          "total": 1
+        }
+      ]
+    },
+    {
+      "job": "bard",
+      "name": "吟遊詩人",
+      "level": 10,
+      "luk": 69,
+      "naturalResistance": 0.215625,
+      "totals": [
+        {
+          "gearResistance": 0,
+          "sharedPassive": 0,
+          "total": 0.215625
+        },
+        {
+          "gearResistance": 0.3,
+          "sharedPassive": 0,
+          "total": 0.515625
+        },
+        {
+          "gearResistance": 0.6,
+          "sharedPassive": 0,
+          "total": 0.815625
+        },
+        {
+          "gearResistance": 0.87,
+          "sharedPassive": 0,
+          "total": 1
+        }
+      ]
+    },
+    {
+      "job": "bard",
+      "name": "吟遊詩人",
+      "level": 30,
+      "luk": 165,
+      "naturalResistance": 0.20625,
+      "totals": [
+        {
+          "gearResistance": 0,
+          "sharedPassive": 0.1,
+          "total": 0.30625
+        },
+        {
+          "gearResistance": 0.3,
+          "sharedPassive": 0.1,
+          "total": 0.60625
+        },
+        {
+          "gearResistance": 0.6,
+          "sharedPassive": 0.1,
+          "total": 0.9062499999999999
+        },
+        {
+          "gearResistance": 0.87,
+          "sharedPassive": 0.1,
+          "total": 1
+        }
+      ]
+    },
+    {
+      "job": "bard",
+      "name": "吟遊詩人",
+      "level": 60,
+      "luk": 309,
+      "naturalResistance": 0.20328947368421052,
+      "totals": [
+        {
+          "gearResistance": 0,
+          "sharedPassive": 0.1,
+          "total": 0.30328947368421055
+        },
+        {
+          "gearResistance": 0.3,
+          "sharedPassive": 0.1,
+          "total": 0.6032894736842105
+        },
+        {
+          "gearResistance": 0.6,
+          "sharedPassive": 0.1,
+          "total": 0.9032894736842104
+        },
+        {
+          "gearResistance": 0.87,
+          "sharedPassive": 0.1,
+          "total": 1
+        }
+      ]
+    },
+    {
+      "job": "bard",
+      "name": "吟遊詩人",
+      "level": 99,
+      "luk": 496,
+      "naturalResistance": 0.20195439739413681,
+      "totals": [
+        {
+          "gearResistance": 0,
+          "sharedPassive": 0.1,
+          "total": 0.3019543973941368
+        },
+        {
+          "gearResistance": 0.3,
+          "sharedPassive": 0.1,
+          "total": 0.6019543973941368
+        },
+        {
+          "gearResistance": 0.6,
+          "sharedPassive": 0.1,
+          "total": 0.9019543973941367
+        },
+        {
+          "gearResistance": 0.87,
+          "sharedPassive": 0.1,
+          "total": 1
+        }
+      ]
+    }
+  ],
+  "additionalProjection": [
+    {
+      "id": "dark_knight_A05",
+      "name": "苦痛の刃",
+      "status": "bleed",
+      "baseRate": 0.35,
+      "illustrativeDuration": 3,
+      "hardControl": false,
+      "normal": 0.35,
+      "resistant": 0.175,
+      "weak": 0.7,
+      "immune": 0,
+      "boss": 0.26249999999999996
+    },
+    {
+      "id": "berserker_A08",
+      "name": "地砕き",
+      "status": "statdown",
+      "baseRate": 0.8,
+      "illustrativeDuration": 2,
+      "hardControl": false,
+      "normal": 0.8,
+      "resistant": 0.4,
+      "weak": 0.95,
+      "immune": 0,
+      "boss": 0.6000000000000001
+    },
+    {
+      "id": "gladiator_A01",
+      "name": "決闘の指名",
+      "status": "taunt",
+      "baseRate": 0.85,
+      "illustrativeDuration": 2,
+      "hardControl": false,
+      "normal": 0.85,
+      "resistant": 0.425,
+      "weak": 0.95,
+      "immune": 0,
+      "boss": 0.6375
+    },
+    {
+      "id": "gladiator_A05",
+      "name": "足払い",
+      "status": "bind",
+      "baseRate": 0.35,
+      "illustrativeDuration": 3,
+      "hardControl": false,
+      "normal": 0.35,
+      "resistant": 0.175,
+      "weak": 0.7,
+      "immune": 0,
+      "boss": 0.26249999999999996
+    },
+    {
+      "id": "warrior_monk_A04",
+      "name": "土の印",
+      "status": "statdown",
+      "baseRate": 0.8,
+      "illustrativeDuration": 3,
+      "hardControl": false,
+      "normal": 0.8,
+      "resistant": 0.4,
+      "weak": 0.95,
+      "immune": 0,
+      "boss": 0.6000000000000001
+    },
+    {
+      "id": "ascetic_A06",
+      "name": "土脈撃",
+      "status": "statdown",
+      "baseRate": 0.8,
+      "illustrativeDuration": 2,
+      "hardControl": false,
+      "normal": 0.8,
+      "resistant": 0.4,
+      "weak": 0.95,
+      "immune": 0,
+      "boss": 0.6000000000000001
+    },
+    {
+      "id": "executioner_A02",
+      "name": "血刻み",
+      "status": "bleed",
+      "baseRate": 0.35,
+      "illustrativeDuration": 3,
+      "hardControl": false,
+      "normal": 0.35,
+      "resistant": 0.175,
+      "weak": 0.7,
+      "immune": 0,
+      "boss": 0.26249999999999996
+    },
+    {
+      "id": "executioner_A06",
+      "name": "怯ませる眼",
+      "status": "fear",
+      "baseRate": 0.5,
+      "illustrativeDuration": 2,
+      "hardControl": false,
+      "normal": 0.5,
+      "resistant": 0.25,
+      "weak": 0.95,
+      "immune": 0,
+      "boss": 0.375
+    },
+    {
+      "id": "executioner_A06",
+      "name": "怯ませる眼",
+      "status": "fear",
+      "baseRate": 0.7,
+      "illustrativeDuration": 2,
+      "hardControl": false,
+      "normal": 0.7,
+      "resistant": 0.35,
+      "weak": 0.95,
+      "immune": 0,
+      "boss": 0.5249999999999999
+    },
+    {
+      "id": "ninja_A06",
+      "name": "撒き菱",
+      "status": "bind",
+      "baseRate": 0.4,
+      "illustrativeDuration": 2,
+      "hardControl": false,
+      "normal": 0.4,
+      "resistant": 0.2,
+      "weak": 0.8,
+      "immune": 0,
+      "boss": 0.30000000000000004
+    }
+  ],
+  "allyConditionSkills": [
+    {
+      "id": "knight_P04",
+      "name": "救援の決意",
+      "job": "knight"
+    },
+    {
+      "id": "monk_P03",
+      "name": "逆境の闘気",
+      "job": "monk"
+    },
+    {
+      "id": "black_mage_P05",
+      "name": "逆境の魔力",
+      "job": "black_mage"
+    },
+    {
+      "id": "white_mage_P03",
+      "name": "救護の決意",
+      "job": "white_mage"
+    },
+    {
+      "id": "bard_P03",
+      "name": "逆境の歌声",
+      "job": "bard"
+    },
+    {
+      "id": "bard_P04",
+      "name": "支える声",
+      "job": "bard"
+    }
+  ],
+  "noGearNaturalRange": {
+    "min": 0.13599348534201955,
+    "max": 0.3076923076923077
+  },
+  "assumptions": [
+    "base chance examples are 50%, not all monster attacks",
+    "source party buffs and nopoison are held at zero/false for the controlled matrix",
+    "stats.statusResist is supplied explicitly; gear totals are additive component scenarios, not item-drop or acquisition simulations",
+    "same status source chance is conditional on a successful damaging hit when the skill requires one",
+    "additional skill duration/AI/resource execution is not implemented and was not replayed"
+  ],
+  "extractedHelpers": [
+    "allyStatusChance",
+    "enemyStatusChance",
+    "masterStatusResist",
+    "masterStatusMultiplier",
+    "passiveRules",
+    "weaponAllowed",
+    "effectiveSkill",
+    "usedSkillLevel",
+    "learnedSkillLevel",
+    "skillMaxLevel",
+    "isLearned"
+  ],
+  "previousResistanceCap": 0.9,
+  "currentResistanceCap": 1,
+  "skillDataUnchanged": true,
+  "runtimeSkillParametersChanged": false,
+  "designSkillDefinitionsChanged": false,
+  "designCompatibilityRulesChanged": true,
+  "sources": {
+    "battle": "114f5b7f475a813079a993f49f9fc28b69da1b98",
+    "combat": "50417303e41db6bf3ddb47b5511b8112f6a7ce7e",
+    "growth": "05cf2d2586a923a8bd1340268c61923cf0aa700a",
+    "skills": "a45f3ffc1d2b6833ef978a65fd8ba14621cb1ecf",
+    "balance": "45bcb12cbaaed014e78efaf67367483127160a60",
+    "additional": "4b9c4797720a8fa6e9e7cabce3c8351569a0d420"
+  }
+}
