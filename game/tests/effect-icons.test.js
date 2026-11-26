@@ -44,9 +44,9 @@ test('キャラ詳細は残り時間・重複数・効果量を保持し、ジ�
   const before = structuredClone({ game, battle });
   const sections = allyEffectEntries(data, game, battle, 0);
   assert.deepEqual(sections[0][1], [{ label: '毒 ×3（残り2）', icon: 'poison' }, { label: '魔力漏出（残り1）', icon: 'weaken' }]);
-  assert.deepEqual(sections[1][1].map(e => e.icon), ['str-up', 'def-down', JOB_EFFECT_ICON]);
-  assert.equal(sections[2][1][0].icon, 'spd-up');
-  const job = sections.slice(3).flatMap(([, entries]) => entries);
+  assert.deepEqual(sections[1][1].map(e => e.icon), ['str-up', 'def-down']);
+  assert.equal(sections[2][1][0].icon, JOB_EFFECT_ICON);
+  const job = sections.slice(2).flatMap(([, entries]) => entries);
   assert.ok(job.length >= 5);
   assert.ok(job.every(e => e.icon === JOB_EFFECT_ICON));
   assert.ok(job.some(e => e.label.includes('守護の祈り（残り2）') && e.label.includes('DEF +30%') && e.label.includes('防護 40 HP')));

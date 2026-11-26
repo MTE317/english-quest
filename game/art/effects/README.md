@@ -4,8 +4,9 @@
 
 - 状態異常は `data/status_effects.csv` のIDと同名。魔力漏出の内部IDは `weaken`。
 - 通常の能力変化は `str/mag/def/res/spd/crt/eva-up/down.png`。会心の内部名 `crit` は `crt` と同じ画像。
-- ジョブ固有の継続効果、加護、防護、怒気、かばう、次の攻撃強化などは、金色の紋章 `job-special.png` 1種を共用。固有能力による複数の能力上昇も、この画像と効果説明でまとめて示す。
+- 「全体の強化・弱化」「ジョブの固有継続効果」「その他の特殊効果」は、金色の紋章 `job-special.png` 1種を共用する。全体支援も能力ごとの画像へ分割せず、同じ画像と効果説明で示す。
+- 全体の号令・歌・全体軽減は「全体の強化・弱化」、加護・防護・吸収・怒気・連携・罠は「ジョブの固有継続効果」、次回だけの強化や費用軽減・障壁・かばう・反撃準備は「その他の特殊効果」に分類する。現在の職名ではなく、実際の付与効果と装着技能で判定する。
 - キャラをタップした詳細画面に画像と効果名を併記。残り時間、重複数、効果量も維持。効果がなければ「なし」。
 - 戦闘画面のキャラカード・敵表示・効果計算・セーブ形式には変更なし。
 
-対応表と描画は `game/js/ui/effect-icons.js`。状態異常の網羅性・素材サイズ・効果との対応は `game/tests/effect-icons.test.js` で検証。
+画像の対応表と描画は `game/js/ui/effect-icons.js`、分類は `game/js/ui/battle-view.js`。状態異常の網羅性・素材サイズは `game/tests/effect-icons.test.js`、実際の技能効果の分類は `game/tests/job-effect-sections.test.js` で検証。分類基準と職業別の例は `docs/battle-job-effects-display.md` を参照。
