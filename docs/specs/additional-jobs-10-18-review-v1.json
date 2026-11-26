@@ -1,9 +1,15 @@
 {
   "date": "2026-11-26",
   "status": "design_review_only",
-  "assertions": 2229,
+  "assertions": 2274,
   "structural": {
-    "status": "design_only",
+    "status": "partially_implemented",
+    "implementedJobs": [
+      "assassin",
+      "bounty_hunter",
+      "dragoon"
+    ],
+    "implementedSkills": 45,
     "jobs": 9,
     "skills": 135,
     "counts": {
@@ -248,8 +254,8 @@
     }
   ],
   "limits": [
-    "新技能を実戦闘エンジンへ登録・発動する検証ではない",
+    "この設計点検自体は新技能を発動する検証ではない",
     "倍率の概算は正誤・会心・乱数・属性・敵防御・6人編成を含まない",
-    "長期バランスと新機構の実動は個別実装後に検証する"
+    "追加13〜18の新機構は未実装。長期の6人編成バランスは継続検証する"
   ]
 }

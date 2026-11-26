@@ -33,6 +33,7 @@ export function masterCondition(data, game, b, actor, target, condition = {}, sk
   const testStatus = unit => Boolean(unit && (condition.statuses?.length
     ? condition.statuses.some(id => unit.statuses?.[id]) : Object.keys(unit.statuses ?? {}).some(id => id !== 'taunt')));
   switch (condition.when) {
+    case 'target_stat_down': return targetStatDown(enemy);
     case 'target_def_down': return Boolean(enemy && (enemy.debuffs?.def?.[0] > 0 || Object.values(enemy.masterDebuffs ?? {}).some(e => e.stat === 'def' && e.value > 0)));
     case 'target_hp_below': return Boolean(enemy && enemy.hp <= enemy.maxHp * condition.threshold);
     case 'target_def_buff': return Boolean(enemy?.buffs?.def?.[0] > 0 || enemy?.buffs?.pcut?.[0] > 0 || enemy?.buffs?.cut?.[0] > 0);
@@ -99,6 +100,7 @@ export function masterDamageBonus(data, game, b, actor, target, skill, elements 
     }
   }
   for (const effect of Object.values(b.enemies[target]?.masterMarks ?? {})) rate += effect.rate ?? 0;
+  rate += pursuitJumpDamage(data, game, b, actor, target, skill);
   if (!skill || skill.effect?.base === 'weapon') {
     const duel = activeDuel(game, b, actor);
     if (duel?.target === target) rate += duel.damage + (duel.focus ? ruleNumber(data, member, 'duel_focus_bonus') : 0)
@@ -136,6 +138,8 @@ export function masterCutBonus(data, game, b, actor, magic, enemy = null) {
   for (const rule of passiveRules(data, game.party[actor])) {
     if (source && rule.low_hp_source_cut && source.hp <= source.maxHp * rule.low_hp_source_cut.threshold) rate += rule.low_hp_source_cut.rate;
     if (magic && aCloneSnapshot(b, actor)) rate += rule.clone_magic_cut ?? 0;
+    if (activeMark(game, b, actor)?.target === enemy) rate += rule.marked_source_cut ?? 0;
+    if (source?.types?.includes(rule.type_source_cut?.type)) rate += rule.type_source_cut.rate;
   }
   return rate;
 }
@@ -149,7 +153,8 @@ export function grantMasterEffect(b, target, key, effect) {
     const strength = e => Object.values(e.values ?? {}).reduce((sum, value) => sum + Math.abs(value), 0) + (e.regen?.amount ?? 0) + (e.shield ?? 0)
       + (e.nextMpSave?.rate ?? 0) + (e.nextDamage?.rate ?? 0) + (e.statusResist?.rate ?? 0) + (e.weaponDamage ?? 0)
       + (e.nextAccuracy?.rate ?? 0) + (e.targetCrit?.rate ?? 0) + (e.nextMagicEcho?.m ?? 0) + (e.qigongDamage ?? 0)
-      + (e.magicDamage?.rate ?? 0) + (e.cloneEvasion ?? 0);
+      + (e.magicDamage?.rate ?? 0) + (e.cloneEvasion ?? 0)
+      + (e.nextTargetDamage?.rate ?? 0) + (e.nextMarkedIgnore?.rate ?? 0) + (e.nextJumpDamage?.rate ?? 0) + (e.markedPartyDamage?.rate ?? 0);
     if (strength(old) > strength(next)) return old;
     if (strength(old) === strength(next)) next.remaining = Math.max(old.remaining, next.remaining);
   }
@@ -207,6 +212,11 @@ export function beginMasterAction(data, game, b, actor, skill) {
   const a = b.allies[actor];
   a.currentActionClock = b.actionClock;
   a.advancedAction = { paidHp: 0, damageBonus: 0, actualDamage: 0, executed: false, cloneCount: cloneCount(a) };
+  if (!pursuitRule(data, game.party[actor])) a.pursuit = 0;
+  a.advancedAction.startPursuit = pursuitStage(data, game, b, actor);
+  a.advancedAction.markTarget = activeMark(game,b,actor)?.target;
+  a.advancedAction.normalActive = Boolean(skill && !skill.isFinal && !reactionSkill(skill));
+  a.advancedAction.statusAtStart = b.enemies.map(enemy => Object.keys(enemy.statuses ?? {}).some(id => data.statusEffects.has(id)));
   if (!angerRule(data, game.party[actor])) a.anger = 0;
   if (!prayerRule(data, game.party[actor])) a.prayer = 0;
   a.conditionSnapshot = { enemy: b.enemies.filter(unit => unit.hp > 0).map(unit => Object.keys(unit.statuses ?? {}).filter(id => id !== 'taunt')),
@@ -217,6 +227,7 @@ export function beginMasterAction(data, game, b, actor, skill) {
 }
 export function startMasterOpportunity(data, game, b, actor, ctx) {
   const a = b.allies[actor];
+  if (a.jump) { a.landingReady = a.jump; delete a.jump; }
   delete a.readGuard;
   delete a.substitute;
   clearDefeatedTacticalTargets(b);
@@ -254,6 +265,7 @@ export function finishMasterOpportunity(data, game, b, actor, ctx, skill = null,
   a.lastOpportunityRound = b.round;
   finishTacticalOpportunity(data, game, b, actor, skill, voluntary && performed, voluntary);
   finishSpecialistOpportunity(data, game, b, actor, skill, voluntary && performed, voluntary);
+  finishPursuitJumpOpportunity(data, game, b, actor, skill, voluntary && performed);
   finishAdvancedAction(data, game, b, actor, skill, voluntary);
   if (!voluntary || !performed) { a.previousWeaponSkill = null; a.comboStage = 0; delete a.conditionSnapshot; return; }
   for (const rule of passiveRules(data, member)) {
@@ -300,6 +312,8 @@ export function spendHpPayment(data, game, b, actor, skill) {
   return cost;
 }
 export function advancedSkillBlock(data, game, b, actor, skill) {
+  if (skill.effect.rules?.requires_mark && !activeMark(game, b, actor)) return '自分の追跡札が付いた生存敵が必要';
+  if (skill.effect.rules?.move_mark && !b.enemies.some((enemy, i) => enemy.hp > 0 && i !== activeMark(game, b, actor)?.target)) return '追跡を移せる別の敵がいない';
   if (game.party[actor].hp <= hpPayment(data,game,b,actor,skill)) return 'HPの支払い後に1以上残す必要がある';
   if (skill.effect.rules?.consume_blessing && !ownedBlessing(b,actor)) return '自分に自分の加護が必要';
   if (skill.effect.rules?.move_blessing && !b.allies.some((_,target)=>ownedBlessing(b,actor,target))) return '移せる自分の加護がない';
@@ -314,6 +328,8 @@ export function advancedSkillBlock(data, game, b, actor, skill) {
 export function advancedTargetBlock(data, game, b, actor, skill, target, action) {
   if (!skill.effect.additional) return '';
   const rule=skill.effect.rules??{};
+  if (rule.move_mark && target === activeMark(game, b, actor)?.target) return '現在の標的と別の敵を選んでください';
+  if (skill.kind === 'jump' && !(b.enemies[target]?.hp > 0)) return '生存している敵を選んでください';
   if (skill.effect.tgt === 'selected_enemy' && !(b.enemies[target]?.hp > 0)) return '生存している敵を選んでください';
   const partyTarget = ['ally_buff','heal','cure'].includes(skill.kind) && skill.effect.tgt!=='self';
   if (partyTarget && (!game.party[target] || game.party[target].hp<=0 || b.allies[target].statuses.petrify)) return '生存している対象を選んでください';
@@ -330,6 +346,14 @@ export function advancedTargetBlock(data, game, b, actor, skill, target, action)
 export function payAdvancedCosts(data, game, b, actor, skill, action) {
   const ally=b.allies[actor], rule=skill.effect.rules??{}, state=ally.advancedAction;
   state.executed=true;
+  state.previousPreparation = Boolean(ally.previousPreparation);
+  state.previousLanding = Boolean(ally.previousLanding);
+  delete ally.previousPreparation;
+  delete ally.previousLanding;
+  if (rule.spend_pursuit && activeMark(game,b,actor)?.target === action.target) {
+    state.pursuitSpent = state.startPursuit;
+    ally.pursuit = 0;
+  }
   state.previousSelfRecovery = Boolean(ally.previousSelfRecovery);
   if (normalQigong(skill) && ally.breathReady && passiveRules(data, game.party[actor]).some(p => p.breath_cycle)) state.qigongBonus = ally.breathReady.rate;
   delete ally.breathReady;
@@ -364,7 +388,7 @@ function finishAdvancedAction(data, game, b, actor, skill, voluntary) {
   else if (voluntary && ally.advancedAction?.executed) {
     if ((!skill || weaponSkill(skill)) && !skill?.isFinal && !skill?.effect.rules?.spend_anger && ally.advancedAction.actualDamage>0)
       ally.anger=Math.min(rule.max,angerStage(data,game,b,actor)+1);
-    else if (skill && skill.kind!=='attack') ally.anger=Math.max(0,angerStage(data,game,b,actor)-1);
+    else if (skill && skill.kind!=='attack' && !masterTags(skill).includes('attack_prepare')) ally.anger=Math.max(0,angerStage(data,game,b,actor)-1);
   }
   delete ally.advancedAction;
 }
@@ -441,7 +465,7 @@ export function masterCoverTarget(data, game, b, original, magic) {
   for (let actor = 0; actor < game.party.length; actor++) {
     if (actor === original || game.party[actor].hp <= 0) continue;
     const a = b.allies[actor];
-    if (['petrify', 'sleep', 'freeze', 'stun', 'paralysis', 'confusion', 'charm'].some(id => a.statuses[id])) continue;
+    if (isAirborne(b, actor) || ['petrify', 'sleep', 'freeze', 'stun', 'paralysis', 'confusion', 'charm'].some(id => a.statuses[id])) continue;
     const definitions = [a.masterCover, ...passiveRules(data, game.party[actor]).map(rule => rule.cover && ({ ...rule.cover, sourceSkill: rule.skill.id })), a.masterUltimateCover].filter(Boolean);
     for (const cover of definitions) {
       if (magic && cover.physical_only !== false) continue;
@@ -509,6 +533,11 @@ export function consumeStatusPreparation(b, actor, status) {
 }
 export function clearDefeatedTacticalTargets(b) {
   for (const ally of b.allies) {
+    if (ally.mark && !(b.enemies[ally.mark.target]?.hp > 0)) { delete ally.mark; ally.pursuit = 0; }
+    for (const [key, effect] of Object.entries(ally.masterEffects ?? {})) {
+      const target = (effect.nextTargetDamage ?? effect.nextMarkedIgnore ?? effect.markedPartyDamage)?.target;
+      if (target != null && !(b.enemies[target]?.hp > 0)) delete ally.masterEffects[key];
+    }
     for (const key of ['duel', 'distance']) if (ally[key] && !(b.enemies[ally[key].target]?.hp > 0)) delete ally[key];
     if (ally.masterCounter?.target != null && !(b.enemies[ally.masterCounter.target]?.hp > 0)) delete ally.masterCounter;
     for (const [key,effect] of Object.entries(ally.masterEffects??{})) if (effect.targetCrit && !(b.enemies[effect.targetCrit.target]?.hp>0)) delete ally.masterEffects[key];
@@ -516,7 +545,7 @@ export function clearDefeatedTacticalTargets(b) {
 }
 export function resetTacticalState(ally) {
   for (const key of ['stance', 'duel', 'distance', 'readGuard', 'clones', 'substitute', 'breathReady',
-    'previousSelfRecovery', 'cloneDefense', 'cloneEnemySnapshot']) delete ally[key];
+    'previousSelfRecovery', 'cloneDefense', 'cloneEnemySnapshot', 'mark', 'pursuit', 'jump', 'landingReady', 'previousPreparation', 'previousLanding']) delete ally[key];
   ally.prayer = 0;
   // 決着の余裕の一戦1回フラグは、蘇生しても戻さない。
 }
@@ -698,4 +727,163 @@ function finishSpecialistOpportunity(data, game, b, actor, skill, performed, vol
     if (effect.nextAccuracy && weaponSkill(skill)) delete ally.masterEffects[key];
     if (effect.targetCrit && weaponSkill(skill) && state.weaponTargets?.includes(effect.targetCrit.target)) delete ally.masterEffects[key];
   }
+}
+
+// 追加10〜12職。標的・次回準備・跳躍はJSONだけで途中保存できる。
+export function targetStatDown(enemy) {
+  const stats = ['str','mag','def','res','spd','luk'];
+  return Boolean(enemy && (stats.some(key => enemy.debuffs?.[key]?.[0] > 0)
+    || enemy.debuffs?.abilityDown?.[0] > 0
+    || Object.values(enemy.masterDebuffs ?? {}).some(effect => stats.includes(effect.stat) && effect.value > 0 && effect.turns > 0)));
+}
+export const pursuitRule = (data, member) => passiveRules(data, member).find(rule => rule.pursuit)?.pursuit;
+export function activeMark(game, b, actor) {
+  const mark = b.allies[actor]?.mark;
+  return game.party[actor]?.hp > 0 && mark?.remaining > 0 && b.enemies[mark.target]?.hp > 0 ? mark : null;
+}
+export function pursuitStage(data, game, b, actor) {
+  const rule = pursuitRule(data, game.party[actor]);
+  return rule && activeMark(game,b,actor) ? Math.max(0,Math.min(rule.max,Number(b.allies[actor].pursuit)||0)) : 0;
+}
+export function preparePursuitAttack(data, game, b, actor, targets) {
+  const ally=b.allies[actor],mark=activeMark(game,b,actor);
+  if (mark && targets.some(target=>target!==mark.target)) {
+    ally.pursuit=0;
+    if (ally.advancedAction) { ally.advancedAction.startPursuit=0; ally.advancedAction.pursuitSpent=0; }
+  }
+}
+function pursuitJumpDamage(data, game, b, actor, target, skill) {
+  const ally=b.allies[actor],state=ally.advancedAction,rules=skill?.effect?.rules??{};
+  let rate=0;
+  const marked=activeMark(game,b,actor)?.target===target;
+  if (marked) {
+    rate+=rules.own_mark_damage??0;
+    if (rules.spend_pursuit) rate+=(state?.pursuitSpent??0)*rules.spend_pursuit;
+    else if (weaponSkill(skill)) rate+=(state?.startPursuit??pursuitStage(data,game,b,actor))*(pursuitRule(data,game.party[actor])?.damage??0);
+  }
+  if (state?.previousPreparation) rate+=rules.previous_preparation_damage??0;
+  if (state?.previousLanding) rate+=rules.previous_landing_damage??0;
+  for (const effect of Object.values(ally.masterEffects??{})) {
+    if (weaponSkill(skill) && effect.nextTargetDamage?.target===target
+      && effect.nextTargetDamage.statuses.some(id=>b.enemies[target].statuses[id])) rate+=effect.nextTargetDamage.rate;
+    if (!skill?.isFinal && !reactionSkill(skill) && effect.markedPartyDamage?.target===target) rate+=effect.markedPartyDamage.rate;
+  }
+  return rate;
+}
+export function pursuitAccuracy(data, game, b, actor, target, skill) {
+  if (!weaponSkill(skill) || activeMark(game,b,actor)?.target!==target) return 0;
+  const stage=b.allies[actor].advancedAction?.startPursuit??pursuitStage(data,game,b,actor);
+  return passiveRules(data,game.party[actor]).reduce((sum,rule)=>sum
+    +(rule.marked_accuracy && stage>=rule.marked_accuracy.threshold ? rule.marked_accuracy.rate : 0),0);
+}
+export function conditionalTargetCrit(data, game, b, actor, target, skill) {
+  return (!skill || skill.effect?.base==='weapon') && targetStatDown(b.enemies[target])
+    ? ruleNumber(data,game.party[actor],'target_stat_down_crit') : 0;
+}
+export function pursuitDefIgnore(b, actor, target, skill) {
+  let rate=0;
+  const mark=b.allies[actor].mark;
+  if (weaponSkill(skill)) for (const effect of Object.values(b.allies[actor].masterEffects??{})) {
+    if (effect.nextMarkedIgnore && mark?.remaining>0 && mark.target===target && b.enemies[target].hp>0) rate+=effect.nextMarkedIgnore.rate;
+  }
+  if (b.enemies[target].types?.includes(skill?.effect.rules?.type_def_ignore?.type)) rate+=skill.effect.rules.type_def_ignore.rate;
+  return rate;
+}
+export function pursuitStatusBonus(data, game, b, actor, target, status) {
+  const state=b.allies[actor].advancedAction;
+  if (!state?.executed || !state.normalActive || activeMark(game,b,actor)?.target!==target) return 0;
+  return passiveRules(data,game.party[actor]).reduce((sum,rule)=>sum
+    +(rule.marked_status?.status===status && state.startPursuit>=rule.marked_status.minimum ? rule.marked_status.rate : 0),0);
+}
+export function recordPrimaryHits(b, actor, hits) {
+  const state=b.allies[actor].advancedAction;
+  if (state?.executed) state.primaryDamageTargets=[...new Set(hits.filter(hit=>hit.damage>0).map(hit=>hit.target))];
+}
+export function preparationSnapshot(ally) {
+  const fields=['nextDamage','nextMpSave','nextAccuracy','targetCrit','nextTargetDamage','nextMarkedIgnore','nextJumpDamage'];
+  return Object.fromEntries(Object.entries(ally.masterEffects??{}).flatMap(([key,effect])=>{
+    const values=Object.fromEntries(fields.filter(field=>effect[field]).map(field=>[field,effect[field]]));
+    return Object.keys(values).length ? [[key,JSON.stringify(values)]] : [];
+  }));
+}
+export function recordPreparation(b, actor, skill, before) {
+  if (!skill || skill.isFinal || skill.kind==='attack' || masterTags(skill).includes('attack_prepare')) return;
+  const after=preparationSnapshot(b.allies[actor]);
+  b.allies[actor].advancedAction.selfPreparation=Object.keys(after).some(key=>{
+    const source=b.allies[actor].masterEffects[key].skillId??key;
+    return (source===skill.id || source.startsWith(skill.id+':')) && after[key]!==before[key];
+  });
+}
+export function applyPursuitJumpRules(data, game, b, actor, skill, target, cm) {
+  const ally=b.allies[actor],rules=skill.effect.rules??{};
+  const setMark=(enemy,turns)=>{
+    if (!(b.enemies[enemy]?.hp>0)) return;
+    ally.mark={target:enemy,remaining:turns,source:actor,skillId:skill.id,level:skill.level??1,grantedClock:b.actionClock};
+    ally.pursuit=0;
+  };
+  if (rules.mark) setMark(target,rules.mark.turns);
+  if (rules.move_mark) {
+    const carry=Math.min(pursuitStage(data,game,b,actor),rules.move_mark.carry);
+    setMark(target,rules.move_mark.turns);
+    ally.pursuit=carry;
+  }
+  if (rules.after_mark) setMark(target,rules.after_mark.turns);
+  if (rules.next_target_damage) grantMasterEffect(b,actor,skill.id,{skillId:skill.id,
+    nextTargetDamage:{...rules.next_target_damage,rate:rules.next_target_damage.rate*cm,target},remaining:rules.next_target_damage.turns});
+  if (rules.next_marked_ignore) grantMasterEffect(b,actor,skill.id,{skillId:skill.id,
+    nextMarkedIgnore:{rate:rules.next_marked_ignore.rate*cm},remaining:rules.next_marked_ignore.turns});
+  if (rules.next_jump_damage) grantMasterEffect(b,actor,skill.id,{skillId:skill.id,
+    nextJumpDamage:{rate:rules.next_jump_damage.rate*cm},remaining:rules.next_jump_damage.turns});
+  if (rules.marked_party_damage) for (const [index,member] of game.party.entries()) if (member.hp>0 && !b.allies[index].statuses.petrify) {
+    grantMasterEffect(b,index,skill.id,{skillId:skill.id,source:actor,party:true,
+      markedPartyDamage:{target:activeMark(game,b,actor).target,rate:rules.marked_party_damage.rate*cm},remaining:rules.marked_party_damage.turns});
+  }
+  if (rules.after_self_shield) grantMasterEffect(b,actor,skill.id,{skillId:skill.id,
+    shield:Math.min(masterShieldRoom(data,game,b,actor,skill.id),Math.floor(maxHp(data,game.party[actor])*rules.after_self_shield.hp_fraction*cm)),remaining:rules.after_self_shield.turns});
+  if (rules.jump) {
+    let boost=0;
+    for (const [key,effect] of Object.entries(ally.masterEffects??{})) if (effect.nextJumpDamage) {
+      boost+=effect.nextJumpDamage.rate; delete ally.masterEffects[key];
+    }
+    const landing={...skill,mp:0,kind:'attack',elements:[rules.jump.element],effect:{...skill.effect,
+      base:'weapon',m:rules.jump.m,element:rules.jump.element,tgt:'single',jump_landing:true,
+      tags:['active','physical','weapon'],rules:{}}};
+    delete landing.effect.levels;
+    ally.jump={skill:landing,target,source:actor,level:skill.level??1,cm,boost,mpPaid:ally.advancedAction.mpPaid};
+  }
+}
+export const isAirborne=(b,actor)=>Boolean(b.allies[actor]?.jump);
+export function landingAction(b, actor) {
+  const jump=b.allies[actor].landingReady;
+  if (!jump) return null;
+  const target=b.enemies[jump.target]?.hp>0?jump.target:b.enemies.findIndex(enemy=>enemy.hp>0);
+  return target<0?null:{type:'landing',skillId:jump.skill.id,target};
+}
+function finishPursuitJumpOpportunity(data, game, b, actor, skill, performed) {
+  const ally=b.allies[actor],state=ally.advancedAction;
+  if (!(game.party[actor].hp>0)) {resetTacticalState(ally);return;}
+  if (ally.mark && (ally.mark.grantedClock!==b.actionClock || !performed) && --ally.mark.remaining<=0) {delete ally.mark;ally.pursuit=0;}
+  if (!performed || !state?.executed) {
+    delete ally.previousPreparation; delete ally.previousLanding; delete ally.jump; delete ally.landingReady; return;
+  }
+  ally.previousPreparation=Boolean(state.selfPreparation);
+  ally.previousLanding=Boolean(skill?.effect.jump_landing);
+  const targets=state.primaryDamageTargets??[];
+  if (weaponSkill(skill)) {
+    const mark=activeMark(game,b,actor);
+    if (mark && !skill.effect.rules?.no_pursuit_gain && targets.includes(mark.target) && pursuitRule(data,game.party[actor]))
+      ally.pursuit=Math.min(pursuitRule(data,game.party[actor]).max,(ally.pursuit??0)+1);
+    for (const p of passiveRules(data,game.party[actor])) {
+      if (p.after_status_weapon && targets.some(target=>state.statusAtStart[target]))
+        grantMasterEffect(b,actor,p.skill.id,{skillId:p.skill.id,values:{eva:p.after_status_weapon.evasion},remaining:p.after_status_weapon.turns});
+      if (p.after_landing && skill.effect.jump_landing && targets.length)
+        grantMasterEffect(b,actor,p.skill.id,{skillId:p.skill.id,values:p.after_landing.values,remaining:p.after_landing.turns});
+    }
+    for (const [key,effect] of Object.entries(ally.masterEffects??{})) {
+      if (effect.grantedClock===b.actionClock) continue;
+      const target=effect.nextMarkedIgnore ? state.markTarget : effect.nextTargetDamage?.target;
+      if (target!=null && state.weaponTargets?.includes(target)) delete ally.masterEffects[key];
+    }
+  }
+  if (skill?.effect.rules?.end_mark) {delete ally.mark;ally.pursuit=0;}
 }

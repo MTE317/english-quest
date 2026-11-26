@@ -3,7 +3,7 @@ import { now } from '../storage.js?v=skill-growth-2';
 import { QuestionPicker, REASON_LABEL } from '../picker.js?v=skill-growth-2';
 import { makePracticeQuestion, questionDirection, questionSpeech, DIRECTION } from '../quiz.js?v=skill-growth-2';
 import { speak, canSpeak, stopSpeech } from '../speech.js?v=skill-growth-2';
-import { nextTurn, actionOptions, setPending, prepareQuizAction, resolvePending, targetKind, skillMp, collectBattleHits, enemyIntent, enemyCanAct } from '../battle.js?v=party-wipe-1';
+import { nextTurn, actionOptions, setPending, prepareQuizAction, resolvePending, targetKind, skillMp, collectBattleHits, enemyIntent, enemyCanAct } from '../battle.js?v=jobs-intro-1';
 import { skillMaxLevel, learnedSkillLevel, effectiveSkill } from '../growth.js?v=advanced-jobs-1';
 import { maxHp, maxMp } from '../character.js?v=advanced-jobs-1';
 import { el, render } from '../dom.js?v=skill-growth-2';
@@ -15,7 +15,7 @@ import { portraitIcon } from './portrait.js?v=skill-growth-2';
 import { ultimateGauge } from './skill-presentation.js?v=skill-growth-2';
 import { skillIcon } from './skill-icons.js?v=skill-icons-1';
 import { describeSkillEffect, describeSkillForUI } from '../skill-effects.js?v=tactical-jobs-1';
-import { ownedBlessing, passiveRules, activeDuel, prayerRule, prayerStage } from '../job-combat.js?v=specialist-jobs-1';
+import { ownedBlessing, passiveRules, activeDuel, prayerRule, prayerStage } from '../job-combat.js?v=jobs-intro-1';
 import { statusIconId, buffIconId, effectIcon, JOB_EFFECT_ICON } from './effect-icons.js?v=battle-effect-icons-1';
 
 const TARGET_PROMPT = {
@@ -59,7 +59,8 @@ function jobEffectSection(skill, effect) {
   const continuous = Object.values(effect.values ?? {}).some(value => value !== 0)
     || effect.shield > 0 || effect.regen || effect.statusResist || effect.lifesteal || effect.weaponDamage || effect.mpSave?.length
     || effect.qigongDamage || effect.magicDamage || effect.cloneEvasion;
-  if (!continuous && (effect.nextDamage || effect.nextMpSave || effect.nextHpCost || effect.nextAccuracy || effect.targetCrit || effect.nextMagicEcho)) return JOB_EFFECT_SECTIONS.special;
+  if (!continuous && (effect.nextDamage || effect.nextMpSave || effect.nextHpCost || effect.nextAccuracy || effect.targetCrit || effect.nextMagicEcho
+    || effect.nextTargetDamage || effect.nextMarkedIgnore || effect.nextJumpDamage)) return JOB_EFFECT_SECTIONS.special;
   if (effect.shield > 0 || effect.blessing) return JOB_EFFECT_SECTIONS.ongoing;
   if (effect.party || effect.song || skill?.kind === 'party_buff'
     || skill?.kind === 'ally_buff' && skill.effect?.tgt === 'all') return JOB_EFFECT_SECTIONS.party;
@@ -109,6 +110,10 @@ export function allyEffectEntries(data, game, battle, index) {
     if (effect.lifesteal) values.push(`HP吸収 ${Math.round(effect.lifesteal * 100)}%`);
     if (effect.weaponDamage) values.push(`武器ダメージ +${Math.round(effect.weaponDamage * 100)}%`);
     if (effect.nextAccuracy) values.push(`次の通常武器技の命中 +${Math.round(effect.nextAccuracy.rate*100)}ポイント`);
+    if (effect.nextTargetDamage && battle.enemies[effect.nextTargetDamage.target]?.hp>0) values.push(`対象 ${battle.enemies[effect.nextTargetDamage.target].name}・暗闇／恐怖／束縛なら次の通常武器技を強化`);
+    if (effect.nextMarkedIgnore && ally.mark?.remaining>0 && battle.enemies[ally.mark.target]?.hp>0) values.push(`標的 ${battle.enemies[ally.mark.target].name}・次の通常武器技が防御を貫く`);
+    if (effect.nextJumpDamage) values.push('次の跳躍の着地攻撃を強化');
+    if (effect.markedPartyDamage && battle.enemies[effect.markedPartyDamage.target]?.hp>0) values.push(`対象 ${battle.enemies[effect.markedPartyDamage.target].name}への通常攻撃・技能を強化`);
     if (effect.targetCrit && battle.enemies[effect.targetCrit.target]?.hp>0) values.push(`対象 ${battle.enemies[effect.targetCrit.target].name}・HP${Math.round(effect.targetCrit.threshold*100)}%以下で次の通常武器技の会心 +${Math.round(effect.targetCrit.rate*100)}ポイント`);
     if (effect.nextMagicEcho) values.push('次の通常攻撃魔法で主対象に追撃1回');
     if (effect.qigongDamage) values.push(`気功ダメージ +${Math.round(effect.qigongDamage*100)}%`);
@@ -136,6 +141,12 @@ export function allyEffectEntries(data, game, battle, index) {
   const prayer = prayerRule(data, member);
   if (member.hp > 0 && prayer) ongoing.push(entry(`祈念 ${prayerStage(data,game,battle,index)}/${prayer.max}`));
   const clones=(ally.clones??[]).filter(clone=>clone.remaining>0);
+  if (member.hp>0 && ally.mark?.remaining>0 && battle.enemies[ally.mark.target]?.hp>0) {
+    const pursuit=passives.find(rule=>rule.pursuit)?.pursuit;
+    ongoing.push(entry(`追跡札${duration(ally.mark.remaining)}：標的 ${battle.enemies[ally.mark.target].name}${pursuit?`・追跡 ${Math.min(pursuit.max,ally.pursuit??0)}/${pursuit.max}段階`:''}`));
+  }
+  const jump=ally.jump??ally.landingReady;
+  if (member.hp>0 && jump) special.push(entry(`${ally.jump?'跳躍中：次の行動開始まで空中':'着地攻撃の予約'}・対象 ${battle.enemies[jump.target]?.name??'生存敵へ変更'}${jump.boost>0?'・踏み切り強化を予約済み':''}`));
   if (member.hp>0 && clones.length) ongoing.push(entry(`分身 ${clones.length}/3体：${clones.map(clone=>'残り'+clone.remaining+'行動').join('・')}`));
   if (member.hp>0 && ally.breathReady) special.push(entry('整息：次の通常の気功を強化・別の行動やスキップで解除'));
   if (member.hp>0 && ally.substitute) special.push(entry('影替わり：単体攻撃1行動を身代わりで防ぐ・次の行動開始まで'));
@@ -446,6 +457,11 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
     const choose = (action) => chooseTarget(action, sub);
     const back = () => showCommand();
     const notice = message ? el('p', { class: 'battle-notice', role: 'status' }, message) : null;
+    if (opts.landing) {
+      showPanel(`${member.name}の番`,[notice,el('p',{class:'battle-notice'},'跳躍から着地して攻撃する。追加のMP消費なし。'),
+        el('div',{class:'battle-commands'},command('✦','着地攻撃',()=>ask(opts.landing),b.enemies[opts.landing.target].name))]);
+      return;
+    }
 
     if (sub === 'skill' || sub === 'item') {
       const isSkill = sub === 'skill';
@@ -617,6 +633,7 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
 
   function actionLabel(action) {
     if (action.type === 'attack') return '通常攻撃';
+    if (action.type === 'landing') return '跳躍槍・着地攻撃';
     if (action.type === 'flee') return '逃げる';
     if (action.type === 'skill') return [data.skills.get(action.skillId).name,
       action.element ? `（${data.elements.get(action.element)?.name ?? action.element}）` : '', action.boost ? '・MP投入' : ''].join('');

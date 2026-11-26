@@ -9,6 +9,8 @@ const baseCommit='a3190d0c382d62ef765e184bffa864689a6709f0';
 const rules=JSON.parse(fs.readFileSync(path.join(root,'data/basic_job_rules.json'),'utf8'));
 const roster=parseCsv(fs.readFileSync(path.join(root,'data/jobs_mid.csv'),'utf8')).rows;
 const existing=parseCsv(fs.readFileSync(path.join(root,'data/skills.csv'),'utf8')).rows;
+const implementedJobs=['assassin','bounty_hunter','dragoon'];
+const comparisonExisting=existing.filter(skill=>!implementedJobs.includes(skill.job));
 const jobs=[];let job;
 const attribute={slash:'斬撃',pierce:'刺突',blunt:'打撃',fire:'炎',ice:'氷',thunder:'雷',wind:'風',earth:'土',water:'水',light:'光',dark:'闇',none:'無'};
 const section={party:'全体の強化・弱化',ongoing:'ジョブの固有継続効果',special:'その他の特殊効果'};
@@ -222,7 +224,7 @@ strike('U01','百刻の災呪',[1.8],{ref:'M',element:'dark',target:'敵全体',
 
 
 const commonRules=[
- 'この135技能は設計のみ。追加10〜18（50職表のNo.18〜26）を対象とし、ゲームの技能CSV・転職可否・技能実装フラグ・既存セーブは変更しない。将来の神殿Lv・職業解放は別の施設設計で決める。数値は比較用の仮値で、長期の編成・実戦シミュレーション済みとはしない。',
+ '追加10〜18（50職表のNo.18〜26）の135技能を定義する。追加10〜12は個別の実装仕様に基づいてゲームへ反映済み、追加13〜18は設計のみ。この生成スクリプトはゲームのCSV・転職可否・技能実装フラグ・既存セーブを変更しない。将来の神殿Lv・職業解放は別の施設設計で決める。数値は仮値で、長期の編成バランスは継続検証する。',
  '各職は通常アクティブ9・パッシブ5・奥義1。修得時に完成するレベルなし、対象・持続・条件等の最大Lv3、主力威力・基礎能力の最大Lv5を使う。基本8職の28/46/46という比率へ合わせない。今回の9奥義はすべてレベルなし。',
  '装備costは各技能で固定。通常容量10・パッシブ容量10、奥義は専用1枠・通常容量0。MPの軽/中/重は3/6/12、修得APの導入/標準/発展/奥義は10/18/28/50、強化APは12/20/30/45を現行仮値から継承。奥義は同職の非奥義10種類修得＋別AP、追加必須技能なし。強化回数は種類数を増やさない。',
  '前提は修得時だけ。現在の職名から固有能力・資源・武器補正を無料で与えず、装備した技能と残っている有効状態だけで発動する。すべて他職へ継承可能。資源が必要な技能は対応生成手段も必要だが、生成技能を外しただけで既存の有効付与をコピーしたり回復したりしない。',
@@ -261,10 +263,12 @@ const expected=['assassin','bounty_hunter','dragoon','gunner','pirate','spellbla
 assert.deepEqual(jobs.map(j=>j.id),expected);
 const all=jobs.flatMap(j=>j.skills),byId=new Map(all.map(s=>[s.id,s]));
 assert.equal(all.length,135);assert.equal(byId.size,135);assert.equal(new Set(all.map(s=>s.name)).size,135);
-const sourceSnapshot={baseCommit,existingJobs:roster.filter(j=>j.skills_ready==='1').length+8,existingMasterSkills:existing.filter(s=>JSON.parse(s.effect_json).master).length,
- existingSkillsCompared:existing.length,spellEquipment:rules.spell_equipment,caps:rules.caps};
+const sourceSnapshot={baseCommit,existingJobs:17,existingMasterSkills:comparisonExisting.filter(s=>JSON.parse(s.effect_json).master).length,
+ existingSkillsCompared:comparisonExisting.length,spellEquipment:rules.spell_equipment,caps:rules.caps};
 for(const s of all){
- assert.ok(!existing.some(old=>old.id===s.id||old.name===s.name),'既存技能と重複: '+s.id+' '+s.name);
+ assert.ok(!comparisonExisting.some(old=>old.id===s.id||old.name===s.name),'既存技能と重複: '+s.id+' '+s.name);
+ const registered=existing.find(old=>old.id===s.id);
+ if(registered)assert.ok(implementedJobs.includes(registered.job)&&registered.name===s.name,'実装済み技能の識別不一致: '+s.id);
  assert.equal(s.effects.length,s.maxLevel);assert.equal(s.simpleDescriptions.length,s.maxLevel);assert.equal(s.levelRules.length,s.maxLevel);
  assert.equal(new Set(s.effects).size,s.maxLevel,s.id+' 本文に成長差');
  assert.equal(new Set(s.levelRules.map(x=>JSON.stringify(x))).size,s.maxLevel,s.id+' 数値・条件に成長差');
@@ -295,17 +299,17 @@ for(const j of jobs){
  assert.ok(total('actions')<=10&&total('passives')<=10,j.name+' 装備容量');
  perJob.push({id:j.id,name:j.name,additionalNumber:j.additionalNumber,masterNumber:j.masterNumber,...counts(j.skills),stages:j.skills.reduce((sum,s)=>sum+s.maxLevel,0),exampleActionCost:total('actions'),examplePassiveCost:total('passives')});
 }
-const validation={status:'design_only',jobs:jobs.length,skills:all.length,counts:counts(all),stages:all.reduce((sum,s)=>sum+s.maxLevel,0),
+const validation={status:'partially_implemented',implementedJobs,implementedSkills:45,jobs:jobs.length,skills:all.length,counts:counts(all),stages:all.reduce((sum,s)=>sum+s.maxLevel,0),
  prerequisiteEdges:all.reduce((sum,s)=>sum+s.prerequisites.length,0),reachableNonUltimates:all.filter(s=>s.type!=='ultimate'&&done.has(s.id)).length,
  perJob,checks:['各職A9/P5/U1・全135技能','既存256技能と名前・IDの重複なし','全段階の本文・短文・数値定義が一致','1/3/5成長・各段階の数値または条件に差','前提の参照・上限・非奥義・循環なし','非奥義126技能へ到達可能・奥義10種類条件を満たせる','固定cost・奥義専用枠・手動AP','9職の開発用装備例がA10/P10以内','全アクティブのphysical/magic分類','全体対象上限8・装填上限3・連撃合計倍率1']};
-const source={schemaVersion:1,title:'English Quest 追加10〜18職 スキル設計 v1',date:'2026-11-26',status:'design_only',
+const source={schemaVersion:1,title:'English Quest 追加10〜18職 スキル設計 v1',date:'2026-11-26',status:'partially_implemented',
  references:['docs/jobs-baseline-v2.md','docs/basic-jobs-skills-v2.md','docs/additional-jobs-01-03-redesign-v2.md','docs/additional-jobs-04-06-implementation.md','docs/additional-jobs-07-09-implementation.md','docs/battle-job-effects-display.md'],
  formulas,commonRules,jobs,developmentLoadouts:loadouts,sourceSnapshot,validation};
 const cell=v=>String(v??'').replaceAll('|','／').replaceAll('\n',' '),row=values=>'| '+values.map(cell).join(' | ')+' |';
 const mode=s=>s.maxLevel===1?'レベルなし':'最大Lv'+s.maxLevel;
 const pre=s=>s.type==='ultimate'?'同職非奥義10種類＋別AP':s.prerequisites.length?s.prerequisites.map(p=>{const parent=byId.get(p.id);return parent.name+(parent.maxLevel===1?' 修得':' Lv'+p.level);}).join('・'):'なし';
 const countTable=['| 職業 | レベルなし | 最大Lv3 | 最大Lv5 | 効果段階 |','|---|---:|---:|---:|---:|',...perJob.map(j=>row([j.name,j.none,j.lv3,j.lv5,j.stages])),row(['合計',validation.counts.none,validation.counts.lv3,validation.counts.lv5,validation.stages])].join('\n');
-let doc='# English Quest：追加10〜18職 スキル設計 v1\n\n2026-11-26。**設計のみ・ゲーム未実装**。追加一覧10〜18、50職基準表のNo.18〜26を対象とする。9職×15技能＝135技能、'+validation.stages+'効果段階。現在の17職・255マスター技能の利用可否は変更しない。\n\n全成長段階の詳細本文・簡素説明・数値定義・表示分類を[仕様JSON](specs/additional-jobs-10-18-skills-v1.json)へ保存する。準備・有限反応・鎌術装備の点検は[設計点検](additional-jobs-10-18-review-v1.md)を参照。数値は仮値であり、個別実装時の実戦・編成検証を必要とする。\n\n## 職業の役割\n\n| 追加番号 | 50職表番号 | 職業 | 主な戦い方 |\n|---|---|---|---|\n'+jobs.map(j=>row([j.additionalNumber,j.masterNumber,j.name,j.role])).join('\n')+'\n\n## 成長方式\n\n'+countTable+'\n\n## 共通ルール\n\n'+commonRules.map((s,i)=>(i+1)+'. '+s).join('\n')+'\n\n## 参照式\n\n| ID | 定義 |\n|---|---|\n'+Object.entries(formulas).map(([id,formula])=>row([id,formula])).join('\n')+'\n\n';
+let doc='# English Quest：追加10〜18職 スキル設計 v1\n\n2026-11-26。**追加10〜12は実装済み、追加13〜18は設計のみ**。追加一覧10〜18、50職基準表のNo.18〜26を対象とする。9職×15技能＝135技能、'+validation.stages+'効果段階。現在は基本8職＋追加12職の20職・300マスター技能が利用可能。[追加10〜12の実装](additional-jobs-10-12-implementation.md)を参照。\n\n全成長段階の詳細本文・簡素説明・数値定義・表示分類を[仕様JSON](specs/additional-jobs-10-18-skills-v1.json)へ保存する。準備・有限反応・鎌術装備の点検は[設計点検](additional-jobs-10-18-review-v1.md)を参照。数値は仮値であり、個別実装時の実戦・編成検証を必要とする。\n\n## 職業の役割\n\n| 追加番号 | 50職表番号 | 職業 | 主な戦い方 |\n|---|---|---|---|\n'+jobs.map(j=>row([j.additionalNumber,j.masterNumber,j.name,j.role])).join('\n')+'\n\n## 成長方式\n\n'+countTable+'\n\n## 共通ルール\n\n'+commonRules.map((s,i)=>(i+1)+'. '+s).join('\n')+'\n\n## 参照式\n\n| ID | 定義 |\n|---|---|\n'+Object.entries(formulas).map(([id,formula])=>row([id,formula])).join('\n')+'\n\n';
 for(const j of jobs){
  doc+='## 追加'+j.additionalNumber+'：'+j.name+'\n\n'+j.role+'\n\n**既存職との分担**：'+j.difference+'\n\n**戦闘内状態**：'+j.state+'\n\n### 一覧とゲーム用の簡素説明\n\n| ID | 種別 | 技能 | 成長 | cost | 基礎MP | 修得AP | 簡素説明（修得時） |\n|---|---|---|---|---:|---:|---:|---|\n'+j.skills.map(s=>row([s.id,{active:'通常',passive:'P',ultimate:'奥義'}[s.type],s.name,mode(s),s.cost,s.baseMp,s.learnAp,s.simpleDescriptions[0]])).join('\n')+'\n\n';
  for(const s of j.skills){

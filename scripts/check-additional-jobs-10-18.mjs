@@ -14,15 +14,19 @@ const get=id=>byId.get(id),last=id=>get(id).levelRules.at(-1);
 let assertions=0;
 const check=(condition,label)=>{assert.ok(condition,label);assertions++;};
 const near=(a,b,label)=>check(Math.abs(a-b)<1e-8,label);
-check(source.status==='design_only','設計のみ');
+const implemented=new Set(['assassin','bounty_hunter','dragoon']);
+check(source.status==='partially_implemented','追加10〜12のみ実装済み');
 check(skills.length===135&&source.validation.stages===439,'135技能439段階');
-check(data.jobs.filter(j=>j.skillsReady).length===17,'現行17職のまま');
-check([...data.skills.values()].filter(s=>s.effect.master).length===255,'現行255技能のまま');
+check(data.jobs.filter(j=>j.skillsReady).length===20,'現行20職');
+check([...data.skills.values()].filter(s=>s.effect.master).length===300,'現行300技能');
 for(const job of source.jobs){
- const baseline=data.jobsById.get(job.id);check(baseline&&!baseline.skillsReady,job.id+' は準備中');
+ const baseline=data.jobsById.get(job.id);check(baseline&&baseline.skillsReady===implemented.has(job.id),job.id+' の実装区分');
  check(job.skills.length===15,job.id+' は15技能');
  for(const skill of job.skills){
-  check(!data.skills.has(skill.id),skill.id+' は実行データへ未登録');
+  if(implemented.has(job.id)) {
+   const actual=data.skills.get(skill.id);check(actual?.name===skill.name,skill.id+' 実行データ');
+   check(JSON.stringify([actual.effect.source_description,...actual.effect.levels.map(l=>l.effect.source_description)])===JSON.stringify(skill.effects),skill.id+' 全段階の実装本文');
+  } else check(!data.skills.has(skill.id),skill.id+' は実行データへ未登録');
   check(skill.weapons.every(id=>data.weaponTypes.has(id)),skill.id+' 武器ID');
   check(skill.effectDisplay.sections.every(title=>Object.values({party:'全体の強化・弱化',ongoing:'ジョブの固有継続効果',special:'その他の特殊効果'}).includes(title)),skill.id+' 表示分類');
   check(skill.effectDisplay.icon==='job-special',skill.id+' 共通画像');
@@ -93,11 +97,11 @@ const budgets=[
  {case:'通常苦呪印1回の反応総量',actions:1,baseMp:get('hexer_A01').baseMp,rawPower:Number(markFinite.toFixed(4)),perAction:null,note:'最大Lvで3敵×2反応、苦呪の深さ最大を加算。敵の実行・生存・所有者生存等の条件が必要。'}
 ];
 const report={date:'2026-11-26',status:'design_review_only',assertions,structural:source.validation,budgets,equipment,statusCases,
- limits:['新技能を実戦闘エンジンへ登録・発動する検証ではない','倍率の概算は正誤・会心・乱数・属性・敵防御・6人編成を含まない','長期バランスと新機構の実動は個別実装後に検証する']};
+ limits:['この設計点検自体は新技能を発動する検証ではない','倍率の概算は正誤・会心・乱数・属性・敵防御・6人編成を含まない','追加13〜18の新機構は未実装。長期の6人編成バランスは継続検証する']};
 if(process.argv.includes('--write')){
  fs.writeFileSync(path.join(root,'docs/specs/additional-jobs-10-18-review-v1.json'),JSON.stringify(report,null,2)+'\n');
  const cell=value=>String(value??'—').replaceAll('|','／'),row=values=>'| '+values.map(cell).join(' | ')+' |';
- let md='# 追加10〜18職：設計点検\n\n2026-11-26。[135技能の設計](additional-jobs-10-18-skills-v1.md)に対する独立点検。ゲームへの実装・実動確認ではない。\n\n'+assertions+'件の参照・分類・数値・上限チェックが成功。全135技能、439段階、既存256技能との非重複、現行17職・255技能を維持したことを確認した。全体の構造結果は[点検JSON](specs/additional-jobs-10-18-review-v1.json)に保存。\n\n## 準備・有限反応の予算\n\n生の倍率と基礎MPだけの比較。属性相性、敵防御、正誤、乱数、会心、6人編成は含まない。\n\n| 対象 | 必要な自発行動 | 基礎MP | 倍率合計 | 1行動当たり | 条件 |\n|---|---:|---:|---:|---:|---|\n'+budgets.map(b=>row([b.case,b.actions,b.baseMp,b.rawPower,b.perAction==null?'—':Number(b.perAction.toFixed(4)),b.note])).join('\n')+'\n\n## 魔女の鎌術と装備補助\n\n現行の通常MAG魔法は鎌から術補助を得ない。鎌術MSは、普通の術装備と同じLv・品質・強化・適性係数で独立した補助を設計した。鎌の物理武器威力を足す式ではなく、MS技能だけに適用する未実装要素。\n\n| キャラLv | 実装済みの装備 | 装備Lv | MAG | 物理武器威力 | 現行の通常術補助 | 設計したMS術補助 |\n|---|---|---:|---:|---:|---:|---:|\n'+equipment.map(e=>row([e.characterLevel,e.item,e.itemLevel,e.MAG,e.physicalWeaponPower,e.currentOrdinarySpellAux,e.plannedMSAux])).join('\n')+'\n\n## 状態異常と範囲\n\n実行中の共通計算を用い、毒・束縛・暗闇・恐怖・封印・沈黙の×相性が0、ボス補正が成功率を増やさない、★相性も95%上限であることを確認。味方の乗算軽減の算術は加算100%なら0を保つ。新技能の実付与は未実装のため、ゲーム上での発動を確認した結果ではない。\n\n## 実装時に残る検証\n\n'+report.limits.map(s=>'- '+s).join('\n')+'\n\n再確認：node scripts/design-additional-jobs-10-18.mjs → node scripts/check-additional-jobs-10-18.mjs --write。\n';
+ let md='# 追加10〜18職：設計点検\n\n2026-11-26。[135技能の設計](additional-jobs-10-18-skills-v1.md)に対する独立点検。設計全体の構造を点検する。追加10〜12の実動確認は[実装記録](additional-jobs-10-12-implementation.md)と戦闘テストを参照。\n\n'+assertions+'件の参照・分類・数値・上限チェックが成功。全135技能、439段階、既存256技能との非重複、追加10〜12の45技能の実装本文、追加13〜18の未登録、現行20職・300技能を確認した。全体の構造結果は[点検JSON](specs/additional-jobs-10-18-review-v1.json)に保存。\n\n## 準備・有限反応の予算\n\n生の倍率と基礎MPだけの比較。属性相性、敵防御、正誤、乱数、会心、6人編成は含まない。\n\n| 対象 | 必要な自発行動 | 基礎MP | 倍率合計 | 1行動当たり | 条件 |\n|---|---:|---:|---:|---:|---|\n'+budgets.map(b=>row([b.case,b.actions,b.baseMp,b.rawPower,b.perAction==null?'—':Number(b.perAction.toFixed(4)),b.note])).join('\n')+'\n\n## 魔女の鎌術と装備補助\n\n現行の通常MAG魔法は鎌から術補助を得ない。鎌術MSは、普通の術装備と同じLv・品質・強化・適性係数で独立した補助を設計した。鎌の物理武器威力を足す式ではなく、MS技能だけに適用する未実装要素。\n\n| キャラLv | 実装済みの装備 | 装備Lv | MAG | 物理武器威力 | 現行の通常術補助 | 設計したMS術補助 |\n|---|---|---:|---:|---:|---:|---:|\n'+equipment.map(e=>row([e.characterLevel,e.item,e.itemLevel,e.MAG,e.physicalWeaponPower,e.currentOrdinarySpellAux,e.plannedMSAux])).join('\n')+'\n\n## 状態異常と範囲\n\n実行中の共通計算を用い、毒・束縛・暗闇・恐怖・封印・沈黙の×相性が0、ボス補正が成功率を増やさない、★相性も95%上限であることを確認。味方の乗算軽減の算術は加算100%なら0を保つ。この点検では新技能の発動は扱わない。追加10〜12の実付与・資源・跳躍は個別の戦闘テストで検証する。\n\n## 実装時に残る検証\n\n'+report.limits.map(s=>'- '+s).join('\n')+'\n\n再確認：node scripts/design-additional-jobs-10-18.mjs → node scripts/check-additional-jobs-10-18.mjs --write。\n';
  fs.writeFileSync(path.join(root,'docs/additional-jobs-10-18-review-v1.md'),md);
 }
 console.log(JSON.stringify({status:'passed',assertions,jobs:9,skills:135,stages:439,budgets,equipment},null,2));
