@@ -94,12 +94,27 @@ test('全滅しても学習記録は残る', () => {
   assert.ok(mem.getItem(LEARNING_KEY));
 });
 
+test('取得数がない旧遠征では、直近に記録された宝箱の道具と現在の残数で精算する', () => {
+  const mem = new MemoryStorage();
+  const s = reopen(mem);
+  s.startNew({ ...newGame(), items: { potion: 3, ether: 2 } });
+  s.enterDungeon({ dungeonId: 'mossy_cave' });
+  s.updateRun((run, game) => {
+    delete run.acquiredItems;
+    run.explorationNotices = [{ type: 'chest', item: 'potion' }];
+    // 宝箱でポーションを1個拾い、ポーションとエーテルをそれぞれ1個消費した。
+    game.items.ether = 1;
+  });
+  reopen(mem).wipe();
+  assert.deepEqual(reopen(mem).game.items, { potion: 2, ether: 1 });
+});
+
 test('全滅しても図鑑は残り、報酬と依頼進捗は入場時に戻す', () => {
   const mem = new MemoryStorage();
   const s = reopen(mem);
   const before = {
     ...newGame(),
-    party: [{ lv: 2, xp: 4, ap: { warrior: 2 }, learned: ['slash_1'] }],
+    party: [{ lv: 2, xp: 4, ap: { warrior: 2 }, learned: ['slash_1'], hp: 25 }],
     items: { potion: 3 },
     kills: { goblin: 2 },
     quests: [{ uid: 1, progress: 0, depositPaid: 30 }],
@@ -120,7 +135,7 @@ test('全滅しても図鑑は残り、報酬と依頼進捗は入場時に戻�
     game.materials.goblin_mat += 5;
     game.gear.push({ id: 'iron_sword' });
     game.catalog.gear.push('iron_sword');
-    game.party[0] = { lv: 3, xp: 20, ap: { warrior: 6 }, learned: ['slash_1', 'slash_2'] };
+    game.party[0] = { lv: 3, xp: 20, ap: { warrior: 6 }, learned: ['slash_1', 'slash_2'], hp: 0 };
     game.items.potion -= 2;
     game.quests[0].progress = 1;
     game.kills.goblin += 1;
@@ -129,15 +144,17 @@ test('全滅しても図鑑は残り、報酬と依頼進捗は入場時に戻�
   const resumed = reopen(mem);
   resumed.wipe();
   const expectedCatalog = {
-    gear: ['wood_sword'], monsters: ['goblin', 'owl_boss', 'unexamined_slime'],
+    gear: ['wood_sword', 'iron_sword'], monsters: ['goblin', 'owl_boss', 'unexamined_slime'],
     affinities: {
       goblin: { elements: ['slash', 'fire', 'dark', 'none'], scanned: false },
       owl_boss: { elements: ['ice', 'wind'], scanned: true },
     },
     defeats: { goblin: 3 }, sightings: {},
   };
-  assert.deepEqual(resumed.game, { ...before, catalog: expectedCatalog });
-  assert.deepEqual(reopen(mem).game, { ...before, catalog: expectedCatalog });
+  const expected = { ...before, catalog: expectedCatalog, items: { potion: 1 },
+    party: [{ ...before.party[0], lv: 3, xp: 20, ap: { warrior: 6 }, hp: 0 }] };
+  assert.deepEqual(resumed.game, expected);
+  assert.deepEqual(reopen(mem).game, expected);
 });
 
 test('旧セーブでも遠征中の初遭遇と相性調査は全滅後に残る', () => {

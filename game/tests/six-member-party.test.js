@@ -102,6 +102,18 @@ test('旧4人の遠征・回答中の問題・全滅復元元を保ち、町に�
   }
 });
 
+test('旧4人の遠征が全滅で終わっても、6人化で出発可能にはならない', () => {
+  const storage = new MemoryStorage();
+  const session = new GameSession({ storage });
+  session.startNew(legacy());
+  session.enterDungeon({ dungeonId: 'mossy_cave' });
+  for (const member of session.game.party) member.hp = 0;
+  session.wipe((game) => normalizeGame(data, game));
+  const { game } = new GameSession({ storage });
+  assert.equal(game.party.length, PARTY_SIZE);
+  assert.ok(game.party.every(({ hp }) => hp === 0));
+});
+
 test('6人全員に行動機会と報酬があり、5・6人目を回復対象にできる', () => {
   const game = fresh();
   const enemy = makeEnemy(data, 'slime', { lv: 1 });

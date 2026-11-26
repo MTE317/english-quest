@@ -3,14 +3,13 @@
 // 決まりごと（docs/checklist.md 4章）
 // - 自動保存は1つ。戦闘が1つ終わるたびに保存し、ダンジョンの途中で閉じても再開できる
 // - 読み込み直して全滅をなかったことにはできない
-// - 全滅したら、ゲームの進み具合はダンジョンに入る前に戻す。学習記録（storage.js の LearningStore）は別の場所なので残る
-// - 遭遇・属性相性・討伐数は、全滅しても図鑑に残す
+// - 全滅時は戦利品を失い、死亡・石化と育成・図鑑・学習の記録を維持して町に帰る
 //
 // 中身
 //   { version, savedAt, game, run }
 //   game … 町にいるときの進み具合（お金・日数・パーティ・持ち物など。中身は次の段階から足していく）
 //   run  … ダンジョンの中にいるときだけある。{ dungeonId, stoneId, floor, battlesDone, snapshot, battle, ... }
-//          snapshot はダンジョンに入る直前の game の写し（全滅したらこれに戻す）
+//          snapshot は出発時の所持品や依頼進捗などの復元元
 //          battle は戦っている途中の戦闘の状態（読み込み直すと同じ戦闘の続きから始まる）
 //
 // 全滅をなかったことにさせないための約束（戦闘を作るときに守る）
@@ -60,6 +59,14 @@ export class SaveStore {
         return { status: 'broken', error: `版 ${data.version} のセーブを読めない` };
       }
       data = { ...migrate(data), version: data.version + 1 };
+    }
+    const run = data.run;
+    if (run && !run.acquiredItems) {
+      // 旧セーブで確定できる取得は、直近の探索結果に記録された分のみ。
+      run.acquiredItems = {};
+      for (const { item } of run.explorationNotices ?? []) {
+        if (item) run.acquiredItems[item] = (run.acquiredItems[item] ?? 0) + 1;
+      }
     }
     return { status: 'ok', data };
   }
@@ -160,6 +167,7 @@ export class GameSession {
       battlesDone: 0,
       enteredAt: this.now(),
       snapshot: clone(this.state.game),
+      acquiredItems: {},
       battle: null,
     };
     initialize?.(this.state.run, this.state.game);
@@ -201,25 +209,57 @@ export class GameSession {
     this.save();
   }
 
-  /**
-   * 全滅：ゲームの進み具合をダンジョンに入る前に戻して、すぐ保存する。
-   * 学習記録は別の場所にあるので、ここでは触らない（残る）。
-   * 報酬は入場時に戻す。図鑑と詠唱の記録は残す。
-   */
-  wipe() {
+  /** 全滅時の状態と成果を反映してから、町での状態を保存する。 */
+  wipe(fn) {
     this.#needRun();
-    const run = this.state.run;
-    const { chants, catalog } = this.state.game;
-    this.state.game = clone(run.snapshot);
-    if (chants != null) this.state.game.chants = chants;
-    if (catalog) this.state.game.catalog = {
-      ...this.state.game.catalog,
-      monsters: catalog.monsters ?? [], affinities: catalog.affinities ?? {},
-      defeats: catalog.defeats ?? {}, sightings: catalog.sightings ?? {},
-    };
-
+    const { run, game } = this.state;
+    const town = clone(run.snapshot);
+    for (const key of ['chants', 'jp', 'catalog']) {
+      if (game[key] != null) town[key] = clone(game[key]);
+    }
+    // 同じ道具は持ち込んだ分から消費したものとして精算する。
+    // 旧セーブでは取得数の記録がないため、確認できる残数を上限にする。
+    for (const [id, before] of Object.entries(town.items ?? {})) {
+      const remaining = (game.items?.[id] ?? 0) - (run.acquiredItems?.[id] ?? 0);
+      if (remaining > 0) town.items[id] = Math.min(before, remaining);
+      else delete town.items[id];
+    }
+    town.party?.forEach((member, index) => {
+      const current = game.party[index];
+      for (const key of ['lv', 'xp', 'ap']) {
+        if (Object.hasOwn(current, key)) member[key] = clone(current[key]);
+      }
+      if (Number.isFinite(current.hp)) member.hp = Math.max(0, current.hp);
+      if (current.persist?.includes('petrify')) {
+        member.persist = [...new Set([...(member.persist ?? []), 'petrify'])];
+        member.persistState ??= {};
+        member.persistState.petrify = clone(current.persistState?.petrify ?? {});
+      } else {
+        if (member.persist) member.persist = member.persist.filter((id) => id !== 'petrify');
+        if (member.persistState) delete member.persistState.petrify;
+      }
+    });
+    fn?.(town);
+    this.state.game = town;
     this.state.run = null;
     this.state.lastWipe = { at: this.now(), dungeonId: run.dungeonId, floor: run.floor, battlesDone: run.battlesDone };
+    this.save();
+  }
+
+  /** 挑戦の中止・試験終了・時間切れでは開始前の状態へ戻す。 */
+  rollbackRun(fn) {
+    this.#needRun();
+    const { run, game } = this.state;
+    const town = clone(run.snapshot);
+    if (game.chants != null) town.chants = game.chants;
+    if (game.catalog) town.catalog = {
+      ...town.catalog,
+      monsters: game.catalog.monsters ?? [], affinities: game.catalog.affinities ?? {},
+      defeats: game.catalog.defeats ?? {}, sightings: game.catalog.sightings ?? {},
+    };
+    fn?.(town);
+    this.state.game = town;
+    this.state.run = null;
     this.save();
   }
 

@@ -1,11 +1,11 @@
 import { goldScale } from '../gold.js?v=skill-growth-2';
-import { normalizeGame } from '../game-state.js?v=advanced-jobs-1';
-// 動作確認用：自動保存・ダンジョンの途中からの再開・全滅で入る前に戻る、を試す画面
+import { normalizeGame } from '../game-state.js?v=party-wipe-1';
+// 動作確認用：自動保存・ダンジョンの途中からの再開・全滅状態での帰還を試す画面
 // 戦闘とダンジョンはまだないので、報酬（お金・素材・装備・経験値）は「仮」の値を足すだけ
-import { GameSession } from '../save.js?v=skill-growth-2';
+import { GameSession } from '../save.js?v=party-wipe-1';
 import { LearningStore } from '../storage.js?v=skill-growth-2';
 import { loadGameData } from '../gamedata.js?v=skill-growth-2';
-import { gainXp, makeGear } from '../character.js?v=advanced-jobs-1';
+import { gainXp, makeGear, partyCanAct } from '../character.js?v=party-wipe-1';
 import { el, render } from '../dom.js?v=skill-growth-2';
 
 const view = document.getElementById('view');
@@ -58,16 +58,17 @@ function draw() {
   parts.push(el('h2', {}, '進み具合'), summary());
   if (session.state.lastWipe) {
     const w = session.state.lastWipe;
-    parts.push(el('div', { class: 'muted small' }, `前回の全滅：${w.dungeonId} の ${w.floor}階（${fmt(w.at)}）→ 入る前に戻った`));
+    parts.push(el('div', { class: 'muted small' }, `前回の全滅：${w.dungeonId ?? '挑戦'}（${fmt(w.at)}）`));
   }
 
   if (!session.inDungeon) {
     parts.push(
       el('h2', {}, '町'),
       el('button', { onclick: () => { session.update((g) => { g.day += 1; }); draw(); } }, '1日すごす（日数+1）'),
-      el('button', { class: 'primary', onclick: () => { session.enterDungeon({ dungeonId: 'trial_dungeon', stoneId: null }); draw(); } }, 'ダンジョンに入る（仮）'),
+      el('button', { class: 'primary', disabled: !partyCanAct(session.game),
+        onclick: () => { session.enterDungeon({ dungeonId: 'trial_dungeon', stoneId: null }); draw(); } }, 'ダンジョンに入る（仮）'),
     );
-  } else {
+  } else if (session.run.dungeonId === 'trial_dungeon') {
     parts.push(el('h2', {}, 'ダンジョン'), runPanel());
     const r = session.run;
     if (!r.battle) {
@@ -88,20 +89,18 @@ function draw() {
               g.storage.gear.push(makeGear(g, [...data.equipment.keys()][0]));
               for (const m of g.party) gainXp(data, m, 30);
             });
-            (async () => {
-  try {
-    data = await loadGameData();
-    if (session.game && !session.readOnly) { normalizeGame(data, session.game, session.run); session.save(); }
-    draw();
-  } catch (e) {
-    render(view, el('p', { class: 'error' }, `読み込みに失敗：${e.message}`));
-  }
-})();
+            draw();
           },
         }, `戦闘に勝つ（お金+${10 * goldScale(data)}・素材+1・装備+1・経験値+30 の仮の報酬）`),
       );
     }
-    parts.push(el('button', { class: 'ghost error', onclick: () => { session.wipe(); draw(); } }, '全滅する（入る前に戻る）'));
+    parts.push(el('button', { class: 'ghost error', onclick: () => {
+      for (const member of session.game.party) member.hp = 0;
+      session.wipe();
+      draw();
+    } }, '全滅する（全員のHPが0のまま町へ）'));
+  } else {
+    parts.push(el('a', { class: 'btn', href: session.run.challenge ? 'challenge.html' : 'dungeon.html' }, '冒険を再開'));
   }
 
   parts.push(

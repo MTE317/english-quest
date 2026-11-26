@@ -1,7 +1,7 @@
 import { normalizeAp } from './ap.js?v=skill-growth-2';
 import { migrateGold, goldVersion } from './gold.js?v=skill-growth-2';
 // 新しいゲームの進み具合（セーブの game の中身）
-import { createMember, maxHp, maxMp, levelCap } from './character.js?v=advanced-jobs-1';
+import { createMember, maxHp, maxMp, levelCap, partyCanAct } from './character.js?v=party-wipe-1';
 import { ensureLoadout, jobSkills, isLearned, normalizeSkillLevels, migrateInitialSkills } from './growth.js?v=advanced-jobs-1';
 import { parseAmounts } from './csv.js?v=skill-growth-2';
 import { recordStoredMaterials } from './temple.js?v=skill-growth-2';
@@ -82,7 +82,7 @@ export function normalizeGame(data, game, run = null, { expandParty = true } = {
   delete game.overdue;
   game.notices = game.notices ?? [];
   retireLegacyQuestChains(data, game);
-  delete game.jp; // 転職費用のJPは廃止。教材は学習記録へ統一。
+  // 転職でのJP消費は廃止済み。旧セーブにある残高は保持する。
   game.titles ??= [];
   game.unlockedJobs = game.unlockedJobs ?? [];
   for (const job of data.jobs ?? []) if (job.skillsReady && data.jobUnlocks?.get(job.id)?.method === '初期'
@@ -125,6 +125,7 @@ function expandLegacyParty(data, game) {
     ...gear.map((item) => Number.isSafeInteger(item?.uid) ? item.uid + 1 : 1));
   const specs = defaultPartySpecs(data);
   const ids = new Set(game.party.map((member) => member.id));
+  const canAct = partyCanAct(game);
   const added = [];
   while (game.party.length < PARTY_SIZE) {
     const index = game.party.length;
@@ -140,7 +141,7 @@ function expandLegacyParty(data, game) {
       member.skillGrowthVersion=2;
       member.ultimateGauge = 0;
     }
-    member.hp = maxHp(data, member);
+    member.hp = canAct ? maxHp(data, member) : 0;
     member.mp = maxMp(data, member);
     member.masteredJobs = [];
     game.party.push(member);
