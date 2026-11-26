@@ -21,7 +21,7 @@ export function passiveRules(data, member) {
 }
 export const ruleNumber = (data, member, key) => passiveRules(data, member).reduce((sum, rule) => sum + (Number(rule[key]) || 0), 0);
 export function matchesTag(skill, tag) {
-  if (!skill || skill.isFinal) return false;
+  if (!skill || skill.isFinal || reactionSkill(skill)) return false;
   if (tag === 'active' || !tag) return skill.kind !== 'passive';
   if (tag === 'weapon') return weaponSkill(skill);
   if (tag === 'heal') return ['heal','heal_all'].includes(skill.kind);
@@ -34,6 +34,7 @@ export function masterCondition(data, game, b, actor, target, condition = {}, sk
     ? condition.statuses.some(id => unit.statuses?.[id]) : Object.keys(unit.statuses ?? {}).some(id => id !== 'taunt')));
   switch (condition.when) {
     case 'target_def_down': return Boolean(enemy && (enemy.debuffs?.def?.[0] > 0 || Object.values(enemy.masterDebuffs ?? {}).some(e => e.stat === 'def' && e.value > 0)));
+    case 'target_hp_below': return Boolean(enemy && enemy.hp <= enemy.maxHp * condition.threshold);
     case 'target_def_buff': return Boolean(enemy?.buffs?.def?.[0] > 0 || enemy?.buffs?.pcut?.[0] > 0 || enemy?.buffs?.cut?.[0] > 0);
     case 'self_status': return testStatus(a);
     case 'target_status': return testStatus(enemy);
@@ -64,21 +65,28 @@ export function scopeMatches(skill, scope) {
   if (scope === 'magic') return skill?.effect?.base === 'mag' && skill.kind === 'attack';
   return masterTags(skill).includes(scope);
 }
-export function masterDamageBonus(data, game, b, actor, target, skill, elements = skill?.elements ?? []) {
+export function masterDamageBonus(data, game, b, actor, target, skill, elements = skill?.elements ?? [], targetHp = null) {
   const member = game.party[actor], a = b.allies[actor];
   let rate = 0;
   for (const rule of [...passiveRules(data, member), skill?.effect?.rules ?? {}]) {
     for (const condition of rule.condition_damage ?? []) if (scopeMatches(skill, condition.scope)
       && (!condition.elements?.length || condition.elements.some(id => elements.includes(id)))
-      && masterCondition(data, game, b, actor, target, condition, { ...skill, elements })) rate += condition.rate ?? 0;
+      && (condition.when==='target_hp_below' && targetHp!=null ? targetHp<=b.enemies[target].maxHp*condition.threshold
+        : masterCondition(data, game, b, actor, target, condition, { ...skill, elements }))) rate += condition.rate ?? 0;
     if (rule.combo && weaponSkill(skill)) rate += (a.comboStage ?? 0) * rule.combo.step;
     if (rule.instrument && member.equip?.weapon && gearDef(data, member.equip.weapon).kind === 'instrument'
       && skill?.elements?.some(el => rule.instrument.elements?.includes(el))) rate += rule.instrument.damage ?? 0;
   }
-  if (a.currentBoost && !skill?.isFinal && skill?.effect?.base === 'mag') rate += a.currentBoost.damage ?? 0;
+  if (a.currentBoost && !skill?.isFinal && skill?.effect?.base === 'mag' && !reactionSkill(skill)) rate += a.currentBoost.damage ?? 0;
+  if (normalQigong(skill) && a.advancedAction?.executed) rate += (a.advancedAction.qigongBonus ?? 0)
+    + (a.advancedAction.previousSelfRecovery ? skill.effect.rules?.previous_self_recovery ?? 0 : 0);
+  if (skill?.effect?.base === 'mag' && a.advancedAction?.executed && !reactionSkill(skill)) rate += a.advancedAction.cloneFocus ?? 0;
   if (skill?.effect?.rules?.covered_attack_bonus && a.lastCoverClock != null && a.lastCoverClock >= (a.previousActionClock ?? -1)) rate += skill.effect.rules.covered_attack_bonus / (skill.effect.m || 1);
   for (const effect of Object.values(a.masterEffects ?? {})) {
     if (effect.nextDamage && matchesTag(skill, effect.nextDamage.tag)) rate += effect.nextDamage.rate;
+    if (masterTags(skill).includes('qigong')) rate += effect.qigongDamage ?? 0;
+    if (skill?.effect?.base === 'mag' && effect.magicDamage && (!effect.magicDamage.normalOnly || directMagic(skill))
+      && effect.magicDamage.elements.some(element => elements.includes(element))) rate += effect.magicDamage.rate;
   }
   rate += masterBuff(data, game, b, actor, 'dmg');
   if (!skill || skill.effect?.base === 'weapon') {
@@ -124,6 +132,11 @@ export function masterCutBonus(data, game, b, actor, magic, enemy = null) {
   rate -= angerStage(data, game, b, actor) * (angerRule(data, game.party[actor])?.received ?? 0);
   const duel = activeDuel(game, b, actor);
   if (duel && enemy != null) rate += duel.target === enemy ? -duel.received : ruleNumber(data, game.party[actor], 'outside_duel_cut');
+  const source = b.enemies[enemy];
+  for (const rule of passiveRules(data, game.party[actor])) {
+    if (source && rule.low_hp_source_cut && source.hp <= source.maxHp * rule.low_hp_source_cut.threshold) rate += rule.low_hp_source_cut.rate;
+    if (magic && aCloneSnapshot(b, actor)) rate += rule.clone_magic_cut ?? 0;
+  }
   return rate;
 }
 
@@ -134,7 +147,9 @@ export function grantMasterEffect(b, target, key, effect) {
   if (old) {
     // 同名の弱い効果で強い値や長い期間を延長しない。
     const strength = e => Object.values(e.values ?? {}).reduce((sum, value) => sum + Math.abs(value), 0) + (e.regen?.amount ?? 0) + (e.shield ?? 0)
-      + (e.nextMpSave?.rate ?? 0) + (e.nextDamage?.rate ?? 0) + (e.statusResist?.rate ?? 0) + (e.weaponDamage ?? 0);
+      + (e.nextMpSave?.rate ?? 0) + (e.nextDamage?.rate ?? 0) + (e.statusResist?.rate ?? 0) + (e.weaponDamage ?? 0)
+      + (e.nextAccuracy?.rate ?? 0) + (e.targetCrit?.rate ?? 0) + (e.nextMagicEcho?.m ?? 0) + (e.qigongDamage ?? 0)
+      + (e.magicDamage?.rate ?? 0) + (e.cloneEvasion ?? 0);
     if (strength(old) > strength(next)) return old;
     if (strength(old) === strength(next)) next.remaining = Math.max(old.remaining, next.remaining);
   }
@@ -191,7 +206,7 @@ export function beginMasterAction(data, game, b, actor, skill) {
   b.actionClock = (b.actionClock ?? 0) + 1;
   const a = b.allies[actor];
   a.currentActionClock = b.actionClock;
-  a.advancedAction = { paidHp: 0, damageBonus: 0, actualDamage: 0, executed: false };
+  a.advancedAction = { paidHp: 0, damageBonus: 0, actualDamage: 0, executed: false, cloneCount: cloneCount(a) };
   if (!angerRule(data, game.party[actor])) a.anger = 0;
   if (!prayerRule(data, game.party[actor])) a.prayer = 0;
   a.conditionSnapshot = { enemy: b.enemies.filter(unit => unit.hp > 0).map(unit => Object.keys(unit.statuses ?? {}).filter(id => id !== 'taunt')),
@@ -203,6 +218,7 @@ export function beginMasterAction(data, game, b, actor, skill) {
 export function startMasterOpportunity(data, game, b, actor, ctx) {
   const a = b.allies[actor];
   delete a.readGuard;
+  delete a.substitute;
   clearDefeatedTacticalTargets(b);
   for (const [key, effect] of Object.entries(a.masterEffects ?? {})) if (effect.expire === 'start') delete a.masterEffects[key];
   if (a.masterCounter?.expire === 'start') delete a.masterCounter;
@@ -237,6 +253,7 @@ export function finishMasterOpportunity(data, game, b, actor, ctx, skill = null,
   if (a.masterCounter && (a.masterCounter.grantedClock !== b.actionClock || !voluntary) && --a.masterCounter.remaining <= 0) delete a.masterCounter;
   a.lastOpportunityRound = b.round;
   finishTacticalOpportunity(data, game, b, actor, skill, voluntary && performed, voluntary);
+  finishSpecialistOpportunity(data, game, b, actor, skill, voluntary && performed, voluntary);
   finishAdvancedAction(data, game, b, actor, skill, voluntary);
   if (!voluntary || !performed) { a.previousWeaponSkill = null; a.comboStage = 0; delete a.conditionSnapshot; return; }
   for (const rule of passiveRules(data, member)) {
@@ -287,6 +304,11 @@ export function advancedSkillBlock(data, game, b, actor, skill) {
   if (skill.effect.rules?.consume_blessing && !ownedBlessing(b,actor)) return '自分に自分の加護が必要';
   if (skill.effect.rules?.move_blessing && !b.allies.some((_,target)=>ownedBlessing(b,actor,target))) return '移せる自分の加護がない';
   if (skill.effect.rules?.require_prayer && prayerStage(data, game, b, actor) <= 0) return '祈りの往還を装備して祈念をためてください';
+  if (skill.effect.rules?.spend_clone && !cloneCount(b.allies[actor])) return '分身が1体必要';
+  if (skill.effect.rules?.require_direct_magic && !(game.party[actor].loadout?.actions ?? []).some(id => {
+    const magic = data.skills.get(id);
+    return directMagic(magic) && weaponAllowed(data, game.party[actor], magic);
+  })) return '通常の攻撃魔法を装備してください';
   return '';
 }
 export function advancedTargetBlock(data, game, b, actor, skill, target, action) {
@@ -298,6 +320,7 @@ export function advancedTargetBlock(data, game, b, actor, skill, target, action)
   if (rule.move_blessing && (!ownedBlessing(b,actor,action.sourceTarget) || action.sourceTarget===target
     || !game.party[action.sourceTarget]?.hp || b.allies[action.sourceTarget].statuses.petrify)) return '加護の移動元と別の移動先を選んでください';
   if (action.consumeBlessing && rule.optional_blessing && !ownedBlessing(b,actor)) return '消費できる自分の加護がない';
+  if (action.consumeClone && rule.optional_clone && !cloneCount(b.allies[actor])) return '消費できる分身がない';
   if (skill.kind==='attack' && !b.enemies.some(enemy=>enemy.hp>0)) return '生存している敵を選んでください';
   if (skill.kind==='attack' && !['all','random'].includes(skill.effect.tgt) && !(b.enemies[target]?.hp>0)) return '生存している敵を選んでください';
   if (action.targets && (!Array.isArray(action.targets) || !action.targets.length || new Set(action.targets).size!==action.targets.length
@@ -307,6 +330,16 @@ export function advancedTargetBlock(data, game, b, actor, skill, target, action)
 export function payAdvancedCosts(data, game, b, actor, skill, action) {
   const ally=b.allies[actor], rule=skill.effect.rules??{}, state=ally.advancedAction;
   state.executed=true;
+  state.previousSelfRecovery = Boolean(ally.previousSelfRecovery);
+  if (normalQigong(skill) && ally.breathReady && passiveRules(data, game.party[actor]).some(p => p.breath_cycle)) state.qigongBonus = ally.breathReady.rate;
+  delete ally.breathReady;
+  delete ally.previousSelfRecovery;
+  for (const p of passiveRules(data, game.party[actor])) if (p.clone_focus && state.cloneCount >= p.clone_focus.count) state.cloneFocus = (state.cloneFocus ?? 0) + p.clone_focus.rate;
+  if (rule.spend_clone || rule.optional_clone && action.consumeClone) {
+    ally.clones.shift();
+    state.cloneSpent = true;
+    if (rule.optional_clone) state.damageBonus += rule.optional_clone;
+  }
   state.paidHp=spendHpPayment(data,game,b,actor,skill);
   if (rule.consume_blessing || rule.optional_blessing && action.consumeBlessing) {
     delete ally.masterEffects.blessing;
@@ -478,10 +511,12 @@ export function clearDefeatedTacticalTargets(b) {
   for (const ally of b.allies) {
     for (const key of ['duel', 'distance']) if (ally[key] && !(b.enemies[ally[key].target]?.hp > 0)) delete ally[key];
     if (ally.masterCounter?.target != null && !(b.enemies[ally.masterCounter.target]?.hp > 0)) delete ally.masterCounter;
+    for (const [key,effect] of Object.entries(ally.masterEffects??{})) if (effect.targetCrit && !(b.enemies[effect.targetCrit.target]?.hp>0)) delete ally.masterEffects[key];
   }
 }
 export function resetTacticalState(ally) {
-  for (const key of ['stance', 'duel', 'distance', 'readGuard']) delete ally[key];
+  for (const key of ['stance', 'duel', 'distance', 'readGuard', 'clones', 'substitute', 'breathReady',
+    'previousSelfRecovery', 'cloneDefense', 'cloneEnemySnapshot']) delete ally[key];
   ally.prayer = 0;
   // 決着の余裕の一戦1回フラグは、蘇生しても戻さない。
 }
@@ -558,4 +593,109 @@ function finishTacticalOpportunity(data, game, b, actor, skill, performed, volun
   }
   if (skill?.effect.rules?.end_duel) delete ally.duel;
   if (ally.duel) ally.duel.wasHit = false;
+}
+
+// 追加7〜9職。追撃は独立した自発行動にせず、実ダメージと費用の確定を分ける。
+export const reactionSkill = skill => masterTags(skill).some(tag => ['reaction','trap','followup'].includes(tag));
+export const directMagic = skill => Boolean(skill && !skill.isFinal && skill.kind === 'attack' && skill.effect?.base === 'mag' && !reactionSkill(skill));
+const normalQigong = skill => Boolean(skill && !skill.isFinal && skill.kind === 'attack' && masterTags(skill).includes('qigong') && !reactionSkill(skill));
+export const cloneCount = ally => (ally.clones ?? []).filter(clone => clone.remaining > 0).length;
+function aCloneSnapshot(b, actor) {
+  const snapshot = b.allies[actor].cloneEnemySnapshot;
+  return Boolean(snapshot && snapshot.clock === b.enemyActionClock && snapshot.hadClone);
+}
+export function snapshotCloneDefense(b) {
+  for (const ally of b.allies) ally.cloneEnemySnapshot = {clock:b.enemyActionClock,hadClone:cloneCount(ally)>0};
+}
+export function cloneDefense(b, actor, {single=true,sureHit=false}={}) {
+  const ally=b.allies[actor];
+  if (ally.cloneDefense && ally.cloneDefense.clock===b.enemyActionClock) return ally.cloneDefense;
+  const result={clock:b.enemyActionClock,substitute:false,evasion:0};
+  ally.cloneDefense=result;
+  if (sureHit) return result;
+  if (single && ally.substitute) {
+    result.substitute=true;
+    delete ally.substitute;
+    return result;
+  }
+  if (cloneCount(ally)) {
+    const clone=ally.clones.shift();
+    result.evasion=Math.max(clone.evasion, ...Object.values(ally.masterEffects??{}).map(effect=>effect.cloneEvasion??0));
+  }
+  return result;
+}
+export function specialistAccuracy(b, actor, skill) {
+  if (!weaponSkill(skill)) return 0;
+  return Object.values(b.allies[actor].masterEffects??{}).reduce((sum,effect)=>sum+(effect.nextAccuracy?.rate??0),0);
+}
+export function specialistCrit(b, actor, target, skill, targetHp = null) {
+  if (!weaponSkill(skill)) return 0;
+  const enemy=b.enemies[target];
+  return Object.values(b.allies[actor].masterEffects??{}).reduce((sum,effect)=>sum
+    +(effect.targetCrit?.target===target && (targetHp??enemy.hp)<=enemy.maxHp*effect.targetCrit.threshold ? effect.targetCrit.rate : 0),0);
+}
+export function notePrimaryKill(b, actor, enemy, primary) {
+  const state=b.allies[actor]?.advancedAction;
+  if (primary && state?.executed) (state.primaryKills??=[]).push(enemy);
+}
+export function recordSelfSupport(b, actor, before, after, skill) {
+  const state=b.allies[actor].advancedAction;
+  if (!state || !before || skill.kind==='attack') return;
+  const old=before[actor],next=after[actor];
+  state.selfHealed=next.hp>old.hp;
+  state.selfRecovery=state.selfHealed || old.statuses.some(id=>!next.statuses.includes(id));
+  state.selfProtection=next.shield>old.shield;
+}
+export function applySpecialistRules(data, game, b, actor, skill, target, cm) {
+  const ally=b.allies[actor],rules=skill.effect.rules??{};
+  if (rules.qigong_damage) grantMasterEffect(b,actor,skill.id+':qigong',{
+    skillId:skill.id,qigongDamage:rules.qigong_damage.rate*cm,remaining:rules.qigong_damage.turns});
+  if (rules.next_target_crit) grantMasterEffect(b,actor,skill.id,{
+    skillId:skill.id,targetCrit:{...rules.next_target_crit,target},remaining:rules.next_target_crit.turns});
+  if (rules.next_accuracy) grantMasterEffect(b,actor,skill.id+':accuracy',{
+    skillId:skill.id,nextAccuracy:{...rules.next_accuracy},remaining:rules.next_accuracy.turns});
+  if (rules.clones) {
+    const rule=rules.clones;
+    const clones=rule.replace?[]:(ally.clones??[]);
+    for(let n=0;n<rule.count;n++) {
+      while(clones.length>=rule.max)clones.shift();
+      clones.push({remaining:rule.turns,evasion:rule.evasion,skillId:skill.id,level:skill.level??1,grantedClock:b.actionClock});
+    }
+    ally.clones=clones;
+  }
+  if (rules.substitute) ally.substitute={skillId:skill.id,expire:rules.substitute.expire};
+  if (rules.next_magic_echo) grantMasterEffect(b,actor,skill.id,{
+    skillId:skill.id,nextMagicEcho:{m:rules.next_magic_echo.m},remaining:rules.next_magic_echo.turns});
+  if (rules.clone_empower) grantMasterEffect(b,actor,skill.id,{
+    skillId:skill.id,cloneEvasion:rules.clone_empower.evasion,magicDamage:rules.clone_empower.magic,remaining:rules.clone_empower.turns});
+}
+function finishSpecialistOpportunity(data, game, b, actor, skill, performed, voluntary) {
+  const ally=b.allies[actor],state=ally.advancedAction,member=game.party[actor];
+  ally.clones=(ally.clones??[]).filter(clone=>(clone.grantedClock===b.actionClock&&voluntary)||--clone.remaining>0);
+  if (!(member.hp>0)) {resetTacticalState(ally);return;}
+  if (!voluntary) {delete ally.breathReady;delete ally.previousSelfRecovery;return;}
+  if (!performed || !state?.executed) return;
+  // 通常攻撃・道具等も、直前の自己回復と整息の「次の行動」を使い切る。
+  delete ally.breathReady;
+  delete ally.previousSelfRecovery;
+  const support=Boolean(skill && skill.kind!=='attack');
+  const passives=passiveRules(data,member);
+  if (support && state.selfRecovery) ally.previousSelfRecovery=true;
+  for(const p of passives) {
+    if (support && !skill.isFinal && p.breath_cycle && (state.selfRecovery||state.selfProtection))
+      ally.breathReady={rate:p.breath_cycle.rate,skillId:p.skill.id,level:p.skill.level??1};
+    if (support && !skill.isFinal && ['heal','heal_all'].includes(skill.kind) && state.selfHealed && p.on_self_heal)
+      grantMasterEffect(b,actor,p.skill.id,{values:{res:p.on_self_heal.res},remaining:p.on_self_heal.turns});
+    if (!skill?.isFinal && state.primaryKills?.length && p.on_primary_kill && ally.primaryKillRound!==b.round) {
+      ally.primaryKillRound=b.round;
+      grantMasterEffect(b,actor,p.skill.id,{skillId:p.skill.id,nextMpSave:{...p.on_primary_kill,uses:1},remaining:p.on_primary_kill.turns});
+    }
+    if (skill && !skill.isFinal && state.cloneSpent && p.on_clone_spend)
+      grantMasterEffect(b,actor,p.skill.id,{values:{eva:p.on_clone_spend.evasion},remaining:p.on_clone_spend.turns});
+  }
+  for(const [key,effect] of Object.entries(ally.masterEffects??{})) {
+    if (effect.grantedClock===b.actionClock)continue;
+    if (effect.nextAccuracy && weaponSkill(skill)) delete ally.masterEffects[key];
+    if (effect.targetCrit && weaponSkill(skill) && state.weaponTargets?.includes(effect.targetCrit.target)) delete ally.masterEffects[key];
+  }
 }

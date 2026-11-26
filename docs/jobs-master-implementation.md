@@ -1,6 +1,6 @@
 # 50職マスター・基本8職技能の実装
 
-2026-11-26追記：聖騎士・暗黒騎士・狂戦士と、侍・剣闘士・僧兵を実装し、初期解放へ変更した。現在は14職・210技能が利用可能。[追加1〜3職の実装記録](additional-jobs-01-03-implementation.md)、[追加4〜6職の設計・実装](additional-jobs-04-06-implementation.md)を参照。以下は基本8職を導入した時点の記録。
+2026-11-26追記：追加1〜9職を実装し、初期解放へ変更した。現在は基本8職＋追加9職の17職・255技能が利用可能。[追加1〜3職の実装](additional-jobs-01-03-implementation.md)、[追加4〜6職の設計・実装](additional-jobs-04-06-implementation.md)、[追加7〜9職の設計・実装](additional-jobs-07-09-implementation.md)を参照。以下は基本8職を導入した時点の記録。
 
 2026-11-25。`jobs-baseline-v1.md` と `basic-jobs-skills-v1.md` を現行の職業・技能設計として反映する。
 資料と競合する旧職・旧技能は今回のマスターへ置き換える。

@@ -12,7 +12,7 @@ import {JOB_EFFECT_ICON} from '../js/ui/effect-icons.js';
 import {describeSkillForUI,describeSkillEffect} from '../js/skill-effects.js';
 import {GameSession} from '../js/save.js';
 
-const data=realGameData(),ids=['samurai','gladiator','warrior_monk'];
+const data=realGameData(),ids=['samurai','gladiator','warrior_monk','ascetic','executioner','ninja'];
 const spec=JSON.parse(readFileSync(new URL('../../docs/specs/additional-jobs-04-06-skills-v1.json',import.meta.url),'utf8'));
 function fixture(job='samurai',count=2,seed=51) {
   const specs=defaultPartySpecs(data);specs[0].job=job;
@@ -48,8 +48,8 @@ function enemyActs(c,index=0,{magic=false,power=80,target=0,element='slash',stat
 const section=(c,key,actor=0)=>allyEffectEntries(data,c.game,c.b,actor).find(([title])=>title===key)?.[1]??[];
 
 test('追加4〜6職は45技能・137段階で設計と一致し、通常9・パッシブ5・奥義1を保つ',()=>{
-  assert.equal(data.jobs.filter(j=>j.skillsReady).length,14);
-  assert.equal([...data.skills.values()].filter(s=>s.effect.master).length,210);
+  assert.equal(data.jobs.filter(j=>j.skillsReady).length,17);
+  assert.equal([...data.skills.values()].filter(s=>s.effect.master).length,255);
   let stages=0;
   for(const job of spec.jobs){
     const list=[...data.skills.values()].filter(s=>s.job===job.id);assert.equal(list.length,15);
@@ -70,7 +70,7 @@ test('追加4〜6職は45技能・137段階で設計と一致し、通常9・パ
       }
     }
   }
-  assert.equal(stages,137);assert.equal(data.jobsById.get('ascetic').skillsReady,false);
+  assert.equal(stages,137);assert.equal(data.jobsById.get('assassin').skillsReady,false);
 });
 test('新規・既存セーブで3職を初期から選べ、転職で技能や装備を自動配布しない',()=>{
   for(const id of ids){

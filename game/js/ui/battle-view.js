@@ -3,7 +3,7 @@ import { now } from '../storage.js?v=skill-growth-2';
 import { QuestionPicker, REASON_LABEL } from '../picker.js?v=skill-growth-2';
 import { makePracticeQuestion, questionDirection, questionSpeech, DIRECTION } from '../quiz.js?v=skill-growth-2';
 import { speak, canSpeak, stopSpeech } from '../speech.js?v=skill-growth-2';
-import { nextTurn, actionOptions, setPending, prepareQuizAction, resolvePending, targetKind, skillMp, collectBattleHits, enemyIntent, enemyCanAct } from '../battle.js?v=tactical-jobs-1';
+import { nextTurn, actionOptions, setPending, prepareQuizAction, resolvePending, targetKind, skillMp, collectBattleHits, enemyIntent, enemyCanAct } from '../battle.js?v=specialist-jobs-1';
 import { skillMaxLevel, learnedSkillLevel, effectiveSkill } from '../growth.js?v=advanced-jobs-1';
 import { maxHp, maxMp } from '../character.js?v=advanced-jobs-1';
 import { el, render } from '../dom.js?v=skill-growth-2';
@@ -15,7 +15,7 @@ import { portraitIcon } from './portrait.js?v=skill-growth-2';
 import { ultimateGauge } from './skill-presentation.js?v=skill-growth-2';
 import { skillIcon } from './skill-icons.js?v=skill-icons-1';
 import { describeSkillEffect, describeSkillForUI } from '../skill-effects.js?v=tactical-jobs-1';
-import { ownedBlessing, passiveRules, activeDuel, prayerRule, prayerStage } from '../job-combat.js?v=tactical-jobs-1';
+import { ownedBlessing, passiveRules, activeDuel, prayerRule, prayerStage } from '../job-combat.js?v=specialist-jobs-1';
 import { statusIconId, buffIconId, effectIcon, JOB_EFFECT_ICON } from './effect-icons.js?v=battle-effect-icons-1';
 
 const TARGET_PROMPT = {
@@ -57,8 +57,9 @@ export const JOB_EFFECT_SECTIONS = Object.freeze({
 function jobEffectSection(skill, effect) {
   if (effect.statusResist?.uses > 0) return JOB_EFFECT_SECTIONS.special;
   const continuous = Object.values(effect.values ?? {}).some(value => value !== 0)
-    || effect.shield > 0 || effect.regen || effect.statusResist || effect.lifesteal || effect.weaponDamage || effect.mpSave?.length;
-  if (!continuous && (effect.nextDamage || effect.nextMpSave || effect.nextHpCost)) return JOB_EFFECT_SECTIONS.special;
+    || effect.shield > 0 || effect.regen || effect.statusResist || effect.lifesteal || effect.weaponDamage || effect.mpSave?.length
+    || effect.qigongDamage || effect.magicDamage || effect.cloneEvasion;
+  if (!continuous && (effect.nextDamage || effect.nextMpSave || effect.nextHpCost || effect.nextAccuracy || effect.targetCrit || effect.nextMagicEcho)) return JOB_EFFECT_SECTIONS.special;
   if (effect.shield > 0 || effect.blessing) return JOB_EFFECT_SECTIONS.ongoing;
   if (effect.party || effect.song || skill?.kind === 'party_buff'
     || skill?.kind === 'ally_buff' && skill.effect?.tgt === 'all') return JOB_EFFECT_SECTIONS.party;
@@ -107,6 +108,12 @@ export function allyEffectEntries(data, game, battle, index) {
     if (effect.nextHpCost) values.push(`次のスキルのHP消費 -${Math.round((1 - effect.nextHpCost.rate) * 100)}%・残り1回`);
     if (effect.lifesteal) values.push(`HP吸収 ${Math.round(effect.lifesteal * 100)}%`);
     if (effect.weaponDamage) values.push(`武器ダメージ +${Math.round(effect.weaponDamage * 100)}%`);
+    if (effect.nextAccuracy) values.push(`次の通常武器技の命中 +${Math.round(effect.nextAccuracy.rate*100)}ポイント`);
+    if (effect.targetCrit && battle.enemies[effect.targetCrit.target]?.hp>0) values.push(`対象 ${battle.enemies[effect.targetCrit.target].name}・HP${Math.round(effect.targetCrit.threshold*100)}%以下で次の通常武器技の会心 +${Math.round(effect.targetCrit.rate*100)}ポイント`);
+    if (effect.nextMagicEcho) values.push('次の通常攻撃魔法で主対象に追撃1回');
+    if (effect.qigongDamage) values.push(`気功ダメージ +${Math.round(effect.qigongDamage*100)}%`);
+    if (effect.cloneEvasion) values.push(`分身の回避補助 +${Math.round(effect.cloneEvasion*100)}ポイント`);
+    if (effect.magicDamage) values.push(`${effect.magicDamage.elements.map(id=>data.elements.get(id)?.name??id).join('・')}の通常攻撃魔法 +${Math.round(effect.magicDamage.rate*100)}%`);
     const coverRule = passives.find(rule => rule.skill.id === id)?.on_cover;
     if (coverRule && ally.coverStages > 0) values.push(`守勢 ${Math.min(coverRule.max, ally.coverStages)}/${coverRule.max}段階`);
     groups[jobEffectSection(skill, effect)].push(entry(`${name}${duration(effect.remaining)}${values.length ? '：' + values.join('・') : ''}`));
@@ -128,6 +135,10 @@ export function allyEffectEntries(data, game, battle, index) {
   }
   const prayer = prayerRule(data, member);
   if (member.hp > 0 && prayer) ongoing.push(entry(`祈念 ${prayerStage(data,game,battle,index)}/${prayer.max}`));
+  const clones=(ally.clones??[]).filter(clone=>clone.remaining>0);
+  if (member.hp>0 && clones.length) ongoing.push(entry(`分身 ${clones.length}/3体：${clones.map(clone=>'残り'+clone.remaining+'行動').join('・')}`));
+  if (member.hp>0 && ally.breathReady) special.push(entry('整息：次の通常の気功を強化・別の行動やスキップで解除'));
+  if (member.hp>0 && ally.substitute) special.push(entry('影替わり：単体攻撃1行動を身代わりで防ぐ・次の行動開始まで'));
   const traps = new Map();
   for (const trap of battle.masterTraps ?? []) {
     if (trap.actor !== index || member.hp <= 0 || !(battle.enemies?.[trap.target]?.hp > 0)) continue;
@@ -466,6 +477,12 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
     const elements = entry.elements ?? skill.effect.rules?.choose_element ?? [];
     const back = () => showCommand('skill');
     const chooseBoost = selected => {
+      if (entry.optionalClone && selected.consumeClone==null) return showPanel(`${skill.name}の分身`,[
+        el('p',{class:'battle-notice'},'分身1体を使うと、今回の一撃が強まります。'),
+        el('div',{class:'battle-action-list'},
+          listChoice('分身を残す',`MP ${battleMp(skill)}`,null,()=>chooseBoost({...selected,consumeClone:false})),
+          listChoice('分身を使う',`MP ${battleMp(skill)}`,null,()=>chooseBoost({...selected,consumeClone:true}))),
+      ],{back});
       if (entry.optionalBlessing && selected.consumeBlessing == null) return showPanel(`${skill.name}の加護`,[
         el('p',{class:'battle-notice'},'自分の加護を消費すると、今回の直接ダメージが増えます。'),
         el('div',{class:'battle-action-list'},
@@ -495,7 +512,10 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
   function chooseTarget(action, sub, targetReasons = {}) {
     const member = g.party[b.turn.i];
     const skill = action.type === 'skill' ? effectiveSkill(data, member, data.skills.get(action.skillId)) : null;
-    const kind = targetKind(data, action, member);
+    const magicPrimary=skill && !skill.isFinal && skill.kind==='attack' && skill.effect.base==='mag'
+      && Object.values(b.allies[b.turn.i].masterEffects??{}).some(effect=>effect.nextMagicEcho)
+      && targetKind(data,action,member)==='enemies' && !skill.effect.select_targets;
+    const kind = magicPrimary?'enemy':targetKind(data, action, member);
     if (skill?.effect.rules?.move_blessing && action.sourceTarget == null) {
       const indices=g.party.flatMap((m,index)=>m.hp>0&&!b.allies[index].statuses.petrify&&ownedBlessing(b,b.turn.i,index)?[index]:[]);
       if (!indices.length) return showCommand(sub,'移せる自分の加護がありません。');
@@ -536,7 +556,17 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
         && !(skill?.effect.rules?.cover?.target === 'selected' && index === b.turn.i) ? [index] : []);
     }
 
-    const select = (target) => ask({ ...action, target });
+    const select = target => {
+      if (!skill?.effect.rules?.kill_followup) return ask({...action,target});
+      const others=b.enemies.flatMap((enemy,index)=>enemy.hp>0&&index!==target?[index]:[]);
+      const pickSecondary=secondaryTarget=>ask({...action,target,secondaryTarget});
+      if (others.length<=1) return pickSecondary(others[0]??null);
+      drawField(b.turn.i,{kind:'enemy',indices:others,select:pickSecondary});
+      showPanel(skill.name,[
+        el('p',{class:'battle-target-prompt'},'とどめを刺した後の追撃先を選ぶ'),
+        el('div',{class:'battle-targets'},others.map(index=>el('button',{onclick:()=>pickSecondary(index)},b.enemies[index].name))),
+      ],{back:()=>chooseTarget(action,sub,targetReasons)});
+    };
     if (!indices.length && kind === 'ko_ally' && action.type === 'skill'
       && data.skills.get(action.skillId)?.effect.rules?.revive && data.skills.get(action.skillId)?.kind === 'heal_all') return ask({ ...action, target: null });
     if (indices.length === 0) return showCommand(sub, '選べる対象がいません。');
@@ -549,7 +579,7 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
       return el('button', { disabled: !!reason, onclick: () => select(index) }, `${enemy.icon} ${enemy.name}${reason ? `・${reason}` : ''}`);
     })) : null;
     showPanel(actionLabel(action), [
-      el('p', { class: 'battle-target-prompt' }, skill?.effect.rules?.move_blessing ? '加護の移動先を選ぶ' : TARGET_PROMPT[kind]),
+      el('p', { class: 'battle-target-prompt' }, skill?.effect.rules?.move_blessing ? '加護の移動先を選ぶ' : magicPrimary ? '魔法追撃の主対象を選ぶ' : TARGET_PROMPT[kind]),
       enemyTargets,
     ], { back: () => showCommand(sub), focus: !!enemyTargets });
     if (!enemyTargets) screen.querySelector('button.targetable').focus({ preventScroll: true });
