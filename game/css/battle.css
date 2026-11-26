@@ -547,7 +547,8 @@ body:has(.battle-screen) { background: #10171e; }
 .battle-encyclopedia dd { margin: 0; }
 .battle-encyclopedia dt { color: var(--battle-dim); }
 
-.battle-enemy-marks { font-size: .8rem; line-height: 1.2; }
+/* 敵のマークはモンスターアイコンの上中央に表示する。 */
+.battle-enemy-marks { order: -1; margin-bottom: 2px; font-size: .8rem; line-height: 1.2; }
 
 /* 戦闘中だけ外側のページ見出しを省き、場所を背景内の独立行へ。 */
 .quest-ui .app:has(.battle-screen) > .page-heading,
