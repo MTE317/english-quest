@@ -609,7 +609,7 @@ const BATTLE_ITEM_EFFECTS = ['heal_hp', 'heal_hp_pct', 'heal_hp_all', 'heal_hp_a
 export function fleeRate(data, game, b, actor = b.turn?.side === 'ally' ? b.turn.i : null) {
   const al = game.party.map((m, i) => i).filter((i) => canAct(game, b, i));
   const ae = b.enemies.filter(enemyCanAct);
-  if (!b.canFlee || ae.some((e) => e.boss) || al.some((i) => has(b.allies[i], 'noevade_noflee', data))) return 0;
+  if (!b.canFlee || al.some((i) => has(b.allies[i], 'noevade_noflee', data))) return 0;
   const avg = (arr) => arr.reduce((x, y) => x + y, 0) / Math.max(1, arr.length);
   const sts = al.map((i) => battleStats(data, game, b, i));
   const base = evaluate(f(data, 'flee'), {
@@ -644,7 +644,7 @@ export function actionOptions(data, game, b, i) {
   }).filter((x) => x.item);
   const flee = fleeRate(data, game, b, i);
   return { skills, ultimate: ultimate ? { ...entry(ultimate), gauge: game.party[i].ultimateGauge ?? 0, max: ultimateRules(data).gauge_max ?? 100 } : null,
-    items, flee: { rate: flee, reason: flee > 0 ? '' : (b.enemies.some((e) => e.hp > 0 && e.boss) ? 'ボスからは逃げられない' : '逃げられない') } };
+    items, flee: { rate: flee, reason: flee > 0 ? '' : '逃げられない' } };
 }
 
 /** 行動の対象の選び方：'enemy'（敵1体）/ 'enemies'（敵全体）/ 'ally'（味方1人）/ 'ko_ally'（倒れた味方）/ 'allies' / 'self' / 'none' */
