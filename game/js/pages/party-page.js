@@ -27,6 +27,7 @@ import { weaponIcon } from '../ui/weapon-icons.js?v=skill-growth-2';
 import { uiIcon } from '../ui/pixel-icons.js?v=skill-growth-2';
 import { armorIcon, equipmentIcon } from '../ui/equipment-icons.js?v=skill-growth-2';
 import { portraitIcon, portraitLabel, PORTRAIT_GROUPS } from '../ui/portrait.js?v=skill-growth-2';
+import { skillIcon as renderSkillIcon } from '../ui/skill-icons.js?v=skill-icons-1';
 
 const view = document.getElementById('view');
 setSceneMusic('facility');
@@ -315,9 +316,8 @@ function showMember(index, tab = 'skills', selectedSlot = null, { scroll = true 
   window.scrollTo(0, scroll ? 0 : scrollY);
 }
 
-function skillIcon(skill) {
-  const mark = skill.kind === 'passive' ? '◆' : skill.isFinal ? '★' : '✦';
-  return el('span', { class: 'shop-item-icon skill-shop-icon', 'aria-hidden': 'true' }, mark);
+function skillIcon(skill, member) {
+  return renderSkillIcon(data, skill, member);
 }
 
 // ---------------- スキル装備・取り外し ----------------
@@ -367,7 +367,7 @@ function showLoadout(index, kind = 'actions', message = '', skillId = '') {
     const weaponReason = skillWeaponBlock(data, member, skill);
     const level = learnedSkillLevel(member, base);
     render(detail,
-      el('header', {}, skillIcon(skill),
+      el('header', {}, skillIcon(skill, member),
         el('div', {}, el('h2', {}, `${skill.name}${skillMaxLevel(skill)>1?` Lv${level}`:""}`),
           equipped ? el('span', { class: 'skill-shop-equipped' }, '装着中') : null)),
       el('p', { class: 'skill-shop-effect' }, describeSkillEffect(data, skill)),
@@ -392,7 +392,7 @@ function showLoadout(index, kind = 'actions', message = '', skillId = '') {
       type: 'button', class: 'shop-slot skill-shop-slot', 'data-item': skill.id, 'aria-pressed': 'false',
       'aria-label': `${skill.name}${skillMaxLevel(skill)>1?` Lv${level}`:""}、${skillCostLabel(skill)}${equipped ? '、装着中' : ''}`,
       onclick: () => selectSkill(skill),
-    }, skillIcon(skill), el('span', { class: 'shop-slot-name' }, skill.name),
+    }, skillIcon(skill, member), el('span', { class: 'shop-slot-name' }, skill.name),
     el('span', { class: 'shop-slot-count', 'aria-hidden': 'true' }, `${skillMaxLevel(skill)>1?`Lv${level}・`:""}${skillCostLabel(skill)}${equipped ? ' ・ 装着中' : ''}`));
     nodes.set(skill.id, button);
     return button;
@@ -457,7 +457,7 @@ function showSkills(index, jobId, skillId, message = '') {
     const level = learnedSkillLevel(member, skill);
     const next = skill.effect.levels?.[level - 1];
     const effective = effectiveSkill(data, member, skill);
-    render(detail, el('header', {}, skillIcon(skill), el('h2', {}, `${skill.name}${learned && skillMaxLevel(skill)>1 ? ` Lv${level}` : ''}`)),
+    render(detail, el('header', {}, skillIcon(skill, member), el('h2', {}, `${skill.name}${learned && skillMaxLevel(skill)>1 ? ` Lv${level}` : ''}`)),
       el('p', { class: 'skill-shop-effect' }, describeSkillEffect(data, effective)),
       el('p', { class: 'muted small' }, [skill.path, skill.kind === 'passive' ? 'パッシブ' : `MP ${skillMp(data, member, skill)}`,
         skillCostLabel(skill), skill.isFinal && 'ゲージ満タンで使用'].filter(Boolean).join('・')),
@@ -480,7 +480,7 @@ function showSkills(index, jobId, skillId, message = '') {
     const learned = (member.common ?? []).includes(node.id);
     const reason = commonBlock(data, member, node);
     render(detail,
-      el('header', {}, skillIcon({ kind: 'passive' }), el('h2', {}, node.name)),
+      el('header', {}, skillIcon({ kind: 'passive' }, member), el('h2', {}, node.name)),
       el('p', { class: 'shop-description' }, '共通パッシブ'),
       el('p', {}, node.effect),
       el('p', { class: 'small muted' }, `必要Lv ${node.level}・習得AP ${commonApCost(node)}・残りAP ${availableAp(data, member)}`),
@@ -506,7 +506,7 @@ function showSkills(index, jobId, skillId, message = '') {
         type: 'button', class: 'shop-slot skill-shop-slot', 'aria-pressed': 'false',
         'aria-label': `${node.name}、共通パッシブ、${learned ? '習得済' : available ? '習得可' : '未習得'}`,
         onclick: () => selectCommon(node),
-      }, skillIcon({ kind: 'passive' }),
+      }, skillIcon({ kind: 'passive' }, member),
       el('span', { class: 'shop-slot-name' }, node.name),
       el('span', { class: 'shop-slot-count' }, `Lv${node.level}・AP ${commonApCost(node)}`),
       el('span', { class: 'skill-node-state' }, learned ? '習得済' : available ? '習得可' : '未習得'));
@@ -541,7 +541,7 @@ function showSkills(index, jobId, skillId, message = '') {
             const node = el('button', { type: 'button', class: 'shop-slot skill-shop-slot', 'aria-pressed': 'false',
               'aria-label': `${skill.name}、${equipped ? '装着中' : learned ? '習得済' : available ? '習得可' : '未習得'}、${skillCostLabel(skill)}`,
               onclick: () => selectSkill(skill) },
-              skillIcon(skill),
+              skillIcon(skill, member),
               el('span', { class: 'shop-slot-name' }, skill.name),
               el('span', { class: 'shop-slot-count' }, `${learned && skillMaxLevel(skill)>1 ? `Lv${learnedSkillLevel(member, skill)}・` : ''}${skillCostLabel(skill)}`),
               el('span', { class: `skill-node-state${equipped ? ' equipped' : ''}` },
