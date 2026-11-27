@@ -16,7 +16,7 @@ test('職業マスターは設計基準表の50職・基本8/追加36/伝説6に
   assert.deepEqual(data.jobs.map(job => job.name), baseline.map(row => row[2]));
   assert.deepEqual(['base', 'additional', 'legendary'].map(tier => data.jobs.filter(job => job.tier === tier).length), [8,36,6]);
   for (const job of data.jobs) {
-    assert.equal(job.skillsReady, job.tier === 'base' || ['paladin','dark_knight','berserker','samurai','gladiator','warrior_monk','ascetic','executioner','ninja','assassin','bounty_hunter','dragoon','gunner','pirate','spellblade','elementalist','witch','hexer','beastmaster','puppeteer','dancer','strategist','jester','gambler'].includes(job.id), job.name);
+    assert.equal(job.skillsReady, job.tier === 'base' || ['paladin','dark_knight','berserker','samurai','gladiator','warrior_monk','ascetic','executioner','ninja','assassin','bounty_hunter','dragoon','gunner','pirate','spellblade','elementalist','witch','hexer','necromancer','onmyoji','shrine_maiden','beastmaster','puppeteer','dancer','strategist','jester','gambler'].includes(job.id), job.name);
     assert.equal(Object.keys(job.grades).length, 8, job.name);
     assert.ok(job.statReference && job.style && job.ultimateConcept, job.name);
     for (const element of [...job.elements, ...job.supportElements]) assert.ok(data.elements.has(element), `${job.name}: ${element}`);

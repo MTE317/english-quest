@@ -17,9 +17,9 @@ spellblade,魔法剣士,属性付与・物理魔法複合,additional,B,B,A,B,C,C
 elementalist,精霊術士,属性の場・継続的な優位,additional,C,A,D,A,C,A,B,C,wind|earth|water,,staff,tome|fan,MAG・MP,属性の場を1つ展開し、敵味方への影響を読んで切り替える,場を展開し、同属性の全体攻撃と味方への防護,1,,staff,light,初期解放（条件は後日設定）,1
 witch,魔女,使い魔・氷闇の術・妨害,additional,C,A,D,A,D,B,B,A,ice|dark,,scythe,tome|staff,MAG（鎌術・使い魔）,自分の魔法に使い魔が反応し、妨害や追撃を行う,強化使い魔を呼び、魔法連携と妨害を大幅強化,1,,scythe,light,初期解放（条件は後日設定）,1
 hexer,呪術師,敵行動への呪印・弱体,additional,C,A,D,A,D,A,B,B,dark,earth,tome,scythe|whip,MAG・MP,敵行動を条件に呪印を発動。敵側の状態異常も活用,敵全体に強力な呪印を刻み、行動に応じて災厄を起こす,1,,tome,light,初期解放（条件は後日設定）,1
-necromancer,死霊術師,魂の蓄積・亡霊・吸収,additional,C,A,D,A,D,A,C,B,dark,none,scythe,tome,MAG（鎌術・魂術）・MP,ダメージや撃破などから魂を蓄え、亡霊や吸収へ使う,亡霊軍を呼び出す。蓄積した魂で追加強化,0,,scythe,light,個別技能の実装待ち,1
-onmyoji,陰陽師,光闇の交互使用・符術,additional,C,A,D,A,C,A,C,B,light|dark,,fan,tome,MAG・MP,陰と陽の術を交互に使い、術や結界を強める,光闇の式神と結界で攻撃と妨害対策を両立,0,,fan,light,個別技能の実装待ち,1
-shrine_maiden,巫女,異常予防・浄化・神楽,additional,C,A,D,B,C,A,B,B,light,water,fan,staff,MAG／MP・RES,厄除け・防護・再生の神楽を選び、災厄に備える,全体へ強力な異常予防・浄化・継続回復,0,,fan,light,個別技能の実装待ち,1
+necromancer,死霊術師,魂の蓄積・亡霊・吸収,additional,C,A,D,A,D,A,C,B,dark,none,scythe,tome,MAG（鎌術・魂術）・MP,ダメージや撃破などから魂を蓄え、亡霊や吸収へ使う,亡霊軍を呼び出す。蓄積した魂で追加強化,1,,scythe,light,神殿Lv6で解放,1
+onmyoji,陰陽師,光闇の交互使用・符術,additional,C,A,D,A,C,A,C,B,light|dark,,fan,tome,MAG・MP,陰と陽の術を交互に使い、術や結界を強める,光闇の式神と結界で攻撃と妨害対策を両立,1,,fan,light,神殿Lv6で解放,1
+shrine_maiden,巫女,異常予防・浄化・神楽,additional,C,A,D,B,C,A,B,B,light,water,fan,staff,MAG／MP・RES,厄除け・防護・再生の神楽を選び、災厄に備える,全体へ強力な異常予防・浄化・継続回復,1,,fan,light,神殿Lv6で解放,1
 summoner,召喚士,契約先選択・一時的な大効果,additional,C,A,D,A,D,A,C,B,fire|earth|water,,tome,staff,MAG・MP,攻撃・防護・回復の契約先を選んで呼ぶ。常設相棒とは区別,選んだ大召喚による強烈な攻撃、または大規模な防護・回復,0,,tome,light,個別技能の実装待ち,1
 druid,ドルイド,植物の成長・変身,additional,B,A,D,A,C,A,C,C,earth|water,,staff,scythe,MAG／獣化時もMAGを攻撃へ反映,育つ植物を仕込み、人型の術と獣化を使い分ける,植物を急成長させ、全体回復と敵への拘束,0,,staff,light,個別技能の実装待ち,1
 astrologer,占星術師,予兆・遅延発動・先読み,additional,C,A,D,A,D,A,B,B,light|none,,tome,fan,MAG・MP,未来のターンへ攻撃や加護を予約し、発動時刻を組み立てる,大きな予兆をまとめて設置し、既存の予兆も早める,0,,tome,light,個別技能の実装待ち,1
