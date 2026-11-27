@@ -2,7 +2,7 @@ import { availableAp } from '../ap.js?v=skill-growth-2';
 // パーティーの画面：キャラメイク・6人の一覧・能力値・装備8枠
 import { loadGameData } from '../gamedata.js?v=unique-reroll-1';
 import { GameSession } from '../save.js?v=party-wipe-1';
-import { createNewGame, defaultPartySpecs, normalizeGame } from '../game-state.js?v=unique-reroll-1';
+import { createNewGame, defaultPartySpecs, normalizeGame } from '../game-state.js?v=default-party-1';
 import {
   computeStats, SLOTS, SLOT_LABEL, STAT_LABEL, canEquip, equipFromStorage, equipRecommended, unequip, gearDef,
   aptitudeGrade, xpToNext, levelCap, gainXp, makeGear,
