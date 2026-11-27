@@ -31,11 +31,13 @@ test('原の最終戦まで無料で進み、帰還で森と洞窟を同時に�
  enter(s,'mossy_cave');for(let i=0;i<4;i++)win(s);assert.equal(s.run.bossDefeated,true);returnToTown(data,s);
  assert.ok(allowedDungeons(data,s.game).some(d=>d.id==='ruined_fort'));
 });
-test('4季節の原は1/2/3スライムだけ、森は毒最大1体、洞窟ボスは単独。HP補正は地域限定',()=>{
+test('4季節の原は各戦1〜3体のスライム、森は毒最大1体、洞窟ボスは単独。HP補正は地域限定',()=>{
  for(const season of ['spring','summer','autumn','winter'])for(const id of ['windward_plain','sunlit_forest','mossy_cave']){
   const rows=data.dungeonFloors.filter(r=>r.dungeonId===id);
   for(const row of rows){const enemies=makeEncounter(data,id,row.floor,()=>0,{season,boss:row.lastBattleIsBoss,elites:true,bountyId:'bounty_goblin'});
-   assert.equal(enemies.length,row.enemiesPerBattle);assert.ok(enemies.every(e=>!e.eliteId&&!e.bounty));
+   if(id==='windward_plain')assert.ok(enemies.length>=1&&enemies.length<=3);
+   else assert.equal(enemies.length,row.enemiesPerBattle);
+   assert.ok(enemies.every(e=>!e.eliteId&&!e.bounty));
    if(id==='windward_plain')assert.ok(enemies.every(e=>e.monsterId==='slime'));
    if(id==='sunlit_forest')assert.ok(enemies.filter(e=>e.monsterId==='poison_cap').length<=1);
    if(row.lastBattleIsBoss)assert.deepEqual(enemies.map(e=>e.monsterId),['goblin_boss']);
@@ -45,6 +47,14 @@ test('4季節の原は1/2/3スライムだけ、森は毒最大1体、洞窟ボ�
  const oldRow=data.balance.dungeon.pre_intro_routes.mossy_cave[0];
  const old=makeEncounter(data,'mossy_cave',1,()=>0,{season:'winter',rowOverride:oldRow});
  assert.ok(old.every(e=>e.maxHp>0));
+});
+test('平原の各戦で敵数を抽選し、再挑戦でも固定順にならない',()=>{
+ for(const floor of [1,2,3]){
+  assert.deepEqual([0,.5,.999].map(draw=>makeEncounter(data,'windward_plain',floor,()=>draw).length),[1,2,3]);
+ }
+ const a=session();enter(a,'windward_plain');startNextBattle(data,a);
+ const b=session();enter(b,'windward_plain');startNextBattle(data,b);
+ assert.equal(a.run.battle.enemies.length,b.run.battle.enemies.length);
 });
 test('途中の羽帰還は戦利品だけ保持し未踏破。全滅は経路解放を巻き戻し、現行の図鑑保持規則を維持する',()=>{
  const s=session();enter(s,'windward_plain');win(s);const gold=s.game.gold;
