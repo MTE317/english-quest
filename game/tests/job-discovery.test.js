@@ -25,7 +25,7 @@ test('新マスターの準備中15職は踏破しても解放せず、神殿投
   const game = createNewGame(master, specs);
   for (const dungeon of master.dungeons.values()) discoverJobs(master, game, dungeon.id, () => 0);
   assert.deepEqual(game.unlockedJobs, []);
-  assert.equal(master.jobs.filter((job) => job.skillsReady === false).length,15);
+  assert.equal(master.jobs.filter((job) => job.skillsReady === false).length,12);
 });
 
 test('公開の発見2職だけ3踏破保証を持ち、元の10%抽選を維持する', () => {

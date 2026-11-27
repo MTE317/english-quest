@@ -10,6 +10,7 @@ import { fixedBattleRewards } from './monster-rewards.js?v=public-rewards-1';
 //
 // 式・効果の上限は data/balance.json から読む。BATTLE_FORMULAS は旧データ向けの既定値。
 import { evaluate } from './expr.js?v=skill-growth-2';
+import { trioItems, trioBlock, trioTargetBlock, clearTrio, finishTrioOpportunity, runTrio } from './trio-combat.js?v=jobs-31-33-1';
 import { computeStats, gearDef, weaponPower, spellPower, scytheSpellPower, maxHp, maxMp, gearEffects, affixSum, memberCanAct } from './character.js?v=unique-reroll-1';
 import { actionSkills, ultimateSkill, memberMods, addMasteryKill, effectiveSkill } from './growth.js?v=unique-reroll-1';
 import { encounterMonsters, learnMonsterElements, hitEffectiveness } from './monster-knowledge.js?v=monster-catalog-1';
@@ -291,7 +292,7 @@ export function battleStats(data, game, b, i) {
 export function allyElementMultiplier(data, game, b, index, element, magic = false) {
   const target = game.party[index];
   const resist = element
-    ? bval(b.partyBuffs, `eres:${element}`) + affixSum(target, `ELEM_RES:${element}`) / 100 + partyPassive(data, game, b, 'party_eres')
+    ? bval(b.partyBuffs, `eres:${element}`) + bval(b.allies[index].buffs, `eres:${element}`) + affixSum(target, `ELEM_RES:${element}`) / 100 + partyPassive(data, game, b, 'party_eres')
     : 0;
   return 1 - Math.min(f(data, 'element_resist_cap'), resist + (magic || element ? partyPassive(data, game, b, 'party_ecut') : 0));
 }
@@ -342,7 +343,10 @@ function endRound(data, game, b) {
   for (const [i, m] of game.party.entries()) {
     if (m.hp > 0 && expireDoom(data, b, b.allies[i], m.name)) koAlly(game, b, i);
     // 石化などで行動列から外れた場合も一巡を一機会として期限を進める。
-    if (b.allies[i].lastOpportunityRound !== b.round) finishMasterOpportunity(data, game, b, i, masterContext(data, game, b), null, false);
+    if (b.allies[i].lastOpportunityRound !== b.round) {
+      finishMasterOpportunity(data, game, b, i, masterContext(data, game, b), null, false);
+      finishTrioOpportunity(b,i);
+    }
   }
   for (const enemy of b.enemies) {
     if (enemy.hp > 0 && expireDoom(data, b, enemy, enemy.name)) enemy.hp = 0;
@@ -428,6 +432,7 @@ export function nextTurn(data, game, b) {
     }
     tickStatuses(data, b, a, m.name);
     finishMasterOpportunity(data, game, b, u.i, masterContext(data, game, b), null, false);
+    finishTrioOpportunity(b,u.i);
   }
   throw new Error('戦闘が進まない');
 }
@@ -512,6 +517,7 @@ export function prepareQuizAction(data, game, b) {
   }
   tickStatuses(data, b, b.allies[i], game.party[i].name);
   finishMasterOpportunity(data, game, b, i, masterContext(data, game, b), null, false);
+  finishTrioOpportunity(b,i);
   b.turn = null;
   return false;
 }
@@ -555,6 +561,8 @@ function damageAlly(data, game, b, i, amount, prefix, source) {
 function koAlly(game, b, i) {
   const m = game.party[i];
   m.hp = 0;
+  clearTrio(b, i);
+  for (const ally of b.allies) if (ally.machine?.guard?.target===i) delete ally.machine.guard;
   // 戦闘不能時に戦闘中の状態を解除する現行ルールを維持する。
   b.allies[i].statuses = {};
   m.persist = [];
@@ -643,6 +651,8 @@ function skillBlock(data, game, b, i, s) {
   if (advancedBlock) return advancedBlock;
   const mysticBlock = mysticSkillBlock(b, i, s);
   if (mysticBlock) return mysticBlock;
+  const trioReason = trioBlock(data, game, b, i, s);
+  if (trioReason) return trioReason;
   if (s.isFinal && (m.ultimateGauge ?? 0) < (ultimateRules(data).gauge_max ?? 100)) return '必殺技ゲージが足りない';
   if (s.isFinal && ultimateRules(data).once_per_battle && a.once.includes(s.id)) return 'この戦闘ではもう使った';
   if (s.effect.require_weapon && (!m.equip.weapon || gearDef(data, m.equip.weapon).kind !== s.effect.require_weapon)) {
@@ -690,6 +700,7 @@ export function actionOptions(data, game, b, i) {
     return { skill: s, reason: skillBlock(data, game, b, i, s) || (noTarget ? '盗める通常物資を持つ敵がいない' : ''), targetReasons, boost: boost ? { mp: boost.mp, bonus: boost.damage } : null,
       hpCost: hpPayment(data,game,b,i,s), optionalBlessing: Boolean(s.effect.rules?.optional_blessing && ownedBlessing(b,i)),
       optionalClone: Boolean(s.effect.rules?.optional_clone && cloneCount(b.allies[i])),
+      itemChoices: trioItems(data, game, s),
       elements: s.effect.rules?.choose_element ?? s.effect.rules?.choose_mode ?? s.effect.choose_element ?? [] };
   };
   const skills = knownSkills(data, game.party[i]).map(entry);
@@ -716,6 +727,7 @@ export function targetKind(data, action, member = null) {
   }
   const s = member ? effectiveSkill(data, member, data.skills.get(action.skillId)) : data.skills.get(action.skillId);
   const tgt = s.effect.tgt;
+  if (s.effect.rules?.trio) return s.effect.rules.trio.targetKind;
   if (tgt === 'selected_enemy') return 'enemy';
   if (tgt === 'self') return 'self';
   if (s.effect.rules?.revive && s.kind === 'heal_all') return 'ko_ally';
@@ -764,6 +776,7 @@ export function resolvePending(data, game, b, correct) {
   if (!bleedProcessed && !allyBleed(data, game, b, i)) {
     tickStatuses(data, b, a, m.name);
     finishMasterOpportunity(data, game, b, i, masterContext(data, game, b), null, false);
+    finishTrioOpportunity(b,i);
     if (b.queue.length) checkEnd(game, b);
     else checkDefeat(game, b);
     return { cm };
@@ -801,6 +814,7 @@ export function resolvePending(data, game, b, correct) {
   }
   tickStatuses(data, b, a, m.name);
   finishMasterOpportunity(data, game, b, i, masterContext(data, game, b), chosenSkill ?? (act.type === 'attack' ? null : { kind: 'utility', effect: {} }));
+  finishTrioOpportunity(b,i);
   if (performed && correct && act.type !== 'flee' && !chosenSkill?.isFinal) gainUltimate(data, m, ultimateRules(data).gain_correct ?? 20);
   if (b.queue.length) checkEnd(game, b);
   else checkDefeat(game, b);
@@ -1390,6 +1404,8 @@ function doSkill(data, game, b, i, s, target, cm, normalSkillReady = false, acti
   if (s.effect.tgt === 'self') target = i;
   const targetBlock = advancedTargetBlock(data,game,b,i,s,target,action);
   if (targetBlock) { log(b, `${s.name}は使えなかった（${targetBlock}）`); return; }
+  const trioReason = trioTargetBlock(data,game,b,i,s,target,action);
+  if (trioReason) { log(b, `${s.name}は使えなかった（${trioReason}）`); return; }
   if (s.effect.rules?.mystic && (
     (s.kind === 'attack' && (s.effect.tgt === 'all' ? !livingEnemies(b).length : !enemyCanAct(b.enemies[target] ?? {hp:0})))
     || (s.kind === 'debuff' && !enemyCanAct(b.enemies[target] ?? {hp:0}))
@@ -1466,7 +1482,36 @@ function doSkill(data, game, b, i, s, target, cm, normalSkillReady = false, acti
     if(full)s={...s,effect:{...s.effect,m:(s.effect.m??1)*1.10}};
     delete a.decoy;
   }
-  switch (s.kind) {
+  if (e.rules?.trio) runTrio(data,game,b,i,s,target,cm,action,{
+    log: message=>log(b,message), spentMp, stats:()=>battleStats(data,game,b,i),
+    heal:(t,power,cap=1)=>{
+      const st=battleStats(data,game,b,i),traits=weaponTraits(data,m.equip.weapon);
+      const amount=evaluate(f(data,'heal'),{MAG:st.mag,wpow:spellPower(data,m),m:power,heal_mul:traits.heal_mul??1})*cm
+        *(1+(memberMods(data,m).healp??0)+affixSum(m,'HEAL_POWER')/100+masterHealingBonus(data,game,b,i,s));
+      return healAlly(data,game,b,t,Math.min(amount,maxHp(data,game.party[t])*cap));
+    },
+    healRaw:(t,amount,cap=1)=>healAlly(data,game,b,t,Math.min(amount,maxHp(data,game.party[t])*cap)),
+    cure:(t,ids,count)=>{const candidates=ids.map((id,index)=>({id,index,state:b.allies[t].statuses[id]})).filter(x=>x.state)
+      .sort((x,y)=>(x.state.turns??Infinity)-(y.state.turns??Infinity)||x.index-y.index).slice(0,count);
+      for(const {id} of candidates)delete b.allies[t].statuses[id];return candidates.length;},
+    putBuff:(t,key,value,turns)=>putBuff(b.allies[t].buffs,key,value,turns),
+    shield:(t,amount,key)=>{const room=masterShieldRoom(data,game,b,t,key);const value=Math.max(0,Math.floor(Math.min(room,amount*cm,maxHp(data,game.party[t])*.5)));
+      if(value)grantMasterEffect(b,t,key,{shield:value,remaining:2,source:i,skillId:s.id,grantedClock:b.actionClock});return value;},
+    attack:(t,power,element,base,status,finalMultiplier=1)=>{
+      const elements=Array.isArray(element)?element:element?[element]:undefined;
+      const bonus=s.id.startsWith('machinist_')&&['machinist_A02','machinist_A06'].includes(s.id)?a.machine?.overdrive?.rate??0:0;
+      const known=game.catalog?.affinities?.[b.enemies[t]?.monsterId]?.elements??[];
+      const weak=elements?.some(el=>b.enemies[t].weak?.includes(el)&&known.includes(el));
+      const p05=passiveRules(data,m).find(x=>x.skill.id==='machinist_P05')?.trio?.level??0;
+      const proxy={...s,elements:elements??s.elements,effect:{...s.effect,base,m:power,...(elements?{element:elements.length===1?elements[0]:undefined}:{}),st:status??undefined}};
+      const result=attackDamage(data,game,b,i,t,proxy,cm);
+      result.damage=Math.max(0,Math.round(result.damage*finalMultiplier*(1+bonus)*(s.id.startsWith('machinist_')&&weak&&p05?1+[0,.05,.08,.10][p05]:1)));
+      hitEnemy(data,game,b,i,t,result.damage,{...result,primaryAction:true});
+      if(result.landed&&result.damage>0&&status)applyAttackStatuses(data,game,b,i,t,proxy.effect,cm);
+      return result;
+    },
+  });
+  else switch (s.kind) {
     case 'jump': break; // 準備だけ。武器攻撃の資源と命中処理は着地時に一度だけ。
     case 'utility': {
       if (e.master) break;
@@ -2367,7 +2412,7 @@ function absorbCompanionGuard(data,game,b,target,damage){
   const options=[];
   for(let owner=0;owner<game.party.length;owner++){
     if(game.party[owner].hp<=0)continue;
-    for(const kind of ['companion','puppet']){
+    for(const kind of ['companion','puppet','machine']){
       const unit=b.allies[owner][kind],guard=unit?.guard;
       if(!unit?.hp||!guard?.remaining||guard.target!==target||guard.usedClock===b.enemyActionClock)continue;
       options.push({owner,kind,unit,guard});
@@ -2378,23 +2423,24 @@ function absorbCompanionGuard(data,game,b,target,damage){
   }
   if(!options.length)return damage;
   const chosen=options.sort((a,c)=>c.guard.placedClock-a.guard.placedClock||c.owner-a.owner)[0];
-  const cut=chosen.kind==='decoy'?0:ruleNumber(data,game.party[chosen.owner],chosen.kind==='companion'?'companion_cover_cut':'puppet_cover_cut');
+  const cut=chosen.kind==='decoy'?0:chosen.kind==='machine'?0:ruleNumber(data,game.party[chosen.owner],chosen.kind==='companion'?'companion_cover_cut':'puppet_cover_cut');
   const incoming=Math.max(1,Math.round(damage*(1-Math.min(.70,cut))));
-  const absorbed=Math.min(chosen.unit.hp,incoming);
-  chosen.unit.hp-=absorbed;
+  const deviceReduction=chosen.kind==='machine'&&chosen.unit.mode==='guard'?(chosen.unit.modeBonus??0):0;
+  const absorbed=Math.min(incoming,Math.floor(chosen.unit.hp/(1-deviceReduction)));
+  chosen.unit.hp-=Math.min(chosen.unit.hp,Math.max(1,Math.round(absorbed*(1-deviceReduction))));
   if(chosen.kind==='decoy'){
     chosen.unit.usedClock=b.enemyActionClock;chosen.unit.uses--;
     const owner=game.party[chosen.owner],record=b.allies[chosen.owner];
     if(absorbed>0&&(record.decoyMpTriggers??0)<3){record.decoyMpTriggers=(record.decoyMpTriggers??0)+1;
       owner.mp=Math.min(maxMp(data,owner),owner.mp+ruleNumber(data,owner,'decoy_mp_gain'));}
   }else chosen.guard.usedClock=b.enemyActionClock;
-  log(b,`${game.party[chosen.owner].name}の${chosen.kind==='companion'?'相棒':chosen.kind==='puppet'?'人形':'囮'}が${game.party[target].name}への${absorbed}ダメージを引き受けた`);
+  log(b,`${game.party[chosen.owner].name}の${chosen.kind==='companion'?'相棒':chosen.kind==='puppet'?'人形':chosen.kind==='machine'?'装置':'囮'}が${game.party[target].name}への${absorbed}ダメージを引き受けた`);
   if(chosen.unit.hp<=0)delete b.allies[chosen.owner][chosen.kind];
   if(chosen.kind==='decoy'&&chosen.unit.uses<=0)delete b.allies[chosen.owner].decoy;
-  return incoming-absorbed;
+  return chosen.kind==='machine'?Math.max(0,Math.round((incoming-absorbed)*(1-[0,.10,.15,.20][passiveRules(data,game.party[chosen.owner]).find(x=>x.skill.id==='machinist_P04')?.trio?.level??0]))):incoming-absorbed;
 }
 function finishCompanionEnemyAction(b){
-  for(const ally of b.allies)for(const kind of ['companion','puppet']){
+  for(const ally of b.allies)for(const kind of ['companion','puppet','machine']){
     const guard=ally[kind]?.guard;
     if(guard&&--guard.remaining<=0)delete ally[kind].guard;
   }
@@ -2702,6 +2748,7 @@ export function finishBattle(data, game, b) {
     ally.statuses = structuredClone(m.persistState);
     ally.buffs = {};
     ally.masterEffects = {};
+    clearTrio(b,i);
     delete ally.familiar;
     delete ally.companion;
     delete ally.puppet;

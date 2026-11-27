@@ -48,7 +48,7 @@ const near=(actual,expected,margin=1e-8)=>assert.ok(Math.abs(actual-expected)<=m
 const dealt=c=>1e7-c.enemies[0].hp;
 
 test('追加7〜9職は45技能・147段階で、全段階の成長・詳細文・簡素説明・前提が一致する',()=>{
-assert.equal(data.jobs.filter(j=>j.skillsReady).length,35);assert.equal([...data.skills.values()].filter(s=>s.effect.master).length,525);
+assert.equal(data.jobs.filter(j=>j.skillsReady).length,38);assert.equal([...data.skills.values()].filter(s=>s.effect.master).length,570);
   let count=0;const modes={};
   for(const job of spec.jobs){
     const list=[...data.skills.values()].filter(s=>s.job===job.id);assert.equal(list.length,15);
@@ -72,7 +72,7 @@ test('3職は初期選択と既存セーブの転職で使え、自動技能・�
     assert.ok(availableJobs(data,c.game,c.member).some(j=>j.id===id));changeJob(data,c.game,0,id);
     assert.equal(c.member.hp,7);assert.equal(c.member.mp,2);assert.deepEqual(c.member.learned,learned);assert.deepEqual(c.game.storage.gear,gear);
     const saved=normalizeGame(data,JSON.parse(JSON.stringify(c.game)));assert.ok(availableJobs(data,saved,saved.party[0]).some(j=>j.id===id));}
-  assert.equal(data.jobs.filter(j=>!j.skillsReady).length,15);
+  assert.equal(data.jobs.filter(j=>!j.skillsReady).length,12);
 });
 
 test('APで手動修得・強化し、固定技能のLv表記を増やさず、奥義10種類と他職継承を扱う',()=>{
