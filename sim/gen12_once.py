@@ -327,27 +327,6 @@ for i, b in enumerate(bosses):
                      source=b["id"], drop_rate=(0.15 if b["role"] == "boss" else 0.5), fixed_effects="|".join(fx + [sp])))
 W("uniques.csv", ["id", "name", "slot", "kind", "armor_weight", "item_lv", "star", "source", "drop_rate", "fixed_effects"], uniq)
 
-# ================================================================ セット装備（20セット×4部位）
-SETN = ["旅人", "見張り", "森番", "灯台守", "巡礼者", "鉱夫", "船乗り", "学者", "騎兵", "隠者", "竜狩り", "星読み", "嵐の", "月光の",
-        "炎帝", "氷姫", "雷神", "大地の", "黄昏の", "暁の"]
-BON = [("STR:5%", "通常攻撃のダメージ+10%"), ("MAG:5%", "魔法のダメージ+10%"), ("DEF:8%", "受けるダメージ-8%"), ("SPD:5%", "最初のターンに先に動く"),
-       ("HP:8%", "戦闘のあとHP5%回復"), ("LUK:8%", "素材が出やすい+10%"), ("RES:8%", "状態異常にかかる確率-15%"), ("CRT:3", "会心のダメージ+20%")]
-sets = []; set_items = []
-for i, sn in enumerate(SETN):
-    k = 2 + (i * 10) // 20  # ★2〜★11
-    b2, b4 = BON[i % len(BON)]
-    sid = f"set{i+1:02d}"
-    parts = ["head", "body", "arm", "accessory"]
-    wt = rng.choice(["heavy", "medium", "light"])
-    pid = []
-    for p in parts:
-        base = ARM.get((wt, p)) or rng.choice(list(ACC.values()))
-        iid = f"{sid}_{p}"; pid.append(iid)
-        set_items.append(dict(id=iid, set_id=sid, name=f"{sn}の{base}", slot=p, armor_weight=wt if p != "accessory" else "", item_lv=ilvl(2 * k), star=k,
-                              source=f"★{k}のダンジョンでまれに出る", fixed_effects=f"{rng.choice(STATS_SLOT[p])}:{round(3 + ilvl(2*k) * 0.1)}"))
-    sets.append(dict(id=sid, name=f"{sn}の装い", star=k, pieces="|".join(pid), bonus_2=b2, bonus_4=b4))
-W("sets.csv", ["id", "name", "star", "pieces", "bonus_2", "bonus_4"], sets)
-W("set_items.csv", ["id", "set_id", "name", "slot", "armor_weight", "item_lv", "star", "source", "fixed_effects"], set_items)
 
 # ================================================================ 経済・施設・宿
 econ = R("economy_by_rank.csv"); keys = [k for k in econ[0] if k != "dungeon_rank"]
@@ -489,3 +468,4 @@ json.dump(b, open(f"{D}/balance.json", "w", encoding="utf-8"), ensure_ascii=Fals
 import collections
 print("dungeons", len(dungeons), "monsters", len(monsters), collections.Counter(m["role"] for m in monsters), "mats", len(mats),
       "equip", len(eq), "uniques", len(uniq), "sets", len(sets), "ranks", len(ranks), "skills", len(sk))
+

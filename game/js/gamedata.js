@@ -55,8 +55,6 @@ const FILES = {
   facilityRanks: 'facility_ranks.csv',
   facilityEffects: 'facility_effects.csv',
   kokuinSlots: 'kokuin_slots.csv', // 旧セーブの刻印枠費用を返還するためだけに読む。
-  sets: 'sets.csv',
-  setItems: 'set_items.csv',
 };
 
 const byId = (rows, key = 'id') => new Map(rows.map((r) => [r[key], r]));
@@ -110,11 +108,6 @@ export function buildGameData(raw) {
       id: r.id, name: r.name, slot: r.slot, kind: r.weapon_type_or_kind || null, armorWeight: r.armor_weight || null,
       star: toNumber(r.star, 1), source: r.source, unique: false,
     })),
-    ...(raw.setItems ?? []).map((r) => ({
-      id: r.id, name: r.name, slot: r.slot, kind: r.kind || null, armorWeight: r.armor_weight || null,
-      star: toNumber(r.star, 1), source: r.source, setId: r.set_id,
-      fixedEffects: parseEffects(r.fixed_effects),
-    })),
     // 固有装備（ボス・賞金首が落とす）も同じ表で引けるようにする
     ...(raw.uniques ?? []).map((r) => ({
       id: r.id, name: r.name, slot: r.slot, kind: r.kind || null, armorWeight: r.armor_weight || null,
@@ -131,7 +124,7 @@ export function buildGameData(raw) {
       ? equipment.get(r.base_equipment_id)
       : [...equipment.values()].filter((def) => def.slot === 'weapon' && def.kind === r.weapon_type && def.star <= cap && !def.unique)
         .sort((a, b) => b.star - a.star)[0];
-    if (!base || (r.slot && base.slot !== r.slot) || base.unique || base.setId) {
+    if (!base || (r.slot && base.slot !== r.slot) || base.unique) {
       throw new Error(`制作レシピの素体が不正：${r.id}（${r.base_equipment_id || r.weapon_type}）`);
     }
     equipment.set(r.id, {
@@ -171,7 +164,6 @@ export function buildGameData(raw) {
     facilityRanks: raw.facilityRanks ?? [],
     facilityEffects: raw.facilityEffects ?? [],
     kokuinSlots: raw.kokuinSlots ?? [],
-    sets: byId(raw.sets ?? []),
     ...buildBattleData(raw),
   });
 }
@@ -181,8 +173,15 @@ export function parseEffects(cell) {
   const out = {};
   for (const part of splitList(cell)) {
     const bits = part.split(':').map((x) => x.trim());
+    if (bits[0] === '全体化') { out.NORMAL_ALL = 20; continue; }
+    if (bits[0] === '属性付与') { out[`ELEMENT:${bits[1]}`] = 1; continue; }
     const value = Number(bits.pop());
-    out[bits.join(':')] = (out[bits.join(':')] ?? 0) + value;
+    const aliases = { '経験値': 'EXP', 'MP節約': 'MP_SAVE', '瀕死で耐える': 'ENDURE',
+      '毎ターンHP回復': 'REGEN', '先制': 'FIRST_SPD', '反撃': 'COUNTER',
+      'HP吸収': 'LIFESTEAL', '会心ダメージ': 'CRIT_DMG', '状態異常付与': 'STATUS_ON_HIT' };
+    const key = [aliases[bits[0]] ?? bits[0], ...bits.slice(1)].join(':');
+    if (!Number.isFinite(value)) throw new Error(`装備効果の数値が不正：${part}`);
+    out[key] = (out[key] ?? 0) + value;
   }
   return out;
 }
@@ -277,7 +276,7 @@ function buildBattleData(raw) {
       { id: stone.id, name: stone.name, rank: stone.minFacility, kind: 'workshop' });
     loot.materials.set(ENCHANT_POWDER_ID,
       { id: ENCHANT_POWDER_ID, name: 'エンチャント粉', rank: 1, kind: 'workshop' });
-    for (const rarity of [...raw.rarities, { id: 'unique', name: 'ユニーク' }, { id: 'set', name: 'セット' }]) {
+    for (const rarity of [...raw.rarities, { id: 'unique', name: 'ユニーク' }]) {
       const id = 'fragment_' + rarity.id;
       loot.materials.set(id, { id, name: rarity.name + 'の欠片', rank: 1, kind: 'workshop' });
     }
@@ -343,5 +342,6 @@ export function loadGameData() {
 }
 
 export const GAME_FILES = FILES;
+
 
 

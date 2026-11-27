@@ -351,10 +351,10 @@ test('ビルド向けエンチャントが実在素材で選べ、付与結果�
     const candidates = enchantCandidates(master, def);
     const index = candidates.indexOf(family);
     assert.ok(index >= 0);
-    const msg = enchant(master, ctx.game, gear, 0, '', 1, () => (index + 0.01) / candidates.length);
-    assert.equal(gear.enchants[0].stat, family);
-    assert.ok(!msg.includes(family), msg);
-    assert.ok(describeEffect(master, family, gear.enchants[0].value).length > 0);
+    ctx.game.gold = 1e6;
+    enchant(master, ctx.game, gear, '', () => 0.5);
+    assert.ok(Object.values(gear.affixOrigins).filter(kind => kind === 'unique').length >= 2);
+    assert.ok(describeEffect(master, family, 10).length > 0);
   }
 });
 
@@ -389,4 +389,5 @@ test('逃走率付与は行動者だけに反映し、表示と実際の逃走�
   ctx.enemy.boss = false; ctx.battle.allies[0].statuses.bind = { turns: 2 };
   assert.equal(fleeRate(rules, ctx.game, ctx.battle, 0), 0);
 });
+
 

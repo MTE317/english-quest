@@ -75,25 +75,22 @@ test('共通の旧強化石は最初の石へ一度だけ移行する', () => {
   assert.equal(game.storage.materials.enhancement_stone, undefined);
 });
 
-test('粉10個で付与し、竜素材は竜特効を出やすくするが保証しない', () => {
-  const weapon = [...data.equipment.values()].find((e) => e.slot === 'weapon' && e.star === 1 && e.source.includes('制作'));
-  const material = [...data.materials.values()].find((m) => data.monsters.get(m.sourceMonster)?.types?.includes('dragon')
+test('全再付与は★別ゴールドと粉10個を消費し、追加素材は種類を保証しない', () => {
+  const weapon = [...data.equipment.values()].find(e => e.slot === 'weapon' && e.star === 1 && e.source.includes('制作'));
+  const material = [...data.materials.values()].find(m => data.monsters.get(m.sourceMonster)?.types?.includes('dragon')
     && enchantFamilies(data, weapon, m).includes('TYPE_BONUS:dragon'));
   assert.ok(material);
-  const all = enchantCandidates(data, weapon);
-  const boosted = enchantFamilies(data, weapon, material);
-  assert.ok(boosted.includes('TYPE_BONUS:dragon') && all.length > boosted.length);
-  const game = fresh(); game.gold = 10000;
-  game.storage.materials.enchant_powder = 19;
+  const game = fresh();
+  game.gold = 1e6;
+  game.storage.materials.enchant_powder = 10;
   game.storage.materials[material.id] = 1;
   const gear = makeGear(game, weapon.id);
-  const draws = [0, 0];
-  enchant(data, game, gear, 0, material.id, 1, () => draws.shift());
-  assert.equal(gear.enchants[0].stat, boosted[0]);
-  assert.equal(game.storage.materials.enchant_powder, 9);
-  assert.equal(game.storage.materials[material.id], undefined);
-  assert.throws(() => enchant(data, game, gear, 0, '', 1, () => 0), /素材が足りません/);
-  game.storage.materials.enchant_powder = 10;
-  enchant(data, game, gear, 0, '', 1, () => 0);
-  assert.equal(gear.enchants[0].stat, all[0]);
+  const before = game.gold;
+  enchant(data, game, gear, material.id, () => 0.9);
+  assert.equal(game.gold, before - 2 * data.economy.get(weapon.star).craft_gold);
+  assert.equal(game.storage.materials.enchant_powder ?? 0, 0);
+  assert.equal(game.storage.materials[material.id] ?? 0, 0);
+  assert.ok(Object.keys(gear.affixes).length <= 2);
+  assert.throws(() => enchant(data, game, gear, '', () => 0), /素材が足りません/);
 });
+

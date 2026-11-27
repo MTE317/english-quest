@@ -1,13 +1,13 @@
 import { el, render } from '../dom.js?v=skill-growth-2';
 import { equipmentIcon } from './equipment-icons.js?v=skill-growth-2';
 import { uiIcon } from './pixel-icons.js?v=skill-growth-2';
-import { describeFixedEffects, describeEffect } from '../equipment-effects.js?v=skill-growth-2';
+import { describeEffect } from '../equipment-effects.js?v=skill-growth-2';
 
 // 倉庫の表示順と選択状態だけを管理し、所持品の保存順は変更しない。
 export function storageView(data, game, state) {
-  const rarityIds = [...data.rarityTable.map(r => r.id), 'set', 'unique'];
-  const rarityNames = new Map([...data.rarityTable.map(r => [r.id, r.name]), ['set', 'セット'], ['unique', 'ユニーク']]);
-  const rarityOf = (gear, def) => def.unique ? 'unique' : def.setId ? 'set' : gear.rarity || 'common';
+  const rarityIds = [...data.rarityTable.map(r => r.id), 'unique'];
+  const rarityNames = new Map([...data.rarityTable.map(r => [r.id, r.name]), ['unique', 'ユニーク']]);
+  const rarityOf = (gear, def) => def.unique || gear.crafted ? 'unique' : gear.rarity || 'common';
   const modes = [
     { id: 'materials', label: '素材' }, { id: 'gear', label: '装備' }, { id: 'items', label: '道具' },
   ];
@@ -59,17 +59,13 @@ export function storageView(data, game, state) {
     function select(entry) {
       state.selected[mode] = entry.id;
       for (const [id, button] of buttons) button.setAttribute('aria-pressed', String(id === entry.id));
-      const fixed = entry.gear && entry.def ? describeFixedEffects(data, entry.def) : '';
       render(detail,
         el('header', {}, icon(entry), el('h2', {}, entry.name)),
         el('p', { class: 'shop-description' }, entry.description),
         el('p', {}, `所持数：${entry.owned}個`),
-        fixed ? el('p', { class: 'small' }, `固定効果：${fixed}`) : null,
         entry.gear ? [
           ...Object.entries(entry.gear.affixes ?? {}).map(([key, value]) =>
-            el('p', { class: 'small' }, describeEffect(data, key, value))),
-          ...(entry.gear.enchants ?? []).map(effect =>
-            el('p', { class: 'small' }, describeEffect(data, effect.stat, effect.value))),
+            el('p', { class: 'small' }, `${entry.gear.affixOrigins?.[key] === 'unique' ? '固有' : '共通'}：${describeEffect(data, key, value)}`)),
         ] : null);
     }
     render(grid, entries.map(entry => {
@@ -102,4 +98,5 @@ export function storageView(data, game, state) {
   draw();
   return root;
 }
+
 

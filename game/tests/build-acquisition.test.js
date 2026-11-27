@@ -8,6 +8,7 @@ import { gearEffects, maxHp, maxMp, makeGear } from '../js/character.js';
 import { learnSkill, equipSkill, isLearned, upgradeSkill, learnedSkillLevel } from '../js/growth.js';
 import { createBattle, makeEnemy, setPending, resolvePending } from '../js/battle.js';
 import { parseAmounts } from '../js/csv.js';
+import { uniqueCandidates, candidates } from '../js/enchantment-roll.js';
 import { readCsv, readJson, seededRng } from './helpers.js';
 
 const data = buildGameData(Object.fromEntries(Object.entries(GAME_FILES).map(([key, name]) =>
@@ -16,65 +17,30 @@ const fresh = (job = 'warrior') => createNewGame(data,
   [job, 'knight', 'black_mage', 'white_mage', 'thief', 'bard'].map((id) => ({ name: id, job: id, icon: 'x' })));
 const additions = data.balance.content_updates;
 
-test('追加18制作は対応工房と実在素材で作れ、専用効果を保ったまま別の効果を付与できる', () => {
+test('追加18制作は固有4候補を持つユニークとして制作・再抽選できる', () => {
   assert.equal(additions.build36_recipes.length, 18);
   for (const id of additions.build36_recipes) {
-    const recipe = data.recipes.find((row) => row.id === id);
+    const recipe = data.recipes.find(row => row.id === id);
     const def = data.equipment.get(id);
     const rank = Number(recipe.workshop_rank);
-    const facility = 'workshop';
     assert.ok([2, 3].includes(rank));
-    assert.ok(!def.unique && !def.setId);
-    assert.ok(def.star <= Number(data.facilityRanks.find((row) => Number(row.rank) === rank).craft_star_cap));
-    const game = fresh();
-    game.gold = 10000;
-    game.facilities[facility] = rank;
-    for (const { id: materialId, count } of parseAmounts(recipe.materials)) {
-      assert.ok(data.materials.get(materialId).rank <= rank, `${id}: ${materialId}`);
-      game.storage.materials[materialId] = count;
-    }
-    const before = game.gold;
-    craft(data, game, def);
+    assert.equal(Object.keys(uniqueCandidates(data, def)).length, 4);
+    const game = fresh(); game.gold = 1e6; game.facilities.workshop = rank;
+    for (const { id: materialId, count } of parseAmounts(recipe.materials)) game.storage.materials[materialId] = count;
+    craft(data, game, def, seededRng(99));
     const item = game.storage.gear.at(-1);
-    assert.equal(game.gold, before - Number(recipe.gold));
-    assert.deepEqual(item.affixes, def.fixedEffects);
-    assert.equal(item.quality, undefined);
-    const family = enchantCandidates(data, def)[0];
+    assert.equal(item.rarity, 'unique');
+    assert.ok(Object.values(item.affixOrigins).filter(kind => kind === 'unique').length >= 2);
     game.storage.materials.enchant_powder = 10;
-    const candidates = enchantCandidates(data, def);
-    const index = candidates.indexOf(family);
-    enchant(data, game, item, 0, '', rank, () => (index + 0.01) / candidates.length);
-    assert.equal(item.enchants[0].stat, family);
-    assert.deepEqual(item.affixes, def.fixedEffects, '後から付与しても固定効果は消えない');
-    assert.ok(gearEffects(item)[family] > 0);
+    enchant(data, game, item, '', seededRng(177));
+    assert.ok(Object.values(item.affixOrigins).filter(kind => kind === 'unique').length >= 2);
   }
 });
 
-test('7系統と状態別12種を合法付与でき、★12の通常制作にも核効果を持ち越せる', () => {
-  const statusFamilies = affixVariants(data, 'VS_STATUS');
-  assert.equal(statusFamilies.length, 12);
-  const families = [...statusFamilies, 'FIRST_HIT', 'NORMAL_SKILL', 'EVA_COUNTER', 'CRIT_MP', 'ATTACK_HEAL', 'OVERHEAL_SHIELD'];
-  for (const family of families) {
-    const slots = data.affixes.filter((row) => row.stat === family.split(':')[0]).map((row) => row.slot);
-    assert.equal(slots.length, 2, family);
-    for (const slot of slots) {
-      const def = [...data.equipment.values()].filter((entry) => !entry.recipeId && !entry.unique && !entry.setId
-        && entry.slot === slot && entry.star === 12 && entry.source.includes('制作'))[0];
-      assert.ok(def, slot);
-      assert.ok(enchantCandidates(data, def).includes(family), `${family}: ${slot} の抽選候補`);
-      const game = fresh();
-      game.gold = 1000000;
-      game.facilities['workshop'] = 12;
-      const common = [...data.materials.values()].find((entry) => entry.rank === 12 && entry.kind === 'common');
-      game.storage.materials[common.id] = 4;
-      craft(data, game, def);
-      const item = game.storage.gear.at(-1);
-      game.storage.materials.enchant_powder = 10;
-      const candidates = enchantCandidates(data, def);
-      const index = candidates.indexOf(family);
-      enchant(data, game, item, 0, '', 12, () => (index + 0.01) / candidates.length);
-      assert.ok(gearEffects(item)[family] > 0, family);
-    }
+test('状態特効・属性耐性を対象別に通常エンチャント候補へ展開する', () => {
+  for (const family of [...affixVariants(data, 'VS_STATUS'), 'ELEM_RES:fire', 'ELEM_DMG:fire']) {
+    const slots = ['weapon', 'head', 'cloak', 'accessory'].filter(slot => candidates(data, slot).some(row => row.id === family));
+    assert.ok(slots.length, family);
   }
 });
 
@@ -131,5 +97,6 @@ test('新マスターの状態付与8技能は前提LvとAPを払い、装備し
     assert.ok(applied, `${skill.name}: ${status.name}`);
   }
 });
+
 
 

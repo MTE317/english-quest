@@ -1,12 +1,12 @@
 import { roundGold, goldScale } from './gold.js?v=skill-growth-2';
 import { parseAmounts, splitList } from './csv.js?v=skill-growth-2';
-import { makeGear } from './character.js?v=advanced-jobs-1';
-import { rollAffixes } from './loot.js?v=jobs-intro-1';
+import { makeGear } from './character.js?v=unique-reroll-1';
+import { rollSet, rerollValue, enchantCost, facilityValueMul, numericEffect } from './enchantment-roll.js?v=unique-reroll-1';
 import { matchesNeed, parseMaterialNeed } from './town.js?v=public-rewards-1';
 import { currentRank } from './dungeon.js?v=public-rewards-1';
 import { consumeMaterials } from './temple.js?v=skill-growth-2';
-import { describeEffect } from './equipment-effects.js?v=targeted-enchant-2';
-import { equipmentTier, rarityBonus } from './equipment-scaling.js?v=equipment-rarity-1';
+import { describeEffect } from './equipment-effects.js?v=unique-reroll-1';
+import { equipmentTier } from './equipment-scaling.js?v=equipment-rarity-1';
 import { STONE_STAGES, stoneRequirement, ENCHANT_POWDER_ID, ENCHANT_POWDER_COST } from './workshop-materials.js?v=workshop-materials-1';
 
 const facilityFor = () => 'workshop';
@@ -53,7 +53,7 @@ export function canCraft(data, game, def) {
   if (!def) return false;
   const recipe = data.recipes.find((r) => r.id === def.id);
   if ((game.facilities[facilityFor(def)] ?? 1) < Number(recipe?.workshop_rank ?? def.star) ||
-      (!recipe && (!def.source?.includes('制作') || def.unique || def.setId)) ||
+      (!recipe && (!def.source?.includes('制作') || def.unique)) ||
       (recipe?.derive_from && !game.storage.gear.some((g) => g.id === recipe.derive_from && g.crafted))) return false;
   const price = Number(recipe?.gold ?? data.economy.get(def.star)?.craft_gold);
   if (!Number.isFinite(price) || game.gold < price) return false;
@@ -87,23 +87,23 @@ export function brew(data, game, recipe) {
   return `${item.name}を ${qty} 個作った。`;
 }
 
-export function craft(data, game, def) {
+export function craft(data, game, def, rng = Math.random) {
   const recipe = data.recipes.find((r) => r.id === def.id);
   const level = game.facilities[facilityFor(def)] ?? 1;
   const rank = Number(recipe?.workshop_rank ?? def.star);
   if (level < rank) throw new Error('工房ランクが足りません。');
-  if (!recipe && (!def.source?.includes('制作') || def.unique || def.setId)) throw new Error('制作できない装備です。');
+  if (!recipe && (!def.source?.includes('制作') || def.unique)) throw new Error('制作できない装備です。');
   const prerequisite = recipe?.derive_from ? game.storage.gear.find((g) => g.id === recipe.derive_from && g.crafted) : null;
   if (recipe?.derive_from && !prerequisite) throw new Error('派生元の制作装備を倉庫に入れてください。');
   const materials = recipe
     ? Object.fromEntries(parseAmounts(recipe.materials).map(({ id, count }) => [id, count]))
     : typeMaterials(data, game, [{ count: 4, minRank: def.star, kind: 'common', text: `★${def.star}以上の通常素材` }]);
+  const rolled = rollSet(data, def, 'unique', rng,
+    { forceUnique: true, mul: facilityValueMul(data, game) });
   pay(game, Number(recipe?.gold ?? data.economy.get(def.star).craft_gold), materials);
   if (prerequisite) game.storage.gear.splice(game.storage.gear.indexOf(prerequisite), 1);
-  // 専用レシピの固定効果は装備の永続効果として保存する。
-  // 鍛冶・付与と併用できるが、固定効果は振り直し対象にしない（craftedで制御）。
   const gear = makeGear(game, def.id, {
-    affixes: { ...(def.fixedEffects ?? {}) },
+    rarity: 'unique', affixes: rolled.affixes, affixOrigins: rolled.origins,
   });
   gear.crafted = true;
   game.storage.gear.push(gear);
@@ -145,17 +145,11 @@ export function dismantle(data, game, gear) {
 
 export function reroll(data, game, gear, stat, rng) {
   const def = data.equipment.get(gear.id);
-  if (gear.crafted || def.unique || def.setId || !(stat in (gear.affixes ?? {}))) throw new Error('この効果は振り直せません。');
-  const rarity = data.rarityTable.findIndex((r) => r.id === gear.rarity);
-  const cands = Object.entries(rollAffixes(data, def.slot, data.affixes.length, def.star, rarity, rng))
-    .filter(([key]) => key === stat || !(key in gear.affixes));
-  if (!cands.length) throw new Error('選べる効果がありません。');
-  const [key, value] = cands[Math.floor(rng() * cands.length)];
-  pay(game, 0, { [fragmentId(gear)]: 1 + (gear.rerolls ?? 0) });
-  delete gear.affixes[stat];
-  gear.affixes[key] = value;
-  gear.rerolls = (gear.rerolls ?? 0) + 1;
-  return `${describeEffect(data, key, value)} が付いた。`;
+  if (!def || !numericEffect(stat)) throw new Error('この効果の数値は再抽選できません。');
+  const value = rerollValue(data, def, gear, stat, rng, facilityValueMul(data, game));
+  pay(game, enchantCost(data, def), { [ENCHANT_POWDER_ID]: ENCHANT_POWDER_COST });
+  gear.affixes[stat] = value;
+  return `${describeEffect(data, stat, value)} に変わった。`;
 }
 
 // ドロップ品のランダム効果は維持し、工房の候補と数値だけを個別化する。
@@ -218,53 +212,25 @@ export function enchantFamilies(data, def, material) {
   return [...new Set(allowed.flatMap(expand))].filter((family) => candidates.has(family));
 }
 
-function rollEnchant(data, def, material, rng) {
-  const all = enchantCandidates(data, def);
-  if (!all.length) throw new Error('この装備に付けられる効果がありません。');
-  const boosted = material ? enchantFamilies(data, def, material) : [];
-  // 追加素材ありなら65%で対応候補、35%で全部位候補から抽選。狙いの効果も確定しない。
-  const pool = boosted.length && rng() < 0.65 ? boosted : all;
-  const monster = material && data.monsters.get(material.sourceMonster);
-  const direct = new Set([
-    ...(monster?.types ?? []).map((id) => `TYPE_BONUS:${id}`),
-    ...['ELEM_DMG', 'ELEM_RES', 'ELEMENT'].map((kind) => `${kind}:${material?.element}`),
-    ...['STATUS_RATE', 'STATUS_RES', 'VS_STATUS', 'DOT_POWER']
-      .map((kind) => `${kind}:${monster?.status}`),
-  ]);
-  const weights = pool.map((id) => pool === boosted && direct.has(id) ? 4 : 1);
-  const total = weights.reduce((sum, weight) => sum + weight, 0);
-  let roll = Math.min(1 - Number.EPSILON, Math.max(0, rng())) * total;
-  for (let i = 0; i < pool.length; i++) {
-    roll -= weights[i];
-    if (roll < 0) return pool[i];
-  }
-  return pool.at(-1);
-}
 
-export function enchantValue(data, def, family, grade, rarity = 'common') {
-  const base = enchantAffixes(data, def.slot).find((a) => a.stat === family.split(':')[0]);
-  const row = data.enchantGrades.find((r) => Number(r.grade) === grade);
-  if (!base || !row) return null;
-  return base.stat === 'ELEMENT' ? 1 : Math.round(base.max * Number(row.value_mul)
-    * (base.scales ? equipmentTier(data, def.star).affixScale : 1)
-    * rarityBonus(data, rarity).effect * 10) / 10;
-}
-
-export function enchant(data, game, gear, slot, materialId, grade, rng = Math.random) {
+export function enchant(data, game, gear, materialId, rng = Math.random) {
   const def = data.equipment.get(gear.id);
   const material = materialId ? data.materials.get(materialId) : null;
-  const row = data.enchantGrades.find((r) => Number(r.grade) === grade);
-  if (!def || def.unique || def.setId || ![0, 1].includes(slot) || (slot === 1 && !gear.enchants?.[0])) throw new Error('この枠には付与できません。');
-  if (!row || (game.facilities[facilityFor(def)] ?? 1) < Number(row.workshop_rank)) throw new Error('工房ランクが足りません。');
+  if (!def) throw new Error('装備がありません。');
   if (materialId && (!material || !enchantFamilies(data, def, material).length)) throw new Error('この素材では候補を絞れません。');
-  pay(game, Number(row.gold), {
+  const rolled = rollSet(data, def, gear.rarity, rng, {
+    forceUnique: Boolean(gear.crafted),
+    preferred: material ? enchantFamilies(data, def, material) : [],
+    mul: facilityValueMul(data, game),
+  });
+  pay(game, enchantCost(data, def), {
     [ENCHANT_POWDER_ID]: ENCHANT_POWDER_COST,
     ...(materialId ? { [materialId]: 1 } : {}),
   });
-  const family = rollEnchant(data, def, material, rng);
-  const value = enchantValue(data, def, family, grade, gear.rarity);
-  gear.enchants ??= [];
-  gear.enchants[slot] = { stat: family, value };
-  return `${describeEffect(data, family, value)} を付けた。`;
+  gear.affixes = rolled.affixes;
+  gear.affixOrigins = rolled.origins;
+  delete gear.enchants;
+  return `効果を${Object.keys(rolled.affixes).length}個に再抽選した。`;
 }
+
 

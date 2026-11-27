@@ -40,6 +40,7 @@ export function makeGear(game, equipId, opts = {}) {
   const gear = {
     uid: game.nextUid++, id: equipId, enh: opts.enh ?? 0,
     rarity: opts.rarity ?? 'common', affixes: opts.affixes ?? {},
+    affixOrigins: opts.affixOrigins ?? {},
   };
   return gear;
 }
@@ -338,5 +339,6 @@ export function createMember(data, game, spec, index) {
   member.mp = maxMp(data, member);
   return member;
 }
+
 
 

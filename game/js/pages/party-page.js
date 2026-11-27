@@ -1,22 +1,22 @@
 import { availableAp } from '../ap.js?v=skill-growth-2';
 // パーティーの画面：キャラメイク・6人の一覧・能力値・装備8枠
-import { loadGameData } from '../gamedata.js?v=workshop-materials-1';
+import { loadGameData } from '../gamedata.js?v=unique-reroll-1';
 import { GameSession } from '../save.js?v=party-wipe-1';
-import { createNewGame, defaultPartySpecs, normalizeGame } from '../game-state.js?v=workshop-materials-1';
+import { createNewGame, defaultPartySpecs, normalizeGame } from '../game-state.js?v=unique-reroll-1';
 import {
   computeStats, SLOTS, SLOT_LABEL, STAT_LABEL, canEquip, equipFromStorage, equipRecommended, unequip, gearDef,
   aptitudeGrade, xpToNext, levelCap, gainXp, makeGear,
-} from '../character.js?v=recommended-equipment-1';
+} from '../character.js?v=unique-reroll-1';
 import {
   availableJobs, jobPaths, isLearned, learnBlock, learnSkill, equipBlock, equipSkill, unequipSkill, capacity, usedCapacity,
   commonApCost, commonBlock, learnCommon, masteryLevel, isJobMastered, GROWTH_FORMULAS,
   skillMaxLevel, learnedSkillLevel, effectiveSkill, upgradeSkillBlock, upgradeSkill, skillWeaponBlock,
-} from '../growth.js?v=advanced-jobs-1';
-import { skillMp } from '../battle.js?v=public-rewards-1';
+} from '../growth.js?v=unique-reroll-1';
+import { skillMp } from '../battle.js?v=unique-reroll-1';
 import { elementResistancePanel } from '../ui/element-resistance.js?v=public-rewards-1';
 import { statusSusceptibilityPanel } from '../ui/status-susceptibility.js?v=public-rewards-1';
 import { el, render, stars } from '../dom.js?v=skill-growth-2';
-import { describeFixedEffects } from '../equipment-effects.js?v=skill-growth-2';
+import { describeFixedEffects } from '../equipment-effects.js?v=unique-reroll-1';
 import { describeSkillForUI } from '../skill-effects.js?v=tactical-jobs-1';
 import { SKILL_CATEGORIES, skillCategory, skillLoadoutKind, equippedSkillIds, isSkillEquipped, skillCostLabel, skillWeaponText, prerequisiteText } from '../ui/skill-presentation.js?v=skill-growth-2';
 
@@ -635,9 +635,9 @@ function showSlot(index, slot, container, refresh) {
     el('div', { class: 'shop-grid storage-grid equipment-items', role: 'group', 'aria-label': '倉庫の装備一覧' },
       cands.map(({ gear, check }) => {
         const def = gearDef(data, gear);
-        const rarity = def.unique ? 'unique' : def.setId ? 'set' : gear.rarity || 'common';
+        const rarity = def.unique || gear.crafted ? 'unique' : gear.rarity || 'common';
         const rarityName = data.rarityTable.find(entry => entry.id === rarity)?.name
-          ?? ({ set: 'セット', unique: 'ユニーク' }[rarity]) ?? rarity;
+          ?? ({ unique: 'ユニーク' }[rarity]) ?? rarity;
         const button = el('button', { type: 'button', class: 'shop-slot', 'data-rarity': rarity,
           disabled: !check.ok, 'aria-pressed': 'false',
           'aria-label': `${gearLabel(gear, m.job)}、${rarityName}、${check.ok ? '比較する' : check.reason}`,
@@ -685,5 +685,6 @@ function debugTools() {
     console.error(e);
   }
 })();
+
 
 
