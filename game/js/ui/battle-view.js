@@ -4,7 +4,7 @@ import { now } from '../storage.js?v=skill-growth-2';
 import { QuestionPicker, REASON_LABEL } from '../picker.js?v=skill-growth-2';
 import { makePracticeQuestion, questionDirection, questionSpeech, DIRECTION } from '../quiz.js?v=skill-growth-2';
 import { speak, canSpeak, stopSpeech } from '../speech.js?v=skill-growth-2';
-import { nextTurn, actionOptions, setPending, prepareQuizAction, resolvePending, targetKind, skillMp, collectBattleHits, enemyIntent, enemyCanAct } from '../battle.js?v=jobs-25-27-1';
+import { nextTurn, actionOptions, setPending, prepareQuizAction, resolvePending, targetKind, skillMp, collectBattleHits, enemyIntent, enemyCanAct } from '../battle.js?v=jobs-28-30-1';
 import { skillMaxLevel, learnedSkillLevel, effectiveSkill } from '../growth.js?v=advanced-jobs-1';
 import { maxHp, maxMp } from '../character.js?v=advanced-jobs-1';
 import { el, render } from '../dom.js?v=skill-growth-2';
@@ -16,7 +16,7 @@ import { portraitIcon } from './portrait.js?v=skill-growth-2';
 import { ultimateGauge } from './skill-presentation.js?v=skill-growth-2';
 import { skillIcon } from './skill-icons.js?v=skill-icons-1';
 import { describeSkillEffect, describeSkillForUI } from '../skill-effects.js?v=tactical-jobs-1';
-import { ownedBlessing, passiveRules, activeDuel, prayerRule, prayerStage } from '../job-combat.js?v=jobs-25-27-1';
+import { ownedBlessing, passiveRules, activeDuel, prayerRule, prayerStage } from '../job-combat.js?v=jobs-28-30-1';
 import { statusIconId, buffIconId, effectIcon, JOB_EFFECT_ICON } from './effect-icons.js?v=battle-effect-icons-1';
 
 const TARGET_PROMPT = {
@@ -182,6 +182,12 @@ export function allyEffectEntries(data, game, battle, index) {
   if(member.hp>0 && ally.familiar?.uses>0)ongoing.push(entry(`使い魔：${ally.familiar.mode==='pursuit'?'追撃型':'悪戯型'}・残り${ally.familiar.uses}回${duration(ally.familiar.remaining)}`));
   if(member.hp>0 && ally.companion?.hp>0)ongoing.push(entry(`相棒：耐久${ally.companion.hp}/${ally.companion.maxHp}${duration(ally.companion.remaining)}`));
   if(member.hp>0 && ally.puppet?.hp>0)ongoing.push(entry(`人形：${ally.puppet.stance==='guard'?'防御型':'攻撃型'}・耐久${ally.puppet.hp}/${ally.puppet.maxHp}${duration(ally.puppet.remaining)}`));
+  if(member.hp>0 && ally.decoy?.hp>0)ongoing.push(entry(`囮：${game.party[ally.decoy.target]?.name??'味方'}を保護・耐久${ally.decoy.hp}/${ally.decoy.maxHp}・残り${ally.decoy.uses}回`));
+  if(member.hp>0 && ally.strategistOrder)ongoing.push(entry(`号令：${ally.strategistOrder.type==='guard'?'次の被害を軽減':ally.strategistOrder.type==='flank'?'指定敵への通常攻撃を強化':'次の直接攻撃を強化'}${duration(ally.strategistOrder.remaining)}`));
+  if(member.hp>0 && ally.strategistUltimate)ongoing.push(entry(`天下布陣：攻撃${ally.strategistUltimate.damage!=null?'待機中':'使用済み'}・防護${ally.strategistUltimate.guard!=null?'待機中':'使用済み'}${duration(ally.strategistUltimate.remaining)}`));
+  if(member.hp>0 && ally.comebackTickets>0)ongoing.push(entry(`再起札 ${ally.comebackTickets}/2`));
+  if(member.hp>0 && ally.insurance)ongoing.push(entry(`保険札：失敗倍率 +${ally.insurance.rate.toFixed(2)}${duration(ally.insurance.remaining)}`));
+  if(member.hp>0 && ally.winCrit)ongoing.push(entry(`勝ちの勢い：次の堅実な攻撃 会心 +${Math.round(ally.winCrit.rate*100)}ポイント${duration(ally.winCrit.remaining)}`));
   if(member.hp>0 && (member.job==='dancer'||(ally.rhythm??0)>0))ongoing.push(entry(`律動 ${ally.rhythm??0}/2`));
   if (ally.normalSkillReady) special.push(entry('次の攻撃技能を強化'));
   const barrier = ally.buffs?.barrier;
@@ -546,10 +552,10 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
       ], { back });
     };
     if (!elements.length) return chooseBoost(action);
-    showPanel(`${skill.name}の${skill.effect.rules?.puppet_quick_stance?'構え':'属性'}`, [
+    showPanel(`${skill.name}の${skill.effect.rules?.gamble?'勝負':skill.effect.rules?.puppet_quick_stance?'構え':'属性'}`, [
       el('p', { class: 'battle-notice' }, describeSkillEffect(data, skill)),
       el('div', { class: 'battle-action-list' }, elements.map(element => listChoice(
-         ({pursuit:'追撃型',mischief:'悪戯型',attack:'攻撃型',guard:'防御型'}[element] ?? data.elements.get(element)?.name ?? element), `MP ${battleMp(skill)}`, null,
+         ({pursuit:'追撃型',mischief:'悪戯型',attack:'攻撃型',guard:'防御型',safe:'堅実',risk:'大勝負'}[element] ?? data.elements.get(element)?.name ?? element), `MP ${battleMp(skill)}`, null,
         () => chooseBoost({ ...action, element })))),
     ], { back });
   }
@@ -561,6 +567,31 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
       && Object.values(b.allies[b.turn.i].masterEffects??{}).some(effect=>effect.nextMagicEcho)
       && targetKind(data,action,member)==='enemies' && !skill.effect.select_targets;
     const kind = magicPrimary?'enemy':targetKind(data, action, member);
+    const rule=skill?.effect.rules??{};
+    if(rule.proxy_attack && action.sourceTarget==null){
+      const indices=g.party.flatMap((m,index)=>m.hp>0&&!['petrify','sleep','freeze','stun','paralysis','confusion','charm'].some(id=>b.allies[index].statuses[id])?[index]:[]);
+      const select=sourceTarget=>chooseTarget({...action,sourceTarget},sub,targetReasons);
+      drawField(b.turn.i,{kind:'ally',indices,select});
+      showPanel(skill.name,[el('p',{class:'battle-target-prompt'},'連携する味方を選ぶ')],{back:()=>showCommand(sub)});
+      return;
+    }
+    if(rule.orders_party){
+      const indices=g.party.flatMap((m,index)=>m.hp>0&&!b.allies[index].statuses.petrify?[index]:[]);
+      const count=Math.min(rule.orders_party.count,indices.length),selected=new Set();
+      const select=index=>{if(selected.has(index))selected.delete(index);else if(selected.size<count)selected.add(index);drawSelection();};
+      const drawSelection=()=>{drawField(b.turn.i,{kind:'ally',indices,select});
+        showPanel(skill.name,[el('p',{class:'battle-target-prompt'},`味方を${count}人選ぶ（${selected.size}/${count}）`),
+          el('div',{class:'battle-targets'},indices.map(index=>el('button',{'aria-pressed':String(selected.has(index)),onclick:()=>select(index)},`${selected.has(index)?'✓ ':''}${g.party[index].name}`))),
+          el('button',{disabled:selected.size!==count,onclick:()=>ask({...action,targets:[...selected]})},'この対象に号令する')],{back:()=>showCommand(sub)});};
+      return drawSelection();
+    }
+    if(rule.decoy_ultimate && action.secondaryTarget==null){
+      const indices=g.party.flatMap((m,index)=>m.hp>0&&!b.allies[index].statuses.petrify?[index]:[]);
+      const select=secondaryTarget=>chooseTarget({...action,secondaryTarget},sub,targetReasons);
+      drawField(b.turn.i,{kind:'ally',indices,select});
+      showPanel(skill.name,[el('p',{class:'battle-target-prompt'},'強化囮の保護先を選ぶ')],{back:()=>showCommand(sub)});
+      return;
+    }
     if (skill?.effect.rules?.move_blessing && action.sourceTarget == null) {
       const indices=g.party.flatMap((m,index)=>m.hp>0&&!b.allies[index].statuses.petrify&&ownedBlessing(b,b.turn.i,index)?[index]:[]);
       if (!indices.length) return showCommand(sub,'移せる自分の加護がありません。');
@@ -597,11 +628,21 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
     } else {
       indices = g.party.flatMap((target, index) => target.hp > 0
         && !(skill?.effect.master && b.allies[index].statuses?.petrify)
+        && (!(skill?.effect.rules?.order_front||skill?.effect.rules?.order_speed)||b.queue.some(u=>u.side==='ally'&&u.i===index))
+        && !(skill?.effect.rules?.decoy_move && b.allies[b.turn.i].decoy?.target===index)
         && !(skill?.effect.rules?.move_blessing && index===action.sourceTarget)
         && !(skill?.effect.rules?.cover?.target === 'selected' && index === b.turn.i) ? [index] : []);
     }
 
     const select = target => {
+      if(rule.proxy_attack)return ask({...action,target,secondaryTarget:target});
+      if(rule.order?.enemy){
+        const enemies=b.enemies.flatMap((enemy,index)=>enemy.hp>0?[index]:[]);
+        const pickEnemy=secondaryTarget=>ask({...action,target,secondaryTarget});
+        drawField(b.turn.i,{kind:'enemy',indices:enemies,select:pickEnemy});
+        showPanel(skill.name,[el('p',{class:'battle-target-prompt'},'対象の敵を選ぶ')],{back:()=>chooseTarget(action,sub,targetReasons)});
+        return;
+      }
       if (!skill?.effect.rules?.kill_followup) return ask({...action,target});
       const others=b.enemies.flatMap((enemy,index)=>enemy.hp>0&&index!==target?[index]:[]);
       const pickSecondary=secondaryTarget=>ask({...action,target,secondaryTarget});

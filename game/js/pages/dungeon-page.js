@@ -10,10 +10,10 @@ import { normalizeGame } from '../game-state.js?v=unique-reroll-1';
 import {
   allowedDungeons, allowedStones, expeditionFee, startRun, startNextBattle, afterBattle, returnToTown, continueRun, resolveLoot,
   isBossBattle, runFloorRow, runFloorCount, returnItems, currentRank, useItemOutsideBattle, FIELD_ITEM_EFFECTS,
-} from '../dungeon.js?v=jobs-25-27-1';
+} from '../dungeon.js?v=jobs-28-30-1';
 import { backpackSlots, backpackUsed, addItem } from '../loot.js?v=unique-reroll-1';
 import { maxHp, maxMp, partyCanAct } from '../character.js?v=unique-reroll-1';
-import { createBattleView } from '../ui/battle-view.js?v=jobs-25-27-1';
+import { createBattleView } from '../ui/battle-view.js?v=jobs-28-30-1';
 import { createVictoryView, createLootIcons } from '../ui/victory-view.js?v=advanced-jobs-1';
 import { el, render, stars } from '../dom.js?v=skill-growth-2';
 import { buildWorldMap, newDiscoveries } from '../world-map.js?v=canyon-public-1';

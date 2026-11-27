@@ -7,7 +7,7 @@ import { roundGold } from './gold.js?v=skill-growth-2';
 //   'loot'         … 拾ったものがバックパックに入りきらない（入れ替えるかあきらめるかを選ぶ）
 //   'return_point' … 帰還ポイント（帰るか先へ進むかを選ぶ）
 //   'cleared'      … いちばん奥のボスを倒した（町に帰るだけ）
-import { createBattle, finishBattle, battleRewards, curedBy } from './battle.js?v=jobs-25-27-1';
+import { createBattle, finishBattle, battleRewards, curedBy } from './battle.js?v=jobs-28-30-1';
 import { recordMonsterDefeats } from './monster-knowledge.js?v=monster-catalog-1';
 import { makeEncounter, floorRow, planBounty } from './encounter.js?v=canyon-public-1';
 import { rollBattleLoot, addToBackpack, swapIntoBackpack, unloadBackpack } from './loot.js?v=jobs-intro-1';
