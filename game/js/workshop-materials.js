@@ -20,7 +20,7 @@ export function availableStoneStages(data, game) {
   return STONE_STAGES.filter((stage) => stage.minFacility <= cap);
 }
 
-// セットを最後まで英作文で完了した場合だけ、自己評価によらず固定数を両方付与。
+// セットを最後まで英作文で完了した場合だけ、自己評価によらず石は問題数に応じて1～3個、粉は1個付与。
 export function awardCompositionSet(data, game, { mode, count, answered, phrases, stoneId }) {
   if (!['phrases', 'chunks'].includes(mode) || ![5, 10, 15].includes(count)
     || answered !== count || phrases !== count) return null;
@@ -29,6 +29,6 @@ export function awardCompositionSet(data, game, { mode, count, answered, phrases
   const amount = count / 5;
   const stock = game.storage.materials;
   stock[stage.id] = (stock[stage.id] ?? 0) + amount;
-  stock[ENCHANT_POWDER_ID] = (stock[ENCHANT_POWDER_ID] ?? 0) + amount;
-  return { stoneId: stage.id, stoneName: stage.name, stones: amount, powder: amount };
+  stock[ENCHANT_POWDER_ID] = (stock[ENCHANT_POWDER_ID] ?? 0) + 1;
+  return { stoneId: stage.id, stoneName: stage.name, stones: amount, powder: 1 };
 }
