@@ -4,7 +4,7 @@ import { now } from '../storage.js?v=skill-growth-2';
 import { QuestionPicker, REASON_LABEL } from '../picker.js?v=skill-growth-2';
 import { makePracticeQuestion, questionDirection, questionSpeech, DIRECTION } from '../quiz.js?v=skill-growth-2';
 import { speak, canSpeak, stopSpeech } from '../speech.js?v=skill-growth-2';
-import { nextTurn, actionOptions, setPending, prepareQuizAction, resolvePending, targetKind, skillMp, collectBattleHits, enemyIntent, enemyCanAct } from '../battle.js?v=jobs-19-21-1';
+import { nextTurn, actionOptions, setPending, prepareQuizAction, resolvePending, targetKind, skillMp, collectBattleHits, enemyIntent, enemyCanAct } from '../battle.js?v=jobs-31-33-1';
 import { skillMaxLevel, learnedSkillLevel, effectiveSkill } from '../growth.js?v=advanced-jobs-1';
 import { maxHp, maxMp } from '../character.js?v=advanced-jobs-1';
 import { el, render } from '../dom.js?v=skill-growth-2';
@@ -535,6 +535,10 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
     const elements = entry.elements ?? skill.effect.rules?.choose_element ?? skill.effect.rules?.choose_mode ?? [];
     const back = () => showCommand('skill');
     const chooseBoost = selected => {
+      if (skill.effect.rules?.trio_items && !selected.itemId) return showPanel(`${skill.name}の素材`,[
+        el('div',{class:'battle-action-list'},entry.itemChoices.map(item=>listChoice(item.name,`×${item.count}`,null,
+          ()=>chooseBoost({...selected,itemId:item.id})))),
+      ],{back});
       if (entry.optionalClone && selected.consumeClone==null) return showPanel(`${skill.name}の分身`,[
         el('p',{class:'battle-notice'},'分身1体を使うと、今回の一撃が強まります。'),
         el('div',{class:'battle-action-list'},
