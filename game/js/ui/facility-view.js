@@ -47,7 +47,7 @@ export function workshopView(data, g, act, rng, selection) {
   }
 
   function redraw() {
-    const tabs = [['craft', '制作'], ['gear', '倉庫の装備（強化）'], ['alchemy', '調合台']];
+    const tabs = [['craft', '制作'], ['gear', '武器強化・分解'], ['alchemy', '調合台']];
     if (!tabs.some(([id]) => id === selection.tab)) selection.tab = 'craft';
     const switcher = el('div', { class: 'district-switch workshop-tabs', role: 'group', 'aria-label': '工房の窓口' },
       tabs.map(([id, title]) => el('button', { type: 'button', 'data-workshop-tab': id,
@@ -57,16 +57,21 @@ export function workshopView(data, g, act, rng, selection) {
         },
       }, title)));
     if (selection.tab === 'gear') {
-      const gear = g.storage.gear.find(item => item.uid === selection.gear) ?? g.storage.gear[0];
+      const entries = [
+        ...g.storage.gear.map(item => ({ item, location: '倉庫' })),
+        ...g.party.flatMap(member => Object.values(member.equip ?? {}).filter(Boolean)
+          .map(item => ({ item, location: `${member.name}：装備中` }))),
+      ];
+      const gear = entries.find(({ item }) => item.uid === selection.gear)?.item ?? entries[0]?.item;
       selection.gear = gear?.uid;
-      render(deck, switcher, iconCatalog(g.storage.gear.map(item => {
+      render(deck, switcher, iconCatalog(entries.map(({ item, location }) => {
         const def = data.equipment.get(item.id);
         const rarity = item.rarity === 'unique' ? 'ユニーク'
           : data.rarityTable.find(r => r.id === item.rarity)?.name ?? 'コモン';
         return { id: String(item.uid), name: `${def?.name ?? item.id}${item.enh > 0 ? ' +' + item.enh : ''}`,
-          rarity: item.rarity, caption: rarity, icon: () => equipmentIcon(def) ?? uiIcon('gear') };
-      }), gear ? String(gear.uid) : '', id => { selection.gear = g.storage.gear.find(item => String(item.uid) === id)?.uid; },
-      gear ? gearOptions(gear) : [], '倉庫に装備がありません。'));
+          rarity: item.rarity, caption: `${rarity} ／ ${location}`, icon: () => equipmentIcon(def) ?? uiIcon('gear') };
+      }), gear ? String(gear.uid) : '', id => { selection.gear = entries.find(({ item }) => String(item.uid) === id)?.item.uid; },
+      gear ? gearOptions(gear) : [], '強化・分解できる装備がありません。'));
       return;
     }
     if (selection.tab === 'alchemy') {
@@ -131,6 +136,7 @@ export function workshopView(data, g, act, rng, selection) {
   }
 
   function gearOptions(item) {
+    const inStorage = g.storage.gear.includes(item);
     const definition = data.equipment.get(item.id);
     const icon = equipmentIcon(definition);
     const stats = Object.entries(item.affixes ?? {});
@@ -147,12 +153,12 @@ export function workshopView(data, g, act, rng, selection) {
       })()) : el('p', { class: 'small muted' }, '強化上限 +10'),
       btn('強化する', () => act((game) => enhance(data, game, item, rng())),
         !stoneRequirement(data, item.enh) || (g.storage.materials[stoneRequirement(data, item.enh).id] ?? 0) < stoneRequirement(data, item.enh).count),
-      btn(`分解する（粉${dismantlePowder(item)}個）`, () => {
+      inStorage ? btn(`分解する（粉${dismantlePowder(item)}個）`, () => {
         if (confirm(`${definition.name}を分解しますか？ 欠片1個・強化石Iを1個・エンチャント粉${dismantlePowder(item)}個を得ます。`))
           act((game) => dismantle(data, game, item));
-      }),
-      enchantForm(item, definition),
-      stats.some(([key]) => numericEffect(key)) ? panel('② 数値だけ再抽選',
+      }) : el('p', { class: 'small muted' }, '装備中のアイテムは分解できません。分解する場合は装備を外してください。'),
+      inStorage ? enchantForm(item, definition) : null,
+      inStorage && stats.some(([key]) => numericEffect(key)) ? panel('② 数値だけ再抽選',
         el('p', { class: 'small muted' }, `選んだ効果の種類は変わりません。${price} G・粉${ENCHANT_POWDER_COST}個。数値が下がることもあります。`),
         stats.filter(([key]) => numericEffect(key)).map(([key, value]) =>
           btn(`${describeEffect(data, key, value)} の数値を引き直す`,
