@@ -192,6 +192,13 @@ function switchMemberTab(index, tab) {
   view.querySelector('.member-main-tabs [aria-pressed="true"]')?.focus({ preventScroll: true });
 }
 
+function switchSkillTab(show) {
+  const { scrollX, scrollY } = window;
+  show();
+  window.scrollTo({ left: scrollX, top: scrollY, behavior: 'instant' });
+  view.querySelector('.member-skill-tabs [aria-pressed="true"]')?.focus({ preventScroll: true });
+}
+
 function memberNavigation(index, active, switchMember, {
   skillMode = 'learn', onSkillLearn = () => showSkills(index), onSkillSet = () => showLoadout(index),
 } = {}) {
@@ -205,9 +212,9 @@ function memberNavigation(index, active, switchMember, {
           onclick: () => { if (active !== id) switchMemberTab(index, id); } }, title))),
     active === 'skills' ? el('div', { class: 'member-skill-tabs', role: 'group', 'aria-label': 'スキルのメニュー' },
       el('button', { type: 'button', 'aria-pressed': String(skillMode === 'learn'),
-        onclick: () => { if (skillMode !== 'learn') onSkillLearn(); } }, '習得'),
+        onclick: () => { if (skillMode !== 'learn') switchSkillTab(onSkillLearn); } }, '習得'),
       el('button', { type: 'button', 'aria-pressed': String(skillMode === 'set'),
-        onclick: () => { if (skillMode !== 'set') onSkillSet(); } }, 'セット')) : null,
+        onclick: () => { if (skillMode !== 'set') switchSkillTab(onSkillSet); } }, 'セット')) : null,
   ];
 }
 
