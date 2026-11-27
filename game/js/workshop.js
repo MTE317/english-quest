@@ -191,8 +191,8 @@ function enchantVariants(data, family) {
 export function enchantCandidates(data, def) {
   const excluded = new Set(['STATUS_RATE', 'STATUS_RES', 'DOT_POWER', 'VS_DEBUFFED']);
   return [...new Set(enchantAffixes(data, def.slot)
-    .filter((affix) => !excluded.has(affix.stat))
-    .flatMap((affix) => enchantVariants(data, affix.stat)))];
+    .flatMap((affix) => enchantVariants(data, affix.stat))
+    .filter((family) => !excluded.has(family)))];
 }
 
 // 旧対応表は付与の許可条件ではなく、追加素材が確率を高める効果の表として使う。
