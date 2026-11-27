@@ -6,6 +6,37 @@ export const STONE_STAGES = Object.freeze([
   { id: 'enhancement_stone_4', name: '強化石IV', minFacility: 4 },
   { id: 'enhancement_stone_5', name: '強化石V', minFacility: 5 },
 ]);
+// 装備のレアリティに対応する分解素材。固有装備は★に見合う段階を返す。
+export const STONE_FRAGMENT_BY_RARITY = Object.freeze({
+  common: 1, uncommon: 2, rare: 3, epic: 4,
+  legendary: 5, artifact: 5, origin: 5,
+});
+export const stoneFragmentId = (stage) => `enhancement_stone_fragment_${stage}`;
+export function dismantleFragment(data, gear) {
+  const def = data.equipment.get(gear.id);
+  const star = Number(def?.star ?? 1);
+  const stage = gear.rarity === 'unique'
+    ? (star <= 3 ? 1 : star <= 5 ? 2 : star <= 7 ? 3 : star <= 9 ? 4 : 5)
+    : (STONE_FRAGMENT_BY_RARITY[gear.rarity ?? 'common'] ?? 1);
+  return STONE_STAGES[stage - 1];
+}
+
+// 石を優先し、不足分だけ同種の欠片を3個ずつ消費する。
+export function stonePayment(game, stone) {
+  const stage = STONE_STAGES.findIndex(row => row.id === stone.id) + 1;
+  if (!stage) throw new Error('強化石の種類が不正です。');
+  const whole = Math.min(game.storage.materials[stone.id] ?? 0, stone.count);
+  const missing = stone.count - whole;
+  const fragmentId = stoneFragmentId(stage);
+  if ((game.storage.materials[fragmentId] ?? 0) < missing * 3) throw new Error('強化石・欠片が足りません。');
+  return { ...(whole ? { [stone.id]: whole } : {}),
+    ...(missing ? { [fragmentId]: missing * 3 } : {}) };
+}
+export function availableStones(game, stone) {
+  const stage = STONE_STAGES.findIndex(row => row.id === stone.id) + 1;
+  return (game.storage.materials[stone.id] ?? 0) +
+    Math.floor((game.storage.materials[stoneFragmentId(stage)] ?? 0) / 3);
+}
 export const ENCHANT_POWDER_ID = 'enchant_powder';
 export const ENCHANT_POWDER_COST = 10;
 
