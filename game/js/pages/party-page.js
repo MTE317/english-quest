@@ -8,10 +8,10 @@ import {
   aptitudeGrade, xpToNext, levelCap, gainXp, makeGear,
 } from '../character.js?v=unique-reroll-1';
 import {
-  availableJobs, jobPaths, isLearned, learnBlock, learnSkill, equipBlock, equipSkill, unequipSkill, capacity, usedCapacity,
+  availableJobs, jobPaths, isLearned, learnBlock, learnAndEquipSkill, equipBlock, equipSkill, unequipSkill, capacity, usedCapacity,
   commonApCost, commonBlock, learnCommon, masteryLevel, isJobMastered, GROWTH_FORMULAS,
   skillMaxLevel, learnedSkillLevel, effectiveSkill, upgradeSkillBlock, upgradeSkill, skillWeaponBlock,
-} from '../growth.js?v=unique-reroll-1';
+} from '../growth.js?v=auto-equip-skills-1';
 import { skillMp } from '../battle.js?v=unique-reroll-1';
 import { elementResistancePanel } from '../ui/element-resistance.js?v=public-rewards-1';
 import { statusSusceptibilityPanel } from '../ui/status-susceptibility.js?v=public-rewards-1';
@@ -453,8 +453,9 @@ function showSkills(index, jobId, skillId, message = '') {
 
   function updateSkill(fn) {
     try {
-      session.update((game) => fn(game.party[index]));
-      showSkills(index, job, selected.id);
+      let result;
+      session.update((game) => { result = fn(game.party[index]); });
+      showSkills(index, job, selected.id, typeof result === 'string' ? result : '');
     } catch (error) {
       showSkills(index, job, selected.id, error.message);
     }
@@ -482,7 +483,7 @@ function showSkills(index, jobId, skillId, message = '') {
           upgradeReason || `Lv${level + 1}へ強化（AP ${next.ap}）`) : el('p', { class: 'small muted' }, '最大Lvです。')) : null,
       !learned
         ? el('button', { class: 'primary', disabled: session.inDungeon || !!learnReason,
-          onclick: () => updateSkill((m) => learnSkill(data, m, skill.id)) }, learnReason || `覚える（AP ${skill.apToLearn}）`)
+          onclick: () => updateSkill((m) => learnAndEquipSkill(data, m, skill.id)) }, learnReason || `覚える（AP ${skill.apToLearn}）`)
         : el('p', { class: 'small muted' }, '習得済み。装着・取り外しはスキル装備画面で行えます。'));
   }
 
@@ -533,7 +534,7 @@ function showSkills(index, jobId, skillId, message = '') {
     }),
     el('h2', {}, 'スキル習得・強化'),
     detail,
-    message ? el('p', { class: 'error', role: 'status' }, message) : null,
+    message ? el('p', { class: 'panel small', role: 'status' }, message) : null,
     jobs.length > 1 ? el('label', { class: 'small' }, 'ジョブ',
       el('select', { class: 'select', onchange: (event) => showSkills(index, event.target.value) },
         jobs.map((id) => el('option', { value: id, selected: id === job }, jobName(id))))) : null,

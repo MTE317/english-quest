@@ -109,6 +109,16 @@ export function learnSkill(data, member, skillId) {
   }
 }
 
+/** 習得後、空いている枠へ自動セットする。セットできなくても習得は維持する。 */
+export function learnAndEquipSkill(data, member, skillId) {
+  learnSkill(data, member, skillId);
+  const skill = data.skills.get(skillId);
+  const reason = equipBlock(data, member, skill);
+  if (reason) return `${skill.name}を習得しました。自動セットできませんでした：${reason}。スキル装備画面でセットを変更してください。`;
+  equipSkill(data, member, skillId);
+  return `${skill.name}を習得し、自動でセットしました。`;
+}
+
 // ---------------- 技能レベル（修得した最高Lvで常に発動） ----------------
 export function skillMaxLevel(skill) { return 1 + (skill.effect?.levels?.length ?? 0); }
 export function learnedSkillLevel(member, skill) {
