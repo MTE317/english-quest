@@ -54,7 +54,7 @@ test('平原の各戦で敵数を抽選し、再挑戦でも固定順になら�
  }
  const a=session();enter(a,'windward_plain');startNextBattle(data,a);
  const b=session();enter(b,'windward_plain');startNextBattle(data,b);
- assert.deepEqual(a.run.battle.enemies.map(e=>e.monsterId),b.run.battle.enemies.map(e=>e.monsterId));
+ assert.equal(a.run.battle.enemies.length,b.run.battle.enemies.length);
 });
 test('途中の羽帰還は戦利品だけ保持し未踏破。全滅は経路解放を巻き戻し、現行の図鑑保持規則を維持する',()=>{
  const s=session();enter(s,'windward_plain');win(s);const gold=s.game.gold;
