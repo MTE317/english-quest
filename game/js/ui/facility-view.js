@@ -157,8 +157,8 @@ export function workshopView(data, g, act, rng, selection) {
         if (confirm(`${definition.name}を分解しますか？ 欠片1個・強化石Iを1個・エンチャント粉${dismantlePowder(item)}個を得ます。`))
           act((game) => dismantle(data, game, item));
       }) : el('p', { class: 'small muted' }, '装備中のアイテムは分解できません。分解する場合は装備を外してください。'),
-      inStorage ? enchantForm(item, definition) : null,
-      inStorage && stats.some(([key]) => numericEffect(key)) ? panel('② 数値だけ再抽選',
+      enchantForm(item, definition),
+      stats.some(([key]) => numericEffect(key)) ? panel('② 数値だけ再抽選',
         el('p', { class: 'small muted' }, `選んだ効果の種類は変わりません。${price} G・粉${ENCHANT_POWDER_COST}個。数値が下がることもあります。`),
         stats.filter(([key]) => numericEffect(key)).map(([key, value]) =>
           btn(`${describeEffect(data, key, value)} の数値を引き直す`,
