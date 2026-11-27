@@ -1,7 +1,7 @@
 import { roundGold, goldScale } from './gold.js?v=skill-growth-2';
 import { parseAmounts, splitList } from './csv.js?v=skill-growth-2';
 import { makeGear } from './character.js?v=advanced-jobs-1';
-import { rollAffixes, affixVariants } from './loot.js?v=jobs-intro-1';
+import { rollAffixes } from './loot.js?v=jobs-intro-1';
 import { matchesNeed, parseMaterialNeed } from './town.js?v=public-rewards-1';
 import { currentRank } from './dungeon.js?v=public-rewards-1';
 import { consumeMaterials } from './temple.js?v=skill-growth-2';
@@ -154,28 +154,65 @@ export function reroll(data, game, gear, stat, rng) {
   return `${describeEffect(data, key, value)} が付いた。`;
 }
 
+// ドロップ品のランダム効果は維持し、工房の候補と数値だけを個別化する。
+function enchantAffixes(data, slot) {
+  const key = ['head', 'body', 'arm'].includes(slot) ? 'armor' : slot;
+  const rules = data.affixes.filter((a) => a.slot === key && a.stat !== 'VS_DEBUFFED').map((a) => ({ ...a }));
+  for (const override of data.enchantOverrides) {
+    if (override.slot !== key) continue;
+    const existing = rules.find((a) => a.stat === override.stat);
+    if (existing) existing.max = Number(override.max);
+    else rules.push({ slot: key, stat: override.stat, max: Number(override.max), scales: false });
+  }
+  return rules;
+}
+
+function enchantVariants(data, family) {
+  if (family === 'TYPE_BONUS') return [...data.monsterTypes.keys()].map((id) => `${family}:${id}`);
+  if (family === 'STATUS_RATE' || family === 'STATUS_RES' || family === 'VS_STATUS') {
+    const ids = [...data.statusEffects.keys()];
+    if (family === 'VS_STATUS') ids.push('statdown');
+    return ids.map((id) => `${family}:${id}`);
+  }
+  if (family === 'DOT_POWER') return ['poison', 'toxic', 'burn', 'bleed'].map((id) => `${family}:${id}`);
+  if (family === 'ELEM_DMG' || family === 'ELEM_RES') {
+    return [...data.elements.values()].filter((e) => e.id !== 'none').map((e) => `${family}:${e.id}`);
+  }
+  if (family === 'ELEMENT') return [...data.elements.values()]
+    .filter((e) => e.kind === '魔法' && e.id !== 'none').map((e) => `${family}:${e.id}`);
+  return [family];
+}
+
 export function enchantFamilies(data, def, material) {
   const monster = data.monsters.get(material.sourceMonster);
-  const key = ['head', 'body', 'arm'].includes(def.slot) ? 'armor' : def.slot;
   const matches = { element: [material.element], monster_type: monster?.types ?? [],
-    monster_status: monster?.status ? [monster.status] : [],
-    material_kind: [material.season ? 'season' : material.kind, ...(monster?.role === 'boss' ? ['boss'] : [])] };
+    monster_status: monster?.status ? [monster.status, 'ANY'] : [],
+    material_kind: [material.season ? 'season' : material.kind,
+      ...(!material.element || material.element === 'none' ? ['neutral'] : []),
+      ...(monster?.role === 'boss' ? ['boss'] : [])] };
   const allowed = data.enchantSources.filter((r) => matches[r.source_kind]?.includes(r.source_value)).flatMap((r) => splitList(r.families));
-  const affixes = data.affixes.filter((a) => a.slot === key);
-  const expand = allowed.includes('ANY') ? affixes.flatMap((a) => affixVariants(data, a.stat)) : allowed;
+  const affixes = enchantAffixes(data, def.slot);
+  const expand = allowed.includes('ANY') ? affixes.flatMap((a) => enchantVariants(data, a.stat))
+    : allowed.flatMap((family) => enchantVariants(data, family));
   return [...new Set(expand)].filter((stat) => affixes.some((a) => a.stat === stat.split(':')[0]));
+}
+
+export function enchantValue(data, def, family, grade) {
+  const base = enchantAffixes(data, def.slot).find((a) => a.stat === family.split(':')[0]);
+  const row = data.enchantGrades.find((r) => Number(r.grade) === grade);
+  if (!base || !row) return null;
+  return base.stat === 'ELEMENT' ? 1 : Math.round(base.max * Number(row.value_mul)
+    * (base.scales ? 1 + def.itemLv / 12 : 1) * 10) / 10;
 }
 
 export function enchant(data, game, gear, slot, materialId, family, grade) {
   const def = data.equipment.get(gear.id);
   const material = data.materials.get(materialId);
   const row = data.enchantGrades.find((r) => Number(r.grade) === grade);
-  const key = ['head', 'body', 'arm'].includes(def.slot) ? 'armor' : def.slot;
-  const base = data.affixes.find((a) => a.slot === key && a.stat === family.split(':')[0]);
   if (!gear.crafted || def.unique || def.setId || ![0, 1].includes(slot) || (slot === 1 && !gear.enchants?.[0])) throw new Error('この枠には付与できません。');
   if (!row || (game.facilities[facilityFor(def)] ?? 1) < Number(row.workshop_rank)) throw new Error('工房ランクが足りません。');
-  if (!base || !material || !enchantFamilies(data, def, material).includes(family)) throw new Error('その素材では付けられない効果です。');
-  const value = base.stat === 'ELEMENT' ? 1 : Math.round(base.max * Number(row.value_mul) * (base.scales ? 1 + def.itemLv / 12 : 1) * 10) / 10;
+  if (!material || !enchantFamilies(data, def, material).includes(family)) throw new Error('その素材では付けられない効果です。');
+  const value = enchantValue(data, def, family, grade);
   pay(game, Number(row.gold), { [materialId]: 1 });
   gear.enchants ??= [];
   gear.enchants[slot] = { stat: family, value };

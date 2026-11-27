@@ -1,6 +1,6 @@
 import { el, render } from '../dom.js?v=skill-growth-2';
 import { parseAmounts } from '../csv.js?v=skill-growth-2';
-import { craft, brew, canCraft, canBrew, enhance, dismantle, reroll, enchant, enchantFamilies, facilityUpgrade } from '../workshop.js?v=public-rewards-1';
+import { craft, brew, canCraft, canBrew, enhance, dismantle, reroll, enchant, enchantFamilies, enchantValue, facilityUpgrade } from '../workshop.js?v=targeted-enchant-2';
 import { borrow, repayLoan, loanLimit } from '../town.js?v=public-rewards-1';
 import { unlockJob, jobDiscoveryProgress, offeringRevealed } from '../temple.js?v=skill-growth-2';
 import { describeFixedEffects, effectLabel, describeEffect } from '../equipment-effects.js?v=skill-growth-2';
@@ -151,15 +151,27 @@ export function workshopView(data, g, act, rng, selection) {
     const mats = [...data.materials.values()].filter((m) => g.storage.materials[m.id] > 0 && enchantFamilies(data, def, m).length);
     if (!mats.length) return el('p', { class: 'small muted' }, '付与に使える素材がありません。');
     const familySelect = el('select', { class: 'select' });
-    const materialSelect = el('select', { class: 'select', onchange: () => fill() }, mats.map((m) => option(m.name, m.id)));
-    const fill = () => render(familySelect, enchantFamilies(data, def, data.materials.get(materialSelect.value) ?? mats[0]).map((id) => option(effectLabel(data, id), id)));
-    fill();
+    const materialSelect = el('select', { class: 'select' }, mats.map((m) => option(m.name, m.id)));
     const facility = 'workshop';
-    const grades = el('select', { class: 'select' }, data.enchantGrades.filter((r) => Number(r.workshop_rank) <= g.facilities[facility]).map((row) => option(`グレード${row.grade}・${row.gold} G`, row.grade)));
+    const grades = el('select', { class: 'select' }, data.enchantGrades
+      .filter((r) => Number(r.workshop_rank) <= g.facilities[facility])
+      .map((row) => option(`グレード${row.grade}・${row.gold} G`, row.grade)));
     const slots = el('select', { class: 'select' }, option('枠1', '0'), item.enchants?.length ? option('枠2', '1') : null);
+    const preview = el('p', { class: 'small muted' });
+    const showPreview = () => render(preview, `付与する効果：${describeEffect(data, familySelect.value,
+      enchantValue(data, def, familySelect.value, Number(grades.value)))}`);
+    const fill = () => {
+      render(familySelect, enchantFamilies(data, def, data.materials.get(materialSelect.value) ?? mats[0])
+        .map((id) => option(effectLabel(data, id), id)));
+      showPreview();
+    };
+    materialSelect.addEventListener('change', fill);
+    familySelect.addEventListener('change', showPreview);
+    grades.addEventListener('change', showPreview);
+    fill();
     return panel('エンチャント',
       el('label', {}, '素材', materialSelect), el('label', {}, '効果', familySelect),
-      el('label', {}, 'グレード', grades), el('label', {}, '枠', slots),
+      el('label', {}, 'グレード', grades), preview, el('label', {}, '枠', slots),
       btn('効果を付ける', () => act((game) => enchant(data, game, item, Number(slots.value), materialSelect.value, familySelect.value, Number(grades.value)))));
   }
 

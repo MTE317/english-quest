@@ -38,6 +38,7 @@
 | uniques.csv | 固有装備121（既存108＋闘技場13。闘技場報酬は直接付与） |
 | sets.csv / set_items.csv | セット装備20セット（4部位） |
 | enchant_sources.csv | エンチャントで素材から付く効果の系統 |
+| enchant_overrides.csv | 工房エンチャント専用の部位別数値。ドロップ装備のランダム効果は変えない |
 | job_mastery.csv | ジョブを極めたときの、全ジョブへのボーナス |
 | affixes.csv | 部位ごとの追加効果。継続ダメージ・付与率・会心・弱点・回復・支援・反撃・MP維持などのビルド用効果を含む |
 | type_bonus.csv | 特効（種別に+30%） |

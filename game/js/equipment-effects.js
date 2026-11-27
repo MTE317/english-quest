@@ -22,14 +22,20 @@ const PERCENTS = new Set([
 /** 固定効果・ランダム効果・エンチャントで共通の日本語表記。 */
 export function effectLabel(data, key) {
   if (key.startsWith('STATUS_ON_HIT:')) return `通常攻撃で${data.statusEffects?.get(key.slice(14))?.name ?? key.slice(14)}`;
-  if (key.startsWith('VS_STATUS:')) return `${data.statusEffects?.get(key.slice(10))?.name ?? key.slice(10)}状態への特効`;
+  if (key.startsWith('VS_STATUS:')) {
+    const id = key.slice(10);
+    return `${id === 'statdown' ? '能力ダウン' : data.statusEffects?.get(id)?.name ?? id}状態への特効`;
+  }
+  if (key.startsWith('STATUS_RATE:')) return `${data.statusEffects?.get(key.slice(12))?.name ?? key.slice(12)}付与率`;
+  if (key.startsWith('STATUS_RES:')) return `${data.statusEffects?.get(key.slice(11))?.name ?? key.slice(11)}耐性`;
+  if (key.startsWith('DOT_POWER:')) return `${data.statusEffects?.get(key.slice(10))?.name ?? key.slice(10)}の継続ダメージ`;
   if (key.startsWith('特効:') || key.startsWith('TYPE_BONUS:')) {
     const id = key.slice(key.indexOf(':') + 1);
     return `${data.monsterTypes?.get(id)?.name ?? id}特効`;
   }
-  if (key.startsWith('ELEM_RES:') || key.startsWith('ELEMENT:')) {
+  if (key.startsWith('ELEM_RES:') || key.startsWith('ELEMENT:') || key.startsWith('ELEM_DMG:')) {
     const id = key.slice(key.indexOf(':') + 1);
-    return `${data.elements?.get(id)?.name ?? id}${key.startsWith('ELEM_RES:') ? '耐性' : '属性追加'}`;
+    return `${data.elements?.get(id)?.name ?? id}${key.startsWith('ELEM_RES:') ? '耐性' : key.startsWith('ELEM_DMG:') ? '属性攻撃ダメージ' : '属性追加'}`;
   }
   return LABELS[key] ?? key;
 }
@@ -46,7 +52,9 @@ export function describeEffect(data, key, value) {
     : key.startsWith('VS_STATUS:') ? `直接ダメージ${['sleep', 'freeze'].includes(key.slice(10)) ? '・状態解除前に判定' : ''}`
     : '';
   const percentage = PERCENTS.has(key) || key.startsWith('STATUS_ON_HIT:') || key.startsWith('特効:')
-    || key.startsWith('TYPE_BONUS:') || key.startsWith('ELEM_RES:') || key.startsWith('VS_STATUS:');
+    || key.startsWith('TYPE_BONUS:') || key.startsWith('ELEM_RES:') || key.startsWith('VS_STATUS:')
+    || key.startsWith('ELEM_DMG:') || key.startsWith('STATUS_RATE:') || key.startsWith('STATUS_RES:')
+    || key.startsWith('DOT_POWER:');
   return `${label} +${amount}${percentage ? '%' : ''}${note ? `（${note}）` : ''}`;
 }
 export function describeFixedEffects(data, def) {

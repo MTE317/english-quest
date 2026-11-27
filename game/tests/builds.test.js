@@ -142,6 +142,33 @@ test('毒特化は付与者の強化を継続ダメージに反映し、ボス�
   assert.equal(before - ctx.enemy.hp, Math.round(100000 * .05 * (data.balance.battle_formulas?.boss_dot_mul ?? .65) * 1.75));
 });
 
+test('個別の毒付与率と継続ダメージは毒だけに働く', () => {
+  const ctx = prepare({ job: 'apothecary', weapon: 'craft_dagger_s2' });
+  ctx.member.equip.weapon.affixes = {};
+  ctx.member.equip.weapon.enchants = [
+    { stat: 'STATUS_RATE:poison', value: 100 }, { stat: 'DOT_POWER:poison', value: 30 },
+  ];
+  for (let seed = 1; seed <= 20 && !ctx.enemy.statuses.poison; seed++) {
+    ctx.battle.rng = seed;
+    act(ctx, 'apothecary_p2_s1');
+  }
+  assert.ok(ctx.enemy.statuses.poison);
+  assert.equal(ctx.enemy.statuses.poison.potency, 1.3);
+  assert.equal(ctx.member.equip.weapon.enchants[0].stat, 'STATUS_RATE:poison');
+});
+
+test('指定した氷属性の攻撃強化は氷魔法だけに働く', () => {
+  const base = damage('black_mage_p2_s5', { job: 'black_mage', weapon: 'tome_t1' }).damage;
+  const boosted = damage('black_mage_p2_s5', { job: 'black_mage', weapon: 'tome_t1' }, (ctx) => {
+    ctx.member.equip.accessory1 = makeGear(ctx.game, 'ring_t1', { affixes: { 'ELEM_DMG:ice': 20 } });
+  }).damage;
+  const unrelated = damage('black_mage_p2_s5', { job: 'black_mage', weapon: 'tome_t1' }, (ctx) => {
+    ctx.member.equip.accessory1 = makeGear(ctx.game, 'ring_t1', { affixes: { 'ELEM_DMG:fire': 20 } });
+  }).damage;
+  assert.ok(boosted > base);
+  assert.equal(unrelated, base);
+});
+
 test('毒・猛毒・出血の重ね掛けは割合上限内で、継続ダメージの撃破にも熟練が付く', () => {
   const ctx = prepare({ job: 'warrior', weapon: 'scythe_t1', boss: true });
   ctx.enemy.statuses = Object.fromEntries(['poison', 'toxic', 'bleed', 'burn'].map((id) => [id, { turns: 3, n: 3, potency: 2, actor: 0 }]));
@@ -311,7 +338,7 @@ test('ボスの3巡ごとの予告と全体攻撃はデータで決まり、封�
 test('ビルド向けエンチャントが実在素材で選べ、付与結果も日本語で読める', () => {
   const materials = [...master.materials.values()];
   for (const [id, family] of [
-    ['craft_dagger_s2', 'DOT_POWER'], ['craft_dagger_s2', 'STATUS_RATE'],
+    ['craft_dagger_s2', 'DOT_POWER:poison'], ['craft_dagger_s2', 'STATUS_RATE:poison'],
     ['craft_katana_s2', 'CRIT_DMG'], ['craft_bow_s2', 'WEAK_DMG'],
     ['craft_heavy_body_s3', 'COUNTER'], ['craft_heavy_body_s3', 'ELEM_RES:fire'],
     ['iron_fan', 'PARTY_BUFF_POWER'], ['craft_staff_s2', 'HEAL_POWER'],
