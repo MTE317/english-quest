@@ -3,7 +3,7 @@ import { denominateGoldData } from './gold.js?v=skill-growth-2';
 // ゲームで使う data/ のファイルをまとめて読み、ID で引ける形にする。
 import { loadCsv, loadJson, loadOptional } from './data.js?v=skill-growth-2';
 import { toNumber, splitList } from './csv.js?v=skill-growth-2';
-import { STONE_STAGES, ENCHANT_POWDER_ID } from './workshop-materials.js?v=workshop-materials-1';
+import { STONE_STAGES, stoneFragmentId, ENCHANT_POWDER_ID } from './workshop-materials.js?v=workshop-materials-1';
 
 const FILES = {
   balance: 'balance.json',
@@ -276,9 +276,9 @@ function buildBattleData(raw) {
       { id: stone.id, name: stone.name, rank: stone.minFacility, kind: 'workshop' });
     loot.materials.set(ENCHANT_POWDER_ID,
       { id: ENCHANT_POWDER_ID, name: 'エンチャント粉', rank: 1, kind: 'workshop' });
-    for (const rarity of [...raw.rarities, { id: 'unique', name: 'ユニーク' }]) {
-      const id = 'fragment_' + rarity.id;
-      loot.materials.set(id, { id, name: rarity.name + 'の欠片', rank: 1, kind: 'workshop' });
+    for (const [index, stone] of STONE_STAGES.entries()) {
+      const id = stoneFragmentId(index + 1);
+      loot.materials.set(id, { id, name: stone.name + 'の欠片', rank: stone.minFacility, kind: 'workshop' });
     }
   }
   const town = raw.quests ? {
