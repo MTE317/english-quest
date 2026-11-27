@@ -1,5 +1,5 @@
 // ダンジョンの画面：行き先とルーンストーンを選ぶ → 階を進む → 戦闘 → 帰還ポイント・ボス → 町へ
-import { loadGameData } from '../gamedata.js?v=public-rewards-1';
+import { loadGameData } from '../gamedata.js?v=targeted-enchant-2';
 import { loadJson } from '../data.js?v=skill-growth-2';
 import { loadLearningCatalog } from '../learning-catalog.js?v=skill-growth-2';
 import { Scheduler } from '../srs.js?v=skill-growth-2';
@@ -10,10 +10,10 @@ import { normalizeGame } from '../game-state.js?v=jobs-intro-1';
 import {
   allowedDungeons, allowedStones, expeditionFee, startRun, startNextBattle, afterBattle, returnToTown, continueRun, resolveLoot,
   isBossBattle, runFloorRow, runFloorCount, returnItems, currentRank, useItemOutsideBattle, FIELD_ITEM_EFFECTS,
-} from '../dungeon.js?v=public-rewards-1';
+} from '../dungeon.js?v=targeted-enchant-2';
 import { backpackSlots, backpackUsed, addItem } from '../loot.js?v=jobs-intro-1';
 import { maxHp, maxMp, partyCanAct } from '../character.js?v=party-wipe-1';
-import { createBattleView } from '../ui/battle-view.js?v=public-rewards-1';
+import { createBattleView } from '../ui/battle-view.js?v=targeted-enchant-2';
 import { createVictoryView, createLootIcons } from '../ui/victory-view.js?v=advanced-jobs-1';
 import { el, render, stars } from '../dom.js?v=skill-growth-2';
 import { buildWorldMap, newDiscoveries } from '../world-map.js?v=jobs-intro-1';

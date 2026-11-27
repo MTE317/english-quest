@@ -5,7 +5,7 @@ import { rollAffixes } from './loot.js?v=jobs-intro-1';
 import { matchesNeed, parseMaterialNeed } from './town.js?v=public-rewards-1';
 import { currentRank } from './dungeon.js?v=public-rewards-1';
 import { consumeMaterials } from './temple.js?v=skill-growth-2';
-import { describeEffect } from './equipment-effects.js?v=skill-growth-2';
+import { describeEffect } from './equipment-effects.js?v=targeted-enchant-2';
 
 const facilityFor = () => 'workshop';
 const capFor = (data, game, facility) => data.facilityRanks.find((r) => Number(r.rank) === (game.facilities[facility] ?? 1));

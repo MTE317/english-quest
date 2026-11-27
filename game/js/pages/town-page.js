@@ -1,9 +1,9 @@
 import { availableAp } from '../ap.js?v=skill-growth-2';
 // 町をホームにして、施設カードから各施設を開く。
-import { loadGameData } from '../gamedata.js?v=public-rewards-1';
+import { loadGameData } from '../gamedata.js?v=targeted-enchant-2';
 import { GameSession } from '../save.js?v=party-wipe-1';
 import { normalizeGame } from '../game-state.js?v=jobs-intro-1';
-import { currentRank, seededRng } from '../dungeon.js?v=public-rewards-1';
+import { currentRank, seededRng } from '../dungeon.js?v=targeted-enchant-2';
 import {
   calendarOf, fillBoard, boardSize, acceptQuest, canAcceptQuest, abandonQuest, canReport, reportQuest, questText, questProgress, questDestination, questRewardGold, questRankPoints, questDepositTotal, questAbandonRefund, nextRankStatus, stayInn, revive, reviveCost, checkRankUp,
   canExpandBackpack, expandBackpack, feeTier,

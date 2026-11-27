@@ -3,7 +3,7 @@ import { parseAmounts } from '../csv.js?v=skill-growth-2';
 import { craft, brew, canCraft, canBrew, enhance, dismantle, reroll, enchant, enchantFamilies, enchantValue, facilityUpgrade } from '../workshop.js?v=targeted-enchant-2';
 import { borrow, repayLoan, loanLimit } from '../town.js?v=public-rewards-1';
 import { unlockJob, jobDiscoveryProgress, offeringRevealed } from '../temple.js?v=skill-growth-2';
-import { describeFixedEffects, effectLabel, describeEffect } from '../equipment-effects.js?v=skill-growth-2';
+import { describeFixedEffects, effectLabel, describeEffect } from '../equipment-effects.js?v=targeted-enchant-2';
 import { equipmentIcon } from './equipment-icons.js?v=skill-growth-2';
 import { uiIcon } from './pixel-icons.js?v=skill-growth-2';
 
