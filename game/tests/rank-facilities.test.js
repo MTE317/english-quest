@@ -102,12 +102,13 @@ test('11段階の投資額とギルド上限、★11・★12の同時解放', ()
   assert.ok(gearShopStock(data, game).some(row => row.star === 11));
   assert.ok(gearShopStock(data, game).some(row => row.star === 12));
 });
-test('空の神殿段階には投資できず、旧Lv12と所持装備は失われない', () => {
+test('神殿Lv7で追加職を解放し、旧Lv12と所持装備は失われない', () => {
   const game = fresh();
-  assert.deepEqual(facilityUnlocks(data, 'temple', 7), []);
+  assert.ok(facilityUnlocks(data, 'temple', 7).length >= 6);
   game.rank = 'S'; game.gold = 2000000;
   game.facilities.temple = 6;
-  assert.throws(() => facilityUpgrade(data, game, 'temple'), /実装されていません/);
+  facilityUpgrade(data, game, 'temple');
+  assert.equal(game.facilities.temple, 7);
   game.facilities.workshop = 12;
   game.facilities.equipment_shop = 12;
   game.facilities.warehouse = 5;

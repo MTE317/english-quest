@@ -81,6 +81,15 @@ export function masterDamageBonus(data, game, b, actor, target, skill, elements 
   if (skill?.effect?.rules?.puppet_attack) rate += ruleNumber(data,member,'puppet_attack_damage')
     + (a.puppetQuick?.remaining>0 ? a.puppetQuick.bonus : 0);
   if (skill?.effect?.rules?.dance==='spin') rate += (a.rhythm??0)*ruleNumber(data,member,'spin_damage');
+  if (skill?.effect?.rules?.gamble && a.advancedAction?.gambleFailed) rate+=ruleNumber(data,member,'gamble_miss_damage');
+  if (skill?.effect?.base==='mag' && skill.job==='jester' && elements.some(el=>['wind','dark'].includes(el))
+    && (b.enemies[target]?.statuses?.blind||b.enemies[target]?.statuses?.fear)) rate+=ruleNumber(data,member,'jester_status_damage');
+  if ((!skill || skill.kind==='attack') && !masterTags(skill).some(tag=>['reaction','trap'].includes(tag))) {
+    const order=a.strategistOrder,ultimate=a.strategistUltimate;
+    const eligible=order?.type==='damage'||order?.type==='flank' && !skill
+      && order.enemy===target;
+    rate+=Math.max(eligible?order.rate:0,ultimate?.damage??0);
+  }
   const field=activeField(game,b), state=a.advancedAction;
   if (field && elements.includes(field.element) && (!skill || skill.kind==='attack')) rate+=field.rate;
   if (directMagic(skill)) {
@@ -167,6 +176,8 @@ export function masterEvasionBonus(data, game, b, actor) {
 }
 export function masterCutBonus(data, game, b, actor, magic, enemy = null) {
   let rate = 0;
+  if(b.allies.some(a=>a.strategistOrder?.source===actor&&a.strategistOrder.remaining>0))
+    rate+=ruleNumber(data,game.party[actor],'order_self_cut');
   for (const rule of passiveRules(data, game.party[actor])) for (const cond of rule.condition_cut ?? []) {
     if ((cond.scope !== 'magic' || magic) && (cond.scope !== 'physical' || !magic)
       && masterCondition(data, game, b, actor, null, cond)) rate += cond.rate ?? 0;
@@ -236,6 +247,10 @@ export function masterMpSave(data, member, skill, b = null, actor = null) {
   }
   if (b && actor != null) {
     const a=b.allies[actor];
+    if (['strategist_A01','strategist_A02','strategist_A03','strategist_A04','strategist_A06','strategist_A09'].includes(skill.id))
+      rate+=ruleNumber(data,member,'order_mp_save');
+    if (a.strategistOrder?.mpSave && a.strategistOrder.remaining>0 && (skill.kind==='attack'||!skill.isFinal&&skill.effect?.base))
+      rate+=a.strategistOrder.mpSave;
     if (weaponSkill(skill) && a.masterEffects?.pirate_P01?.momentum) rate+=ruleNumber(data,member,'momentum_mp_save');
     if (skill?.effect?.rules?.adaptive_enchant && a.masterEffects?.spellblade_P01?.switchMp) rate+=a.masterEffects.spellblade_P01.switchMp.rate;
     for (const effect of Object.values(b.allies[actor].masterEffects ?? {})) {
@@ -308,6 +323,12 @@ function masterRegenAmount(data, game, b, target, effect) {
 export function finishMasterOpportunity(data, game, b, actor, ctx, skill = null, voluntary = true) {
   const a = b.allies[actor], member = game.party[actor];
   const performed = a.advancedAction?.executed ?? true;
+  if (a.strategistOrder && a.strategistOrder.grantedClock!==b.actionClock && --a.strategistOrder.remaining<=0) delete a.strategistOrder;
+  if (a.strategistUltimate && a.strategistUltimate.grantedClock!==b.actionClock && --a.strategistUltimate.remaining<=0) delete a.strategistUltimate;
+  if (a.analysisMarks) for(const [enemy,mark] of Object.entries(a.analysisMarks))
+    if(mark.grantedClock!==b.actionClock&&--mark.remaining<=0) delete a.analysisMarks[enemy];
+  if (a.insurance && a.insurance.grantedClock!==b.actionClock && --a.insurance.remaining<=0) delete a.insurance;
+  if (a.winCrit && a.winCrit.grantedClock!==b.actionClock && --a.winCrit.remaining<=0) delete a.winCrit;
   if (a.companion && a.companion.grantedClock!==b.actionClock && --a.companion.remaining<=0) delete a.companion;
   if (a.puppet && a.puppet.grantedClock!==b.actionClock && --a.puppet.remaining<=0) delete a.puppet;
   if (a.puppetQuick && a.puppetQuick.grantedClock!==b.actionClock && --a.puppetQuick.remaining<=0) delete a.puppetQuick;
@@ -407,6 +428,11 @@ export function spendHpPayment(data, game, b, actor, skill) {
 }
 export function advancedSkillBlock(data, game, b, actor, skill) {
   const rules=skill.effect.rules??{}, ally=b.allies[actor];
+  if ((rules.decoy_move||rules.decoy_repair||rules.decoy_burst||rules.decoy_lure) && !(ally.decoy?.hp>0&&ally.decoy.remaining>0)) return '囮が必要';
+  if (rules.decoy_repair && ally.decoyRepaired) return 'この戦闘ではもう補修できない';
+  if (rules.ticket_heal && !(ally.comebackTickets>0)) return '再起札が必要';
+  if (rules.order_front && ally.orderFrontRound===b.round) return 'このラウンドでは隊列整備済み';
+  if (rules.order_front && !b.queue.some(u=>u.side==='ally'&&game.party[u.i]?.hp>0)) return '待機中の味方がいない';
   if (rules.requires_companion && !(ally.companion?.hp>0&&ally.companion.remaining>0)) return '相棒が必要';
   if ((rules.companion_guard||rules.companion_repair) && !(ally.companion?.hp>0&&ally.companion.remaining>0)) return '相棒が必要';
   if (rules.companion_repair && (ally.companionRepairs??0)>=rules.companion_repair.limit) return 'この戦闘ではもう手当てできない';
@@ -441,6 +467,16 @@ export function advancedSkillBlock(data, game, b, actor, skill) {
 export function advancedTargetBlock(data, game, b, actor, skill, target, action) {
   if (!skill.effect.additional) return '';
   const rule=skill.effect.rules??{};
+  if (rule.gamble && rule.choose_mode && !['safe','risk'].includes(action.element)) return '堅実か大勝負を選んでください';
+  if (rule.proxy_attack && (!game.party[action.sourceTarget]?.hp||
+    ['petrify','sleep','freeze','stun','paralysis','confusion','charm'].some(id=>b.allies[action.sourceTarget]?.statuses?.[id]))) return '行動できる味方を選んでください';
+  if ((rule.order?.enemy||rule.proxy_attack) && !(b.enemies[action.secondaryTarget]?.hp>0)) return '生存している敵を選んでください';
+  if (rule.order_front && !b.queue.some(u=>u.side==='ally'&&u.i===target&&game.party[target]?.hp>0)) return '未行動の味方を選んでください';
+  if (rule.order_speed && !b.queue.some(u=>u.side==='ally'&&u.i===target&&game.party[target]?.hp>0)) return '未行動の味方を選んでください';
+  if (rule.orders_party && (!Array.isArray(action.targets)||action.targets.length!==Math.min(rule.orders_party.count,game.party.filter(m=>m.hp>0).length)
+    || new Set(action.targets).size!==action.targets.length||action.targets.some(t=>!game.party[t]?.hp||b.allies[t]?.statuses?.petrify))) return '生存味方を指定人数選んでください';
+  if (rule.decoy_ultimate && (!game.party[action.secondaryTarget]?.hp||b.allies[action.secondaryTarget]?.statuses?.petrify)) return '囮を置く味方を選んでください';
+  if (rule.decoy_move && b.allies[actor].decoy?.target===target) return '別の味方を選んでください';
   if (rule.puppet_quick_stance && !['attack','guard'].includes(action.element)) return '人形の構えを選んでください';
   if (rule.release_curse && !ownCurseMark(b,actor,target))return '自分の呪印がある敵を選んでください';
   if (rule.familiar_mode && action.element===b.allies[actor].familiar?.mode)return '異なる使い魔の型を選んでください';
@@ -455,7 +491,7 @@ export function advancedTargetBlock(data, game, b, actor, skill, target, action)
   if (action.consumeClone && rule.optional_clone && !cloneCount(b.allies[actor])) return '消費できる分身がない';
   if (skill.kind==='attack' && !b.enemies.some(enemy=>enemy.hp>0)) return '生存している敵を選んでください';
   if (skill.kind==='attack' && !['all','random'].includes(skill.effect.tgt) && !(b.enemies[target]?.hp>0)) return '生存している敵を選んでください';
-  if (action.targets && (!Array.isArray(action.targets) || !action.targets.length || new Set(action.targets).size!==action.targets.length
+  if (action.targets && !rule.orders_party && (!Array.isArray(action.targets) || !action.targets.length || new Set(action.targets).size!==action.targets.length
     || action.targets.length>(skill.effect.target_limit??b.enemies.length) || action.targets.some(i=>!(b.enemies[i]?.hp>0)))) return '異なる生存敵を上限内で選んでください';
   return '';
 }

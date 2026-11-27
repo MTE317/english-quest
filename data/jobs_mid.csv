@@ -26,9 +26,9 @@ astrologer,占星術師,予兆・遅延発動・先読み,additional,C,A,D,A,D,A
 beastmaster,魔獣使い,相棒との継続連携,additional,A,C,A,D,B,C,B,C,blunt|wind,earth,whip,spear,STR・HP（相棒へ反映）,相棒1体と戦い、命令や連携を選ぶ。属性技もSTR参照可,相棒の立て直しと、主人との連携猛攻,1,,whip,medium,神殿Lv7で解放,1
 puppeteer,人形師,人形の手動操作・身代わり,additional,C,A,D,A,A,B,C,C,none,,instrument,tome,MAG（人形攻撃）／DEF（身代わり）,音や弦で人形の姿勢を切り替え、攻撃・防御・修繕を選ぶ,強化人形を展開し、既存人形も修復して攻守を強化,1,,instrument,light,神殿Lv7で解放,1
 dancer,踊り子,舞の順番・即応支援・魅了,additional,C,B,C,B,D,B,A,B,wind,water,fan,whip|dagger,MAG（舞）・SPD,舞の順番で、次の支援や妨害に追加効果,連続する大舞で全体支援・治療・敵への妨害,1,,fan,light,神殿Lv7で解放,1
-strategist,軍師,次の行動の強化・行動順,additional,B,B,C,C,B,B,A,C,,,fan,sword|spear,号令は技能Lv／行動順SPD／攻撃は支援先の能力,特定の仲間の次の行動を強化し、攻防のタイミングを整える,全体の行動順を整え、各人の次の行動を大幅強化,0,,fan,medium,個別技能の実装待ち,1
-jester,道化師,囮・手品・敵行動の誘導,additional,C,B,C,B,D,C,A,A,wind,dark,instrument,whip|dagger,MAG（手品）／SPD・LUK,仕掛けを選んで狙いや行動を誘導。賭博師より結果を選びやすい,複数の囮と手品で敵を翻弄し、安全と攻め時を作る,0,,instrument,light,個別技能の実装待ち,1
-gambler,賭博師,確率と見返りの選択,additional,C,C,B,C,C,C,A,A,pierce|none,thunder,gun,dagger,武器威力／LUK（賭けの成功補正）,安定した効果と大きな賭けを選び、外れた際の補助も持つ,大きな見返りの勝負。結果ごとの最低効果と上限を設ける,0,,gun,medium,個別技能の実装待ち,1
+strategist,軍師,次の行動の強化・行動順,additional,B,B,C,C,B,B,A,C,,,fan,sword|spear,号令は技能Lv／行動順SPD／攻撃は支援先の能力,特定の仲間の次の行動を強化し、攻防のタイミングを整える,全体の行動順を整え、各人の次の行動を大幅強化,1,,fan,medium,神殿Lv7で解放,1
+jester,道化師,囮・手品・敵行動の誘導,additional,C,B,C,B,D,C,A,A,wind,dark,instrument,whip|dagger,MAG（手品）／SPD・LUK,仕掛けを選んで狙いや行動を誘導。賭博師より結果を選びやすい,複数の囮と手品で敵を翻弄し、安全と攻め時を作る,1,,instrument,light,神殿Lv7で解放,1
+gambler,賭博師,確率と見返りの選択,additional,C,C,B,C,C,C,A,A,pierce|none,thunder,gun,dagger,武器威力／LUK（賭けの成功補正）,安定した効果と大きな賭けを選び、外れた際の補助も持つ,大きな見返りの勝負。結果ごとの最低効果と上限を設ける,1,,gun,medium,神殿Lv7で解放,1
 apothecary,薬師,薬による即応・毒・治療,additional,B,B,C,C,B,B,A,C,,,dagger,staff,技能Lv・薬の性能／SPD,薬を選んで回復・治療・予防・毒を使い分ける,全体への強力な処方による大回復・治療・予防,0,,dagger,medium,個別技能の実装待ち,1
 alchemist,錬金術師,素材の組み合わせ・薬品攻撃,additional,C,A,D,A,C,B,B,B,fire|ice|thunder,,gun,tome,MAG（薬品射出）・素材の効果,素材や触媒を組み合わせて属性攻撃・石化薬・支援薬を作る,連続する錬成反応で属性攻撃または特殊支援を大きく発揮,0,,gun,light,個別技能の実装待ち,1
 machinist,機工士,設置・改造・整備,additional,B,C,A,C,B,C,C,B,blunt|fire,thunder,hammer,gun,STR・武器Lv（機械性能へ反映）,機械を設置し、改造や整備で継続稼働させる,強化機械の展開・一斉稼働と既存機械の整備,0,,hammer,medium,個別技能の実装待ち,1
