@@ -126,7 +126,7 @@ export function workshopView(data, g, act, rng, selection) {
             `派生元：${data.equipment.get(recipe.derive_from)?.name ?? recipe.derive_from}（制作済みの現物を消費）`) : null,
         ] : el('p', { class: 'small muted' },
           `${data.economy.get(selectedDef.star).craft_gold} G・★${selectedDef.star}以上の通常素材4個`),
-        btn('制作する', () => act(game => craft(data, game, selectedDef, rng)), !canMake),
+        btn('制作する', () => act(game => craft(data, game, selectedDef, rng())), !canMake),
       ] : [], 'この条件で作れる装備はありません。施設ランクか絞り込みを確認してください。'));
   }
 
@@ -156,7 +156,7 @@ export function workshopView(data, g, act, rng, selection) {
         el('p', { class: 'small muted' }, `選んだ効果の種類は変わりません。${price} G・粉${ENCHANT_POWDER_COST}個。数値が下がることもあります。`),
         stats.filter(([key]) => numericEffect(key)).map(([key, value]) =>
           btn(`${describeEffect(data, key, value)} の数値を引き直す`,
-            () => act(game => reroll(data, game, item, key, rng)), !affordable))) : null,
+            () => act(game => reroll(data, game, item, key, rng())), !affordable))) : null,
     ];
   }
 
@@ -180,7 +180,7 @@ export function workshopView(data, g, act, rng, selection) {
     return panel('① 全再付与',
       el('label', {}, '追加素材（任意・1個）', materialSelect),
       preview,
-      btn('すべて再抽選する', () => act(game => enchant(data, game, item, materialSelect.value, rng)),
+      btn('すべて再抽選する', () => act(game => enchant(data, game, item, materialSelect.value, rng())),
         g.gold < price || (g.storage.materials[ENCHANT_POWDER_ID] ?? 0) < ENCHANT_POWDER_COST));
   }
 

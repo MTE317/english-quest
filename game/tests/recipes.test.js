@@ -6,7 +6,8 @@ import { craft, brew, canCraft, canBrew } from '../js/workshop.js';
 import { parseMaterialNeed, matchesNeed } from '../js/town.js';
 import { canEquip, computeStats, gearEffects, makeGear, maxHp } from '../js/character.js';
 import { createBattle, makeEnemy, setPending, resolvePending, skillMp, battleStats } from '../js/battle.js';
-import { readCsv, readJson } from './helpers.js';
+import { uniqueCandidates } from '../js/enchantment-roll.js';
+import { readCsv, readJson, seededRng } from './helpers.js';
 
 const data = buildGameData(Object.fromEntries(Object.entries(GAME_FILES).map(([key, name]) =>
   [key, name.endsWith('.json') ? readJson(name) : readCsv(name).rows])));
@@ -114,11 +115,15 @@ test('専用の毒短剣を制作すると固有効果が保存され、素材�
   const def = supply(g, 'craft_dagger_s2');
   const gold = g.gold;
   const materials = { ...g.storage.materials };
-  craft(data, g, def);
+  craft(data, g, def, seededRng(167));
   const item = g.storage.gear[0];
   assert.ok(item.crafted);
   assert.equal(item.id, 'craft_dagger_s2');
-  assert.equal(item.affixes['STATUS_ON_HIT:poison'], 20);
+  // #166以降は候補から2〜4個を抽選する。毒の固定20%を必須にしない。
+  const unique = Object.keys(item.affixes).filter(key => item.affixOrigins[key] === 'unique');
+  assert.ok(unique.length >= 2 && unique.length <= 4);
+  assert.ok(unique.every(key => key in uniqueCandidates(data, def)));
+  assert.ok(Object.values(item.affixes).every(Number.isFinite));
   assert.ok(g.gold < gold);
   assert.ok(Object.keys(materials).some((id) => g.storage.materials[id] !== materials[id]));
   assert.equal(data.equipment.get('dagger_t4').fixedEffects, undefined);
@@ -140,7 +145,7 @@ test('重装防具・マント・アクセサリーが個別スロットへ制�
   const g = fresh();
   for (const id of ['craft_heavy_body_s3', 'craft_cloak_1_s2', 'craft_ring_1_s2']) {
     const def = supply(g, id);
-    craft(data, g, def);
+    craft(data, g, def, seededRng(167));
   }
   const w = g.party[0];
   const slots = ['body', 'cloak', 'accessory1'];
@@ -151,10 +156,16 @@ test('重装防具・マント・アクセサリーが個別スロットへ制�
     w.equip[slots[i]] = item;
   }
   const after = computeStats(data, w);
-  assert.ok(after.hp > before.hp);
-  assert.ok(gearEffects(w.equip.body).PHYS_CUT > 0);
-  assert.ok(gearEffects(w.equip.cloak).FIRST_SPD > 0);
-  assert.ok(gearEffects(w.equip.accessory1).STATUS_RES > 0);
+  assert.ok(after.def > before.def);
+  // 特定の候補を必須にせず、実際に抽選された効果が装備に反映されることを検証。
+  for (const slot of slots) {
+    const item = w.equip[slot];
+    assert.ok(Object.keys(item.affixes).length >= 2);
+    for (const [key, value] of Object.entries(item.affixes)) {
+      assert.ok(Number.isFinite(value));
+      assert.equal(gearEffects(item)[key], value);
+    }
+  }
 });
 
 test('専用レシピの毒付与・吸血・追撃が通常攻撃で実際に発動する', () => {
