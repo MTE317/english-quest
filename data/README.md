@@ -53,7 +53,7 @@
 | inn_rooms.csv / facilities.csv / facility_ranks.csv / facility_effects.csv | 宿屋・町の施設 |
 | enhance_rates.csv / rarities.csv / recipes.csv | 強化石I～Vの必要数と成功率（費用は1.8^強化値で増える）・レアリティ・制作。171件の専用レシピ（武器114件・防具27件・マント10件・装飾品20件）＋汎用制作 |
 | enchant_grades.csv | エンチャントのグレード（工房のランク）ごとの費用 |
-| economy_by_rank.csv | ★ごとのお金の目安（月末に払うのはギルドの会費だけ。倉庫は無料） |
+| economy_by_rank.csv | ★ごとのお金の目安（所持品の保管料はなし） |
 | backpack.csv | バックパックの広さの段階と、広げる費用 |
 | manifest.json | data/ にあるファイル名の一覧（ゲームが読み込みに使う） |
 | adventurer_ranks.csv | 冒険者ランク25段階（★ごとに本ランクと＋、最後にS）。昇格試験・特典。掲示6件、同時受注数に上限なし |
@@ -145,7 +145,7 @@
 - 専用武器99件（16武器種それぞれ6件以上。既存の剣の9件はセーブ互換のため残す）、防具27件（頭・体・腕×重中軽×3段階）、マント9件、アクセサリー18件。
 - `recipes.csv` の追加列：`slot`（装備部位）、`armor_weight`（防具の重さ）、`base_equipment_id`（通常装備から流用する素体ID）、`fixed_effects`（制作固有効果）、`description`（表示用）。
 - 固定効果は `STATUS_ON_HIT:poison:20|SPD:3|DOT_POWER:8` など、`key:value` を `|` で連結する形式。キーに `:` を含む場合、最後の `:` より後が数値です。特殊効果は吸血（LIFESTEAL）・追撃（EXTRA_HIT）・DEF貫通（DEF_PIERCE）・弱点特効（WEAK_DMG）・MP節約（MP_SAVE）・被ダメージ軽減（PHYS_CUT / MAGIC_CUT）・全体強化（PARTY_BUFF_POWER）・反撃（COUNTER）・継続ダメージ強化（DOT_POWER）・状態異常付与率（STATUS_RATE）など。
-- 素材はすべて `materials.csv` に存在するIDで指定。派生元があるレシピは、そのレシピで作った装備を倉庫から1個消費する。
+- 素材はすべて `materials.csv` に存在するIDで指定。派生元があるレシピは、そのレシピで作った装備を所持品から1個消費する。
 - 固定効果は装備実体の `affixes` に保持し、制作装備へのエンチャントと共存。専用制作装備は通常ドロップ・通常店舗には混ぜない。
 - 工房には専用制作／通常制作・部位・★での絞り込み、素材の所持数、必要な派生元、効果の日本語表示を追加。
 

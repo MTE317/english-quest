@@ -34,7 +34,7 @@ function formula(data, key) {
 
 // ---------------- 装備の実体 ----------------
 
-/** 装備を1つ作る（倉庫や装備枠に入るもの） */
+/** 装備を1つ作る（所持品や装備枠に入るもの） */
 export function makeGear(game, equipId, opts = {}) {
   game.nextUid = (game.nextUid ?? 1);
   const gear = {
@@ -255,12 +255,12 @@ export function gainXp(data, member, amount) {
   return ups;
 }
 
-// ---------------- 装備の付け外し（倉庫とのやりとり） ----------------
+// ---------------- 装備の付け外し（所持品とのやりとり） ----------------
 
-/** 倉庫（game.storage.gear）から装備をつける。前についていたものは倉庫へ戻す */
+/** 所持品（game.storage.gear）から装備をつける。前についていたものは所持品へ戻す */
 export function equipFromStorage(data, game, member, slot, uid) {
   const idx = game.storage.gear.findIndex((g) => g.uid === uid);
-  if (idx < 0) throw new Error('倉庫にその装備がない');
+  if (idx < 0) throw new Error('所持品にその装備がない');
   const gear = game.storage.gear[idx];
   const check = canEquip(data, member, slot, gear);
   if (!check.ok) throw new Error(check.reason);
@@ -276,7 +276,7 @@ export function equipFromStorage(data, game, member, slot, uid) {
   clampHpMp(data, member);
 }
 
-/** 外して倉庫へ */
+/** 外して所持品へ */
 export function unequip(data, game, member, slot) {
   const gear = member.equip[slot];
   if (!gear) return;
@@ -286,7 +286,7 @@ export function unequip(data, game, member, slot) {
   clampHpMp(data, member);
 }
 
-/** 倉庫と現在の装備から、各枠の最高アイテムレベル（同点なら強化値）を選ぶ。 */
+/** 所持品と現在の装備から、各枠の最高アイテムレベル（同点なら強化値）を選ぶ。 */
 export function equipRecommended(data, game, member) {
   let changed = 0;
   for (const slot of SLOTS) {

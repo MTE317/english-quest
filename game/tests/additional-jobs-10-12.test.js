@@ -70,8 +70,8 @@ test('追加10〜12職の45技能・149段階・簡素説明・前提と成長�
   assert.equal(stages,149);assert.deepEqual(modes,{lv5:17,lv3:18,none:10});
 });
 
-test('3職は最初から選べ、既存セーブでもAPで手動修得し、他職へ継承できる',()=>{
-  for(const job of spec.jobs){const c=fixture(job.id),learned=[...c.member.learned],gear=structuredClone(c.member.equip);
+test('3職は神殿Lv4で選べ、既存セーブでもAPで手動修得し、他職へ継承できる',()=>{
+  for(const job of spec.jobs){const c=fixture(job.id);c.game.facilities.temple=4;const learned=[...c.member.learned],gear=structuredClone(c.member.equip);
     const saved=normalizeGame(data,structuredClone(c.game));assert.ok(availableJobs(data,saved,saved.party[0]).some(j=>j.id===job.id));
     changeJob(data,c.game,0,'warrior');changeJob(data,c.game,0,job.id);
     assert.deepEqual(c.member.learned,learned);assert.deepEqual(c.member.equip,gear);

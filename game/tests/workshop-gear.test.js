@@ -68,13 +68,13 @@ test('工房は全員の装備中アイテムを表示し、外さずに強化�
       assert.equal(game.storage.materials.enhancement_stone_1, 10 - stoneRequirement(data, before).count);
       assert.ok(game.gold < gold);
       const saved = structuredClone(game);
-      assert.throws(() => dismantle(data, game, item), /倉庫/);
+      assert.throws(() => dismantle(data, game, item), /所持品/);
       assert.deepEqual(game, saved);
     }
   }
 });
 
-test('倉庫と装備中の同じ種類を区別し、選び直した倉庫の現物だけを分解する', () => {
+test('所持品と装備中の同じ種類を区別し、選び直した所持品の現物だけを分解する', () => {
   const game = fresh();
   const equipped = game.party[0].equip.weapon;
   const stored = makeGear(game, equipped.id);
@@ -82,7 +82,7 @@ test('倉庫と装備中の同じ種類を区別し、選び直した倉庫の�
   const selection = { tab: 'gear', gear: equipped.uid };
   const root = view(game, selection);
   const storedButton = nodes(root).find(n => n.attrs?.['data-workshop-item'] === String(stored.uid));
-  assert.ok(text(storedButton).includes('倉庫'));
+  assert.ok(text(storedButton).includes('所持品'));
   storedButton.attrs.onclick();
   assert.equal(selection.gear, stored.uid);
   button(root, '分解する').attrs.onclick();
@@ -91,7 +91,7 @@ test('倉庫と装備中の同じ種類を区別し、選び直した倉庫の�
   assert.equal(game.storage.materials.enhancement_stone_1, 11);
 });
 
-test('倉庫が空でも装備中のアイテムを初期選択し、所持装備がなければ空表示する', () => {
+test('所持品が空でも装備中のアイテムを初期選択し、所持装備がなければ空表示する', () => {
   const game = fresh();
   const selection = { tab: 'gear', gear: 'removed' };
   assert.ok(button(view(game, selection), '強化する'));

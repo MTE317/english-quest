@@ -3,7 +3,7 @@ import { equipmentIcon } from './equipment-icons.js?v=skill-growth-2';
 import { uiIcon } from './pixel-icons.js?v=skill-growth-2';
 import { describeEffect } from '../equipment-effects.js?v=skill-growth-2';
 
-// 倉庫の表示順と選択状態だけを管理し、所持品の保存順は変更しない。
+// 所持品の表示順と選択状態だけを管理し、所持品の保存順は変更しない。
 export function storageView(data, game, state) {
   const rarityIds = [...data.rarityTable.map(r => r.id), 'unique'];
   const rarityNames = new Map([...data.rarityTable.map(r => [r.id, r.name]), ['unique', 'ユニーク']]);
@@ -11,7 +11,7 @@ export function storageView(data, game, state) {
   const modes = [
     { id: 'materials', label: '素材' }, { id: 'gear', label: '装備' }, { id: 'items', label: '道具' },
   ];
-  const root = el('section', { class: 'storage-view', 'aria-label': '倉庫' });
+  const root = el('section', { class: 'storage-view', 'aria-label': '所持品' });
   function entriesFor(mode) {
     if (mode === 'gear') return game.storage.gear.map((gear, index) => {
       const def = data.equipment.get(gear.id);
@@ -81,12 +81,12 @@ export function storageView(data, game, state) {
     }));
     if (selected) select(selected);
     render(root,
-      el('div', { class: 'district-switch storage-tabs', role: 'group', 'aria-label': '倉庫の種類' },
+      el('div', { class: 'district-switch storage-tabs', role: 'group', 'aria-label': '所持品の種類' },
         modes.map(m => el('button', { type: 'button', 'data-storage-tab': m.id,
           'aria-pressed': String(mode === m.id), onclick: () => { state.mode = m.id; draw('tab'); },
         }, m.label))),
       el('label', { class: 'storage-sort' }, '並べ替え',
-        el('select', { class: 'select', 'aria-label': '倉庫の並べ替え', onchange: event => {
+        el('select', { class: 'select', 'aria-label': '所持品の並べ替え', onchange: event => {
           state.sorts[mode] = event.target.value; draw('sort');
         } }, options.map(([id, title]) => el('option', { value: id, selected: sort === id }, title)))),
       el('p', { class: 'small muted' }, `${modes.find(m => m.id === mode).label}：${entries.length}${mode === 'gear' ? '個' : '種類'}`),

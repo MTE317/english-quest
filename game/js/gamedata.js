@@ -266,7 +266,7 @@ function buildBattleData(raw) {
     ranks: raw.ranks.map((r) => ({
       id: r.id, title: r.title, pointsRequired: toNumber(r.points_required, 0),
       facilityCap: toNumber(r.facility_cap, 1), materialStar: toNumber(r.material_star, 0),
-      maxDungeonRank: toNumber(r.facility_cap, 1), // 旧UIの推奨★と融資計算用。ダンジョン入場条件ではない。
+      maxDungeonRank: Math.max(1, toNumber(r.material_star, 1)), // 旧UIの推奨★と融資計算用。ダンジョン入場条件ではない。
       needsBossClear: r.needs_boss_clear === '1', needsExam: r.needs_exam === '1', questBonus: toNumber(r.quest_bonus, 0),
       shopDiscount: toNumber(r.shop_discount, 0), perk: r.perk,
     })),

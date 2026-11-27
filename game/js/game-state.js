@@ -7,7 +7,7 @@ import { parseAmounts } from './csv.js?v=skill-growth-2';
 import { recordStoredMaterials } from './temple.js?v=skill-growth-2';
 import { retireLegacyQuestChains } from './retired-quests.js?v=skill-growth-2';
 import { migrateJobMaster, JOB_MASTER_VERSION } from './jobs-migration.js?v=skill-growth-2';
-import { migrateRankFacilities } from './rank-migration.js';
+import { migrateRankFacilities } from './rank-migration.js?v=facilities-11-1';
 import { STONE_STAGES } from './workshop-materials.js?v=workshop-materials-1';
 
 export const PARTY_SIZE = 6;
@@ -45,6 +45,7 @@ export function createNewGame(data, partySpecs, { partySize = PARTY_SIZE } = {})
     contentUpdates: { build36: true },
     rank: data.ranks?.[0]?.id ?? null, // 冒険者ランク（adventurer_ranks.csv の最初）
     backpackTier: data.backpackTiers?.[0]?.tier ?? 1,
+    templeUnlockVersion: 1,
   };
   game.party = partySpecs.map((spec, i) => createMember(data, game, spec, i));
   if (data.basicJobRules) {
@@ -83,6 +84,13 @@ export function normalizeGame(data, game, run = null, { expandParty = true } = {
   delete game.storage.materials.enhancement_stone;
   recordStoredMaterials(game);
   game.items = game.items ?? {};
+  // 旧セーブは以前の初期解放ジョブを維持する。新規セーブは神殿Lvで開く。
+  if (game.templeUnlockVersion !== 1) {
+    game.unlockedJobs ??= [];
+    for (const job of data.jobs ?? []) if (job.skillsReady && data.jobUnlocks?.get(job.id)?.method === '初期'
+      && !game.unlockedJobs.includes(job.id)) game.unlockedJobs.push(job.id);
+    game.templeUnlockVersion = 1;
+  }
   migrateRankFacilities(data, game);
   game.rank = game.rank ?? data.ranks?.[0]?.id ?? null;
   game.rankPoints = game.rankPoints ?? 0;
@@ -99,8 +107,6 @@ export function normalizeGame(data, game, run = null, { expandParty = true } = {
   // 転職でのJP消費は廃止済み。旧セーブにある残高は保持する。
   game.titles ??= [];
   game.unlockedJobs = game.unlockedJobs ?? [];
-  for (const job of data.jobs ?? []) if (job.skillsReady && data.jobUnlocks?.get(job.id)?.method === '初期'
-    && !game.unlockedJobs.includes(job.id)) game.unlockedJobs.push(job.id);
   game.examsPassed = game.examsPassed ?? [];
   const masterChangedMembers = new Set((game.party ?? []).filter((member) => member.jobMasterVersion !== JOB_MASTER_VERSION));
   const masterChanged = migrateJobMaster(data, game, run);

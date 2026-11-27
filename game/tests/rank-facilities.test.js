@@ -1,9 +1,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { availableJobs } from '../js/growth.js';
 import { buildGameData, GAME_FILES } from '../js/gamedata.js';
 import { createNewGame, normalizeGame } from '../js/game-state.js';
 import { checkRankUp, nextRankStatus, questRankPoints, gearShopStock } from '../js/town.js';
-import { facilityUpgrade, canBrew } from '../js/workshop.js';
+import { facilityUpgrade, facilityUnlocks, canBrew } from '../js/workshop.js';
 import { readCsv, readJson } from './helpers.js';
 
 const data = buildGameData(Object.fromEntries(Object.entries(GAME_FILES).map(([key, name]) =>
@@ -57,6 +58,8 @@ test('施設Lv上限はランクで決まり、装備店と工房と調合は別
   assert.equal(canBrew(data, game, recipe), false);
   facilityUpgrade(data, game, 'alchemy');
   assert.equal(game.facilities.alchemy, 2);
+  facilityUpgrade(data, game, 'alchemy');
+  assert.equal(game.facilities.alchemy, 3);
   assert.throws(() => facilityUpgrade(data, game, 'alchemy'), /上限/);
 });
 
@@ -77,4 +80,62 @@ test('旧セーブのランク・累積点・工房投資と合格済みの試�
   const snapshot = structuredClone(game.facilities);
   normalizeGame(data, game);
   assert.deepEqual(game.facilities, snapshot);
+});
+
+test('11段階の投資額とギルド上限、★11・★12の同時解放', () => {
+  const game = fresh();
+  assert.deepEqual(data.ranks.map(row => row.facilityCap), [1,2,3,4,5,6,7,8,9,10,11]);
+  assert.equal(data.facilities.length, 5);
+  assert.equal(data.facilityRanks[1].invest_cost, 3000);
+  assert.equal(data.facilityRanks[2].invest_cost, 6000);
+  assert.equal(data.facilityRanks.at(-1).invest_cost, 1000000);
+  game.rank = 'E+';
+  game.gold = 20000;
+  facilityUpgrade(data, game, 'equipment_shop');
+  assert.equal(game.gold, 17000);
+  assert.ok(gearShopStock(data, game).some(row => row.star === 2));
+  assert.throws(() => facilityUpgrade(data, game, 'equipment_shop'), /上限/);
+  game.rank = 'S'; game.gold = 2000000;
+  game.facilities.equipment_shop = 10;
+  assert.ok(facilityUnlocks(data, 'equipment_shop', 11).length);
+  facilityUpgrade(data, game, 'equipment_shop');
+  assert.ok(gearShopStock(data, game).some(row => row.star === 11));
+  assert.ok(gearShopStock(data, game).some(row => row.star === 12));
+});
+test('空の神殿段階には投資できず、旧Lv12と所持装備は失われない', () => {
+  const game = fresh();
+  assert.deepEqual(facilityUnlocks(data, 'temple', 7), []);
+  game.rank = 'S'; game.gold = 2000000;
+  game.facilities.temple = 6;
+  assert.throws(() => facilityUpgrade(data, game, 'temple'), /実装されていません/);
+  game.facilities.workshop = 12;
+  game.facilities.equipment_shop = 12;
+  game.facilities.warehouse = 5;
+  game.rankFacilityVersion = 1;
+  game.storage.gear.push({ uid: 999, id: [...data.equipment.keys()][0] });
+  normalizeGame(data, game);
+  assert.equal(game.facilities.workshop, 11);
+  assert.equal(game.facilities.equipment_shop, 11);
+  assert.equal(game.facilities.warehouse, undefined);
+  assert.equal(game.storage.gear.at(-1).uid, 999);
+});
+
+test('新規は基本8職、神殿投資で実装済み職が増え、既存セーブの取得職は保持', () => {
+  const game = fresh();
+  assert.equal(availableJobs(data, game).length, 8);
+  game.rank = 'E+'; game.gold = 10000;
+  facilityUpgrade(data, game, 'temple');
+  assert.equal(availableJobs(data, game).length, 12);
+  const legacy = fresh();
+  delete legacy.templeUnlockVersion;
+  legacy.facilities.temple = 1;
+  normalizeGame(data, legacy);
+  assert.ok(availableJobs(data, legacy).length >= 26);
+  const count = availableJobs(data, legacy).length;
+  normalizeGame(data, legacy);
+  assert.equal(availableJobs(data, legacy).length, count);
+});
+test('調合の新段階には実際に作れるレシピがある', () => {
+  for (const lv of [3, 5, 8, 9, 11]) assert.ok(facilityUnlocks(data, 'alchemy', lv).length, `Lv${lv}`);
+  assert.equal(facilityUnlocks(data, 'temple', 11).length, 0);
 });

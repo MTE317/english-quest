@@ -53,7 +53,7 @@ test('追加16〜18職の45技能・143段階・転職・セーブ後の習得�
   assert.equal([...data.skills.values()].filter(s=>s.effect.master).length,390);
   let stages=0;
   for(const j of spec.jobs.filter(j=>ids.includes(j.id))){
-    const c=fixture(j.id);
+    const c=fixture(j.id);c.game.facilities.temple=6;
     assert.ok(availableJobs(data,c.game,c.member).some(x=>x.id===j.id));
     changeJob(data,c.game,0,'warrior');changeJob(data,c.game,0,j.id);
     for(const source of j.skills){

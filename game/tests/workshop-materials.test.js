@@ -29,7 +29,7 @@ test('分解は全装備の効果数に応じて粉0～3個を返し、欠片と
       assert.equal(game.storage.materials.enhancement_stone_1, 1);
       assert.equal(game.storage.materials.enchant_powder, 4 + expected);
       assert.match(message, expected ? new RegExp(`粉${expected}個`) : /欠片と強化石Iを得た/);
-      assert.throws(() => dismantle(data, game, gear), /倉庫/);
+      assert.throws(() => dismantle(data, game, gear), /所持品/);
     }
   }
   const legacy = { affixes: { STR: 2 }, enchants: [{ stat: 'MAG', value: 3 }] };

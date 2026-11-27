@@ -31,7 +31,7 @@ const hasClass = name => node => node.className.split(' ').includes(name);
 const one = (root, predicate) => { const node = all(root, predicate)[0]; assert.ok(node, '対象の表示がある'); return node; };
 const buttonText = text => node => node.tag === 'button' && node.textContent === text;
 
-test('装備一覧を保って枠・倉庫アイコン・比較・変更・取り外しを同じ画面で操作できる', () => {
+test('装備一覧を保って枠・所持品アイコン・比較・変更・取り外しを同じ画面で操作できる', () => {
   const oldDocument = globalThis.document, oldNode = globalThis.Node;
   globalThis.Node = TestNode;
   globalThis.document = { createElement: tag => new TestNode(tag), createTextNode: text => new TestNode('', text) };
@@ -71,7 +71,7 @@ test('装備一覧を保って枠・倉庫アイコン・比較・変更・取�
     assert.ok(one(picker, hasClass('equipment-current')).textContent.includes(data.equipment.get(current.id).name));
     const grid = one(picker, hasClass('storage-grid'));
     assert.ok(grid.children[0].className.includes('shop-slot'));
-    assert.ok(all(grid, node => node.tag === 'img').length > 0, '倉庫と同じ装備アイコンを表示する');
+    assert.ok(all(grid, node => node.tag === 'img').length > 0, '所持品と同じ装備アイコンを表示する');
     assert.equal(one(picker, hasClass('equipment-comparison')).hidden, true);
     const saveBeforePreview = JSON.stringify(game);
     grid.children[0].click();
@@ -79,16 +79,16 @@ test('装備一覧を保って枠・倉庫アイコン・比較・変更・取�
     assert.equal(comparison.hidden, false);
     assert.ok(comparison.textContent.includes('現在：'));
     assert.ok(comparison.textContent.includes('→'));
-    assert.equal(JSON.stringify(game), saveBeforePreview, '比較だけでは装備や倉庫を変更しない');
+    assert.equal(JSON.stringify(game), saveBeforePreview, '比較だけでは装備や所持品を変更しない');
     one(comparison, buttonText('この装備に替える')).click();
     assert.equal(game.party[0].equip.weapon.uid, candidate.uid);
     assert.ok(game.storage.gear.some(gear => gear.uid === current.uid));
     assert.equal(one(view, hasClass('equipment-picker')).hidden, false, '変更後も枠を開いたままにする');
     assert.equal(window.scrollY, 240);
-    one(view, buttonText('外して倉庫へ')).click();
+    one(view, buttonText('外して所持品へ')).click();
     assert.equal(game.party[0].equip.weapon, null);
     assert.ok(one(view, hasClass('equipment-current')).textContent.includes('未装備'));
-    // 倉庫に候補がない枠へ切り替え、古い比較を残さない。
+    // 所持品に候補がない枠へ切り替え、古い比較を残さない。
     const slotButtons = one(view, hasClass('equipment-slots')).children.map(li => li.children[0]);
     slotButtons[character.SLOTS.indexOf('head')].click();
     assert.equal(one(view, hasClass('equipment-comparison')).hidden, true);

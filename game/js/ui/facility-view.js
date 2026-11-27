@@ -1,6 +1,6 @@
 import { el, render } from '../dom.js?v=skill-growth-2';
 import { parseAmounts } from '../csv.js?v=skill-growth-2';
-import { craft, brew, canCraft, canBrew, enhance, dismantle, dismantlePowder, reroll, enchant, enchantFamilies, facilityUpgrade } from '../workshop.js?v=dismantle-powder-1';
+import { craft, brew, canCraft, canBrew, enhance, dismantle, dismantlePowder, reroll, enchant, enchantFamilies, facilityUpgrade, facilityUnlocks } from '../workshop.js?v=facilities-11-1';
 import { borrow, repayLoan, loanLimit } from '../town.js?v=public-rewards-1';
 import { unlockJob, jobDiscoveryProgress, offeringRevealed } from '../temple.js?v=skill-growth-2';
 import { effectLabel, describeEffect } from '../equipment-effects.js?v=unique-reroll-1';
@@ -58,7 +58,7 @@ export function workshopView(data, g, act, rng, selection) {
       }, title)));
     if (selection.tab === 'gear') {
       const entries = [
-        ...g.storage.gear.map(item => ({ item, location: '倉庫' })),
+        ...g.storage.gear.map(item => ({ item, location: '所持品' })),
         ...g.party.flatMap(member => Object.values(member.equip ?? {}).filter(Boolean)
           .map(item => ({ item, location: `${member.name}：装備中` }))),
       ];
@@ -209,9 +209,15 @@ export function managementView(data, g, act) {
       const current = g.facilities[f.id] ?? 1;
       const next = data.facilityRanks.find((r) => Number(r.rank) === current + 1);
       const fx = data.facilityEffects.find((r) => r.facility === f.id && Number(r.rank) === current);
+      const nextFx = data.facilityEffects.find((r) => r.facility === f.id && Number(r.rank) === current + 1);
+      const unlocks = next ? facilityUnlocks(data, f.id, current + 1) : [];
+      const cap = data.ranks.find(r => r.id === g.rank)?.facilityCap ?? 1;
       return el('div', { class: 'panel small' }, `${f.name} Lv. ${current}`,
         fx ? el('p', { class: 'muted' }, fx.effect) : null,
-        next ? btn(`投資する（${next.invest_cost} G）`, () => act((game) => facilityUpgrade(data, game, f.id)), current >= (data.ranks.find(r => r.id === g.rank)?.facilityCap ?? 1) || g.gold < Number(next.invest_cost)) : null);
+        next ? el('p', { class: 'muted' }, `次のLv：${nextFx?.effect ?? (unlocks.slice(0, 3).join('・') || '解放内容は準備中')} ／ ${next.invest_cost} G`) : null,
+        next && !unlocks.length ? el('p', { class: 'muted small' }, '解放内容の実装後に投資できます。') : null,
+        next ? btn(`投資する（${next.invest_cost} G）`, () => act((game) => facilityUpgrade(data, game, f.id)),
+          current >= cap || !unlocks.length || g.gold < Number(next.invest_cost)) : null);
     }),
   ];
 }
@@ -225,9 +231,11 @@ export function templeExtras(data, g, act, selection = {}, jobIcon = () => uiIco
   const renderUnlock = (rule) => {
     const job = data.jobsById.get(rule.job_id);
     const name = job.name;
-    const opened = (g.unlockedJobs ?? []).includes(rule.job_id);
+    const opened = (g.unlockedJobs ?? []).includes(rule.job_id)
+      || (rule.method === '初期' && (g.facilities?.temple ?? 1) >= Number(rule.temple_level));
     if (opened) return el('p', {}, `${name} ・ 解放済み`);
     if (rule.method === '討伐報告') return null;
+    if (rule.method === '初期') return el('p', {}, `${name} ・ 神殿Lv${rule.temple_level}で解放`);
     if (rule.method === '発見') {
       const progress = jobDiscoveryProgress(data, g, rule.job_id);
       const dungeon = data.dungeons.get(progress.dungeonId);
@@ -268,8 +276,10 @@ export function templeExtras(data, g, act, selection = {}, jobIcon = () => uiIco
   const grid = el('div', { class: 'shop-grid temple-job-grid', role: 'group', 'aria-label': '解放する追加ジョブ' },
     midRules.map(rule => {
       const job = data.jobsById.get(rule.job_id);
-      const opened = (g.unlockedJobs ?? []).includes(job.id);
-      const status = opened ? '解放済み' : rule.method === '素材' ? '素材で解放' : '冒険で発見';
+      const opened = (g.unlockedJobs ?? []).includes(job.id)
+          || (rule.method === '初期' && (g.facilities?.temple ?? 1) >= Number(rule.temple_level));
+      const status = opened ? '解放済み' : rule.method === '初期' ? `神殿Lv${rule.temple_level}`
+          : rule.method === '素材' ? '素材で解放' : '冒険で発見';
       const node = el('button', {
         type: 'button', class: 'shop-slot', 'aria-pressed': 'false',
         'aria-label': `${job.name}、${status}`,

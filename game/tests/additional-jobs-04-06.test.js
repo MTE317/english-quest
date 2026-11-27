@@ -72,9 +72,9 @@ test('追加4〜6職は45技能・137段階で設計と一致し、通常9・パ
   }
   assert.equal(stages,137);assert.equal(data.jobsById.get('necromancer').skillsReady,false);
 });
-test('新規・既存セーブで3職を初期から選べ、転職で技能や装備を自動配布しない',()=>{
+test('神殿Lv4で追加職を選べ、転職で技能や装備を自動配布しない',()=>{
   for(const id of ids){
-    const c=fixture('warrior');const available=availableJobs(data,c.game,c.member);
+    const c=fixture('warrior');c.game.facilities.temple=4;const available=availableJobs(data,c.game,c.member);
     assert.ok(available.some(j=>j.id===id));c.member.hp=7;c.member.mp=2;
     const learned=[...c.member.learned],gear=structuredClone(c.game.storage.gear);
     changeJob(data,c.game,0,id);
