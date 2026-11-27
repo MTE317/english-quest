@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { realGameData } from './helpers.js';
 import { createNewGame, defaultPartySpecs } from '../js/game-state.js';
 import { makeGear } from '../js/character.js';
-import { enchant, enchantFamilies, enchantValue } from '../js/workshop.js';
+import { enchant, enchantCandidates, enchantFamilies, enchantValue } from '../js/workshop.js';
 import { describeEffect } from '../js/equipment-effects.js';
 import { allyStatusChance, allyElementMultiplier, createBattle, makeEnemy, setPending, resolvePending } from '../js/battle.js';
 
@@ -43,11 +43,22 @@ test('グレードと部位ごとの新しい数値を既存素材で付与で�
   assert.equal(enchantValue(data, def('body'), 'STATUS_RES:poison', 12), 36);
   const game = fresh();
   game.gold = 10000;
+  game.storage.materials.enchant_powder = 20;
   game.storage.materials[common.id] = 1;
   const gear = makeGear(game, weapon.id); gear.crafted = true;
-  enchant(data, game, gear, 0, common.id, 'ELEM_DMG:slash', 1);
-  assert.deepEqual(gear.enchants, [{ stat: 'ELEM_DMG:slash', value: 8.4 }]);
+  const boosted = enchantFamilies(data, weapon, common);
+  const target = 'ELEM_DMG:slash';
+  assert.ok(boosted.includes(target));
+  const all = enchantCandidates(data, weapon);
+  const index = all.indexOf(target);
+  assert.ok(all.length > boosted.length && index >= 0);
+  // 素材を追加しても、全候補側の抽選で別の効果が出る可能性が残る。
+  enchant(data, game, gear, 0, common.id, 1, (() => {
+    let calls = 0; return () => calls++ === 0 ? 0.99 : (index + 0.01) / all.length;
+  })());
+  assert.deepEqual(gear.enchants, [{ stat: target, value: 8.4 }]);
   assert.equal(game.storage.materials[common.id] ?? 0, 0);
+  assert.equal(game.storage.materials.enchant_powder, 10);
 });
 
 test('個別耐性は対象の異常と属性だけを防ぐ', () => {

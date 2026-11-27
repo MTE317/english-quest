@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { buildGameData, GAME_FILES } from '../js/gamedata.js';
 import { createNewGame } from '../js/game-state.js';
-import { craft, enchant, enchantFamilies } from '../js/workshop.js';
+import { craft, enchant, enchantFamilies, enchantCandidates } from '../js/workshop.js';
 import { rollAffixes, affixVariants } from '../js/loot.js';
 import { gearEffects, maxHp, maxMp, makeGear } from '../js/character.js';
 import { learnSkill, equipSkill, isLearned, upgradeSkill, learnedSkillLevel } from '../js/growth.js';
@@ -41,8 +41,10 @@ test('追加18制作は対応工房と実在素材で作れ、専用効果を保
     assert.equal(item.quality, undefined);
     const material = [...data.materials.values()].find((m) => m.rank <= rank && enchantFamilies(data, def, m).length);
     const family = enchantFamilies(data, def, material)[0];
-    game.storage.materials[material.id] = 1;
-    enchant(data, game, item, 0, material.id, family, rank);
+    game.storage.materials.enchant_powder = 10;
+    const candidates = enchantCandidates(data, def);
+    const index = candidates.indexOf(family);
+    enchant(data, game, item, 0, '', rank, () => (index + 0.01) / candidates.length);
     assert.equal(item.enchants[0].stat, family);
     assert.deepEqual(item.affixes, def.fixedEffects, '後から付与しても固定効果は消えない');
     assert.ok(gearEffects(item)[family] > 0);
@@ -69,8 +71,10 @@ test('7系統と状態別12種を合法付与でき、★12の通常制作にも
       game.storage.materials[common.id] = 4;
       craft(data, game, def);
       const item = game.storage.gear.at(-1);
-      game.storage.materials[material.id] = 1;
-      enchant(data, game, item, 0, material.id, family, 12);
+      game.storage.materials.enchant_powder = 10;
+      const candidates = enchantCandidates(data, def);
+      const index = candidates.indexOf(family);
+      enchant(data, game, item, 0, '', 12, () => (index + 0.01) / candidates.length);
       assert.ok(gearEffects(item)[family] > 0, family);
     }
   }

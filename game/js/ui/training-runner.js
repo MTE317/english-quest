@@ -4,6 +4,7 @@ import { recordChant } from '../chant.js?v=skill-growth-2';
 import { now } from '../storage.js?v=skill-growth-2';
 import { speak, canSpeak, stopSpeech } from '../speech.js?v=skill-growth-2';
 import { el, render } from '../dom.js?v=skill-growth-2';
+import { awardCompositionSet } from '../workshop-materials.js?v=workshop-materials-1';
 
 const WORD_GRADES = [[1, '×', 'わからない'], [3, '〇', 'わかる'], [4, '◎', '簡単']];
 const REASONS = { due: '期限が来た復習', retry: '苦手問題', new: '新規学習', practice: '練習' };
@@ -19,10 +20,21 @@ export function runTrainingSession({ view, catalog, store, session, scheduler, d
   let phrases = 0;
   let xp = 0;
   let ap = 0;
+  let finished = false;
 
   function finish() {
+    if (finished) return;
+    finished = true;
     stopSpeech();
-    onFinish({ answered, words, wordCorrect, phrases, xp, ap });
+    let materials = null;
+    if (answered === options.count && phrases === options.count) {
+      session.update((game) => {
+        materials = awardCompositionSet(data, game, {
+          mode: options.mode, count: options.count, answered, phrases, stoneId: options.stoneId,
+        });
+      });
+    }
+    onFinish({ answered, words, wordCorrect, phrases, xp, ap, materials });
   }
   function recordReward(entry, passed) {
     let result;

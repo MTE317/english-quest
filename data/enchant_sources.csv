@@ -1,36 +1,36 @@
 ﻿source_kind,source_value,families,note
-element,fire,ELEMENT:fire|ELEM_RES:fire|ELEM_DMG:fire,炎属性の素材 → 炎属性追加・炎耐性・炎攻撃強化
-element,ice,ELEMENT:ice|ELEM_RES:ice|ELEM_DMG:ice,氷属性の素材 → 氷属性追加・氷耐性・氷攻撃強化
-element,wind,ELEMENT:wind|ELEM_RES:wind|ELEM_DMG:wind,風属性の素材 → 風属性追加・風耐性・風攻撃強化
-element,earth,ELEMENT:earth|ELEM_RES:earth|ELEM_DMG:earth,土属性の素材 → 土属性追加・土耐性・土攻撃強化
-element,thunder,ELEMENT:thunder|ELEM_RES:thunder|ELEM_DMG:thunder,雷属性の素材 → 雷属性追加・雷耐性・雷攻撃強化
-element,water,ELEMENT:water|ELEM_RES:water|ELEM_DMG:water,水属性の素材 → 水属性追加・水耐性・水攻撃強化
-element,light,ELEMENT:light|ELEM_RES:light|ELEM_DMG:light,光属性の素材 → 光属性追加・光耐性・光攻撃強化
-element,dark,ELEMENT:dark|ELEM_RES:dark|ELEM_DMG:dark,闇属性の素材 → 闇属性追加・闇耐性・闇攻撃強化
-monster_type,amorphous,TYPE_BONUS:amorphous|DOT_POWER|VS_STATUS,不定形の素材 → 不定形特効・継続ダメージ・状態別特効
-monster_type,beast,TYPE_BONUS:beast|CRIT_DMG|LIFESTEAL|FIRST_HIT,獣の素材 → 獣特効・会心ダメージ・吸血・初撃強化
-monster_type,humanoid,TYPE_BONUS:humanoid|COUNTER|DEF_PIERCE|NORMAL_SKILL,人型の素材 → 人型特効・反撃・防御無視・通常攻撃から技能への強化
-monster_type,bird,TYPE_BONUS:bird|CRT|EXTRA_HIT|EVA_COUNTER,鳥の素材 → 鳥特効・会心率・追撃・回避反撃
-monster_type,insect,TYPE_BONUS:insect|STATUS_RATE|DOT_POWER,虫の素材 → 虫特効・異常付与・継続ダメージ
-monster_type,spirit,TYPE_BONUS:spirit|MP_SAVE|MAGIC_CUT,精霊の素材 → 精霊特効・MP節約・魔法軽減
-monster_type,plant,TYPE_BONUS:plant|HEAL_POWER|STATUS_RES|ATTACK_HEAL,植物の素材 → 植物特効・回復強化・異常耐性・攻撃時の味方回復
-monster_type,undead,TYPE_BONUS:undead|DOT_POWER|LIFESTEAL,アンデッドの素材 → アンデッド特効・継続ダメージ・吸血
-monster_type,golem,TYPE_BONUS:golem|PHYS_CUT|DEF_PIERCE,ゴーレムの素材 → ゴーレム特効・物理軽減・防御無視
-monster_type,ghost,TYPE_BONUS:ghost|MP_ON_HIT|MAGIC_CUT|CRIT_MP,幽霊の素材 → 幽霊特効・通常攻撃MP回復・魔法軽減・会心時MP回復
-monster_type,giant,TYPE_BONUS:giant|COUNTER|PHYS_CUT,巨人の素材 → 巨人特効・反撃・物理軽減
-monster_type,aquatic,TYPE_BONUS:aquatic|HEAL_POWER|STATUS_RES,水棲の素材 → 水棲特効・回復強化・異常耐性
-monster_type,demon,TYPE_BONUS:demon|VS_STATUS|STATUS_RATE,悪魔の素材 → 悪魔特効・状態別特効・異常付与
-monster_type,machine,TYPE_BONUS:machine|DEF_PIERCE|MP_SAVE,機械の素材 → 機械特効・防御無視・MP節約
-monster_type,fairy,TYPE_BONUS:fairy|PARTY_BUFF_POWER|HEAL_POWER|OVERHEAL_SHIELD,妖精の素材 → 妖精特効・全体支援・回復強化・余剰回復の障壁
-monster_type,dragon,TYPE_BONUS:dragon|WEAK_DMG|CRIT_DMG,竜の素材 → 竜特効・弱点強化・会心ダメージ
-monster_type,aberration,TYPE_BONUS:aberration|STATUS_RATE|VS_STATUS,異形の素材 → 異形特効・異常付与・状態別特効
-monster_type,divine_beast,TYPE_BONUS:divine_beast|WEAK_DMG|PARTY_BUFF_POWER,神獣の素材 → 神獣特効・弱点強化・全体支援
-material_kind,common,STR|MAG|DEF|RES|HP,通常の素材 → 基本能力値
-material_kind,neutral,ELEM_DMG:slash|ELEM_DMG:pierce|ELEM_DMG:blunt|ELEM_RES:slash|ELEM_RES:pierce|ELEM_RES:blunt,属性なし・無属性の既存素材 → 斬突打の攻撃強化と耐性
-material_kind,rare,CRT|SPD|LUK|EVA|STATUS_RES,まれな素材 → 会心・素早さ・運など
-material_kind,season,EXP|DROP|FIRST_SPD,季節の素材 → 経験値・素材の出やすさ・先手
-material_kind,boss,ANY,ボスの素材 → どの系統でも選べる
-monster_status,ANY,VS_STATUS,状態異常を使うモンスターの素材 → 全状態異常・能力ダウンから対象を選ぶ
+element,fire,ELEMENT:fire|ELEM_RES:fire|ELEM_DMG:fire,炎属性の素材で出やすくなる：炎属性追加・炎耐性・炎攻撃強化
+element,ice,ELEMENT:ice|ELEM_RES:ice|ELEM_DMG:ice,氷属性の素材で出やすくなる：氷属性追加・氷耐性・氷攻撃強化
+element,wind,ELEMENT:wind|ELEM_RES:wind|ELEM_DMG:wind,風属性の素材で出やすくなる：風属性追加・風耐性・風攻撃強化
+element,earth,ELEMENT:earth|ELEM_RES:earth|ELEM_DMG:earth,土属性の素材で出やすくなる：土属性追加・土耐性・土攻撃強化
+element,thunder,ELEMENT:thunder|ELEM_RES:thunder|ELEM_DMG:thunder,雷属性の素材で出やすくなる：雷属性追加・雷耐性・雷攻撃強化
+element,water,ELEMENT:water|ELEM_RES:water|ELEM_DMG:water,水属性の素材で出やすくなる：水属性追加・水耐性・水攻撃強化
+element,light,ELEMENT:light|ELEM_RES:light|ELEM_DMG:light,光属性の素材で出やすくなる：光属性追加・光耐性・光攻撃強化
+element,dark,ELEMENT:dark|ELEM_RES:dark|ELEM_DMG:dark,闇属性の素材で出やすくなる：闇属性追加・闇耐性・闇攻撃強化
+monster_type,amorphous,TYPE_BONUS:amorphous|DOT_POWER|VS_STATUS,不定形の素材で出やすくなる：不定形特効・継続ダメージ・状態別特効
+monster_type,beast,TYPE_BONUS:beast|CRIT_DMG|LIFESTEAL|FIRST_HIT,獣の素材で出やすくなる：獣特効・会心ダメージ・吸血・初撃強化
+monster_type,humanoid,TYPE_BONUS:humanoid|COUNTER|DEF_PIERCE|NORMAL_SKILL,人型の素材で出やすくなる：人型特効・反撃・防御無視・通常攻撃から技能への強化
+monster_type,bird,TYPE_BONUS:bird|CRT|EXTRA_HIT|EVA_COUNTER,鳥の素材で出やすくなる：鳥特効・会心率・追撃・回避反撃
+monster_type,insect,TYPE_BONUS:insect|STATUS_RATE|DOT_POWER,虫の素材で出やすくなる：虫特効・異常付与・継続ダメージ
+monster_type,spirit,TYPE_BONUS:spirit|MP_SAVE|MAGIC_CUT,精霊の素材で出やすくなる：精霊特効・MP節約・魔法軽減
+monster_type,plant,TYPE_BONUS:plant|HEAL_POWER|STATUS_RES|ATTACK_HEAL,植物の素材で出やすくなる：植物特効・回復強化・異常耐性・攻撃時の味方回復
+monster_type,undead,TYPE_BONUS:undead|DOT_POWER|LIFESTEAL,アンデッドの素材で出やすくなる：アンデッド特効・継続ダメージ・吸血
+monster_type,golem,TYPE_BONUS:golem|PHYS_CUT|DEF_PIERCE,ゴーレムの素材で出やすくなる：ゴーレム特効・物理軽減・防御無視
+monster_type,ghost,TYPE_BONUS:ghost|MP_ON_HIT|MAGIC_CUT|CRIT_MP,幽霊の素材で出やすくなる：幽霊特効・通常攻撃MP回復・魔法軽減・会心時MP回復
+monster_type,giant,TYPE_BONUS:giant|COUNTER|PHYS_CUT,巨人の素材で出やすくなる：巨人特効・反撃・物理軽減
+monster_type,aquatic,TYPE_BONUS:aquatic|HEAL_POWER|STATUS_RES,水棲の素材で出やすくなる：水棲特効・回復強化・異常耐性
+monster_type,demon,TYPE_BONUS:demon|VS_STATUS|STATUS_RATE,悪魔の素材で出やすくなる：悪魔特効・状態別特効・異常付与
+monster_type,machine,TYPE_BONUS:machine|DEF_PIERCE|MP_SAVE,機械の素材で出やすくなる：機械特効・防御無視・MP節約
+monster_type,fairy,TYPE_BONUS:fairy|PARTY_BUFF_POWER|HEAL_POWER|OVERHEAL_SHIELD,妖精の素材で出やすくなる：妖精特効・全体支援・回復強化・余剰回復の障壁
+monster_type,dragon,TYPE_BONUS:dragon|WEAK_DMG|CRIT_DMG,竜の素材で出やすくなる：竜特効・弱点強化・会心ダメージ
+monster_type,aberration,TYPE_BONUS:aberration|STATUS_RATE|VS_STATUS,異形の素材で出やすくなる：異形特効・異常付与・状態別特効
+monster_type,divine_beast,TYPE_BONUS:divine_beast|WEAK_DMG|PARTY_BUFF_POWER,神獣の素材で出やすくなる：神獣特効・弱点強化・全体支援
+material_kind,common,STR|MAG|DEF|RES|HP,通常の素材で出やすくなる：基本能力値
+material_kind,neutral,ELEM_DMG:slash|ELEM_DMG:pierce|ELEM_DMG:blunt|ELEM_RES:slash|ELEM_RES:pierce|ELEM_RES:blunt,属性なし・無属性の既存素材で出やすくなる：斬突打の攻撃強化と耐性
+material_kind,rare,CRT|SPD|LUK|EVA|STATUS_RES,まれな素材で出やすくなる：会心・素早さ・運など
+material_kind,season,EXP|DROP|FIRST_SPD,季節の素材で出やすくなる：経験値・素材の出やすさ・先手
+material_kind,boss,ANY,ボス素材の旧設定。確率補正はその敵の種族・属性・状態異常を使う
+monster_status,ANY,VS_STATUS,状態異常を使うモンスターの素材で出やすくなる：全状態異常・能力ダウンから対象を選ぶ
 monster_status,poison,VS_STATUS:poison,ドロップ効果の従来候補・毒
 monster_status,toxic,VS_STATUS:toxic,ドロップ効果の従来候補・猛毒
 monster_status,burn,VS_STATUS:burn,ドロップ効果の従来候補・火傷
