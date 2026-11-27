@@ -37,7 +37,7 @@
 | equipment.csv | 通常装備720 ID。既存セーブとレシピのため同一★の2系列IDを残すが、基礎性能は★・種類で共通 |
 | uniques.csv | 固有装備121（既存108＋闘技場13。闘技場報酬は直接付与） |
 | sets.csv / set_items.csv | セット装備20セット（4部位） |
-| enchant_sources.csv | エンチャントで素材から付く効果の系統 |
+| enchant_sources.csv | 任意で追加する素材によって出やすくなる効果の系統 |
 | equipment_tiers.csv | ★1～12の基礎武器・防具・魔法補助・固定ダメージ・付与係数 |
 | enchant_overrides.csv | 工房エンチャント専用の部位別数値。ドロップ装備のランダム効果は変えない |
 | job_mastery.csv | ジョブを極めたときの、全ジョブへのボーナス |
@@ -52,7 +52,7 @@
 | items.csv / shop_inventory.csv | 消耗品（回復は固定量と割合の2種類。能力を上げる薬は調合のみ）/ 店の品ぞろえ |
 | alchemy_recipes.csv | 調合のレシピ（素材は種別と★で指定） |
 | inn_rooms.csv / facilities.csv / facility_ranks.csv / facility_effects.csv | 宿屋・町の施設 |
-| enhance_rates.csv / rarities.csv / recipes.csv | 強化（費用は1.8^強化値で増える）・レアリティ・制作。171件の専用レシピ（武器114件・防具27件・マント10件・装飾品20件）＋汎用制作 |
+| enhance_rates.csv / rarities.csv / recipes.csv | 強化石I～Vの必要数と成功率（費用は1.8^強化値で増える）・レアリティ・制作。171件の専用レシピ（武器114件・防具27件・マント10件・装飾品20件）＋汎用制作 |
 | enchant_grades.csv | エンチャントのグレード（工房のランク）ごとの費用 |
 | economy_by_rank.csv | ★ごとのお金の目安（月末に払うのはギルドの会費だけ。倉庫は無料） |
 | backpack.csv | バックパックの広さの段階と、広げる費用 |
@@ -155,7 +155,7 @@
 - 第一弾の36案に合わせ、技能8件と専用制作18件を追加。新しい付与系統は `VS_STATUS`、`FIRST_HIT`、`NORMAL_SKILL`、`EVA_COUNTER`、`CRIT_MP`、`ATTACK_HEAL`、`OVERHEAL_SHIELD`。上限は `balance.json` の `battle_formulas`、発動条件は [36ビルドの設計・検証](../docs/build-catalog.md) を参照。
 - `VS_STATUS:poison` のように対象状態を含める系統を、部位表では `VS_STATUS` として登録する。`enchant_sources.csv` の `monster_status` は素材の出典モンスターの `status` と照合する。ランダム付与も対象IDを展開し、効果の働かない裸の `VS_STATUS` / `ELEM_RES` は装備へ保存しない。
 - `content_updates.build36_skills` は既得のジョブマスタリー移行に使う8技能ID。更新前の技能を全て習得していた職だけ保護し、新規開始の習得条件は現行の全技能。以後の追加時にも既得の達成を消さない。
-- `enchant_sources.csv` の素材種族ごとの `families` と、`affixes.csv` の部位別 `stat` の両方を満たす効果だけ付与できます。素材側に効果名があっても、その部位に対応する行がなければ選べません。ボス素材の `ANY` も部位条件を越えません。
+- 後付けは部位が許す全候補から抽選します。エンチャント粉10個が必須で、任意の追加素材1個は `enchant_sources.csv` の対応系統を出やすくします。ボス素材の旧 `ANY` は確率補正に使いません。
 - 二刀流の副武器攻撃は通常攻撃だけです。通常攻撃時の固定状態異常は、主手・副手それぞれが当たったときに判定し、攻撃技能から副武器の固定状態異常は発動しません。
 - 追撃と装備による通常攻撃MP回復は一行動に一回まで。HP吸収は実際に減らしたHPから計算し、一行動の回復量にも上限があります。反撃は物理被弾時のみで、反撃から追加状態異常・追撃・吸収を連鎖させません。
 - `DOT_POWER` と `dot_power` は付与者の継続ダメージ強化、`STATUS_RATE` と `stat_rate` は付与率を補助します。毒・出血などは付与時の本人の強化を保存し、合計ダメージにも上限を適用します。`VS_DEBUFFED` は状態異常だけでなくDEF低下などの弱体にも対応します。

@@ -7,6 +7,7 @@ import { currentRank } from './dungeon.js?v=public-rewards-1';
 import { consumeMaterials } from './temple.js?v=skill-growth-2';
 import { describeEffect } from './equipment-effects.js?v=targeted-enchant-2';
 import { equipmentTier, rarityBonus } from './equipment-scaling.js?v=equipment-rarity-1';
+import { STONE_STAGES, stoneRequirement, ENCHANT_POWDER_ID, ENCHANT_POWDER_COST } from './workshop-materials.js?v=workshop-materials-1';
 
 const facilityFor = () => 'workshop';
 const capFor = (data, game, facility) => data.facilityRanks.find((r) => Number(r.rank) === (game.facilities[facility] ?? 1));
@@ -115,7 +116,9 @@ export function enhance(data, game, gear, rng) {
   const cap = Number(capFor(data, game, facilityFor(def))?.enhance_cap ?? 0);
   if (!row || Number(row.to_level) > cap) throw new Error('この工房での強化上限に達しています。');
   const base = equipmentTier(data, def.star).enhanceBase * 1.8 ** gear.enh;
-  pay(game, roundGold(data, goldScale(data) * base * (def.slot === 'weapon' ? 1 : 0.5), 'ceil'), { enhancement_stone: 1 });
+  const stone = stoneRequirement(data, gear.enh);
+  if (!stone) throw new Error('これ以上強化できません。');
+  pay(game, roundGold(data, goldScale(data) * base * (def.slot === 'weapon' ? 1 : 0.5), 'ceil'), { [stone.id]: stone.count });
   const odds = Math.min(1, Number(row.success_rate) + 0.05 * (gear.enhanceFailures ?? 0));
   if (rng() >= odds) {
     gear.enhanceFailures = (gear.enhanceFailures ?? 0) + 1;
@@ -135,8 +138,9 @@ export function dismantle(data, game, gear) {
   const stock = game.storage.materials;
   const fragment = fragmentId(gear);
   stock[fragment] = (stock[fragment] ?? 0) + 1;
-  stock.enhancement_stone = (stock.enhancement_stone ?? 0) + 1;
-  return '装備を分解し、欠片と強化石を得た。';
+  // 分解で返す石の段階・個数は別途調整。従来どおり最低段階を1個返す。
+  stock[STONE_STAGES[0].id] = (stock[STONE_STAGES[0].id] ?? 0) + 1;
+  return '装備を分解し、欠片と強化石Iを得た。';
 }
 
 export function reroll(data, game, gear, stat, rng) {
@@ -183,18 +187,58 @@ function enchantVariants(data, family) {
   return [family];
 }
 
+// 部位で付与できるすべての個別効果。素材なしでもここから抽選する。
+export function enchantCandidates(data, def) {
+  const excluded = new Set(['STATUS_RATE', 'STATUS_RES', 'DOT_POWER', 'VS_DEBUFFED']);
+  return [...new Set(enchantAffixes(data, def.slot)
+    .flatMap((affix) => enchantVariants(data, affix.stat))
+    .filter((family) => !excluded.has(family)))];
+}
+
+// 旧対応表は付与の許可条件ではなく、追加素材が確率を高める効果の表として使う。
 export function enchantFamilies(data, def, material) {
+  if (!material || material.kind === 'workshop') return [];
   const monster = data.monsters.get(material.sourceMonster);
   const matches = { element: [material.element], monster_type: monster?.types ?? [],
     monster_status: monster?.status ? [monster.status, 'ANY'] : [],
     material_kind: [material.season ? 'season' : material.kind,
       ...(!material.element || material.element === 'none' ? ['neutral'] : []),
       ...(monster?.role === 'boss' ? ['boss'] : [])] };
-  const allowed = data.enchantSources.filter((r) => matches[r.source_kind]?.includes(r.source_value)).flatMap((r) => splitList(r.families));
-  const affixes = enchantAffixes(data, def.slot);
-  const expand = allowed.includes('ANY') ? affixes.flatMap((a) => enchantVariants(data, a.stat))
-    : allowed.flatMap((family) => enchantVariants(data, family));
-  return [...new Set(expand)].filter((stat) => affixes.some((a) => a.stat === stat.split(':')[0]));
+  const allowed = data.enchantSources.filter((r) => matches[r.source_kind]?.includes(r.source_value))
+    .flatMap((r) => splitList(r.families)).filter((family) => family !== 'ANY');
+  const candidates = new Set(enchantCandidates(data, def));
+  const expand = (family) => {
+    if (family === 'TYPE_BONUS' && monster?.types?.length)
+      return monster.types.map((id) => `TYPE_BONUS:${id}`);
+    if (['STATUS_RATE', 'STATUS_RES', 'VS_STATUS', 'DOT_POWER'].includes(family)
+      && monster?.status && enchantVariants(data, family).includes(`${family}:${monster.status}`))
+      return [`${family}:${monster.status}`];
+    return enchantVariants(data, family);
+  };
+  return [...new Set(allowed.flatMap(expand))].filter((family) => candidates.has(family));
+}
+
+function rollEnchant(data, def, material, rng) {
+  const all = enchantCandidates(data, def);
+  if (!all.length) throw new Error('この装備に付けられる効果がありません。');
+  const boosted = material ? enchantFamilies(data, def, material) : [];
+  // 追加素材ありなら65%で対応候補、35%で全部位候補から抽選。狙いの効果も確定しない。
+  const pool = boosted.length && rng() < 0.65 ? boosted : all;
+  const monster = material && data.monsters.get(material.sourceMonster);
+  const direct = new Set([
+    ...(monster?.types ?? []).map((id) => `TYPE_BONUS:${id}`),
+    ...['ELEM_DMG', 'ELEM_RES', 'ELEMENT'].map((kind) => `${kind}:${material?.element}`),
+    ...['STATUS_RATE', 'STATUS_RES', 'VS_STATUS', 'DOT_POWER']
+      .map((kind) => `${kind}:${monster?.status}`),
+  ]);
+  const weights = pool.map((id) => pool === boosted && direct.has(id) ? 4 : 1);
+  const total = weights.reduce((sum, weight) => sum + weight, 0);
+  let roll = Math.min(1 - Number.EPSILON, Math.max(0, rng())) * total;
+  for (let i = 0; i < pool.length; i++) {
+    roll -= weights[i];
+    if (roll < 0) return pool[i];
+  }
+  return pool.at(-1);
 }
 
 export function enchantValue(data, def, family, grade, rarity = 'common') {
@@ -206,15 +250,19 @@ export function enchantValue(data, def, family, grade, rarity = 'common') {
     * rarityBonus(data, rarity).effect * 10) / 10;
 }
 
-export function enchant(data, game, gear, slot, materialId, family, grade) {
+export function enchant(data, game, gear, slot, materialId, grade, rng = Math.random) {
   const def = data.equipment.get(gear.id);
-  const material = data.materials.get(materialId);
+  const material = materialId ? data.materials.get(materialId) : null;
   const row = data.enchantGrades.find((r) => Number(r.grade) === grade);
   if (!def || def.unique || def.setId || ![0, 1].includes(slot) || (slot === 1 && !gear.enchants?.[0])) throw new Error('この枠には付与できません。');
   if (!row || (game.facilities[facilityFor(def)] ?? 1) < Number(row.workshop_rank)) throw new Error('工房ランクが足りません。');
-  if (!material || !enchantFamilies(data, def, material).includes(family)) throw new Error('その素材では付けられない効果です。');
+  if (materialId && (!material || !enchantFamilies(data, def, material).length)) throw new Error('この素材では候補を絞れません。');
+  pay(game, Number(row.gold), {
+    [ENCHANT_POWDER_ID]: ENCHANT_POWDER_COST,
+    ...(materialId ? { [materialId]: 1 } : {}),
+  });
+  const family = rollEnchant(data, def, material, rng);
   const value = enchantValue(data, def, family, grade, gear.rarity);
-  pay(game, Number(row.gold), { [materialId]: 1 });
   gear.enchants ??= [];
   gear.enchants[slot] = { stat: family, value };
   return `${describeEffect(data, family, value)} を付けた。`;

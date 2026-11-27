@@ -5,7 +5,7 @@ import { buildGameData, GAME_FILES } from '../js/gamedata.js';
 import { withEngineSkillFixtures, equippedGame } from './combat-fixtures.js';
 import { makeGear, maxHp, maxMp, computeStats } from '../js/character.js';
 import { createBattle, makeEnemy, setPending, resolvePending, nextTurn, enemyIntent, skillMp, fleeRate, actionOptions, rand } from '../js/battle.js';
-import { enchantFamilies, enchant } from '../js/workshop.js';
+import { enchantFamilies, enchantCandidates, enchant } from '../js/workshop.js';
 import { describeEffect } from '../js/equipment-effects.js';
 import { readCsv, readJson } from './helpers.js';
 
@@ -346,11 +346,12 @@ test('ビルド向けエンチャントが実在素材で選べ、付与結果�
   ]) {
     const ctx = prepare({ rules: master });
     const def = master.equipment.get(id);
-    const material = materials.find((m) => enchantFamilies(master, def, m).includes(family));
-    assert.ok(material, `${id} / ${family} の素材`);
     const gear = makeGear(ctx.game, id); gear.crafted = true;
-    ctx.game.storage.materials[material.id] = 1;
-    const msg = enchant(master, ctx.game, gear, 0, material.id, family, 1);
+    ctx.game.storage.materials.enchant_powder = 10;
+    const candidates = enchantCandidates(master, def);
+    const index = candidates.indexOf(family);
+    assert.ok(index >= 0);
+    const msg = enchant(master, ctx.game, gear, 0, '', 1, () => (index + 0.01) / candidates.length);
     assert.equal(gear.enchants[0].stat, family);
     assert.ok(!msg.includes(family), msg);
     assert.ok(describeEffect(master, family, gear.enchants[0].value).length > 0);

@@ -41,16 +41,17 @@ test('通常ドロップにも後付け2枠を使え、天然効果の振り直�
   const game = fresh();
   game.gold = 10000;
   const material = [...data.materials.values()].find((m) => m.kind === 'common' && !m.element);
-  game.storage.materials[material.id] = 3;
+  game.storage.materials.enchant_powder = 20;
+  game.storage.materials[material.id] = 2;
   const gear = makeGear(game, 'sword_t2', { rarity: 'rare', affixes: { STR: 3 } });
   const def = data.equipment.get(gear.id);
   assert.equal(enchantValue(data, def, 'ELEM_DMG:slash', 1, 'rare'), 8.7);
-  enchant(data, game, gear, 0, material.id, 'ELEM_DMG:slash', 1);
-  enchant(data, game, gear, 1, material.id, 'ELEM_DMG:blunt', 1);
+  enchant(data, game, gear, 0, material.id, 1, () => 0.99);
+  enchant(data, game, gear, 1, material.id, 1, () => 0.99);
   assert.equal(gear.enchants.length, 2);
   assert.deepEqual(gear.affixes, { STR: 3 });
   assert.equal(gearEffects(gear).STR, 3);
-  assert.throws(() => enchant(data, game, gear, 2, material.id, 'ELEM_DMG:slash', 1));
+  assert.throws(() => enchant(data, game, gear, 2, material.id, 1));
 });
 
 test('製作品は隠れた15%補正を持たず、レシピ固有効果はコモンのまま保持する', () => {

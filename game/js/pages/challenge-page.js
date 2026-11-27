@@ -1,11 +1,11 @@
-import { loadGameData } from '../gamedata.js?v=targeted-enchant-2';
+import { loadGameData } from '../gamedata.js?v=workshop-materials-1';
 import { loadJson, loadOptional } from '../data.js?v=skill-growth-2';
 import { splitList } from '../csv.js?v=skill-growth-2';
 import { loadLearningCatalog } from '../learning-catalog.js?v=skill-growth-2';
 import { Scheduler } from '../srs.js?v=skill-growth-2';
 import { LearningStore, now } from '../storage.js?v=skill-growth-2';
 import { GameSession } from '../save.js?v=party-wipe-1';
-import { normalizeGame } from '../game-state.js?v=jobs-intro-1';
+import { normalizeGame } from '../game-state.js?v=workshop-materials-1';
 import { createBattle, makeEnemy, finishBattle } from '../battle.js?v=targeted-enchant-2';
 import { currentRank, returnAfterDefeat, useItemOutsideBattle, FIELD_ITEM_EFFECTS } from '../dungeon.js?v=targeted-enchant-2';
 import { nextRankStatus, checkRankUp } from '../town.js?v=public-rewards-1';

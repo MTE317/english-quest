@@ -8,6 +8,7 @@ import { recordStoredMaterials } from './temple.js?v=skill-growth-2';
 import { retireLegacyQuestChains } from './retired-quests.js?v=skill-growth-2';
 import { migrateJobMaster, JOB_MASTER_VERSION } from './jobs-migration.js?v=skill-growth-2';
 import { migrateRankFacilities } from './rank-migration.js';
+import { STONE_STAGES } from './workshop-materials.js?v=workshop-materials-1';
 
 export const PARTY_SIZE = 6;
 
@@ -74,6 +75,11 @@ export function normalizeGame(data, game, run = null, { expandParty = true } = {
   }
   game.storage = game.storage ?? { gear: [], materials: {} };
   game.storage.materials ??= {};
+  // 旧セーブの共通強化石は最初の段階へ1:1で移し、再読込で重複させない。
+  const legacyStones = Number(game.storage.materials.enhancement_stone ?? 0);
+  if (legacyStones > 0) game.storage.materials[STONE_STAGES[0].id] =
+    (game.storage.materials[STONE_STAGES[0].id] ?? 0) + legacyStones;
+  delete game.storage.materials.enhancement_stone;
   recordStoredMaterials(game);
   game.items = game.items ?? {};
   migrateRankFacilities(data, game);

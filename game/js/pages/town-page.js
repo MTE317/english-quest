@@ -1,8 +1,8 @@
 import { availableAp } from '../ap.js?v=skill-growth-2';
 // 町をホームにして、施設カードから各施設を開く。
-import { loadGameData } from '../gamedata.js?v=targeted-enchant-2';
+import { loadGameData } from '../gamedata.js?v=workshop-materials-1';
 import { GameSession } from '../save.js?v=party-wipe-1';
-import { normalizeGame } from '../game-state.js?v=jobs-intro-1';
+import { normalizeGame } from '../game-state.js?v=workshop-materials-1';
 import { currentRank, seededRng } from '../dungeon.js?v=targeted-enchant-2';
 import {
   calendarOf, fillBoard, boardSize, acceptQuest, canAcceptQuest, abandonQuest, canReport, reportQuest, questText, questProgress, questDestination, questRewardGold, questRankPoints, questDepositTotal, questAbandonRefund, nextRankStatus, stayInn, revive, reviveCost, checkRankUp,
@@ -14,7 +14,7 @@ import { maxHp, maxMp, gearDef } from '../character.js?v=advanced-jobs-1';
 import { availableJobs, changeJob } from '../growth.js?v=advanced-jobs-1';
 import { explorationStories, acceptExplorationStory, reportExplorationStory } from '../exploration-story.js?v=public-rewards-1';
 import { cureAtTemple, recordStoredMaterials } from '../temple.js?v=skill-growth-2';
-import { workshopView, managementView, templeExtras } from '../ui/facility-view.js?v=targeted-enchant-2';
+import { workshopView, managementView, templeExtras } from '../ui/facility-view.js?v=workshop-materials-1';
 import { itemShopView, gearShopView } from '../ui/town-shops.js?v=public-rewards-1';
 import { weaponIcon } from '../ui/weapon-icons.js?v=skill-growth-2';
 import { equipmentIcon } from '../ui/equipment-icons.js?v=skill-growth-2';

@@ -1,18 +1,19 @@
 // 英語学習は訓練場（単語・瞬間英作文・チャンク）と試験の間へ集約する。
-import { loadGameData } from '../gamedata.js?v=public-rewards-1';
+import { loadGameData } from '../gamedata.js?v=workshop-materials-1';
 import { loadJson } from '../data.js?v=skill-growth-2';
 import { loadLearningCatalog } from '../learning-catalog.js?v=skill-growth-2';
 import { Scheduler } from '../srs.js?v=skill-growth-2';
 import { LearningStore, now } from '../storage.js?v=skill-growth-2';
 import { GameSession } from '../save.js?v=party-wipe-1';
-import { normalizeGame } from '../game-state.js?v=jobs-intro-1';
+import { normalizeGame } from '../game-state.js?v=workshop-materials-1';
 import { nextRankStatus, checkRankUp, promotionMaterialStatus, offerPromotionMaterials } from '../town.js?v=public-rewards-1';
 import { EXAM_RULES, promotionProgress, promotionExamState } from '../promotion.js?v=promotion-exam-1';
 import { runDualPromotionExam } from '../ui/learning-exams.js?v=promotion-exam-1';
 import { learningStatistics } from '../learning-stats.js?v=skill-growth-2';
 import { TRAINING_COUNTS, trainingChunksForSet, trainingWordsForSet,
   trainingPhrasesForSet, resolveTrainingMode } from '../training.js?v=advanced-jobs-1';
-import { runTrainingSession } from '../ui/training-runner.js?v=advanced-jobs-1';
+import { runTrainingSession } from '../ui/training-runner.js?v=workshop-materials-1';
+import { availableStoneStages, ENCHANT_POWDER_ID } from '../workshop-materials.js?v=workshop-materials-1';
 import { el, render } from '../dom.js?v=skill-growth-2';
 import { setSceneMusic } from '../battle-music.js?v=skill-growth-2';
 import { installGameShell } from '../ui/game-shell.js?v=skill-growth-2';
@@ -34,7 +35,7 @@ const state = {
   phraseMode: initialMode === 'chunks' ? 'chunks' : 'normal',
   mainId: '00', setId: '00', chunkId: '',
   chunkSearch: '', chunkLimit: 10, showSubcategories: false,
-  reviewType: 'both', reviewScope: 'due', count: 10,
+  reviewType: 'both', reviewScope: 'due', count: 10, stoneId: 'enhancement_stone_1',
 };
 let message = '';
 
@@ -220,6 +221,12 @@ function training() {
           state.phraseMode = value;
           draw();
         }, '英作文の練習方法'),
+      el('label', { class: 'small' }, 'セット完了時に受け取る強化石',
+        el('select', { class: 'select', onchange: (event) => { state.stoneId = event.target.value; } },
+          availableStoneStages(data, session.game).map((stage) =>
+            el('option', { value: stage.id, selected: stage.id === state.stoneId }, stage.name)))),
+      el('p', { class: 'small muted' },
+        `5問で石とエンチャント粉を各1個、10問で各2個、15問で各3個。粉は共通1種類（現在${session.game.storage.materials[ENCHANT_POWDER_ID] ?? 0}個）。`),
     ] : null,
     // 長い教材・チャンク一覧をスクロールする前に訓練を開始できるようにする。
     el('div', { class: 'training-start-bar' },
@@ -256,11 +263,13 @@ function startTraining() {
       mode, setId: state.mode === 'review' ? 'all' : state.setId,
       chunkId: state.chunkId, reviewType: state.reviewType,
       reviewScope: state.reviewScope, count: state.count,
+      stoneId: state.stoneId,
     },
     onFinish: (result) => {
       message = result.answered
         ? result.answered + '問完了（単語' + result.words + '・英作文' + result.phrases +
-          '）。6人合計 XP +' + result.xp + ' / AP +' + result.ap + '。端数は次回へ繰り越します。'
+          '）。6人合計 XP +' + result.xp + ' / AP +' + result.ap + '。端数は次回へ繰り越します。' +
+          (result.materials ? ` ${result.materials.stoneName}・エンチャント粉を各${result.materials.stones}個獲得。` : '')
         : 'この条件では出題可能な項目がありません。教材や学習モードを変更してください。';
       tab = 'training'; draw();
     },

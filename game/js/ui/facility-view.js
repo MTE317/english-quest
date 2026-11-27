@@ -1,9 +1,10 @@
 import { el, render } from '../dom.js?v=skill-growth-2';
 import { parseAmounts } from '../csv.js?v=skill-growth-2';
-import { craft, brew, canCraft, canBrew, enhance, dismantle, reroll, enchant, enchantFamilies, enchantValue, facilityUpgrade } from '../workshop.js?v=targeted-enchant-2';
+import { craft, brew, canCraft, canBrew, enhance, dismantle, reroll, enchant, enchantFamilies, facilityUpgrade } from '../workshop.js?v=workshop-materials-1';
 import { borrow, repayLoan, loanLimit } from '../town.js?v=public-rewards-1';
 import { unlockJob, jobDiscoveryProgress, offeringRevealed } from '../temple.js?v=skill-growth-2';
 import { describeFixedEffects, effectLabel, describeEffect } from '../equipment-effects.js?v=targeted-enchant-2';
+import { stoneRequirement, ENCHANT_POWDER_ID, ENCHANT_POWDER_COST } from '../workshop-materials.js?v=workshop-materials-1';
 import { equipmentIcon } from './equipment-icons.js?v=skill-growth-2';
 import { uiIcon } from './pixel-icons.js?v=skill-growth-2';
 
@@ -136,8 +137,12 @@ export function workshopView(data, g, act, rng, selection) {
       icon ? el('p', { class: 'gear-with-icon' },
         icon, el('span', {}, `${definition.name}${item.enh > 0 ? ` +${item.enh}` : ''}`)) : null,
       effectText ? el('p', { class: 'small' }, `固定効果：${effectText}`) : null,
-      el('p', { class: 'small muted' }, `強化石 ${g.storage.materials.enhancement_stone ?? 0}個`),
-      btn('強化する', () => act((game) => enhance(data, game, item, rng()))),
+      item.enh < 10 ? el('p', { class: 'small muted' }, (() => {
+        const stone = stoneRequirement(data, item.enh);
+        return `+${item.enh + 1}：${stone.name} ${g.storage.materials[stone.id] ?? 0}/${stone.count}個`;
+      })()) : el('p', { class: 'small muted' }, '強化上限 +10'),
+      btn('強化する', () => act((game) => enhance(data, game, item, rng())),
+        !stoneRequirement(data, item.enh) || (g.storage.materials[stoneRequirement(data, item.enh).id] ?? 0) < stoneRequirement(data, item.enh).count),
       btn('分解する', () => {
         if (confirm(`${definition.name}を分解しますか？`)) act((game) => dismantle(data, game, item));
       }),
@@ -148,31 +153,32 @@ export function workshopView(data, g, act, rng, selection) {
   }
 
   function enchantForm(item, def) {
-    const mats = [...data.materials.values()].filter((m) => g.storage.materials[m.id] > 0 && enchantFamilies(data, def, m).length);
-    if (!mats.length) return el('p', { class: 'small muted' }, '付与に使える素材がありません。');
-    const familySelect = el('select', { class: 'select' });
-    const materialSelect = el('select', { class: 'select' }, mats.map((m) => option(m.name, m.id)));
-    const facility = 'workshop';
+    const mats = [...data.materials.values()].filter((m) =>
+      g.storage.materials[m.id] > 0 && enchantFamilies(data, def, m).length);
+    const materialSelect = el('select', { class: 'select' },
+      option('追加しない（全候補から抽選）', ''), mats.map((m) => option(m.name, m.id)));
     const grades = el('select', { class: 'select' }, data.enchantGrades
-      .filter((r) => Number(r.workshop_rank) <= g.facilities[facility])
+      .filter((r) => Number(r.workshop_rank) <= g.facilities.workshop)
       .map((row) => option(`グレード${row.grade}・${row.gold} G`, row.grade)));
     const slots = el('select', { class: 'select' }, option('枠1', '0'), item.enchants?.length ? option('枠2', '1') : null);
     const preview = el('p', { class: 'small muted' });
-    const showPreview = () => render(preview, `付与する効果：${describeEffect(data, familySelect.value,
-      enchantValue(data, def, familySelect.value, Number(grades.value), item.rarity))}`);
-    const fill = () => {
-      render(familySelect, enchantFamilies(data, def, data.materials.get(materialSelect.value) ?? mats[0])
-        .map((id) => option(effectLabel(data, id), id)));
-      showPreview();
+    const showPreview = () => {
+      const material = data.materials.get(materialSelect.value);
+      const preferred = material ? enchantFamilies(data, def, material) : [];
+      render(preview,
+        `エンチャント粉 ${g.storage.materials[ENCHANT_POWDER_ID] ?? 0}/${ENCHANT_POWDER_COST}個。効果は抽選で決定。`,
+        material ? el('span', {}, ` ${material.name}で出やすい効果：${preferred.slice(0, 5)
+          .map((id) => effectLabel(data, id)).join('、')}${preferred.length > 5 ? ` ほか${preferred.length - 5}種` : ''}（確定ではありません）`) : null);
     };
-    materialSelect.addEventListener('change', fill);
-    familySelect.addEventListener('change', showPreview);
+    materialSelect.addEventListener('change', showPreview);
     grades.addEventListener('change', showPreview);
-    fill();
+    showPreview();
     return panel('エンチャント',
-      el('label', {}, '素材', materialSelect), el('label', {}, '効果', familySelect),
+      el('label', {}, '追加素材（任意・1個）', materialSelect),
       el('label', {}, 'グレード', grades), preview, el('label', {}, '枠', slots),
-      btn('効果を付ける', () => act((game) => enchant(data, game, item, Number(slots.value), materialSelect.value, familySelect.value, Number(grades.value)))));
+      btn('効果を抽選する', () => act((game) => enchant(data, game, item,
+        Number(slots.value), materialSelect.value, Number(grades.value), rng())),
+      (g.storage.materials[ENCHANT_POWDER_ID] ?? 0) < ENCHANT_POWDER_COST));
   }
 
   redraw();
