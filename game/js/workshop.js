@@ -7,7 +7,7 @@ import { currentRank } from './dungeon.js?v=public-rewards-1';
 import { consumeMaterials } from './temple.js?v=skill-growth-2';
 import { describeEffect } from './equipment-effects.js?v=unique-reroll-1';
 import { equipmentTier } from './equipment-scaling.js?v=equipment-rarity-1';
-import { STONE_STAGES, stoneRequirement, ENCHANT_POWDER_ID, ENCHANT_POWDER_COST } from './workshop-materials.js?v=workshop-materials-1';
+import { STONE_STAGES, stoneRequirement, stonePayment, dismantleFragment, stoneFragmentId, ENCHANT_POWDER_ID, ENCHANT_POWDER_COST } from './workshop-materials.js?v=workshop-materials-1';
 
 const facilityFor = () => 'workshop';
 const capFor = (data, game, facility) => data.facilityRanks.find((r) => Number(r.rank) === (game.facilities[facility] ?? 1));
@@ -143,7 +143,7 @@ export function enhance(data, game, gear, rng) {
   const base = equipmentTier(data, def.star).enhanceBase * 1.8 ** gear.enh;
   const stone = stoneRequirement(data, gear.enh);
   if (!stone) throw new Error('これ以上強化できません。');
-  pay(game, roundGold(data, goldScale(data) * base * (def.slot === 'weapon' ? 1 : 0.5), 'ceil'), { [stone.id]: stone.count });
+  pay(game, roundGold(data, goldScale(data) * base * (def.slot === 'weapon' ? 1 : 0.5), 'ceil'), stonePayment(game, stone));
   const odds = Math.min(1, Number(row.success_rate) + 0.05 * (gear.enhanceFailures ?? 0));
   if (rng() >= odds) {
     gear.enhanceFailures = (gear.enhanceFailures ?? 0) + 1;
@@ -154,7 +154,6 @@ export function enhance(data, game, gear, rng) {
   return `${def.name}を +${gear.enh} に強化した。`;
 }
 
-export const fragmentId = (gear) => `fragment_${gear.rarity ?? 'common'}`;
 export const dismantlePowder = (gear) => Math.min(3, Math.ceil(
   (Object.keys(gear.affixes ?? {}).length + (gear.enchants ?? []).length) / 2));
 
@@ -162,14 +161,13 @@ export function dismantle(data, game, gear) {
   const index = game.storage.gear.indexOf(gear);
   if (index < 0) throw new Error('装備を所持品に入れてください。');
   const powder = dismantlePowder(gear);
+  const stage = dismantleFragment(data, gear);
   game.storage.gear.splice(index, 1);
   const stock = game.storage.materials;
-  const fragment = fragmentId(gear);
+  const fragment = stoneFragmentId(STONE_STAGES.indexOf(stage) + 1);
   stock[fragment] = (stock[fragment] ?? 0) + 1;
-  // 分解で返す石の段階・個数は別途調整。従来どおり最低段階を1個返す。
-  stock[STONE_STAGES[0].id] = (stock[STONE_STAGES[0].id] ?? 0) + 1;
   if (powder) stock[ENCHANT_POWDER_ID] = (stock[ENCHANT_POWDER_ID] ?? 0) + powder;
-  return `装備を分解し、欠片と強化石I${powder ? `、エンチャント粉${powder}個` : ''}を得た。`;
+  return `装備を分解し、${stage.name}の欠片1個${powder ? `とエンチャント粉${powder}個` : ''}を得た。`;
 }
 
 export function reroll(data, game, gear, stat, rng) {
