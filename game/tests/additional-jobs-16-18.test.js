@@ -16,6 +16,7 @@ const spec=JSON.parse(readFileSync(new URL('../../docs/specs/additional-jobs-10-
 function fixture(job='elementalist',count=3,seed=65){
   const specs=defaultPartySpecs(data);specs[0].job=job;
   const game=createNewGame(data,specs);
+  game.facilities.temple=12;
   for(const m of game.party){m.lv=20;m.hp=maxHp(data,m);m.mp=maxMp(data,m);}
   const member=game.party[0];member.ap=10000;
   const kind=job==='witch'?'scythe':'staff';
@@ -49,11 +50,11 @@ const reset=c=>{c.member.mp=Math.max(999,maxMp(data,c.member));};
 const near=(a,b)=>assert.ok(Math.abs(a-b)<1e-8,`${a} != ${b}`);
 
 test('追加16〜18職の45技能・143段階・転職・セーブ後の習得が設計と一致する',()=>{
-  assert.equal(data.jobs.filter(j=>j.skillsReady).length,26);
-  assert.equal([...data.skills.values()].filter(s=>s.effect.master).length,390);
+assert.equal(data.jobs.filter(j=>j.skillsReady).length,29);
+  assert.equal([...data.skills.values()].filter(s=>s.effect.master).length,435);
   let stages=0;
   for(const j of spec.jobs.filter(j=>ids.includes(j.id))){
-    const c=fixture(j.id);c.game.facilities.temple=6;
+    const c=fixture(j.id);
     assert.ok(availableJobs(data,c.game,c.member).some(x=>x.id===j.id));
     changeJob(data,c.game,0,'warrior');changeJob(data,c.game,0,j.id);
     for(const source of j.skills){

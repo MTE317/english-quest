@@ -24,7 +24,7 @@ import { masterTags, weaponSkill, songSkill, healingSkill, weaponAllowed, passiv
   notePrimaryKill, recordSelfSupport, applySpecialistRules,
   activeMark, preparePursuitAttack, pursuitAccuracy, conditionalTargetCrit, pursuitDefIgnore, pursuitStatusBonus,
   recordPrimaryHits, preparationSnapshot, recordPreparation, applyPursuitJumpRules, isAirborne, landingAction,
-  applyFirearmSeaArcaneRules, activeField, ownCurseMark } from './job-combat.js?v=jobs-intro-1';
+  applyFirearmSeaArcaneRules, activeField, ownCurseMark } from './job-combat.js?v=jobs-25-27-1';
 
 /** balance.json にまだ式がないもの（sim と同じ） */
 export const BATTLE_FORMULAS = Object.freeze({
@@ -560,6 +560,11 @@ function koAlly(game, b, i) {
   b.allies[i].buffs = {};
   b.allies[i].masterEffects = {};
   delete b.allies[i].familiar;
+  delete b.allies[i].companion;
+  delete b.allies[i].puppet;
+  delete b.allies[i].puppetQuick;
+  b.allies[i].rhythm=0;
+  b.allies[i].lastDance=null;
   if(b.field?.source===i)delete b.field;
   for(const enemy of b.enemies)if(enemy.curseMarks)delete enemy.curseMarks[i];
   b.allies[i].anger = 0;
@@ -861,12 +866,14 @@ function attackDamage(data, game, b, i, e, skill, cm, { offhand = false, actionB
     els=[a.weaponEnchant.element];
   if (!els.length && kind === 'mag') els = ['none'];
   if (skill?.effect.hits) hits = skill.effect.hits;
-  const mult = (skill?.effect.m ?? 1) * (skill && base === 'weapon' ? traits.weapon_skill_mul ?? 1 : 1);
+  const mult = ((skill?.effect.m ?? 1) + (skill?.effect.rules?.rhythm_power ?? 0)*(a.advancedAction?.rhythmSpent ?? 0))
+    * (skill && base === 'weapon' ? traits.weapon_skill_mul ?? 1 : 1);
   const qigong = masterTags(skill).includes('qigong') || skill?.effect.rules?.no_weapon_power;
-  const statVal = kind === 'phys'
+  const statVal = (kind === 'phys'
     ? (skill?.effect.beststat ? Math.max(st.str, st.mag) : st.str) * (qigong ? 1 : traits.str_mul ?? 1) + (qigong ? 0 : st.mag * (mods.mag2phys ?? 0))
       + st.mag*(skill?.effect.rules?.hybrid_mag_rate??0)
-    : st.mag * (skill?.effect.master && base !== 'weapon' ? 1 : traits.mag_mul ?? 1) * (1 + bval(a.buffs, 'magb'));
+    : st.mag * (skill?.effect.master && base !== 'weapon' ? 1 : traits.mag_mul ?? 1) * (1 + bval(a.buffs, 'magb')))
+    + (skill?.effect.rules?.companion_attack ? Math.floor(maxHp(data,m)*.08) : 0);
   const wpow = qigong ? 0 : skill && base === 'mag' ? spellPower(data, m) + (skill.effect.rules?.scythe_spell?scytheSpellPower(data,m):0)
     : weaponPower(data, m, weapon) + st.mag * (mods.mag_to_atk ?? 0);
   const bard = !data.basicJobRules && game.party.find((x, j) => x.job === 'bard' && canAct(game, b, j));
@@ -1125,6 +1132,16 @@ function doAttack(data, game, b, i, skill, target, cm, { normalSkillReady = fals
     const dealt = Math.max(0, before - b.enemies[e].hp);
     primaryHits.push({target:e,damage:dealt,elements:r.elements,killed:before>0&&b.enemies[e].hp<=0});
     const hits = [[dealt, r]];
+    if (skill?.effect.rules?.companion_follow && a.companion?.hp>0 && b.enemies[e].hp>0) {
+      const follow=skill.effect.rules.companion_follow;
+      const followSkill={...skill,elements:[follow.element],effect:{...skill.effect,base:'phys',element:follow.element,m:follow.m,
+        tags:['active','physical'],rules:{companion_attack:true,no_weapon_power:true}}};
+      const extra=attackDamage(data,game,b,i,e,followSkill,cm);
+      const beforeExtra=b.enemies[e].hp;
+      hitEnemy(data,game,b,i,e,extra.damage,{...extra,prefix:'相棒の連携！'});
+      const dealtExtra=Math.max(0,beforeExtra-b.enemies[e].hp);
+      hits.push([dealtExtra,extra]);
+    }
     // 追撃は通常攻撃1行動につき最大1回。追加ヒットからの再発動はなし。
     if (!skill && !extraHitGranted && dealt > 0 && b.enemies[e].hp > 0
       && chance(b, Math.min(f(data, 'extra_hit_cap'), affixSum(m, 'EXTRA_HIT') / 100))) {
@@ -1277,7 +1294,9 @@ function inflictByActor(data, game, b, actor, target, status, cm, allowPursuit =
   const id = data.statusByName.get(status[0])?.id ?? data.statusEffects.get(status[0])?.id ?? status[0];
   const targetId = data.statusEffects.has(id) ? id : 'statdown';
   const base = [status[0], status[1] + (allowPursuit ? pursuitStatusBonus(data, game, b, actor, target, id) : 0)];
-  return inflictEnemy(data, b, target, base, cm,
+  const danceCharm=base?.[0]==='charm' && b.allies[actor]?.advancedAction?.skillId==='dancer_A03'
+    ? ruleNumber(data,member,'charm_bonus') : 0;
+  return inflictEnemy(data, b, target, [base[0], Math.min(.95,base[1]+danceCharm)], cm,
     (mods.stat_rate ?? 0) + (affixSum(member, 'STATUS_RATE') + affixSum(member, `STATUS_RATE:${targetId}`)) / 100,
     { actor, potency: 1 + Math.min(f(data, 'dot_power_cap'), (mods.dot_power ?? 0)
       + (affixSum(member, 'DOT_POWER') + affixSum(member, `DOT_POWER:${targetId}`)) / 100) });
@@ -1364,6 +1383,7 @@ function doSkill(data, game, b, i, s, target, cm, normalSkillReady = false, acti
   const preparationBefore = preparationSnapshot(a);
   if (boost) a.currentBoost = boost;
   payAdvancedCosts(data,game,b,i,s,action);
+  a.advancedAction.skillId=s.id;
   if (a.advancedAction.paidHp > 0) log(b, `${m.name}はHPを${a.advancedAction.paidHp}支払った`);
   m.mp -= spentMp;
   a.advancedAction.mpPaid = spentMp;
@@ -1382,13 +1402,16 @@ function doSkill(data, game, b, i, s, target, cm, normalSkillReady = false, acti
   const healAmt = () => {
     const st = battleStats(data, game, b, i);
     const traits = weaponTraits(data, m.equip.weapon);
-    return evaluate(f(data, 'heal'), { MAG: st.mag, wpow: spellPower(data, m), m: e.m ?? 1, heal_mul: traits.heal_mul ?? 1 }) * cm
+    return evaluate(f(data, 'heal'), { MAG: st.mag, wpow: spellPower(data, m), m: (e.m ?? 1)
+      + (e.rules?.dance_ultimate ? (a.advancedAction?.rhythmSpent??0)*.10 : 0), heal_mul: traits.heal_mul ?? 1 }) * cm
       * (1 + (memberMods(data, m).healp ?? 0) + affixSum(m, 'HEAL_POWER') / 100 + masterHealingBonus(data, game, b, i, s));
   };
   if (e.master && s.kind === 'heal_all' && e.rules?.cure_statuses) {
     for (const j of allies()) if (!isPetrified(b, j)) masterCure(data, game, b, i, j, e.rules.cure_statuses, cm);
   }
   if (e.rules?.cure_before_heal) masterCure(data,game,b,i,i,e.rules.cure_before_heal,cm);
+  if (e.rules?.companion_ultimate) summonCompanion(data,game,b,i,2,true);
+  if (e.rules?.puppet_ultimate) summonPuppet(data,game,b,i,2,true);
   switch (s.kind) {
     case 'jump': break; // 準備だけ。武器攻撃の資源と命中処理は着地時に一度だけ。
     case 'utility': {
@@ -1761,6 +1784,81 @@ function applyMasterSkillRules(data, game, b, actor, skill, target, cm, action =
   applyPursuitJumpRules(data,game,b,actor,skill,target,cm);
   applyFirearmSeaArcaneRules(data,game,b,actor,skill,cm,living);
   applyArcaneSkillRules(data,game,b,actor,skill,target,cm,action,living);
+  applyCompanionSkillRules(data,game,b,actor,skill,target,cm,action,living);
+}
+function summonCompanion(data,game,b,actor,turns,ultimate=false){
+  const ally=b.allies[actor],member=game.party[actor],stats=battleStats(data,game,b,actor);
+  const base=Math.floor(10+maxHp(data,member)*.10+stats.str*.25);
+  const maximum=Math.max(1,Math.min(Math.floor(maxHp(data,member)*.30),
+    Math.floor(base*(1+ruleNumber(data,member,'companion_hp')))));
+  if(ultimate&&ally.companion?.hp>0){ally.companion.hp=ally.companion.maxHp;return;}
+  ally.companion={hp:ultimate?Math.max(1,Math.floor(maximum*.5)):maximum,maxHp:maximum,
+    remaining:turns,grantedClock:b.actionClock,guard:null};
+}
+function summonPuppet(data,game,b,actor,turns,ultimate=false){
+  const ally=b.allies[actor],member=game.party[actor],stats=battleStats(data,game,b,actor);
+  const base=Math.floor(10+stats.def*.8);
+  const maximum=Math.max(1,Math.min(Math.floor(maxHp(data,member)*.30),
+    Math.floor(base*(1+ruleNumber(data,member,'puppet_hp')))));
+  if(ultimate&&ally.puppet?.hp>0){ally.puppet.hp=ally.puppet.maxHp;ally.puppet.stance='attack';
+    ally.puppet.remaining=Math.max(ally.puppet.remaining,turns);return;}
+  ally.puppet={hp:ultimate?Math.max(1,Math.floor(maximum*.5)):maximum,maxHp:maximum,
+    remaining:turns,grantedClock:b.actionClock,stance:'attack',guard:null};
+}
+function applyCompanionSkillRules(data,game,b,actor,skill,target,cm,action,living){
+  if(!['beastmaster','puppeteer','dancer'].includes(skill.job))return;
+  const rule=skill.effect.rules??{},ally=b.allies[actor],member=game.party[actor];
+  if(rule.companion_summon)summonCompanion(data,game,b,actor,rule.companion_summon.turns);
+  if(rule.companion_guard&&ally.companion)ally.companion.guard={target,remaining:rule.companion_guard.turns,
+    placedClock:b.actionClock};
+  if(rule.companion_repair&&ally.companion){ally.companionRepairs=(ally.companionRepairs??0)+1;
+    ally.companion.hp=Math.min(ally.companion.maxHp,ally.companion.hp+
+      Math.floor(ally.companion.maxHp*rule.companion_repair.rate*cm));}
+  if(rule.party_next_cut)for(const t of living)grantMasterEffect(b,t,`${skill.id}:cut`,{
+    values:{cut:rule.party_next_cut*cm},source:actor,remaining:1});
+  if(rule.puppet_summon)summonPuppet(data,game,b,actor,rule.puppet_summon.turns);
+  if(rule.puppet_stance&&ally.puppet)ally.puppet.stance=rule.puppet_stance;
+  if(rule.puppet_guard&&ally.puppet)ally.puppet.guard={target,remaining:rule.puppet_guard.turns,
+    placedClock:b.actionClock};
+  if(rule.puppet_repair&&ally.puppet){ally.puppetRepairs=(ally.puppetRepairs??0)+1;
+    ally.puppet.hp=Math.min(ally.puppet.maxHp,ally.puppet.hp+
+      Math.floor(ally.puppet.maxHp*rule.puppet_repair.rate*cm));}
+  if(rule.puppet_quick_stance&&ally.puppet){ally.puppet.stance=action.element;
+    ally.puppetQuick={bonus:rule.puppet_quick_stance.bonus*cm,remaining:rule.puppet_quick_stance.turns,
+      grantedClock:b.actionClock};}
+  if(rule.puppet_shield){
+    const def=battleStats(data,game,b,actor).def;
+    const base=Math.floor(10+.5*member.lv+def);
+    const bonus=ally.puppetQuick?.bonus??0;
+    for(const t of living){const amount=Math.min(masterShieldRoom(data,game,b,t,skill.id),
+      Math.floor(base*rule.puppet_shield.m*(1+bonus)*cm));
+      if(amount>0)grantMasterEffect(b,t,skill.id,{shield:amount,source:actor,remaining:rule.puppet_shield.turns});
+    }
+    if(ally.puppetQuick)delete ally.puppetQuick;
+  }
+  if(rule.puppet_attack&&ally.puppetQuick)delete ally.puppetQuick;
+  if(rule.puppet_slow&&b.enemies[target]?.hp>0&&chance(b,enemyStatusChance(data,b.enemies[target],b.round,'statdown',rule.puppet_slow.rate*cm))){
+    b.enemies[target].masterDebuffs??={};b.enemies[target].masterDebuffs[skill.id]={stat:'spd',
+      value:rule.puppet_slow.value,turns:rule.puppet_slow.turns};
+  }
+  const step=1+ruleNumber(data,member,'step_bonus');
+  if(rule.dance_spd)for(const t of living)grantMasterEffect(b,t,skill.id,{values:{spd:rule.dance_spd*step*cm},
+    source:actor,remaining:1});
+  if(rule.dance_evasion)grantMasterEffect(b,target,skill.id,{values:{eva:rule.dance_evasion*step*cm},
+    source:actor,remaining:1});
+  if(rule.dance_next_damage)for(const t of living)grantMasterEffect(b,t,`${skill.id}:damage`,{
+    nextDamage:{tag:'',rate:(rule.dance_next_damage+(ally.advancedAction?.rhythmSpent??0)*(rule.rhythm_bonus??0))*cm},
+    source:actor,remaining:2});
+  if(rule.dance_ultimate){
+    const cureable=new Set(['poison','toxic','burn','bleed','curse','bind','fear','silence','blind','confusion','charm','weaken']);
+    for(const t of living){
+      const id=Object.keys(b.allies[t].statuses).filter(key=>cureable.has(key))
+        .sort((a,c)=>(b.allies[t].statuses[a].turns??0)-(b.allies[t].statuses[c].turns??0)||a.localeCompare(c))[0];
+      if(id)cureAlly(data,game,b,t,status=>status.id===id);
+      grantMasterEffect(b,t,`${skill.id}:damage`,{nextDamage:{tag:'',rate:.10*cm},source:actor,remaining:2});
+    }
+    for(const e of livingEnemies(b))inflictByActor(data,game,b,actor,e,['charm',.35],cm);
+  }
 }
 function arcaneShield(data,game,b,actor,target,skill,rate,turns){
   const stats=battleStats(data,game,b,actor),formula=data.basicJobRules.protection;
@@ -1973,11 +2071,38 @@ function finishArcaneEnemy(data,game,b,index,{performed=false,magic=false,physic
   }
   finishEnemyTurn(enemy,data,b);
 }
+function absorbCompanionGuard(data,game,b,target,damage){
+  const options=[];
+  for(let owner=0;owner<game.party.length;owner++){
+    if(game.party[owner].hp<=0)continue;
+    for(const kind of ['companion','puppet']){
+      const unit=b.allies[owner][kind],guard=unit?.guard;
+      if(!unit?.hp||!guard?.remaining||guard.target!==target||guard.usedClock===b.enemyActionClock)continue;
+      options.push({owner,kind,unit,guard});
+    }
+  }
+  if(!options.length)return damage;
+  const chosen=options.sort((a,c)=>c.guard.placedClock-a.guard.placedClock||c.owner-a.owner)[0];
+  const cut=ruleNumber(data,game.party[chosen.owner],chosen.kind==='companion'?'companion_cover_cut':'puppet_cover_cut');
+  const incoming=Math.max(1,Math.round(damage*(1-Math.min(.70,cut))));
+  const absorbed=Math.min(chosen.unit.hp,incoming);
+  chosen.unit.hp-=absorbed;
+  chosen.guard.usedClock=b.enemyActionClock;
+  log(b,`${game.party[chosen.owner].name}の${chosen.kind==='companion'?'相棒':'人形'}が${game.party[target].name}への${absorbed}ダメージを引き受けた`);
+  if(chosen.unit.hp<=0)delete b.allies[chosen.owner][chosen.kind];
+  return incoming-absorbed;
+}
+function finishCompanionEnemyAction(b){
+  for(const ally of b.allies)for(const kind of ['companion','puppet']){
+    const guard=ally[kind]?.guard;
+    if(guard&&--guard.remaining<=0)delete ally[kind].guard;
+  }
+}
 function enemyTurn(data, game, b, e) {
   const enemy = b.enemies[e];
   const trapBlocked = ['sleep','freeze','stun','petrify'].some(id=>enemy.statuses[id]);
   b.enemyActionClock = (b.enemyActionClock ?? 0) + 1;
-  const finish=(intent={})=>finishArcaneEnemy(data,game,b,e,intent);
+  const finish=(intent={})=>{finishCompanionEnemyAction(b);finishArcaneEnemy(data,game,b,e,intent);};
   snapshotCloneDefense(b);
   // 罠は対象の行動機会に一度発動。反撃や資源蓄積を再帰させない。
   const triggered = (b.masterTraps ?? []).filter(trap => trap.target === e);
@@ -2180,7 +2305,8 @@ function enemyTurn(data, game, b, e) {
       * (activeField(game,b) && incomingElements.includes(b.field.element)?1+b.field.rate:1);
     const elName = enemy.attackElement ? data.elements.get(enemy.attackElement)?.name : null;
     const beforeHp = target.hp;
-    damageAlly(data, game, b, t, dmg, `${enemy.name}の${magic ? `${elName ?? ''}魔法` : '攻撃'}！ ${target.name}に`, { side: 'enemy', i: e });
+    const remaining=!intent.sweep&&t===original ? absorbCompanionGuard(data,game,b,t,dmg) : dmg;
+    if(remaining>0)damageAlly(data, game, b, t, remaining, `${enemy.name}の${magic ? `${elName ?? ''}魔法` : '攻撃'}！ ${target.name}に`, { side: 'enemy', i: e });
     if (target.hp < beforeHp) noteDuelHit(game, b, t, e);
     if (masterCover && t !== original && target.hp < beforeHp) onMasterCover(data, game, b, t, true);
     for (const id of Object.keys(ta.statuses)) if (data.statusEffects.get(id)?.kind === 'skip_until_hit') delete ta.statuses[id];
@@ -2263,6 +2389,11 @@ export function finishBattle(data, game, b) {
     ally.buffs = {};
     ally.masterEffects = {};
     delete ally.familiar;
+    delete ally.companion;
+    delete ally.puppet;
+    delete ally.puppetQuick;
+    ally.rhythm=0;
+    ally.lastDance=null;
     ally.anger = 0;
     resetTacticalState(ally);
     delete ally.advancedAction;

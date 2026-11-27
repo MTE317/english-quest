@@ -4,7 +4,7 @@ import { now } from '../storage.js?v=skill-growth-2';
 import { QuestionPicker, REASON_LABEL } from '../picker.js?v=skill-growth-2';
 import { makePracticeQuestion, questionDirection, questionSpeech, DIRECTION } from '../quiz.js?v=skill-growth-2';
 import { speak, canSpeak, stopSpeech } from '../speech.js?v=skill-growth-2';
-import { nextTurn, actionOptions, setPending, prepareQuizAction, resolvePending, targetKind, skillMp, collectBattleHits, enemyIntent, enemyCanAct } from '../battle.js?v=targeted-enchant-2';
+import { nextTurn, actionOptions, setPending, prepareQuizAction, resolvePending, targetKind, skillMp, collectBattleHits, enemyIntent, enemyCanAct } from '../battle.js?v=jobs-25-27-1';
 import { skillMaxLevel, learnedSkillLevel, effectiveSkill } from '../growth.js?v=advanced-jobs-1';
 import { maxHp, maxMp } from '../character.js?v=advanced-jobs-1';
 import { el, render } from '../dom.js?v=skill-growth-2';
@@ -16,7 +16,7 @@ import { portraitIcon } from './portrait.js?v=skill-growth-2';
 import { ultimateGauge } from './skill-presentation.js?v=skill-growth-2';
 import { skillIcon } from './skill-icons.js?v=skill-icons-1';
 import { describeSkillEffect, describeSkillForUI } from '../skill-effects.js?v=tactical-jobs-1';
-import { ownedBlessing, passiveRules, activeDuel, prayerRule, prayerStage } from '../job-combat.js?v=jobs-intro-1';
+import { ownedBlessing, passiveRules, activeDuel, prayerRule, prayerStage } from '../job-combat.js?v=jobs-25-27-1';
 import { statusIconId, buffIconId, effectIcon, JOB_EFFECT_ICON } from './effect-icons.js?v=battle-effect-icons-1';
 
 const TARGET_PROMPT = {
@@ -180,6 +180,9 @@ export function allyEffectEntries(data, game, battle, index) {
   if (member.hp>0 && (member.job==='gunner' || (ally.loaded??0)>0)) ongoing.push(entry(`装填 ${ally.loaded??0}/3`));
   if (member.hp>0 && ally.weaponEnchant?.remaining>0) ongoing.push(entry(`武器付与：${data.elements.get(ally.weaponEnchant.element)?.name??ally.weaponEnchant.element}${duration(ally.weaponEnchant.remaining)}`));
   if(member.hp>0 && ally.familiar?.uses>0)ongoing.push(entry(`使い魔：${ally.familiar.mode==='pursuit'?'追撃型':'悪戯型'}・残り${ally.familiar.uses}回${duration(ally.familiar.remaining)}`));
+  if(member.hp>0 && ally.companion?.hp>0)ongoing.push(entry(`相棒：耐久${ally.companion.hp}/${ally.companion.maxHp}${duration(ally.companion.remaining)}`));
+  if(member.hp>0 && ally.puppet?.hp>0)ongoing.push(entry(`人形：${ally.puppet.stance==='guard'?'防御型':'攻撃型'}・耐久${ally.puppet.hp}/${ally.puppet.maxHp}${duration(ally.puppet.remaining)}`));
+  if(member.hp>0 && (member.job==='dancer'||(ally.rhythm??0)>0))ongoing.push(entry(`律動 ${ally.rhythm??0}/2`));
   if (ally.normalSkillReady) special.push(entry('次の攻撃技能を強化'));
   const barrier = ally.buffs?.barrier;
   if (barrier?.[0] > 0 && barrier[1] > 0) special.push(entry(buffText(data, 'barrier', barrier[0]) + duration(barrier[1])));
@@ -543,10 +546,10 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
       ], { back });
     };
     if (!elements.length) return chooseBoost(action);
-    showPanel(`${skill.name}の属性`, [
+    showPanel(`${skill.name}の${skill.effect.rules?.puppet_quick_stance?'構え':'属性'}`, [
       el('p', { class: 'battle-notice' }, describeSkillEffect(data, skill)),
       el('div', { class: 'battle-action-list' }, elements.map(element => listChoice(
-         ({pursuit:'追撃型',mischief:'悪戯型'}[element] ?? data.elements.get(element)?.name ?? element), `MP ${battleMp(skill)}`, null,
+         ({pursuit:'追撃型',mischief:'悪戯型',attack:'攻撃型',guard:'防御型'}[element] ?? data.elements.get(element)?.name ?? element), `MP ${battleMp(skill)}`, null,
         () => chooseBoost({ ...action, element })))),
     ], { back });
   }

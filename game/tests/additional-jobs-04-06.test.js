@@ -17,6 +17,7 @@ const spec=JSON.parse(readFileSync(new URL('../../docs/specs/additional-jobs-04-
 function fixture(job='samurai',count=2,seed=51) {
   const specs=defaultPartySpecs(data);specs[0].job=job;
   const game=createNewGame(data,specs);
+  game.facilities.temple=12;
   for(const m of game.party){m.lv=20;m.hp=maxHp(data,m);m.mp=maxMp(data,m);}
   const member=game.party[0];member.ap=10000;
   const kind=job==='samurai'?'katana':job==='gladiator'?'greatsword':'spear';
@@ -48,8 +49,8 @@ function enemyActs(c,index=0,{magic=false,power=80,target=0,element='slash',stat
 const section=(c,key,actor=0)=>allyEffectEntries(data,c.game,c.b,actor).find(([title])=>title===key)?.[1]??[];
 
 test('追加4〜6職は45技能・137段階で設計と一致し、通常9・パッシブ5・奥義1を保つ',()=>{
-  assert.equal(data.jobs.filter(j=>j.skillsReady).length,26);
-  assert.equal([...data.skills.values()].filter(s=>s.effect.master).length,390);
+assert.equal(data.jobs.filter(j=>j.skillsReady).length,29);
+  assert.equal([...data.skills.values()].filter(s=>s.effect.master).length,435);
   let stages=0;
   for(const job of spec.jobs){
     const list=[...data.skills.values()].filter(s=>s.job===job.id);assert.equal(list.length,15);
@@ -72,9 +73,9 @@ test('追加4〜6職は45技能・137段階で設計と一致し、通常9・パ
   }
   assert.equal(stages,137);assert.equal(data.jobsById.get('necromancer').skillsReady,false);
 });
-test('神殿Lv4で追加職を選べ、転職で技能や装備を自動配布しない',()=>{
+test('新規・既存セーブで3職を初期から選べ、転職で技能や装備を自動配布しない',()=>{
   for(const id of ids){
-    const c=fixture('warrior');c.game.facilities.temple=4;const available=availableJobs(data,c.game,c.member);
+    const c=fixture('warrior');const available=availableJobs(data,c.game,c.member);
     assert.ok(available.some(j=>j.id===id));c.member.hp=7;c.member.mp=2;
     const learned=[...c.member.learned],gear=structuredClone(c.game.storage.gear);
     changeJob(data,c.game,0,id);

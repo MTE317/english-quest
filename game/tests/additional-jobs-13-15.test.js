@@ -15,6 +15,7 @@ const spec=JSON.parse(readFileSync(new URL('../../docs/specs/additional-jobs-10-
 function fixture(job='gunner',count=3,seed=61){
   const specs=defaultPartySpecs(data);specs[0].job=job;
   const game=createNewGame(data,specs);
+  game.facilities.temple=12;
   for(const m of game.party){m.lv=20;m.hp=maxHp(data,m);m.mp=maxMp(data,m);}
   const member=game.party[0];member.ap=10000;
   const kind=job==='gunner'?'gun':job==='pirate'?'sword':'katana';
@@ -41,11 +42,11 @@ const reset=c=>{c.member.mp=maxMp(data,c.member);};
 const near=(x,y)=>assert.ok(Math.abs(x-y)<1e-8,`${x} != ${y}`);
 
 test('13〜15職は45技能・147段階を設計に沿って読み込み、転職と継承ができる',()=>{
-  assert.equal(data.jobs.filter(j=>j.skillsReady).length,26);
-  assert.equal([...data.skills.values()].filter(s=>s.effect.master).length,390);
+assert.equal(data.jobs.filter(j=>j.skillsReady).length,29);
+  assert.equal([...data.skills.values()].filter(s=>s.effect.master).length,435);
   let stages=0;
   for(const j of spec.jobs.filter(j=>jobs.includes(j.id))){
-    const c=fixture(j.id);c.game.facilities.temple=5;
+    const c=fixture(j.id);
     assert.ok(availableJobs(data,c.game,c.member).some(x=>x.id===j.id));
     changeJob(data,c.game,0,'warrior');changeJob(data,c.game,0,j.id);
     for(const source of j.skills){
