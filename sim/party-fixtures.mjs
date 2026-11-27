@@ -118,7 +118,15 @@ function materialFor(data, def, family, rank) {
     idx.materials.find((m) => m.rank <= rank && enchantFamilies(data, def, m).includes(family)) ?? null);
   return idx.materialChoices.get(key);
 }
-export function resolveBuildFamily(data, boss, family) {
+export function resolveBuildFamily(data, boss, family, definition = null) {
+  const targeted = Object.values(definition?.affixes ?? {}).flat()
+    .find((value) => value.startsWith('VS_STATUS:') && data.statusEffects.has(value.slice(10)))?.slice(10);
+  const skillStatus = (definition?.actions ?? []).map((id) => data.skills.get(id)?.effect?.st?.[0])
+    .map((name) => data.statusByName.get(name)?.id ?? name).find((id) => data.statusEffects.has(id));
+  const status = targeted ?? skillStatus ?? (data.statusEffects.has(boss.status) ? boss.status : 'poison');
+  if (['STATUS_RATE', 'STATUS_RES', 'DOT_POWER', 'VS_DEBUFFED'].includes(family)) {
+    return `${family === 'VS_DEBUFFED' ? 'VS_STATUS' : family}:${family === 'STATUS_RES' && data.statusEffects.has(boss.status) ? boss.status : status}`;
+  }
   if (family === 'TYPE_BONUS:$bossType') {
     if (!boss.types[0]) throw new Error('種族特効の対象となるボス種族がありません。');
     return `TYPE_BONUS:${boss.types[0]}`;
@@ -133,7 +141,7 @@ function memberDefinitions(build) { return build ? [build, ...build.allies] : []
 function requiredSkills(definition) { return [...(definition?.actions ?? []), ...(definition?.passives ?? [])]; }
 function buildAffixes(data, boss, definition) {
   return Object.fromEntries(Object.entries(definition?.affixes ?? {}).map(([slot, families]) =>
-    [slot, families.map((family) => resolveBuildFamily(data, boss, family))]));
+    [slot, families.map((family) => resolveBuildFamily(data, boss, family, definition))]));
 }
 function checkBuildProgress(data, build, rank, stage) {
   for (const [i, definition] of memberDefinitions(build).entries()) {
@@ -174,7 +182,7 @@ export function assertBuildCore(data, game) {
         throw new Error(`${build.id} の核心付与を用意できませんでした: ${i + 1}人目/${slot}/${family}`);
       }
     }
-    const effects = (definition.coreEffects ?? []).map((family) => resolveBuildFamily(data, boss, family));
+    const effects = (definition.coreEffects ?? []).map((family) => resolveBuildFamily(data, boss, family, definition));
     for (const family of effects) if (!(affixSum(m, family) > 0)) throw new Error(`${build.id} の核心効果がありません: ${family}`);
     verified.push({ member: i, actions: [...(definition.actions ?? [])], passives: [...(definition.passives ?? [])], affixes, effects });
   }
@@ -188,7 +196,7 @@ function preferredArmor(data, job) {
 }
 function affixWants(job, profile, primary) {
   if (primary) {
-    if (['poison', 'bleed'].includes(profile)) return { weapon: ['DOT_POWER', 'STATUS_RATE'], accessory1: ['STATUS_RATE'], accessory2: ['VS_DEBUFFED'] };
+    if (['poison', 'bleed'].includes(profile)) return { weapon: [`DOT_POWER:${profile}`, `STATUS_RATE:${profile}`], accessory1: [`STATUS_RATE:${profile}`], accessory2: [`VS_STATUS:${profile}`] };
     if (profile === 'critical') return { weapon: ['CRIT_DMG', 'CRT'], accessory1: ['CRT'], accessory2: ['CRIT_DMG'] };
     if (profile === 'counter') return { weapon: ['DEF_PIERCE'], arm: ['COUNTER'], body: ['PHYS_CUT'], accessory1: ['COUNTER'], accessory2: ['HP'] };
     if (profile === 'support') return { weapon: ['PARTY_BUFF_POWER'], accessory1: ['PARTY_BUFF_POWER'], accessory2: ['MP_SAVE'] };
@@ -198,7 +206,7 @@ function affixWants(job, profile, primary) {
   }
   if (job === 'white_mage') return { weapon: ['HEAL_POWER'], accessory1: ['MP_SAVE'], accessory2: ['HEAL_POWER'] };
   if (['bard', 'dancer'].includes(job)) return { weapon: ['PARTY_BUFF_POWER'], accessory1: ['MP_SAVE'], accessory2: ['PARTY_BUFF_POWER'] };
-  if (job === 'hexer' || job === 'apothecary' && profile === 'poison') return { weapon: ['DOT_POWER'], accessory1: ['STATUS_RATE'], accessory2: ['VS_DEBUFFED'] };
+  if (job === 'hexer' || job === 'apothecary' && profile === 'poison') return { weapon: ['DOT_POWER:poison'], accessory1: ['STATUS_RATE:poison'], accessory2: ['VS_STATUS:poison'] };
   if (job === 'knight') return { weapon: ['DEF_PIERCE'], accessory1: ['COUNTER'], accessory2: ['HP'] };
   if (['hunter', 'black_mage', 'elementalist', 'gunner'].includes(job)) return { weapon: ['WEAK_DMG'], accessory1: ['WEAK_DMG'], accessory2: ['MP_SAVE'] };
   return { weapon: ['CRIT_DMG'], accessory1: ['CRT'], accessory2: ['HP'] };

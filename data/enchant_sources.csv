@@ -1,13 +1,13 @@
 ﻿source_kind,source_value,families,note
-element,fire,ELEMENT:fire|ELEM_RES:fire,炎属性の素材 → 炎属性の付与か炎耐性
-element,ice,ELEMENT:ice|ELEM_RES:ice,氷属性の素材 → 氷属性の付与か氷耐性
-element,wind,ELEMENT:wind|ELEM_RES:wind,風属性の素材 → 風属性の付与か風耐性
-element,earth,ELEMENT:earth|ELEM_RES:earth,土属性の素材 → 土属性の付与か土耐性
-element,thunder,ELEMENT:thunder|ELEM_RES:thunder,雷属性の素材 → 雷属性の付与か雷耐性
-element,water,ELEMENT:water|ELEM_RES:water,水属性の素材 → 水属性の付与か水耐性
-element,light,ELEMENT:light|ELEM_RES:light,光属性の素材 → 光属性の付与か光耐性
-element,dark,ELEMENT:dark|ELEM_RES:dark,闇属性の素材 → 闇属性の付与か闇耐性
-monster_type,amorphous,TYPE_BONUS:amorphous|DOT_POWER|VS_DEBUFFED,不定形の素材 → 不定形特効・継続ダメージ・弱体特効
+element,fire,ELEMENT:fire|ELEM_RES:fire|ELEM_DMG:fire,炎属性の素材 → 炎属性追加・炎耐性・炎攻撃強化
+element,ice,ELEMENT:ice|ELEM_RES:ice|ELEM_DMG:ice,氷属性の素材 → 氷属性追加・氷耐性・氷攻撃強化
+element,wind,ELEMENT:wind|ELEM_RES:wind|ELEM_DMG:wind,風属性の素材 → 風属性追加・風耐性・風攻撃強化
+element,earth,ELEMENT:earth|ELEM_RES:earth|ELEM_DMG:earth,土属性の素材 → 土属性追加・土耐性・土攻撃強化
+element,thunder,ELEMENT:thunder|ELEM_RES:thunder|ELEM_DMG:thunder,雷属性の素材 → 雷属性追加・雷耐性・雷攻撃強化
+element,water,ELEMENT:water|ELEM_RES:water|ELEM_DMG:water,水属性の素材 → 水属性追加・水耐性・水攻撃強化
+element,light,ELEMENT:light|ELEM_RES:light|ELEM_DMG:light,光属性の素材 → 光属性追加・光耐性・光攻撃強化
+element,dark,ELEMENT:dark|ELEM_RES:dark|ELEM_DMG:dark,闇属性の素材 → 闇属性追加・闇耐性・闇攻撃強化
+monster_type,amorphous,TYPE_BONUS:amorphous|DOT_POWER|VS_STATUS,不定形の素材 → 不定形特効・継続ダメージ・状態別特効
 monster_type,beast,TYPE_BONUS:beast|CRIT_DMG|LIFESTEAL|FIRST_HIT,獣の素材 → 獣特効・会心ダメージ・吸血・初撃強化
 monster_type,humanoid,TYPE_BONUS:humanoid|COUNTER|DEF_PIERCE|NORMAL_SKILL,人型の素材 → 人型特効・反撃・防御無視・通常攻撃から技能への強化
 monster_type,bird,TYPE_BONUS:bird|CRT|EXTRA_HIT|EVA_COUNTER,鳥の素材 → 鳥特効・会心率・追撃・回避反撃
@@ -19,25 +19,27 @@ monster_type,golem,TYPE_BONUS:golem|PHYS_CUT|DEF_PIERCE,ゴーレムの素材 �
 monster_type,ghost,TYPE_BONUS:ghost|MP_ON_HIT|MAGIC_CUT|CRIT_MP,幽霊の素材 → 幽霊特効・通常攻撃MP回復・魔法軽減・会心時MP回復
 monster_type,giant,TYPE_BONUS:giant|COUNTER|PHYS_CUT,巨人の素材 → 巨人特効・反撃・物理軽減
 monster_type,aquatic,TYPE_BONUS:aquatic|HEAL_POWER|STATUS_RES,水棲の素材 → 水棲特効・回復強化・異常耐性
-monster_type,demon,TYPE_BONUS:demon|VS_DEBUFFED|STATUS_RATE,悪魔の素材 → 悪魔特効・弱体特効・異常付与
+monster_type,demon,TYPE_BONUS:demon|VS_STATUS|STATUS_RATE,悪魔の素材 → 悪魔特効・状態別特効・異常付与
 monster_type,machine,TYPE_BONUS:machine|DEF_PIERCE|MP_SAVE,機械の素材 → 機械特効・防御無視・MP節約
 monster_type,fairy,TYPE_BONUS:fairy|PARTY_BUFF_POWER|HEAL_POWER|OVERHEAL_SHIELD,妖精の素材 → 妖精特効・全体支援・回復強化・余剰回復の障壁
 monster_type,dragon,TYPE_BONUS:dragon|WEAK_DMG|CRIT_DMG,竜の素材 → 竜特効・弱点強化・会心ダメージ
-monster_type,aberration,TYPE_BONUS:aberration|STATUS_RATE|VS_DEBUFFED,異形の素材 → 異形特効・異常付与・弱体特効
+monster_type,aberration,TYPE_BONUS:aberration|STATUS_RATE|VS_STATUS,異形の素材 → 異形特効・異常付与・状態別特効
 monster_type,divine_beast,TYPE_BONUS:divine_beast|WEAK_DMG|PARTY_BUFF_POWER,神獣の素材 → 神獣特効・弱点強化・全体支援
-material_kind,common,STR|MAG|DEF|RES|HP,通常の素材 → 基本の能力値
+material_kind,common,STR|MAG|DEF|RES|HP,通常の素材 → 基本能力値
+material_kind,neutral,ELEM_DMG:slash|ELEM_DMG:pierce|ELEM_DMG:blunt|ELEM_RES:slash|ELEM_RES:pierce|ELEM_RES:blunt,属性なし・無属性の既存素材 → 斬突打の攻撃強化と耐性
 material_kind,rare,CRT|SPD|LUK|EVA|STATUS_RES,まれな素材 → 会心・素早さ・運など
 material_kind,season,EXP|DROP|FIRST_SPD,季節の素材 → 経験値・素材の出やすさ・先手
 material_kind,boss,ANY,ボスの素材 → どの系統でも選べる
-monster_status,poison,VS_STATUS:poison,毒を使うモンスターの素材 → 毒中の敵への特効
-monster_status,toxic,VS_STATUS:toxic,猛毒を使うモンスターの素材 → 猛毒中の敵への特効
-monster_status,burn,VS_STATUS:burn,火傷を使うモンスターの素材 → 火傷中の敵への特効
-monster_status,bleed,VS_STATUS:bleed,出血を使うモンスターの素材 → 出血中の敵への特効
-monster_status,sleep,VS_STATUS:sleep,睡眠を使うモンスターの素材 → 睡眠中の敵への特効
-monster_status,paralysis,VS_STATUS:paralysis,麻痺を使うモンスターの素材 → 麻痺中の敵への特効
-monster_status,freeze,VS_STATUS:freeze,凍結を使うモンスターの素材 → 凍結中の敵への特効
-monster_status,stun,VS_STATUS:stun,スタンを使うモンスターの素材 → スタン中の敵への特効
-monster_status,bind,VS_STATUS:bind,束縛を使うモンスターの素材 → 束縛中の敵への特効
-monster_status,silence,VS_STATUS:silence,沈黙を使うモンスターの素材 → 沈黙中の敵への特効
-monster_status,blind,VS_STATUS:blind,暗闇を使うモンスターの素材 → 暗闇中の敵への特効
-monster_status,statdown,VS_STATUS:statdown,能力ダウンを使うモンスターの素材 → 能力ダウン中の敵への特効
+monster_status,ANY,VS_STATUS,状態異常を使うモンスターの素材 → 全状態異常・能力ダウンから対象を選ぶ
+monster_status,poison,VS_STATUS:poison,ドロップ効果の従来候補・毒
+monster_status,toxic,VS_STATUS:toxic,ドロップ効果の従来候補・猛毒
+monster_status,burn,VS_STATUS:burn,ドロップ効果の従来候補・火傷
+monster_status,bleed,VS_STATUS:bleed,ドロップ効果の従来候補・出血
+monster_status,sleep,VS_STATUS:sleep,ドロップ効果の従来候補・睡眠
+monster_status,paralysis,VS_STATUS:paralysis,ドロップ効果の従来候補・麻痺
+monster_status,freeze,VS_STATUS:freeze,ドロップ効果の従来候補・凍結
+monster_status,stun,VS_STATUS:stun,ドロップ効果の従来候補・スタン
+monster_status,bind,VS_STATUS:bind,ドロップ効果の従来候補・束縛
+monster_status,silence,VS_STATUS:silence,ドロップ効果の従来候補・沈黙
+monster_status,blind,VS_STATUS:blind,ドロップ効果の従来候補・暗闇
+monster_status,statdown,VS_STATUS:statdown,ドロップ効果の従来候補・能力ダウン
