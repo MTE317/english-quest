@@ -41,12 +41,12 @@ test('ID固定・合算・ボス5倍の重複なし、対象外/不明地域と�
  assert.equal(fixedBattleRewards(data,old.enemies,'sunlit_forest'),null);
  assert.deepEqual(reward(g,old,'sunlit_forest'),battleRewards(data,g,old));
 });
-test('冠EXP倍率・APは1体+1、レベル差はEXPだけ、死亡/石化の配布対象維持',()=>{
+test('冠EXP倍率・APは1体+1、レベル差はEXPだけ、死亡/石化にもEXPを配布',()=>{
  const g=fresh();const elite=data.elitePrefixes[0];const b=battle(g,[enemy('slime',{eliteId:elite.id}),enemy('slime',{eliteId:elite.id})]);
  assert.equal(reward(g,b).xp[0],Math.round(22*elite.rewardMul));assert.equal(reward(g,b).ap[0],4);
  g.party[0].lv=20;assert.equal(reward(g,b).xp[0],0);assert.equal(reward(g,b).ap[0],4);
  g.party[1].hp=0;b.allies[2].statuses.petrify={turns:2};
- for(const i of [1,2]){assert.equal(reward(g,b).xp[i],0);assert.equal(reward(g,b).ap[i],0);}
+ for(const i of [1,2]){assert.ok(reward(g,b).xp[i]>0);assert.equal(reward(g,b).ap[i],0);}
 });
 test('勝利前/勝利済み保存再開、出題補正、既存AP・XP保持、二重払いなし',()=>{
  const s=enter();s.game.party[0].ap=73;s.game.party[0].xp=3;
