@@ -4,7 +4,7 @@ import { now } from '../storage.js?v=skill-growth-2';
 import { QuestionPicker, REASON_LABEL } from '../picker.js?v=skill-growth-2';
 import { makePracticeQuestion, questionDirection, questionSpeech, DIRECTION } from '../quiz.js?v=skill-growth-2';
 import { speak, canSpeak, stopSpeech } from '../speech.js?v=skill-growth-2';
-import { nextTurn, actionOptions, setPending, prepareQuizAction, resolvePending, targetKind, skillMp, collectBattleHits, enemyIntent, enemyCanAct } from '../battle.js?v=jobs-28-30-1';
+import { nextTurn, actionOptions, setPending, prepareQuizAction, resolvePending, targetKind, skillMp, collectBattleHits, enemyIntent, enemyCanAct } from '../battle.js?v=jobs-19-21-1';
 import { skillMaxLevel, learnedSkillLevel, effectiveSkill } from '../growth.js?v=advanced-jobs-1';
 import { maxHp, maxMp } from '../character.js?v=advanced-jobs-1';
 import { el, render } from '../dom.js?v=skill-growth-2';
@@ -16,7 +16,7 @@ import { portraitIcon } from './portrait.js?v=skill-growth-2';
 import { ultimateGauge } from './skill-presentation.js?v=skill-growth-2';
 import { skillIcon } from './skill-icons.js?v=skill-icons-1';
 import { describeSkillEffect, describeSkillForUI } from '../skill-effects.js?v=tactical-jobs-1';
-import { ownedBlessing, passiveRules, activeDuel, prayerRule, prayerStage } from '../job-combat.js?v=jobs-28-30-1';
+import { ownedBlessing, passiveRules, activeDuel, prayerRule, prayerStage } from '../job-combat.js?v=jobs-19-21-1';
 import { statusIconId, buffIconId, effectIcon, JOB_EFFECT_ICON } from './effect-icons.js?v=battle-effect-icons-1';
 
 const TARGET_PROMPT = {
@@ -108,6 +108,7 @@ export function allyEffectEntries(data, game, battle, index) {
     if (effect.regen) values.push(`HP継続回復 ${Math.round(effect.regen.amount ?? 0)}`);
     if (effect.statusResist) values.push(`状態異常耐性：${(effect.statusResist.statuses ?? []).map(id => data.statusEffects.get(id)?.name ?? id).join('・') || '対象状態異常'} ${Math.round(effect.statusResist.rate * 100)}%`);
     if (effect.statusResist?.uses > 0) values.push(`残り${effect.statusResist.uses}判定`);
+    if (effect.preventCharges) values.push(`次の新規状態異常を${effect.preventCharges}回防ぐ`);
     if (effect.nextDamage) values.push(`次の攻撃ダメージ +${Math.round(effect.nextDamage.rate * 100)}%`);
     if (effect.nextMpSave) values.push(`次のスキル消費MP -${Math.round(effect.nextMpSave.rate * 100)}%・残り${effect.nextMpSave.uses ?? 1}回`);
     for (const save of effect.mpSave ?? []) values.push(`スキル消費MP -${Math.round(save.rate * 100)}%`);
@@ -180,6 +181,12 @@ export function allyEffectEntries(data, game, battle, index) {
   if (member.hp>0 && (member.job==='gunner' || (ally.loaded??0)>0)) ongoing.push(entry(`装填 ${ally.loaded??0}/3`));
   if (member.hp>0 && ally.weaponEnchant?.remaining>0) ongoing.push(entry(`武器付与：${data.elements.get(ally.weaponEnchant.element)?.name??ally.weaponEnchant.element}${duration(ally.weaponEnchant.remaining)}`));
   if(member.hp>0 && ally.familiar?.uses>0)ongoing.push(entry(`使い魔：${ally.familiar.mode==='pursuit'?'追撃型':'悪戯型'}・残り${ally.familiar.uses}回${duration(ally.familiar.remaining)}`));
+  if(member.hp>0 && (member.job==='necromancer'||(ally.soul??0)>0))ongoing.push(entry(`魂 ${ally.soul??0}/3`));
+  if(member.hp>0 && ally.ghost?.remaining>0)ongoing.push(entry(`亡霊：指示残り${ally.ghost.charges}回${duration(ally.ghost.remaining)}`));
+  if(member.hp>0 && (member.job==='onmyoji'||(ally.seals??0)>0))ongoing.push(entry(`調和符 ${ally.seals??0}/2${ally.lastPolarity?'・直前'+(ally.lastPolarity==='light'?'光':'闇'):''}`));
+  if(member.hp>0 && ally.mysticNext)ongoing.push(entry(`符の転回：次の光・闇魔法 +${Math.round(ally.mysticNext.bonus*100)}%${duration(ally.mysticNext.remaining)}`));
+  if(member.hp>0 && ally.mysticDark)ongoing.push(entry(`魂の余韻：次の闇魔法 +${Math.round(ally.mysticDark.bonus*100)}%${duration(ally.mysticDark.remaining)}`));
+  if(member.hp>0 && ally.mysticGuard)ongoing.push(entry(`両儀の守り：光・闇の被害 -${Math.round(ally.mysticGuard.cut*100)}%${duration(ally.mysticGuard.remaining)}`));
   if(member.hp>0 && ally.companion?.hp>0)ongoing.push(entry(`相棒：耐久${ally.companion.hp}/${ally.companion.maxHp}${duration(ally.companion.remaining)}`));
   if(member.hp>0 && ally.puppet?.hp>0)ongoing.push(entry(`人形：${ally.puppet.stance==='guard'?'防御型':'攻撃型'}・耐久${ally.puppet.hp}/${ally.puppet.maxHp}${duration(ally.puppet.remaining)}`));
   if(member.hp>0 && ally.decoy?.hp>0)ongoing.push(entry(`囮：${game.party[ally.decoy.target]?.name??'味方'}を保護・耐久${ally.decoy.hp}/${ally.decoy.maxHp}・残り${ally.decoy.uses}回`));

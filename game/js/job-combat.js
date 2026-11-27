@@ -238,6 +238,10 @@ export function masterMpSave(data, member, skill, b = null, actor = null) {
   if (skill.isFinal) return 0;
   let rate = 0;
   for (const rule of passiveRules(data, member)) {
+    if (skill.effect?.rules?.mystic?.consumeSoul && !skill.isFinal && rule.skill.id === 'necromancer_P01')
+      rate += rule.mystic.rate;
+    if (skill.effect?.rules?.mystic?.consumeSeal && !skill.isFinal && rule.skill.id === 'onmyoji_P04')
+      rate += rule.mystic.rate;
     if (['puppeteer_A03','puppeteer_A05','puppeteer_A09'].includes(skill.id)) rate += rule.puppet_mp_save??0;
     if (skill.effect?.rules?.dance==='finish' && b && actor!=null) rate += (b.allies[actor].rhythm??0)*(rule.finish_mp_save??0);
     for (const entry of rule.mp_save ?? []) if (matchesTag(skill, entry.tag)) rate += entry.rate;
@@ -332,6 +336,9 @@ export function finishMasterOpportunity(data, game, b, actor, ctx, skill = null,
   if (a.companion && a.companion.grantedClock!==b.actionClock && --a.companion.remaining<=0) delete a.companion;
   if (a.puppet && a.puppet.grantedClock!==b.actionClock && --a.puppet.remaining<=0) delete a.puppet;
   if (a.puppetQuick && a.puppetQuick.grantedClock!==b.actionClock && --a.puppetQuick.remaining<=0) delete a.puppetQuick;
+  for (const key of ['ghost', 'mysticNext', 'mysticDark', 'mysticGuard']) {
+    if (a[key] && a[key].grantedClock !== b.actionClock && --a[key].remaining <= 0) delete a[key];
+  }
   if (voluntary && performed && skill?.effect?.rules?.dance) {
     const dance=skill.effect.rules.dance;
     if (dance==='finish') { a.rhythm=0; a.lastDance=null; }

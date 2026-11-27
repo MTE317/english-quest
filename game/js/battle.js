@@ -24,7 +24,7 @@ import { masterTags, weaponSkill, songSkill, healingSkill, weaponAllowed, passiv
   notePrimaryKill, recordSelfSupport, applySpecialistRules,
   activeMark, preparePursuitAttack, pursuitAccuracy, conditionalTargetCrit, pursuitDefIgnore, pursuitStatusBonus,
   recordPrimaryHits, preparationSnapshot, recordPreparation, applyPursuitJumpRules, isAirborne, landingAction,
-  applyFirearmSeaArcaneRules, activeField, ownCurseMark } from './job-combat.js?v=jobs-28-30-1';
+  applyFirearmSeaArcaneRules, activeField, ownCurseMark } from './job-combat.js?v=jobs-19-21-1';
 
 /** balance.json にまだ式がないもの（sim と同じ） */
 export const BATTLE_FORMULAS = Object.freeze({
@@ -120,7 +120,9 @@ export function allyStatusChance(data, game, b, i, id, rate, stats = battleStats
     + bval(b.partyBuffs, 'sres:' + group) + partyPassive(data, game, b, 'party_sres')
     + masterStatusResist(data, game, b, i, id), 0, f(data, 'status_resist_cap'));
   if (st && memberMods(data, game.party[i]).nopoison && st.kind.startsWith('dot') && st.cure.includes('毒消し')) return 0;
-  return clamp(rate * (1 - resist) * masterStatusMultiplier(data, game, b, i, id)
+  const shrine = mysticPassive(data, game.party[i], 'shrine_maiden_P04');
+  const extra = shrine && b.allies[i].masterEffects?.kagura ? 1 - shrine.rate : 1;
+  return clamp(rate * (1 - resist) * masterStatusMultiplier(data, game, b, i, id) * extra
     * (1 - clamp(bval(b.partyBuffs, 'immune'), 0, 1)), 0, 1);
 }
 
@@ -569,6 +571,7 @@ function koAlly(game, b, i) {
   delete b.allies[i].analysisMarks;
   delete b.allies[i].insurance;
   delete b.allies[i].winCrit;
+  clearMysticState(b, i);
   b.allies[i].rhythm=0;
   b.allies[i].lastDance=null;
   if(b.field?.source===i)delete b.field;
@@ -638,6 +641,8 @@ function skillBlock(data, game, b, i, s) {
   if (!weaponAllowed(data, m, s)) return '対応する武器を装備すると使える';
   const advancedBlock = advancedSkillBlock(data, game, b, i, s);
   if (advancedBlock) return advancedBlock;
+  const mysticBlock = mysticSkillBlock(b, i, s);
+  if (mysticBlock) return mysticBlock;
   if (s.isFinal && (m.ultimateGauge ?? 0) < (ultimateRules(data).gauge_max ?? 100)) return '必殺技ゲージが足りない';
   if (s.isFinal && ultimateRules(data).once_per_battle && a.once.includes(s.id)) return 'この戦闘ではもう使った';
   if (s.effect.require_weapon && (!m.equip.weapon || gearDef(data, m.equip.weapon).kind !== s.effect.require_weapon)) {
@@ -789,6 +794,11 @@ export function resolvePending(data, game, b, correct) {
   else if (act.type === 'item') { a.advancedAction.executed = true; doItem(data, game, b, i, data.items.get(act.itemId), act.target, cm); }
   else if (act.type === 'flee') { a.advancedAction.executed = true; doFlee(data, game, b, correct, i); }
   const performed = a.advancedAction?.executed;
+  if (performed && chosenSkill && mysticSingleElement(chosenSkill) && !chosenSkill.isFinal) {
+    const element = act.element ?? chosenSkill.effect.element;
+    if (['light','dark'].includes(element) && a.mysticNext?.grantedClock !== b.actionClock) delete a.mysticNext;
+    if (element === 'dark' && a.mysticDark?.grantedClock !== b.actionClock) delete a.mysticDark;
+  }
   tickStatuses(data, b, a, m.name);
   finishMasterOpportunity(data, game, b, i, masterContext(data, game, b), chosenSkill ?? (act.type === 'attack' ? null : { kind: 'utility', effect: {} }));
   if (performed && correct && act.type !== 'flee' && !chosenSkill?.isFinal) gainUltimate(data, m, ultimateRules(data).gain_correct ?? 20);
@@ -891,6 +901,7 @@ function attackDamage(data, game, b, i, e, skill, cm, { offhand = false, actionB
   let pm = 1;
   const masterBonus=masterDamageBonus(data,game,b,i,e,skill,els);
   pm += masterBonus;
+  pm += mysticDamageBonus(data, game, b, i, skill, els);
   if (els.some(el => elementMul(data, enemy, el) > 1)) pm += skill?.effect.rules?.weak_damage ?? 0;
   for (const [names, v] of mods.wdmg ?? []) if (base === 'weapon' && wt && names.some((n) => nameIs(data.weaponTypes, wt.id, n))) pm += v;
   for (const [name, v] of mods.edmg ?? []) if (els.some((el) => nameIs(data.elements, el, name))) pm += v;
@@ -1127,7 +1138,7 @@ function doAttack(data, game, b, i, skill, target, cm, { normalSkillReady = fals
       primaryHits.push({target:e,damage:Math.max(0,before-b.enemies[e].hp),elements:r.elements,killed:before>0&&b.enemies[e].hp<=0});
       if (!statusTargets.has(e) && (!skill.effect.status_once_action || statusTargets.size === 0)) {
         if (r.landed && r.damage > 0) applyAttackStatuses(data, game, b, i, e, skill.effect, cm);
-        applyMasterAttackAfter(data, game, b, i, e, skill, cm, r);
+        applyMasterAttackAfter(data, game, b, i, e, skill, cm, { ...r, dealt: Math.max(0,before-b.enemies[e].hp) });
         statusTargets.add(e);
       }
       weaponHitBonus(Math.max(0, before - b.enemies[e].hp), r);
@@ -1187,7 +1198,7 @@ function doAttack(data, game, b, i, skill, target, cm, { normalSkillReady = fals
       }
     }
     if (skill && r.landed && r.damage > 0) applyAttackStatuses(data, game, b, i, e, skill.effect, cm);
-    if (skill) applyMasterAttackAfter(data, game, b, i, e, skill, cm, r);
+    if (skill) applyMasterAttackAfter(data, game, b, i, e, skill, cm, { ...r, dealt });
     const ap = memberMods(data, m).auto_poison;
     if (!skill && ap && r.landed && b.enemies[e].hp > 0) inflictByActor(data, game, b, i, e, [data.statusEffects.get('poison').name, ap], cm);
     // 通常攻撃で発動する武器固有の状態異常（鎚・鎌）
@@ -1379,6 +1390,15 @@ function doSkill(data, game, b, i, s, target, cm, normalSkillReady = false, acti
   if (s.effect.tgt === 'self') target = i;
   const targetBlock = advancedTargetBlock(data,game,b,i,s,target,action);
   if (targetBlock) { log(b, `${s.name}は使えなかった（${targetBlock}）`); return; }
+  if (s.effect.rules?.mystic && (
+    (s.kind === 'attack' && (s.effect.tgt === 'all' ? !livingEnemies(b).length : !enemyCanAct(b.enemies[target] ?? {hp:0})))
+    || (s.kind === 'debuff' && !enemyCanAct(b.enemies[target] ?? {hp:0}))
+    || (s.id === 'shrine_maiden_A09' && !game.party.some((member,index)=>index!==i && member.hp>0 && !isPetrified(b,index)))
+  )) { log(b, `${s.name}は使えなかった（対象がいない）`); return; }
+  if (s.effect.rules?.mystic && ['ally_buff', 'cure'].includes(s.kind)
+    && s.effect.tgt !== 'self' && (!game.party[target] || game.party[target].hp <= 0 || isPetrified(b, target))) {
+    log(b, `${s.name}は使えなかった（対象が行動できない）`); return;
+  }
   if ((s.kind === 'mp_give' && s.effect.transfer || s.effect.rules?.cover?.target === 'selected') && target === i) {
     log(b, '自分以外の味方を選んでください'); return;
   }
@@ -1398,6 +1418,7 @@ function doSkill(data, game, b, i, s, target, cm, normalSkillReady = false, acti
   const preparationBefore = preparationSnapshot(a);
   if (boost) a.currentBoost = boost;
   payAdvancedCosts(data,game,b,i,s,action);
+  payMysticCosts(b, i, s);
   a.advancedAction.skillId=s.id;
   if (a.advancedAction.paidHp > 0) log(b, `${m.name}はHPを${a.advancedAction.paidHp}支払った`);
   m.mp -= spentMp;
@@ -1405,6 +1426,7 @@ function doSkill(data, game, b, i, s, target, cm, normalSkillReady = false, acti
   if (s.isFinal) { m.ultimateGauge = 0; if (ultimateRules(data).once_per_battle) a.once.push(s.id); }
   if (s.effect.once) a.once.push(s.id);
   log(b, `${m.name}の${s.name}！`);
+  if (s.id === 'necromancer_U01') s = { ...s, effect: { ...s.effect, m: 1.8 + (a.advancedAction.soulSpent ?? 0) * .25 } };
   const e = s.effect;
   if (e.rules?.before_party_buff) {
     const rule = e.rules.before_party_buff;
@@ -1699,6 +1721,7 @@ function masterCleanseEnemy(enemy, count) {
   return Math.min(count, keys.length);
 }
 function applyMasterAttackAfter(data, game, b, actor, target, skill, cm, result) {
+  applyMysticAttackAfter(data, game, b, actor, target, skill, cm, result);
   const rules = skill?.effect?.rules;
   if (!skill?.effect.master || !rules || !b.enemies[target]) return;
   const enemy = b.enemies[target];
@@ -1837,6 +1860,7 @@ function applyMasterSkillRules(data, game, b, actor, skill, target, cm, action =
   applyArcaneSkillRules(data,game,b,actor,skill,target,cm,action,living);
   applyCompanionSkillRules(data,game,b,actor,skill,target,cm,action,living);
   applyCommandSkillRules(data,game,b,actor,skill,target,cm,action,living);
+  applyMysticSkillRules(data,game,b,actor,skill,target,cm,living);
 }
 function grantOrder(b,target,type,rate,owner,extra={}){
   b.allies[target].strategistOrder={type,rate,source:owner,remaining:2,grantedClock:b.actionClock,...extra};
@@ -1885,6 +1909,173 @@ function applyCommandSkillRules(data,game,b,actor,skill,target,cm,action,living)
     const amount=Math.min(masterShieldRoom(data,game,b,actor,skill.id),Math.floor((10+.5*member.lv+battleStats(data,game,b,actor).res)
       *rule.gambler_shield*cm));
     grantMasterEffect(b,actor,skill.id,{shield:amount,remaining:2,source:actor});
+  }
+}
+// 追加19〜21職の一時資源。いずれも battle の JSON に含まれ、町には持ち越さない。
+function mysticPassive(data, member, id) {
+  return passiveRules(data, member).find(rule => rule.skill.id === id)?.mystic;
+}
+function mysticMagic(skill) {
+  return skill?.kind === 'attack' && skill.effect?.base === 'mag'
+    && !masterTags(skill).some(tag => ['reaction','trap','followup'].includes(tag));
+}
+function mysticSingleElement(skill) {
+  return mysticMagic(skill) && !skill.effect.rules?.mystic?.elements?.length;
+}
+function clearMysticState(b, actor) {
+  const ally = b.allies[actor];
+  for (const key of ['soul','ghost','seals','lastPolarity','mysticNext','mysticDark','mysticGuard']) delete ally[key];
+  for (const unit of b.allies) if (unit.masterEffects?.kagura?.source === actor) delete unit.masterEffects.kagura;
+}
+function mysticSkillBlock(b, actor, skill) {
+  const r = skill.effect?.rules?.mystic;
+  if (!r) return '';
+  const a = b.allies[actor];
+  if (r.requiresSoul && (a.soul ?? 0) < r.requiresSoul) return '魂が足りない';
+  if (r.requiresSeal && (a.seals ?? 0) < r.requiresSeal) return '調和符が足りない';
+  if (r.requiresGhost && (!a.ghost?.remaining || !a.ghost.charges)) return '亡霊がいない';
+  return '';
+}
+function payMysticCosts(b, actor, skill) {
+  const r = skill.effect?.rules?.mystic;
+  if (!r) return;
+  const a = b.allies[actor];
+  const soul = r.consumeSoulUpTo ? Math.min(r.consumeSoulUpTo, a.soul ?? 0) : r.consumeSoul ?? 0;
+  const seals = r.consumeSealUpTo ? Math.min(r.consumeSealUpTo, a.seals ?? 0) : r.consumeSeal ?? 0;
+  a.soul = (a.soul ?? 0) - soul;
+  a.seals = (a.seals ?? 0) - seals;
+  a.advancedAction.soulSpent = soul;
+  a.advancedAction.sealsSpent = seals;
+  if (r.ghostChargeCost && a.ghost) {
+    a.ghost.charges -= r.ghostChargeCost;
+    if (!a.ghost.charges) delete a.ghost;
+  }
+}
+function mysticDamageBonus(data, game, b, actor, skill, elements) {
+  if (!mysticMagic(skill) || skill.isFinal) return 0;
+  const a = b.allies[actor], member = game.party[actor];
+  const element = skill.effect?.element;
+  let bonus = 0;
+  if (skill.id === 'necromancer_A06') bonus += mysticPassive(data, member, 'necromancer_P04')?.bonus ?? 0;
+  if (mysticSingleElement(skill) && element === 'dark') bonus += a.mysticDark?.bonus ?? 0;
+  if (mysticSingleElement(skill) && ['light','dark'].includes(element)) {
+    bonus += a.mysticNext?.bonus ?? 0;
+    if (a.lastPolarity && a.lastPolarity !== element) bonus += mysticPassive(data, member, 'onmyoji_P01')?.bonus ?? 0;
+  }
+  if (mysticSingleElement(skill) && elements.includes('light')) {
+    bonus += Math.max(0, ...b.allies.map((unit, index) =>
+      unit.masterEffects?.kagura?.source === index
+        ? mysticPassive(data, game.party[index], 'shrine_maiden_P05')?.bonus ?? 0 : 0));
+  }
+  return bonus;
+}
+function mysticCut(data, game, b, target, magic, elements) {
+  const a = b.allies[target], member = game.party[target];
+  let cut = magic && a.ghost?.remaining ? mysticPassive(data, member, 'necromancer_P03')?.cut ?? 0 : 0;
+  if (elements.some(id => ['light','dark'].includes(id))) cut += a.mysticGuard?.cut ?? 0;
+  return cut;
+}
+function applyMysticAttackAfter(data, game, b, actor, target, skill, cm, result) {
+  const r = skill?.effect?.rules?.mystic, dealt = result.dealt ?? result.damage;
+  if (!result.landed || dealt <= 0) return;
+  const a = b.allies[actor], member = game.party[actor], enemy = b.enemies[target];
+  if (r?.grantSoul && !a.advancedAction?.soulGranted) {
+    a.soul = Math.min(3, (a.soul ?? 0) + 1);
+    a.advancedAction.soulGranted = true;
+  }
+  if (r?.drainRate) healAlly(data, game, b, actor, Math.min(dealt * r.drainRate, maxHp(data, member) * r.healCapMaxHp));
+  if (r?.removeEnemyBuffs && enemy.hp > 0) masterCleanseEnemy(enemy, r.count);
+  if (r?.statDebuff && enemy.hp > 0 && chance(b, enemyStatusChance(data, enemy, b.round, 'statdown', r.statDebuff.rate * cm))) {
+    enemy.masterDebuffs ??= {};
+    const key = skill.id + ':' + r.statDebuff.stat;
+    const previous = enemy.masterDebuffs[key];
+    if (!previous || previous.value <= r.statDebuff.value)
+      enemy.masterDebuffs[key] = { stat:r.statDebuff.stat, value:r.statDebuff.value,
+        turns:Math.max(previous?.turns ?? 0, r.statDebuff.turns ?? r.turns ?? 2) };
+  }
+  if ((member.job === 'onmyoji' || member.learned?.some(id=>id.startsWith('onmyoji_')))
+    && mysticSingleElement(skill) && !skill.isFinal && ['light','dark'].includes(skill.effect.element)) {
+    const element = skill.effect.element;
+    const alternated = a.lastPolarity && a.lastPolarity !== element;
+    if (alternated && !r?.noSameActionSealGain && !r?.noSealGain) a.seals = Math.min(2, (a.seals ?? 0) + 1);
+    a.lastPolarity = element;
+    if (alternated) {
+      const guard = mysticPassive(data, member, 'onmyoji_P05');
+      if (guard) a.mysticGuard = { cut:guard.cut, remaining:2, grantedClock:b.actionClock };
+    }
+  }
+}
+function mysticCure(data, game, b, actor, target, rule, cm) {
+  const status = b.allies[target].statuses;
+  const allowed = Array.isArray(rule.cure) ? rule.cure : null;
+  const ids = Object.keys(status).filter(id => id !== 'petrify' && (
+    allowed ? allowed.includes(id) : Boolean(data.statusEffects.get(id)?.cure?.length)))
+    .sort((left,right) => (status[left].turns ?? 0) - (status[right].turns ?? 0) || left.localeCompare(right));
+  const removed = ids.slice(0, Math.max(1, Math.floor((rule.cureCount ?? rule.count ?? 1) * cm)));
+  for (const id of removed) {
+    delete status[id];
+    game.party[target].persist = (game.party[target].persist ?? []).filter(value => value !== id);
+    if (game.party[target].persistState) delete game.party[target].persistState[id];
+  }
+  if (removed.length && !rule.preventNextStatus) {
+    const healing = mysticPassive(data, game.party[actor], 'shrine_maiden_P01');
+    if (healing) healAlly(data, game, b, target, maxHp(data, game.party[target]) * healing.bonus);
+  }
+  return removed.length;
+}
+function mysticShield(data, game, b, actor, target, rate, skillId, cm) {
+  const member = game.party[actor], base = Math.floor(10 + .5 * member.lv + battleStats(data,game,b,actor).res);
+  const amount = Math.max(0, Math.floor(Math.min(masterShieldRoom(data,game,b,target,skillId),base*rate*cm)));
+  if (amount) grantMasterEffect(b,target,skillId,{shield:amount,remaining:2,source:actor});
+}
+function applyMysticSkillRules(data,game,b,actor,skill,target,cm,living) {
+  const r = skill.effect.rules?.mystic;
+  if (!r) return;
+  const a = b.allies[actor], member = game.party[actor], effects = a.masterEffects;
+  if (skill.id === 'necromancer_A02' || skill.id === 'necromancer_U01') {
+    const ghost = r.afterGhost ?? { charges:r.ghostCharges, turns:r.turns };
+    a.ghost = { charges:ghost.charges, remaining:ghost.turns, grantedClock:b.actionClock };
+  }
+  if (skill.id === 'necromancer_A07') {
+    const enemy = b.enemies[target];
+    if (enemy?.hp>0 && chance(b,enemyStatusChance(data,enemy,b.round,'statdown',r.statDebuff.rate*cm))) {
+      enemy.masterDebuffs ??= {};
+      enemy.masterDebuffs[skill.id] = {stat:'res',value:r.statDebuff.value,turns:r.turns};
+    }
+  }
+  if (['necromancer_A08','onmyoji_A03','shrine_maiden_A07'].includes(skill.id)) {
+    const bonus = skill.id === 'onmyoji_A03' ? mysticPassive(data,member,'onmyoji_P03')?.bonus ?? 0 : 0;
+    mysticShield(data,game,b,actor,target,r.guard*(1+bonus),skill.id,cm);
+  }
+  if (skill.id === 'onmyoji_U01') for (const t of living) mysticShield(data,game,b,actor,t,
+    r.shieldBaseRate+(a.advancedAction?.sealsSpent??0)*r.bonusPerSeal,skill.id,cm);
+  if (skill.id === 'onmyoji_A07') a.mysticNext = {bonus:r.bonus*cm,remaining:r.turns,grantedClock:b.actionClock};
+  if (['onmyoji_A08','shrine_maiden_A02'].includes(skill.id)) mysticCure(data,game,b,actor,target,r,cm);
+  if (skill.id === 'shrine_maiden_A06' || skill.id === 'shrine_maiden_U01')
+    for (const t of living) mysticCure(data,game,b,actor,t,
+      skill.id === 'shrine_maiden_A06' ? {...r,count:r.cureCount} : r,cm);
+  if (r.kagura) {
+    for (const unit of b.allies) delete unit.masterEffects?.kagura;
+    const mastery = mysticPassive(data,member,'shrine_maiden_P03');
+    const rate = (r.rate ?? r.regen ?? r.cut ?? 0) *
+      (mastery && ['regeneration','protection'].includes(r.kagura) ? 1+mastery.bonus : 1)*cm;
+    for (const t of living) grantMasterEffect(b,t,'kagura',{
+      source:actor,skillId:skill.id,kaguraKind:r.kagura,remaining:r.turns,
+      ...(r.kagura === 'prevention' ? {statusResist:{multiplicative:true,statuses:r.statuses,rate}} : {}),
+      ...(r.kagura === 'regeneration' ? {regen:{amount:maxHp(data,game.party[t])*rate,trigger:'end'}} : {}),
+      ...(r.kagura === 'protection' ? {values:{cut:rate}} : {}),
+    });
+  }
+  if (skill.id === 'shrine_maiden_A09') for (const t of living.filter(t=>t!==actor)) {
+    const targetMember=game.party[t];
+    targetMember.mp+=Math.min(r.restore,Math.floor(maxMp(data,targetMember)*r.mpRestoreCapMaxMp),
+      maxMp(data,targetMember)-targetMember.mp);
+  }
+  if (skill.id === 'shrine_maiden_U01') for (const t of living)
+    grantMasterEffect(b,t,skill.id,{source:actor,remaining:r.preventNextStatus.turns,preventCharges:1});
+  if (a.advancedAction?.soulSpent && !skill.isFinal) {
+    const echo = mysticPassive(data,member,'necromancer_P05');
+    if (echo) a.mysticDark={bonus:echo.bonus,remaining:echo.turns,grantedClock:b.actionClock};
   }
 }
 function summonCompanion(data,game,b,actor,turns,ultimate=false){
@@ -2414,7 +2605,8 @@ function enemyTurn(data, game, b, e) {
     const cut = 1 - Math.min(f(data, 'damage_cut_cap'), bval(b.partyBuffs, 'cut') + bval(ta.buffs, 'cut')
       + (memberMods(data, target).damage_cut ?? 0) + gearCut + (magic ? 0 : bval(ta.buffs, 'pcut'))
       + masterBuff(data, game, b, t, 'cut') + masterBuff(data, game, b, t, magic ? 'mcut' : 'pcut')
-      + masterCutBonus(data, game, b, t, magic, e) + (counterStance?.cut ?? 0) + readGuardCut(b, t, magic, incomingElements)
+      + masterCutBonus(data, game, b, t, magic, e) + mysticCut(data, game, b, t, magic, incomingElements)
+      + (counterStance?.cut ?? 0) + readGuardCut(b, t, magic, incomingElements)
       + (masterCover && t !== original ? masterCover.cover.cut ?? 0 : 0)+orderCut);
     const ecut = allyElementMultiplier(data, game, b, t, enemy.attackElement, magic);
     const dmg = evaluate(f(data, 'enemy_damage'), { atk, df, r: between(b, f(data, 'enemy_rand')) })
@@ -2441,7 +2633,10 @@ function enemyTurn(data, game, b, e) {
       if (st) {
         const inflicted = chance(b, allyStatusChance(data, game, b, t, st.id, enemy.statusRate, ts));
         consumeStatusPreparation(b, t, st.id);
-        if (inflicted) {
+         if (inflicted && !ta.statuses[st.id] && ta.masterEffects?.shrine_maiden_U01?.preventCharges && st.id !== 'petrify') {
+           delete ta.masterEffects.shrine_maiden_U01;
+           log(b, `${target.name}の予防札が${st.name}を防いだ`);
+         } else if (inflicted) {
           const cur = ta.statuses[st.id];
           if (cur && st.kind === 'dot') { cur.n = Math.min(3, cur.n + 1); cur.turns = st.turns; } else ta.statuses[st.id] = { turns: st.turns, n: 1 };
           if (st.persists && !target.persist.includes(st.id)) {
@@ -2517,6 +2712,7 @@ export function finishBattle(data, game, b) {
     delete ally.analysisMarks;
     delete ally.insurance;
     delete ally.winCrit;
+    clearMysticState(b, i);
     ally.rhythm=0;
     ally.lastDance=null;
     ally.anger = 0;
