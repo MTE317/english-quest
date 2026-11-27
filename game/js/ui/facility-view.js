@@ -1,6 +1,6 @@
 import { el, render } from '../dom.js?v=skill-growth-2';
 import { parseAmounts } from '../csv.js?v=skill-growth-2';
-import { craft, brew, canCraft, canBrew, enhance, dismantle, reroll, enchant, enchantFamilies, facilityUpgrade } from '../workshop.js?v=unique-reroll-1';
+import { craft, brew, canCraft, canBrew, enhance, dismantle, dismantlePowder, reroll, enchant, enchantFamilies, facilityUpgrade } from '../workshop.js?v=dismantle-powder-1';
 import { borrow, repayLoan, loanLimit } from '../town.js?v=public-rewards-1';
 import { unlockJob, jobDiscoveryProgress, offeringRevealed } from '../temple.js?v=skill-growth-2';
 import { effectLabel, describeEffect } from '../equipment-effects.js?v=unique-reroll-1';
@@ -147,8 +147,9 @@ export function workshopView(data, g, act, rng, selection) {
       })()) : el('p', { class: 'small muted' }, '強化上限 +10'),
       btn('強化する', () => act((game) => enhance(data, game, item, rng())),
         !stoneRequirement(data, item.enh) || (g.storage.materials[stoneRequirement(data, item.enh).id] ?? 0) < stoneRequirement(data, item.enh).count),
-      btn('分解する', () => {
-        if (confirm(`${definition.name}を分解しますか？`)) act((game) => dismantle(data, game, item));
+      btn(`分解する（粉${dismantlePowder(item)}個）`, () => {
+        if (confirm(`${definition.name}を分解しますか？ 欠片1個・強化石Iを1個・エンチャント粉${dismantlePowder(item)}個を得ます。`))
+          act((game) => dismantle(data, game, item));
       }),
       enchantForm(item, definition),
       stats.some(([key]) => numericEffect(key)) ? panel('② 数値だけ再抽選',

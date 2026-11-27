@@ -3,11 +3,38 @@ import assert from 'node:assert/strict';
 import { realGameData } from './helpers.js';
 import { createNewGame, defaultPartySpecs, normalizeGame } from '../js/game-state.js';
 import { makeGear } from '../js/character.js';
-import { enhance, enchant, enchantCandidates, enchantFamilies } from '../js/workshop.js';
+import { enhance, enchant, enchantCandidates, enchantFamilies, dismantle, dismantlePowder } from '../js/workshop.js';
 import { STONE_STAGES, stoneRequirement, availableStoneStages, awardCompositionSet } from '../js/workshop-materials.js';
 
 const data = realGameData();
 const fresh = () => createNewGame(data, defaultPartySpecs(data));
+
+test('分解は全装備の効果数に応じて粉0～3個を返し、欠片と強化石Iも維持する', () => {
+  const slots = ['weapon', 'head', 'accessory'];
+  for (const slot of slots) {
+    const def = [...data.equipment.values()].find(e => e.slot === slot && e.star === 1);
+    assert.ok(def);
+    for (let count = 0; count <= 7; count++) {
+      const game = fresh();
+      const gear = makeGear(game, def.id, {
+        affixes: Object.fromEntries(Array.from({ length: count }, (_, i) => [`effect_${i}`, 1])),
+      });
+      game.storage.gear.push(gear);
+      game.storage.materials.enchant_powder = 4;
+      const expected = Math.min(3, Math.ceil(count / 2));
+      assert.equal(dismantlePowder(gear), expected);
+      const message = dismantle(data, game, gear);
+      assert.equal(game.storage.gear.includes(gear), false);
+      assert.equal(game.storage.materials.fragment_common, 1);
+      assert.equal(game.storage.materials.enhancement_stone_1, 1);
+      assert.equal(game.storage.materials.enchant_powder, 4 + expected);
+      assert.match(message, expected ? new RegExp(`粉${expected}個`) : /欠片と強化石Iを得た/);
+      assert.throws(() => dismantle(data, game, gear), /倉庫/);
+    }
+  }
+  const legacy = { affixes: { STR: 2 }, enchants: [{ stat: 'MAG', value: 3 }] };
+  assert.equal(dismantlePowder(legacy), 1);
+});
 
 test('強化石の種類・必要数は装備★ではなく強化先+1～+10で決まる', () => {
   const ids = [1,1,1,2,2,3,3,4,4,5];

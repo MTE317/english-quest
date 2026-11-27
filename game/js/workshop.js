@@ -130,17 +130,21 @@ export function enhance(data, game, gear, rng) {
 }
 
 export const fragmentId = (gear) => `fragment_${gear.rarity ?? 'common'}`;
+export const dismantlePowder = (gear) => Math.min(3, Math.ceil(
+  (Object.keys(gear.affixes ?? {}).length + (gear.enchants ?? []).length) / 2));
 
 export function dismantle(data, game, gear) {
   const index = game.storage.gear.indexOf(gear);
   if (index < 0) throw new Error('装備を倉庫に入れてください。');
+  const powder = dismantlePowder(gear);
   game.storage.gear.splice(index, 1);
   const stock = game.storage.materials;
   const fragment = fragmentId(gear);
   stock[fragment] = (stock[fragment] ?? 0) + 1;
   // 分解で返す石の段階・個数は別途調整。従来どおり最低段階を1個返す。
   stock[STONE_STAGES[0].id] = (stock[STONE_STAGES[0].id] ?? 0) + 1;
-  return '装備を分解し、欠片と強化石Iを得た。';
+  if (powder) stock[ENCHANT_POWDER_ID] = (stock[ENCHANT_POWDER_ID] ?? 0) + powder;
+  return `装備を分解し、欠片と強化石I${powder ? `、エンチャント粉${powder}個` : ''}を得た。`;
 }
 
 export function reroll(data, game, gear, stat, rng) {
