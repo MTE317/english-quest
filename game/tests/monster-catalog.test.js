@@ -54,10 +54,10 @@ test('新素材の参照元が有効',()=>{
   for(const row of rows)if(row.source_monster)assert.ok(data.monsters.has(row.source_monster),row.id+' -> '+row.source_monster);
 });
 
-test('先行5ダンジョンの図鑑は103種を収録する', () => {
+test('公開7ダンジョンの図鑑は127種を収録する', () => {
   const monsters = catalogMonsters(realGameData());
-  assert.equal(monsters.length, 103);
-  assert.equal(new Set(monsters.map(m => m.id)).size, 103);
+  assert.equal(monsters.length, 127);
+  assert.equal(new Set(monsters.map(m => m.id)).size, 127);
   assert.ok(monsters.some(m => m.id === 'goblin_boss'));
 });
 

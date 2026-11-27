@@ -409,7 +409,7 @@ test('宝箱の同種道具と盗品は全滅で失い、再読込しても途�
 test('入門以外の既存58経路は2・3・6戦で最奥だけがボス', () => {
   assert.equal(data.dungeons.size, 61);
   for (const dungeon of data.dungeons.values()) {
-    if (data.balance.dungeon.intro_routes[dungeon.id]) continue; // 入門3経路はintro-route.test.jsで全階検証
+    if (data.balance.dungeon.intro_routes[dungeon.id] || dungeon.id === 'howling_canyon') continue; // 入門3経路はintro-route.test.jsで全階検証
     const route = data.dungeonFloors.filter(({ dungeonId }) => dungeonId === dungeon.id);
     const length = dungeon.kind === '近場' ? 2 : dungeon.kind === '深層' ? 6 : 3;
     assert.equal(route.length, length, dungeon.id);

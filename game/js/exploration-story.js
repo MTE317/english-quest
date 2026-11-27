@@ -1,4 +1,4 @@
-import { allowedDungeons } from './dungeon.js?v=public-rewards-1';
+import { allowedDungeons } from './dungeon.js?v=canyon-public-1';
 
 function availableStories(data, game) {
   const reachable = new Set(allowedDungeons(data, game).map(d => d.id));

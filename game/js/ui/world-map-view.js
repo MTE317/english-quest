@@ -1,4 +1,4 @@
-import { TRIAL_DUNGEON_IDS } from '../world-map.js?v=jobs-intro-1';
+import { TRIAL_DUNGEON_IDS } from '../world-map.js?v=canyon-public-1';
 import { el } from '../dom.js?v=skill-growth-2';
 import { expeditionScene } from './scenery.js?v=skill-growth-2';
 
@@ -42,6 +42,7 @@ export function createWorldMapView({ world, discoveries, selectedDungeon, onDung
     discoveries.length
       ? el('p', { class: 'atlas-status', role: 'status' }, `新しい冒険先を発見：${discoveries.map((d) => d.name).join('、')}`)
       : null,
+    (world.hints ?? []).map(text => el('p', { class: 'atlas-status' }, text)),
     el('div', { class: 'atlas-destinations', role: 'group', 'aria-label': '発見済みの冒険先一覧' }, cards));
 }
 

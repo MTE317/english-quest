@@ -86,7 +86,7 @@
     "xp_to_next": "25 * Lv^1.5"
   },
   "rewards": {
-    "fixed_monster_dungeons": ["windward_plain", "sunlit_forest", "mossy_cave", "goblin_quarry", "ruined_fort", "misty_marsh"],
+    "fixed_monster_dungeons": ["windward_plain", "sunlit_forest", "mossy_cave", "goblin_quarry", "ruined_fort", "misty_marsh", "howling_canyon"],
     "xp_per_enemy": "6 + 3.2*enemyLv (boss x5)",
     "overlevel_penalty_per_level": "経験値 × max(0, 1 - 0.25 × max(0, (自分のLv - 敵のLv) - 1))。敵より2レベル高いと減り始め、5レベル高いと0",
     "overlevel_min": 0,
@@ -118,6 +118,7 @@
     "floor1_enemies": 2,
     "other_floor_enemies": 3,
     "boss_battle": "boss + 1",
+    "new_route_boss_escorts": { "howling_canyon": 0 },
     "layout_version": 2,
     "exploration": {
       "slots": {
@@ -748,6 +749,7 @@
       }
     },
     "pre_intro_routes": {
+      "howling_canyon": [{"dungeonId": "howling_canyon", "floor": 1, "enemyLevel": 15, "battles": 1, "enemiesPerBattle": 2, "lastBattleIsBoss": false, "returnPointAfter": false}, {"dungeonId": "howling_canyon", "floor": 2, "enemyLevel": 17, "battles": 1, "enemiesPerBattle": 3, "lastBattleIsBoss": false, "returnPointAfter": true}, {"dungeonId": "howling_canyon", "floor": 3, "enemyLevel": 19, "battles": 1, "enemiesPerBattle": 1, "lastBattleIsBoss": true, "returnPointAfter": false}],
       "mossy_cave": [
         {
           "dungeonId": "mossy_cave",

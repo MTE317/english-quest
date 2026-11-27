@@ -125,7 +125,8 @@ export function makeEncounter(data, dungeonId, floor, rng, {
     const dg = data.dungeons.get(dungeonId);
     enemies.push(makeEnemy(data, dg.bossId, { lv: row.enemyLevel, dungeonId, boss: true }));
   }
-  const count = boss ? bossEscorts(data) : row.enemiesPerBattle;
+  const escorts = rowOverride ? rowOverride.bossEscorts : data.balance.dungeon?.new_route_boss_escorts?.[dungeonId];
+  const count = boss ? (Number.isInteger(escorts) ? escorts : bossEscorts(data)) : row.enemiesPerBattle;
   const rank = data.dungeons.get(dungeonId).rank;
   const config = data.balance.dungeon ?? {};
   const eliteLimit = Math.max(0, Math.min(maxElites, config.elite_max_per_battle ?? count));
