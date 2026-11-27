@@ -3,6 +3,7 @@ import { roundGold } from './gold.js?v=skill-growth-2';
 // 式が data にないものは sim/world.py と同じ値を LOOT_FORMULAS に置く（docs/requests.md で依頼済み）。
 import { evaluate } from './expr.js?v=skill-growth-2';
 import { makeGear } from './character.js?v=advanced-jobs-1';
+import { equipmentTier } from './equipment-scaling.js?v=equipment-rarity-1';
 import { splitList } from './csv.js?v=skill-growth-2';
 
 export const LOOT_FORMULAS = Object.freeze({
@@ -12,11 +13,8 @@ export const LOOT_FORMULAS = Object.freeze({
   boss_rare_rate: 0.3,
   // 装備の部位の割合（武器・頭体腕・マント・アクセサリー）
   slot_share: { weapon: 0.35, armor: 0.45, cloak: 0.08, accessory: 0.12 },
-  // 装備Lvは、そのダンジョンの範囲のうち、奥の階ほど高い
   rarity_floor_bonus: 0.08, // 階ごと（レア以上の重みを増やす）
   rarity_rank_bonus: 0.15, // ★ごと
-  affix_scale: '1 + itemLv / 12', // scales_with_item_lv の効果
-  affix_high_rarity_mul: 1.15, // レアリティの順番が5番目以上（アーティファクト以上）
   stack_max: 99, // 素材は1種類で1枠、99個まで（docs/checklist.md 3章）
   item_max: 10, // 道具は種類ごとに10個まで
 });
@@ -93,7 +91,7 @@ export function affixVariants(data, family) {
 }
 
 /** ランダム効果を n 個（同じ系統は1回まで） */
-export function rollAffixes(data, slot, n, itemLv, rarityIndex, rng) {
+export function rollAffixes(data, slot, n, star, rarityIndex, rng) {
   const key = ['head', 'body', 'arm'].includes(slot) ? 'armor' : slot;
   const pool = data.affixes.filter((a) => a.slot === key && a.stat !== 'ELEMENT');
   const out = {};
@@ -101,8 +99,8 @@ export function rollAffixes(data, slot, n, itemLv, rarityIndex, rng) {
     const a = weighted(rng, pool, (x) => x.weight);
     pool.splice(pool.indexOf(a), 1);
     let v = a.min + (a.max - a.min) * rng();
-    if (a.scales) v *= evaluate(LOOT_FORMULAS.affix_scale, { itemLv });
-    if (rarityIndex >= 5) v *= LOOT_FORMULAS.affix_high_rarity_mul;
+    if (a.scales) v *= equipmentTier(data, star).affixScale;
+    v *= data.rarityTable[rarityIndex]?.effectMul ?? 1;
     let stat = a.stat;
     if (stat === 'TYPE_BONUS') stat = `特効:${[...data.monsterTypes.keys()][Math.floor(rng() * data.monsterTypes.size)]}`;
     if (stat === 'VS_STATUS' || stat === 'ELEM_RES') {
@@ -115,24 +113,19 @@ export function rollAffixes(data, slot, n, itemLv, rarityIndex, rng) {
   return out;
 }
 
-/** 落ちた装備を1つ作る（装備Lvはダンジョンの範囲で、奥の階ほど高い） */
+/** 落ちた通常装備を1つ作る（地域の★と装備種別で選ぶ）。 */
 export function rollGearDrop(data, game, dungeonId, floor, rng, { commonOnly = false } = {}) {
   const dg = data.dungeons.get(dungeonId);
-  const top = dg.itemLvMin + (dg.itemLvMax - dg.itemLvMin) * Math.min(1, floor / dg.floors);
   const share = LOOT_FORMULAS.slot_share;
   const kind = weighted(rng, Object.keys(share), (k) => share[k]);
   const slots = kind === 'armor' ? ['head', 'body', 'arm'] : [kind];
   const cands = [...data.equipment.values()].filter((e) => !e.unique && !e.setId && slots.includes(e.slot)
-    && e.source.includes('ドロップ') && e.itemLv >= dg.itemLvMin && e.itemLv <= Math.max(top, dg.itemLvMin));
-  // 専用制作装備をランダムドロップに混ぜない。候補不足時もドロップ対象だけを探す。
-  const pool = cands.length ? cands : [...data.equipment.values()].filter((e) =>
-    !e.unique && !e.setId && e.source.includes('ドロップ') && slots.includes(e.slot) && e.itemLv <= dg.itemLvMax);
-  if (commonOnly && !pool.length) return null;
-  // いちばん高い装備Lvのものを多めに
-  const maxLv = Math.max(...pool.map((e) => e.itemLv));
-  const def = weighted(rng, pool, (e) => (e.itemLv === maxLv ? 2 : 1));
+    && e.source.includes('ドロップ') && e.star === dg.rank);
+  const pool = cands;
+  if (!pool.length) return null;
+  const def = weighted(rng, pool, () => 1);
   const rar = commonOnly ? { id: 'common', effects: 0, i: 0 } : rollRarity(data, dungeonId, floor, rng);
-  return makeGear(game, def.id, { rarity: rar.id, affixes: rollAffixes(data, def.slot, rar.effects, def.itemLv, rar.i, rng) });
+  return makeGear(game, def.id, { rarity: rar.id, affixes: rollAffixes(data, def.slot, rar.effects, def.star, rar.i, rng) });
 }
 
 /** ボスの固有装備（uniques.csv の drop_rate） */

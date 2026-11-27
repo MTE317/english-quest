@@ -152,7 +152,7 @@ function gearLabel(gear, jobId) {
   const def = gearDef(data, gear);
   const apt = aptitudeGrade(data, jobId, def);
   const enh = gear.enh ? `+${gear.enh}` : '';
-  return `${def.name}${enh}（Lv${def.itemLv}${apt ? `・適正${apt}` : ''}）`;
+  return `${def.name}${enh}（★${def.star}${apt ? `・適正${apt}` : ''}）`;
 }
 
 function gearNameWithIcon(gear, jobId, tag = 'span') {
@@ -597,7 +597,7 @@ function showSlot(index, slot, container, refresh) {
   const kind = { offhand: 'weapon', accessory1: 'accessory', accessory2: 'accessory' }[slot] ?? slot;
   const cands = g.storage.gear.filter((x) => gearDef(data, x).slot === kind)
     .map((gear) => ({ gear, check: canEquip(data, m, slot, gear) }))
-    .sort((a, b) => Number(b.check.ok) - Number(a.check.ok) || gearDef(data, b.gear).itemLv - gearDef(data, a.gear).itemLv);
+    .sort((a, b) => Number(b.check.ok) - Number(a.check.ok) || gearDef(data, b.gear).star - gearDef(data, a.gear).star);
   const confirmation = el('section', { class: 'equipment-confirm equipment-comparison', hidden: true, 'aria-label': '装備の比較' });
   const selectedButtons = [];
   function select(gear, source) {
@@ -645,7 +645,7 @@ function showSlot(index, slot, container, refresh) {
           el('span', { class: 'shop-item-icon', 'aria-hidden': 'true' }, equipmentIcon(def) ?? uiIcon('gear')),
           el('span', { class: 'shop-slot-name' }, gearLabel(gear, m.job)),
           el('span', { class: 'shop-slot-count' }, rarityName),
-          el('span', { class: 'shop-slot-count' }, check.ok ? `装備Lv ${def.itemLv}` : check.reason));
+          el('span', { class: 'shop-slot-count' }, check.ok ? `★${def.star}` : check.reason));
         selectedButtons.push(button);
         return button;
       })),

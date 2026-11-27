@@ -25,7 +25,7 @@ test('追加18制作は対応工房と実在素材で作れ、専用効果を保
     const facility = 'workshop';
     assert.ok([2, 3].includes(rank));
     assert.ok(!def.unique && !def.setId);
-    assert.ok(def.itemLv <= Number(data.facilityRanks.find((row) => Number(row.rank) === rank).craft_item_lv));
+    assert.ok(def.star <= Number(data.facilityRanks.find((row) => Number(row.rank) === rank).craft_star_cap));
     const game = fresh();
     game.gold = 10000;
     game.facilities[facility] = rank;
@@ -38,7 +38,7 @@ test('追加18制作は対応工房と実在素材で作れ、専用効果を保
     const item = game.storage.gear.at(-1);
     assert.equal(game.gold, before - Number(recipe.gold));
     assert.deepEqual(item.affixes, def.fixedEffects);
-    assert.equal(item.quality, 1.15);
+    assert.equal(item.quality, undefined);
     const material = [...data.materials.values()].find((m) => m.rank <= rank && enchantFamilies(data, def, m).length);
     const family = enchantFamilies(data, def, material)[0];
     game.storage.materials[material.id] = 1;

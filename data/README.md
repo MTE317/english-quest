@@ -34,10 +34,11 @@
 | skills.csv | 14ジョブのスキルツリー（5段目まで。効果は effect_json） |
 | common_tree.csv | 全ジョブ共通のパッシブ |
 | weapon_types.csv / armor_weights.csv | 武器16種（鎌・扇を含む）・防具の重さ。`dual_wield`・`attack_stat`・`traits_json` で戦闘特性を管理 |
-| equipment.csv | 通常装備720種（24段階＝★ごとに2段階。武器16種＝384本、防具9種・マント・アクセサリー4種） |
+| equipment.csv | 通常装備720 ID。既存セーブとレシピのため同一★の2系列IDを残すが、基礎性能は★・種類で共通 |
 | uniques.csv | 固有装備121（既存108＋闘技場13。闘技場報酬は直接付与） |
 | sets.csv / set_items.csv | セット装備20セット（4部位） |
 | enchant_sources.csv | エンチャントで素材から付く効果の系統 |
+| equipment_tiers.csv | ★1～12の基礎武器・防具・魔法補助・固定ダメージ・付与係数 |
 | enchant_overrides.csv | 工房エンチャント専用の部位別数値。ドロップ装備のランダム効果は変えない |
 | job_mastery.csv | ジョブを極めたときの、全ジョブへのボーナス |
 | affixes.csv | 部位ごとの追加効果。継続ダメージ・付与率・会心・弱点・回復・支援・反撃・MP維持などのビルド用効果を含む |

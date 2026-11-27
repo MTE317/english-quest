@@ -19,7 +19,7 @@ export function storageView(data, game, state) {
       return { id: String(gear.uid ?? index), name: (def?.name ?? gear.id) + (gear.enh > 0 ? ` +${gear.enh}` : ''),
         owned: 1, rank: def?.star ?? 0, rarity, rarityOrder: rarityIds.indexOf(rarity), def, gear,
         icon: () => equipmentIcon(def) ?? uiIcon('gear'),
-        description: [rarityNames.get(rarity) ?? rarity, def ? `★${def.star} ／ 装備Lv ${def.itemLv}` : ''].filter(Boolean).join(' ／ ') };
+        description: [rarityNames.get(rarity) ?? rarity, def ? `★${def.star}` : ''].filter(Boolean).join(' ／ ') };
     });
     const stock = mode === 'materials' ? game.storage.materials : game.items;
     const catalog = mode === 'materials' ? data.materials : data.items;

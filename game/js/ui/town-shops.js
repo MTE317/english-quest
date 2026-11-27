@@ -114,7 +114,7 @@ export function gearShopView(data, game, state, act) {
       id, price, rarity: gear.rarity, name: gearName(def, gear), owned: owned.get(def.id) ?? 0,
       icon: () => equipmentIcon(def) ?? gearIcons[def.slot],
       category: def.slot === 'weapon' || def.slot === 'accessory' ? def.slot : 'armor',
-      description: [stars(star), kind, `装備Lv ${def.itemLv}`, rarity].filter(Boolean).join(' ／ '),
+      description: [stars(star), kind, rarity].filter(Boolean).join(' ／ '),
       details: () => equipmentDetails(data, game, def, gear),
       equipped: equipped.some((item) => item.id === def.id),
     };

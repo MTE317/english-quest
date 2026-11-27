@@ -89,7 +89,7 @@ export function workshopView(data, g, act, rng, selection) {
     const filtered = usableDefs.filter(def =>
       Boolean(def.recipeId) === (mode === 'special')
       && categoryOf(def) === category && (star === 'all' || def.star === Number(star)))
-      .sort((a, b) => a.itemLv - b.itemLv || a.name.localeCompare(b.name, 'ja'));
+      .sort((a, b) => a.star - b.star || a.name.localeCompare(b.name, 'ja'));
     const selectedDef = filtered.find(def => def.id === selection.recipe) ?? filtered[0];
     selection.recipe = selectedDef?.id;
     const recipe = data.recipes.find(r => r.id === selectedDef?.id);
@@ -106,7 +106,7 @@ export function workshopView(data, g, act, rng, selection) {
         select('★', [['all', 'すべて'], ...Array.from({ length: 12 }, (_, i) => [String(i + 1), `★${i + 1}`])],
           value => { selection.craftStar = value; selection.recipe = null; redraw(); }, star)),
       el('p', { class: 'muted small' }, `条件に合う制作候補：${filtered.length}件（施設ランクで解放）`),
-      iconCatalog(filtered.map(def => ({ id: def.id, name: def.name, caption: `★${def.star} ／ Lv${def.itemLv}`,
+      iconCatalog(filtered.map(def => ({ id: def.id, name: def.name, caption: `★${def.star}`,
         icon: () => equipmentIcon(def) ?? uiIcon('gear') })),
       selectedDef?.id, id => { selection.recipe = id; }, selectedDef ? [
         el('header', {}, equipmentIcon(selectedDef) ?? uiIcon('gear'), heading(selectedDef.name)),
@@ -141,7 +141,7 @@ export function workshopView(data, g, act, rng, selection) {
       btn('分解する', () => {
         if (confirm(`${definition.name}を分解しますか？`)) act((game) => dismantle(data, game, item));
       }),
-      item.crafted ? [enchantments, enchantForm(item, definition)] : null,
+      !definition.unique && !definition.setId ? [enchantments, enchantForm(item, definition)] : null,
       !item.crafted && !definition.unique && !definition.setId && stats.length ? panel('効果の振り直し',
         stats.map(([key, value]) => btn(`${describeEffect(data, key, value)} を振り直す`, () => act((game) => reroll(data, game, item, key, rng()))))) : null,
     ];
@@ -159,7 +159,7 @@ export function workshopView(data, g, act, rng, selection) {
     const slots = el('select', { class: 'select' }, option('枠1', '0'), item.enchants?.length ? option('枠2', '1') : null);
     const preview = el('p', { class: 'small muted' });
     const showPreview = () => render(preview, `付与する効果：${describeEffect(data, familySelect.value,
-      enchantValue(data, def, familySelect.value, Number(grades.value)))}`);
+      enchantValue(data, def, familySelect.value, Number(grades.value), item.rarity))}`);
     const fill = () => {
       render(familySelect, enchantFamilies(data, def, data.materials.get(materialSelect.value) ?? mats[0])
         .map((id) => option(effectLabel(data, id), id)));

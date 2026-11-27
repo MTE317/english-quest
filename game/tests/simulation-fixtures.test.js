@@ -27,7 +27,7 @@ test('比較編成は合法な6人・装備・容量・修得前提を守る', (
       }
       for (const [slot, gear] of Object.entries(member.equip)) if (gear) {
         assert.equal(canEquip(data, member, slot, gear).ok, true, `${formation.id}/${member.job}/${slot}`);
-        assert.ok(data.equipment.get(gear.id).itemLv <= 10);
+        assert.ok(data.equipment.get(gear.id).star <= 1);
         assert.equal(data.equipment.get(gear.id).unique, false);
         assert.ok(!data.equipment.get(gear.id).setId);
       }
