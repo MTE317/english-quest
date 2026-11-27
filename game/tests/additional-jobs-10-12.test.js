@@ -18,6 +18,7 @@ const spec=JSON.parse(readFileSync(new URL('../../docs/specs/additional-jobs-10-
 function fixture(job='assassin',count=3,seed=51) {
   const specs=defaultPartySpecs(data);specs[0].job=job;
   const game=createNewGame(data,specs);
+  game.facilities.temple=12;
   for(const member of game.party){member.lv=20;member.hp=maxHp(data,member);member.mp=maxMp(data,member);}
   const member=game.party[0];member.ap=10000;
   const kind=job==='dragoon'?'spear':job==='bounty_hunter'?'bow':'dagger';
@@ -52,8 +53,8 @@ const damage=c=>1e7-c.enemies[0].hp;
 const mpReset=c=>{c.member.mp=maxMp(data,c.member);};
 
 test('追加10〜12職の45技能・149段階・簡素説明・前提と成長方式がマスターへ反映される',()=>{
-  assert.equal(data.jobs.filter(job=>job.skillsReady).length,26);
-  assert.equal([...data.skills.values()].filter(skill=>skill.effect.master).length,390);
+assert.equal(data.jobs.filter(job=>job.skillsReady).length,29);
+  assert.equal([...data.skills.values()].filter(skill=>skill.effect.master).length,435);
   let stages=0;const modes={};
   for(const job of spec.jobs){const list=[...data.skills.values()].filter(skill=>skill.job===job.id);
     assert.deepEqual([list.filter(s=>!s.isFinal&&s.kind!=='passive').length,list.filter(s=>s.kind==='passive').length,list.filter(s=>s.isFinal).length],[9,5,1]);
@@ -70,8 +71,8 @@ test('追加10〜12職の45技能・149段階・簡素説明・前提と成長�
   assert.equal(stages,149);assert.deepEqual(modes,{lv5:17,lv3:18,none:10});
 });
 
-test('3職は神殿Lv4で選べ、既存セーブでもAPで手動修得し、他職へ継承できる',()=>{
-  for(const job of spec.jobs){const c=fixture(job.id);c.game.facilities.temple=4;const learned=[...c.member.learned],gear=structuredClone(c.member.equip);
+test('3職は最初から選べ、既存セーブでもAPで手動修得し、他職へ継承できる',()=>{
+  for(const job of spec.jobs){const c=fixture(job.id),learned=[...c.member.learned],gear=structuredClone(c.member.equip);
     const saved=normalizeGame(data,structuredClone(c.game));assert.ok(availableJobs(data,saved,saved.party[0]).some(j=>j.id===job.id));
     changeJob(data,c.game,0,'warrior');changeJob(data,c.game,0,job.id);
     assert.deepEqual(c.member.learned,learned);assert.deepEqual(c.member.equip,gear);
@@ -83,7 +84,7 @@ test('3職は神殿Lv4で選べ、既存セーブでもAPで手動修得し、�
     assert.equal(learnBlock(data,c.member,ultimate),'');learnSkill(data,c.member,ultimate.id);equipSkill(data,c.member,ultimate.id);
     changeJob(data,c.game,0,'warrior');assert.equal(c.member.loadout.ultimate,ultimate.id);
   }
-  assert.equal(data.jobs.filter(job=>!job.skillsReady).length,24);
+  assert.equal(data.jobs.filter(job=>!job.skillsReady).length,21);
 });
 
 test('暗殺者の異常・能力低下条件は対象ごとで、標的・属性耐性・別の敵の状態では成立しない',()=>{

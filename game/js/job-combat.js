@@ -72,6 +72,15 @@ export function scopeMatches(skill, scope) {
 export function masterDamageBonus(data, game, b, actor, target, skill, elements = skill?.elements ?? [], targetHp = null) {
   const member = game.party[actor], a = b.allies[actor];
   let rate = 0;
+  if (skill?.effect?.rules?.companion_attack) {
+    rate += ruleNumber(data,member,'companion_command_damage');
+    if (b.enemies[target]?.statuses?.fear) rate += ruleNumber(data,member,'companion_fear_damage');
+    if (skill.effect.rules.companion_high_damage && a.companion?.hp >= a.companion.maxHp*.5)
+      rate += skill.effect.rules.companion_high_damage;
+  }
+  if (skill?.effect?.rules?.puppet_attack) rate += ruleNumber(data,member,'puppet_attack_damage')
+    + (a.puppetQuick?.remaining>0 ? a.puppetQuick.bonus : 0);
+  if (skill?.effect?.rules?.dance==='spin') rate += (a.rhythm??0)*ruleNumber(data,member,'spin_damage');
   const field=activeField(game,b), state=a.advancedAction;
   if (field && elements.includes(field.element) && (!skill || skill.kind==='attack')) rate+=field.rate;
   if (directMagic(skill)) {
@@ -218,6 +227,8 @@ export function masterMpSave(data, member, skill, b = null, actor = null) {
   if (skill.isFinal) return 0;
   let rate = 0;
   for (const rule of passiveRules(data, member)) {
+    if (['puppeteer_A03','puppeteer_A05','puppeteer_A09'].includes(skill.id)) rate += rule.puppet_mp_save??0;
+    if (skill.effect?.rules?.dance==='finish' && b && actor!=null) rate += (b.allies[actor].rhythm??0)*(rule.finish_mp_save??0);
     for (const entry of rule.mp_save ?? []) if (matchesTag(skill, entry.tag)) rate += entry.rate;
     if (b && actor != null && !b.allies[actor].firstActiveUsed) rate += rule.first_mp_save ?? 0;
     if (b && actor != null && weaponSkill(skill) && rule.anger_mp_save
@@ -297,6 +308,14 @@ function masterRegenAmount(data, game, b, target, effect) {
 export function finishMasterOpportunity(data, game, b, actor, ctx, skill = null, voluntary = true) {
   const a = b.allies[actor], member = game.party[actor];
   const performed = a.advancedAction?.executed ?? true;
+  if (a.companion && a.companion.grantedClock!==b.actionClock && --a.companion.remaining<=0) delete a.companion;
+  if (a.puppet && a.puppet.grantedClock!==b.actionClock && --a.puppet.remaining<=0) delete a.puppet;
+  if (a.puppetQuick && a.puppetQuick.grantedClock!==b.actionClock && --a.puppetQuick.remaining<=0) delete a.puppetQuick;
+  if (voluntary && performed && skill?.effect?.rules?.dance) {
+    const dance=skill.effect.rules.dance;
+    if (dance==='finish') { a.rhythm=0; a.lastDance=null; }
+    else { a.rhythm=a.lastDance && a.lastDance!==dance ? Math.min(2,(a.rhythm??0)+1) : 0; a.lastDance=dance; }
+  } else { a.rhythm=0; a.lastDance=null; }
   const beforeMomentum=a.masterEffects?.pirate_P01?.momentum;
   const usingWeapon=voluntary&&performed&&weaponSkill(skill)&&!skill?.isFinal;
   const primaryKills=a.advancedAction?.primaryKills?.length??0;
@@ -388,6 +407,14 @@ export function spendHpPayment(data, game, b, actor, skill) {
 }
 export function advancedSkillBlock(data, game, b, actor, skill) {
   const rules=skill.effect.rules??{}, ally=b.allies[actor];
+  if (rules.requires_companion && !(ally.companion?.hp>0&&ally.companion.remaining>0)) return '相棒が必要';
+  if ((rules.companion_guard||rules.companion_repair) && !(ally.companion?.hp>0&&ally.companion.remaining>0)) return '相棒が必要';
+  if (rules.companion_repair && (ally.companionRepairs??0)>=rules.companion_repair.limit) return 'この戦闘ではもう手当てできない';
+  if ((rules.requires_puppet||rules.puppet_stance||rules.puppet_guard||rules.puppet_repair||rules.puppet_shield||rules.puppet_quick_stance)
+      && !(ally.puppet?.hp>0&&ally.puppet.remaining>0)) return '人形が必要';
+  if ((rules.requires_puppet==='attack'||rules.puppet_attack) && ally.puppet?.stance!=='attack') return '攻撃型の人形が必要';
+  if ((rules.puppet_guard||rules.puppet_shield) && ally.puppet?.stance!=='guard') return '防御型の人形が必要';
+  if (rules.puppet_repair && (ally.puppetRepairs??0)>=rules.puppet_repair.limit) return 'この戦闘ではもう修復できない';
   if (rules.field_guard && !activeField(game,b))return '属性の場が必要';
   if (rules.release_field && activeField(game,b)?.source!==actor)return '自分の属性の場が必要';
   if ((rules.familiar_mode||rules.familiar_shield||rules.release_familiar) && !(ally.familiar?.uses>0&&ally.familiar?.remaining>0))
@@ -414,6 +441,7 @@ export function advancedSkillBlock(data, game, b, actor, skill) {
 export function advancedTargetBlock(data, game, b, actor, skill, target, action) {
   if (!skill.effect.additional) return '';
   const rule=skill.effect.rules??{};
+  if (rule.puppet_quick_stance && !['attack','guard'].includes(action.element)) return '人形の構えを選んでください';
   if (rule.release_curse && !ownCurseMark(b,actor,target))return '自分の呪印がある敵を選んでください';
   if (rule.familiar_mode && action.element===b.allies[actor].familiar?.mode)return '異なる使い魔の型を選んでください';
   if (rule.move_mark && target === activeMark(game, b, actor)?.target) return '現在の標的と別の敵を選んでください';
@@ -434,6 +462,7 @@ export function advancedTargetBlock(data, game, b, actor, skill, target, action)
 export function payAdvancedCosts(data, game, b, actor, skill, action) {
   const ally=b.allies[actor], rule=skill.effect.rules??{}, state=ally.advancedAction;
   state.executed=true;
+  if (rule.dance==='finish') { state.rhythmSpent=ally.rhythm??0; ally.rhythm=0; }
   if (rule.release_field) {state.releasedField=ally.advancedAction.fieldAtStart;delete b.field;}
   if (rule.release_familiar) {state.releasedFamiliar=ally.familiar?.uses??0;delete ally.familiar;}
   if (rule.familiar_shield && ally.familiar) {
