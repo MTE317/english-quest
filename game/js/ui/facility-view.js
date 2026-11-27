@@ -1,10 +1,10 @@
 import { el, render } from '../dom.js?v=skill-growth-2';
 import { parseAmounts } from '../csv.js?v=skill-growth-2';
-import { craft, brew, canCraft, canBrew, enhance, dismantle, dismantlePowder, reroll, enchant, enchantFamilies, facilityUpgrade, facilityUnlocks } from '../workshop.js?v=facilities-11-1';
+import { craft, brew, canCraft, canBrew, enhance, dismantle, dismantlePowder, reroll, enchant, enchantFamilies, facilityUpgrade, facilityUnlocks } from '../workshop.js?v=stone-fragments-1';
 import { borrow, repayLoan, loanLimit } from '../town.js?v=public-rewards-1';
 import { unlockJob, jobDiscoveryProgress, offeringRevealed } from '../temple.js?v=skill-growth-2';
 import { effectLabel, describeEffect } from '../equipment-effects.js?v=unique-reroll-1';
-import { stoneRequirement, availableStones, dismantleFragment, stoneFragmentId, STONE_STAGES, ENCHANT_POWDER_ID, ENCHANT_POWDER_COST } from '../workshop-materials.js?v=workshop-materials-1';
+import { stoneRequirement, availableStones, dismantleFragment, stoneFragmentId, STONE_STAGES, ENCHANT_POWDER_ID, ENCHANT_POWDER_COST } from '../workshop-materials.js?v=stone-fragments-1';
 import { uniqueCandidates, numericEffect, enchantCost, facilityValueMul } from '../enchantment-roll.js?v=unique-reroll-1';
 import { equipmentIcon } from './equipment-icons.js?v=skill-growth-2';
 import { uiIcon } from './pixel-icons.js?v=skill-growth-2';
