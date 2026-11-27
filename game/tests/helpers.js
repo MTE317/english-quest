@@ -66,6 +66,7 @@ export function realGameData() {
     economy: readCsv('economy_by_rank.csv').rows,
     materials: readCsv('materials.csv').rows,
     affixes: readCsv('affixes.csv').rows,
+    enhanceRates: readCsv('enhance_rates.csv').rows,
     enchantGrades: readCsv('enchant_grades.csv').rows,
     enchantOverrides: readCsv('enchant_overrides.csv').rows,
     enchantSources: readCsv('enchant_sources.csv').rows,

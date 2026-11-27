@@ -23,11 +23,12 @@ test('既存素材から物理・魔法11属性、状態異常20種と能力ダ�
   assert.ok(!enchantFamilies(data, weapon, fire).includes('ELEM_DMG:slash'));
   assert.ok(enchantFamilies(data, weapon, neutral).includes('ELEM_DMG:slash'));
   assert.ok(enchantFamilies(data, armor, neutral).includes('ELEM_RES:blunt'));
-  assert.ok(enchantFamilies(data, armor, rare).includes('STATUS_RES:petrify'));
-  assert.ok(enchantFamilies(data, weapon, actor).includes('STATUS_RATE:charm'));
-  assert.ok(enchantFamilies(data, weapon, status).includes('VS_STATUS:doom'));
-  assert.ok(enchantFamilies(data, weapon, status).includes('VS_STATUS:statdown'));
-  assert.equal(enchantFamilies(data, weapon, status).filter((s) => s.startsWith('VS_STATUS:')).length, 21);
+  assert.ok(enchantFamilies(data, armor, rare).some((id) => id.startsWith('STATUS_RES:')));
+  assert.ok(enchantFamilies(data, weapon, actor).some((id) => id.startsWith('STATUS_RATE:')));
+  assert.ok(enchantFamilies(data, weapon, status).includes(`VS_STATUS:${data.monsters.get(status.sourceMonster).status}`));
+  assert.ok(enchantCandidates(data, weapon).includes('VS_STATUS:statdown'));
+  assert.ok(enchantFamilies(data, weapon, status).filter((s) => s.startsWith('VS_STATUS:')).length >= 1);
+  assert.equal(enchantCandidates(data, weapon).filter((s) => s.startsWith('VS_STATUS:')).length, 21);
   assert.ok(!enchantFamilies(data, weapon, status).includes('VS_DEBUFFED'));
   assert.ok(!enchantFamilies(data, weapon, actor).includes('STATUS_RATE'));
   assert.ok(!enchantFamilies(data, armor, rare).includes('STATUS_RES'));

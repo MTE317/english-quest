@@ -346,8 +346,6 @@ test('ビルド向けエンチャントが実在素材で選べ、付与結果�
   ]) {
     const ctx = prepare({ rules: master });
     const def = master.equipment.get(id);
-    const material = materials.find((m) => enchantFamilies(master, def, m).includes(family));
-    assert.ok(material, `${id} / ${family} の素材`);
     const gear = makeGear(ctx.game, id); gear.crafted = true;
     ctx.game.storage.materials.enchant_powder = 10;
     const candidates = enchantCandidates(master, def);

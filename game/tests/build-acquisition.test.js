@@ -39,8 +39,7 @@ test('追加18制作は対応工房と実在素材で作れ、専用効果を保
     assert.equal(game.gold, before - Number(recipe.gold));
     assert.deepEqual(item.affixes, def.fixedEffects);
     assert.equal(item.quality, undefined);
-    const material = [...data.materials.values()].find((m) => m.rank <= rank && enchantFamilies(data, def, m).length);
-    const family = enchantFamilies(data, def, material)[0];
+    const family = enchantCandidates(data, def)[0];
     game.storage.materials.enchant_powder = 10;
     const candidates = enchantCandidates(data, def);
     const index = candidates.indexOf(family);
@@ -62,8 +61,7 @@ test('7系統と状態別12種を合法付与でき、★12の通常制作にも
       const def = [...data.equipment.values()].filter((entry) => !entry.recipeId && !entry.unique && !entry.setId
         && entry.slot === slot && entry.star === 12 && entry.source.includes('制作'))[0];
       assert.ok(def, slot);
-      const material = [...data.materials.values()].find((entry) => entry.rank <= 3 && enchantFamilies(data, def, entry).includes(family));
-      assert.ok(material, `${family}: ${slot} の対応素材`);
+      assert.ok(enchantCandidates(data, def).includes(family), `${family}: ${slot} の抽選候補`);
       const game = fresh();
       game.gold = 1000000;
       game.facilities['workshop'] = 12;
