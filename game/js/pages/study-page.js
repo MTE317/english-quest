@@ -226,7 +226,7 @@ function training() {
           availableStoneStages(data, session.game).map((stage) =>
             el('option', { value: stage.id, selected: stage.id === state.stoneId }, stage.name)))),
       el('p', { class: 'small muted' },
-        `5問で石とエンチャント粉を各1個、10問で各2個、15問で各3個。粉は共通1種類（現在${session.game.storage.materials[ENCHANT_POWDER_ID] ?? 0}個）。`),
+        `5問で石1個・粉1個、10問で石2個・粉1個、15問で石3個・粉1個。粉は共通1種類（現在${session.game.storage.materials[ENCHANT_POWDER_ID] ?? 0}個）。`),
     ] : null,
     // 長い教材・チャンク一覧をスクロールする前に訓練を開始できるようにする。
     el('div', { class: 'training-start-bar' },
@@ -269,7 +269,7 @@ function startTraining() {
       message = result.answered
         ? result.answered + '問完了（単語' + result.words + '・英作文' + result.phrases +
           '）。6人合計 XP +' + result.xp + ' / AP +' + result.ap + '。端数は次回へ繰り越します。' +
-          (result.materials ? ` ${result.materials.stoneName}・エンチャント粉を各${result.materials.stones}個獲得。` : '')
+          (result.materials ? ` ${result.materials.stoneName}を${result.materials.stones}個・エンチャント粉を${result.materials.powder}個獲得。` : '')
         : 'この条件では出題可能な項目がありません。教材や学習モードを変更してください。';
       tab = 'training'; draw();
     },
