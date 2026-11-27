@@ -260,7 +260,7 @@ export function chooseAction(data, game, b, options = actionOptions(data, game, 
         }
         const bossMul = target.e.boss ? .75 : 1;
         if (status.kind.startsWith('dot')) score += target.e.maxHp * status.value * 2.4 * s.effect.st[1] * bossMul
-          * (target.e.boss ? .65 : 1) * (1 + affixSum(member, 'DOT_POWER') / 100);
+          * (target.e.boss ? .65 : 1) * (1 + (affixSum(member, 'DOT_POWER') + affixSum(member, `DOT_POWER:${status.id}`)) / 100);
         else if (target.e.hp > attackEstimate(data, game, b, i, null, target.j) * 2) score += (target.e.str + target.e.mag) * .15 * s.effect.st[1] * bossMul;
         if (catalog) {
           const beneficiary = game.party.map((m, index) => ({ m, index, rate: affixSum(m, `VS_STATUS:${status.id}`) / 100 }))

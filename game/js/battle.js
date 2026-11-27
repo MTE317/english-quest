@@ -114,7 +114,8 @@ const STATUS_TIERS = Object.freeze({ '★': 2, '◎': 1.5, '〇': 1, '△': 0.5,
 export function allyStatusChance(data, game, b, i, id, rate, stats = battleStats(data, game, b, i)) {
   const st = data.statusEffects.get(id);
   const group = st?.group ?? '弱体化';
-  const resist = clamp(stats.statusResist + bval(b.partyBuffs, 'sres:すべて')
+  const resist = clamp(stats.statusResist + affixSum(game.party[i], `STATUS_RES:${id}`) / 100
+    + bval(b.partyBuffs, 'sres:すべて')
     + bval(b.partyBuffs, 'sres:' + group) + partyPassive(data, game, b, 'party_sres')
     + masterStatusResist(data, game, b, i, id), 0, f(data, 'status_resist_cap'));
   if (st && memberMods(data, game.party[i]).nopoison && st.kind.startsWith('dot') && st.cure.includes('毒消し')) return 0;
@@ -878,6 +879,8 @@ function attackDamage(data, game, b, i, e, skill, cm, { offhand = false, actionB
   if (els.some(el => elementMul(data, enemy, el) > 1)) pm += skill?.effect.rules?.weak_damage ?? 0;
   for (const [names, v] of mods.wdmg ?? []) if (base === 'weapon' && wt && names.some((n) => nameIs(data.weaponTypes, wt.id, n))) pm += v;
   for (const [name, v] of mods.edmg ?? []) if (els.some((el) => nameIs(data.elements, el, name))) pm += v;
+  // 複合属性でも装備による属性攻撃強化は最大の1系統だけ使う。
+  pm += Math.max(0, ...els.map((el) => affixSum(m, `ELEM_DMG:${el}`) / 100));
   for (const [names, v] of mods.tdmg ?? []) if (enemy.types.some((t) => names.some((n) => nameIs(data.monsterTypes, t, n)))) pm += v;
   for (const type of enemy.types) pm += ((weapon ? gearEffects(weapon)['特効:' + type] ?? 0 : 0) + affixSum(m, 'TYPE_BONUS:' + type)) / 100;
   if (wt?.id === 'gun' && base === 'phys' && skill) pm += mods.bullet ?? 0;
@@ -1269,11 +1272,13 @@ function applyAttackStatuses(data, game, b, actor, target, effect, cm) {
 function inflictByActor(data, game, b, actor, target, status, cm, allowPursuit = true) {
   const member = game.party[actor];
   const mods = memberMods(data, member);
-  const id=data.statusByName.get(status[0])?.id??status[0];
-  const base=[status[0],status[1]+(allowPursuit?pursuitStatusBonus(data,game,b,actor,target,id):0)];
+  const id = data.statusByName.get(status[0])?.id ?? data.statusEffects.get(status[0])?.id ?? status[0];
+  const targetId = data.statusEffects.has(id) ? id : 'statdown';
+  const base = [status[0], status[1] + (allowPursuit ? pursuitStatusBonus(data, game, b, actor, target, id) : 0)];
   return inflictEnemy(data, b, target, base, cm,
-    (mods.stat_rate ?? 0) + affixSum(member, 'STATUS_RATE') / 100,
-    { actor, potency: 1 + Math.min(f(data, 'dot_power_cap'), (mods.dot_power ?? 0) + affixSum(member, 'DOT_POWER') / 100) });
+    (mods.stat_rate ?? 0) + (affixSum(member, 'STATUS_RATE') + affixSum(member, `STATUS_RATE:${targetId}`)) / 100,
+    { actor, potency: 1 + Math.min(f(data, 'dot_power_cap'), (mods.dot_power ?? 0)
+      + (affixSum(member, 'DOT_POWER') + affixSum(member, `DOT_POWER:${targetId}`)) / 100) });
 }
 
 function spreadPoison(data, game, b, actor, defeated) {
