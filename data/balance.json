@@ -950,13 +950,29 @@
   "new_game": {
     "gold": 1000,
     "day": 1,
+    "party_names": [
+      "アルス",
+      "ミーナ",
+      "セシリア",
+      "バルト",
+      "エルシア",
+      "オーウェン"
+    ],
     "party_jobs": [
       "warrior",
       "knight",
-      "black_mage",
       "white_mage",
       "thief",
-      "bard"
+      "hunter",
+      "black_mage"
+    ],
+    "party_icons": [
+      "human_01",
+      "human_02",
+      "human_04",
+      "human_07",
+      "human_06",
+      "human_03"
     ],
     "items": {
       "return_feather": 1
