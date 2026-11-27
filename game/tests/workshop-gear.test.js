@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import vm from 'node:vm';
 import { buildGameData, GAME_FILES } from '../js/gamedata.js';
-import { createNewGame } from '../js/game-state.js';
+import { createNewGame, normalizeGame } from '../js/game-state.js';
 import { makeGear } from '../js/character.js';
 import { enhance, dismantle, dismantlePowder, enchant, reroll } from '../js/workshop.js';
 import { stoneRequirement, availableStones, dismantleFragment, stoneFragmentId, STONE_STAGES, ENCHANT_POWDER_ID, ENCHANT_POWDER_COST } from '../js/workshop-materials.js';
@@ -190,4 +190,19 @@ test('欠片3個を石1個分として強化し、石と欠片も併用できる
   const snapshot = structuredClone(game);
   assert.throws(() => enhance(data, game, gear, () => 0), /足りません/);
   assert.deepEqual(game, snapshot);
+});
+
+test('旧欠片を新しい段階へ一度だけ移し、既存の完成石を維持する', () => {
+  const game = fresh();
+  game.storage.materials = { fragment_common: 2, fragment_rare: 3,
+    fragment_legendary: 1, fragment_unique: 2, enhancement_stone_1: 4 };
+  normalizeGame(data, game);
+  assert.equal(game.storage.materials[stoneFragmentId(1)], 2);
+  assert.equal(game.storage.materials[stoneFragmentId(3)], 3);
+  assert.equal(game.storage.materials[stoneFragmentId(5)], 3);
+  assert.equal(game.storage.materials.enhancement_stone_1, 4);
+  assert.equal(game.storage.materials.fragment_common, undefined);
+  const materials = structuredClone(game.storage.materials);
+  normalizeGame(data, game);
+  assert.deepEqual(game.storage.materials, materials);
 });
