@@ -4,7 +4,7 @@ import { craft, brew, canCraft, canBrew, enhance, dismantle, dismantlePowder, re
 import { borrow, repayLoan, loanLimit } from '../town.js?v=public-rewards-1';
 import { unlockJob, jobDiscoveryProgress, offeringRevealed } from '../temple.js?v=skill-growth-2';
 import { effectLabel, describeEffect } from '../equipment-effects.js?v=unique-reroll-1';
-import { stoneRequirement, ENCHANT_POWDER_ID, ENCHANT_POWDER_COST } from '../workshop-materials.js?v=workshop-materials-1';
+import { stoneRequirement, availableStones, dismantleFragment, stoneFragmentId, STONE_STAGES, ENCHANT_POWDER_ID, ENCHANT_POWDER_COST } from '../workshop-materials.js?v=workshop-materials-1';
 import { uniqueCandidates, numericEffect, enchantCost, facilityValueMul } from '../enchantment-roll.js?v=unique-reroll-1';
 import { equipmentIcon } from './equipment-icons.js?v=skill-growth-2';
 import { uiIcon } from './pixel-icons.js?v=skill-growth-2';
@@ -149,12 +149,12 @@ export function workshopView(data, g, act, rng, selection) {
         `${item.affixOrigins?.[key] === 'unique' ? '固有' : '共通'} ${describeEffect(data, key, value)}`).join('、') : 'なし'}`),
       item.enh < 10 ? el('p', { class: 'small muted' }, (() => {
         const stone = stoneRequirement(data, item.enh);
-        return `+${item.enh + 1}：${stone.name} ${g.storage.materials[stone.id] ?? 0}/${stone.count}個`;
+        return `+${item.enh + 1}：${stone.name} ${availableStones(g, stone)}/${stone.count}個分（石${g.storage.materials[stone.id] ?? 0}個・欠片${g.storage.materials[stoneFragmentId(STONE_STAGES.findIndex(row => row.id === stone.id) + 1)] ?? 0}個、欠片3個＝石1個）`;
       })()) : el('p', { class: 'small muted' }, '強化上限 +10'),
       btn('強化する', () => act((game) => enhance(data, game, item, rng())),
-        !stoneRequirement(data, item.enh) || (g.storage.materials[stoneRequirement(data, item.enh).id] ?? 0) < stoneRequirement(data, item.enh).count),
-      inStorage ? btn(`分解する（粉${dismantlePowder(item)}個）`, () => {
-        if (confirm(`${definition.name}を分解しますか？ 欠片1個・強化石Iを1個・エンチャント粉${dismantlePowder(item)}個を得ます。`))
+        !stoneRequirement(data, item.enh) || availableStones(g, stoneRequirement(data, item.enh)) < stoneRequirement(data, item.enh).count),
+      inStorage ? btn(`分解する（${dismantleFragment(data, item).name}の欠片1個・粉${dismantlePowder(item)}個）`, () => {
+        if (confirm(`${definition.name}を分解しますか？ ${dismantleFragment(data, item).name}の欠片1個${dismantlePowder(item) ? `・エンチャント粉${dismantlePowder(item)}個` : ''}を得ます。`))
           act((game) => dismantle(data, game, item));
       }) : el('p', { class: 'small muted' }, '装備中のアイテムは分解できません。分解する場合は装備を外してください。'),
       enchantForm(item, definition),
