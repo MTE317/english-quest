@@ -6,7 +6,7 @@ import { buildGameData, GAME_FILES } from '../js/gamedata.js';
 import { createNewGame } from '../js/game-state.js';
 import { makeGear } from '../js/character.js';
 import { enhance, dismantle, dismantlePowder, enchant, reroll } from '../js/workshop.js';
-import { stoneRequirement, ENCHANT_POWDER_ID, ENCHANT_POWDER_COST } from '../js/workshop-materials.js';
+import { stoneRequirement, availableStones, dismantleFragment, stoneFragmentId, STONE_STAGES, ENCHANT_POWDER_ID, ENCHANT_POWDER_COST } from '../js/workshop-materials.js';
 import { numericEffect, enchantCost, facilityValueMul } from '../js/enchantment-roll.js';
 import { readCsv, readJson } from './helpers.js';
 
@@ -24,7 +24,7 @@ function view(game, selection = { tab: 'gear' }) {
     btn: (label, onclick, disabled = false) => el('button', { onclick, disabled }, label),
     equipmentIcon: () => null, uiIcon: () => null,
     describeFixedEffects: () => '', describeEffect: () => '',
-    enhance, dismantle, dismantlePowder, enchant, reroll, stoneRequirement, ENCHANT_POWDER_ID, ENCHANT_POWDER_COST, numericEffect, enchantCost,
+    enhance, dismantle, dismantlePowder, enchant, reroll, stoneRequirement, availableStones, dismantleFragment, stoneFragmentId, STONE_STAGES, ENCHANT_POWDER_ID, ENCHANT_POWDER_COST, numericEffect, enchantCost,
     panel: (...children) => el('details', {}, ...children), option: (label, value) => el('option', { value }, label),
     enchantFamilies: () => [], facilityValueMul, uniqueCandidates: () => [],
     confirm: () => true,
@@ -88,7 +88,8 @@ test('所持品と装備中の同じ種類を区別し、選び直した所持�
   button(root, '分解する').attrs.onclick();
   assert.equal(game.storage.gear.length, 0);
   assert.equal(game.party[0].equip.weapon, equipped);
-  assert.equal(game.storage.materials.enhancement_stone_1, 11);
+  assert.equal(game.storage.materials.enhancement_stone_1, 10);
+  assert.equal(game.storage.materials[stoneFragmentId(1)], 1);
 });
 
 test('所持品が空でも装備中のアイテムを初期選択し、所持装備がなければ空表示する', () => {
@@ -154,4 +155,39 @@ test('装備中でも資金・粉不足では再付与と数値再抽選を無�
     assert.throws(() => button(root, 'すべて再抽選する').attrs.onclick());
     assert.deepEqual(game, before);
   }
+});
+
+test('レアリティに応じた欠片だけを分解で得る（粉は効果がある場合のみ）', () => {
+  const game = fresh();
+  for (const [rarity, stage] of Object.entries({
+    common: 1, uncommon: 2, rare: 3, epic: 4, legendary: 5, artifact: 5, origin: 5,
+  })) {
+    const gear = makeGear(game, game.party[0].equip.weapon.id, { rarity, affixes: {} });
+    game.storage.gear.push(gear);
+    const before = game.storage.materials[stoneFragmentId(stage)] ?? 0;
+    dismantle(data, game, gear);
+    assert.equal(game.storage.materials[stoneFragmentId(stage)], before + 1, rarity);
+  }
+  assert.equal(game.storage.materials.enhancement_stone_1, 10);
+  assert.equal(game.storage.materials.enchant_powder ?? 0, 0);
+  assert.equal(Object.keys(game.storage.materials).some(id => id.startsWith('fragment_')), false);
+});
+
+test('欠片3個を石1個分として強化し、石と欠片も併用できる', () => {
+  const game = fresh();
+  const gear = game.party[0].equip.weapon;
+  game.storage.materials = { [stoneFragmentId(1)]: 9 };
+  assert.equal(availableStones(game, stoneRequirement(data, 0)), 3);
+  assert.equal(button(view(game, { tab: 'gear', gear: gear.uid }), '強化する').attrs.disabled, false);
+  enhance(data, game, gear, () => 0);
+  assert.equal(gear.enh, 1);
+  assert.equal(game.storage.materials[stoneFragmentId(1)], undefined);
+  game.storage.materials = { enhancement_stone_1: 1, [stoneFragmentId(1)]: 7 };
+  enhance(data, game, gear, () => 0);
+  assert.equal(gear.enh, 2);
+  assert.equal(game.storage.materials.enhancement_stone_1, undefined);
+  assert.equal(game.storage.materials[stoneFragmentId(1)], 1);
+  const snapshot = structuredClone(game);
+  assert.throws(() => enhance(data, game, gear, () => 0), /足りません/);
+  assert.deepEqual(game, snapshot);
 });
