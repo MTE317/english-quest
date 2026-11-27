@@ -75,8 +75,24 @@ test('★1の敵に全問正解で勝てる。経験値と AP がもらえる', 
   assert.equal(result, 'win');
   finishBattle(data, game, b);
   const r = battleRewards(data, game, b);
-  assert.ok(r.xp.every((x, i) => (game.party[i].hp > 0 ? x > 0 : x === 0)));
+  assert.ok(r.xp.every((x) => x > 0));
   assert.equal(r.ap[0], readJson('balance.json').rewards.ap_per_battle);
+});
+
+
+test('勝利時に戦闘不能や石化の仲間も経験値を受け取り、APは受け取らない', () => {
+  const game = equippedGame(data, party);
+  const b = createBattle(data, game, { enemies: mossyEnemies(), seed: 1 });
+  assert.equal(fight(game, b).result, 'win');
+  game.party[1].hp = 0;
+  b.allies[2].statuses.petrify = { turns: 3, n: 1 };
+  const rewards = battleRewards(data, game, b);
+  assert.ok(rewards.xp.every((xp) => xp > 0));
+  assert.equal(rewards.xp[1], rewards.xp[0]);
+  assert.equal(rewards.xp[2], rewards.xp[0]);
+  assert.equal(rewards.ap[1], 0);
+  assert.equal(rewards.ap[2], 0);
+  assert.equal(rewards.ap[0], readJson('balance.json').rewards.ap_per_battle);
 });
 
 test('同じ種と同じ答えなら同じ結果（乱数は battle に入っている）', () => {
