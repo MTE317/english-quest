@@ -11,6 +11,7 @@
 | 従来5ダンジョンの公開・入場 | [5ダンジョン先行版](trial-five-dungeons.md) |
 | 教材の中身 | [教材基本版v1.0](../../data/learning/v1/README.md) |
 | 職業・技能 | [50職の設計基準v2](../jobs-baseline-v2.md)、[基本8職の技能v2](../basic-jobs-skills-v2.md)、追加10〜18職の[135技能の設計](../additional-jobs-10-18-skills-v1.md)。追加10〜12の[実装](../additional-jobs-10-12-implementation.md)、追加13〜15の[実装](../additional-jobs-13-15-implementation.md)、追加16〜18の[実装](../additional-jobs-16-18-implementation.md)を参照 |
+| 装備の★・レアリティ・強化値（改定設計・コード未実装） | [装備・素材・制作](equipment-crafting.md)。現行の装備Lv廃止と製作品質+15%廃止は実装前 |
 | データ数値と実際の処理 | `data/` と `game/js/`。設計との差分がある間は「実装済み」と読み替えない |
 
 ## 関連設計・履歴
@@ -19,4 +20,4 @@
 
 `docs/game-overview.md` と `docs/checklist.md` は旧時点の履歴資料。旧Rランク、旧教材数、月会費、旧職業・技能、ランクによるダンジョン入場条件は新仕様の根拠にしない。英語試験の現行仕様はランク・昇級設計を参照する。D以外の正式な昇格素材、神殿の職業解放、倉庫容量の実装は別途進める。
 
-更新：2026-11-26。
+更新：2026-11-27。
