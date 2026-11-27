@@ -1,0 +1,200 @@
+[
+  {
+    "level": 10,
+    "accuracy": 0.65,
+    "N": 64,
+    "trips": 64,
+    "wins": 64,
+    "materialsByTrip": [
+      64,
+      64,
+      64
+    ],
+    "questionsMean": 33.19,
+    "questionsP50": 33.5,
+    "questionsP90": 39,
+    "actualAccuracy": 0.6643,
+    "goldNetMean": -4405,
+    "xpFirstMemberMean": 82.25,
+    "apFirstMemberMean": 4.5,
+    "itemsUsed": {
+      "potion": 69,
+      "ether": 2,
+      "revive_salts": 3,
+      "antidote": 0
+    },
+    "fullRoute": {
+      "N": 64,
+      "cleared": 0,
+      "lossFloors": {
+        "2": 48,
+        "3": 16
+      }
+    }
+  },
+  {
+    "level": 10,
+    "accuracy": 0.8,
+    "N": 64,
+    "trips": 64,
+    "wins": 64,
+    "materialsByTrip": [
+      64,
+      64,
+      64
+    ],
+    "questionsMean": 27.09,
+    "questionsP50": 27.0,
+    "questionsP90": 34,
+    "actualAccuracy": 0.8524,
+    "goldNetMean": -4405,
+    "xpFirstMemberMean": 82.25,
+    "apFirstMemberMean": 4.5,
+    "itemsUsed": {
+      "potion": 44,
+      "ether": 0,
+      "revive_salts": 1,
+      "antidote": 0
+    },
+    "fullRoute": {
+      "N": 64,
+      "cleared": 0,
+      "lossFloors": {
+        "2": 22,
+        "3": 42
+      }
+    }
+  },
+  {
+    "level": 10,
+    "accuracy": 0.95,
+    "N": 64,
+    "trips": 64,
+    "wins": 64,
+    "materialsByTrip": [
+      64,
+      64,
+      64
+    ],
+    "questionsMean": 25.14,
+    "questionsP50": 25.0,
+    "questionsP90": 31,
+    "actualAccuracy": 0.9602,
+    "goldNetMean": -4405,
+    "xpFirstMemberMean": 82.25,
+    "apFirstMemberMean": 4.5,
+    "itemsUsed": {
+      "potion": 49,
+      "ether": 0,
+      "revive_salts": 1,
+      "antidote": 0
+    },
+    "fullRoute": {
+      "N": 64,
+      "cleared": 0,
+      "lossFloors": {
+        "2": 18,
+        "3": 46
+      }
+    }
+  },
+  {
+    "level": 15,
+    "accuracy": 0.65,
+    "N": 64,
+    "trips": 68,
+    "wins": 64,
+    "materialsByTrip": [
+      60,
+      64,
+      64
+    ],
+    "questionsMean": 45,
+    "questionsP50": 45.5,
+    "questionsP90": 51,
+    "actualAccuracy": 0.6352,
+    "goldNetMean": -5527,
+    "xpFirstMemberMean": 78.42,
+    "apFirstMemberMean": 4.28,
+    "itemsUsed": {
+      "potion": 177,
+      "ether": 24,
+      "revive_salts": 36,
+      "antidote": 0
+    },
+    "fullRoute": {
+      "N": 64,
+      "cleared": 0,
+      "lossFloors": {
+        "2": 60,
+        "1": 4
+      }
+    }
+  },
+  {
+    "level": 15,
+    "accuracy": 0.8,
+    "N": 64,
+    "trips": 69,
+    "wins": 67,
+    "materialsByTrip": [
+      61,
+      62,
+      62
+    ],
+    "questionsMean": 37.93,
+    "questionsP50": 39,
+    "questionsP90": 45,
+    "actualAccuracy": 0.8169,
+    "goldNetMean": -5058,
+    "xpFirstMemberMean": 82.67,
+    "apFirstMemberMean": 4.51,
+    "itemsUsed": {
+      "potion": 173,
+      "ether": 10,
+      "revive_salts": 29,
+      "antidote": 0
+    },
+    "fullRoute": {
+      "N": 64,
+      "cleared": 0,
+      "lossFloors": {
+        "2": 63,
+        "1": 1
+      }
+    }
+  },
+  {
+    "level": 15,
+    "accuracy": 0.95,
+    "N": 64,
+    "trips": 67,
+    "wins": 64,
+    "materialsByTrip": [
+      61,
+      64,
+      64
+    ],
+    "questionsMean": 34.06,
+    "questionsP50": 33.5,
+    "questionsP90": 40,
+    "actualAccuracy": 0.95,
+    "goldNetMean": -5236,
+    "xpFirstMemberMean": 82.19,
+    "apFirstMemberMean": 4.48,
+    "itemsUsed": {
+      "potion": 154,
+      "ether": 1,
+      "revive_salts": 34,
+      "antidote": 0
+    },
+    "fullRoute": {
+      "N": 64,
+      "cleared": 0,
+      "lossFloors": {
+        "2": 61,
+        "1": 3
+      }
+    }
+  }
+]

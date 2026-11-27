@@ -1,7 +1,8 @@
 import fs from 'node:fs';
-import {data,newSession,run,townPrep} from './engine.mjs';
+import {data,newSession,run,townPrep,sha,fingerprint} from './engine.mjs';
 import {buyItem} from '../../js/town.js';
 const inputs=new URL('./inputs/',import.meta.url).pathname,out=(process.env.OUT??'/tmp/canyon-verification')+'/';fs.mkdirSync(out,{recursive:true});
+fs.writeFileSync(out+'metadata.json',JSON.stringify({sha,fingerprint:fingerprint(),seeds:4,source:'inputs: natural fort first-clear, successful source cohorts only',gearStarCap:2},null,2));
 const rows=[],seasons=['spring','summer','autumn','winter'];
 const materialCount=g=>Object.entries(g.storage.materials).reduce((n,[id,q])=>n+(data.materials.get(id)?.rank===3?q:0),0);
 for(const file of fs.readdirSync(inputs).filter(x=>x.endsWith('.json')))for(const season of seasons)for(const accuracy of [.65,.8,.95])for(let n=0;n<4;n++)for(const level of [10,15])for(const mode of ['material','boss']){

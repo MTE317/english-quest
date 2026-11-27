@@ -19,7 +19,7 @@ export function newSession(g){const s=new GameSession({storage:new MemoryStorage
 function gearScore(m,gear,slot){if(!gear)return -1;const def=gearDef(data,gear),bonus=Object.values(gear.affixes??{}).filter(Number.isFinite).reduce((a,b)=>a+Math.abs(b),0)*.01;if(slot==='weapon')return weaponPower(data,m,gear)+spellPower(data,m,gear)+bonus;if(['head','body','arm'].includes(slot))return armorPieceValue(data,m,gear)+bonus;return Object.values(gear.affixes??{}).filter(Number.isFinite).reduce((a,b)=>a+b,0);}
 export function equipEarned(g){const changes=[];for(const [i,m] of g.party.entries())for(const slot of ['weapon','head','body','arm','cloak','accessory1','accessory2']){
  const original=m.equip[slot];const kind=slot.startsWith('accessory')?'accessory':slot;
- const c=g.storage.gear.filter(x=>gearDef(data,x).slot===kind&&canEquip(data,m,slot,x).ok&&(slot!=='weapon'||gearDef(data,x).kind===gearDef(data,original)?.kind));
+ const c=g.storage.gear.filter(x=>gearDef(data,x).star<=2&&gearDef(data,x).slot===kind&&canEquip(data,m,slot,x).ok&&(slot!=='weapon'||gearDef(data,x).kind===gearDef(data,original)?.kind));
  c.sort((a,b)=>gearScore(m,b,slot)-gearScore(m,a,slot));const best=c[0];if(best&&gearScore(m,best,slot)>gearScore(m,original,slot)){equipFromStorage(data,g,m,slot,best.uid);changes.push({member:i,slot,id:best.id,rarity:best.rarity,crafted:!!best.crafted});}
  }return changes;}
 export function townPrep(g,seed,{crafting=false}={}){const log={goldBefore:g.gold,bought:[],crafted:[],equipped:[]};

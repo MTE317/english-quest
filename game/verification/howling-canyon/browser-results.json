@@ -1,0 +1,13 @@
+{
+  "questions": 43,
+  "orPaths": true,
+  "locked": true,
+  "materials": {
+    "canyon_wolf_mat": 1
+  },
+  "featherUsed": 1,
+  "reload": true,
+  "promotionAfterReport": true,
+  "syntheticRankPoints": 3500,
+  "errors": []
+}
