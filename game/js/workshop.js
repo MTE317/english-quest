@@ -7,7 +7,7 @@ import { currentRank } from './dungeon.js?v=public-rewards-1';
 import { consumeMaterials } from './temple.js?v=skill-growth-2';
 import { describeEffect } from './equipment-effects.js?v=unique-reroll-1';
 import { equipmentTier } from './equipment-scaling.js?v=equipment-rarity-1';
-import { STONE_STAGES, stoneRequirement, stonePayment, dismantleFragment, stoneFragmentId, ENCHANT_POWDER_ID, ENCHANT_POWDER_COST } from './workshop-materials.js?v=workshop-materials-1';
+import { STONE_STAGES, stoneRequirement, stonePayment, dismantleFragment, stoneFragmentId, ENCHANT_POWDER_ID, ENCHANT_POWDER_COST } from './workshop-materials.js?v=stone-fragments-1';
 
 const facilityFor = () => 'workshop';
 const capFor = (data, game, facility) => data.facilityRanks.find((r) => Number(r.rank) === (game.facilities[facility] ?? 1));
