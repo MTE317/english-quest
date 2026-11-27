@@ -5,9 +5,9 @@ import vm from 'node:vm';
 import { buildGameData, GAME_FILES } from '../js/gamedata.js';
 import { createNewGame } from '../js/game-state.js';
 import { makeGear } from '../js/character.js';
-import { enhance, dismantle, dismantlePowder } from '../js/workshop.js';
+import { enhance, dismantle, dismantlePowder, enchant, reroll } from '../js/workshop.js';
 import { stoneRequirement, ENCHANT_POWDER_ID, ENCHANT_POWDER_COST } from '../js/workshop-materials.js';
-import { numericEffect, enchantCost } from '../js/enchantment-roll.js';
+import { numericEffect, enchantCost, facilityValueMul } from '../js/enchantment-roll.js';
 import { readCsv, readJson } from './helpers.js';
 
 const data = buildGameData(Object.fromEntries(Object.entries(GAME_FILES).map(([key, name]) =>
@@ -21,12 +21,12 @@ function view(game, selection = { tab: 'gear' }) {
   const el = (tag, attrs = {}, ...children) => ({ tag, attrs, children: children.flat(Infinity).filter(c => c != null && c !== false), querySelector: () => null, addEventListener() {} });
   const context = vm.createContext({
     el, render: (root, ...children) => { root.children = children.flat(Infinity).filter(c => c != null && c !== false); },
-    btn: (label, onclick) => el('button', { onclick }, label),
+    btn: (label, onclick, disabled = false) => el('button', { onclick, disabled }, label),
     equipmentIcon: () => null, uiIcon: () => null,
     describeFixedEffects: () => '', describeEffect: () => '',
-    enhance, dismantle, dismantlePowder, stoneRequirement, ENCHANT_POWDER_ID, ENCHANT_POWDER_COST, numericEffect, enchantCost,
+    enhance, dismantle, dismantlePowder, enchant, reroll, stoneRequirement, ENCHANT_POWDER_ID, ENCHANT_POWDER_COST, numericEffect, enchantCost,
     panel: (...children) => el('details', {}, ...children), option: (label, value) => el('option', { value }, label),
-    enchantFamilies: () => [], facilityValueMul: () => 1, uniqueCandidates: () => [],
+    enchantFamilies: () => [], facilityValueMul, uniqueCandidates: () => [],
     confirm: () => true,
   });
   vm.runInContext(workshopSource, context);
@@ -100,4 +100,58 @@ test('所持品が空でも装備中のアイテムを初期選択し、所持�
   const root = view(game, selection);
   assert.ok(text(root).includes('強化・分解できる装備がありません。'));
   assert.equal(button(root, '強化する'), undefined);
+});
+
+for (const slot of ['weapon', 'head', 'accessory1']) {
+  test(`装備中の${slot}を外さず全再付与・数値再抽選でき、費用を消費する`, () => {
+    const game = fresh(), member = game.party[0], item = member.equip[slot];
+    item.rarity = 'rare';
+    const stat = slot === 'head' ? 'DEF' : 'STR';
+    item.affixes = { [stat]: 999 };
+    game.storage.materials[ENCHANT_POWDER_ID] = 30;
+    const otherGear = makeGear(game, item.id, { affixes: { STR: 123 } });
+    game.storage.gear.push(otherGear);
+    const savedOther = structuredClone(otherGear);
+    const price = enchantCost(data, data.equipment.get(item.id));
+    const gold = game.gold;
+    const root = view(game, { tab: 'gear', gear: item.uid });
+    const full = button(root, 'すべて再抽選する');
+    assert.ok(full && !full.attrs.disabled);
+    full.attrs.onclick();
+    assert.notEqual(item.affixes[stat], 999);
+    assert.ok(Object.keys(item.affixes).length > 0);
+    assert.equal(game.gold, gold - price);
+    assert.equal(game.storage.materials[ENCHANT_POWDER_ID], 30 - ENCHANT_POWDER_COST);
+    assert.equal(member.equip[slot], item);
+    assert.deepEqual(otherGear, savedOther);
+    // 数値再抽選は種類と装備先を維持する。
+    item.affixes = { [stat]: 999 };
+    const rerollRoot = view(game, { tab: 'gear', gear: item.uid });
+    const numeric = nodes(rerollRoot).find(n => n.tag === 'button' && text(n).includes('の数値を引き直す'));
+    assert.ok(numeric && !numeric.attrs.disabled);
+    numeric.attrs.onclick();
+    assert.deepEqual(Object.keys(item.affixes), [stat]);
+    assert.notEqual(item.affixes[stat], 999);
+    assert.equal(game.gold, gold - price * 2);
+    assert.equal(game.storage.materials[ENCHANT_POWDER_ID], 30 - ENCHANT_POWDER_COST * 2);
+    assert.equal(member.equip[slot], item);
+    assert.equal(button(rerollRoot, '分解する'), undefined);
+    assert.deepEqual(otherGear, savedOther);
+  });
+}
+
+test('装備中でも資金・粉不足では再付与と数値再抽選を無効にする', () => {
+  for (const missing of ['gold', 'powder']) {
+    const game = fresh(), item = game.party[0].equip.weapon;
+    item.affixes = { STR: 2 };
+    game.gold = missing === 'gold' ? 0 : 100000;
+    game.storage.materials[ENCHANT_POWDER_ID] = missing === 'powder' ? ENCHANT_POWDER_COST - 1 : ENCHANT_POWDER_COST;
+    const root = view(game, { tab: 'gear', gear: item.uid });
+    assert.equal(button(root, 'すべて再抽選する').attrs.disabled, true);
+    const numeric = nodes(root).find(n => n.tag === 'button' && text(n).includes('の数値を引き直す'));
+    assert.equal(numeric.attrs.disabled, true);
+    const before = structuredClone(game);
+    assert.throws(() => button(root, 'すべて再抽選する').attrs.onclick());
+    assert.deepEqual(game, before);
+  }
 });
