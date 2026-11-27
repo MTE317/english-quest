@@ -72,16 +72,17 @@ test('失敗でも当該段階の石10個を消費し、強化値を維持する
   assert.equal(game.storage.materials.enhancement_stone_5, undefined);
 });
 
-test('英作文5・10・15問の完了で、選んだ段階の石と共通粉を各1・2・3個得る', () => {
+test('英作文5・10・15問の完了で、石は1・2・3個、共通粉は毎回1個得る', () => {
   const game = fresh();
   assert.deepEqual(availableStoneStages(data, game).map((s) => s.id), ['enhancement_stone_1']);
   for (const [count, amount] of [[5,1],[10,2],[15,3]]) {
     const result = awardCompositionSet(data, game, { mode:'phrases', count, answered:count, phrases:count,
       stoneId:'enhancement_stone_1' });
     assert.equal(result.stones, amount);
+    assert.equal(result.powder, 1);
   }
   assert.equal(game.storage.materials.enhancement_stone_1, 6);
-  assert.equal(game.storage.materials.enchant_powder, 6);
+  assert.equal(game.storage.materials.enchant_powder, 3);
   assert.equal(awardCompositionSet(data, game, { mode:'phrases', count:10, answered:9, phrases:9,
     stoneId:'enhancement_stone_1' }), null);
   assert.equal(awardCompositionSet(data, game, { mode:'words', count:5, answered:5, phrases:0,
@@ -92,6 +93,8 @@ test('英作文5・10・15問の完了で、選んだ段階の石と共通粉を
   const result = awardCompositionSet(data, game, { mode:'chunks', count:5, answered:5, phrases:5,
     stoneId:'enhancement_stone_2' });
   assert.equal(result.stones, 1);
+  assert.equal(result.powder, 1);
+  assert.equal(game.storage.materials.enchant_powder, 4);
 });
 
 test('共通の旧強化石は最初の石へ一度だけ移行する', () => {
