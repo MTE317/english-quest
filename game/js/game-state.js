@@ -8,7 +8,7 @@ import { recordStoredMaterials } from './temple.js?v=skill-growth-2';
 import { retireLegacyQuestChains } from './retired-quests.js?v=skill-growth-2';
 import { migrateJobMaster, JOB_MASTER_VERSION } from './jobs-migration.js?v=skill-growth-2';
 import { migrateRankFacilities } from './rank-migration.js?v=facilities-11-1';
-import { STONE_STAGES, STONE_FRAGMENT_BY_RARITY, stoneFragmentId } from './workshop-materials.js?v=workshop-materials-1';
+import { STONE_STAGES, STONE_FRAGMENT_BY_RARITY, stoneFragmentId } from './workshop-materials.js?v=stone-fragments-1';
 
 export const PARTY_SIZE = 6;
 
