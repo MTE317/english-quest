@@ -8,7 +8,7 @@ import { recordStoredMaterials } from './temple.js?v=skill-growth-2';
 import { retireLegacyQuestChains } from './retired-quests.js?v=skill-growth-2';
 import { migrateJobMaster, JOB_MASTER_VERSION } from './jobs-migration.js?v=skill-growth-2';
 import { migrateRankFacilities } from './rank-migration.js?v=facilities-11-1';
-import { STONE_STAGES } from './workshop-materials.js?v=workshop-materials-1';
+import { STONE_STAGES, STONE_FRAGMENT_BY_RARITY, stoneFragmentId } from './workshop-materials.js?v=stone-fragments-1';
 
 export const PARTY_SIZE = 6;
 
@@ -82,6 +82,16 @@ export function normalizeGame(data, game, run = null, { expandParty = true } = {
   if (legacyStones > 0) game.storage.materials[STONE_STAGES[0].id] =
     (game.storage.materials[STONE_STAGES[0].id] ?? 0) + legacyStones;
   delete game.storage.materials.enhancement_stone;
+  // 廃止したレアリティ別の欠片は、対応する強化石の欠片として引き継ぐ。
+  for (const [rarity, stage] of Object.entries({ ...STONE_FRAGMENT_BY_RARITY, unique: 5 })) {
+    const oldId = `fragment_${rarity}`;
+    const count = Number(game.storage.materials[oldId] ?? 0);
+    if (count > 0) {
+      const newId = stoneFragmentId(stage);
+      game.storage.materials[newId] = (game.storage.materials[newId] ?? 0) + count;
+    }
+    delete game.storage.materials[oldId];
+  }
   recordStoredMaterials(game);
   game.items = game.items ?? {};
   // 旧セーブは以前の初期解放ジョブを維持する。新規セーブは神殿Lvで開く。
