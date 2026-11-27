@@ -2279,14 +2279,13 @@ export function finishBattle(data, game, b) {
   return b.result;
 }
 
-/** 勝ったときの経験値（1人あたり。倒れている人は0）と AP */
+/** 勝ったときの経験値（戦闘不能者も含む1人あたり）と AP */
 export function battleRewards(data, game, b, { dungeonId } = {}) {
   const fixed = fixedBattleRewards(data, b.enemies, dungeonId);
   const R = data.balance.rewards;
   const boss = b.enemies.some((e) => e.boss);
   const ap = fixed ? fixed.reduce((sum, r) => sum + r.ap, 0) : boss ? R.ap_per_boss_battle : R.ap_per_battle;
   const xp = game.party.map((m, i) => {
-    if (!canAct(game, b, i)) return 0;
     let sum = 0;
     for (const [index, e] of b.enemies.entries()) {
       let x = fixed ? fixed[index].exp : evaluate(f(data, 'xp_per_enemy'), { enemyLv: e.lv }) * (e.boss ? f(data, 'boss_xp_mul') : 1);
