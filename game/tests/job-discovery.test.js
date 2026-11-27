@@ -21,10 +21,10 @@ const specs = ['warrior', 'knight', 'black_mage', 'white_mage', 'thief', 'bard']
 const discoveries = [['necromancer', 'ruined_fort'], ['onmyoji', 'howling_canyon']];
 const fresh = () => createNewGame(data, specs);
 
-test('新マスターの準備中30職は踏破しても解放せず、初期解放12職と旧職を混同しない', () => {
+test('新マスターの準備中30職は踏破しても解放せず、神殿投資と探索による職の解放を混同しない', () => {
   const game = createNewGame(master, specs);
   for (const dungeon of master.dungeons.values()) discoverJobs(master, game, dungeon.id, () => 0);
-  assert.deepEqual(game.unlockedJobs, ['paladin','dark_knight','berserker','samurai','gladiator','warrior_monk','ascetic','executioner','ninja','assassin','bounty_hunter','dragoon','gunner','pirate','spellblade','elementalist','witch','hexer']);
+  assert.deepEqual(game.unlockedJobs, []);
   assert.equal(master.jobs.filter((job) => job.skillsReady === false).length,24);
 });
 

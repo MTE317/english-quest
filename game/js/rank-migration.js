@@ -17,9 +17,9 @@ const LEGACY_RANKS = [
 /** One-time conversion; old purchases, completed exams and guild progress remain available. */
 export function migrateRankFacilities(data, game) {
   game.facilities ??= {};
-  if (game.rankFacilityVersion === 1) return;
+  if (game.rankFacilityVersion === 2) return;
   const legacy = LEGACY_RANKS.find(([id]) => id === game.rank);
-  if (legacy) {
+  if (game.rankFacilityVersion !== 1 && legacy) {
     const [, rankId, oldThreshold, oldShopLevel] = legacy;
     const rank = data.ranks.find(r => r.id === rankId);
     const next = data.ranks[data.ranks.indexOf(rank) + 1];
@@ -41,5 +41,10 @@ export function migrateRankFacilities(data, game) {
     game.notices.push(`ギルドランクを${rank.title}に移行しました。施設の投資Lvと獲得済みの特典を引き継ぎました。`);
   }
   for (const key of ['weapon_workshop','armor_workshop','accessory_workshop']) delete game.facilities[key];
-  game.rankFacilityVersion = 1;
+  // 旧Lv12は新Lv11に統合。Lv11で★11と★12の両方を扱う。
+  for (const id of ['equipment_shop', 'workshop', 'item_shop', 'alchemy', 'temple']) {
+    if (game.facilities[id] > 11) game.facilities[id] = 11;
+  }
+  delete game.facilities.warehouse;
+  game.rankFacilityVersion = 2;
 }

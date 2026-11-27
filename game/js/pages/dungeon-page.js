@@ -278,7 +278,7 @@ function showReturned(pack) {
       createLootIcons(data, { gear: pack.gear }, gearName),
       el('h3', {}, '持ち帰った素材'),
       createLootIcons(data, { materials: pack.materials }, gearName),
-      el('div', { class: 'muted' }, '拾った物は町の倉庫に入った。')),
+      el('div', { class: 'muted' }, '拾った物は町の所持品に入った。')),
     el('div', { class: 'row' },
       el('a', { class: 'btn primary', href: 'index.html' }, '町へ'),
       el('button', { type: 'button', onclick: () => { showDeparture(); window.scrollTo(0, 0); } }, '冒険先一覧へ')));

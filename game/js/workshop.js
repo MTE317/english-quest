@@ -1,8 +1,8 @@
 import { roundGold, goldScale } from './gold.js?v=skill-growth-2';
 import { parseAmounts, splitList } from './csv.js?v=skill-growth-2';
-import { makeGear } from './character.js?v=unique-reroll-1';
+import { makeGear } from './character.js?v=facilities-11-1';
 import { rollSet, rerollValue, enchantCost, facilityValueMul, numericEffect } from './enchantment-roll.js?v=unique-reroll-1';
-import { matchesNeed, parseMaterialNeed } from './town.js?v=public-rewards-1';
+import { matchesNeed, parseMaterialNeed } from './town.js?v=facilities-11-1';
 import { currentRank } from './dungeon.js?v=public-rewards-1';
 import { consumeMaterials } from './temple.js?v=skill-growth-2';
 import { describeEffect } from './equipment-effects.js?v=unique-reroll-1';
@@ -64,11 +64,36 @@ export function canCraft(data, game, def) {
   } catch { return false; }
 }
 
+/** 次の投資で実際に増える内容。空の段階への支払いは許可しない。 */
+export function facilityUnlocks(data, id, rank) {
+  const stars = rank === 11 ? [11, 12] : [rank];
+  if (id === 'equipment_shop') return [...data.equipment.values()]
+    .filter(e => stars.includes(e.star) && !e.unique && e.source?.includes('店')
+      && ['weapon', 'head', 'body', 'arm'].includes(e.slot)).map(e => e.name);
+  if (id === 'workshop') {
+    const recipes = data.recipes.filter(r => Number(r.workshop_rank) === rank).map(r => r.name);
+    const grade = data.enchantGrades.find(r => Number(r.workshop_rank) === rank);
+    return [...recipes, ...(grade ? [`エンチャント倍率 ${grade.value_mul}倍`] : [])];
+  }
+  if (id === 'item_shop') return [
+    ...[...data.items.values()].filter(it => it.source === '店' && it.price > 0 && it.shopRank === rank).map(it => it.name),
+    ...data.backpackTiers.filter(t => t.shopRank === rank).map(t => `バックパック${t.slots}枠への拡張資格`),
+  ];
+  if (id === 'alchemy') return data.alchemyRecipes.filter(r => Number(r.workshop_rank) === rank)
+    .map(r => data.items.get(r.result)?.name ?? r.result);
+  if (id === 'temple') return [...data.jobUnlocks.values()]
+    .filter(r => r.method === '初期' && Number(r.temple_level) === rank
+      && data.jobsById.get(r.job_id)?.skillsReady !== false && data.jobsById.has(r.job_id))
+    .map(r => data.jobsById.get(r.job_id).name);
+  return [];
+}
+
 export function facilityUpgrade(data, game, id) {
   const rank = (game.facilities[id] ?? 1) + 1;
   const row = data.facilityRanks.find((r) => Number(r.rank) === rank);
   if (!row || !data.facilities.some((f) => f.id === id)) throw new Error('施設をこれ以上強化できません。');
   if (rank > currentRank(data, game).facilityCap) throw new Error('ギルドランクによる施設投資の上限です。');
+  if (!facilityUnlocks(data, id, rank).length) throw new Error('このLvの解放内容はまだ実装されていません。');
   const cost = Number(row.invest_cost);
   const materialRule = row.materials ? parseMaterialNeed(data, row.materials) : [];
   pay(game, cost, typeMaterials(data, game, materialRule));
@@ -94,7 +119,7 @@ export function craft(data, game, def, rng = Math.random) {
   if (level < rank) throw new Error('工房ランクが足りません。');
   if (!recipe && (!def.source?.includes('制作') || def.unique)) throw new Error('制作できない装備です。');
   const prerequisite = recipe?.derive_from ? game.storage.gear.find((g) => g.id === recipe.derive_from && g.crafted) : null;
-  if (recipe?.derive_from && !prerequisite) throw new Error('派生元の制作装備を倉庫に入れてください。');
+  if (recipe?.derive_from && !prerequisite) throw new Error('派生元の制作装備を所持品に入れてください。');
   const materials = recipe
     ? Object.fromEntries(parseAmounts(recipe.materials).map(({ id, count }) => [id, count]))
     : typeMaterials(data, game, [{ count: 4, minRank: def.star, kind: 'common', text: `★${def.star}以上の通常素材` }]);
@@ -135,7 +160,7 @@ export const dismantlePowder = (gear) => Math.min(3, Math.ceil(
 
 export function dismantle(data, game, gear) {
   const index = game.storage.gear.indexOf(gear);
-  if (index < 0) throw new Error('装備を倉庫に入れてください。');
+  if (index < 0) throw new Error('装備を所持品に入れてください。');
   const powder = dismantlePowder(gear);
   game.storage.gear.splice(index, 1);
   const stock = game.storage.materials;

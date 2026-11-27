@@ -1,24 +1,24 @@
 import { availableAp } from '../ap.js?v=skill-growth-2';
 // 町をホームにして、施設カードから各施設を開く。
-import { loadGameData } from '../gamedata.js?v=unique-reroll-1';
+import { loadGameData } from '../gamedata.js?v=facilities-11-1';
 import { GameSession } from '../save.js?v=party-wipe-1';
-import { normalizeGame } from '../game-state.js?v=unique-reroll-1';
+import { normalizeGame } from '../game-state.js?v=facilities-11-1';
 import { currentRank, seededRng } from '../dungeon.js?v=canyon-public-1';
 import {
   calendarOf, fillBoard, boardSize, acceptQuest, canAcceptQuest, abandonQuest, canReport, reportQuest, questText, questProgress, questDestination, questRewardGold, questRankPoints, questDepositTotal, questAbandonRefund, nextRankStatus, stayInn, revive, reviveCost, checkRankUp,
   canExpandBackpack, expandBackpack, feeTier,
   nextBackpackTier,
-} from '../town.js?v=canyon-public-1';
+} from '../town.js?v=facilities-11-1';
 import { backpackSlots } from '../loot.js?v=unique-reroll-1';
-import { maxHp, maxMp, gearDef } from '../character.js?v=unique-reroll-1';
-import { availableJobs, changeJob } from '../growth.js?v=unique-reroll-1';
+import { maxHp, maxMp, gearDef } from '../character.js?v=facilities-11-1';
+import { availableJobs, changeJob } from '../growth.js?v=facilities-11-1';
 import { explorationStories, acceptExplorationStory, reportExplorationStory } from '../exploration-story.js?v=canyon-public-1';
 import { cureAtTemple, recordStoredMaterials } from '../temple.js?v=skill-growth-2';
-import { workshopView, managementView, templeExtras } from '../ui/facility-view.js?v=equipped-enhancement-1';
+import { workshopView, managementView, templeExtras } from '../ui/facility-view.js?v=facilities-11-1';
 import { itemShopView, gearShopView } from '../ui/town-shops.js?v=public-rewards-1';
 import { weaponIcon } from '../ui/weapon-icons.js?v=skill-growth-2';
 import { equipmentIcon } from '../ui/equipment-icons.js?v=skill-growth-2';
-import { storageView } from '../ui/storage-view.js?v=unique-reroll-1';
+import { storageView } from '../ui/storage-view.js?v=facilities-11-1';
 import { monsterCatalogView } from '../ui/monster-catalog-view.js?v=canyon-public-1';
 import { uiIcon } from '../ui/pixel-icons.js?v=skill-growth-2';
 import { portraitIcon } from '../ui/portrait.js?v=skill-growth-2';
@@ -60,7 +60,7 @@ const facilityGroups = [
     { id: 'items', name: '道具屋', icon: 'items', detail: '道具を買う、荷物枠を広げる', show: items },
     { id: 'workshop', name: '工房・調合', icon: 'workshop', detail: '装備の作成・強化、道具の調合',
       show: () => workshopView(data, session.game, act, rng, workshopSelection) },
-    { id: 'storage', name: '倉庫', icon: 'storage', detail: '装備・道具・素材を確認', show: storage },
+    { id: 'storage', name: '所持品', icon: 'storage', detail: '装備・道具・素材を確認', show: storage },
   ] },
   { title: '挑戦・運営', cards: [
     { href: 'challenge.html', name: '闘技場', icon: 'arena', detail: '対戦と最終試験' },
@@ -395,7 +395,7 @@ function temple() {
   return [switcher,
     el('h2', {}, '転職する仲間'),
     chooseMember,
-    el('p', { class: 'muted small' }, '転職は何度でも無料。装備できなくなる物は倉庫へ戻り、習得スキルとAPは残ります。'),
+    el('p', { class: 'muted small' }, '転職は何度でも無料。装備できなくなる物は所持品へ戻り、習得スキルとAPは残ります。'),
     el('div', { class: 'shop-layout temple-job-layout' }, grid, detail),
   ];
 }

@@ -23,7 +23,7 @@ function summary() {
   return el('div', { class: 'panel small' },
     el('div', {}, `日数：${g.day}日目　お金：${g.gold}`),
     el('div', {}, `素材：${mats}`),
-    el('div', {}, `倉庫の装備：${g.storage.gear.length}個`),
+    el('div', {}, `所持品の装備：${g.storage.gear.length}個`),
     el('div', {}, `レベル：${g.party.map((m) => `${m.name} Lv${m.lv}`).join('、')}`),
   );
 }

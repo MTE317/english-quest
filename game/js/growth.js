@@ -360,15 +360,16 @@ export function addMasteryKill(data, member) {
 }
 
 // ---------------- ジョブチェンジ（神殿） ----------------
-/** 基本職・初期解放に指定した実装済み職・解放済みの職を選べる。 */
+/** 基本職・神殿Lvで解放した実装済み職・旧セーブで解放済みの職を選べる。 */
 export function availableJobs(data, game) {
   const unlocked = new Set(game.unlockedJobs ?? []);
   return data.jobs.filter((j) => j.skillsReady !== false && (j.tier === 'base'
-    || data.jobUnlocks?.get(j.id)?.method === '初期' || unlocked.has(j.id)));
+    || (data.jobUnlocks?.get(j.id)?.method === '初期'
+      && Number(data.jobUnlocks.get(j.id).temple_level) <= (game.facilities?.temple ?? 1)) || unlocked.has(j.id)));
 }
 
 /**
- * ジョブを変える。新しいジョブで装備できない（適正×）物は倉庫へ。
+ * ジョブを変える。新しいジョブで装備できない（適正×）物は所持品へ。
  * 修得済みの技能と奥義の装着は転職後も保持する。
  */
 export function changeJob(data, game, index, jobId) {

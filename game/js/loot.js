@@ -209,7 +209,7 @@ export function swapIntoBackpack(data, game, pack, drop, entry) {
   return left.length === 0;
 }
 
-/** 町に帰ったら、バックパックの中身はすべて倉庫へ */
+/** 町に帰ったら、バックパックの中身はすべて所持品へ */
 export function unloadBackpack(game, pack) {
   for (const g of pack.gear) game.storage.gear.push(g);
   for (const [id, n] of Object.entries(pack.materials)) game.storage.materials[id] = (game.storage.materials[id] ?? 0) + n;

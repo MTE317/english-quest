@@ -6,7 +6,7 @@ import { createNewGame, defaultPartySpecs, normalizeGame } from '../game-state.j
 import {
   computeStats, SLOTS, SLOT_LABEL, STAT_LABEL, canEquip, equipFromStorage, equipRecommended, unequip, gearDef,
   aptitudeGrade, xpToNext, levelCap, gainXp, makeGear,
-} from '../character.js?v=unique-reroll-1';
+} from '../character.js?v=facilities-11-1';
 import {
   availableJobs, jobPaths, isLearned, learnBlock, learnSkill, equipBlock, equipSkill, unequipSkill, capacity, usedCapacity,
   commonApCost, commonBlock, learnCommon, masteryLevel, isJobMastered, GROWTH_FORMULAS,
@@ -126,7 +126,7 @@ function showParty() {
   const g = session.game;
   render(view,
     session.inDungeon ? el('div', { class: 'panel small error' }, 'ダンジョンの中では装備を変えられません。') : null,
-    el('div', { class: 'muted small' }, `${g.day}日目・お金 ${g.gold}・倉庫の装備 ${g.storage.gear.length}個`),
+    el('div', { class: 'muted small' }, `${g.day}日目・お金 ${g.gold}・所持品の装備 ${g.storage.gear.length}個`),
     el('h2', { class: 'chapter-title' }, `冒険中の仲間（${g.party.length}人）`),
     el('p', { class: 'muted small' }, '仲間を選ぶと、装備・能力・スキルを確認できます。'),
     el('ul', { class: 'choice-list party-roster' },
@@ -614,7 +614,7 @@ function showSlot(index, slot, container, refresh) {
         describeFixedEffects(data, gearDef(data, gear)) ? el('p', { class: 'small' },
           `専用効果：${describeFixedEffects(data, gearDef(data, gear))}`) : null,
         el('div', { class: 'equipment-changes' }, equipmentChanges(before, stats)),
-        offhandRemoved && slot === 'weapon' ? el('p', { class: 'small' }, 'サブ武器も倉庫へ戻ります。') : null),
+        offhandRemoved && slot === 'weapon' ? el('p', { class: 'small' }, 'サブ武器も所持品へ戻ります。') : null),
       el('button', { class: 'primary', onclick: () => {
         session.update((game) => equipFromStorage(data, game, game.party[index], slot, gear.uid));
         refresh();
@@ -628,11 +628,11 @@ function showSlot(index, slot, container, refresh) {
       m.equip[slot] ? el('button', { type: 'button', onclick: () => {
         session.update((game) => unequip(data, game, game.party[index], slot));
         refresh();
-      } }, '外して倉庫へ') : null),
-    el('h3', {}, '倉庫の装備'),
+      } }, '外して所持品へ') : null),
+    el('h3', {}, '所持品の装備'),
     el('p', { class: 'small muted' }, 'アイコンを選ぶと、装備中のものと比較できます。'),
-    cands.length === 0 ? el('p', { class: 'muted' }, 'この枠につけられる装備は倉庫にありません。') : null,
-    el('div', { class: 'shop-grid storage-grid equipment-items', role: 'group', 'aria-label': '倉庫の装備一覧' },
+    cands.length === 0 ? el('p', { class: 'muted' }, 'この枠につけられる装備は所持品にありません。') : null,
+    el('div', { class: 'shop-grid storage-grid equipment-items', role: 'group', 'aria-label': '所持品の装備一覧' },
       cands.map(({ gear, check }) => {
         const def = gearDef(data, gear);
         const rarity = def.unique || gear.crafted ? 'unique' : gear.rarity || 'common';
@@ -662,12 +662,12 @@ function debugTools() {
     el('button', {
       onclick: () => {
         session.update((game) => {
-          // ★1・★2 の装備を1つずつ倉庫へ
+          // ★1・★2 の装備を1つずつ所持品へ
           for (const def of data.equipment.values()) if (def.star <= 2) game.storage.gear.push(makeGear(game, def.id));
         });
         showParty();
       },
-    }, '倉庫に★1〜★2の装備を1つずつ入れる'),
+    }, '所持品に★1〜★2の装備を1つずつ入れる'),
     el('button', {
       onclick: () => { session.update((game) => { for (const m of game.party) gainXp(data, m, 100); }); showParty(); },
     }, '全員に経験値+100'),

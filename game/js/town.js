@@ -496,10 +496,10 @@ export function buyItem(data, game, itemId, count = 1) {
 
 /** 武器・防具屋の品ぞろえ：施設ランクに応じた★の通常の武器・防具（頭・体・腕）。 */
 export function gearShopStock(data, game) {
-  const maxStar = game.facilities?.equipment_shop ?? 1;
+  const level = game.facilities?.equipment_shop ?? 1;
+  const maxStar = level >= 11 ? 12 : level;
   const out = [];
   for (let star = 1; star <= maxStar; star++) {
-    if (![...data.dungeons.values()].some((d) => d.rank === star)) continue;
     const cands = [...data.equipment.values()].filter((e) => !e.unique && e.source.includes('店') && ['weapon', 'head', 'body', 'arm'].includes(e.slot));
     for (const e of cands.filter((x) => x.star === star)) out.push({ def: e, star, price: priceWith(data, game, gearPrice(data, e)) });
   }
@@ -518,7 +518,7 @@ export function buyGear(data, game, equipId) {
   return g;
 }
 
-/** 倉庫の装備を売る値段 */
+/** 所持装備を売る値段 */
 export function sellPrice(data, gear) {
   const def = gearDef(data, gear);
   const star = Math.min(data.economy.size, Math.max(1, def.star));
@@ -527,7 +527,7 @@ export function sellPrice(data, gear) {
 }
 export function sellGear(data, game, uid) {
   const i = game.storage.gear.findIndex((g) => g.uid === uid);
-  if (i < 0) throw new Error('倉庫にない');
+  if (i < 0) throw new Error('所持品にない');
   const p = sellPrice(data, game.storage.gear[i]);
   game.storage.gear.splice(i, 1);
   game.gold += p;
