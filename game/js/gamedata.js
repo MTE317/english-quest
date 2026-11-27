@@ -17,6 +17,7 @@ const FILES = {
   weaponTypes: 'weapon_types.csv',
   armorWeights: 'armor_weights.csv',
   equipment: 'equipment.csv',
+  equipmentTiers: 'equipment_tiers.csv',
   icons: 'appearance_icons.csv',
   rarities: 'rarities.csv',
   monsters: 'monsters.csv',
@@ -106,17 +107,17 @@ export function buildGameData(raw) {
   const equipment = byId([
     ...raw.equipment.map((r) => ({
       id: r.id, name: r.name, slot: r.slot, kind: r.weapon_type_or_kind || null, armorWeight: r.armor_weight || null,
-      itemLv: toNumber(r.item_lv, 1), star: toNumber(r.star, 1), source: r.source, unique: false,
+      star: toNumber(r.star, 1), source: r.source, unique: false,
     })),
     ...(raw.setItems ?? []).map((r) => ({
       id: r.id, name: r.name, slot: r.slot, kind: r.kind || null, armorWeight: r.armor_weight || null,
-      itemLv: toNumber(r.item_lv, 1), star: toNumber(r.star, 1), source: r.source, setId: r.set_id,
+      star: toNumber(r.star, 1), source: r.source, setId: r.set_id,
       fixedEffects: parseEffects(r.fixed_effects),
     })),
     // 固有装備（ボス・賞金首が落とす）も同じ表で引けるようにする
     ...(raw.uniques ?? []).map((r) => ({
       id: r.id, name: r.name, slot: r.slot, kind: r.kind || null, armorWeight: r.armor_weight || null,
-      itemLv: toNumber(r.item_lv, 1), star: toNumber(r.star, 1), source: r.source, unique: true,
+      star: toNumber(r.star, 1), source: r.source, unique: true,
       dropRate: toNumber(r.drop_rate, 0), fixedEffects: parseEffects(r.fixed_effects),
     })),
   ]);
@@ -124,11 +125,11 @@ export function buildGameData(raw) {
   // 旧レシピは base_equipment_id がない場合も既存の武器選択方式で読める。
   for (const r of raw.recipes ?? []) {
     if (equipment.has(r.id)) throw new Error(`制作レシピIDが既存装備と重複：${r.id}`);
-    const cap = Number((raw.facilityRanks ?? []).find((x) => x.rank === r.workshop_rank)?.craft_item_lv);
+    const cap = Number((raw.facilityRanks ?? []).find((x) => x.rank === r.workshop_rank)?.craft_star_cap) || Number(r.workshop_rank) || 1;
     const base = r.base_equipment_id
       ? equipment.get(r.base_equipment_id)
-      : [...equipment.values()].filter((def) => def.slot === 'weapon' && def.kind === r.weapon_type && def.itemLv <= cap && !def.unique)
-        .sort((a, b) => b.itemLv - a.itemLv)[0];
+      : [...equipment.values()].filter((def) => def.slot === 'weapon' && def.kind === r.weapon_type && def.star <= cap && !def.unique)
+        .sort((a, b) => b.star - a.star)[0];
     if (!base || (r.slot && base.slot !== r.slot) || base.unique || base.setId) {
       throw new Error(`制作レシピの素体が不正：${r.id}（${r.base_equipment_id || r.weapon_type}）`);
     }
@@ -152,6 +153,11 @@ export function buildGameData(raw) {
     weaponTypes,
     armorWeights,
     equipment,
+    equipmentTiers: new Map((raw.equipmentTiers ?? []).map((r) => [toNumber(r.star, 1), {
+      weaponBase: toNumber(r.weapon_base), armorBase: toNumber(r.armor_base),
+      spellLevelBase: toNumber(r.spell_level_base), fixedDamageBase: toNumber(r.fixed_damage_base),
+      affixScale: toNumber(r.affix_scale), enhanceBase: toNumber(r.enhance_base),
+    }])),
     icons: raw.icons.map((r) => ({ id: r.id, category: r.category, icon: r.icon })),
     rarities: raw.rarities.map((r) => ({ id: r.id, name: r.name })),
     jobUnlocks: byId(raw.jobUnlocks ?? [], 'job_id'),
@@ -235,7 +241,7 @@ function buildBattleData(raw) {
   }));
   const dungeons = raw.dungeons.map((r) => ({
     id: r.id, rank: toNumber(r.rank, 1), name: r.name, kind: r.kind, days: toNumber(r.days, 1), floors: toNumber(r.floors, 1),
-    itemLvMin: toNumber(r.item_lv_min, 1), itemLvMax: toNumber(r.item_lv_max, 1), returnPointFloor: toNumber(r.return_point_floor, 0),
+    returnPointFloor: toNumber(r.return_point_floor, 0),
     bossId: r.boss_id, enemyMul: toNumber(r.enemy_mul, 1), incomeMul: toNumber(r.income_mul, 1), character: r.character,
   }));
   const floors = raw.dungeonFloors.map((r) => ({
@@ -255,7 +261,7 @@ function buildBattleData(raw) {
     affixes: raw.affixes.map((r) => ({
       slot: r.slot, stat: r.stat, min: toNumber(r.min, 0), max: toNumber(r.max, 0), scales: r.scales_with_item_lv === '1', weight: toNumber(r.weight, 1),
     })),
-    rarityTable: raw.rarities.map((r) => ({ id: r.id, name: r.name, weight: toNumber(r.drop_weight_pct, 0), effects: toNumber(r.random_effects, 0) })),
+    rarityTable: raw.rarities.map((r) => ({ id: r.id, name: r.name, weight: toNumber(r.drop_weight_pct, 0), effects: toNumber(r.random_effects, 0), baseMul: toNumber(r.base_mul, 1), effectMul: toNumber(r.effect_mul, 1) })),
     backpackTiers: raw.backpack.map((r) => ({ tier: toNumber(r.tier, 1), slots: toNumber(r.slots, 12), gold: toNumber(r.gold, 0), materials: r.materials, shopRank: toNumber(r.shop_rank, 1) })),
     ranks: raw.ranks.map((r) => ({
       id: r.id, title: r.title, pointsRequired: toNumber(r.points_required, 0),

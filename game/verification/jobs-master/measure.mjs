@@ -116,8 +116,8 @@ function gearFor(member, itemLevel, kindOverride) {
   const apt = data.jobWeaponApt.get(member.job) ?? {};
   const weaponKind = kindOverride ?? [...data.weaponTypes.keys()].find(kind => apt[kind] === 'S');
   const choose = predicate => [...data.equipment.values()]
-    .filter(gear => !gear.unique && !gear.setId && !gear.recipeId && gear.itemLv <= itemLevel && predicate(gear))
-    .sort((a, b) => b.itemLv - a.itemLv || a.id.localeCompare(b.id))[0];
+    .filter(gear => !gear.unique && !gear.setId && !gear.recipeId && gear.star <= Math.max(1, Math.ceil(itemLevel / 10)) && predicate(gear))
+    .sort((a, b) => b.star - a.star || a.id.localeCompare(b.id))[0];
   const entries = { weapon: choose(gear => gear.slot === 'weapon' && gear.kind === weaponKind) };
   const gradeOrder = { S: 5, A: 4, B: 3, C: 2, D: 1 };
   const armorApt = data.jobArmorApt.get(member.job) ?? {};
@@ -372,10 +372,10 @@ function dungeonTrials() {
     const route = data.dungeonFloors.filter(row => row.dungeonId === dungeon.id).sort((a, b) => a.floor - b.floor);
     assert.ok(route.length);
     const minimumGearLevel = Math.max(...[...data.weaponTypes.keys()].map(kind => Math.min(...[...data.equipment.values()]
-      .filter(gear => gear.slot === 'weapon' && gear.kind === kind && !gear.unique && !gear.recipeId).map(gear => gear.itemLv))));
+      .filter(gear => gear.slot === 'weapon' && gear.kind === kind && !gear.unique && !gear.recipeId).map(gear => gear.star * 10))));
     for (const phase of ['entry', 'prepared']) {
     const level = phase === 'entry' ? route[0].enemyLevel : Math.max(...route.map(row => row.enemyLevel));
-    const itemLevel = Math.max(minimumGearLevel, phase === 'entry' ? dungeon.itemLvMin : Math.round((dungeon.itemLvMin + dungeon.itemLvMax) / 2));
+    const itemLevel = Math.max(minimumGearLevel, phase === 'entry' ? dungeon.rank * 10 : dungeon.rank * 10);
     const apBudget = phase === 'entry' ? 70 + level * 10 : 130 + level * 10;
     const skillLevel = phase === 'entry' ? 1 : 2;
     for (const formation of formations) for (const accuracy of [.7, 1]) {

@@ -2,6 +2,7 @@
 // 式は data/balance.json から読む。balance.json に式として書かれていないもの（説明の文だけのもの）は、
 // シミュレーター（sim/core.py）と同じ式を下の SIM_FORMULAS に置いて使う。docs/requests.md で balance.json への追加を依頼済み。
 import { evaluate, isFormula } from './expr.js?v=skill-growth-2';
+import { equipmentTier, rarityBonus } from './equipment-scaling.js?v=equipment-rarity-1';
 import { memberMods, masteryMul, ensureLoadout } from './growth.js?v=advanced-jobs-1';
 
 export const STATS = ['hp', 'mp', 'str', 'mag', 'def', 'res', 'spd', 'luk'];
@@ -20,8 +21,6 @@ const ARMOR_SLOTS = ['head', 'body', 'arm'];
 
 /** balance.json にまだ式がないもの（sim/core.py と同じ） */
 export const SIM_FORMULAS = Object.freeze({
-  weapon_power: '(8 + 1.6*itemLv) * quality * (1 + 0.05*enh) * power_mul * apt',
-  cloak_res: '(6 + 1.3*itemLv) * 0.3',
   crit: '0.03 + 0.15 * LUK / (20 + 6*Lv) + crit_bonus',
   evasion: 'min(0.45, 0.02 + 0.08 * SPD / (20 + 6*Lv) + armor_evasion)',
   status_resist: 'min(0.8, 0.25 * LUK / (20 + 6*Lv))',
@@ -39,7 +38,7 @@ function formula(data, key) {
 export function makeGear(game, equipId, opts = {}) {
   game.nextUid = (game.nextUid ?? 1);
   const gear = {
-    uid: game.nextUid++, id: equipId, enh: opts.enh ?? 0, quality: opts.quality ?? 1,
+    uid: game.nextUid++, id: equipId, enh: opts.enh ?? 0,
     rarity: opts.rarity ?? 'common', affixes: opts.affixes ?? {},
   };
   return gear;
@@ -151,9 +150,8 @@ export function maxMp(data, member) {
 export function armorPieceValue(data, member, gear) {
   const def = gearDef(data, gear);
   const w = data.armorWeights.get(def.armorWeight);
-  const total = evaluate(data.balance.armor_value, {
-    itemLv: def.itemLv, def_res_mul: w.defResMul, quality: gear.quality, 強化値: gear.enh,
-  });
+  const total = equipmentTier(data, def.star).armorBase * w.defResMul
+    * rarityBonus(data, gear.rarity).base * (1 + 0.05 * gear.enh) * 1.6;
   return (total / ARMOR_SLOTS.length) * (aptitudeMul(data, member.job, def) ?? 0);
 }
 
@@ -162,10 +160,9 @@ export function weaponPower(data, member, gear) {
   if (!gear) return 0;
   const def = gearDef(data, gear);
   const wt = data.weaponTypes.get(def.kind);
-  return evaluate(formula(data, 'weapon_power'), {
-    itemLv: def.itemLv, quality: gear.quality, enh: gear.enh, power_mul: wt.powerMul,
-    apt: aptitudeMul(data, member.job, def) ?? 0,
-  }) * masteryMul(data, member, def.kind); // 武器の熟練度
+  return equipmentTier(data, def.star).weaponBase * rarityBonus(data, gear.rarity).base
+    * (1 + 0.05 * gear.enh) * wt.powerMul * (aptitudeMul(data, member.job, def) ?? 0)
+    * masteryMul(data, member, def.kind); // 武器の熟練度
 }
 
 /** 魔法用装備の補助値。物理武器威力や銃の倍率を魔法・回復へ転用しない。 */
@@ -174,8 +171,8 @@ export function spellPower(data, member, gear = member.equip?.weapon) {
   const def = gearDef(data, gear);
   const rules = data.basicJobRules?.spell_equipment ?? {};
   if (!(rules.types ?? ['staff', 'tome', 'instrument', 'fan']).includes(def.kind)) return 0;
-  const base = (rules.base ?? 3) + (rules.per_level ?? 1.8) * def.itemLv;
-  return Math.max(0, base * (gear.quality ?? 1) * (1 + 0.05 * (gear.enh ?? 0))
+  const base = (rules.base ?? 3) + (rules.per_level ?? 1.8) * equipmentTier(data, def.star).spellLevelBase;
+  return Math.max(0, base * rarityBonus(data, gear.rarity).base * (1 + 0.05 * (gear.enh ?? 0))
     * (aptitudeMul(data, member.job, def) ?? 0));
 }
 /** 鎌術だけに使う術装備補助。通常の鎌の物理威力は加算しない。 */
@@ -183,8 +180,8 @@ export function scytheSpellPower(data, member) {
   const gear=member.equip?.weapon;
   if (!gear || gearDef(data,gear).kind!=='scythe') return 0;
   const def=gearDef(data,gear),rules=data.basicJobRules?.spell_equipment??{};
-  return Math.max(0,((rules.base??3)+(rules.per_level??1.8)*def.itemLv)
-    *(gear.quality??1)*(1+.05*(gear.enh??0))*(aptitudeMul(data,member.job,def)??0));
+  return Math.max(0,((rules.base??3)+(rules.per_level??1.8)*equipmentTier(data,def.star).spellLevelBase)
+    *rarityBonus(data,gear.rarity).base*(1+.05*(gear.enh??0))*(aptitudeMul(data,member.job,def)??0));
 }
 
 /** 装備・ジョブ・レベルを合わせた能力値と、派生の値 */
@@ -206,7 +203,7 @@ export function computeStats(data, member) {
   }
   out.def += armor;
   out.res += armor;
-  if (member.equip.cloak) out.res += evaluate(formula(data, 'cloak_res'), { itemLv: gearDef(data, member.equip.cloak).itemLv }) * member.equip.cloak.quality * (1 + 0.05 * member.equip.cloak.enh);
+  if (member.equip.cloak) out.res += (equipmentTier(data, gearDef(data, member.equip.cloak).star).armorBase * 0.3) * rarityBonus(data, member.equip.cloak.rarity).base * (1 + 0.05 * member.equip.cloak.enh);
   const mainDef = member.equip.weapon ? gearDef(data, member.equip.weapon) : null;
   const wt = mainDef ? data.weaponTypes.get(mainDef.kind) : null;
   out.spd += armorSpd / ARMOR_SLOTS.length + (wt?.spdMod ?? 0);
@@ -296,7 +293,7 @@ export function equipRecommended(data, game, member) {
     const kind = SLOT_KIND[slot];
     const candidates = [current, ...game.storage.gear].filter(gear => gear && gearDef(data, gear).slot === kind);
     const eligible = candidates.filter(gear => canEquip(data, member, slot, gear).ok);
-    eligible.sort((a, b) => gearDef(data, b).itemLv - gearDef(data, a).itemLv || (b.enh ?? 0) - (a.enh ?? 0));
+    eligible.sort((a, b) => gearDef(data, b).star - gearDef(data, a).star || rarityBonus(data, b.rarity).base - rarityBonus(data, a.rarity).base || (b.enh ?? 0) - (a.enh ?? 0));
     const best = eligible[0];
     if (best && best.uid !== current?.uid) {
       equipFromStorage(data, game, member, slot, best.uid);
@@ -316,7 +313,7 @@ function clampHpMp(data, member) {
 /** そのジョブの最初の装備（start_weapon / start_armor_weight のうち、いちばん低い段階のもの） */
 export function starterGearIds(data, jobId) {
   const job = data.jobsById.get(jobId);
-  const lowest = (pred) => [...data.equipment.values()].filter(pred).sort((a, b) => a.itemLv - b.itemLv)[0]?.id ?? null;
+  const lowest = (pred) => [...data.equipment.values()].filter(pred).sort((a, b) => a.star - b.star)[0]?.id ?? null;
   const out = {};
   if (job.startWeapon) out.weapon = lowest((e) => e.slot === 'weapon' && e.kind === job.startWeapon);
   if (job.startArmorWeight) {

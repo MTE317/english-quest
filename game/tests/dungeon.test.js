@@ -272,7 +272,7 @@ test('ドロップ：お金は run_income から。装備はダンジョンの�
   for (let k = 0; k < 50; k++) {
     const g = rollGearDrop(data, game, 'mossy_cave', 1 + (k % 5), rng);
     const def = data.equipment.get(g.id);
-    assert.ok(def.itemLv >= dg.itemLvMin && def.itemLv <= dg.itemLvMax, def.id);
+    assert.equal(def.star, dg.rank, def.id);
   }
   let uniques = 0;
   for (let k = 0; k < 200; k++) {

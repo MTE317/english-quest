@@ -176,9 +176,9 @@ test('武器・防具屋：★1は装備Lv下限+3の段階。買うと倉庫へ
   const g = fresh();
   g.gold = 10000;
   const stock = gearShopStock(data, g);
-  assert.ok(stock.length > 0 && stock.every((x) => x.def.itemLv === 3 && x.star === 1));
+  assert.ok(stock.length > 0 && stock.every((x) => x.def.star === 1 && x.star === 1));
   const sword = stock.find((x) => x.def.id === 'sword_t1');
-  assert.equal(sword.price, 10 * Math.round(Math.round((8 + 1.6 * 3) * 4.5) * (1 - Number(readCsv('adventurer_ranks.csv').rows[0].shop_discount))));
+  assert.equal(sword.price, 10 * Math.round(Math.round(data.equipmentTiers.get(1).weaponBase * 4.5) * (1 - Number(readCsv('adventurer_ranks.csv').rows[0].shop_discount))));
   const beforeCount = g.storage.gear.length;
   const gear = buyGear(data, g, 'sword_t1');
   assert.equal(g.storage.gear.length, beforeCount + 1);

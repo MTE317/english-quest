@@ -3,6 +3,7 @@ import { roundGold, goldScale, goldLimit } from './gold.js?v=skill-growth-2';
 // data に数や式として書かれていないものは、シミュレーター（sim/world.py）と同じ値を TOWN_FORMULAS に置く（docs/requests.md で依頼済み）。
 import { evaluate } from './expr.js?v=skill-growth-2';
 import { makeGear, maxHp, maxMp, gearDef } from './character.js?v=advanced-jobs-1';
+import { equipmentTier } from './equipment-scaling.js?v=equipment-rarity-1';
 import { addItem } from './loot.js?v=jobs-intro-1';
 import { currentRank, allowedDungeons } from './dungeon.js?v=public-rewards-1';
 import { monsterPool } from './encounter.js?v=public-rewards-1';
@@ -12,9 +13,7 @@ export const TOWN_FORMULAS = Object.freeze({
   days_per_month: 30, // balance.json の calendar.days_per_month があればそちらを使う
   board_size: 3, // quest_board.size が未設定の場合の既定値
   revive: '30 * Lv', // balance.json の temple.revive が文なので
-  shop_item_lv: 'item_lv_min + 3', // balance.json の shop_gear_price.shop_item_lv が文なので
   sell_price: 'run_income * 0.04 * (1 + 0.8 * rarity_index)',
-  sell_rank: 'floor((itemLv + 4) / 11) + 1', // 装備Lvから★を決める
 });
 
 // ---------------- 暦と月末 ----------------
@@ -495,23 +494,19 @@ export function buyItem(data, game, itemId, count = 1) {
   return bought;
 }
 
-/** 武器・防具屋の品ぞろえ：ランクで行ける★ごとに「その★の装備Lv下限+3」の、効果なしの武器・防具（頭・体・腕） */
+/** 武器・防具屋の品ぞろえ：施設ランクに応じた★の通常の武器・防具（頭・体・腕）。 */
 export function gearShopStock(data, game) {
   const maxStar = game.facilities?.equipment_shop ?? 1;
   const out = [];
   for (let star = 1; star <= maxStar; star++) {
-    const ds = [...data.dungeons.values()].filter((d) => d.rank === star);
-    if (!ds.length) continue;
-    const target = evaluate(TOWN_FORMULAS.shop_item_lv, { item_lv_min: Math.min(...ds.map((d) => d.itemLvMin)) });
+    if (![...data.dungeons.values()].some((d) => d.rank === star)) continue;
     const cands = [...data.equipment.values()].filter((e) => !e.unique && e.source.includes('店') && ['weapon', 'head', 'body', 'arm'].includes(e.slot));
-    const lv = cands.map((e) => e.itemLv).filter((x) => x <= target).sort((a, b) => b - a)[0] ?? Math.min(...cands.map((e) => e.itemLv));
-    for (const e of cands.filter((x) => x.itemLv === lv)) out.push({ def: e, star, price: priceWith(data, game, gearPrice(data, e)) });
+    for (const e of cands.filter((x) => x.star === star)) out.push({ def: e, star, price: priceWith(data, game, gearPrice(data, e)) });
   }
   return out;
 }
 export function gearPrice(data, def) {
-  const P = data.balance.shop_gear_price;
-  return roundGold(data, goldScale(data) * evaluate(def.slot === 'weapon' ? P.weapon : P.armor, { itemLv: def.itemLv }));
+  return roundGold(data, goldScale(data) * (def.slot === 'weapon' ? equipmentTier(data, def.star).weaponBase : equipmentTier(data, def.star).armorBase) * 4.5);
 }
 export function buyGear(data, game, equipId) {
   const e = gearShopStock(data, game).find((x) => x.def.id === equipId);
@@ -526,7 +521,7 @@ export function buyGear(data, game, equipId) {
 /** 倉庫の装備を売る値段 */
 export function sellPrice(data, gear) {
   const def = gearDef(data, gear);
-  const star = Math.min(data.economy.size, Math.max(1, evaluate(TOWN_FORMULAS.sell_rank, { itemLv: def.itemLv })));
+  const star = Math.min(data.economy.size, Math.max(1, def.star));
   const ri = Math.max(0, data.rarityTable.findIndex((r) => r.id === gear.rarity));
   return roundGold(data, evaluate(TOWN_FORMULAS.sell_price, { run_income: data.economy.get(star).run_income, rarity_index: ri }));
 }

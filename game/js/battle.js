@@ -1,3 +1,4 @@
+import { equipmentTier } from './equipment-scaling.js?v=equipment-rarity-1';
 import { fixedBattleRewards } from './monster-rewards.js?v=public-rewards-1';
 // 戦闘：行動順・通常攻撃とスキル・1行動ごとに1問・属性・状態異常・道具・逃げる。
 //
@@ -33,7 +34,7 @@ export const BATTLE_FORMULAS = Object.freeze({
   ally_damage: 'atk * em * 100 / (100 + max(0, df)) * crit * r',
   enemy_damage: 'atk * 1.62 * 100 / (100 + df) * r',
   heal: '(MAG + wpow) * m * heal_mul',
-  fixed_damage: '(20 + 6*itemLv) * em * 100 / (100 + RES * 0.3)',
+  fixed_damage: 'baseDamage * em * 100 / (100 + RES * 0.3)',
   flee: 'max(0.10, min(0.95, 0.5 + spd_diff*0.01 + luk*0.002 + lv_diff*0.02))',
   xp_per_enemy: '6 + 3.2*enemyLv',
   overlevel: 'max(0, 1 - 0.25 * max(0, (Lv - enemyLv) - 1))',
@@ -1517,12 +1518,13 @@ function doSkill(data, game, b, i, s, target, cm, normalSkillReady = false, acti
       break;
     }
     case 'fixed_damage': {
-      const itemLv = m.equip.weapon ? gearDef(data, m.equip.weapon).itemLv : 1;
+      const baseDamage = m.equip.weapon ? equipmentTier(data, gearDef(data, m.equip.weapon).star).fixedDamageBase
+        : equipmentTier(data, 1).fixedDamageBase;
       for (const t of livingEnemies(b)) {
         const en = b.enemies[t];
         const elements = s.elements.length ? s.elements : ['none'];
         const em = Math.max(...elements.map((el) => elementMul(data, en, el)));
-        const damage = Math.round(evaluate(f(data, 'fixed_damage'), { itemLv, em, RES: en.res }) * cm * between(b, f(data, 'enemy_rand')));
+        const damage = Math.round(evaluate(f(data, 'fixed_damage'), { baseDamage, em, RES: en.res }) * cm * between(b, f(data, 'enemy_rand')));
         hitEnemy(data, game, b, i, t, damage, { em, elements, landed: true });
       }
       break;
