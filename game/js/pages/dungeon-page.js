@@ -1,18 +1,18 @@
 // ダンジョンの画面：行き先とルーンストーンを選ぶ → 階を進む → 戦闘 → 帰還ポイント・ボス → 町へ
-import { loadGameData } from '../gamedata.js?v=workshop-materials-1';
+import { loadGameData } from '../gamedata.js?v=unique-reroll-1';
 import { loadJson } from '../data.js?v=skill-growth-2';
 import { loadLearningCatalog } from '../learning-catalog.js?v=skill-growth-2';
 import { Scheduler } from '../srs.js?v=skill-growth-2';
 import { LearningStore, now, loadSettings } from '../storage.js?v=skill-growth-2';
 import { QuestionPicker } from '../picker.js?v=skill-growth-2';
 import { GameSession } from '../save.js?v=party-wipe-1';
-import { normalizeGame } from '../game-state.js?v=workshop-materials-1';
+import { normalizeGame } from '../game-state.js?v=unique-reroll-1';
 import {
   allowedDungeons, allowedStones, expeditionFee, startRun, startNextBattle, afterBattle, returnToTown, continueRun, resolveLoot,
   isBossBattle, runFloorRow, runFloorCount, returnItems, currentRank, useItemOutsideBattle, FIELD_ITEM_EFFECTS,
 } from '../dungeon.js?v=targeted-enchant-2';
-import { backpackSlots, backpackUsed, addItem } from '../loot.js?v=jobs-intro-1';
-import { maxHp, maxMp, partyCanAct } from '../character.js?v=party-wipe-1';
+import { backpackSlots, backpackUsed, addItem } from '../loot.js?v=unique-reroll-1';
+import { maxHp, maxMp, partyCanAct } from '../character.js?v=unique-reroll-1';
 import { createBattleView } from '../ui/battle-view.js?v=targeted-enchant-2';
 import { createVictoryView, createLootIcons } from '../ui/victory-view.js?v=advanced-jobs-1';
 import { el, render, stars } from '../dom.js?v=skill-growth-2';
@@ -392,6 +392,7 @@ function battleView() {
     console.error(e);
   }
 })();
+
 
 
 

@@ -4,7 +4,7 @@ import { realGameData } from './helpers.js';
 import { createNewGame, defaultPartySpecs } from '../js/game-state.js';
 import { makeGear, weaponPower, gearEffects } from '../js/character.js';
 import { rollAffixes, rollGearDrop } from '../js/loot.js';
-import { craft, enchant, enchantValue } from '../js/workshop.js';
+import { craft, enchant, reroll } from '../js/workshop.js';
 
 const data = realGameData();
 const fresh = () => createNewGame(data, defaultPartySpecs(data));
@@ -37,37 +37,45 @@ test('通常ドロップの★は地域の★で選び、天然効果の数値�
   assert.ok(Math.abs(origin[key] / rare[key] - 1.12 / 1.04) < 0.02);
 });
 
-test('通常ドロップにも後付け2枠を使え、天然効果の振り直しとは別に保たれる', () => {
+test('店売りは効果0で、通常ドロップと全再付与はレアリティの範囲を守る', () => {
   const game = fresh();
-  game.gold = 10000;
-  const material = [...data.materials.values()].find((m) => m.kind === 'common' && !m.element);
-  game.storage.materials.enchant_powder = 20;
-  game.storage.materials[material.id] = 2;
+  assert.deepEqual(makeGear(game, 'sword_t1').affixes, {});
+  const dungeon = data.dungeons.get('windward_plain');
+  const drop = rollGearDrop(data, game, dungeon.id, 1, () => 0.4);
+  assert.ok(Object.keys(drop.affixes).length >= 0 && Object.keys(drop.affixes).length <= 7);
   const gear = makeGear(game, 'sword_t2', { rarity: 'rare', affixes: { STR: 3 } });
-  const def = data.equipment.get(gear.id);
-  assert.equal(enchantValue(data, def, 'ELEM_DMG:slash', 1, 'rare'), 8.7);
-  enchant(data, game, gear, 0, material.id, 1, () => 0.99);
-  enchant(data, game, gear, 1, material.id, 1, () => 0.99);
-  assert.equal(gear.enchants.length, 2);
-  assert.deepEqual(gear.affixes, { STR: 3 });
-  assert.equal(gearEffects(gear).STR, 3);
-  assert.throws(() => enchant(data, game, gear, 2, material.id, 1));
+  const price = data.economy.get(data.equipment.get(gear.id).star).craft_gold * 2;
+  game.gold = price * 2;
+  game.storage.materials.enchant_powder = 20;
+  enchant(data, game, gear, null, () => 0.6);
+  assert.ok(Object.keys(gear.affixes).length >= 2 && Object.keys(gear.affixes).length <= 4);
+  assert.equal(game.gold, price);
+  assert.equal(game.storage.materials.enchant_powder, 10);
+  const key = Object.keys(gear.affixes).find(name => !name.startsWith('ELEMENT:'));
+  if (key) {
+    const names = Object.keys(gear.affixes);
+    reroll(data, game, gear, key, () => 0);
+    assert.deepEqual(Object.keys(gear.affixes), names);
+    assert.equal(game.gold, 0);
+  }
 });
 
-test('製作品は隠れた15%補正を持たず、レシピ固有効果はコモンのまま保持する', () => {
+test('制作装備はユニークで、固有2〜4個と共通0〜2個を抽選する', () => {
   const game = fresh();
   game.gold = 100000;
-  const recipe = data.recipes.find((r) => r.id === 'iron_sword');
+  const recipe = data.recipes.find(r => r.id === 'iron_sword');
   for (const part of recipe.materials.split('|')) {
     const [id, count] = part.split(':');
     game.storage.materials[id] = Number(count);
   }
-  const crafted = craft(data, game, data.equipment.get(recipe.id));
-  assert.match(crafted, /制作/);
+  craft(data, game, data.equipment.get(recipe.id), () => 0.5);
   const gear = game.storage.gear.at(-1);
   assert.equal(gear.quality, undefined);
-  assert.equal(gear.rarity, 'common');
-  assert.equal(gearEffects(gear).STR, 2);
-  assert.equal(weaponPower(data, game.party.find((m) => m.job === 'warrior'), gear),
-    weaponPower(data, game.party.find((m) => m.job === 'warrior'), makeGear(game, 'sword_t1')));
+  assert.equal(gear.rarity, 'unique');
+  const kinds = Object.values(gear.affixOrigins);
+  assert.ok(kinds.filter(kind => kind === 'unique').length >= 2);
+  assert.ok(kinds.filter(kind => kind === 'common').length <= 2);
+  assert.equal(weaponPower(data, game.party.find(m => m.job === 'warrior'), gear),
+    weaponPower(data, game.party.find(m => m.job === 'warrior'), makeGear(game, 'sword_t1')));
 });
+

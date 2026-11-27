@@ -2,7 +2,8 @@ import { roundGold } from './gold.js?v=skill-growth-2';
 // 戦闘の報酬（お金・素材・装備）とバックパック。
 // 式が data にないものは sim/world.py と同じ値を LOOT_FORMULAS に置く（docs/requests.md で依頼済み）。
 import { evaluate } from './expr.js?v=skill-growth-2';
-import { makeGear } from './character.js?v=advanced-jobs-1';
+import { makeGear } from './character.js?v=unique-reroll-1';
+import { rollSet } from './enchantment-roll.js?v=unique-reroll-1';
 import { equipmentTier } from './equipment-scaling.js?v=equipment-rarity-1';
 import { splitList } from './csv.js?v=skill-growth-2';
 
@@ -119,20 +120,22 @@ export function rollGearDrop(data, game, dungeonId, floor, rng, { commonOnly = f
   const share = LOOT_FORMULAS.slot_share;
   const kind = weighted(rng, Object.keys(share), (k) => share[k]);
   const slots = kind === 'armor' ? ['head', 'body', 'arm'] : [kind];
-  const cands = [...data.equipment.values()].filter((e) => !e.unique && !e.setId && slots.includes(e.slot)
+  const cands = [...data.equipment.values()].filter((e) => !e.unique && slots.includes(e.slot)
     && e.source.includes('ドロップ') && e.star === dg.rank);
   const pool = cands;
   if (!pool.length) return null;
   const def = weighted(rng, pool, () => 1);
-  const rar = commonOnly ? { id: 'common', effects: 0, i: 0 } : rollRarity(data, dungeonId, floor, rng);
-  return makeGear(game, def.id, { rarity: rar.id, affixes: rollAffixes(data, def.slot, rar.effects, def.star, rar.i, rng) });
+  const rar = commonOnly ? { id: 'common' } : rollRarity(data, dungeonId, floor, rng);
+  const rolled = rollSet(data, def, rar.id, rng);
+  return makeGear(game, def.id, { rarity: rar.id, affixes: rolled.affixes, affixOrigins: rolled.origins });
 }
 
 /** ボスの固有装備（uniques.csv の drop_rate） */
 export function rollUniqueDrop(data, game, monsterId, rng) {
   const u = [...data.equipment.values()].find((e) => e.unique && e.source === monsterId);
   if (!u || rng() >= u.dropRate) return null;
-  return makeGear(game, u.id, { rarity: 'unique', affixes: { ...u.fixedEffects } });
+  const rolled = rollSet(data, u, 'unique', rng);
+  return makeGear(game, u.id, { rarity: 'unique', affixes: rolled.affixes, affixOrigins: rolled.origins });
 }
 
 /**
@@ -160,12 +163,6 @@ export function rollBattleLoot(data, game, dungeonId, floor, enemies, rng, { dro
   for (const enemy of enemies.filter((e) => e.boss || e.bounty)) {
     const unique = rollUniqueDrop(data, game, enemy.monsterId, rng);
     if (unique) gear.push(unique);
-  }
-  const setOdds = data.balance.dungeon?.set_drop_rate ?? 0.05;
-  const parts = [...data.equipment.values()].filter((def) => def.setId && def.star === data.dungeons.get(dungeonId).rank);
-  if (boss && parts.length && rng() < setOdds) {
-    const def = parts[Math.floor(rng() * parts.length)];
-    gear.push(makeGear(game, def.id, { rarity: 'set', affixes: { ...def.fixedEffects } }));
   }
   return { gold, materials: Object.entries(mats).map(([id, count]) => ({ id, count })), gear };
 }
@@ -228,4 +225,5 @@ export function addItem(game, id, count) {
   if (n > 0) game.items[id] = cur + n;
   return count - n;
 }
+
 

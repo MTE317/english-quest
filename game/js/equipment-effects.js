@@ -12,12 +12,13 @@ const LABELS = {
   FIRST_HIT: '初撃ダメージ', NORMAL_SKILL: '通常攻撃後の技能ダメージ',
   EVA_COUNTER: '物理回避時反撃率', CRIT_MP: '正解会心時MP回復',
   ATTACK_HEAL: '攻撃時の味方回復', OVERHEAL_SHIELD: '余剰回復の障壁化', BOUNTY_CHANCE: '賞金首の遭遇率',
+  ENDURE: '戦闘中一度だけ致命傷に耐える', REGEN: '毎巡のHP回復', NORMAL_ALL: '通常攻撃の全体化',
 };
 const PERCENTS = new Set([
   'CRT', 'EVA', 'STATUS_RES', 'FIRST_SPD', 'CRIT_DMG', 'WEAK_DMG', 'VS_DEBUFFED',
   'PHYS_CUT', 'MAGIC_CUT', 'HEAL_POWER', 'PARTY_BUFF_POWER', 'DEF_PIERCE', 'MP_SAVE',
   'LIFESTEAL', 'EXTRA_HIT', 'COUNTER', 'MP_ON_HIT', 'DROP', 'EXP', 'FLEE', 'DOT_POWER', 'STATUS_RATE', 'BOUNTY_CHANCE',
-  'FIRST_HIT', 'NORMAL_SKILL', 'EVA_COUNTER', 'CRIT_MP', 'ATTACK_HEAL', 'OVERHEAL_SHIELD',
+  'FIRST_HIT', 'NORMAL_SKILL', 'EVA_COUNTER', 'CRIT_MP', 'ATTACK_HEAL', 'OVERHEAL_SHIELD', 'REGEN', 'NORMAL_ALL',
 ]);
 /** 固定効果・ランダム効果・エンチャントで共通の日本語表記。 */
 export function effectLabel(data, key) {
@@ -41,6 +42,7 @@ export function effectLabel(data, key) {
 }
 export function describeEffect(data, key, value) {
   if (key.startsWith('ELEMENT:')) return effectLabel(data, key);
+  if (key === 'ENDURE') return effectLabel(data, key);
   const amount = Math.round(value * 10) / 10;
   const label = effectLabel(data, key);
   if (key === 'CRIT_MP') return `${label}：最大MPの${amount}%（正解して会心が命中した時。一行動に一回・技能は支払MPまで）`;
@@ -62,3 +64,4 @@ export function describeFixedEffects(data, def) {
   const element = def?.addedElement ? `${data.elements?.get(def.addedElement)?.name ?? def.addedElement}属性追加` : null;
   return [...(element ? [element] : []), ...effects].join(' ／ ');
 }
+

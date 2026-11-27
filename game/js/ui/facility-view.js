@@ -1,10 +1,11 @@
 import { el, render } from '../dom.js?v=skill-growth-2';
 import { parseAmounts } from '../csv.js?v=skill-growth-2';
-import { craft, brew, canCraft, canBrew, enhance, dismantle, reroll, enchant, enchantFamilies, facilityUpgrade } from '../workshop.js?v=workshop-materials-1';
+import { craft, brew, canCraft, canBrew, enhance, dismantle, reroll, enchant, enchantFamilies, facilityUpgrade } from '../workshop.js?v=unique-reroll-1';
 import { borrow, repayLoan, loanLimit } from '../town.js?v=public-rewards-1';
 import { unlockJob, jobDiscoveryProgress, offeringRevealed } from '../temple.js?v=skill-growth-2';
-import { describeFixedEffects, effectLabel, describeEffect } from '../equipment-effects.js?v=targeted-enchant-2';
+import { effectLabel, describeEffect } from '../equipment-effects.js?v=unique-reroll-1';
 import { stoneRequirement, ENCHANT_POWDER_ID, ENCHANT_POWDER_COST } from '../workshop-materials.js?v=workshop-materials-1';
+import { uniqueCandidates, numericEffect, enchantCost, facilityValueMul } from '../enchantment-roll.js?v=unique-reroll-1';
 import { equipmentIcon } from './equipment-icons.js?v=skill-growth-2';
 import { uiIcon } from './pixel-icons.js?v=skill-growth-2';
 
@@ -22,7 +23,7 @@ function select(label, choices, onChange, state) {
 export function workshopView(data, g, act, rng, selection) {
   const usableDefs = [...data.equipment.values()].filter((def) => {
     const facility = 'workshop';
-    return def.source?.includes('制作') && !def.unique && !def.setId
+    return def.source?.includes('制作') && !def.unique
       && Number(data.recipes.find((r) => r.id === def.id)?.workshop_rank ?? def.star) <= (g.facilities[facility] ?? 1);
   });
   const alchemy = data.alchemyRecipes.filter((recipe) => Number(recipe.workshop_rank) <= (g.facilities.alchemy ?? 1));
@@ -60,7 +61,8 @@ export function workshopView(data, g, act, rng, selection) {
       selection.gear = gear?.uid;
       render(deck, switcher, iconCatalog(g.storage.gear.map(item => {
         const def = data.equipment.get(item.id);
-        const rarity = data.rarityTable.find(r => r.id === item.rarity)?.name ?? item.rarity ?? 'コモン';
+        const rarity = item.rarity === 'unique' ? 'ユニーク'
+          : data.rarityTable.find(r => r.id === item.rarity)?.name ?? 'コモン';
         return { id: String(item.uid), name: `${def?.name ?? item.id}${item.enh > 0 ? ' +' + item.enh : ''}`,
           rarity: item.rarity, caption: rarity, icon: () => equipmentIcon(def) ?? uiIcon('gear') };
       }), gear ? String(gear.uid) : '', id => { selection.gear = g.storage.gear.find(item => String(item.uid) === id)?.uid; },
@@ -107,15 +109,16 @@ export function workshopView(data, g, act, rng, selection) {
         select('★', [['all', 'すべて'], ...Array.from({ length: 12 }, (_, i) => [String(i + 1), `★${i + 1}`])],
           value => { selection.craftStar = value; selection.recipe = null; redraw(); }, star)),
       el('p', { class: 'muted small' }, `条件に合う制作候補：${filtered.length}件（施設ランクで解放）`),
-      iconCatalog(filtered.map(def => ({ id: def.id, name: def.name, caption: `★${def.star}`,
+      iconCatalog(filtered.map(def => ({ id: def.id, name: def.name, rarity: 'unique', caption: `★${def.star}・ユニーク`,
         icon: () => equipmentIcon(def) ?? uiIcon('gear') })),
       selectedDef?.id, id => { selection.recipe = id; }, selectedDef ? [
         el('header', {}, equipmentIcon(selectedDef) ?? uiIcon('gear'), heading(selectedDef.name)),
         selectedDef.recipeDescription ? el('p', { class: 'shop-description' }, selectedDef.recipeDescription) : null,
         selectedDef.slot === 'weapon' ? el('p', { class: 'small muted' },
           `武器特性：${data.weaponTypes.get(selectedDef.kind)?.feature ?? 'なし'}`) : null,
-        describeFixedEffects(data, selectedDef) ? el('p', { class: 'small' },
-          `固定効果：${describeFixedEffects(data, selectedDef)}`) : null,
+        el('p', { class: 'small' }, `固有候補（この中から2〜4個）：${Object.entries(uniqueCandidates(data, selectedDef))
+          .map(([key, value]) => describeEffect(data, key, value)).join('、')}`),
+        el('p', { class: 'small muted' }, '共通効果も0〜2個付きます。数値は制作時に抽選します。'),
         recipe ? [
           el('p', { class: 'small' }, `制作費：${recipe.gold} G（所持：${g.gold} G）`),
           needs.map(m => el('p', { class: 'small muted' }, `${m.name} ×${m.count}（所持：${m.have}）`)),
@@ -123,7 +126,7 @@ export function workshopView(data, g, act, rng, selection) {
             `派生元：${data.equipment.get(recipe.derive_from)?.name ?? recipe.derive_from}（制作済みの現物を消費）`) : null,
         ] : el('p', { class: 'small muted' },
           `${data.economy.get(selectedDef.star).craft_gold} G・★${selectedDef.star}以上の通常素材4個`),
-        btn('制作する', () => act(game => craft(data, game, selectedDef)), !canMake),
+        btn('制作する', () => act(game => craft(data, game, selectedDef, rng)), !canMake),
       ] : [], 'この条件で作れる装備はありません。施設ランクか絞り込みを確認してください。'));
   }
 
@@ -131,12 +134,13 @@ export function workshopView(data, g, act, rng, selection) {
     const definition = data.equipment.get(item.id);
     const icon = equipmentIcon(definition);
     const stats = Object.entries(item.affixes ?? {});
-    const effectText = item.crafted ? describeFixedEffects(data, definition) : '';
-    const enchantments = (item.enchants ?? []).map((effect, index) => el('div', { class: 'small' }, `枠${index + 1} ${describeEffect(data, effect.stat, effect.value)}`));
+    const price = enchantCost(data, definition);
+    const affordable = g.gold >= price && (g.storage.materials[ENCHANT_POWDER_ID] ?? 0) >= ENCHANT_POWDER_COST;
     return [
       icon ? el('p', { class: 'gear-with-icon' },
         icon, el('span', {}, `${definition.name}${item.enh > 0 ? ` +${item.enh}` : ''}`)) : null,
-      effectText ? el('p', { class: 'small' }, `固定効果：${effectText}`) : null,
+      el('p', { class: 'small' }, `エンチャント ${stats.length}個：${stats.length ? stats.map(([key, value]) =>
+        `${item.affixOrigins?.[key] === 'unique' ? '固有' : '共通'} ${describeEffect(data, key, value)}`).join('、') : 'なし'}`),
       item.enh < 10 ? el('p', { class: 'small muted' }, (() => {
         const stone = stoneRequirement(data, item.enh);
         return `+${item.enh + 1}：${stone.name} ${g.storage.materials[stone.id] ?? 0}/${stone.count}個`;
@@ -146,9 +150,12 @@ export function workshopView(data, g, act, rng, selection) {
       btn('分解する', () => {
         if (confirm(`${definition.name}を分解しますか？`)) act((game) => dismantle(data, game, item));
       }),
-      !definition.unique && !definition.setId ? [enchantments, enchantForm(item, definition)] : null,
-      !item.crafted && !definition.unique && !definition.setId && stats.length ? panel('効果の振り直し',
-        stats.map(([key, value]) => btn(`${describeEffect(data, key, value)} を振り直す`, () => act((game) => reroll(data, game, item, key, rng()))))) : null,
+      enchantForm(item, definition),
+      stats.some(([key]) => numericEffect(key)) ? panel('② 数値だけ再抽選',
+        el('p', { class: 'small muted' }, `選んだ効果の種類は変わりません。${price} G・粉${ENCHANT_POWDER_COST}個。数値が下がることもあります。`),
+        stats.filter(([key]) => numericEffect(key)).map(([key, value]) =>
+          btn(`${describeEffect(data, key, value)} の数値を引き直す`,
+            () => act(game => reroll(data, game, item, key, rng)), !affordable))) : null,
     ];
   }
 
@@ -157,28 +164,23 @@ export function workshopView(data, g, act, rng, selection) {
       g.storage.materials[m.id] > 0 && enchantFamilies(data, def, m).length);
     const materialSelect = el('select', { class: 'select' },
       option('追加しない（全候補から抽選）', ''), mats.map((m) => option(m.name, m.id)));
-    const grades = el('select', { class: 'select' }, data.enchantGrades
-      .filter((r) => Number(r.workshop_rank) <= g.facilities.workshop)
-      .map((row) => option(`グレード${row.grade}・${row.gold} G`, row.grade)));
-    const slots = el('select', { class: 'select' }, option('枠1', '0'), item.enchants?.length ? option('枠2', '1') : null);
+    const price = enchantCost(data, def);
     const preview = el('p', { class: 'small muted' });
     const showPreview = () => {
       const material = data.materials.get(materialSelect.value);
       const preferred = material ? enchantFamilies(data, def, material) : [];
       render(preview,
-        `エンチャント粉 ${g.storage.materials[ENCHANT_POWDER_ID] ?? 0}/${ENCHANT_POWDER_COST}個。効果は抽選で決定。`,
+        `① 全再付与：${price} G・エンチャント粉 ${g.storage.materials[ENCHANT_POWDER_ID] ?? 0}/${ENCHANT_POWDER_COST}個。工房ランク${g.facilities.workshop ?? 1}（数値倍率${facilityValueMul(data, g)}倍）。現在の効果はすべて消え、個数も引き直します。`,
         material ? el('span', {}, ` ${material.name}で出やすい効果：${preferred.slice(0, 5)
           .map((id) => effectLabel(data, id)).join('、')}${preferred.length > 5 ? ` ほか${preferred.length - 5}種` : ''}（確定ではありません）`) : null);
     };
     materialSelect.addEventListener('change', showPreview);
-    grades.addEventListener('change', showPreview);
     showPreview();
-    return panel('エンチャント',
+    return panel('① 全再付与',
       el('label', {}, '追加素材（任意・1個）', materialSelect),
-      el('label', {}, 'グレード', grades), preview, el('label', {}, '枠', slots),
-      btn('効果を抽選する', () => act((game) => enchant(data, game, item,
-        Number(slots.value), materialSelect.value, Number(grades.value), rng())),
-      (g.storage.materials[ENCHANT_POWDER_ID] ?? 0) < ENCHANT_POWDER_COST));
+      preview,
+      btn('すべて再抽選する', () => act(game => enchant(data, game, item, materialSelect.value, rng)),
+        g.gold < price || (g.storage.materials[ENCHANT_POWDER_ID] ?? 0) < ENCHANT_POWDER_COST));
   }
 
   redraw();
@@ -279,5 +281,6 @@ export function templeExtras(data, g, act, selection = {}, jobIcon = () => uiIco
     offerings.length ? panel('神殿の儀式', offerings) : null,
   ];
 }
+
 
 

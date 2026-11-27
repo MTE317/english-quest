@@ -231,10 +231,10 @@ function retireRuneBonuses(data, game) {
 function alignCraftedEffects(data, gear) {
   if (!gear?.crafted) return;
   const def = data.equipment?.get(gear.id);
-  if (!def?.recipeId || def.unique || def.setId) return;
-  // 制作品は振り直せないため、affixes はレシピの固定効果だけ。
-  // 効果の辞書をコピーし、マスタや別の装備・入場時の写しと共有しない。
+  if (!def?.recipeId || def.unique || gear.affixOrigins) return;
+  // 旧セーブの未移行制作品だけ補正する。新仕様の抽選結果は保持する。
   gear.affixes = { ...(def.fixedEffects ?? {}) };
 }
+
 
 

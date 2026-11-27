@@ -1,7 +1,7 @@
 import { availableAp, spendAp, normalizeAp, hasVisitedJob } from './ap.js?v=skill-growth-2';
 // 成長：共通AP・技能の修得と強化・装備枠・武器熟練度・ジョブチェンジ。
 // data に数として書かれていないものは GROWTH_FORMULAS に置く（docs/requests.md で依頼済み）。
-import { gearDef, aptitudeMul, unequip, maxHp, maxMp } from './character.js?v=advanced-jobs-1';
+import { gearDef, aptitudeMul, unequip, maxHp, maxMp, affixSum } from './character.js?v=unique-reroll-1';
 
 export const GROWTH_FORMULAS = Object.freeze({
   action_capacity: 10, // 通常スキルの枠（スキルの cost の合計。sim の cap_a）
@@ -314,38 +314,6 @@ function add(out, mods) {
  * キャラの補正の合計。数の補正は足し、wdmg / edmg / tdmg は [[対象, 値], ...] にまとめる
  */
 
-const SET_EFFECTS = {
-  '通常攻撃のダメージ': 'normal_damage', '魔法のダメージ': 'magic_damage',
-  '受けるダメージ': 'damage_cut', '戦闘のあとHP': 'hp_regen',
-  '素材が出やすい': 'drop', '状態異常にかかる確率': 'sres', '会心のダメージ': 'crit_damage',
-};
-
-function equipmentSetMods(data, member) {
-  const counts = new Map();
-  for (const id of new Set(Object.values(member.equip ?? {}).filter(Boolean).map((g) => g.id))) {
-    const set = data.equipment.get(id)?.setId;
-    if (set) counts.set(set, (counts.get(set) ?? 0) + 1);
-  }
-  const mods = {};
-  for (const [id, count] of counts) {
-    if (count < 2) continue;
-    const set = data.sets.get(id);
-    if (!set) continue;
-    const [stat, text] = set.bonus_2.split(':');
-    const key = stat.toLowerCase();
-    mods[key] = (mods[key] ?? 0) + parseFloat(text) / 100;
-    if (count < 4) continue;
-    const effect = set.bonus_4;
-    if (effect === '最初のターンに先に動く') { mods.first = 1; continue; }
-    const kind = Object.keys(SET_EFFECTS).find((label) => effect.startsWith(label));
-    if (kind) {
-      const stat = SET_EFFECTS[kind];
-      const bonus = Math.abs(parseFloat(effect.match(/[+-]?\d+(?=%)/)[0])) / 100;
-      mods[stat] = (mods[stat] ?? 0) + bonus;
-    }
-  }
-  return mods;
-}
 
 export function memberMods(data, member) {
   const out = {};
@@ -368,7 +336,8 @@ export function memberMods(data, member) {
     common.mp_regen -= Math.min(treeRate, passiveRate);
   }
   add(out, common);
-  add(out, equipmentSetMods(data, member));
+  out.regen = (out.regen ?? 0) + affixSum(member, 'REGEN') / 100;
+  if (affixSum(member, 'ENDURE') > 0) out.endure = 1;
   // マスター状態は実績用。装着枠の外から常時能力を加算しない。
   return out;
 }
@@ -416,5 +385,6 @@ export function changeJob(data, game, index, jobId) {
   m.hp = Math.min(m.hp, maxHp(data, m));
   m.mp = Math.min(m.mp, maxMp(data, m));
 }
+
 
 

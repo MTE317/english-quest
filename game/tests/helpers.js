@@ -50,7 +50,6 @@ export function realGameData() {
     equipmentTiers: readCsv('equipment_tiers.csv').rows,
     recipes: readCsv('recipes.csv').rows,
     facilityRanks: readCsv('facility_ranks.csv').rows,
-    setItems: readCsv('set_items.csv').rows,
     icons: readCsv('appearance_icons.csv').rows,
     rarities: readCsv('rarities.csv').rows,
     monsters: readCsv('monsters.csv').rows,
@@ -84,3 +83,4 @@ export function realGameData() {
     jobUnlocks: readCsv('job_unlocks.csv').rows,
   });
 }
+

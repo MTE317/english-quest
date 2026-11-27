@@ -10,8 +10,8 @@ import { fixedBattleRewards } from './monster-rewards.js?v=public-rewards-1';
 //
 // 式・効果の上限は data/balance.json から読む。BATTLE_FORMULAS は旧データ向けの既定値。
 import { evaluate } from './expr.js?v=skill-growth-2';
-import { computeStats, gearDef, weaponPower, spellPower, scytheSpellPower, maxHp, maxMp, gearEffects, affixSum, memberCanAct } from './character.js?v=party-wipe-1';
-import { actionSkills, ultimateSkill, memberMods, addMasteryKill, effectiveSkill } from './growth.js?v=advanced-jobs-1';
+import { computeStats, gearDef, weaponPower, spellPower, scytheSpellPower, maxHp, maxMp, gearEffects, affixSum, memberCanAct } from './character.js?v=unique-reroll-1';
+import { actionSkills, ultimateSkill, memberMods, addMasteryKill, effectiveSkill } from './growth.js?v=unique-reroll-1';
 import { encounterMonsters, learnMonsterElements, hitEffectiveness } from './monster-knowledge.js?v=monster-catalog-1';
 import { masterTags, weaponSkill, songSkill, healingSkill, weaponAllowed, passiveRules, ruleNumber, matchesTag,
   masterDamageBonus, masterCritBonus, masterEvasionBonus, masterCutBonus, grantMasterEffect, masterBuff, masterMpSave,
@@ -993,8 +993,9 @@ function doAttack(data, game, b, i, skill, target, cm, { normalSkillReady = fals
   const kind = skill ? (skill.effect.jump_landing?'enemy':targetKind(data, { type: 'skill', skillId: skill.id }, m)) : 'enemy';
   const mainDef = m.equip.weapon ? gearDef(data, m.equip.weapon) : null;
   const wt = mainDef ? data.weaponTypes.get(mainDef.kind) : null;
-  const allMul = !skill && wt?.traits.normal_all_mul != null
-    ? memberMods(data, m).whip ?? wt.traits.normal_all_mul : null; // 鞭などの通常全体攻撃
+  const weaponAll = wt?.traits.normal_all_mul != null
+    ? memberMods(data, m).whip ?? wt.traits.normal_all_mul : 0;
+  const allMul = !skill ? Math.max(weaponAll, affixSum(m, 'NORMAL_ALL') / 100) || null : null;
   if (!skill) log(b, `${m.name}の攻撃！`);
   // 初撃は命中や正誤にかかわらず一行動で消費。全体・連打・二刀目には同じ倍率を渡す。
   const firstBonus = a.firstAttackUsed ? 0 : Math.min(f(data, 'first_hit_cap'), Math.max(0, affixSum(m, 'FIRST_HIT') / 100));
@@ -2297,5 +2298,6 @@ export function battleRewards(data, game, b, { dungeonId } = {}) {
   });
   return { xp, ap: game.party.map((m, i) => (canAct(game, b, i) ? ap : 0)) };
 }
+
 
 

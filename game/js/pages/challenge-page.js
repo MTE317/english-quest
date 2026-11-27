@@ -1,15 +1,16 @@
-import { loadGameData } from '../gamedata.js?v=workshop-materials-1';
+import { loadGameData } from '../gamedata.js?v=unique-reroll-1';
 import { loadJson, loadOptional } from '../data.js?v=skill-growth-2';
 import { splitList } from '../csv.js?v=skill-growth-2';
 import { loadLearningCatalog } from '../learning-catalog.js?v=skill-growth-2';
 import { Scheduler } from '../srs.js?v=skill-growth-2';
 import { LearningStore, now } from '../storage.js?v=skill-growth-2';
 import { GameSession } from '../save.js?v=party-wipe-1';
-import { normalizeGame } from '../game-state.js?v=workshop-materials-1';
-import { createBattle, makeEnemy, finishBattle } from '../battle.js?v=targeted-enchant-2';
+import { normalizeGame } from '../game-state.js?v=unique-reroll-1';
+import { createBattle, makeEnemy, finishBattle } from '../battle.js?v=unique-reroll-1';
 import { currentRank, returnAfterDefeat, useItemOutsideBattle, FIELD_ITEM_EFFECTS } from '../dungeon.js?v=targeted-enchant-2';
 import { nextRankStatus, checkRankUp } from '../town.js?v=public-rewards-1';
-import { makeGear, partyCanAct } from '../character.js?v=party-wipe-1';
+import { makeGear, partyCanAct } from '../character.js?v=unique-reroll-1';
+import { rollSet } from '../enchantment-roll.js?v=unique-reroll-1';
 import { arenaReviewWords } from '../study.js?v=skill-growth-2';
 import { runDualPromotionExam } from '../ui/learning-exams.js?v=skill-growth-2';
 import { createBattleView } from '../ui/battle-view.js?v=targeted-enchant-2';
@@ -96,7 +97,8 @@ function completeArena() {
     game.medals = (game.medals ?? 0) + (first ? arenaReward.medalsFirst : arenaReward.medalsRepeat);
     if (first && data.equipment.has(arenaReward.gear)) {
       const def = data.equipment.get(arenaReward.gear);
-      game.storage.gear.push(makeGear(game, def.id, { rarity: 'unique', affixes: { ...def.fixedEffects } }));
+      const rolled = rollSet(data, def, 'unique', Math.random);
+      game.storage.gear.push(makeGear(game, def.id, { rarity: 'unique', affixes: rolled.affixes, affixOrigins: rolled.origins }));
     }
     addTitle(game, arenaReward.title);
     if (timeLimit && !timedOut) addTitle(game, arenaReward.timedTitle);
@@ -210,7 +212,8 @@ function draw() {
         if (!Number.isSafeInteger(cost) || cost <= 0 || (g.medals ?? 0) < cost) throw new Error('交換に必要なメダルが足りません。');
         const def = data.equipment.get(row.gear_id);
         g.medals -= cost;
-        g.storage.gear.push(makeGear(g, def.id, { rarity: 'unique', affixes: { ...def.fixedEffects } }));
+        const rolled = rollSet(data, def, 'unique', Math.random);
+        g.storage.gear.push(makeGear(g, def.id, { rarity: 'unique', affixes: rolled.affixes, affixOrigins: rolled.origins }));
       });
       message = 'メダルを交換しました。';
       draw();

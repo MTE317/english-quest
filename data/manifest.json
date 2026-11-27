@@ -55,8 +55,6 @@
   "rarities.csv",
   "recipes.csv",
   "seasons.csv",
-  "set_items.csv",
-  "sets.csv",
   "shop_inventory.csv",
   "skills.csv",
   "skill_migration.json",
@@ -67,3 +65,4 @@
   "uniques.csv",
   "weapon_types.csv"
 ]
+
