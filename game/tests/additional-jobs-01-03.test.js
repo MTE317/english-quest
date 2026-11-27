@@ -73,14 +73,14 @@ test('追加1〜3職45技能は設計の全段階・前提・cost・MP/APに一�
   assert.equal(data.jobsById.get('necromancer').skillsReady,false);
 });
 
-test('新規・既存セーブは3職を初期から選べ、転職で技能・APを配布せず負傷も回復させない',()=>{
+test('神殿Lv2で3職を選べ、転職で技能・APを配布せず負傷も回復させない',()=>{
   const c=fixture('warrior','sword');
   c.member.hp=7;c.member.mp=3;const ap=c.member.ap;
-  c.game.unlockedJobs=[];
+  c.game.unlockedJobs=[]; c.game.facilities.temple=2;
   assert.deepEqual(availableJobs(data,c.game).filter(job=>ids.includes(job.id)).map(job=>job.id),ids);
   for(const id of ids) {changeJob(data,c.game,0,id);assert.equal(c.member.hp,7);assert.equal(c.member.mp,3);assert.equal(c.member.ap,ap);assert.deepEqual(c.member.learned,[]);}
   normalizeGame(data,c.game);normalizeGame(data,c.game);
-  assert.ok(ids.every(id=>c.game.unlockedJobs.includes(id)));
+  assert.ok(ids.every(id=>availableJobs(data,c.game).some(job=>job.id===id)));
   assert.equal(new Set(c.game.unlockedJobs).size,c.game.unlockedJobs.length);
   assert.throws(()=>changeJob(data,c.game,0,'necromancer'),/まだ選べない/);
 });

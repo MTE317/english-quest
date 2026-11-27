@@ -45,7 +45,7 @@ test('13〜15職は45技能・147段階を設計に沿って読み込み、転�
   assert.equal([...data.skills.values()].filter(s=>s.effect.master).length,390);
   let stages=0;
   for(const j of spec.jobs.filter(j=>jobs.includes(j.id))){
-    const c=fixture(j.id);
+    const c=fixture(j.id);c.game.facilities.temple=5;
     assert.ok(availableJobs(data,c.game,c.member).some(x=>x.id===j.id));
     changeJob(data,c.game,0,'warrior');changeJob(data,c.game,0,j.id);
     for(const source of j.skills){
