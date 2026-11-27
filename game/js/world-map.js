@@ -7,17 +7,19 @@ const TRIAL_DUNGEONS = Object.freeze([
   { id: 'goblin_quarry', clears: ['sunlit_forest'] },
   { id: 'ruined_fort', clears: ['mossy_cave'] },
   { id: 'misty_marsh', clears: ['sunlit_forest'] },
+  { id: 'howling_canyon', anyClears: ['ruined_fort', 'misty_marsh'] },
 ]);
 
 export const TRIAL_DUNGEON_IDS = Object.freeze(TRIAL_DUNGEONS.map(({ id }) => id));
 
 export const INITIAL_DUNGEON_IDS = Object.freeze(
-  TRIAL_DUNGEONS.filter(({ clears }) => !clears.length).map(({ id }) => id),
+  TRIAL_DUNGEONS.filter(({ clears = [], anyClears = [] }) => !clears.length && !anyClears.length).map(({ id }) => id),
 );
 
 export function meetsDiscoveryRule(game, rule) {
   return Boolean(rule)
     && (rule.clears ?? []).every((id) => (game?.cleared?.[id] ?? 0) > 0)
+    && (!rule.anyClears?.length || rule.anyClears.some(id => (game?.cleared?.[id] ?? 0) > 0))
     && (rule.flags ?? []).every((id) => game?.worldFlags?.[id] === true);
 }
 
@@ -30,6 +32,9 @@ export function isTrialDungeonUnlocked(game, dungeonId) {
 export function buildWorldMap(dungeons, availableDungeons, game) {
   const allowed = new Set(availableDungeons.map(({ id }) => id));
   return {
+    hints: TRIAL_DUNGEONS.filter(rule => rule.anyClears?.length && !allowed.has(rule.id)
+      && rule.anyClears.some(id => allowed.has(id)))
+      .map(rule => `${rule.anyClears.map(id => dungeons.get(id)?.name ?? id).join(' または ')}を踏破すると${dungeons.get(rule.id)?.name}を発見できます。`),
     dungeons: TRIAL_DUNGEONS.filter(({ id }) => allowed.has(id) && dungeons.has(id))
       .map(({ id }) => ({
         ...dungeons.get(id),

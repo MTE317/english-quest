@@ -9,14 +9,14 @@ import { roundGold } from './gold.js?v=skill-growth-2';
 //   'cleared'      … いちばん奥のボスを倒した（町に帰るだけ）
 import { createBattle, finishBattle, battleRewards, curedBy } from './battle.js?v=targeted-enchant-2';
 import { recordMonsterDefeats } from './monster-knowledge.js?v=monster-catalog-1';
-import { makeEncounter, floorRow, planBounty } from './encounter.js?v=public-rewards-1';
+import { makeEncounter, floorRow, planBounty } from './encounter.js?v=canyon-public-1';
 import { rollBattleLoot, addToBackpack, swapIntoBackpack, unloadBackpack } from './loot.js?v=jobs-intro-1';
 import { gainXp, maxHp, maxMp, affixSum, partyCanAct } from './character.js?v=party-wipe-1';
-import { advanceDays, calendarOf, countKills, refreshBoard } from './town.js?v=public-rewards-1';
+import { advanceDays, calendarOf, countKills, refreshBoard } from './town.js?v=canyon-public-1';
 import { discoverJobs, recordStoredMaterials } from './temple.js?v=skill-growth-2';
 import { memberMods } from './growth.js?v=advanced-jobs-1';
 import { planExploration, resolveExploration, commitExploration, explorationEntryAllowed } from './exploration.js?v=public-rewards-1';
-import { isTrialDungeonUnlocked, TRIAL_DUNGEON_IDS } from './world-map.js?v=jobs-intro-1';
+import { isTrialDungeonUnlocked, TRIAL_DUNGEON_IDS } from './world-map.js?v=canyon-public-1';
 
 /** 乱数の種から 0〜1 の乱数を返す関数（状態は obj[key] に入れて保存できる） */
 export function seededRng(obj, key = 'rng') {
@@ -30,7 +30,7 @@ export function currentRank(data, game) {
   return data.ranks.find((r) => r.id === game.rank) ?? data.ranks[0];
 }
 
-/** 先行5か所だけを公開。ランクではなく踏破によって新しい冒険先を発見する。 */
+/** 公開対象の地域だけを公開。ランクではなく踏破によって新しい冒険先を発見する。 */
 export function allowedDungeons(data, game) {
   return [...data.dungeons.values()]
     .filter((dungeon) => isTrialDungeonUnlocked(game, dungeon.id)
@@ -83,6 +83,9 @@ export function startRun(data, session, { dungeonId, stoneId, quizState, seed, b
     run.route = data.dungeonFloors.filter((row) => row.dungeonId === dungeonId)
       .sort((a, b) => a.floor - b.floor).map((row) => ({ ...row }));
     run.introRouteVersion = 1;
+    if (dungeonId === 'howling_canyon') run.canyonRouteVersion = 1;
+    const escorts = data.balance.dungeon?.new_route_boss_escorts?.[dungeonId];
+    if (Number.isInteger(escorts)) for (const row of run.route) row.bossEscorts = escorts;
     if (TRIAL_DUNGEON_IDS.includes(dungeonId)) {
       for (const row of run.route) row.returnPointAfter = false;
     }
@@ -116,7 +119,7 @@ export function runRoute(data, run) {
       lastBattleIsBoss: i + 1 === legacy.floors, returnPointAfter: i + 1 === legacy.return_point_floor,
     }));
     run.layoutVersion = 1;
-  } else if (!run.introRouteVersion && data.balance.dungeon?.pre_intro_routes?.[run.dungeonId]) {
+  } else if ((!run.introRouteVersion || (run.dungeonId === 'howling_canyon' && !run.canyonRouteVersion)) && data.balance.dungeon?.pre_intro_routes?.[run.dungeonId]) {
     run.route = structuredClone(data.balance.dungeon.pre_intro_routes[run.dungeonId]);
   } else {
     run.route = data.dungeonFloors.filter((row) => row.dungeonId === run.dungeonId)
@@ -206,7 +209,7 @@ export function afterBattle(data, session, updateTown) {
     if (b.result === 'win') {
       recordMonsterDefeats(g, b.enemies);
       countKills(g, b.enemies, run.dungeonId);
-      const r = battleRewards(data, g, b, { dungeonId: run.training ? undefined : run.dungeonId });
+      const r = battleRewards(data, g, b, { dungeonId: run.training || (run.dungeonId === 'howling_canyon' && !run.canyonRouteVersion) ? undefined : run.dungeonId });
       const practice = b.learningRewards;
       if (practice?.answers) {
         const scale = practice.total / practice.answers;
