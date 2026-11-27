@@ -185,6 +185,13 @@ function memberSwitcher(index, select = showMember) {
     }, portraitIcon(member.icon, { small: true }), el('span', {}, member.name))));
 }
 
+function switchMemberTab(index, tab) {
+  const { scrollX, scrollY } = window;
+  showMember(index, tab, null, { scroll: false });
+  window.scrollTo({ left: scrollX, top: scrollY, behavior: 'instant' });
+  view.querySelector('.member-main-tabs [aria-pressed="true"]')?.focus({ preventScroll: true });
+}
+
 function memberNavigation(index, active, switchMember, {
   skillMode = 'learn', onSkillLearn = () => showSkills(index), onSkillSet = () => showLoadout(index),
 } = {}) {
@@ -194,7 +201,8 @@ function memberNavigation(index, active, switchMember, {
     memberBanner(session.game.party[index]),
     el('div', { class: 'member-main-tabs', role: 'group', 'aria-label': 'キャラクターのメニュー' },
       [['skills', 'スキル'], ['equipment', '装備'], ['abilities', '能力']].map(([id, title]) =>
-        el('button', { type: 'button', 'aria-pressed': String(active === id), onclick: () => showMember(index, id) }, title))),
+        el('button', { type: 'button', 'aria-pressed': String(active === id),
+          onclick: () => { if (active !== id) switchMemberTab(index, id); } }, title))),
     active === 'skills' ? el('div', { class: 'member-skill-tabs', role: 'group', 'aria-label': 'スキルのメニュー' },
       el('button', { type: 'button', 'aria-pressed': String(skillMode === 'learn'),
         onclick: () => { if (skillMode !== 'learn') onSkillLearn(); } }, '習得'),
