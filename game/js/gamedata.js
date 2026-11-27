@@ -3,7 +3,7 @@ import { denominateGoldData } from './gold.js?v=skill-growth-2';
 // ゲームで使う data/ のファイルをまとめて読み、ID で引ける形にする。
 import { loadCsv, loadJson, loadOptional } from './data.js?v=skill-growth-2';
 import { toNumber, splitList } from './csv.js?v=skill-growth-2';
-import { STONE_STAGES, stoneFragmentId, ENCHANT_POWDER_ID } from './workshop-materials.js?v=workshop-materials-1';
+import { STONE_STAGES, stoneFragmentId, ENCHANT_POWDER_ID } from './workshop-materials.js?v=stone-fragments-1';
 
 const FILES = {
   balance: 'balance.json',
