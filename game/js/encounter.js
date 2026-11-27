@@ -108,7 +108,10 @@ export function makeEncounter(data, dungeonId, floor, rng, {
   // 保存済みの旧経路には introEncounter がないため、更新前の抽選を維持する。
   const intro = rowOverride ? rowOverride.introEncounter : data.balance.dungeon?.intro_routes?.[dungeonId];
   if (intro) {
-    const ids = intro.formations[floor - 1];
+    // 平原は各戦で1〜3体を抽選する。期待値は従来の1→2→3体と同じ。
+    const ids = dungeonId === 'windward_plain'
+      ? intro.formations[Math.floor(rng() * intro.formations.length)]
+      : intro.formations[floor - 1];
     const enemies = ids.map(id => {
       const monsterId = id === '$season' ? intro.seasonal[season] : id;
       const enemy = makeEnemy(data, monsterId, { lv: row.enemyLevel, dungeonId, boss });
