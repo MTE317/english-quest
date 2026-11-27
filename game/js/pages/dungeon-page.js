@@ -103,9 +103,8 @@ function showDeparture(message = null) {
     const fee = expeditionFee(data, dg);
     departure.disabled = !canDepart || !st.stoneId || g.gold < fee;
     render(info, el('div', { class: 'route-facts' },
-      [['階層', `${dg.floors}階`], ['所要日数', `${dg.days}日`], ['遠征費', fee ? `${fee} G` : '無料'], ['帰還', '最終戦後は無料']]
+      [['階層', `${dg.floors}階`], ['所要日数', `${dg.days}日`], ['遠征費', fee ? `${fee} G` : '無料']]
         .map(([key, value]) => el('div', {}, el('small', {}, key), el('strong', {}, value)))),
-      el('p', { class: 'muted small' }, '戦闘の間は帰還の羽で途中帰還できます（未踏破）。' + dg.character),
       !stones.length ? el('p', { class: 'error' }, '持ち込めるルーンストーンがありません。') : null,
       g.gold < fee ? el('p', { class: 'error' }, '遠征費が足りません。') : null);
   };
