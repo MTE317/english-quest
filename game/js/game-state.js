@@ -14,12 +14,13 @@ export const PARTY_SIZE = 6;
 
 /** 新規作成と旧セーブへの加入で使う、データに沿った初期メンバー。 */
 export function defaultPartySpecs(data) {
-  const names = ['アレン', 'リゼ', 'ノア', 'ミラ', 'カイ', 'エマ'];
+  const names = data.balance.new_game?.party_names ?? ['アルス', 'ミーナ', 'セシリア', 'バルト', 'エルシア', 'オーウェン'];
+  const portraits = data.balance.new_game?.party_icons ?? ['human_01', 'human_02', 'human_04', 'human_07', 'human_06', 'human_03'];
   const jobs = data.jobs.filter((job) => job.tier === 'base');
   return Array.from({ length: PARTY_SIZE }, (_, i) => ({
     name: names[i],
     job: jobs.find((job) => job.id === data.balance.new_game?.party_jobs?.[i])?.id ?? jobs[i % jobs.length].id,
-    icon: data.icons[i % data.icons.length]?.id ?? '',
+    icon: data.icons.find(icon => icon.id === portraits[i])?.id ?? data.icons[i % data.icons.length]?.id ?? '',
   }));
 }
 
