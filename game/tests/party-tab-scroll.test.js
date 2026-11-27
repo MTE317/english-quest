@@ -86,3 +86,43 @@ for (const skillMode of ['learn', 'set']) {
     });
   }
 }
+
+for (const kind of ['actions', 'passives', 'ultimate']) {
+  test(`セット内の${kind}から各種別へ切り替えても位置を保持する`, () => {
+    const calls = [], focused = [];
+    const window = { scrollX: 4, scrollY: 510, scrollTo: options => {
+      assert.equal(options.behavior, 'instant');
+      window.scrollX = options.left; window.scrollY = options.top;
+    } };
+    let rendered;
+    const context = vm.createContext({ window, kind, index: 2,
+      el: (tag, attrs, ...children) => ({ tag, attrs, children: children.flat(Infinity) }),
+      used: { actions: 0, passives: 0 }, cap: { actions: 10, passives: 10 },
+      member: { loadout: { ultimate: null } }, skills: [], message: '', isUltimateKind: kind === 'ultimate',
+      memberNavigation: () => null, render: (_view, ...children) => { rendered = children; },
+      showLoadout: (index, tab) => {
+        calls.push({ index, tab });
+        window.scrollX = 0; window.scrollY = 0;
+      },
+      view: { querySelector: selector => {
+        assert.equal(selector, '.skill-loadout-tabs [aria-selected="true"]');
+        return { focus: options => focused.push(options.preventScroll) };
+      } },
+    });
+    vm.runInContext(source.slice(source.indexOf('function switchSkillTab('), source.indexOf('function memberNavigation(')), context);
+    // 実際のセット画面のタブ生成・イベント登録を使う。
+    const tabStart = source.indexOf('  const tabs = [', source.indexOf('function showLoadout('));
+    const tabEnd = source.indexOf('  if (selected) selectSkill(selected);', tabStart);
+    vm.runInContext(source.slice(tabStart, tabEnd), context);
+    const tabs = allNodes(rendered).filter(n => n.attrs?.role === 'tab');
+    assert.equal(tabs.length, 3);
+    for (const [i, tab] of ['actions', 'passives', 'ultimate'].entries()) {
+      tabs[i].attrs.onclick();
+      assert.equal(window.scrollX, 4);
+      assert.equal(window.scrollY, 510);
+      if (tab !== kind) assert.deepEqual(calls.at(-1), { index: 2, tab });
+    }
+    assert.equal(calls.length, 2, '選択中の種別は再描画しない');
+    assert.deepEqual(focused, [true, true]);
+  });
+}

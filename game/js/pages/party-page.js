@@ -192,11 +192,11 @@ function switchMemberTab(index, tab) {
   view.querySelector('.member-main-tabs [aria-pressed="true"]')?.focus({ preventScroll: true });
 }
 
-function switchSkillTab(show) {
+function switchSkillTab(show, selector = '.member-skill-tabs [aria-pressed="true"]') {
   const { scrollX, scrollY } = window;
   show();
   window.scrollTo({ left: scrollX, top: scrollY, behavior: 'instant' });
-  view.querySelector('.member-skill-tabs [aria-pressed="true"]')?.focus({ preventScroll: true });
+  view.querySelector(selector)?.focus({ preventScroll: true });
 }
 
 function memberNavigation(index, active, switchMember, {
@@ -440,7 +440,9 @@ function showLoadout(index, kind = 'actions', message = '', skillId = '') {
     message ? el('p', { class: 'error', role: 'status' }, message) : null,
     el('div', { class: 'skill-loadout-tabs', role: 'tablist', 'aria-label': 'スキルの種類' }, tabs.map(([key, label]) =>
       el('button', { class: `skill-loadout-tab${kind === key ? ' active' : ''}`, role: 'tab', 'aria-selected': String(kind === key),
-        onclick: () => showLoadout(index, key) }, label))),
+        onclick: () => {
+          if (kind !== key) switchSkillTab(() => showLoadout(index, key), '.skill-loadout-tabs [aria-selected="true"]');
+        } }, label))),
     skills.length ? el('div', { class: 'shop-layout skill-shop-layout skill-loadout-layout' }, detail, grid)
       : el('section', { class: 'shop-detail skill-shop-empty' },
         el('p', { class: 'muted' }, isUltimateKind ? '習得済みの奥義はありません。同じ職の非奥義10種類を覚えると解禁されます。' : '習得済みのスキルはありません。'),
