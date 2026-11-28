@@ -27,7 +27,7 @@ import { playDungeonEntrance } from '../ui/dungeon-entrance.js?v=skill-growth-2'
 import { calendarOf } from '../town.js?v=world-journey-1';
 import { worldNode, ensureWorldJourney, worldEntries, exitChoices } from '../world-journey.js?v=world-journey-1';
 import { chooseWorldExit } from '../dungeon.js?v=world-journey-1';
-import { createJourneyDeparture, createJourneyMap } from '../ui/world-journey-view.js?v=world-journey-1';
+import { createJourneyDeparture, createJourneyMap } from '../ui/world-journey-view.js?v=world-destination-labels-1';
 
 const view = document.getElementById('view');
 const session = new GameSession();
@@ -199,8 +199,7 @@ function showJourneyDeparture(message) {
       selectedStone: state.stoneId, selectedDungeon: state.dungeonId,
       onStone: id => { state.stoneId = id; state.dungeonId = null; showJourneyDeparture(); },
       onDungeon: id => { state.dungeonId = id; showJourneyDeparture(); } }),
-    node ? el('div', { class: 'panel departure-plan' }, el('h3', {}, `${node.name}・敵Lv${node.level}`),
-      el('p', { class: 'muted small' }, `${node.battles}戦を終えたら、次の道を選びます。`),
+    node ? el('div', { class: 'panel departure-plan' }, el('h3', {}, node.name),
       el('label', {}, '学習する教材', lessonSelect), departure) : null,
     el('details', { class: 'panel' }, el('summary', {}, '仲間の状態'), partyPanel()),
     new URLSearchParams(location.search).has('debug') ? debugTools() : null);
@@ -229,7 +228,7 @@ function journeyExitActions(run, result) {
           finally { advancing = false; }
         },
       }, el('strong', {}, exit.label), el('span', {}, !exit.known ? '？？？' : exit.to === data.worldRoutes.startStone ? '町へ' : exit.target.name),
-      el('small', {}, exit.reason || [exit.known ? (exit.target.level ? `敵Lv${exit.target.level}` : '到着後、町に帰還') : '', exit.seasonLabel ? `${exit.seasonLabel}のみ` : ''].filter(Boolean).join('・'))))),
+      el('small', {}, exit.reason || [exit.known && !exit.target.level ? '到着後、町に帰還' : '', exit.seasonLabel ? `${exit.seasonLabel}のみ` : ''].filter(Boolean).join('・'))))),
     el('div', { class: 'journey-utilities' }, el('button', { onclick: () => showFieldItems(result) }, '道具を使う'),
       ...returnItems(data, session.game).map(id => el('button', { onclick: () => {
         if (!confirm(`${data.items.get(id).name}で町に帰りますか？`)) return;

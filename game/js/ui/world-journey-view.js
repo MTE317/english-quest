@@ -49,7 +49,7 @@ export function createJourneyMap({ data, game, season, currentKey }) {
     group.append(svgElement('text', { x: p.x, y: p.y - 4, 'text-anchor': 'middle' }, stone ? place.name : `${place.key} ${place.name}`));
     group.append(svgElement('text', { x: p.x, y: p.y + 16, class: 'journey-sub', 'text-anchor': 'middle' }, stone
       ? reached ? 'ワープ解放済み' : '未到達'
-      : `敵Lv${place.level}・${id === currentKey ? '現在地' : reached ? '到達済み' : '未到達'}`));
+      : id === currentKey ? '現在地' : reached ? '到達済み' : '未到達'));
     svg.append(group);
   }
   const routes = graph.edges.map(edge => el('li', {}, `${point(edge.from)?.name} → ${point(edge.to)?.name}（${edge.label}・${!edge.open ? edge.reason : edge.passed ? '通過済み' : '未通過'}）`));
@@ -70,7 +70,7 @@ export function createJourneyDeparture({ data, game, season, selectedStone, sele
     el('p', { class: 'muted' }, selectedStone === data.worldRoutes.startStone ? '町から冒険に出発する。' : `${stones.find(s => s.id === selectedStone)?.name}へワープして出発する。`),
     entries.length ? el('div', { class: 'atlas-destinations', role: 'group', 'aria-label': '地域の入口' }, entries.map(node => el('button', {
       type: 'button', class: 'atlas-destination', 'aria-pressed': String(selectedDungeon === node.id), onclick: () => onDungeon(node.id),
-    }, el('strong', {}, `${node.key} ${node.name}`), el('span', {}, `敵Lv${node.level}・${node.battles}戦`))))
+    }, el('strong', {}, `${node.key} ${node.name}`), el('span', {}, `${node.battles}戦`))))
       : el('p', { class: 'panel', role: 'status' }, 'この地域の続きは準備中です。ワープの解放記録は保存されています。'),
     el('details', {}, el('summary', {}, '探索の地図を見る'), createJourneyMap({ data, game, season })));
 }
