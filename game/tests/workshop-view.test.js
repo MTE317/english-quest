@@ -8,6 +8,7 @@ import { seededRng } from '../js/dungeon.js';
 import { GameSession } from '../js/save.js';
 import { rarityRange, enchantCost } from '../js/enchantment-roll.js';
 import { dismantlePowder } from '../js/workshop.js';
+import { dismantleFragment, stoneFragmentId, STONE_STAGES } from '../js/workshop-materials.js';
 
 // 実際の工房ビューが登録するボタンイベントを、町と同じfactory契約で実行する。
 class Element {
@@ -86,7 +87,7 @@ test('不足時はボタン無効・表示後の残高不足でも支払いや�
 test('強化は従来どおり一生成器、分解は確認後に一度だけ還元する', () => fixture(({game,gear,view,button,calls}) => {
   const gold=game.gold;button(view({tab:'gear',gear:gear.uid}),'強化する').click();assert.equal(calls(),1);assert.equal(gear.enh,1);assert.equal(game.gold,gold-420);assert.equal(game.storage.materials.enhancement_stone_1??0,0);
   let root=view({tab:'gear',gear:gear.uid});globalThis.confirm=()=>false;const before=structuredClone(game);button(root,/^分解する/).click();assert.deepEqual(game,before);
-  globalThis.confirm=()=>true;const powder=dismantlePowder(gear);button(root,/^分解する/).click();assert.equal(game.storage.gear.length,0);assert.equal(game.storage.materials.enchant_powder,40+powder);assert.equal(game.storage.materials.enhancement_stone_1,1);assert.equal(calls(),1);
+  globalThis.confirm=()=>true;const powder=dismantlePowder(gear), fragment=stoneFragmentId(STONE_STAGES.indexOf(dismantleFragment(data,gear))+1);button(root,/^分解する/).click();assert.equal(game.storage.gear.length,0);assert.equal(game.storage.materials.enchant_powder,40+powder);assert.equal(game.storage.materials[fragment],1);assert.equal(game.storage.materials.enhancement_stone_1,undefined);assert.equal(calls(),1);
 }));
 
 test('過去に保存されたnullや空の抽選結果・残高を自動復旧しない', () => fixture(({game,gear}) => {

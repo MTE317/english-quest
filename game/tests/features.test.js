@@ -79,11 +79,13 @@ test('制作、分解、強化、調合と施設投資が在庫や資金に反�
   const dummy = makeGear(g, 'sword_t1');
   g.storage.gear.push(dummy);
   dismantle(data, g, dummy);
-  assert.equal(g.storage.materials.enhancement_stone_1, 1);
-  g.storage.materials.enhancement_stone_1 += 2;
+  assert.equal(g.storage.materials.enhancement_stone_fragment_1, 1);
+  assert.equal(g.storage.materials.enhancement_stone_1, undefined);
+  g.storage.materials.enhancement_stone_1 = 3;
   enhance(data, g, gear, () => 0);
   assert.equal(gear.enh, 1);
   assert.equal(g.storage.materials.enhancement_stone_1, undefined);
+  assert.equal(g.storage.materials.enhancement_stone_fragment_1, 1);
   const recipe = data.alchemyRecipes.find((r) => r.result === 'buff_str_1');
   brew(data, g, recipe);
   assert.equal(g.items[recipe.result], Number(recipe.qty));
