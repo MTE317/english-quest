@@ -54,6 +54,8 @@ export function realGameData({ world = false } = {}) {
     icons: readCsv('appearance_icons.csv').rows,
     rarities: readCsv('rarities.csv').rows,
     monsters: readCsv('monsters.csv').rows,
+    monsterStats: readCsv('monster_stats.csv').rows,
+    monsterElites: readJson('monster_elites.json'),
     monsterTypes: readCsv('monster_types.csv').rows,
     elements: readCsv('elements.csv').rows,
     statusEffects: readCsv('status_effects.csv').rows,

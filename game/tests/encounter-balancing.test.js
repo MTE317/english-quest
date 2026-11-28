@@ -106,9 +106,9 @@ test('季節の地以外でも現在の季節の敵だけが出現する', () =>
   assert.ok(sawSeasonal);
 });
 
-test('冠付きは初心者・ボス・賞金首を避け、通常戦でも上限を守る', () => {
+test('対象種だけがエリートになり、ボス・賞金首を避け、通常戦でも上限を守る', () => {
   const dungeon = [...data.dungeons.values()].find((d) => d.rank === data.balance.dungeon.elite_min_star);
-  const normal = makeEncounter(data, dungeon.id, 1, () => 0, { elites: true, season: 'spring' });
+  const normal = makeEncounter(realGameData({ world: true }), 'world_a', 1, () => 0, { elites: true, season: 'spring' });
   assert.equal(normal.filter((enemy) => enemy.eliteId).length, 1);
   assert.ok(makeEncounter(data, 'mossy_cave', 1, () => 0, { elites: true }).every((enemy) => !enemy.eliteId));
   assert.ok(makeEncounter(data, dungeon.id, dungeon.floors, () => 0, { boss: true, elites: true }).every((enemy) => !enemy.eliteId));

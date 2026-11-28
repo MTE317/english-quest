@@ -1,0 +1,29 @@
+[
+  {
+    "width": 320,
+    "sameLevel": true,
+    "sameSpeciesName": true,
+    "eliteMarked": true,
+    "stronger": true,
+    "reloadPreserved": true,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "sameLevel": true,
+    "sameSpeciesName": true,
+    "eliteMarked": true,
+    "stronger": true,
+    "reloadPreserved": true,
+    "errors": []
+  },
+  {
+    "width": 1000,
+    "sameLevel": true,
+    "sameSpeciesName": true,
+    "eliteMarked": true,
+    "stronger": true,
+    "reloadPreserved": true,
+    "errors": []
+  }
+]

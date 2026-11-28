@@ -1,7 +1,7 @@
-import { publicMonsterReward } from '../monster-rewards.js?v=world-journey-1';
+import { publicMonsterReward } from '../monster-rewards.js?v=fixed-monsters-1';
 import { el, render } from '../dom.js?v=skill-growth-2';
 import { catalogMonsters, monsterUnlocks } from '../monster-catalog.js?v=canyon-public-1';
-import { monsterKnowledge } from '../monster-knowledge.js?v=monster-catalog-1';
+import { monsterKnowledge } from '../monster-knowledge.js?v=fixed-monsters-1';
 
 const waiting = (count, threshold) => `未解放（討伐 ${count}/${threshold}）`;
 const row = (label, value) => el('div', { class: 'monster-catalog-row' }, el('dt', {}, label), el('dd', {}, value));
@@ -12,7 +12,7 @@ function detail(data, game, monster) {
   const threshold = monster.isBoss ? { elements: 2, hp: 1, types: 1, statuses: 3, stats: 4, drops: 5 }
     : { elements: 3, hp: 1, types: 2, statuses: 10, stats: 20, drops: 30 };
   const unlock = (key, value) => known[key] ? value : waiting(count, threshold[key]);
-  const sample = game.catalog?.sightings?.[monster.id];
+  const sample = monster.fixedStats ? { ...monster.fixedStats, lv: monster.fixedStats.level } : game.catalog?.sightings?.[monster.id];
   const affinity = monsterKnowledge(data, game, { ...monster, monsterId: monster.id });
   const seenElements = [...affinity.weak, ...affinity.resist, ...affinity.normal];
   const elementText = [...data.elements.values()].filter(e => e.id !== 'none').map(e => {
@@ -28,7 +28,7 @@ function detail(data, game, monster) {
   const unique = [...data.equipment.values()].filter(gear => gear.unique && gear.source === monster.id);
   drops.push(...unique.map(gear => gear.name));
   const stolen = monster.materialCommon ? data.materials.get(monster.materialCommon)?.name ?? monster.materialCommon : 'なし';
-  const stats = sample ? `Lv ${sample.lv}での記録：MP ${sample.mp}・攻撃 ${Math.round(sample.str)}・魔力 ${Math.round(sample.mag)}・防御 ${Math.round(sample.def)}・魔防 ${Math.round(sample.res)}・素早さ ${Math.round(sample.spd)}`
+  const stats = sample ? `${monster.fixedStats ? '通常個体・固定Lv' : '記録Lv'} ${sample.lv}：MP ${sample.mp}・攻撃 ${Math.round(sample.str)}・魔力 ${Math.round(sample.mag)}・防御 ${Math.round(sample.def)}・魔防 ${Math.round(sample.res)}・素早さ ${Math.round(sample.spd)}`
     : '戦闘での記録なし';
   const reward = publicMonsterReward(data, monster);
   const xp = reward ? `公開ダンジョンの基礎経験値 ${reward.exp}（冠・仲間のレベルなどで変動）` : sample ? `基礎経験値の目安 ${Math.round((6 + 3.2 * sample.lv) * (monster.isBoss ? 5 : 1))}（仲間のレベルなどで変動）` : '';
@@ -36,7 +36,7 @@ function detail(data, game, monster) {
     el('header', {}, el('span', { class: 'shop-item-icon', 'aria-hidden': 'true' }, monster.icon), el('h2', {}, monster.name)),
     el('p', { class: 'shop-description' }, `討伐 ${count}体${monster.isBoss ? '・ボス' : ''}`),
     el('dl', { class: 'monster-catalog-facts' },
-      row('最大HP', unlock('hp', sample ? `${sample.hp}（記録したLv ${sample.lv}での値）` : '戦闘での記録なし')),
+      row('最大HP', unlock('hp', sample ? `${sample.hp}（${monster.fixedStats ? '通常個体・固定Lv' : '記録したLv'} ${sample.lv}）` : '戦闘での記録なし')),
       row('種族', unlock('types', monster.types.map(id => data.monsterTypes.get(id)?.name ?? id).join('・'))),
       row('攻撃属性相性', known.elements ? elementText : seenElements.length ? `判明済み：${seenElements.join('・')} ／ ${waiting(count, threshold.elements)}` : waiting(count, threshold.elements)),
       row('状態異常相性', unlock('statuses', statusText)),

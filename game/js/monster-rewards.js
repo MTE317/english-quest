@@ -20,7 +20,7 @@ export function fixedBattleRewards(data, enemies, dungeonId) {
   if ((!data.balance.rewards.fixed_monster_dungeons?.includes(dungeonId) && !data.worldRoutes?.nodes.some(n => n.id === dungeonId)) || !enemies.length) return null;
   const monsters = enemies.map(e => data.monsters.get(e.monsterId));
   if (!monsters.every(configured)) return null;
-  return monsters.map((monster, i) => ({ exp: monster.baseExp, ap: monster.baseAp + (enemies[i].eliteId ? 1 : 0) }));
+  return monsters.map((monster, i) => ({ exp: monster.baseExp, ap: monster.baseAp + (enemies[i].eliteId && enemies[i].eliteId !== 'elite' ? 1 : 0) }));
 }
 
 /** 図鑑の値は公開地域での基礎値と明記し、遭遇Lvから再計算しない。 */

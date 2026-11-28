@@ -4,9 +4,9 @@ import { roundGold, goldScale, goldLimit } from './gold.js?v=skill-growth-2';
 import { evaluate } from './expr.js?v=skill-growth-2';
 import { makeGear, maxHp, maxMp, gearDef } from './character.js?v=advanced-jobs-1';
 import { equipmentTier } from './equipment-scaling.js?v=equipment-rarity-1';
-import { addItem } from './loot.js?v=world-journey-1';
-import { currentRank, allowedDungeons } from './dungeon.js?v=world-journey-1';
-import { monsterPool } from './encounter.js?v=world-journey-1';
+import { addItem } from './loot.js?v=fixed-monsters-1';
+import { currentRank, allowedDungeons } from './dungeon.js?v=fixed-monsters-1';
+import { monsterPool } from './encounter.js?v=fixed-monsters-1';
 import { unlockReportedHuntJobs } from './temple.js?v=skill-growth-2';
 
 export const TOWN_FORMULAS = Object.freeze({

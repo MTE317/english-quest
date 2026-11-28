@@ -8,15 +8,15 @@ import { roundGold } from './gold.js?v=skill-growth-2';
 //   'loot'         … 拾ったものがバックパックに入りきらない（入れ替えるかあきらめるかを選ぶ）
 //   'return_point' … 帰還ポイント（帰るか先へ進むかを選ぶ）
 //   'cleared'      … 最終戦を終えた（新経路は出口3択、旧経路は帰還）
-import { createBattle, finishBattle, battleRewards, curedBy } from './battle.js?v=world-journey-1';
-import { recordMonsterDefeats } from './monster-knowledge.js?v=monster-catalog-1';
-import { makeEncounter, floorRow, planBounty } from './encounter.js?v=world-journey-1';
-import { rollBattleLoot, addToBackpack, swapIntoBackpack, unloadBackpack } from './loot.js?v=world-journey-1';
+import { createBattle, finishBattle, battleRewards, curedBy } from './battle.js?v=fixed-monsters-1';
+import { recordMonsterDefeats } from './monster-knowledge.js?v=fixed-monsters-1';
+import { makeEncounter, floorRow, planBounty } from './encounter.js?v=fixed-monsters-1';
+import { rollBattleLoot, addToBackpack, swapIntoBackpack, unloadBackpack } from './loot.js?v=fixed-monsters-1';
 import { gainXp, maxHp, maxMp, affixSum, partyCanAct } from './character.js?v=party-wipe-1';
-import { advanceDays, calendarOf, countKills, refreshBoard } from './town.js?v=world-journey-1';
+import { advanceDays, calendarOf, countKills, refreshBoard } from './town.js?v=fixed-monsters-1';
 import { discoverJobs, recordStoredMaterials } from './temple.js?v=skill-growth-2';
 import { memberMods } from './growth.js?v=advanced-jobs-1';
-import { planExploration, resolveExploration, commitExploration, explorationEntryAllowed } from './exploration.js?v=world-journey-1';
+import { planExploration, resolveExploration, commitExploration, explorationEntryAllowed } from './exploration.js?v=fixed-monsters-1';
 import { isTrialDungeonUnlocked, TRIAL_DUNGEON_IDS } from './world-map.js?v=canyon-public-1';
 
 /** 乱数の種から 0〜1 の乱数を返す関数（状態は obj[key] に入れて保存できる） */
@@ -218,7 +218,7 @@ export function startNextBattle(data, session) {
   run.explorationNotices = [];
   const bounty = run.bounty?.floor === run.floor && run.bounty?.battle === run.battleIndex ? run.bounty.monsterId : null;
   const season = calendarOf(data, session.game.day).season?.id;
-  const maxElites = Math.max(0, (data.balance.dungeon?.elite_max_per_run ?? Infinity) - (run.elitesSeen ?? 0));
+  const maxElites = Math.max(0, (data.monsterElites?.maxPerExpedition ?? data.balance.dungeon?.elite_max_per_run ?? Infinity) - (run.elitesSeen ?? 0));
   const enemies = makeEncounter(data, run.dungeonId, run.floor, rng, {
     boss: isBossBattle(data, run), season, bountyId: bounty, elites: true, maxElites,
     quests: session.game.quests ?? [], rowOverride: runFloorRow(data, run),

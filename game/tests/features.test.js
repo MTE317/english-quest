@@ -113,8 +113,7 @@ test('季節の敵と賞金首は連続クエスト廃止後も出現する', ()
   const enemies = makeEncounter(data, 'goblin_quarry', 1, () => 0, { bountyId: 'bounty_01_1', elites: true });
   assert.equal(enemies[0].bounty, true);
   assert.ok(enemies.every(e => !e.eliteId));
-  const eligible = [...data.dungeons.values()].find(d => d.rank === data.balance.dungeon.elite_min_star);
-  const eliteEnemies = makeEncounter(data, eligible.id, 1, () => 0, { elites: true });
+  const eliteEnemies = makeEncounter(realGameData({ world: true }), 'world_a', 1, () => 0, { elites: true });
   assert.equal(eliteEnemies.filter(e => e.eliteId).length, 1);
   assert.equal(data.questChains, undefined);
 });
@@ -154,3 +153,4 @@ test('場面の4択と空欄の4択は正解を一つだけ含む', () => {
   }
 });
 
+import { realGameData } from './helpers.js';

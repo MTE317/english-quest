@@ -1,5 +1,5 @@
 // 戦闘と同じ付与率を基準にした、通常時の状態異常のかかりやすさ。
-import { allyStatusChance } from './battle.js?v=world-journey-1';
+import { allyStatusChance } from './battle.js?v=fixed-monsters-1';
 import { computeStats } from './character.js?v=advanced-jobs-1';
 
 export const STATUS_SUSCEPTIBILITY = Object.freeze([
