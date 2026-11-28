@@ -30,7 +30,7 @@ test('全1024種が固定Lvと能力を持ち、指定Lv・場所・★が変わ
 
 test('ダンジョンの中でも種によってLvが異なり、HP補正は重ならない',()=>{
   const a=makeEncounter(data,'world_a',1,()=>0);
-  const e=makeEncounter(data,'world_e',1,()=>.6);
+  const e=makeEncounter(data,'world_e',1,()=>0);
   assert.equal(a[0].monsterId,'slime');assert.equal(e[0].monsterId,'slime');
   assert.deepEqual(stats(a[0]),stats(e[0]));
   const seen=new Map(),rng=seededRng(19);

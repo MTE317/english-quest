@@ -50,7 +50,9 @@
       "battles": 3,
       "pool": [
         "slime",
-        "nut_squirrel"
+        "nut_squirrel",
+        "pollen_bug",
+        "snow_hare"
       ],
       "counts": [
         1,
@@ -72,7 +74,14 @@
           "direction": "right",
           "to": "origin"
         }
-      ]
+      ],
+      "weights": {
+        "slime": 55,
+        "nut_squirrel": 30,
+        "pollen_bug": 15,
+        "snow_hare": 15
+      },
+      "soloMonsters": []
     },
     {
       "key": "B",
@@ -83,8 +92,10 @@
       "rank": 1,
       "battles": 3,
       "pool": [
+        "slime",
         "cave_rat",
-        "slime"
+        "cave_bat",
+        "m01_001"
       ],
       "counts": [
         1,
@@ -106,7 +117,14 @@
           "direction": "right",
           "to": "C"
         }
-      ]
+      ],
+      "weights": {
+        "slime": 25,
+        "cave_rat": 40,
+        "cave_bat": 25,
+        "m01_001": 10
+      },
+      "soloMonsters": []
     },
     {
       "key": "C",
@@ -118,7 +136,12 @@
       "battles": 3,
       "pool": [
         "skeleton",
-        "fort_bandit"
+        "fort_bandit",
+        "poison_spider",
+        "wandering_armor",
+        "fire_lizard",
+        "dark_crow",
+        "ice_ghost"
       ],
       "counts": [
         1,
@@ -140,7 +163,17 @@
           "direction": "right",
           "to": "F"
         }
-      ]
+      ],
+      "weights": {
+        "skeleton": 40,
+        "fort_bandit": 25,
+        "poison_spider": 20,
+        "wandering_armor": 10,
+        "fire_lizard": 10,
+        "dark_crow": 10,
+        "ice_ghost": 10
+      },
+      "soloMonsters": []
     },
     {
       "key": "D",
@@ -151,8 +184,10 @@
       "rank": 1,
       "battles": 3,
       "pool": [
+        "wolf_pup",
         "goblin",
-        "wolf_pup"
+        "m01_002",
+        "cave_rat"
       ],
       "counts": [
         1,
@@ -174,7 +209,14 @@
           "direction": "right",
           "to": "B"
         }
-      ]
+      ],
+      "weights": {
+        "wolf_pup": 35,
+        "goblin": 30,
+        "m01_002": 25,
+        "cave_rat": 10
+      },
+      "soloMonsters": []
     },
     {
       "key": "E",
@@ -185,8 +227,12 @@
       "rank": 1,
       "battles": 3,
       "pool": [
+        "slime",
         "nut_squirrel",
-        "slime"
+        "poison_cap",
+        "prank_pixie",
+        "mushroom_soldier",
+        "glowmoss_sprite"
       ],
       "counts": [
         1,
@@ -208,7 +254,16 @@
           "direction": "right",
           "to": "L"
         }
-      ]
+      ],
+      "weights": {
+        "slime": 15,
+        "nut_squirrel": 35,
+        "poison_cap": 25,
+        "prank_pixie": 15,
+        "mushroom_soldier": 15,
+        "glowmoss_sprite": 10
+      },
+      "soloMonsters": []
     },
     {
       "key": "F",
@@ -220,7 +275,10 @@
       "battles": 3,
       "pool": [
         "marsh_frog",
-        "mud_slime"
+        "mud_slime",
+        "wisp_dragonfly",
+        "bog_zombie",
+        "fire_lizard"
       ],
       "counts": [
         1,
@@ -242,7 +300,15 @@
           "direction": "right",
           "to": "E"
         }
-      ]
+      ],
+      "weights": {
+        "marsh_frog": 35,
+        "mud_slime": 30,
+        "wisp_dragonfly": 25,
+        "bog_zombie": 10,
+        "fire_lizard": 10
+      },
+      "soloMonsters": []
     },
     {
       "key": "G",
@@ -253,8 +319,11 @@
       "rank": 2,
       "battles": 3,
       "pool": [
+        "skeleton",
         "fort_bandit",
-        "stone_statue"
+        "stone_statue",
+        "paper_golem",
+        "rock_troll"
       ],
       "counts": [
         1,
@@ -276,6 +345,16 @@
           "direction": "right",
           "to": "F"
         }
+      ],
+      "weights": {
+        "skeleton": 20,
+        "fort_bandit": 30,
+        "stone_statue": 35,
+        "paper_golem": 10,
+        "rock_troll": 5
+      },
+      "soloMonsters": [
+        "rock_troll"
       ]
     },
     {
@@ -287,8 +366,12 @@
       "rank": 1,
       "battles": 3,
       "pool": [
+        "slime",
         "nut_squirrel",
-        "slime"
+        "prank_pixie",
+        "pollen_bug",
+        "snow_hare",
+        "mushroom_soldier"
       ],
       "counts": [
         1,
@@ -310,7 +393,16 @@
           "direction": "right",
           "to": "origin"
         }
-      ]
+      ],
+      "weights": {
+        "slime": 20,
+        "nut_squirrel": 30,
+        "prank_pixie": 25,
+        "pollen_bug": 15,
+        "snow_hare": 15,
+        "mushroom_soldier": 15
+      },
+      "soloMonsters": []
     },
     {
       "key": "I",
@@ -322,7 +414,9 @@
       "battles": 3,
       "pool": [
         "wolf_pup",
-        "goblin"
+        "m01_001",
+        "m01_006",
+        "prank_pixie"
       ],
       "counts": [
         1,
@@ -347,7 +441,14 @@
             "spring"
           ]
         }
-      ]
+      ],
+      "weights": {
+        "wolf_pup": 35,
+        "m01_001": 25,
+        "m01_006": 20,
+        "prank_pixie": 20
+      },
+      "soloMonsters": []
     },
     {
       "key": "J",
@@ -358,8 +459,12 @@
       "rank": 2,
       "battles": 3,
       "pool": [
-        "marsh_frog",
-        "wandering_armor"
+        "wandering_armor",
+        "wisp_dragonfly",
+        "paper_golem",
+        "living_tome",
+        "rogue_mage",
+        "owl_sage"
       ],
       "counts": [
         1,
@@ -381,6 +486,17 @@
           "direction": "right",
           "to": "origin"
         }
+      ],
+      "weights": {
+        "wandering_armor": 35,
+        "wisp_dragonfly": 15,
+        "paper_golem": 20,
+        "living_tome": 15,
+        "rogue_mage": 10,
+        "owl_sage": 5
+      },
+      "soloMonsters": [
+        "owl_sage"
       ]
     },
     {
@@ -392,8 +508,14 @@
       "rank": 3,
       "battles": 3,
       "pool": [
+        "stone_statue",
         "canyon_wolf",
-        "wind_spirit"
+        "harpy",
+        "wind_spirit",
+        "owl_sage",
+        "rock_troll",
+        "kamaitachi",
+        "thunderbird"
       ],
       "counts": [
         1,
@@ -415,6 +537,22 @@
           "direction": "right",
           "to": "G"
         }
+      ],
+      "weights": {
+        "stone_statue": 10,
+        "canyon_wolf": 30,
+        "harpy": 25,
+        "wind_spirit": 20,
+        "owl_sage": 5,
+        "rock_troll": 5,
+        "kamaitachi": 3,
+        "thunderbird": 3
+      },
+      "soloMonsters": [
+        "owl_sage",
+        "rock_troll",
+        "kamaitachi",
+        "thunderbird"
       ]
     },
     {
@@ -426,8 +564,10 @@
       "rank": 1,
       "battles": 3,
       "pool": [
+        "wolf_pup",
         "goblin",
-        "cave_rat"
+        "m01_001",
+        "poison_spider"
       ],
       "counts": [
         1,
@@ -449,7 +589,14 @@
           "direction": "right",
           "to": "origin"
         }
-      ]
+      ],
+      "weights": {
+        "wolf_pup": 20,
+        "goblin": 25,
+        "m01_001": 20,
+        "poison_spider": 35
+      },
+      "soloMonsters": []
     },
     {
       "key": "M",
@@ -460,8 +607,10 @@
       "rank": 1,
       "battles": 3,
       "pool": [
+        "cave_rat",
         "goblin",
-        "slime"
+        "m01_002",
+        "wolf_pup"
       ],
       "counts": [
         1,
@@ -483,7 +632,15 @@
           "direction": "right",
           "to": "L"
         }
-      ]
+      ],
+      "weights": {
+        "cave_rat": 30,
+        "goblin": 25,
+        "m01_002": 25,
+        "wolf_pup": 20
+      },
+      "soloMonsters": []
     }
-  ]
+  ],
+  "maxHealersPerBattle": 1
 }
