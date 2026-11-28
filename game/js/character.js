@@ -3,7 +3,7 @@
 // シミュレーター（sim/core.py）と同じ式を下の SIM_FORMULAS に置いて使う。docs/requests.md で balance.json への追加を依頼済み。
 import { evaluate, isFormula } from './expr.js?v=skill-growth-2';
 import { equipmentTier, rarityBonus } from './equipment-scaling.js?v=equipment-rarity-1';
-import { memberMods, masteryMul, ensureLoadout } from './growth.js?v=advanced-jobs-1';
+import { memberMods, masteryMul, ensureLoadout, effectiveSkill, skillWeaponBlock } from './growth.js?v=advanced-jobs-1';
 
 export const STATS = ['hp', 'mp', 'str', 'mag', 'def', 'res', 'spd', 'luk'];
 export const STAT_LABEL = { hp: 'HP', mp: 'MP', str: 'STR', mag: 'MAG', def: 'DEF', res: 'RES', spd: 'SPD', luk: 'LUK' };
@@ -286,20 +286,105 @@ export function unequip(data, game, member, slot) {
   clampHpMp(data, member);
 }
 
-/** 所持品と現在の装備から、各枠の最高アイテムレベル（同点なら強化値）を選ぶ。 */
+/** 汎用おすすめの評価。敵の弱点や特定の状態耐性への対策は固定枠で指定する。 */
+function recommendationProfile(data, member, skills) {
+  const job = data.jobsById.get(member.job);
+  const ref = job.statReference ?? '';
+  let physical = /STR/.test(ref) ? 2 : 0;
+  let magical = /MAG/.test(ref) ? 2 : 0;
+  if (!physical && !magical) {
+    const magicalStart = data.weaponTypes.get(job.startWeapon)?.attackStat === 'mag';
+    physical = magicalStart ? 0 : 2;
+    magical = magicalStart ? 2 : 0;
+  }
+  let healing = /回復/.test(job.role ?? '') ? 2 : 0;
+  for (const skill of skills) {
+    if (skill.effect?.base === 'mag') magical++;
+    if (['weapon', 'str', 'spd', 'luk'].includes(skill.effect?.base)) physical++;
+    if (skill.kind === 'heal') { magical++; healing++; }
+  }
+  return { magic: magical / (physical + magical), healing: healing > 0,
+    scythe: skills.some(skill => skill.effect?.rules?.scythe_spell),
+    tank: /護衛|防御|かばう/.test(job.role ?? '') };
+}
+
+function recommendationScore(data, member, profile) {
+  const st = computeStats(data, member);
+  const wt = member.equip.weapon && data.weaponTypes.get(gearDef(data, member.equip.weapon).kind);
+  const traits = wt?.traits ?? {};
+  const rate = key => Math.max(0, Math.min(100, affixSum(member, key))) / 100;
+  const physical = (st.str * (traits.str_mul ?? 1) + st.attack)
+    * (traits.weapon_skill_mul ?? 1) * (1 + st.crit * (0.5 + rate('CRIT_DMG')))
+    * (1 + rate('DEF_PIERCE') * 0.25 + rate('EXTRA_HIT') * 0.5);
+  // サブ武器は通常攻撃だけに寄与するため、通常攻撃と技能を半々とした汎用評価。
+  const offType = member.equip.offhand && data.weaponTypes.get(gearDef(data, member.equip.offhand).kind);
+  const offhand = offType
+    ? (st.str * (offType.traits?.str_mul ?? 1) + st.offhandAttack)
+      * (data.balance.battle.dual_wield_second_hit ?? 0.5) * 0.5 : 0;
+  const spell = spellPower(data, member) + (profile.scythe ? scytheSpellPower(data, member) : 0);
+  const magical = (st.mag * (traits.mag_mul ?? 1) + spell)
+    * (profile.healing ? (traits.heal_mul ?? 1) * (1 + rate('HEAL_POWER')) : 1);
+  const offense = (1 - profile.magic) * (physical + offhand) + profile.magic * magical;
+  // HPとMPは他の能力より桁が大きいため重みを下げる。適性・熟練・追加効果は実能力へ反映済み。
+  return offense + (st.def + st.res + st.hp / 8) * (profile.tank ? 0.65 : 0.3)
+    + st.mp * (profile.magic ? 0.12 : 0.04) + st.spd * 0.5 + st.luk * 0.1
+    + st.evasion * 30 + st.statusResist * 15
+    + (rate('PHYS_CUT') + rate('MAGIC_CUT')) * (profile.tank ? 60 : 30)
+    + rate('MP_SAVE') * (profile.magic ? 20 : 10);
+}
+
+/** 現在装備と所持品から選ぶ。他メンバーの装備・固定枠・使用可能な技能を保護する。 */
 export function equipRecommended(data, game, member) {
-  let changed = 0;
-  for (const slot of SLOTS) {
-    const current = member.equip[slot];
-    const kind = SLOT_KIND[slot];
-    const candidates = [current, ...game.storage.gear].filter(gear => gear && gearDef(data, gear).slot === kind);
-    const eligible = candidates.filter(gear => canEquip(data, member, slot, gear).ok);
-    eligible.sort((a, b) => gearDef(data, b).star - gearDef(data, a).star || rarityBonus(data, b.rarity).base - rarityBonus(data, a.rarity).base || (b.enh ?? 0) - (a.enh ?? 0));
-    const best = eligible[0];
-    if (best && best.uid !== current?.uid) {
-      equipFromStorage(data, game, member, slot, best.uid);
-      changed++;
+  // 評価中のパッシブ正規化などで実セーブを書き換えない。
+  const probe = structuredClone(member);
+  const original = { ...member.equip };
+  const pool = [...new Map([...Object.values(original), ...game.storage.gear]
+    .filter(Boolean).map(gear => [gear.uid, gear])).values()];
+  const locks = member.equipmentLocks ?? {};
+  const ids = [...(member.loadout?.actions ?? []), ...(member.loadout?.passives ?? []), member.loadout?.ultimate];
+  const skills = [...new Set(ids.filter(Boolean))].map(id => data.skills.get(id)).filter(Boolean)
+    .map(skill => effectiveSkill(data, probe, skill));
+  const protectedSkills = skills.filter(skill => !skillWeaponBlock(data, probe, skill));
+  const profile = recommendationProfile(data, member, skills);
+  let best = { ...original };
+  probe.equip = best;
+  let score = recommendationScore(data, probe, profile);
+  const consider = equip => {
+    const used = new Set();
+    probe.equip = equip;
+    for (const slot of SLOTS) {
+      const gear = equip[slot];
+      if (locks[slot] && gear?.uid !== original[slot]?.uid) return;
+      if (!gear) continue;
+      if (used.has(gear.uid) || !canEquip(data, probe, slot, gear).ok) return;
+      used.add(gear.uid);
     }
+    if (protectedSkills.some(skill => skillWeaponBlock(data, probe, skill))) return;
+    const next = recommendationScore(data, probe, profile);
+    // 同点では変更しない。再実行でも同じ装備に落ち着く。
+    if (next > score + 1e-8) { score = next; best = { ...equip }; }
+  };
+  const candidates = slot => locks[slot] ? [original[slot]]
+    : [best[slot], null, ...pool.filter(gear => gearDef(data, gear).slot === SLOT_KIND[slot])];
+  // 主副武器とアクセサリーはペア評価。他の枠は改善がなくなるまで反復。
+  let previous;
+  do {
+    previous = score;
+    for (const [a, b] of [['weapon', 'offhand'], ['accessory1', 'accessory2']]) {
+      for (const first of candidates(a)) for (const second of candidates(b)) {
+        consider({ ...best, [a]: first, [b]: second });
+      }
+    }
+    for (const slot of ['head', 'body', 'arm', 'cloak']) {
+      for (const gear of candidates(slot)) consider({ ...best, [slot]: gear });
+    }
+  } while (score > previous + 1e-8);
+  const changed = SLOTS.filter(slot => best[slot]?.uid !== original[slot]?.uid).length;
+  if (changed) {
+    const equipped = new Set(Object.values(best).filter(Boolean).map(gear => gear.uid));
+    game.storage.gear = pool.filter(gear => !equipped.has(gear.uid));
+    member.equip = best;
+    clampHpMp(data, member);
   }
   return changed;
 }

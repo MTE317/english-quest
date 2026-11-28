@@ -119,8 +119,11 @@
   padding: 0;
   list-style: none;
 }
+.equipment-slots > li { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.equipment-slots > li > label { display: flex; align-items: center; gap: 4px; min-height: 36px; }
+.equipment-slots input[type="checkbox"] { width: 18px; height: 18px; flex: 0 0 auto; margin: 0; }
 .equipment-slots button {
-  height: 100%;
+  flex: 1;
   min-height: 72px;
   margin: 0;
   padding: 8px 10px;
