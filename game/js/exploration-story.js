@@ -1,6 +1,11 @@
-import { allowedDungeons } from './dungeon.js?v=canyon-public-1';
+import { allowedDungeons } from './dungeon.js?v=world-journey-1';
 
 function availableStories(data, game) {
+  if (game.worldJourney) return (data.balance.exploration_stories ?? []).filter(story => {
+    const record = game.explorationStories?.[story.id];
+    return record && !record.claimed && (game.cleared?.[story.dungeon] ?? 0) > record.clearsAtAcceptance
+      && (!story.objectiveFlag || game.worldFlags?.[story.objectiveFlag] === true);
+  });
   const reachable = new Set(allowedDungeons(data, game).map(d => d.id));
   return (data.balance.exploration_stories ?? []).filter(story =>
     (reachable.has(story.dungeon) || Boolean(game.explorationStories?.[story.id])) &&
@@ -12,7 +17,7 @@ function availableStories(data, game) {
 export function explorationStories(data, game, area) {
   return availableStories(data, game).filter(story =>
     !game.explorationStories?.[story.id]?.claimed &&
-    (!area || area.dungeons.some(d => d.id === story.dungeon))).map(story => {
+    (!area || game.worldJourney || area.dungeons.some(d => d.id === story.dungeon))).map(story => {
     const record = game.explorationStories?.[story.id];
     return { ...story, accepted: Boolean(record),
       ready: Boolean(record && (game.cleared?.[story.dungeon] ?? 0) > record.clearsAtAcceptance &&

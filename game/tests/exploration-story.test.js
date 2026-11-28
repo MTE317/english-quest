@@ -7,6 +7,7 @@ import { explorationStories, acceptExplorationStory, reportExplorationStory } fr
 
 test('現在遊べる探索依頼は安全帰還後に掲示し、新規踏破で一度だけ報酬を受け取る', () => {
   const data = loadData();
+  delete data.worldRoutes; // 進行中の旧遠征・旧イベントの互換性を検証する。
   const game = createNewGame(data, defaultPartySpecs(data));
   const [first, second] = data.balance.exploration_stories;
   game.cleared = { [first.dungeon]: 1, [second.dungeon]: 1 };

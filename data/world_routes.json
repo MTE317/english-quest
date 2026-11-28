@@ -1,0 +1,515 @@
+{
+  "version": 1,
+  "startStone": "origin",
+  "expeditionDays": 1,
+  "expeditionFee": 0,
+  "defaultBattles": 3,
+  "stones": [
+    {
+      "id": "origin",
+      "name": "始まりのワールドストーン",
+      "entries": [
+        "A",
+        "E",
+        "H",
+        "M"
+      ],
+      "x": 1.5,
+      "y": -1
+    },
+    {
+      "id": "stone_2",
+      "name": "ワールドストーン2",
+      "entries": [],
+      "x": 0,
+      "y": 5
+    },
+    {
+      "id": "stone_3",
+      "name": "ワールドストーン3",
+      "entries": [],
+      "x": 2,
+      "y": 5
+    },
+    {
+      "id": "stone_4",
+      "name": "ワールドストーン4",
+      "entries": [],
+      "x": 3,
+      "y": 4
+    }
+  ],
+  "nodes": [
+    {
+      "key": "A",
+      "id": "world_a",
+      "name": "川沿いの草原",
+      "source": "windward_plain",
+      "level": 1,
+      "rank": 1,
+      "battles": 3,
+      "pool": [
+        "slime",
+        "nut_squirrel"
+      ],
+      "counts": [
+        1,
+        2
+      ],
+      "hpMul": 0.58,
+      "bossId": "",
+      "bossHpMul": 0.82,
+      "x": 0,
+      "y": 0,
+      "exits": [
+        {
+          "direction": "left",
+          "to": "B"
+        },
+        {
+          "direction": "forward",
+          "to": "origin"
+        },
+        {
+          "direction": "right",
+          "to": "origin"
+        }
+      ]
+    },
+    {
+      "key": "B",
+      "id": "world_b",
+      "name": "街道の井戸",
+      "source": "mossy_cave",
+      "level": 2,
+      "rank": 1,
+      "battles": 3,
+      "pool": [
+        "cave_rat",
+        "slime"
+      ],
+      "counts": [
+        1,
+        2
+      ],
+      "hpMul": 0.58,
+      "bossId": "",
+      "bossHpMul": 0.82,
+      "x": 0,
+      "y": 1,
+      "exits": [
+        {
+          "direction": "left",
+          "to": "A"
+        },
+        {
+          "direction": "forward",
+          "to": "D"
+        },
+        {
+          "direction": "right",
+          "to": "C"
+        }
+      ]
+    },
+    {
+      "key": "C",
+      "id": "world_c",
+      "name": "古い地下墓地",
+      "source": "ruined_fort",
+      "level": 6,
+      "rank": 2,
+      "battles": 3,
+      "pool": [
+        "skeleton",
+        "fort_bandit"
+      ],
+      "counts": [
+        1,
+        2
+      ],
+      "hpMul": 0.85,
+      "bossId": "",
+      "bossHpMul": 0.82,
+      "x": 1,
+      "y": 2,
+      "exits": [
+        {
+          "direction": "left",
+          "to": "B"
+        },
+        {
+          "direction": "forward",
+          "to": "D"
+        },
+        {
+          "direction": "right",
+          "to": "F"
+        }
+      ]
+    },
+    {
+      "key": "D",
+      "id": "world_d",
+      "name": "森境の旧道",
+      "source": "sunlit_forest",
+      "level": 4,
+      "rank": 1,
+      "battles": 3,
+      "pool": [
+        "goblin",
+        "wolf_pup"
+      ],
+      "counts": [
+        1,
+        2
+      ],
+      "hpMul": 0.58,
+      "bossId": "",
+      "bossHpMul": 0.82,
+      "x": 0,
+      "y": 3,
+      "exits": [
+        {
+          "direction": "left",
+          "to": "C"
+        },
+        {
+          "direction": "forward",
+          "to": "G"
+        },
+        {
+          "direction": "right",
+          "to": "B"
+        }
+      ]
+    },
+    {
+      "key": "E",
+      "id": "world_e",
+      "name": "木漏れ日の小道",
+      "source": "sunlit_forest",
+      "level": 2,
+      "rank": 1,
+      "battles": 3,
+      "pool": [
+        "nut_squirrel",
+        "slime"
+      ],
+      "counts": [
+        1,
+        2
+      ],
+      "hpMul": 0.58,
+      "bossId": "",
+      "bossHpMul": 0.82,
+      "x": 1,
+      "y": 0,
+      "exits": [
+        {
+          "direction": "left",
+          "to": "F"
+        },
+        {
+          "direction": "forward",
+          "to": "origin"
+        },
+        {
+          "direction": "right",
+          "to": "L"
+        }
+      ]
+    },
+    {
+      "key": "F",
+      "id": "world_f",
+      "name": "霧深い林道",
+      "source": "misty_marsh",
+      "level": 6,
+      "rank": 2,
+      "battles": 3,
+      "pool": [
+        "marsh_frog",
+        "mud_slime"
+      ],
+      "counts": [
+        1,
+        2
+      ],
+      "hpMul": 0.85,
+      "bossId": "",
+      "bossHpMul": 0.82,
+      "x": 2,
+      "y": 2,
+      "exits": [
+        {
+          "direction": "left",
+          "to": "C"
+        },
+        {
+          "direction": "forward",
+          "to": "K"
+        },
+        {
+          "direction": "right",
+          "to": "E"
+        }
+      ]
+    },
+    {
+      "key": "G",
+      "id": "world_g",
+      "name": "石守りの峠",
+      "source": "ruined_fort",
+      "level": 7,
+      "rank": 2,
+      "battles": 3,
+      "pool": [
+        "fort_bandit",
+        "stone_statue"
+      ],
+      "counts": [
+        1,
+        2
+      ],
+      "hpMul": 0.85,
+      "bossId": "stone_giant",
+      "bossHpMul": 0.82,
+      "x": 0,
+      "y": 4,
+      "exits": [
+        {
+          "direction": "left",
+          "to": "D"
+        },
+        {
+          "direction": "forward",
+          "to": "stone_2"
+        },
+        {
+          "direction": "right",
+          "to": "F"
+        }
+      ]
+    },
+    {
+      "key": "H",
+      "id": "world_h",
+      "name": "花咲く丘",
+      "source": "blooming_hill",
+      "level": 2,
+      "rank": 1,
+      "battles": 3,
+      "pool": [
+        "nut_squirrel",
+        "slime"
+      ],
+      "counts": [
+        1,
+        2
+      ],
+      "hpMul": 0.58,
+      "bossId": "",
+      "bossHpMul": 0.82,
+      "x": 2,
+      "y": 0,
+      "exits": [
+        {
+          "direction": "left",
+          "to": "I"
+        },
+        {
+          "direction": "forward",
+          "to": "origin"
+        },
+        {
+          "direction": "right",
+          "to": "origin"
+        }
+      ]
+    },
+    {
+      "key": "I",
+      "id": "world_i",
+      "name": "川岸の段丘",
+      "source": "sunlit_forest",
+      "level": 4,
+      "rank": 1,
+      "battles": 3,
+      "pool": [
+        "wolf_pup",
+        "goblin"
+      ],
+      "counts": [
+        1,
+        2
+      ],
+      "hpMul": 0.58,
+      "bossId": "",
+      "bossHpMul": 0.82,
+      "x": 3,
+      "y": 1,
+      "exits": [
+        {
+          "direction": "left",
+          "to": "H"
+        },
+        {
+          "direction": "forward",
+          "to": "origin"
+        },
+        {
+          "direction": "right",
+          "to": "J",
+          "seasons": [
+            "spring"
+          ]
+        }
+      ]
+    },
+    {
+      "key": "J",
+      "id": "world_j",
+      "name": "春霞の渡り路",
+      "source": "misty_marsh",
+      "level": 8,
+      "rank": 2,
+      "battles": 3,
+      "pool": [
+        "marsh_frog",
+        "wandering_armor"
+      ],
+      "counts": [
+        1,
+        2
+      ],
+      "hpMul": 0.85,
+      "bossId": "",
+      "bossHpMul": 0.82,
+      "x": 3,
+      "y": 3,
+      "exits": [
+        {
+          "direction": "left",
+          "to": "I"
+        },
+        {
+          "direction": "forward",
+          "to": "stone_4"
+        },
+        {
+          "direction": "right",
+          "to": "origin"
+        }
+      ]
+    },
+    {
+      "key": "K",
+      "id": "world_k",
+      "name": "風鳴りの山道",
+      "source": "howling_canyon",
+      "level": 9,
+      "rank": 3,
+      "battles": 3,
+      "pool": [
+        "canyon_wolf",
+        "wind_spirit"
+      ],
+      "counts": [
+        1,
+        2
+      ],
+      "hpMul": 0.85,
+      "bossId": "storm_eagle",
+      "bossHpMul": 0.82,
+      "x": 2,
+      "y": 4,
+      "exits": [
+        {
+          "direction": "left",
+          "to": "F"
+        },
+        {
+          "direction": "forward",
+          "to": "stone_3"
+        },
+        {
+          "direction": "right",
+          "to": "G"
+        }
+      ]
+    },
+    {
+      "key": "L",
+      "id": "world_l",
+      "name": "古街道の脇道",
+      "source": "goblin_quarry",
+      "level": 5,
+      "rank": 1,
+      "battles": 3,
+      "pool": [
+        "goblin",
+        "cave_rat"
+      ],
+      "counts": [
+        1,
+        2
+      ],
+      "hpMul": 0.58,
+      "bossId": "",
+      "bossHpMul": 0.82,
+      "x": 1,
+      "y": 1,
+      "exits": [
+        {
+          "direction": "left",
+          "to": "E"
+        },
+        {
+          "direction": "forward",
+          "to": "origin"
+        },
+        {
+          "direction": "right",
+          "to": "origin"
+        }
+      ]
+    },
+    {
+      "key": "M",
+      "id": "world_m",
+      "name": "古い街道",
+      "source": "goblin_quarry",
+      "level": 3,
+      "rank": 1,
+      "battles": 3,
+      "pool": [
+        "goblin",
+        "slime"
+      ],
+      "counts": [
+        1,
+        2
+      ],
+      "hpMul": 0.58,
+      "bossId": "",
+      "bossHpMul": 0.82,
+      "x": 3,
+      "y": 0,
+      "exits": [
+        {
+          "direction": "left",
+          "to": "C"
+        },
+        {
+          "direction": "forward",
+          "to": "origin"
+        },
+        {
+          "direction": "right",
+          "to": "L"
+        }
+      ]
+    }
+  ]
+}

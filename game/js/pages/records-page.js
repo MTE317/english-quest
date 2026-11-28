@@ -1,4 +1,4 @@
-import { GameSession } from '../save.js?v=skill-growth-2';
+import { GameSession } from '../save.js?v=world-journey-1';
 import { LearningStore, loadSettings, saveSettings, now } from '../storage.js?v=skill-growth-2';
 import { loadLearningCatalog } from '../learning-catalog.js?v=skill-growth-2';
 import { learningStatistics } from '../learning-stats.js?v=skill-growth-2';

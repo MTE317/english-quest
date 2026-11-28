@@ -7,6 +7,7 @@ import { GameSession, SAVE_VERSION } from '../js/save.js';
 import { MemoryStorage, readCsv } from './helpers.js';
 import { fillBoard, acceptQuest, reportQuest, questAbandonRefund, itemShopStock, gearShopStock, buyItem, buyGear, sellPrice, loanLimit, repayLoan } from '../js/town.js';
 const data=loadData(),fresh=()=>createNewGame(data,defaultPartySpecs(data));
+delete data.worldRoutes; // 旧契約の通貨移行を旧地図の掲示で検証する。
 
 test('Gの丸めは小額10・5桁100・6桁1000単位、正の見積は0にならない',()=>{
  for(const [n,want]of [[0,0],[1,10],[530,530],[12345,12300],[123456,123000],[999999,1000000]])assert.equal(roundGold(data,n),want);

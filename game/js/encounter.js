@@ -1,10 +1,12 @@
 // 出てくる敵を決める（ダンジョンと階から）。
-import { makeEnemy } from './battle.js?v=public-rewards-1';
+import { makeEnemy } from './battle.js?v=world-journey-1';
 import { affixSum } from './character.js?v=advanced-jobs-1';
 import { memberMods } from './growth.js?v=advanced-jobs-1';
 
 /** そのダンジョンにふだん出るモンスター */
 export function monsterPool(data, dungeonId, season, { legacy = false } = {}) {
+  const world = data.worldRoutes?.nodes.find(node => node.id === dungeonId);
+  if (world) return world.pool.map(id => data.monsters.get(id)).filter(Boolean);
   const intro = !legacy && data.balance.dungeon?.intro_routes?.[dungeonId];
   if (intro) {
     const ids = intro.formations.flat().filter(id => id !== data.dungeons.get(dungeonId)?.bossId)
@@ -105,6 +107,18 @@ export function makeEncounter(data, dungeonId, floor, rng, {
   boss = false, season, bountyId, elites = false, quests = [], maxElites = Infinity, rowOverride = null,
 } = {}) {
   const row = rowOverride ?? floorRow(data, dungeonId, floor);
+  const world = data.worldRoutes?.nodes.find(node => node.id === dungeonId);
+  if (world) {
+    const count = boss ? 1 : world.counts[0] + Math.floor(rng() * (world.counts[1] - world.counts[0] + 1));
+    const enemies = Array.from({ length: count }, () => {
+      const id = boss ? world.bossId : world.pool[Math.floor(rng() * world.pool.length)];
+      const enemy = makeEnemy(data, id, { lv: row.enemyLevel, dungeonId, boss });
+      enemy.maxHp = Math.max(1, Math.round(enemy.maxHp * (boss ? world.bossHpMul : world.hpMul)));
+      enemy.hp = enemy.maxHp;
+      return enemy;
+    });
+    return distinguishNames(enemies);
+  }
   // 保存済みの旧経路には introEncounter がないため、更新前の抽選を維持する。
   const intro = rowOverride ? rowOverride.introEncounter : data.balance.dungeon?.intro_routes?.[dungeonId];
   if (intro) {

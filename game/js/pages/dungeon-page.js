@@ -1,19 +1,19 @@
 // ダンジョンの画面：行き先とルーンストーンを選ぶ → 階を進む → 戦闘 → 帰還ポイント・ボス → 町へ
-import { loadGameData } from '../gamedata.js?v=unique-reroll-1';
+import { loadGameData } from '../gamedata.js?v=world-journey-1';
 import { loadJson } from '../data.js?v=skill-growth-2';
 import { loadLearningCatalog } from '../learning-catalog.js?v=skill-growth-2';
 import { Scheduler } from '../srs.js?v=skill-growth-2';
 import { LearningStore, now, loadSettings } from '../storage.js?v=skill-growth-2';
 import { QuestionPicker } from '../picker.js?v=skill-growth-2';
-import { GameSession } from '../save.js?v=party-wipe-1';
-import { normalizeGame } from '../game-state.js?v=unique-reroll-1';
+import { GameSession } from '../save.js?v=world-journey-1';
+import { normalizeGame } from '../game-state.js?v=world-journey-1';
 import {
   allowedDungeons, allowedStones, expeditionFee, startRun, startNextBattle, afterBattle, returnToTown, continueRun, resolveLoot,
   isBossBattle, runFloorRow, runFloorCount, returnItems, currentRank, useItemOutsideBattle, FIELD_ITEM_EFFECTS,
-} from '../dungeon.js?v=jobs-19-21-1';
-import { backpackSlots, backpackUsed, addItem } from '../loot.js?v=unique-reroll-1';
+} from '../dungeon.js?v=world-journey-1';
+import { backpackSlots, backpackUsed, addItem } from '../loot.js?v=world-journey-1';
 import { maxHp, maxMp, partyCanAct } from '../character.js?v=unique-reroll-1';
-import { createBattleView } from '../ui/battle-view.js?v=legendary-04-06-1';
+import { createBattleView } from '../ui/battle-view.js?v=world-journey-1';
 import { createVictoryView, createLootIcons } from '../ui/victory-view.js?v=advanced-jobs-1';
 import { el, render, stars } from '../dom.js?v=skill-growth-2';
 import { buildWorldMap, newDiscoveries } from '../world-map.js?v=canyon-public-1';
@@ -24,6 +24,10 @@ import { expeditionScene } from '../ui/scenery.js?v=skill-growth-2';
 import { installGameShell } from '../ui/game-shell.js?v=skill-growth-2';
 import { portraitIcon } from '../ui/portrait.js?v=skill-growth-2';
 import { playDungeonEntrance } from '../ui/dungeon-entrance.js?v=skill-growth-2';
+import { calendarOf } from '../town.js?v=world-journey-1';
+import { worldNode, ensureWorldJourney, worldEntries, exitChoices } from '../world-journey.js?v=world-journey-1';
+import { chooseWorldExit } from '../dungeon.js?v=world-journey-1';
+import { createJourneyDeparture, createJourneyMap } from '../ui/world-journey-view.js?v=world-journey-1';
 
 const view = document.getElementById('view');
 const session = new GameSession();
@@ -31,6 +35,7 @@ installGameShell('dungeon', session);
 session.installAutoSave(window);
 let data; let lex; let scheduler; let store; let srs;
 let advancing = false;
+const journeySelection = { stoneId: null, dungeonId: null, lessonId: '00' };
 
 const gearName = (g) => `${data.equipment.get(g.id).name}${g.rarity && g.rarity !== 'common' ? `（${data.rarityTable.find((r) => r.id === g.rarity)?.name ?? '固有'}）` : ''}`;
 
@@ -65,6 +70,7 @@ function showDeparture(message = null) {
     render(view, el('p', {}, 'まだパーティーがいません。'), el('a', { class: 'btn primary', href: 'party.html' }, 'パーティーを作る'));
     return;
   }
+  if (data.worldRoutes) return showJourneyDeparture(message);
   const canDepart = partyCanAct(g);
   const rank = currentRank(data, g);
   const dungeons = allowedDungeons(data, g);
@@ -159,6 +165,74 @@ function showDeparture(message = null) {
   }
 }
 
+function showJourneyDeparture(message) {
+  const game = session.game;
+  ensureWorldJourney(data, game);
+  const state = journeySelection;
+  if (!game.worldJourney.stones.includes(state.stoneId)) state.stoneId = data.worldRoutes.startStone;
+  const entries = worldEntries(data, game, state.stoneId);
+  if (!entries.some(n => n.id === state.dungeonId)) state.dungeonId = entries[0]?.id ?? null;
+  const lessons = allowedStones(lex);
+  if (!lessons.some(s => s.id === state.lessonId)) state.lessonId = lessons[0]?.id ?? null;
+  const lessonSelect = el('select', { class: 'select', onchange: event => { state.lessonId = event.target.value; } },
+    lessons.map(s => el('option', { value: s.id, selected: s.id === state.lessonId }, s.name)));
+  const node = worldNode(data, state.dungeonId);
+  const departure = el('button', { class: 'primary', disabled: !node || !state.lessonId || !partyCanAct(game) || session.readOnly,
+    onclick: async () => {
+      if (advancing || session.inDungeon) return;
+      advancing = true; departure.disabled = true;
+      try {
+        const picker = new QuestionPicker({ lex, store, scheduler, stoneId: state.lessonId, nowMs: now() });
+        startRun(data, session, { dungeonId: state.dungeonId, worldStoneId: state.stoneId, stoneId: state.lessonId,
+          quizState: picker.toState(), seed: (Date.now() ^ (Math.random() * 2 ** 32)) >>> 0 });
+        await playDungeonEntrance(node.name, () => showRun());
+      } catch (error) {
+        render(view, el('p', { role: 'alert', class: 'error' }, error.message),
+          el('button', { onclick: () => session.inDungeon ? showRun() : showDeparture() }, '続ける'));
+      } finally { advancing = false; }
+    },
+  }, '出発する');
+  render(view,
+    message ? el('p', { role: 'status', class: 'panel' }, message) : null,
+    !partyCanAct(game) ? el('p', { class: 'panel error' }, '全員が死亡または石化しています。', el('a', { href: 'index.html?facility=temple' }, '神殿へ')) : null,
+    createJourneyDeparture({ data, game, season: calendarOf(data, game.day).season?.id,
+      selectedStone: state.stoneId, selectedDungeon: state.dungeonId,
+      onStone: id => { state.stoneId = id; state.dungeonId = null; showJourneyDeparture(); },
+      onDungeon: id => { state.dungeonId = id; showJourneyDeparture(); } }),
+    node ? el('div', { class: 'panel departure-plan' }, el('h3', {}, `${node.name}・敵Lv${node.level}`),
+      el('p', { class: 'muted small' }, `${node.battles}戦を終えたら、次の道を選びます。`),
+      el('label', {}, '学習する教材', lessonSelect), departure) : null,
+    el('details', { class: 'panel' }, el('summary', {}, '仲間の状態'), partyPanel()),
+    new URLSearchParams(location.search).has('debug') ? debugTools() : null);
+  session.save();
+}
+
+function journeyExitActions(run, result) {
+  const visit = run.worldVisit;
+  return [el('p', { class: 'panel', role: 'status' }, 'ダンジョンを踏破した。次の道を選ぼう。'),
+    el('div', { class: 'journey-exits', role: 'group', 'aria-label': 'クリア後の行き先' },
+      exitChoices(data, session.game, run, run.worldSeason).map(exit => el('button', { type: 'button', disabled: !exit.open,
+        onclick: async event => {
+          if (advancing) return;
+          advancing = true;
+          event.currentTarget.closest('.journey-exits').querySelectorAll('button').forEach(button => { button.disabled = true; });
+          try {
+            const pack = summary(run);
+            const arrival = chooseWorldExit(data, session, exit.direction, visit);
+            if (arrival) showReturned(pack, arrival.message);
+            else await playDungeonEntrance(data.dungeons.get(session.run.dungeonId).name, () => showRun());
+          } catch (error) { alert(error.message); session.run ? showRun() : showDeparture(); }
+          finally { advancing = false; }
+        },
+      }, el('strong', {}, exit.label), el('span', {}, exit.to === data.worldRoutes.startStone ? '町へ' : exit.target.name),
+      el('small', {}, exit.reason || [exit.target.level ? `敵Lv${exit.target.level}` : '到着後、町に帰還', exit.seasonLabel ? `${exit.seasonLabel}のみ` : ''].filter(Boolean).join('・'))))),
+    el('div', { class: 'journey-utilities' }, el('button', { onclick: () => showFieldItems(result) }, '道具を使う'),
+      ...returnItems(data, session.game).map(id => el('button', { onclick: () => {
+        if (!confirm(`${data.items.get(id).name}で町に帰りますか？`)) return;
+        const pack = summary(run); returnToTown(data, session, id); showReturned(pack);
+      } }, `${data.items.get(id).name}で帰る`)))];
+}
+
 function debugTools() {
   return el('details', { class: 'panel' },
     el('summary', {}, '動作確認用'),
@@ -207,6 +281,11 @@ function explorationNotices(run) {
 function showRun(result = null) {
   const run = session.run;
   if (!run) return showDeparture();
+  if (run.worldArrival) {
+    const pack = summary(run), message = run.worldArrival.message;
+    returnToTown(data, session);
+    return showReturned(pack, message);
+  }
   if (run.battle) return battleView().start();
   if (run.state === 'ready' && run.battlesDone === 0) return beginBattle();
   setSceneMusic('dungeon');
@@ -240,12 +319,16 @@ function showRun(result = null) {
       el('button', { onclick: () => { const pack = summary(run); returnToTown(data, session); showReturned(pack); } }, '町に帰る（拾った物は持ち帰る）'),
       el('button', { onclick: () => showFieldItems(result) }, '道具を使う'),
     ];
+  } else if (run.state === 'cleared' && run.worldVersion) {
+    actions = journeyExitActions(run, result);
   } else if (run.state === 'cleared') {
     actions = [
       el('div', { class: 'panel small' }, run.training ? '育成探索を完了した！' : '最後の戦闘を終えた！ 道具なしで町へ帰れます。'),
       el('button', { class: 'primary', onclick: () => { const pack = summary(run); returnToTown(data, session); showReturned(pack); } }, '町に帰る'),
     ];
   }
+  if (run.worldVersion) actions.push(el('details', { class: 'journey-map-toggle' }, el('summary', {}, '探索の地図を見る'),
+    createJourneyMap({ data, game: g, season: run.worldSeason, currentKey: worldNode(data, run.dungeonId).key })));
   const notices = explorationNotices(run);
   if (result?.result === 'win') {
     render(view, createVictoryView({
@@ -265,12 +348,13 @@ function summary(run) {
     materials: Object.entries(run.backpack.materials).map(([id, count]) => ({ id, count })) };
 }
 
-function showReturned(pack) {
+function showReturned(pack, message = '町に帰還した。') {
   setSceneMusic('town');
   normalizeGame(data, session.game);
   session.save();
   render(view,
     el('h2', {}, '町に帰った'),
+    el('p', { role: 'status', class: 'panel' }, message),
     el('div', { class: 'panel small' },
       el('div', {}, `稼いだお金：${pack.gold}`),
       el('h3', {}, '持ち帰った装備'),

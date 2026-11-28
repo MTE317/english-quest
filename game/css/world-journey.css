@@ -1,0 +1,25 @@
+.journey-stones { display:flex; flex-wrap:wrap; gap:8px; margin:12px 0; }
+.journey-departure .atlas-destinations { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
+.journey-departure .atlas-destination { display:flex; flex-direction:column; align-items:flex-start; justify-content:center; gap:8px; min-height:100px; padding:12px; }
+.journey-departure .atlas-destination span { display:block; font-size:.85rem; }
+@media (min-width:700px) { .journey-departure .atlas-destinations { grid-template-columns:repeat(4,minmax(0,1fr)); } }
+.journey-stones button[aria-pressed=true], .journey-departure button[aria-pressed=true] { border-color:#e7bd6c; box-shadow:inset 0 0 0 1px #e7bd6c; }
+.journey-map-scroll { overflow:auto; max-width:100%; border:1px solid var(--line); border-radius:8px; background:#0d1724; }
+.journey-map svg { display:block; width:100%; min-width:580px; max-height:620px; }
+.journey-edge { fill:none; stroke:#8795aa; stroke-width:2; stroke-dasharray:5 5; opacity:.65; }
+.journey-edge.passed { stroke:#e7bd6c; stroke-width:3; stroke-dasharray:none; opacity:.9; }
+.journey-edge.closed { stroke:#c78181; stroke-dasharray:3 6; }
+.journey-node rect { fill:#142132; stroke:#596477; stroke-width:1.5; }
+.journey-node.visited rect { stroke:#e7bd6c; }
+.journey-node.current rect { fill:#294059; stroke:#fff0bd; stroke-width:3; }
+.journey-node.stone rect { fill:#25362f; }
+.journey-node text { fill:#f5ead5; font-size:12px; font-family:inherit; }
+.journey-node .journey-sub { fill:#b9c5d2; font-size:11px; }
+.journey-route-list { padding-left:20px; font-size:.85rem; line-height:1.7; }
+.journey-exits { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; }
+.journey-exits button { min-height:100px; padding:10px 6px; display:flex; flex-direction:column; align-items:center; gap:8px; overflow-wrap:anywhere; }
+.journey-exits button span { font-size:.85rem; }
+.journey-exits button small { color:var(--muted); }
+.journey-exits button:disabled { opacity:.55; }
+.journey-utilities { display:flex; gap:8px; flex-wrap:wrap; margin-top:12px; }
+.journey-map-toggle { margin-top:14px; }

@@ -1,0 +1,29 @@
+[
+  {
+    "width": 320,
+    "entryCount": 4,
+    "exitCount": 3,
+    "continued": true,
+    "reloaded": true,
+    "stoneUnlocked": true,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "entryCount": 4,
+    "exitCount": 3,
+    "continued": true,
+    "reloaded": true,
+    "stoneUnlocked": true,
+    "errors": []
+  },
+  {
+    "width": 1000,
+    "entryCount": 4,
+    "exitCount": 3,
+    "continued": true,
+    "reloaded": true,
+    "stoneUnlocked": true,
+    "errors": []
+  }
+]

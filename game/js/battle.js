@@ -1,5 +1,5 @@
 import { equipmentTier } from './equipment-scaling.js?v=equipment-rarity-1';
-import { fixedBattleRewards } from './monster-rewards.js?v=public-rewards-1';
+import { fixedBattleRewards } from './monster-rewards.js?v=world-journey-1';
 // 戦闘：行動順・通常攻撃とスキル・1行動ごとに1問・属性・状態異常・道具・逃げる。
 //
 // - 戦闘の状態（battle）はすべて JSON にできる形で持つ。乱数も battle.rng に入れておくので、
@@ -706,7 +706,7 @@ function skillBlock(data, game, b, i, s) {
 }
 
 const BATTLE_ITEM_EFFECTS = ['heal_hp', 'heal_hp_pct', 'heal_hp_all', 'heal_hp_all_pct', 'heal_mp', 'heal_mp_pct', 'revive_pct', 'cure_status',
-  'buff_str', 'buff_mag', 'buff_def', 'buff_res', 'buff_spd', 'buff_crt', 'resist_elem_all', 'resist_status_all'];
+  'buff_str', 'buff_mag', 'buff_def', 'buff_res', 'buff_spd', 'buff_crt', 'resist_elem_all', 'resist_status_all', 'escape'];
 
 /** 逃げられる確率。装備の逃走補正は逃げる行動を選ぶ本人の分だけを足す。 */
 export function fleeRate(data, game, b, actor = b.turn?.side === 'ally' ? b.turn.i : null) {
@@ -749,6 +749,7 @@ export function actionOptions(data, game, b, i) {
   const items = Object.entries(game.items ?? {}).filter(([, n]) => n > 0).map(([id, count]) => {
     const item = data.items.get(id);
     const ok = item && BATTLE_ITEM_EFFECTS.includes(item.effect);
+    if (item?.effect === 'escape' && (b.allies[i].beast || fleeRate(data, game, b, i) <= 0)) return { item, count, reason: '逃げられない' };
     return { item, count, reason: ok ? '' : '戦闘では使えない' };
   }).filter((x) => x.item);
   const flee = fleeRate(data, game, b, i);
@@ -758,6 +759,7 @@ export function actionOptions(data, game, b, i) {
 
 /** 行動の対象の選び方：'enemy'（敵1体）/ 'enemies'（敵全体）/ 'ally'（味方1人）/ 'ko_ally'（倒れた味方）/ 'allies' / 'self' / 'none' */
 export function targetKind(data, action, member = null) {
+  if (action.type === 'item' && data.items.get(action.itemId)?.effect === 'escape') return 'none';
   if (action.type === 'attack') return 'enemy';
   if (action.type === 'landing') return 'enemy';
   if (action.type === 'flee') return 'none';
@@ -2436,6 +2438,7 @@ function cureAlly(data, game, b, j, pred) {
 // ---------------- 道具 ----------------
 function doItem(data, game, b, i, it, target, cm) {
   const m = game.party[i];
+  if (it?.effect === 'escape' && (b.allies[i].beast || fleeRate(data, game, b, i) <= 0)) { log(b, 'この戦闘からは逃げられない'); return; }
   if (!game.items[it.id]) { log(b, `${it.name}を持っていない`); return; }
   const preserve = partyPassive(data, game, b, 'save');
   if (!(preserve > 0 && chance(b, preserve))) game.items[it.id] -= 1;
@@ -2447,6 +2450,7 @@ function doItem(data, game, b, i, it, target, cm) {
   const [elOrGroup, num] = String(it.valueText ?? '').split(':');
   const turns = (it.turns ?? 1) + 1;
   switch (it.effect) {
+    case 'escape': b.result = 'fled'; log(b, '煙に紛れて逃げ切った！'); break;
     case 'heal_hp': log(b, `HPが ${healAlly(data, game, b, one, it.value * cm)} 回復`); break;
     case 'heal_hp_pct': log(b, `HPが ${healAlly(data, game, b, one, maxHp(data, game.party[one]) * it.value / 100 * cm)} 回復`); break;
     case 'heal_hp_all': for (const j of alive) healAlly(data, game, b, j, it.value * cm); log(b, '味方全員のHPが回復した'); break;

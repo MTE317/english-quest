@@ -1,25 +1,25 @@
 import { availableAp } from '../ap.js?v=skill-growth-2';
 // 町をホームにして、施設カードから各施設を開く。
-import { loadGameData } from '../gamedata.js?v=stone-fragments-1';
-import { GameSession } from '../save.js?v=party-wipe-1';
-import { normalizeGame } from '../game-state.js?v=stone-fragments-1';
-import { currentRank, seededRng } from '../dungeon.js?v=canyon-public-1';
+import { loadGameData } from '../gamedata.js?v=world-journey-1';
+import { GameSession } from '../save.js?v=world-journey-1';
+import { normalizeGame } from '../game-state.js?v=world-journey-1';
+import { currentRank, seededRng } from '../dungeon.js?v=world-journey-1';
 import {
   calendarOf, fillBoard, boardSize, acceptQuest, canAcceptQuest, abandonQuest, canReport, reportQuest, questText, questProgress, questDestination, questRewardGold, questRankPoints, questDepositTotal, questAbandonRefund, nextRankStatus, stayInn, revive, reviveCost, checkRankUp,
   canExpandBackpack, expandBackpack, feeTier,
   nextBackpackTier,
-} from '../town.js?v=facilities-11-1';
-import { backpackSlots } from '../loot.js?v=unique-reroll-1';
+} from '../town.js?v=world-journey-1';
+import { backpackSlots } from '../loot.js?v=world-journey-1';
 import { maxHp, maxMp, gearDef } from '../character.js?v=facilities-11-1';
 import { availableJobs, changeJob } from '../growth.js?v=facilities-11-1';
-import { explorationStories, acceptExplorationStory, reportExplorationStory } from '../exploration-story.js?v=canyon-public-1';
+import { explorationStories, acceptExplorationStory, reportExplorationStory } from '../exploration-story.js?v=world-journey-1';
 import { cureAtTemple, recordStoredMaterials } from '../temple.js?v=skill-growth-2';
-import { workshopView, managementView, templeExtras } from '../ui/facility-view.js?v=stone-fragments-1';
-import { itemShopView, gearShopView } from '../ui/town-shops.js?v=public-rewards-1';
+import { workshopView, managementView, templeExtras } from '../ui/facility-view.js?v=world-journey-1';
+import { itemShopView, gearShopView } from '../ui/town-shops.js?v=world-journey-1';
 import { weaponIcon } from '../ui/weapon-icons.js?v=skill-growth-2';
 import { equipmentIcon } from '../ui/equipment-icons.js?v=skill-growth-2';
 import { storageView } from '../ui/storage-view.js?v=facilities-11-1';
-import { monsterCatalogView } from '../ui/monster-catalog-view.js?v=canyon-public-1';
+import { monsterCatalogView } from '../ui/monster-catalog-view.js?v=world-journey-1';
 import { uiIcon } from '../ui/pixel-icons.js?v=skill-growth-2';
 import { portraitIcon } from '../ui/portrait.js?v=skill-growth-2';
 import { el, render } from '../dom.js?v=skill-growth-2';
