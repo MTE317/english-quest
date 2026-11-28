@@ -25,7 +25,7 @@ function fixture(job='assassin',count=3,seed=51) {
   const gear=[...data.equipment.values()].filter(item=>item.slot==='weapon'&&item.kind===kind&&!item.unique).sort((a,b)=>a.itemLv-b.itemLv)[0];
   member.equip.weapon=makeGear(game,gear.id);
   const enemies=Array.from({length:count},(_,index)=>Object.assign(makeEnemy(data,'goblin',{lv:1}),{
-    name:'標的'+(index+1),hp:1e7,maxHp:1e7,def:30,res:30,spd:0,weak:[],strongWeak:[],resist:[],immune:[],statusAffinity:{},evasion:0}));
+    name:'標的'+(index+1),skillProfile:null,hp:1e7,maxHp:1e7,def:30,res:30,spd:0,weak:[],strongWeak:[],resist:[],immune:[],statusAffinity:{},evasion:0}));
   const b=createBattle(data,game,{enemies,seed});b.round=1;
   return {game,member,b,enemies,ally:b.allies[0]};
 }

@@ -23,7 +23,7 @@ function fixture(job='samurai',count=2,seed=51) {
   const kind=job==='samurai'?'katana':job==='gladiator'?'greatsword':'spear';
   const item=[...data.equipment.values()].filter(x=>x.slot==='weapon'&&x.kind===kind&&!x.unique).sort((a,c)=>a.itemLv-c.itemLv)[0];
   member.equip.weapon=makeGear(game,item.id);
-  const enemies=Array.from({length:count},()=>{const e=makeEnemy(data,'goblin',{lv:1});Object.assign(e,{hp:1e7,maxHp:1e7,def:30,res:30,spd:0,weak:[],strongWeak:[],resist:[],immune:[],statusAffinity:{},evasion:0});return e;});
+  const enemies=Array.from({length:count},()=>{const e=makeEnemy(data,'goblin',{lv:1});Object.assign(e,{skillProfile:null,hp:1e7,maxHp:1e7,def:30,res:30,spd:0,weak:[],strongWeak:[],resist:[],immune:[],statusAffinity:{},evasion:0});return e;});
   const b=createBattle(data,game,{enemies,seed});b.round=1;
   return {game,member,b,enemies,ally:b.allies[0]};
 }

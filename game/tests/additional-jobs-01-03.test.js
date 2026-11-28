@@ -21,7 +21,7 @@ function fixture(job='paladin', weapon=job==='dark_knight'?'greatsword':job==='b
   if (item) member.equip.weapon=makeGear(game,item.id);
   const enemies=Array.from({length:count},()=>{
     const enemy=makeEnemy(data,'goblin',{lv:1});
-    Object.assign(enemy,{hp:1e7,maxHp:1e7,def:30,res:30,spd:0,weak:[],strongWeak:[],resist:[],immune:[],statusAffinity:{},evasion:0});
+    Object.assign(enemy,{skillProfile:null,hp:1e7,maxHp:1e7,def:30,res:30,spd:0,weak:[],strongWeak:[],resist:[],immune:[],statusAffinity:{},evasion:0});
     return enemy;
   });
   const b=createBattle(data,game,{enemies,seed});b.round=1;

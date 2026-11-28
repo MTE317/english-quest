@@ -66,5 +66,6 @@
   "weapon_types.csv",
   "world_routes.json",
   "monster_stats.csv",
-  "monster_elites.json"
+  "monster_elites.json",
+  "monster_skills.json"
 ]

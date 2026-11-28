@@ -1,21 +1,21 @@
 import { availableAp } from '../ap.js?v=skill-growth-2';
 // 町をホームにして、施設カードから各施設を開く。
-import { loadGameData } from '../gamedata.js?v=fixed-monsters-1';
+import { loadGameData } from '../gamedata.js?v=enemy-skills-1';
 import { GameSession } from '../save.js?v=world-journey-1';
 import { normalizeGame } from '../game-state.js?v=world-journey-1';
-import { currentRank, seededRng } from '../dungeon.js?v=fixed-monsters-1';
+import { currentRank, seededRng } from '../dungeon.js?v=enemy-skills-1';
 import {
   calendarOf, fillBoard, boardSize, acceptQuest, canAcceptQuest, abandonQuest, canReport, reportQuest, questText, questProgress, questDestination, questRewardGold, questRankPoints, questDepositTotal, questAbandonRefund, nextRankStatus, stayInn, revive, reviveCost, checkRankUp,
   canExpandBackpack, expandBackpack, feeTier,
   nextBackpackTier,
-} from '../town.js?v=fixed-monsters-1';
+} from '../town.js?v=enemy-skills-1';
 import { backpackSlots } from '../loot.js?v=fixed-monsters-1';
 import { maxHp, maxMp, gearDef } from '../character.js?v=facilities-11-1';
 import { availableJobs, changeJob } from '../growth.js?v=facilities-11-1';
-import { explorationStories, acceptExplorationStory, reportExplorationStory } from '../exploration-story.js?v=fixed-monsters-1';
+import { explorationStories, acceptExplorationStory, reportExplorationStory } from '../exploration-story.js?v=enemy-skills-1';
 import { cureAtTemple, recordStoredMaterials } from '../temple.js?v=skill-growth-2';
-import { workshopView, managementView, templeExtras } from '../ui/facility-view.js?v=fixed-monsters-1';
-import { itemShopView, gearShopView } from '../ui/town-shops.js?v=fixed-monsters-1';
+import { workshopView, managementView, templeExtras } from '../ui/facility-view.js?v=enemy-skills-1';
+import { itemShopView, gearShopView } from '../ui/town-shops.js?v=enemy-skills-1';
 import { weaponIcon } from '../ui/weapon-icons.js?v=skill-growth-2';
 import { equipmentIcon } from '../ui/equipment-icons.js?v=skill-growth-2';
 import { storageView } from '../ui/storage-view.js?v=facilities-11-1';

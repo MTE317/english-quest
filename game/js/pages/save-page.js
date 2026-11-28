@@ -4,7 +4,7 @@ import { normalizeGame } from '../game-state.js?v=world-journey-1';
 // 戦闘とダンジョンはまだないので、報酬（お金・素材・装備・経験値）は「仮」の値を足すだけ
 import { GameSession } from '../save.js?v=world-journey-1';
 import { LearningStore } from '../storage.js?v=skill-growth-2';
-import { loadGameData } from '../gamedata.js?v=fixed-monsters-1';
+import { loadGameData } from '../gamedata.js?v=enemy-skills-1';
 import { gainXp, makeGear, partyCanAct } from '../character.js?v=party-wipe-1';
 import { el, render } from '../dom.js?v=skill-growth-2';
 
