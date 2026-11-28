@@ -32,6 +32,6 @@ gambler,賭博師,確率と見返りの選択,additional,C,C,B,C,C,C,A,A,pierce|
 apothecary,薬師,薬による即応・毒・治療,additional,B,B,C,C,B,B,A,C,,,dagger,staff,技能Lv・薬の性能／SPD,薬を選んで回復・治療・予防・毒を使い分ける,全体への強力な処方による大回復・治療・予防,1,,dagger,medium,神殿Lv8で解放,1
 alchemist,錬金術師,素材の組み合わせ・薬品攻撃,additional,C,A,D,A,C,B,B,B,fire|ice|thunder,,gun,tome,MAG（薬品射出）・素材の効果,素材や触媒を組み合わせて属性攻撃・石化薬・支援薬を作る,連続する錬成反応で属性攻撃または特殊支援を大きく発揮,1,,gun,light,神殿Lv8で解放,1
 machinist,機工士,設置・改造・整備,additional,B,C,A,C,B,C,C,B,blunt|fire,thunder,hammer,gun,STR・武器Lv（機械性能へ反映）,機械を設置し、改造や整備で継続稼働させる,強化機械の展開・一斉稼働と既存機械の整備,1,,hammer,medium,神殿Lv8で解放,1
-merchant,商人,物資補給・在庫の融通,additional,B,B,C,C,B,B,B,A,,,dagger,gun,技能Lv・在庫／LUK（追加補給）,戦闘用在庫を選び、補給・交換・一括配送で支える,全体への大規模補給と一定期間の物資運用強化,0,,dagger,medium,個別技能の実装待ち,1
-cook,料理人,準備して得る持続支援,additional,A,A,C,C,B,B,D,C,,,dagger,hammer,料理の技能Lv・食材／HP・MP,仕込みの完成を見越し、料理と軽食を使い分ける,大宴会を即座に完成させ、全体回復と持続強化,0,,dagger,medium,個別技能の実装待ち,1
-archaeologist,考古学者,鑑定・遺物の使い分け,additional,B,B,C,A,C,B,C,B,earth,light,whip,tome,MAG（遺物）／技能Lv（鑑定）,敵情報を一部調べ、状況に合う遺物を起動する,強力な遺物を完全起動し、敵に合った攻撃や防護,0,,whip,medium,個別技能の実装待ち,1
+merchant,商人,物資補給・在庫の融通,additional,B,B,C,C,B,B,B,A,,,dagger,gun,技能Lv・在庫／LUK（追加補給）,戦闘用在庫を選び、補給・交換・一括配送で支える,全体への大規模補給と一定期間の物資運用強化,1,,dagger,medium,神殿Lv9で解放,1
+cook,料理人,準備して得る持続支援,additional,A,A,C,C,B,B,D,C,,,dagger,hammer,料理の技能Lv・食材／HP・MP,仕込みの完成を見越し、料理と軽食を使い分ける,大宴会を即座に完成させ、全体回復と持続強化,1,,dagger,medium,神殿Lv9で解放,1
+archaeologist,考古学者,鑑定・遺物の使い分け,additional,B,B,C,A,C,B,C,B,earth,light,whip,tome,MAG（遺物）／技能Lv（鑑定）,敵情報を一部調べ、状況に合う遺物を起動する,強力な遺物を完全起動し、敵に合った攻撃や防護,1,,whip,medium,神殿Lv9で解放,1

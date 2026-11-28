@@ -98,9 +98,9 @@ test('技能準備中の追加職には素材を消費しない', () => {
   const g = game();
   g.storage.materials = { poison_spider_mat: 4, skeleton_mat: 3 };
   const before = structuredClone(g.storage.materials);
-  assert.throws(() => unlockJob(data, g, 'merchant'), /まだ解放できません/);
+  assert.throws(() => unlockJob(data, g, 'hero'), /まだ解放できません/);
   assert.deepEqual(g.storage.materials, before);
-  assert.ok(!g.unlockedJobs.includes('merchant'));
+  assert.ok(!g.unlockedJobs.includes('hero'));
 });
 
 test('季節の敵と賞金首は連続クエスト廃止後も出現する', () => {

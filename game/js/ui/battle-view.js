@@ -4,7 +4,7 @@ import { now } from '../storage.js?v=skill-growth-2';
 import { QuestionPicker, REASON_LABEL } from '../picker.js?v=skill-growth-2';
 import { makePracticeQuestion, questionDirection, questionSpeech, DIRECTION } from '../quiz.js?v=skill-growth-2';
 import { speak, canSpeak, stopSpeech } from '../speech.js?v=skill-growth-2';
-import { nextTurn, actionOptions, setPending, prepareQuizAction, resolvePending, targetKind, skillMp, collectBattleHits, enemyIntent, enemyCanAct } from '../battle.js?v=jobs-31-33-1';
+import { nextTurn, actionOptions, setPending, prepareQuizAction, resolvePending, targetKind, skillMp, collectBattleHits, enemyIntent, enemyCanAct } from '../battle.js?v=jobs-34-36-1';
 import { skillMaxLevel, learnedSkillLevel, effectiveSkill } from '../growth.js?v=advanced-jobs-1';
 import { maxHp, maxMp } from '../character.js?v=advanced-jobs-1';
 import { el, render } from '../dom.js?v=skill-growth-2';
@@ -195,6 +195,11 @@ export function allyEffectEntries(data, game, battle, index) {
   if(member.hp>0 && ally.comebackTickets>0)ongoing.push(entry(`再起札 ${ally.comebackTickets}/2`));
   if(member.hp>0 && ally.insurance)ongoing.push(entry(`保険札：失敗倍率 +${ally.insurance.rate.toFixed(2)}${duration(ally.insurance.remaining)}`));
   if(member.hp>0 && ally.winCrit)ongoing.push(entry(`勝ちの勢い：次の堅実な攻撃 会心 +${Math.round(ally.winCrit.rate*100)}ポイント${duration(ally.winCrit.remaining)}`));
+  if(member.hp>0 && (member.job==='merchant'||ally.supply>0))ongoing.push(entry(`補給札 ${ally.supply??0}/3`));
+  if(member.hp>0 && ally.dish)ongoing.push(entry(`料理：${{meat:'肉',vegetable:'野菜',soup:'スープ'}[ally.dish.taste]}・${ally.dish.preparing?'仕込み中':'完成'}・残り${ally.dish.portions}取り分${duration(ally.dish.remaining)}`));
+  if(member.hp>0 && ally.relic)ongoing.push(entry(`遺物：${ally.relic.mode==='attack'?'攻撃型':'防護型'}・エネルギー${ally.relic.energy}/2${duration(ally.relic.remaining)}`));
+  if(member.hp>0 && ally.civicTransfer)ongoing.push(entry(`弱点の転写：${battle.enemies[ally.civicTransfer.enemy]?.name??'対象'}へ+${Math.round(ally.civicTransfer.rate*100)}%${duration(ally.civicTransfer.remaining)}`));
+  if(member.hp>0){const inspected=(battle.enemies??[]).flatMap(enemy=>enemy.civicMarks?.[index]&&enemy.hp>0?[`${enemy.name}：${data.elements.get(enemy.civicMarks[index].element)?.name??enemy.civicMarks[index].element}`]:[]);if(inspected.length)ongoing.push(entry(`鑑定印 ${inspected.join('・')}`));}
   if(member.hp>0 && (member.job==='dancer'||(ally.rhythm??0)>0))ongoing.push(entry(`律動 ${ally.rhythm??0}/2`));
   if (ally.normalSkillReady) special.push(entry('次の攻撃技能を強化'));
   const barrier = ally.buffs?.barrier;
@@ -535,8 +540,8 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
     const elements = entry.elements ?? skill.effect.rules?.choose_element ?? skill.effect.rules?.choose_mode ?? [];
     const back = () => showCommand('skill');
     const chooseBoost = selected => {
-      if (skill.effect.rules?.trio_items && !selected.itemId) return showPanel(`${skill.name}の素材`,[
-        el('div',{class:'battle-action-list'},entry.itemChoices.map(item=>listChoice(item.name,`×${item.count}`,null,
+      if ((skill.effect.rules?.trio_items||skill.effect.rules?.civic_items) && !selected.itemId) return showPanel(`${skill.name}の品物`,[
+        el('div',{class:'battle-action-list'},[...entry.itemChoices,...entry.civicItems].map(item=>listChoice(item.name,`×${item.count}`,null,
           ()=>chooseBoost({...selected,itemId:item.id})))),
       ],{back});
       if (entry.optionalClone && selected.consumeClone==null) return showPanel(`${skill.name}の分身`,[
@@ -566,7 +571,7 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
     showPanel(`${skill.name}の${skill.effect.rules?.gamble?'勝負':skill.effect.rules?.puppet_quick_stance?'構え':'属性'}`, [
       el('p', { class: 'battle-notice' }, describeSkillEffect(data, skill)),
       el('div', { class: 'battle-action-list' }, elements.map(element => listChoice(
-         ({pursuit:'追撃型',mischief:'悪戯型',attack:'攻撃型',guard:'防御型',safe:'堅実',risk:'大勝負'}[element] ?? data.elements.get(element)?.name ?? element), `MP ${battleMp(skill)}`, null,
+         ({pursuit:'追撃型',mischief:'悪戯型',attack:'攻撃型',guard:'防御型',safe:'堅実',risk:'大勝負',meat:'肉料理',vegetable:'野菜料理',soup:'スープ'}[element] ?? data.elements.get(element)?.name ?? element), `MP ${battleMp(skill)}`, null,
         () => chooseBoost({ ...action, element })))),
     ], { back });
   }
@@ -579,6 +584,13 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
       && targetKind(data,action,member)==='enemies' && !skill.effect.select_targets;
     const kind = magicPrimary?'enemy':targetKind(data, action, member);
     const rule=skill?.effect.rules??{};
+    if(rule.civic_transfer && action.sourceTarget==null){
+      const indices=g.party.flatMap((m,index)=>m.hp>0&&!b.allies[index].statuses.petrify?[index]:[]);
+      const select=sourceTarget=>chooseTarget({...action,sourceTarget},sub,targetReasons);
+      drawField(b.turn.i,{kind:'ally',indices,select});
+      showPanel(skill.name,[el('p',{class:'battle-target-prompt'},'次の攻撃を強化する味方を選ぶ')],{back:()=>showCommand(sub)});
+      return;
+    }
     if(rule.proxy_attack && action.sourceTarget==null){
       const indices=g.party.flatMap((m,index)=>m.hp>0&&!['petrify','sleep','freeze','stun','paralysis','confusion','charm'].some(id=>b.allies[index].statuses[id])?[index]:[]);
       const select=sourceTarget=>chooseTarget({...action,sourceTarget},sub,targetReasons);
