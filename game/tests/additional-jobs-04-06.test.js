@@ -49,8 +49,8 @@ function enemyActs(c,index=0,{magic=false,power=80,target=0,element='slash',stat
 const section=(c,key,actor=0)=>allyEffectEntries(data,c.game,c.b,actor).find(([title])=>title===key)?.[1]??[];
 
 test('追加4〜6職は45技能・137段階で設計と一致し、通常9・パッシブ5・奥義1を保つ',()=>{
-assert.equal(data.jobs.filter(j=>j.skillsReady).length,41);
-  assert.equal([...data.skills.values()].filter(s=>s.effect.master).length,615);
+assert.equal(data.jobs.filter(j=>j.skillsReady).length,44);
+  assert.equal([...data.skills.values()].filter(s=>s.effect.master).length,660);
   let stages=0;
   for(const job of spec.jobs){
     const list=[...data.skills.values()].filter(s=>s.job===job.id);assert.equal(list.length,15);
@@ -71,7 +71,7 @@ assert.equal(data.jobs.filter(j=>j.skillsReady).length,41);
       }
     }
   }
-  assert.equal(stages,137);assert.equal(data.jobsById.get('summoner').skillsReady,false);
+  assert.equal(stages,137);assert.equal(data.jobsById.get('summoner').skillsReady,true);
 });
 test('新規・既存セーブで3職を初期から選べ、転職で技能や装備を自動配布しない',()=>{
   for(const id of ids){

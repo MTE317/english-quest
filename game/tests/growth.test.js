@@ -125,7 +125,7 @@ test('武器熟練度は装備条件にせず、30討伐ごとの威力補正と
   assert.ok(Math.abs(weaponPower(data, member, member.equip.weapon) / before - 1.2) < 1e-9);
 });
 
-test('基本職への転職は無料で武器を保持し、未実装の追加職は選べない', () => {
+test('基本職への転職は無料で武器を保持し、技能準備中の伝説職は選べない', () => {
   const game = fresh();
   const member = game.party[0];
   member.equip.weapon = makeGear(game, 'sword_t1');
@@ -135,7 +135,7 @@ test('基本職への転職は無料で武器を保持し、未実装の追加�
   assert.equal(member.equip.weapon.id, 'sword_t1');
   assert.equal(game.gold, gold);
   assert.deepEqual(member.learned, []);
-  game.unlockedJobs = ['summoner'];
-  assert.ok(availableJobs(data, game).every((job) => job.tier === 'base'||['paladin','dark_knight','berserker','samurai','gladiator','warrior_monk','ascetic','executioner','ninja','assassin','bounty_hunter','dragoon','gunner','pirate','spellblade','elementalist','witch','hexer'].includes(job.id)));
-  assert.throws(() => changeJob(data, game, 0, 'summoner'), /選べない/);
+  game.unlockedJobs = ['hero'];
+  assert.ok(!availableJobs(data, game).some(job=>job.id==='hero'));
+  assert.throws(() => changeJob(data, game, 0, 'hero'), /選べない/);
 });

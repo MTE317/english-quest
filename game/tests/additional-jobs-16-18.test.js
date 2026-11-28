@@ -50,8 +50,8 @@ const reset=c=>{c.member.mp=Math.max(999,maxMp(data,c.member));};
 const near=(a,b)=>assert.ok(Math.abs(a-b)<1e-8,`${a} != ${b}`);
 
 test('追加16〜18職の45技能・143段階・転職・セーブ後の習得が設計と一致する',()=>{
-assert.equal(data.jobs.filter(j=>j.skillsReady).length,41);
-  assert.equal([...data.skills.values()].filter(s=>s.effect.master).length,615);
+assert.equal(data.jobs.filter(j=>j.skillsReady).length,44);
+  assert.equal([...data.skills.values()].filter(s=>s.effect.master).length,660);
   let stages=0;
   for(const j of spec.jobs.filter(j=>ids.includes(j.id))){
     const c=fixture(j.id);
