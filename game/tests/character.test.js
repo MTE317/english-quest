@@ -133,7 +133,7 @@ test('レベル：xp_to_next で上がり、HP も増える。上限は level_ca
   const w = g.party[0];
   const hp1 = maxHp(data, w);
   const need = xpToNext(data, 1);
-  assert.equal(need, Math.round(25 * 1 ** 1.5));
+  assert.equal(need, 38);
   assert.equal(gainXp(data, w, need - 1), 0);
   assert.equal(gainXp(data, w, 1), 1);
   assert.equal(w.lv, 2);

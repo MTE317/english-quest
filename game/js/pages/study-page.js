@@ -1,12 +1,12 @@
 // 英語学習は訓練場（単語・瞬間英作文・チャンク）と試験の間へ集約する。
-import { loadGameData } from '../gamedata.js?v=region1-encounters-1';
+import { loadGameData } from '../gamedata.js?v=playtest-balance-1';
 import { loadJson } from '../data.js?v=skill-growth-2';
 import { loadLearningCatalog } from '../learning-catalog.js?v=skill-growth-2';
 import { Scheduler } from '../srs.js?v=skill-growth-2';
 import { LearningStore, now } from '../storage.js?v=skill-growth-2';
 import { GameSession } from '../save.js?v=world-journey-1';
-import { normalizeGame } from '../game-state.js?v=region1-encounters-1';
-import { nextRankStatus, checkRankUp, promotionMaterialStatus, offerPromotionMaterials } from '../town.js?v=region1-encounters-1';
+import { normalizeGame } from '../game-state.js?v=playtest-balance-1';
+import { nextRankStatus, checkRankUp, promotionMaterialStatus, offerPromotionMaterials } from '../town.js?v=playtest-balance-1';
 import { EXAM_RULES, promotionProgress, promotionExamState } from '../promotion.js?v=promotion-exam-1';
 import { runDualPromotionExam } from '../ui/learning-exams.js?v=promotion-exam-1';
 import { learningStatistics } from '../learning-stats.js?v=skill-growth-2';

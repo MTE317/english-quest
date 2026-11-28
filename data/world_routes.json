@@ -642,5 +642,6 @@
       "soloMonsters": []
     }
   ],
-  "maxHealersPerBattle": 1
+  "maxHealersPerBattle": 1,
+  "seasonalWeightMultiplier": 3
 }

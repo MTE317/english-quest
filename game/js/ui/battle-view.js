@@ -10,6 +10,7 @@ import { maxHp, maxMp } from '../character.js?v=advanced-jobs-1';
 import { el, render } from '../dom.js?v=skill-growth-2';
 import { expeditionScene } from './scenery.js?v=skill-growth-2';
 import { monsterKnowledge } from '../monster-knowledge.js?v=fixed-monsters-1';
+import { monsterBattleVisibility } from '../monster-catalog.js?v=playtest-balance-1';
 import { startBattleMusic, finishBattleMusic } from '../battle-music.js?v=skill-growth-2';
 import { unlockBattleSound, playBattleHitSound } from '../battle-sound.js?v=skill-growth-2';
 import { portraitIcon } from './portrait.js?v=skill-growth-2';
@@ -403,12 +404,13 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
 
   function inspectEnemy(enemy) {
     const { weak, resist, normal, scanned } = monsterKnowledge(data, g, enemy);
+    const visible = monsterBattleVisibility(data,g,enemy);
     render(encyclopedia, el('div', { class: 'battle-encyclopedia-body' },
       el('span', { class: 'battle-enemy-icon', 'aria-hidden': 'true' }, enemy.icon),
       el('h3', { id: 'battle-monster-name' }, enemy.name),
-      resource('HP', enemy.hp, enemy.maxHp, 'hp'),
-      enemy.maxMp == null ? null : resource('MP', enemy.mp, enemy.maxMp, 'mp'),
-      el('p', {}, enemy.types.map((id) => data.monsterTypes.get(id)?.name ?? id).join('・')),
+      visible.hp ? resource('HP', enemy.hp, enemy.maxHp, 'hp') : null,
+      visible.mp && enemy.maxMp != null ? resource('MP', enemy.mp, enemy.maxMp, 'mp') : null,
+      el('p', {}, visible.types ? enemy.types.map((id) => data.monsterTypes.get(id)?.name ?? id).join('・') : '種族：未判明'),
       el('dl', {},
         el('dt', {}, '判明した弱点'), el('dd', {}, weak.join('・') || (scanned ? 'なし' : '未判明')),
         el('dt', {}, '判明した耐性'), el('dd', {}, resist.join('・') || '未判明'),
@@ -424,8 +426,10 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
     render(enemies, b.enemies.map((enemy, index) => {
       const targetable = kind === 'enemy' && indices.includes(index);
       const chosen = selectedKind === 'enemy' && action.target === index;
-      const label = enemy.name + (enemy.boss ? '、ボス' : '') + (enemy.eliteId ? '、エリート' : '') + '、HP ' + enemy.hp + '/' + enemy.maxHp +
-        (enemy.maxMp == null ? '' : '、MP ' + enemy.mp + '/' + enemy.maxMp);
+      const visible = monsterBattleVisibility(data,g,enemy);
+      const label = enemy.name + (enemy.boss ? '、ボス' : '') + (enemy.eliteId ? '、エリート' : '')
+        + (visible.hp ? '、HP ' + enemy.hp + '/' + enemy.maxHp : '')
+        + (visible.mp && enemy.maxMp != null ? '、MP ' + enemy.mp + '/' + enemy.maxMp : '');
       const known = monsterKnowledge(data, g, enemy);
       const intent = enemyIntent(data, enemy, b.round);
       const pendingEnemyTurn = b.queue?.some(turn => turn.side === 'enemy' && turn.i === index)
@@ -442,8 +446,8 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
         targetable ? null : el('span', { class: 'battle-inspect', 'aria-hidden': 'true' }, '図鑑'),
         el('span', { class: 'battle-unit-name' }, enemy.name),
         enemy.boss || enemy.eliteId ? el('span', { class: 'battle-enemy-marks', 'aria-hidden': 'true', title: enemy.eliteId ? 'エリート：能力が高く、レアドロップ率が上昇' : 'ボス' }, [enemy.boss ? '👑' : '', enemy.eliteId ? '◆' : ''].filter(Boolean).join(' ')) : null,
-        resource('HP', enemy.hp, enemy.maxHp, 'hp'),
-        enemy.maxMp == null ? null : resource('MP', enemy.mp, enemy.maxMp, 'mp'),
+        visible.hp ? resource('HP', enemy.hp, enemy.maxHp, 'hp') : null,
+        visible.mp && enemy.maxMp != null ? resource('MP', enemy.mp, enemy.maxMp, 'mp') : null,
         enemy.tactics ? el('span', { class: 'battle-intent' }, { heal: '回復術', ward: '自己強化', disrupt: '弱体化' }[enemy.tactics]) : null,
         intentLabel ? el('span', { class: `battle-intent${imminent ? ' imminent' : ''}` }, intentLabel) : null,
         conditions(battleConditionLabels(data, enemy)),

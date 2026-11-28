@@ -5,8 +5,8 @@ import { evaluate } from './expr.js?v=skill-growth-2';
 import { makeGear, maxHp, maxMp, gearDef } from './character.js?v=advanced-jobs-1';
 import { equipmentTier } from './equipment-scaling.js?v=equipment-rarity-1';
 import { addItem } from './loot.js?v=fixed-monsters-1';
-import { currentRank, allowedDungeons } from './dungeon.js?v=region1-encounters-1';
-import { monsterPool } from './encounter.js?v=region1-encounters-1';
+import { currentRank, allowedDungeons } from './dungeon.js?v=playtest-balance-1';
+import { monsterPool } from './encounter.js?v=playtest-balance-1';
 import { unlockReportedHuntJobs } from './temple.js?v=skill-growth-2';
 
 export const TOWN_FORMULAS = Object.freeze({

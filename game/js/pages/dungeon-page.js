@@ -1,19 +1,19 @@
 // ダンジョンの画面：行き先とルーンストーンを選ぶ → 階を進む → 戦闘 → 帰還ポイント・ボス → 町へ
-import { loadGameData } from '../gamedata.js?v=region1-encounters-1';
+import { loadGameData } from '../gamedata.js?v=playtest-balance-1';
 import { loadJson } from '../data.js?v=skill-growth-2';
 import { loadLearningCatalog } from '../learning-catalog.js?v=skill-growth-2';
 import { Scheduler } from '../srs.js?v=skill-growth-2';
 import { LearningStore, now, loadSettings } from '../storage.js?v=skill-growth-2';
 import { QuestionPicker } from '../picker.js?v=skill-growth-2';
 import { GameSession } from '../save.js?v=world-journey-1';
-import { normalizeGame } from '../game-state.js?v=region1-encounters-1';
+import { normalizeGame } from '../game-state.js?v=playtest-balance-1';
 import {
   allowedDungeons, allowedStones, expeditionFee, startRun, startNextBattle, afterBattle, returnToTown, continueRun, resolveLoot,
   isBossBattle, runFloorRow, runFloorCount, returnItems, currentRank, useItemOutsideBattle, FIELD_ITEM_EFFECTS,
-} from '../dungeon.js?v=region1-encounters-1';
+} from '../dungeon.js?v=playtest-balance-1';
 import { backpackSlots, backpackUsed, addItem } from '../loot.js?v=fixed-monsters-1';
 import { maxHp, maxMp, partyCanAct } from '../character.js?v=unique-reroll-1';
-import { createBattleView } from '../ui/battle-view.js?v=enemy-skills-1';
+import { createBattleView } from '../ui/battle-view.js?v=playtest-balance-1';
 import { createVictoryView, createLootIcons } from '../ui/victory-view.js?v=world-exit-choice-2';
 import { el, render, stars } from '../dom.js?v=skill-growth-2';
 import { buildWorldMap, newDiscoveries } from '../world-map.js?v=canyon-public-1';
@@ -24,10 +24,10 @@ import { expeditionScene } from '../ui/scenery.js?v=skill-growth-2';
 import { installGameShell } from '../ui/game-shell.js?v=skill-growth-2';
 import { portraitIcon } from '../ui/portrait.js?v=skill-growth-2';
 import { playDungeonEntrance } from '../ui/dungeon-entrance.js?v=skill-growth-2';
-import { calendarOf } from '../town.js?v=region1-encounters-1';
-import { worldNode, ensureWorldJourney, worldEntries, exitChoices } from '../world-journey.js?v=region1-encounters-1';
-import { chooseWorldExit } from '../dungeon.js?v=region1-encounters-1';
-import { createJourneyDeparture, createJourneyMap } from '../ui/world-journey-view.js?v=region1-encounters-1';
+import { calendarOf } from '../town.js?v=playtest-balance-1';
+import { worldNode, ensureWorldJourney, worldEntries, exitChoices } from '../world-journey.js?v=playtest-balance-1';
+import { chooseWorldExit } from '../dungeon.js?v=playtest-balance-1';
+import { createJourneyDeparture, createJourneyMap } from '../ui/world-journey-view.js?v=playtest-balance-1';
 
 const view = document.getElementById('view');
 const session = new GameSession();

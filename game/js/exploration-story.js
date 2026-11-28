@@ -1,4 +1,4 @@
-import { allowedDungeons } from './dungeon.js?v=region1-encounters-1';
+import { allowedDungeons } from './dungeon.js?v=playtest-balance-1';
 
 function availableStories(data, game) {
   if (game.worldJourney) return (data.balance.exploration_stories ?? []).filter(story => {

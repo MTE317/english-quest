@@ -1,0 +1,156 @@
+[
+  {
+    "width": 320,
+    "id": "slime",
+    "defeats": 0,
+    "elite": false,
+    "hp": false,
+    "mp": false,
+    "dialog": true,
+    "aria": true,
+    "reload": true
+  },
+  {
+    "width": 320,
+    "id": "slime",
+    "defeats": 20,
+    "elite": false,
+    "hp": true,
+    "mp": true,
+    "dialog": true,
+    "aria": true,
+    "reload": true
+  },
+  {
+    "width": 390,
+    "id": "slime",
+    "defeats": 0,
+    "elite": false,
+    "hp": false,
+    "mp": false,
+    "dialog": true,
+    "aria": true,
+    "reload": true
+  },
+  {
+    "width": 390,
+    "id": "slime",
+    "defeats": 1,
+    "elite": false,
+    "hp": true,
+    "mp": false,
+    "dialog": true,
+    "aria": true,
+    "reload": true
+  },
+  {
+    "width": 390,
+    "id": "slime",
+    "defeats": 19,
+    "elite": false,
+    "hp": true,
+    "mp": false,
+    "dialog": true,
+    "aria": true,
+    "reload": true
+  },
+  {
+    "width": 390,
+    "id": "slime",
+    "defeats": 20,
+    "elite": false,
+    "hp": true,
+    "mp": true,
+    "dialog": true,
+    "aria": true,
+    "reload": true
+  },
+  {
+    "width": 390,
+    "id": "stone_giant",
+    "defeats": 0,
+    "elite": false,
+    "hp": false,
+    "mp": false,
+    "dialog": true,
+    "aria": true,
+    "reload": true
+  },
+  {
+    "width": 390,
+    "id": "stone_giant",
+    "defeats": 1,
+    "elite": false,
+    "hp": true,
+    "mp": false,
+    "dialog": true,
+    "aria": true,
+    "reload": true
+  },
+  {
+    "width": 390,
+    "id": "stone_giant",
+    "defeats": 3,
+    "elite": false,
+    "hp": true,
+    "mp": false,
+    "dialog": true,
+    "aria": true,
+    "reload": true
+  },
+  {
+    "width": 390,
+    "id": "stone_giant",
+    "defeats": 4,
+    "elite": false,
+    "hp": true,
+    "mp": true,
+    "dialog": true,
+    "aria": true,
+    "reload": true
+  },
+  {
+    "width": 390,
+    "id": "slime",
+    "defeats": 0,
+    "elite": true,
+    "hp": false,
+    "mp": false,
+    "dialog": true,
+    "aria": true,
+    "reload": true
+  },
+  {
+    "width": 390,
+    "id": "slime",
+    "defeats": 20,
+    "elite": true,
+    "hp": true,
+    "mp": true,
+    "dialog": true,
+    "aria": true,
+    "reload": true
+  },
+  {
+    "width": 1000,
+    "id": "slime",
+    "defeats": 0,
+    "elite": false,
+    "hp": false,
+    "mp": false,
+    "dialog": true,
+    "aria": true,
+    "reload": true
+  },
+  {
+    "width": 1000,
+    "id": "slime",
+    "defeats": 20,
+    "elite": false,
+    "hp": true,
+    "mp": true,
+    "dialog": true,
+    "aria": true,
+    "reload": true
+  }
+]
