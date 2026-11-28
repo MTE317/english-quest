@@ -52,7 +52,7 @@ export function createLootIcons(data, loot, gearName) {
     : el('p', { class: 'victory-empty' }, 'なし');
 }
 
-export function createVictoryView({ data, dungeon, party, result, backpack, totalGold, gearName, actions }) {
+export function createVictoryView({ data, dungeon, party, result, backpack, totalGold, gearName, actions, primaryActions = [] }) {
   const { loot, growth, floor, battleNumber, battleCount } = result;
 
 
@@ -60,6 +60,7 @@ export function createVictoryView({ data, dungeon, party, result, backpack, tota
     el('header', { class: 'victory-header' },
       el('p', {}, `${dungeon.name} ・ ${floor} / ${dungeon.floors}階 ・ ${battleNumber} / ${battleCount}戦目`),
       el('h2', { tabindex: '-1' }, '勝利！')),
+    primaryActions.length ? el('div', { class: 'victory-primary-actions' }, primaryActions) : null,
     el('section', { class: 'victory-rewards', 'aria-labelledby': 'victory-rewards-title' },
       el('div', { class: 'victory-rewards-head' },
         el('h3', { id: 'victory-rewards-title' }, '戦闘報酬'),
