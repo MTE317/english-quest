@@ -49,16 +49,21 @@ test('発見済みの冒険先だけで季節ごとに掲示6件を生成し、�
   }
 });
 
-test('受注数に上限はなく、掲示6件と同じ依頼の重複防止は維持する', () => {
+test('受注上限5件と掲示6件を別に管理し、同じ依頼の重複を防ぐ', () => {
   const g = fresh(); board(g);
   const accepted = [];
-  for (let i = 0; i < 6; i++) {
+  for (let i = 0; i < 5; i++) {
     const q = g.board[0];
     acceptQuest(data, g, q.uid, seededRng(i + 10)); accepted.push(q);
     assert.equal(g.board.length, 6);
   }
-  assert.equal(g.quests.length, 6);
+  assert.equal(g.quests.length, 5);
   assert.ok(g.board.every((q) => !accepted.some((a) => questKey(a) === questKey(q))));
+  const before = structuredClone(g);
+  assert.match(canAcceptQuest(data, g, g.board[0]).reason, /5件まで/);
+  assert.throws(() => acceptQuest(data, g, g.board[0].uid), /5件まで/);
+  assert.throws(() => acceptQuest(g, g.board[0].uid), /5件まで/);
+  assert.deepEqual(g, before, '受注失敗では保証金も掲示も変更しない');
   g.board.push({ ...accepted[0], uid: -1 });
   assert.equal(canAcceptQuest(data, g, g.board.at(-1)).ok, false);
   assert.throws(() => acceptQuest(data, g, -1), /同じ依頼/);
@@ -174,4 +179,31 @@ test('古い受注依頼は維持し保証金0。未受注だけが6候補へ移
   const money = g.gold;
   abandonQuest(data, g, legacy.uid, seededRng(3));
   assert.equal(g.gold, money);
+});
+
+
+test('既存の6件以上は保持し、報告・放棄で4件になったら再受注できる', () => {
+  for (const finish of ['report', 'abandon']) {
+    const g = fresh(); board(g);
+    for (let i = 0; i < 5; i++) acceptQuest(data, g, g.board[0].uid, seededRng(i + 20));
+    // 上限導入前のセーブを再現する。
+    g.quests.push({ ...g.board[0] });
+    g.board.shift();
+    const before = structuredClone(g);
+    assert.throws(() => acceptQuest(data, g, g.board[0].uid), /5件まで/);
+    assert.deepEqual(g, before);
+    abandonQuest(data, g, g.quests.at(-1).uid, seededRng(40));
+    assert.equal(g.quests.length, 5);
+    assert.equal(canAcceptQuest(data, g, g.board[0]).ok, false);
+    const hunt = g.quests.find(q => q.type === 'hunt');
+    assert.ok(hunt);
+    if (finish === 'report') {
+      hunt.progress = hunt.count;
+      reportQuest(data, g, hunt.uid, seededRng(41));
+    } else abandonQuest(data, g, hunt.uid, seededRng(41));
+    assert.equal(g.quests.length, 4);
+    assert.equal(canAcceptQuest(data, g, g.board[0]).ok, true);
+    acceptQuest(data, g, g.board[0].uid, seededRng(42));
+    assert.equal(g.quests.length, 5);
+  }
 });
