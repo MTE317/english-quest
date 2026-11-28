@@ -96,13 +96,16 @@ test('制作、分解、強化、調合と施設投資が在庫や資金に反�
   assert.equal(g.gold, money + 10);
 });
 
-test('技能準備中の追加職には素材を消費しない', () => {
+test('神殿Lv10未満では伝説職へ転職できず素材も減らない', () => {
   const g = game();
   g.storage.materials = { poison_spider_mat: 4, skeleton_mat: 3 };
   const before = structuredClone(g.storage.materials);
-  assert.throws(() => unlockJob(data, g, 'sage'), /まだ解放できません/);
+  g.facilities.temple=9;
+  assert.throws(() => changeJob(data, g, 0, 'sage'), /選べない/);
   assert.deepEqual(g.storage.materials, before);
-  assert.ok(!g.unlockedJobs.includes('sage'));
+  g.facilities.temple=10;
+  changeJob(data,g,0,'sage');
+  assert.equal(g.party[0].job,'sage');
 });
 
 test('季節の敵と賞金首は連続クエスト廃止後も出現する', () => {
