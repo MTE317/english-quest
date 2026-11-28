@@ -11,6 +11,8 @@ import { fixedBattleRewards } from './monster-rewards.js?v=public-rewards-1';
 // 式・効果の上限は data/balance.json から読む。BATTLE_FORMULAS は旧データ向けの既定値。
 import { evaluate } from './expr.js?v=skill-growth-2';
 import { trioItems, trioBlock, trioTargetBlock, clearTrio, finishTrioOpportunity, runTrio } from './trio-combat.js?v=jobs-31-33-1';
+import { natureResources, natureBlock, natureTargetBlock, natureMpSave, natureEvasion, natureIncomingCut,
+  natureAttackBonus, clearNature, finishNature, runNature } from './nature-combat.js?v=jobs-22-24-1';
 import { civicItems, civicBlock, civicTargetBlock, clearCivic, finishCivicOpportunity, finishCivicEnemy,
   civicIncomingCut, civicAttackBonus, civicOnHit, runCivic } from './civic-combat.js?v=jobs-34-36-1';
 import { computeStats, gearDef, weaponPower, spellPower, scytheSpellPower, maxHp, maxMp, gearEffects, affixSum, memberCanAct } from './character.js?v=unique-reroll-1';
@@ -286,7 +288,7 @@ export function battleStats(data, game, b, i) {
     st[k] *= statModifier(data, buff, debuff);
   }
   st.crit = Math.min(f(data, 'crit_cap'), st.crit + bval(a.buffs, 'crt') + masterBuff(data, game, b, i, 'crt') + masterCritBonus(data, game, b, i));
-  st.evasion = Math.min(f(data, 'evasion_cap'), st.evasion + bval(b.partyBuffs, 'eva') + bval(a.buffs, 'eva') + masterBuff(data, game, b, i, 'eva') + masterEvasionBonus(data, game, b, i));
+  st.evasion = Math.min(f(data, 'evasion_cap'), st.evasion + bval(b.partyBuffs, 'eva') + bval(a.buffs, 'eva') + masterBuff(data, game, b, i, 'eva') + masterEvasionBonus(data, game, b, i) + natureEvasion(data,game,b,i));
   return st;
 }
 
@@ -349,6 +351,7 @@ function endRound(data, game, b) {
       finishMasterOpportunity(data, game, b, i, masterContext(data, game, b), null, false);
       finishTrioOpportunity(b,i);
       finishCivicOpportunity(data,game,b,i);
+      finishNature(data,game,b,i,natureContext(data,game,b,i));
     }
   }
   for (const enemy of b.enemies) {
@@ -437,6 +440,7 @@ export function nextTurn(data, game, b) {
     finishMasterOpportunity(data, game, b, u.i, masterContext(data, game, b), null, false);
     finishTrioOpportunity(b,u.i);
     finishCivicOpportunity(data,game,b,u.i);
+    finishNature(data,game,b,u.i,natureContext(data,game,b,u.i));
   }
   throw new Error('戦闘が進まない');
 }
@@ -523,6 +527,7 @@ export function prepareQuizAction(data, game, b) {
   finishMasterOpportunity(data, game, b, i, masterContext(data, game, b), null, false);
   finishTrioOpportunity(b,i);
   finishCivicOpportunity(data,game,b,i);
+  finishNature(data,game,b,i,natureContext(data,game,b,i));
   b.turn = null;
   return false;
 }
@@ -568,6 +573,7 @@ function koAlly(game, b, i) {
   m.hp = 0;
   clearTrio(b, i);
   clearCivic(b, i);
+  clearNature(b, i);
   for (const ally of b.allies) if (ally.machine?.guard?.target===i) delete ally.machine.guard;
   // 戦闘不能時に戦闘中の状態を解除する現行ルールを維持する。
   b.allies[i].statuses = {};
@@ -641,7 +647,8 @@ export function skillMp(data, member, skill, { battle = null, actor = null } = {
     && elements.length > 0 && elements.every(id => id === 'none');
   const reduction = Math.min(data.basicJobRules?.caps?.mp_save ?? 0.5, affixSum(member, 'MP_SAVE') / 100
     + (neutralMagic ? memberMods(data, member).neutral_magic_mp_save ?? 0 : 0)
-    + masterMpSave(data, member, skill, battle, actor));
+    + masterMpSave(data, member, skill, battle, actor) + natureMpSave(data,member,skill,battle,actor));
+  if(skill.id==='druid_A07'&&actor!=null&&battle?.allies[actor]?.beast)return 0;
   const weaponSkill = skill.kind === 'attack' && (skill.effect?.base ?? 'weapon') === 'weapon';
   const weaponMul = weaponSkill ? weaponTraits(data, member.equip?.weapon).weapon_skill_mp_mul ?? 1 : 1;
   const multiplier = Math.max(1 - (data.basicJobRules?.caps?.mp_save ?? .5), (1 - reduction) * weaponMul);
@@ -661,6 +668,8 @@ function skillBlock(data, game, b, i, s) {
   if (trioReason) return trioReason;
   const civicReason = civicBlock(data, game, b, i, s);
   if (civicReason) return civicReason;
+  const natureReason = natureBlock(data,game,b,i,s);
+  if (natureReason) return natureReason;
   if (s.isFinal && (m.ultimateGauge ?? 0) < (ultimateRules(data).gauge_max ?? 100)) return '必殺技ゲージが足りない';
   if (s.isFinal && ultimateRules(data).once_per_battle && a.once.includes(s.id)) return 'この戦闘ではもう使った';
   if (s.effect.require_weapon && (!m.equip.weapon || gearDef(data, m.equip.weapon).kind !== s.effect.require_weapon)) {
@@ -710,6 +719,7 @@ export function actionOptions(data, game, b, i) {
       optionalClone: Boolean(s.effect.rules?.optional_clone && cloneCount(b.allies[i])),
       itemChoices: trioItems(data, game, s),
       civicItems: civicItems(data, game, s),
+      natureChoices: natureResources(b,i,s),
       elements: s.effect.rules?.choose_element ?? s.effect.rules?.choose_mode ?? s.effect.choose_element ?? [] };
   };
   const skills = knownSkills(data, game.party[i]).map(entry);
@@ -721,7 +731,7 @@ export function actionOptions(data, game, b, i) {
   }).filter((x) => x.item);
   const flee = fleeRate(data, game, b, i);
   return { landing: landingAction(b,i), skills, ultimate: ultimate ? { ...entry(ultimate), gauge: game.party[i].ultimateGauge ?? 0, max: ultimateRules(data).gauge_max ?? 100 } : null,
-    items, flee: { rate: flee, reason: flee > 0 ? '' : '逃げられない' } };
+    items, flee: { rate: flee, reason: b.allies[i].beast ? '獣化中は使えない' : flee > 0 ? '' : '逃げられない' } };
 }
 
 /** 行動の対象の選び方：'enemy'（敵1体）/ 'enemies'（敵全体）/ 'ally'（味方1人）/ 'ko_ally'（倒れた味方）/ 'allies' / 'self' / 'none' */
@@ -738,6 +748,8 @@ export function targetKind(data, action, member = null) {
   const tgt = s.effect.tgt;
   if (s.effect.rules?.trio) return s.effect.rules.trio.targetKind;
   if (s.effect.rules?.civic) return s.effect.rules.civic.targetKind;
+  if (s.id==='summoner_U01'&&action.element!=='fire') return 'self';
+  if (s.effect.rules?.nature) return s.effect.rules.nature_target;
   if (tgt === 'selected_enemy') return 'enemy';
   if (tgt === 'self') return 'self';
   if (s.effect.rules?.revive && s.kind === 'heal_all') return 'ko_ally';
@@ -788,6 +800,7 @@ export function resolvePending(data, game, b, correct) {
     finishMasterOpportunity(data, game, b, i, masterContext(data, game, b), null, false);
     finishTrioOpportunity(b,i);
     finishCivicOpportunity(data,game,b,i);
+    finishNature(data,game,b,i,natureContext(data,game,b,i));
     if (b.queue.length) checkEnd(game, b);
     else checkDefeat(game, b);
     return { cm };
@@ -799,7 +812,8 @@ export function resolvePending(data, game, b, correct) {
     : act.type === 'skill' ? effectiveSkill(data, m, data.skills.get(act.skillId)) : null;
   beginMasterAction(data, game, b, i, chosenSkill);
   if (act.type === 'attack') {
-    doAttack(data, game, b, i, null, act.target, cm);
+    const beast=a.beast?{id:'druid_beast_attack',kind:'attack',elements:['blunt'],effect:{master:true,base:'phys',element:'blunt',m:.75,rules:{nature_beast:true,nature_normal_attack:true}}}:null;
+    doAttack(data, game, b, i, beast, act.target, cm);
     if (correct) {
       const max = maxMp(data, m);
       const recovery = Math.min(max - m.mp, Math.ceil(max * (data.balance.mp_rules?.normal_attack_regen_rate ?? 0)));
@@ -816,7 +830,7 @@ export function resolvePending(data, game, b, correct) {
     doSkill(data,game,b,i,reserved.skill,act.target,cm*reserved.cm,normalSkillReady,act);
   }
   else if (act.type === 'item') { a.advancedAction.executed = true; doItem(data, game, b, i, data.items.get(act.itemId), act.target, cm); }
-  else if (act.type === 'flee') { a.advancedAction.executed = true; doFlee(data, game, b, correct, i); }
+  else if (act.type === 'flee'&&!a.beast) { a.advancedAction.executed = true; doFlee(data, game, b, correct, i); }
   const performed = a.advancedAction?.executed;
   if (performed && chosenSkill && mysticSingleElement(chosenSkill) && !chosenSkill.isFinal) {
     const element = act.element ?? chosenSkill.effect.element;
@@ -827,6 +841,7 @@ export function resolvePending(data, game, b, correct) {
   finishMasterOpportunity(data, game, b, i, masterContext(data, game, b), chosenSkill ?? (act.type === 'attack' ? null : { kind: 'utility', effect: {} }));
   finishTrioOpportunity(b,i);
   finishCivicOpportunity(data,game,b,i);
+  finishNature(data,game,b,i,natureContext(data,game,b,i));
   if (performed && correct && act.type !== 'flee' && !chosenSkill?.isFinal) gainUltimate(data, m, ultimateRules(data).gain_correct ?? 20);
   if (b.queue.length) checkEnd(game, b);
   else checkDefeat(game, b);
@@ -912,13 +927,13 @@ function attackDamage(data, game, b, i, e, skill, cm, { offhand = false, actionB
   const mult = ((skill?.effect.m ?? 1) + (skill?.effect.rules?.rhythm_power ?? 0)*(a.advancedAction?.rhythmSpent ?? 0))
     * (skill && base === 'weapon' ? traits.weapon_skill_mul ?? 1 : 1);
   const qigong = masterTags(skill).includes('qigong') || skill?.effect.rules?.no_weapon_power;
-  const statVal = (kind === 'phys'
+  const statVal = skill?.effect.rules?.nature_snapshot?.mag ?? (skill?.effect.rules?.nature_beast ? st.mag : (kind === 'phys'
     ? (skill?.effect.beststat ? Math.max(st.str, st.mag) : st.str) * (qigong ? 1 : traits.str_mul ?? 1) + (qigong ? 0 : st.mag * (mods.mag2phys ?? 0))
       + st.mag*(skill?.effect.rules?.hybrid_mag_rate??0)
     : st.mag * (skill?.effect.master && base !== 'weapon' ? 1 : traits.mag_mul ?? 1) * (1 + bval(a.buffs, 'magb')))
-    + (skill?.effect.rules?.companion_attack ? Math.floor(maxHp(data,m)*.08) : 0);
-  const wpow = qigong ? 0 : skill && base === 'mag' ? spellPower(data, m) + (skill.effect.rules?.scythe_spell?scytheSpellPower(data,m):0)
-    : weaponPower(data, m, weapon) + st.mag * (mods.mag_to_atk ?? 0);
+    + (skill?.effect.rules?.companion_attack ? Math.floor(maxHp(data,m)*.08) : 0));
+  const wpow = skill?.effect.rules?.nature_snapshot?.spell ?? (qigong ? 0 : skill && (base === 'mag'||skill.effect.rules?.nature_beast) ? spellPower(data, m) + (skill.effect.rules?.scythe_spell?scytheSpellPower(data,m):0)
+    : weaponPower(data, m, weapon) + st.mag * (mods.mag_to_atk ?? 0));
   const bard = !data.basicJobRules && game.party.find((x, j) => x.job === 'bard' && canAct(game, b, j));
   const song = bard ? data.balance.battle.bard_song + (weaponTraits(data, bard.equip.weapon).song_bonus ?? 0) : 0;
   // STR/MAG の強化は battleStats に含む。ここで二重に掛けない。
@@ -929,6 +944,7 @@ function attackDamage(data, game, b, i, e, skill, cm, { offhand = false, actionB
   pm += masterBonus;
   pm += mysticDamageBonus(data, game, b, i, skill, els);
   pm += civicAttackBonus(data,game,b,i,e,skill);
+  pm += natureAttackBonus(data,game,b,i,skill,els);
   if (els.some(el => elementMul(data, enemy, el) > 1)) pm += skill?.effect.rules?.weak_damage ?? 0;
   for (const [names, v] of mods.wdmg ?? []) if (base === 'weapon' && wt && names.some((n) => nameIs(data.weaponTypes, wt.id, n))) pm += v;
   for (const [name, v] of mods.edmg ?? []) if (els.some((el) => nameIs(data.elements, el, name))) pm += v;
@@ -955,7 +971,7 @@ function attackDamage(data, game, b, i, e, skill, cm, { offhand = false, actionB
   if (!skill) pm += mods.normal_damage ?? 0;
   if (kind === 'mag') pm += mods.magic_damage ?? 0;
   if (mods.lowhp_dmg && m.hp < maxHp(data, m) * 0.5) pm += mods.lowhp_dmg;
-  const attackBase = (statVal + (base === 'weapon' || kind === 'mag' ? wpow : wpow * 0.8)) * mult * cm * dm * imb;
+  const attackBase = (statVal + (base === 'weapon' || kind === 'mag' || skill?.effect.rules?.nature_beast ? wpow : wpow * 0.8)) * mult * cm * dm * imb;
   const pierce = kind === 'phys'
     ? Math.min(data.basicJobRules?.caps?.def_ignore ?? .9, (qigong ? 0 : wt?.defPierce ?? 0) + (skill?.effect.defign ?? 0)
       + tacticalDefIgnore(b, i, skill) + pursuitDefIgnore(b,i,e,skill) + affixSum(m, 'DEF_PIERCE') / 100
@@ -1045,7 +1061,7 @@ function doAttack(data, game, b, i, skill, target, cm, { normalSkillReady = fals
   const m = game.party[i];
   const a = b.allies[i];
   if (a.advancedAction) a.advancedAction.executed = true;
-  const kind = skill ? (skill.effect.jump_landing?'enemy':targetKind(data, { type: 'skill', skillId: skill.id }, m)) : 'enemy';
+  const kind = skill ? (skill.effect.rules?.nature_normal_attack||skill.effect.jump_landing?'enemy':targetKind(data, { type: 'skill', skillId: skill.id }, m)) : 'enemy';
   const mainDef = m.equip.weapon ? gearDef(data, m.equip.weapon) : null;
   const wt = mainDef ? data.weaponTypes.get(mainDef.kind) : null;
   const weaponAll = wt?.traits.normal_all_mul != null
@@ -1409,6 +1425,42 @@ function putBuff(buffs, key, value, turns) {
 }
 
 // ---------------- スキル ----------------
+function natureContext(data,game,b,i,cm=1){
+  const member=game.party[i];
+  return {
+    stats:()=>battleStats(data,game,b,i),
+    snapshot:()=>({mag:battleStats(data,game,b,i).mag,spell:spellPower(data,member)}),
+    heal:(target,power,snapshot=null)=>{
+      const st=battleStats(data,game,b,i),traits=weaponTraits(data,member.equip.weapon);
+      const value=evaluate(f(data,'heal'),{MAG:snapshot?.mag??st.mag,wpow:snapshot?.spell??spellPower(data,member),m:power,heal_mul:traits.heal_mul??1})*cm;
+      return healAlly(data,game,b,target,value);
+    },
+    healRaw:(target,value)=>healAlly(data,game,b,target,value),
+    shield:(target,power,key)=>{
+      const amount=(10+.5*member.lv+battleStats(data,game,b,i).res)*power*cm;
+      const room=masterShieldRoom(data,game,b,target,key),value=Math.max(0,Math.floor(Math.min(room,amount,maxHp(data,game.party[target])*.5)));
+      if(value)grantMasterEffect(b,target,key,{shield:value,remaining:2,source:i,skillId:key,grantedClock:b.actionClock});
+      return value;
+    },
+    statusResist:(target,rate,key)=>grantMasterEffect(b,target,key,{statusResist:{multiplicative:true,statuses:[...data.statusEffects.keys()],rate},remaining:2,source:i,skillId:key,grantedClock:b.actionClock}),
+    inflict:(target,status,rate,multiplier,turns)=>{
+      const applied=inflictEnemy(data,b,target,[status,rate],multiplier,0,{actor:i});
+      if(applied&&b.enemies[target].statuses[status])b.enemies[target].statuses[status].turns=b.enemies[target].boss?1:turns;
+      return applied;
+    },
+    attack:(target,power,element,base,id,snapshot=null,status=null)=>{
+      const original=data.skills.get(id),skill=original?effectiveSkill(data,member,original):null;
+      const proxy={...skill,id,kind:'attack',elements:[element],effect:{...skill?.effect,base:base==='beast'?'phys':'mag',element,m:power,
+        rules:{...skill?.effect?.rules,nature_beast:base==='beast',nature_forecast:Boolean(snapshot),nature_snapshot:snapshot}}};
+      const result=attackDamage(data,game,b,i,target,proxy,cm);
+      hitEnemy(data,game,b,i,target,result.damage,{...result,primaryAction:!snapshot});
+      if(result.landed&&result.damage>0&&status){const applied=inflictEnemy(data,b,target,[status.id,status.rate],cm,0,{actor:i});
+        if(applied)b.enemies[target].statuses[status.id].turns=b.enemies[target].boss?1:status.turns;}
+      return result;
+    },
+  };
+}
+
 function doSkill(data, game, b, i, s, target, cm, normalSkillReady = false, action = {}) {
   if (!s.effect?.jump_landing) s = effectiveSkill(data, game.party[i], s);
   const m = game.party[i];
@@ -1422,6 +1474,8 @@ function doSkill(data, game, b, i, s, target, cm, normalSkillReady = false, acti
   if (trioReason) { log(b, `${s.name}は使えなかった（${trioReason}）`); return; }
   const civicReason = civicTargetBlock(data,game,b,i,s,target,action);
   if (civicReason) { log(b, `${s.name}は使えなかった（${civicReason}）`); return; }
+  const natureReason = natureTargetBlock(data,game,b,i,s,target,action);
+  if (natureReason) { log(b, `${s.name}は使えなかった（${natureReason}）`); return; }
   if (s.effect.rules?.mystic && (
     (s.kind === 'attack' && (s.effect.tgt === 'all' ? !livingEnemies(b).length : !enemyCanAct(b.enemies[target] ?? {hp:0})))
     || (s.kind === 'debuff' && !enemyCanAct(b.enemies[target] ?? {hp:0}))
@@ -1498,7 +1552,8 @@ function doSkill(data, game, b, i, s, target, cm, normalSkillReady = false, acti
     if(full)s={...s,effect:{...s.effect,m:(s.effect.m??1)*1.10}};
     delete a.decoy;
   }
-  if (e.rules?.trio || e.rules?.civic) (e.rules?.civic ? runCivic : runTrio)(data,game,b,i,s,target,cm,action,{
+  if(e.rules?.nature){a.advancedAction.executed=true;runNature(data,game,b,i,s,target,cm,action,natureContext(data,game,b,i,cm));}
+  else if (e.rules?.trio || e.rules?.civic) (e.rules?.civic ? runCivic : runTrio)(data,game,b,i,s,target,cm,action,{
     log: message=>log(b,message), spentMp, stats:()=>battleStats(data,game,b,i),
     elementMultiplier:(enemy,element)=>elementMul(data,enemy,element),
     elementName:element=>data.elements.get(element)?.name??element,
@@ -2671,7 +2726,7 @@ function enemyTurn(data, game, b, e) {
       + masterBuff(data, game, b, t, 'cut') + masterBuff(data, game, b, t, magic ? 'mcut' : 'pcut')
       + masterCutBonus(data, game, b, t, magic, e) + mysticCut(data, game, b, t, magic, incomingElements)
       + (counterStance?.cut ?? 0) + readGuardCut(b, t, magic, incomingElements)
-      + (masterCover && t !== original ? masterCover.cover.cut ?? 0 : 0)+orderCut+civicIncomingCut(data,game,b,t,e));
+      + (masterCover && t !== original ? masterCover.cover.cut ?? 0 : 0)+orderCut+civicIncomingCut(data,game,b,t,e)+natureIncomingCut(data,game,b,t));
     const ecut = allyElementMultiplier(data, game, b, t, enemy.attackElement, magic);
     const dmg = evaluate(f(data, 'enemy_damage'), { atk, df, r: between(b, f(data, 'enemy_rand')) })
       * Math.max(f(data, 'minimum_damage_share'), cover * cut * ecut)
@@ -2768,6 +2823,7 @@ export function finishBattle(data, game, b) {
     ally.masterEffects = {};
     clearTrio(b,i);
     clearCivic(b,i);
+    clearNature(b,i);
     delete ally.familiar;
     delete ally.companion;
     delete ally.puppet;

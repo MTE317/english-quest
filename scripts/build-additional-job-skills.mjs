@@ -12,11 +12,12 @@ import { commandJobs, commandSpecs, commandPlans } from './additional-jobs-28-30
 import { mysticJobs, mysticSpecs, mysticPlans } from './additional-jobs-19-21-plans.mjs';
 import { craftJobs, craftSpecs, craftPlans } from './additional-jobs-31-33-plans.mjs';
 import { civicJobs, civicSpecs, civicPlans } from './additional-jobs-34-36-plans.mjs';
+import { natureJobs, natureSpecs, naturePlans } from './additional-jobs-22-24-plans.mjs';
 
 const root = new URL('../', import.meta.url);
 const read = path => fs.readFileSync(new URL(path, root), 'utf8').replace(/^\uFEFF/, '');
 const spec = JSON.parse(read('docs/specs/additional-jobs-01-09-skills-v1.json'));
-export const implementedJobs = ['paladin', 'dark_knight', 'berserker', ...tacticalJobs, ...specialistJobs, ...pursuitJumpJobs, ...firearmSeaArcaneJobs, ...arcaneJobs, ...mysticJobs, ...companionJobs, ...commandJobs, ...craftJobs, ...civicJobs];
+export const implementedJobs = ['paladin', 'dark_knight', 'berserker', ...tacticalJobs, ...specialistJobs, ...pursuitJumpJobs, ...firearmSeaArcaneJobs, ...arcaneJobs, ...mysticJobs, ...natureJobs, ...companionJobs, ...commandJobs, ...craftJobs, ...civicJobs];
 const tacticalSpec = JSON.parse(read('docs/specs/additional-jobs-04-06-skills-v1.json'));
 const specialistSpec = JSON.parse(read('docs/specs/additional-jobs-07-09-skills-v1.json'));
 const pursuitJumpSpec = JSON.parse(read('docs/specs/additional-jobs-10-12-skills-v1.json'));
@@ -86,10 +87,10 @@ const writeCsv = (path, header, rows) => {
 };
 const current = csv('data/skills.csv');
 const rows = current.rows.filter(row => !implementedJobs.includes(row.job));
-const selected = [...spec.jobs.filter(job => implementedJobs.includes(job.id) && !tacticalJobs.includes(job.id) && !specialistJobs.includes(job.id)), ...tacticalSpec.jobs, ...specialistSpec.jobs, ...pursuitJumpSpec.jobs, ...firearmSeaArcaneSpec.jobs.filter(job => [...firearmSeaArcaneJobs,...arcaneJobs].includes(job.id)), ...mysticSpecs, ...companionSpecs.jobs, ...commandSpecs.jobs, ...craftSpecs.jobs, ...civicSpecs.jobs];
+const selected = [...spec.jobs.filter(job => implementedJobs.includes(job.id) && !tacticalJobs.includes(job.id) && !specialistJobs.includes(job.id)), ...tacticalSpec.jobs, ...specialistSpec.jobs, ...pursuitJumpSpec.jobs, ...firearmSeaArcaneSpec.jobs.filter(job => [...firearmSeaArcaneJobs,...arcaneJobs].includes(job.id)), ...mysticSpecs, ...natureSpecs.jobs, ...companionSpecs.jobs, ...commandSpecs.jobs, ...craftSpecs.jobs, ...civicSpecs.jobs];
 const weaponNames = { '刀':'katana', '剣':'sword', '大剣':'greatsword', '槍':'spear', '斧':'axe', '鎌':'scythe', '短剣':'dagger' };
 for (const job of selected) for (const s of job.skills) {
-  const plan = plans.get(s.id) ?? tacticalPlans.get(s.id) ?? specialistPlans.get(s.id) ?? pursuitJumpPlans.get(s.id) ?? firearmSeaArcanePlans.get(s.id) ?? arcanePlans.get(s.id) ?? mysticPlans.get(s.id) ?? companionPlans.get(s.id) ?? commandPlans.get(s.id) ?? craftPlans.get(s.id) ?? civicPlans.get(s.id);
+  const plan = plans.get(s.id) ?? tacticalPlans.get(s.id) ?? specialistPlans.get(s.id) ?? pursuitJumpPlans.get(s.id) ?? firearmSeaArcanePlans.get(s.id) ?? arcanePlans.get(s.id) ?? mysticPlans.get(s.id) ?? naturePlans.get(s.id) ?? companionPlans.get(s.id) ?? commandPlans.get(s.id) ?? craftPlans.get(s.id) ?? civicPlans.get(s.id);
   assert.ok(plan, `実行定義なし: ${s.id}`);
   const weapons = plan.weapons ?? s.weapons ?? (s.weaponCondition.includes('12種') ? physical
     : s.weaponCondition.startsWith('武器条件なし') ? [] : s.weaponCondition.split('・').map(name => weaponNames[name]));
@@ -99,7 +100,7 @@ for (const job of selected) for (const s of job.skills) {
   const ap = s.learnAp ?? rules.ap_bands[{'導入':'intro','標準':'standard','発展':'advanced','奥義':'ultimate'}[s.apBand]];
   const tags = [...new Set([s.type === 'active' ? 'active' : s.type,...(s.tags ?? [])])];
   const effects = s.effects.map((description,i)=>({master:true,additional:true,description,source_description:description,
-    prerequisites:s.prerequisites,weapons,tags,target:s.target,reference:(craftJobs.includes(job.id)?craftSpecs:mysticJobs.includes(job.id)?mysticSpec:commandJobs.includes(job.id)?commandSpecs:companionJobs.includes(job.id)?companionSpecs:[...firearmSeaArcaneJobs,...arcaneJobs].includes(job.id)?firearmSeaArcaneSpec:spec).formulas[s.reference],
+    prerequisites:s.prerequisites,weapons,tags,target:s.target,reference:(craftJobs.includes(job.id)?craftSpecs:natureJobs.includes(job.id)?natureSpecs:mysticJobs.includes(job.id)?mysticSpec:commandJobs.includes(job.id)?commandSpecs:companionJobs.includes(job.id)?companionSpecs:[...firearmSeaArcaneJobs,...arcaneJobs].includes(job.id)?firearmSeaArcaneSpec:spec).formulas[s.reference],
     ...(s.simpleDescriptions ? {short_description:s.simpleDescriptions[i]} : {}),
     growth_mode:s.growthMode,...(final?{ultimate:true}:{}),...plan.build(i)}));
   assert.equal(effects.length,s.maxLevel);
@@ -109,13 +110,13 @@ for (const job of selected) for (const s of job.skills) {
 }
 writeCsv('data/skills.csv',current.header,rows);
 const roster = csv('data/jobs_mid.csv');
-for (const row of roster.rows) if (implementedJobs.includes(row.id)) { row.skills_ready='1'; row.unlock=civicJobs.includes(row.id)?'神殿Lv9で解放':craftJobs.includes(row.id)?'神殿Lv8で解放':[...companionJobs,...commandJobs].includes(row.id)?'神殿Lv7で解放':mysticJobs.includes(row.id)?'神殿Lv6で解放':'初期解放（条件は後日設定）'; }
+for (const row of roster.rows) if (implementedJobs.includes(row.id)) { row.skills_ready='1'; row.unlock=civicJobs.includes(row.id)?'神殿Lv9で解放':craftJobs.includes(row.id)?'神殿Lv8で解放':[...companionJobs,...commandJobs].includes(row.id)?'神殿Lv7で解放':[...mysticJobs,...natureJobs].includes(row.id)?'神殿Lv6で解放':'初期解放（条件は後日設定）'; }
 writeCsv('data/jobs_mid.csv',roster.header,roster.rows);
 const unlocks = csv('data/job_unlocks.csv');
 for (const row of unlocks.rows) if (implementedJobs.includes(row.job_id)) {
   row.method='初期';
   if ([...companionJobs,...commandJobs].includes(row.job_id)) row.temple_level='7';
-  if (mysticJobs.includes(row.job_id)) row.temple_level='6';
+  if ([...mysticJobs,...natureJobs].includes(row.job_id)) row.temple_level='6';
   if (craftJobs.includes(row.job_id)) row.temple_level='8';
   if (civicJobs.includes(row.job_id)) row.temple_level='9';
 }
@@ -129,4 +130,4 @@ fs.writeFileSync(new URL('data/basic_job_rules.json',root),JSON.stringify(rules,
 const balance=fs.readFileSync(new URL('data/balance.json',root),'utf8');
 assert.match(balance,/"lifesteal_action_cap":\s*[\d.]+/);
 fs.writeFileSync(new URL('data/balance.json',root),balance.replace(/"lifesteal_action_cap":\s*[\d.]+/,'"lifesteal_action_cap": 0.1'));
-console.log(`追加1〜21・25〜36職: ${selected.reduce((n,j)=>n+j.skills.length,0)}技能`);
+console.log(`追加1〜36職: ${selected.reduce((n,j)=>n+j.skills.length,0)}技能`);

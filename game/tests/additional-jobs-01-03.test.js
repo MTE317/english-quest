@@ -52,8 +52,8 @@ function enemyActs(c,{power=80,target=0,sweep=false}={}) {
 test('追加1〜3職45技能は設計の全段階・前提・cost・MP/APに一致し、未実装の15職は閉じたまま',()=>{
   const added=[...data.skills.values()].filter(skill=>ids.includes(skill.job));
   assert.equal(added.length,45);
-assert.equal([...data.skills.values()].filter(skill=>skill.effect.master).length,615);
-  assert.equal(data.jobs.filter(job=>job.skillsReady).length,41);
+assert.equal([...data.skills.values()].filter(skill=>skill.effect.master).length,660);
+  assert.equal(data.jobs.filter(job=>job.skillsReady).length,44);
   for(const job of spec.jobs.filter(job=>ids.includes(job.id))) {
     const list=added.filter(skill=>skill.job===job.id);
     assert.deepEqual([list.filter(s=>s.kind==='passive').length,list.filter(s=>s.isFinal).length],[5,1]);
@@ -70,7 +70,7 @@ assert.equal([...data.skills.values()].filter(skill=>skill.effect.master).length
       for(const prerequisite of source.prerequisites) assert.ok(prerequisite.level<=skillMaxLevel(data.skills.get(prerequisite.id)));
     }
   }
-  assert.equal(data.jobsById.get('summoner').skillsReady,false);
+  assert.equal(data.jobsById.get('summoner').skillsReady,true);
 });
 
 test('新規・既存セーブは3職を初期から選べ、転職で技能・APを配布せず負傷も回復させない',()=>{
