@@ -119,6 +119,7 @@ test('スキル選択時だけ習得・セットを主メニュー直下に表�
       showSkills: index => calls.push(['learn', index]),
       showLoadout: index => calls.push(['set', index]),
       showMember: (index, tab) => calls.push([tab, index]),
+      switchSkillTab: callback => callback(),
     });
     vm.runInContext(code, context);
     render(view, context.memberNavigation(0, 'skills'));

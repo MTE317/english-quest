@@ -9,7 +9,7 @@ import { STONE_STAGES, stoneRequirement, availableStoneStages, awardCompositionS
 const data = realGameData();
 const fresh = () => createNewGame(data, defaultPartySpecs(data));
 
-test('分解は全装備の効果数に応じて粉0～3個を返し、欠片と強化石Iも維持する', () => {
+test('分解はレアリティ別の欠片と効果数に応じた粉0～3個を返す', () => {
   const slots = ['weapon', 'head', 'accessory'];
   for (const slot of slots) {
     const def = [...data.equipment.values()].find(e => e.slot === slot && e.star === 1);
@@ -25,10 +25,11 @@ test('分解は全装備の効果数に応じて粉0～3個を返し、欠片と
       assert.equal(dismantlePowder(gear), expected);
       const message = dismantle(data, game, gear);
       assert.equal(game.storage.gear.includes(gear), false);
-      assert.equal(game.storage.materials.fragment_common, 1);
-      assert.equal(game.storage.materials.enhancement_stone_1, 1);
+      assert.equal(game.storage.materials.enhancement_stone_fragment_1, 1);
+      assert.equal(game.storage.materials.enhancement_stone_1, undefined);
       assert.equal(game.storage.materials.enchant_powder, 4 + expected);
-      assert.match(message, expected ? new RegExp(`粉${expected}個`) : /欠片と強化石Iを得た/);
+      assert.match(message, /強化石Iの欠片1個/);
+      if (expected) assert.match(message, new RegExp(`粉${expected}個`));
       assert.throws(() => dismantle(data, game, gear), /所持品/);
     }
   }

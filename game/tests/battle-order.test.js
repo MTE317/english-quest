@@ -126,6 +126,7 @@ test('B1 死の宣告はラウンド末、石化はターンを消費しない',
 test('B1 属性無効の命中はHPを減らさず、武器の追加状態異常を判定する', () => {
   const { data, game, battle, enemy } = encounter();
   enemy.immune = ['slash'];
+  enemy.statusAffinity.poison = '★'; // 属性無効と状態異常の相性は独立。付与率を100%に固定する。
   data.weaponTypes.get('sword').traits.normal_status = { id: 'poison', chance: 1 };
   data.balance.battle_formulas.status_rate_cap = 1;
   const before = enemy.hp;
