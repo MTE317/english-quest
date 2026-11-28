@@ -1,7 +1,8 @@
 // 出てくる敵を決める（ダンジョンと階から）。
-import { makeEnemy } from './battle.js?v=world-journey-1';
+import { makeEnemy } from './battle.js?v=fixed-monsters-1';
 import { affixSum } from './character.js?v=advanced-jobs-1';
 import { memberMods } from './growth.js?v=advanced-jobs-1';
+import { rollMonsterElite } from './monster-stats.js?v=fixed-monsters-1';
 
 /** そのダンジョンにふだん出るモンスター */
 export function monsterPool(data, dungeonId, season, { legacy = false } = {}) {
@@ -110,11 +111,13 @@ export function makeEncounter(data, dungeonId, floor, rng, {
   const world = data.worldRoutes?.nodes.find(node => node.id === dungeonId);
   if (world) {
     const count = boss ? 1 : world.counts[0] + Math.floor(rng() * (world.counts[1] - world.counts[0] + 1));
+    let eliteCount = 0;
+    const eliteLimit = Math.min(maxElites, data.monsterElites?.maxPerBattle ?? 0);
     const enemies = Array.from({ length: count }, () => {
       const id = boss ? world.bossId : world.pool[Math.floor(rng() * world.pool.length)];
-      const enemy = makeEnemy(data, id, { lv: row.enemyLevel, dungeonId, boss });
-      enemy.maxHp = Math.max(1, Math.round(enemy.maxHp * (boss ? world.bossHpMul : world.hpMul)));
-      enemy.hp = enemy.maxHp;
+      const eliteId = elites && !boss && eliteCount < eliteLimit ? rollMonsterElite(data, id, rng) : null;
+      const enemy = makeEnemy(data, id, { dungeonId, boss, eliteId });
+      if (enemy.eliteId) eliteCount++;
       return enemy;
     });
     return distinguishNames(enemies);
@@ -129,8 +132,10 @@ export function makeEncounter(data, dungeonId, floor, rng, {
     const enemies = ids.map(id => {
       const monsterId = id === '$season' ? intro.seasonal[season] : id;
       const enemy = makeEnemy(data, monsterId, { lv: row.enemyLevel, dungeonId, boss });
-      enemy.maxHp = Math.max(1, Math.floor(enemy.maxHp * (boss ? intro.boss_hp_mul : intro.hp_mul)));
-      enemy.hp = enemy.maxHp;
+      if (!enemy.statsVersion) {
+        enemy.maxHp = Math.max(1, Math.floor(enemy.maxHp * (boss ? intro.boss_hp_mul : intro.hp_mul)));
+        enemy.hp = enemy.maxHp;
+      }
       return enemy;
     });
     return distinguishNames(enemies);
@@ -146,15 +151,15 @@ export function makeEncounter(data, dungeonId, floor, rng, {
   const count = boss ? (Number.isInteger(escorts) ? escorts : bossEscorts(data)) : row.enemiesPerBattle;
   const rank = data.dungeons.get(dungeonId).rank;
   const config = data.balance.dungeon ?? {};
-  const eliteLimit = Math.max(0, Math.min(maxElites, config.elite_max_per_battle ?? count));
+  const eliteLimit = Math.max(0, Math.min(maxElites, data.monsterElites?.maxPerBattle ?? config.elite_max_per_battle ?? count));
   const seen = new Set();
   let eliteCount = 0;
   for (let k = 0; k < count; k++) {
     const m = weightedMonster(choices, rng, seen, Math.max(0, data.balance.encounters?.repeat_weight ?? 1));
     seen.add(m.id);
     // ボス・賞金首と冠付きが重なって難度が跳ねることを避ける。
-    const canElite = elites && !boss && !bountyId && rank >= (config.elite_min_star ?? 1) && eliteCount < eliteLimit;
-    const eliteId = canElite ? eliteFor(data, rank, rng) : null;
+    const canElite = elites && !boss && !bountyId && (m.fixedStats || rank >= (config.elite_min_star ?? 1)) && eliteCount < eliteLimit;
+    const eliteId = canElite ? (m.fixedStats ? rollMonsterElite(data, m.id, rng) : eliteFor(data, rank, rng)) : null;
     if (eliteId) eliteCount += 1;
     enemies.push(makeEnemy(data, m.id, { lv: row.enemyLevel, dungeonId, eliteId }));
   }

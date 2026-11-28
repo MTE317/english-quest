@@ -1,5 +1,5 @@
 import { el } from '../dom.js?v=skill-growth-2';
-import { allyElementResistances, ELEMENT_RESISTANCE } from '../element-resistance.js?v=world-journey-1';
+import { allyElementResistances, ELEMENT_RESISTANCE } from '../element-resistance.js?v=fixed-monsters-1';
 
 export function elementResistancePanel(data, game, index) {
   const rows = allyElementResistances(data, game, index);

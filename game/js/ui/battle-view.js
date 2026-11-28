@@ -4,12 +4,12 @@ import { now } from '../storage.js?v=skill-growth-2';
 import { QuestionPicker, REASON_LABEL } from '../picker.js?v=skill-growth-2';
 import { makePracticeQuestion, questionDirection, questionSpeech, DIRECTION } from '../quiz.js?v=skill-growth-2';
 import { speak, canSpeak, stopSpeech } from '../speech.js?v=skill-growth-2';
-import { nextTurn, actionOptions, setPending, prepareQuizAction, resolvePending, targetKind, skillMp, collectBattleHits, enemyIntent, enemyCanAct } from '../battle.js?v=world-journey-1';
+import { nextTurn, actionOptions, setPending, prepareQuizAction, resolvePending, targetKind, skillMp, collectBattleHits, enemyIntent, enemyCanAct } from '../battle.js?v=fixed-monsters-1';
 import { skillMaxLevel, learnedSkillLevel, effectiveSkill } from '../growth.js?v=advanced-jobs-1';
 import { maxHp, maxMp } from '../character.js?v=advanced-jobs-1';
 import { el, render } from '../dom.js?v=skill-growth-2';
 import { expeditionScene } from './scenery.js?v=skill-growth-2';
-import { monsterKnowledge } from '../monster-knowledge.js?v=skill-growth-2';
+import { monsterKnowledge } from '../monster-knowledge.js?v=fixed-monsters-1';
 import { startBattleMusic, finishBattleMusic } from '../battle-music.js?v=skill-growth-2';
 import { unlockBattleSound, playBattleHitSound } from '../battle-sound.js?v=skill-growth-2';
 import { portraitIcon } from './portrait.js?v=skill-growth-2';
@@ -441,7 +441,7 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
         el('span', { class: 'battle-enemy-icon', 'aria-hidden': 'true' }, enemy.icon),
         targetable ? null : el('span', { class: 'battle-inspect', 'aria-hidden': 'true' }, '図鑑'),
         el('span', { class: 'battle-unit-name' }, enemy.name),
-        enemy.boss || enemy.eliteId ? el('span', { class: 'battle-enemy-marks', 'aria-hidden': 'true' }, [enemy.boss ? '👑' : '', enemy.eliteId ? '⚠' : ''].filter(Boolean).join(' ')) : null,
+        enemy.boss || enemy.eliteId ? el('span', { class: 'battle-enemy-marks', 'aria-hidden': 'true', title: enemy.eliteId ? 'エリート：能力が高く、レアドロップ率が上昇' : 'ボス' }, [enemy.boss ? '👑' : '', enemy.eliteId ? '◆' : ''].filter(Boolean).join(' ')) : null,
         resource('HP', enemy.hp, enemy.maxHp, 'hp'),
         enemy.maxMp == null ? null : resource('MP', enemy.mp, enemy.maxMp, 'mp'),
         enemy.tactics ? el('span', { class: 'battle-intent' }, { heal: '回復術', ward: '自己強化', disrupt: '弱体化' }[enemy.tactics]) : null,

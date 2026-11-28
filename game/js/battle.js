@@ -1,5 +1,5 @@
 import { equipmentTier } from './equipment-scaling.js?v=equipment-rarity-1';
-import { fixedBattleRewards } from './monster-rewards.js?v=world-journey-1';
+import { fixedBattleRewards } from './monster-rewards.js?v=fixed-monsters-1';
 // 戦闘：行動順・通常攻撃とスキル・1行動ごとに1問・属性・状態異常・道具・逃げる。
 //
 // - 戦闘の状態（battle）はすべて JSON にできる形で持つ。乱数も battle.rng に入れておくので、
@@ -22,7 +22,7 @@ import { civicItems, civicBlock, civicTargetBlock, clearCivic, finishCivicOpport
   civicIncomingCut, civicAttackBonus, civicOnHit, runCivic } from './civic-combat.js?v=jobs-34-36-1';
 import { computeStats, gearDef, weaponPower, spellPower, scytheSpellPower, maxHp, maxMp, gearEffects, affixSum, memberCanAct } from './character.js?v=unique-reroll-1';
 import { actionSkills, ultimateSkill, memberMods, addMasteryKill, effectiveSkill } from './growth.js?v=unique-reroll-1';
-import { encounterMonsters, learnMonsterElements, hitEffectiveness } from './monster-knowledge.js?v=monster-catalog-1';
+import { encounterMonsters, learnMonsterElements, hitEffectiveness } from './monster-knowledge.js?v=fixed-monsters-1';
 import { masterTags, weaponSkill, songSkill, healingSkill, weaponAllowed, passiveRules, ruleNumber, matchesTag,
   masterDamageBonus, masterCritBonus, masterEvasionBonus, masterCutBonus, grantMasterEffect, masterBuff, masterMpSave,
   masterHealingBonus, masterStatusResist, masterStatusMultiplier, beginMasterAction, startMasterOpportunity, finishMasterOpportunity,
@@ -182,9 +182,15 @@ const enemyMpCapacity = (level, boss) => Math.max(4, Math.round(6 + level * 0.6)
 export function makeEnemy(data, monsterId, { lv, dungeonId = null, boss = false, eliteId = null } = {}) {
   const m = data.monsters.get(monsterId);
   if (!m) throw new Error(`monsters.csv に ${monsterId} がない`);
+  const fixed = m.fixedStats;
+  if (fixed) {
+    lv = fixed.level;
+    boss = boss || m.isBoss;
+    eliteId = eliteId && m.eliteEligible && !boss ? 'elite' : null;
+  }
   const dg = dungeonId ? data.dungeons.get(dungeonId) : null;
   const star = dg?.rank ?? m.rank;
-  const elite = eliteId ? data.elitePrefixes.find((e) => e.id === eliteId) : null;
+  const elite = !fixed && eliteId ? data.elitePrefixes.find((e) => e.id === eliteId) : null;
   const em = elite?.mods ?? { muls: {}, other: {} };
   const E = data.balance.enemy;
   const muls = {
@@ -198,7 +204,7 @@ export function makeEnemy(data, monsterId, { lv, dungeonId = null, boss = false,
   const maxHpV = Math.round(evaluate(E.hp, env) * (boss ? E.boss_hp_mul * (E.hp_boss_rank_mul?.[star] ?? 1) : 1));
   const atk = evaluate(E.str_mag, env) * (boss ? E.boss_atk_mul * (E.atk_boss_rank_mul?.[star] ?? 1) : 1);
   const maxMp = enemyMpCapacity(lv, boss);
-  return {
+  const enemy = {
     mp: maxMp, maxMp,
     monsterId, name: elite ? `${elite.prefix}${m.name}` : m.name, icon: m.icon, lv, boss, eliteId,
     statusAffinity: m.statusAffinity, tactics: m.tactics, buffs: {},
@@ -210,6 +216,15 @@ export function makeEnemy(data, monsterId, { lv, dungeonId = null, boss = false,
     def: evaluate(f(data, 'enemy_def'), env), res: evaluate(f(data, 'enemy_res'), env), spd: evaluate(E.spd, env),
     statuses: {}, debuffs: {}, statusHits: {}, revealed: false, controlGuardUntil: 0,
   };
+  if (fixed) {
+    for (const key of ['hp','mp','str','mag','def','res','spd']) {
+      enemy[key] = Math.round(fixed[key] * (eliteId ? data.monsterElites.statMultipliers[key] : 1) * 100) / 100;
+    }
+    enemy.hp = Math.round(enemy.hp); enemy.mp = Math.round(enemy.mp);
+    enemy.maxHp = enemy.hp; enemy.maxMp = enemy.mp; enemy.statsVersion = 1;
+    enemy.baseStats = { ...fixed };
+  }
+  return enemy;
 }
 
 // ---------------- 戦闘を始める ----------------

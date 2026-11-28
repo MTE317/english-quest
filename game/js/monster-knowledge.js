@@ -5,8 +5,8 @@ export function encounterMonsters(game, enemies) {
   const sightings = (catalog.sightings ??= {});
   for (const enemy of enemies) if (enemy.monsterId && Number.isFinite(enemy.maxHp) && !sightings[enemy.monsterId]) {
     sightings[enemy.monsterId] = {
-      lv: enemy.lv, hp: enemy.maxHp, mp: enemy.maxMp,
-      str: enemy.str, mag: enemy.mag, def: enemy.def, res: enemy.res, spd: enemy.spd,
+      lv: enemy.baseStats?.level ?? enemy.lv, hp: enemy.baseStats?.hp ?? enemy.maxHp, mp: enemy.baseStats?.mp ?? enemy.maxMp,
+      ...Object.fromEntries(['str','mag','def','res','spd'].map(key => [key, enemy.baseStats?.[key] ?? enemy[key]])),
     };
   }
 }

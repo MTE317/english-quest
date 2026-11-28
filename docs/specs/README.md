@@ -9,6 +9,7 @@
 | 冒険者ランク、昇級 | [E〜Sの現行仕様](rank-promotion.md) |
 | 施設投資・神殿の職解放 | [5施設・11段階](town-facilities-11.md) |
 | 世界地図・連続攻略（現行） | [ワールドストーンと連続攻略](world-journey.md)。A〜M各3戦、踏破後3択 |
+| モンスターの強さ・エリート | [固定Lv・固定能力と同名エリート](fixed-monsters.md)。1024種の固定能力、レア素材・装備の優遇 |
 | 旧入門ルート（途中セーブ互換） | [風渡りの原と初回進行](intro-route.md) |
 | 旧★3の公開・D+素材経路（履歴） | [風鳴りの峡谷](howling-canyon-public.md) |
 | 以前の5ダンジョン先行版（履歴） | [旧公開条件](trial-five-dungeons.md) |

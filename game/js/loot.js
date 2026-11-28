@@ -65,16 +65,17 @@ export function materialsForEnemy(data, dungeonId, enemy, rng, dropBonus = 0) {
     if (m.materialRare && rng() < LOOT_FORMULAS.boss_rare_rate) out.push({ id: m.materialRare, count: 1 });
   } else {
     if (m.materialCommon && rng() < dt.materialRate * (1 + dropBonus)) out.push({ id: m.materialCommon, count: 1 });
-    if (m.materialRare && rng() < dt.rareRate) out.push({ id: m.materialRare, count: 1 });
+    const rareMultiplier = enemy.eliteId === 'elite' ? data.monsterElites.rareMaterialMultiplier : 1;
+    if (m.materialRare && rng() < Math.min(1, dt.rareRate * rareMultiplier)) out.push({ id: m.materialRare, count: 1 });
   }
   return out.filter((x) => data.materials.has(x.id));
 }
 
 // ---------------- 装備 ----------------
-function rollRarity(data, dungeonId, floor, rng) {
+function rollRarity(data, dungeonId, floor, rng, rareWeightMultiplier = 1) {
   const dg = data.dungeons.get(dungeonId);
   const bonus = 1 + LOOT_FORMULAS.rarity_floor_bonus * (floor - 1) + LOOT_FORMULAS.rarity_rank_bonus * (dg.rank - 1);
-  const table = data.rarityTable.map((r, i) => ({ ...r, i, w: r.weight * (i >= 2 ? bonus : 1) }));
+  const table = data.rarityTable.map((r, i) => ({ ...r, i, w: r.weight * (i >= 2 ? bonus * rareWeightMultiplier : 1) }));
   return weighted(rng, table, (r) => r.w);
 }
 
@@ -115,7 +116,7 @@ export function rollAffixes(data, slot, n, star, rarityIndex, rng) {
 }
 
 /** 落ちた通常装備を1つ作る（地域の★と装備種別で選ぶ）。 */
-export function rollGearDrop(data, game, dungeonId, floor, rng, { commonOnly = false } = {}) {
+export function rollGearDrop(data, game, dungeonId, floor, rng, { commonOnly = false, rareWeightMultiplier = 1 } = {}) {
   const dg = data.dungeons.get(dungeonId);
   const share = LOOT_FORMULAS.slot_share;
   const kind = weighted(rng, Object.keys(share), (k) => share[k]);
@@ -125,7 +126,7 @@ export function rollGearDrop(data, game, dungeonId, floor, rng, { commonOnly = f
   const pool = cands;
   if (!pool.length) return null;
   const def = weighted(rng, pool, () => 1);
-  const rar = commonOnly ? { id: 'common' } : rollRarity(data, dungeonId, floor, rng);
+  const rar = commonOnly ? { id: 'common' } : rollRarity(data, dungeonId, floor, rng, rareWeightMultiplier);
   const rolled = rollSet(data, def, rar.id, rng);
   return makeGear(game, def.id, { rarity: rar.id, affixes: rolled.affixes, affixOrigins: rolled.origins });
 }
@@ -159,7 +160,8 @@ export function rollBattleLoot(data, game, dungeonId, floor, enemies, rng, { dro
     for (const m of materialsForEnemy(data, dungeonId, e, rng, materialBonus)) mats[m.id] = (mats[m.id] ?? 0) + m.count;
   }
   const boss = enemies.find((e) => e.boss);
-  if (rng() < (boss ? dt.bossGearDrop : dt.gearRate)) gear.push(rollGearDrop(data, game, dungeonId, floor, rng));
+  const rareWeightMultiplier = enemies.some(e => e.eliteId === 'elite') ? data.monsterElites.rareGearWeightMultiplier : 1;
+  if (rng() < (boss ? dt.bossGearDrop : dt.gearRate)) gear.push(rollGearDrop(data, game, dungeonId, floor, rng, { rareWeightMultiplier }));
   for (const enemy of enemies.filter((e) => e.boss || e.bounty)) {
     const unique = rollUniqueDrop(data, game, enemy.monsterId, rng);
     if (unique) gear.push(unique);

@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "eligible": ["slime", "goblin", "wolf_pup", "fort_bandit"],
+  "chance": 0.06,
+  "maxPerBattle": 1,
+  "maxPerExpedition": 1,
+  "statMultipliers": { "hp": 1.5, "mp": 1.2, "str": 1.2, "mag": 1.2, "def": 1.2, "res": 1.2, "spd": 1.1 },
+  "rareMaterialMultiplier": 3,
+  "rareGearWeightMultiplier": 2
+}

@@ -55,7 +55,9 @@ test('命中した属性だけを図鑑に記録し、弱点・耐性・通常�
   }
 });
 
-test('敵の能力値は balance.json の式（★の補正・ボスの倍率を含む）', () => {
+test('固定マスター以前のデータでは旧式と冠補正を読み取れる', () => {
+  const data = realGameData();
+  for (const monster of data.monsters.values()) delete monster.fixedStats;
   const E = readJson('balance.json').enemy;
   const m = data.monsters.get('slime');
   const e = makeEnemy(data, 'slime', { lv: 3, dungeonId: 'mossy_cave' });
@@ -206,7 +208,7 @@ test('道具：使うと減り、HP が回復する。戦闘不能の味方は�
 test('状態異常：敵からかかり、戦闘のあとも残るもの（呪いなど）は persist に残る', () => {
   const game = equippedGame(data, party);
   const cursed = makeEnemy(data, 'goblin', { lv: 1, eliteId: 'cursed' });
-  cursed.statusRate = 1; cursed.magicRate = 0; cursed.str = 1;
+  cursed.status = 'curse'; cursed.statusRate = 1; cursed.magicRate = 0; cursed.str = 1;
   const b = createBattle(data, game, { enemies: [cursed], seed: 11 });
   for (const m of game.party) m.hp = maxHp(data, m);
   // 回避されないよう何度か敵に攻撃させる

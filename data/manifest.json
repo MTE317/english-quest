@@ -64,5 +64,7 @@
   "type_bonus.csv",
   "uniques.csv",
   "weapon_types.csv",
-  "world_routes.json"
+  "world_routes.json",
+  "monster_stats.csv",
+  "monster_elites.json"
 ]
