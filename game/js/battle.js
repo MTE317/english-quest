@@ -23,6 +23,7 @@ import { civicItems, civicBlock, civicTargetBlock, clearCivic, finishCivicOpport
   civicIncomingCut, civicAttackBonus, civicOnHit, runCivic } from './civic-combat.js?v=jobs-34-36-1';
 import { computeStats, gearDef, weaponPower, spellPower, scytheSpellPower, maxHp, maxMp, gearEffects, affixSum, memberCanAct } from './character.js?v=unique-reroll-1';
 import { actionSkills, ultimateSkill, memberMods, addMasteryKill, effectiveSkill } from './growth.js?v=unique-reroll-1';
+import { monsterUnlocks } from './monster-catalog.js?v=inspect-hp-1';
 import { encounterMonsters, learnMonsterHp, learnMonsterElements, hitEffectiveness } from './monster-knowledge.js?v=inspect-hp-1';
 import { masterTags, weaponSkill, songSkill, healingSkill, weaponAllowed, passiveRules, ruleNumber, matchesTag,
   masterDamageBonus, masterCritBonus, masterEvasionBonus, masterCutBonus, grantMasterEffect, masterBuff, masterMpSave,
@@ -723,7 +724,7 @@ function skillBlock(data, game, b, i, s) {
 }
 
 const BATTLE_ITEM_EFFECTS = ['heal_hp', 'heal_hp_pct', 'heal_hp_all', 'heal_hp_all_pct', 'heal_mp', 'heal_mp_pct', 'revive_pct', 'cure_status',
-  'buff_str', 'buff_mag', 'buff_def', 'buff_res', 'buff_spd', 'buff_crt', 'resist_elem_all', 'resist_status_all', 'escape'];
+  'buff_str', 'buff_mag', 'buff_def', 'buff_res', 'buff_spd', 'buff_crt', 'resist_elem_all', 'resist_status_all', 'escape', 'inspect_weakness'];
 
 /** 逃げられる確率。装備の逃走補正は逃げる行動を選ぶ本人の分だけを足す。 */
 export function fleeRate(data, game, b, actor = b.turn?.side === 'ally' ? b.turn.i : null) {
@@ -783,6 +784,7 @@ export function targetKind(data, action, member = null) {
   if (action.type === 'item') {
     const it = data.items.get(action.itemId);
     if (it.effect === 'revive_pct') return 'ko_ally';
+    if (it.effect === 'inspect_weakness') return 'enemy';
     return it.target === 'ally' ? 'ally' : 'allies';
   }
   const s = member ? effectiveSkill(data, member, data.skills.get(action.skillId)) : data.skills.get(action.skillId);
@@ -2458,6 +2460,7 @@ function cureAlly(data, game, b, j, pred) {
 function doItem(data, game, b, i, it, target, cm) {
   const m = game.party[i];
   if (it?.effect === 'escape' && (b.allies[i].beast || fleeRate(data, game, b, i) <= 0)) { log(b, 'この戦闘からは逃げられない'); return; }
+  if (it?.effect === 'inspect_weakness' && !enemyCanAct(b.enemies[target] ?? { hp: 0 })) { log(b, '調べられる敵がいない'); return; }
   if (!game.items[it.id]) { log(b, `${it.name}を持っていない`); return; }
   const preserve = partyPassive(data, game, b, 'save');
   if (!(preserve > 0 && chance(b, preserve))) game.items[it.id] -= 1;
@@ -2469,6 +2472,23 @@ function doItem(data, game, b, i, it, target, cm) {
   const [elOrGroup, num] = String(it.valueText ?? '').split(':');
   const turns = (it.turns ?? 1) + 1;
   switch (it.effect) {
+    case 'inspect_weakness': {
+      const enemy = b.enemies[target];
+      learnMonsterHp(game, enemy);
+      const entry = game.catalog?.affinities?.[enemy.monsterId];
+      const known = new Set(entry?.elements ?? []);
+      const weaknesses = [...new Set([...(enemy.strongWeak ?? []), ...(enemy.weak ?? [])])];
+      const allKnown = monsterUnlocks(data.monsters.get(enemy.monsterId) ?? enemy, game.catalog?.defeats?.[enemy.monsterId] ?? 0).elements;
+      const selected = allKnown || entry?.scanned || enemy.revealed ? undefined : weaknesses.find(id => !known.has(id));
+      log(b, `${enemy.name}のHP：${enemy.hp}/${enemy.maxHp}`);
+      if (selected) {
+        learnMonsterElements(game, enemy, [selected]);
+        log(b, `${enemy.name}の弱点：${data.elements.get(selected)?.name ?? selected}`);
+      } else {
+        log(b, weaknesses.length ? '弱点はすべて判明済み' : 'この敵に弱点はない');
+      }
+      break;
+    }
     case 'escape': b.result = 'fled'; log(b, '煙に紛れて逃げ切った！'); break;
     case 'heal_hp': log(b, `HPが ${healAlly(data, game, b, one, it.value * cm)} 回復`); break;
     case 'heal_hp_pct': log(b, `HPが ${healAlly(data, game, b, one, maxHp(data, game.party[one]) * it.value / 100 * cm)} 回復`); break;
