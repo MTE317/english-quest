@@ -1,0 +1,286 @@
+{
+  "version": 1,
+  "scope": "地域1の配置済み39種",
+  "note": "制作向けメタデータ。外見は制作案であり完成済み画像の描写ではない。表示名の正本はmonsters.csv。IDは改名後も維持する。",
+  "monsters": [
+    {
+      "id": "slime",
+      "name": "スライム",
+      "previousName": "スライム",
+      "motif": "スライム",
+      "appearanceDraft": "半透明のゼリー状の体。丸く低い輪郭。"
+    },
+    {
+      "id": "cave_bat",
+      "name": "ヴェスパー",
+      "previousName": "洞窟コウモリ",
+      "motif": "洞窟コウモリ",
+      "appearanceDraft": "小型のコウモリ。大きな耳と膜状の翼。"
+    },
+    {
+      "id": "pollen_bug",
+      "name": "ポルニル",
+      "previousName": "花粉ムシ",
+      "motif": "花粉ムシ",
+      "appearanceDraft": "花粉をまとった小さな羽虫。腹部と羽の周囲に粉が舞う。"
+    },
+    {
+      "id": "mushroom_soldier",
+      "name": "マイコニド",
+      "previousName": "キノコ兵",
+      "motif": "キノコ兵",
+      "appearanceDraft": "傘と柄が頭と胴になった小型のキノコ人。短い手足。"
+    },
+    {
+      "id": "snow_hare",
+      "name": "ネヴェル",
+      "previousName": "雪ウサギ",
+      "motif": "雪ウサギ",
+      "appearanceDraft": "白い毛のウサギ。長い耳と霜をまとった足。"
+    },
+    {
+      "id": "nut_squirrel",
+      "name": "スクル",
+      "previousName": "スクル",
+      "motif": "スクル",
+      "appearanceDraft": "リス型の小型獣。大きな尾、小さな前足と木の実をかじる前歯。"
+    },
+    {
+      "id": "cave_rat",
+      "name": "ラットル",
+      "previousName": "ラットル",
+      "motif": "ラットル",
+      "appearanceDraft": "ネズミ型の小型獣。丸い耳と長い尾、鋭い前歯。"
+    },
+    {
+      "id": "poison_cap",
+      "name": "モルキノ",
+      "previousName": "毒キノコ",
+      "motif": "毒キノコ",
+      "appearanceDraft": "毒胞子を放つキノコ。まだらの傘と傘の下に漂う胞子。"
+    },
+    {
+      "id": "prank_pixie",
+      "name": "ピクシー",
+      "previousName": "いたずら妖精",
+      "motif": "いたずら妖精",
+      "appearanceDraft": "小さな人型の妖精。薄い羽といたずらっぽい表情。"
+    },
+    {
+      "id": "glowmoss_sprite",
+      "name": "リュミエル",
+      "previousName": "ヒカリゴケの精",
+      "motif": "ヒカリゴケの精",
+      "appearanceDraft": "発光する苔を核にした小さな精霊。柔らかな光の粒をまとう。"
+    },
+    {
+      "id": "wolf_pup",
+      "name": "ワーグ",
+      "previousName": "ワーグの仔",
+      "motif": "ワーグの仔",
+      "appearanceDraft": "若い狼型の魔獣。低い姿勢と大きめの牙。改名後も幼い個体の設定を維持。"
+    },
+    {
+      "id": "m01_001",
+      "name": "アラネア",
+      "previousName": "大蜘蛛",
+      "motif": "大蜘蛛",
+      "appearanceDraft": "大きな蜘蛛。八本脚、丸い腹部と糸を出す姿。"
+    },
+    {
+      "id": "goblin",
+      "name": "ゴブリン",
+      "previousName": "ゴブリン",
+      "motif": "ゴブリン",
+      "appearanceDraft": "小柄な人型の魔物。尖った耳と粗末な武器。"
+    },
+    {
+      "id": "marsh_frog",
+      "name": "グルヌ",
+      "previousName": "沼ガエル",
+      "motif": "沼ガエル",
+      "appearanceDraft": "沼に棲む太ったカエル。大きな口と湿ったいぼ状の皮膚。"
+    },
+    {
+      "id": "m01_002",
+      "name": "アルブレイド",
+      "previousName": "白い剣士",
+      "motif": "白い剣士",
+      "appearanceDraft": "白を基調とした装束の人型剣士。細身の剣を持つ。"
+    },
+    {
+      "id": "m01_006",
+      "name": "リュネット",
+      "previousName": "月の妖精",
+      "motif": "月の妖精",
+      "appearanceDraft": "月をモチーフにした小さな妖精。三日月形の飾りと淡い光。"
+    },
+    {
+      "id": "skeleton",
+      "name": "スケルトン",
+      "previousName": "骸骨兵",
+      "motif": "骸骨兵",
+      "appearanceDraft": "骨だけの兵士。傷んだ武器と小盾を持つ。"
+    },
+    {
+      "id": "poison_spider",
+      "name": "ヴェノクス",
+      "previousName": "毒グモ",
+      "motif": "毒グモ",
+      "appearanceDraft": "毒を持つ蜘蛛。目立つ腹部の模様と発達した牙。"
+    },
+    {
+      "id": "mud_slime",
+      "name": "ボグル",
+      "previousName": "泥スライム",
+      "motif": "泥スライム",
+      "appearanceDraft": "泥でできた不定形の魔物。重く垂れる輪郭と泥のしぶき。"
+    },
+    {
+      "id": "wisp_dragonfly",
+      "name": "ウィスピル",
+      "previousName": "鬼火トンボ",
+      "motif": "鬼火トンボ",
+      "appearanceDraft": "細い体と四枚の羽を持つトンボ。尾の先に鬼火のような発光。"
+    },
+    {
+      "id": "fort_bandit",
+      "name": "ブリガンド",
+      "previousName": "砦の野盗",
+      "motif": "砦の野盗",
+      "appearanceDraft": "人間の野盗。使い古した革装備、短剣と顔を覆う布。"
+    },
+    {
+      "id": "fire_lizard",
+      "name": "サラマンダー",
+      "previousName": "火トカゲ",
+      "motif": "火トカゲ",
+      "appearanceDraft": "四足のトカゲ型魔獣。背や尾に小さな炎。"
+    },
+    {
+      "id": "bog_zombie",
+      "name": "モルグ",
+      "previousName": "沼のゾンビ",
+      "motif": "沼のゾンビ",
+      "appearanceDraft": "泥と藻に覆われた人型の動く死体。崩れた姿勢と傷んだ衣服。"
+    },
+    {
+      "id": "stone_statue",
+      "name": "ガーディアン",
+      "previousName": "石像兵",
+      "motif": "石像兵",
+      "appearanceDraft": "石で造られた兵士型ゴーレム。角張った手足と継ぎ目。"
+    },
+    {
+      "id": "wandering_armor",
+      "name": "レヴナント",
+      "previousName": "さまよう鎧",
+      "motif": "さまよう鎧",
+      "appearanceDraft": "中身のない動く鎧。隙間に霊気が見え、武器を携える。"
+    },
+    {
+      "id": "dark_crow",
+      "name": "ノクレイヴ",
+      "previousName": "闇ガラス",
+      "motif": "闇ガラス",
+      "appearanceDraft": "黒いカラス型の魔鳥。尖ったくちばしと闇をまとう羽。"
+    },
+    {
+      "id": "ice_ghost",
+      "name": "フリジア",
+      "previousName": "氷のゴースト",
+      "motif": "氷のゴースト",
+      "appearanceDraft": "氷霧をまとった幽霊。半透明の体と氷片、足のない裾。"
+    },
+    {
+      "id": "harpy",
+      "name": "ハーピー",
+      "previousName": "ハーピー",
+      "motif": "ハーピー",
+      "appearanceDraft": "人型の上半身と鳥の翼・鉤爪を持つ魔物。"
+    },
+    {
+      "id": "canyon_wolf",
+      "name": "フェルガル",
+      "previousName": "峡谷オオカミ",
+      "motif": "峡谷オオカミ",
+      "appearanceDraft": "峡谷に棲む成獣の狼。がっしりした四肢と鋭い牙。"
+    },
+    {
+      "id": "paper_golem",
+      "name": "パピリオン",
+      "previousName": "紙の兵隊",
+      "motif": "紙の兵隊",
+      "appearanceDraft": "紙を折って作られた兵隊型の魔物。折り目のある薄い体、紙の刃と重ね紙の盾。蝶ではない。"
+    },
+    {
+      "id": "stone_giant",
+      "name": "グランドル",
+      "previousName": "石の巨人",
+      "motif": "石の巨人",
+      "appearanceDraft": "岩塊でできた巨人のボス。巨大な腕と重量感のある胴体。"
+    },
+    {
+      "id": "wind_spirit",
+      "name": "シルフ",
+      "previousName": "風の精",
+      "motif": "風の精",
+      "appearanceDraft": "風をまとう精霊。流線形の体と渦巻く風の尾。"
+    },
+    {
+      "id": "living_tome",
+      "name": "グリモワール",
+      "previousName": "動く魔導書",
+      "motif": "動く魔導書",
+      "appearanceDraft": "自律して浮かぶ魔導書。開いたページに魔法文字、留め具のある表紙。"
+    },
+    {
+      "id": "rogue_mage",
+      "name": "アプレンティス",
+      "previousName": "見習い魔術師",
+      "motif": "見習い魔術師",
+      "appearanceDraft": "若い人間の魔術師。簡素なローブと杖、雷の魔法の光。"
+    },
+    {
+      "id": "rock_troll",
+      "name": "トロール",
+      "previousName": "岩トロール",
+      "motif": "岩トロール",
+      "appearanceDraft": "岩のようにごつごつした皮膚の巨人。長い腕と大きな棍棒。"
+    },
+    {
+      "id": "owl_sage",
+      "name": "ストリクス",
+      "previousName": "知恵のフクロウ",
+      "motif": "知恵のフクロウ",
+      "appearanceDraft": "フクロウ型の魔鳥。大きな目と顔盤、落ち着いた姿勢。"
+    },
+    {
+      "id": "kamaitachi",
+      "name": "カマイタチ",
+      "previousName": "カマイタチ",
+      "motif": "カマイタチ",
+      "appearanceDraft": "イタチ型の魔獣。鎌状の爪と体を取り巻く風。"
+    },
+    {
+      "id": "thunderbird",
+      "name": "サンダーバード",
+      "previousName": "雷鳥",
+      "motif": "雷鳥",
+      "appearanceDraft": "雷をまとう鳥型の魔物。逆立つ羽と翼の周囲の稲妻。"
+    },
+    {
+      "id": "storm_eagle",
+      "name": "ヴァルストーム",
+      "previousName": "嵐の大鷲",
+      "motif": "嵐の大鷲",
+      "appearanceDraft": "嵐を呼ぶ大鷲のボス。大きく広げた翼、力強い鉤爪と渦巻く風。"
+    }
+  ],
+  "futureNameCollision": {
+    "name": "サラマンダー",
+    "activeId": "fire_lizard",
+    "unplacedId": "salamander",
+    "note": "未配置マスターにも同名がある。未配置個体を公開する際に名称を再検討する。今回は地域1のみ改名。"
+  }
+}
