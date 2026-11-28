@@ -208,6 +208,7 @@ test('道具：使うと減り、HP が回復する。戦闘不能の味方は�
 test('状態異常：敵からかかり、戦闘のあとも残るもの（呪いなど）は persist に残る', () => {
   const game = equippedGame(data, party);
   const cursed = makeEnemy(data, 'goblin', { lv: 1, eliteId: 'cursed' });
+  cursed.skillProfile = null; // 呪いの付与処理だけを検証する制御個体。
   cursed.status = 'curse'; cursed.statusRate = 1; cursed.magicRate = 0; cursed.str = 1;
   const b = createBattle(data, game, { enemies: [cursed], seed: 11 });
   for (const m of game.party) m.hp = maxHp(data, m);
@@ -304,6 +305,7 @@ test('無属性を含む5段階の相性と、0ダメージの命中による相
 test('魔力漏出で敵のMPが減り、MP不足時は魔法攻撃を通常攻撃に切り替える', () => {
   const game = equippedGame(data, party);
   const enemy = makeEnemy(data, 'goblin', { lv: 3 });
+  enemy.skillProfile = null; // 従来AIのMP不足時の互換動作。
   enemy.magicRate = 1;
   enemy.mp = 2;
   enemy.statuses.weaken = { turns: 3, n: 1 };

@@ -1,11 +1,13 @@
 // 初回移行用。以降の調整は monster_stats.csv を正とし、再生成は明示指定する。
 import fs from 'node:fs';
-import { realGameData } from '../game/tests/helpers.js';
+import { realGameData, readCsv } from '../game/tests/helpers.js';
 import { makeEnemy } from '../game/js/battle.js';
 
 const output = new URL('../data/monster_stats.csv', import.meta.url);
-if (fs.existsSync(output) && !process.argv.includes('--overwrite')) throw new Error('再生成には --overwrite が必要です。手動調整値を上書きします。');
+if (fs.existsSync(output) && !process.argv.includes('--overwrite')) throw new Error('再生成には --overwrite が必要です。地域1以外の暫定値を上書きします。');
 const data = realGameData();
+// 編集済みの地域1の固定能力は再生成でも保持する。
+const reviewed = new Map(readCsv('monster_stats.csv').rows.filter(r=>r.review==='region1').map(r=>[r.monster_id,r]));
 for (const monster of data.monsters.values()) delete monster.fixedStats;
 const current = {
   slime: [1, 'windward_plain', .58], nut_squirrel: [2, 'sunlit_forest', .58],
@@ -20,6 +22,11 @@ const current = {
 const median = values => [...values].sort((a,b)=>a-b)[Math.floor(values.length/2)];
 const rows = [];
 for (const m of data.monsters.values()) {
+  if (reviewed.has(m.id)) {
+    const row=reviewed.get(m.id);
+    rows.push(['monster_id','level','hp','mp','str','mag','def','res','spd','review'].map(k=>row[k]).join(','));
+    continue;
+  }
   const ownRows = data.dungeonFloors.filter(row => m.dungeons.includes(row.dungeonId)
     && data.dungeons.get(row.dungeonId)?.rank === m.rank);
   const reference = ownRows.length ? ownRows : data.dungeonFloors.filter(row => data.dungeons.get(row.dungeonId)?.rank === m.rank);
@@ -32,4 +39,4 @@ for (const m of data.monsters.values()) {
     current[m.id] ? 'region1' : 'provisional'].join(','));
 }
 fs.writeFileSync(output,'\uFEFFmonster_id,level,hp,mp,str,mag,def,res,spd,review\n'+rows.join('\n')+'\n');
-console.log('固定能力を作成: '+rows.length+'種（地域1の15種以外は既存設定からの暫定値）');
+console.log('固定能力を作成: '+rows.length+'種（地域1の編集済み能力を保持）');

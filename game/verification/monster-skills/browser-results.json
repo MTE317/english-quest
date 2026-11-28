@@ -1,0 +1,32 @@
+[
+  {
+    "width": 320,
+    "profiles": 39,
+    "healLog": true,
+    "bossWarning": true,
+    "eliteMarked": true,
+    "reloadPreserved": true,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "profiles": 39,
+    "healLog": true,
+    "bossWarning": true,
+    "eliteMarked": true,
+    "reloadPreserved": true,
+    "overflow": false,
+    "errors": []
+  },
+  {
+    "width": 1000,
+    "profiles": 39,
+    "healLog": true,
+    "bossWarning": true,
+    "eliteMarked": true,
+    "reloadPreserved": true,
+    "overflow": false,
+    "errors": []
+  }
+]

@@ -31,6 +31,7 @@ function setup({ job = 'warrior', weapon = 'sword_t1', count = 1, data = rules, 
   member.equip.offhand = null;
   // 同じ条件で何度も殴れる検証標的。プレイヤーの攻撃・防御・MPは現行式のまま。
   const enemies = Array.from({ length: count }, () => Object.assign(makeEnemy(data, 'goblin', { lv: 20 }), {
+    skillProfile: null, // 制御した攻撃でジョブ効果を測る標的。敵固有AIは別途検証する。
     maxHp: 100000, hp: 100000, def: 50, res: 50, str: 40, mag: 40, spd: 0,
     weak: [], resist: [], magicRate: 0, attackElement: null, status: null, evasion: 0,
   }));

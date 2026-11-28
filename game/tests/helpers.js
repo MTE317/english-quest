@@ -56,6 +56,7 @@ export function realGameData({ world = false } = {}) {
     monsters: readCsv('monsters.csv').rows,
     monsterStats: readCsv('monster_stats.csv').rows,
     monsterElites: readJson('monster_elites.json'),
+    monsterSkills: readJson('monster_skills.json'),
     monsterTypes: readCsv('monster_types.csv').rows,
     elements: readCsv('elements.csv').rows,
     statusEffects: readCsv('status_effects.csv').rows,

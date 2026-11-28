@@ -1,5 +1,6 @@
 import { installWorldData } from './world-journey.js?v=world-journey-1';
 import { installMonsterStats } from './monster-stats.js?v=fixed-monsters-1';
+import { installMonsterSkills } from './monster-skills.js?v=enemy-skills-1';
 import { parseMonsterRewards } from './monster-rewards.js?v=fixed-monsters-1';
 import { denominateGoldData } from './gold.js?v=skill-growth-2';
 // ゲームで使う data/ のファイルをまとめて読み、ID で引ける形にする。
@@ -27,6 +28,7 @@ const FILES = {
   monsters: 'monsters.csv',
   monsterStats: 'monster_stats.csv',
   monsterElites: 'monster_elites.json',
+  monsterSkills: 'monster_skills.json',
   monsterTypes: 'monster_types.csv',
   elements: 'elements.csv',
   statusEffects: 'status_effects.csv',
@@ -140,7 +142,7 @@ export function buildGameData(raw) {
   }
   const aptTable = (rows) => new Map(rows.map((r) => [r.job_id, r]));
 
-  return installMonsterStats(installWorldData(denominateGoldData({
+  return installMonsterSkills(installMonsterStats(installWorldData(denominateGoldData({
     balance: raw.balance,
     basicJobRules: raw.basicJobRules ?? {},
     skillMigration: raw.skillMigration ?? {},
@@ -170,7 +172,7 @@ export function buildGameData(raw) {
     facilityEffects: raw.facilityEffects ?? [],
     kokuinSlots: raw.kokuinSlots ?? [],
     ...buildBattleData(raw),
-  }), raw.worldRoutes), raw.monsterStats, raw.monsterElites);
+  }), raw.worldRoutes), raw.monsterStats, raw.monsterElites), raw.monsterSkills);
 }
 
 /** `STR:4|特効:beast:15` → { STR: 4, '特効:beast': 15 } */

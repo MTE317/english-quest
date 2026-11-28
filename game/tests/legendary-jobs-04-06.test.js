@@ -15,7 +15,7 @@ function setup(job){
  const item=[...data.equipment.values()].find(x=>x.slot==='weapon'&&x.kind===weapon&&!x.unique);
  game.party[0].equip.weapon=makeGear(game,item.id);
  for(const m of game.party){m.lv=25;m.hp=maxHp(data,m);m.mp=maxMp(data,m);}
- const enemy=Object.assign(makeEnemy(data,'goblin',{lv:1}),{hp:1e8,maxHp:1e8,def:10,res:10,spd:0,weak:[],resist:[],immune:[],statuses:{},buffs:{},debuffs:{},evasion:0,magicRate:0});
+ const enemy=Object.assign(makeEnemy(data,'goblin',{lv:1}),{skillProfile:null,hp:1e8,maxHp:1e8,def:10,res:10,spd:0,weak:[],resist:[],immune:[],statuses:{},buffs:{},debuffs:{},evasion:0,magicRate:0});
  const b=createBattle(data,game,{enemies:[enemy],seed:119});b.round=1;
  return {game,b,m:game.party[0],a:b.allies[0]};
 }

@@ -1,4 +1,4 @@
-import { allowedDungeons } from './dungeon.js?v=fixed-monsters-1';
+import { allowedDungeons } from './dungeon.js?v=enemy-skills-1';
 
 function availableStories(data, game) {
   if (game.worldJourney) return (data.balance.exploration_stories ?? []).filter(story => {

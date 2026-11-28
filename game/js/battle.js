@@ -1,5 +1,6 @@
 import { equipmentTier } from './equipment-scaling.js?v=equipment-rarity-1';
 import { fixedBattleRewards } from './monster-rewards.js?v=fixed-monsters-1';
+import { enemySkillAllowed, enemyHealTarget, enemySkillChoices, spendEnemySkill } from './monster-skills.js?v=enemy-skills-1';
 // 戦闘：行動順・通常攻撃とスキル・1行動ごとに1問・属性・状態異常・道具・逃げる。
 //
 // - 戦闘の状態（battle）はすべて JSON にできる形で持つ。乱数も battle.rng に入れておくので、
@@ -208,6 +209,7 @@ export function makeEnemy(data, monsterId, { lv, dungeonId = null, boss = false,
     mp: maxMp, maxMp,
     monsterId, name: elite ? `${elite.prefix}${m.name}` : m.name, icon: m.icon, lv, boss, eliteId,
     statusAffinity: m.statusAffinity, tactics: m.tactics, buffs: {},
+    skillProfile: m.skillProfile ? structuredClone(m.skillProfile) : undefined,
     types: m.types, weak: m.weak, resist: m.resist, strongWeak: m.strongWeak, immune: m.immune, magicRate: m.magicRate,
     status: elite?.mods.status?.id ?? m.status, statusRate: elite?.mods.status?.rate ?? m.statusRate,
     attackElement: elite?.mods.element ?? m.attackElement,
@@ -2511,6 +2513,14 @@ function doFlee(data, game, b, correct, actor) {
 export function enemyIntent(data, enemy, round) {
   const rule = data.balance.boss_patterns ?? {};
   const every = Math.max(2, Number(rule.sweep_every ?? 3));
+  if (enemy.skillProfile) {
+    const skill = enemy.skillProfile.skills.find(s => s.sweep);
+    const enabled = rule.enabled !== false && enemy.boss && skill && enemySkillAllowed(enemy,skill,round);
+    const sweep = Boolean(enabled && round > 0 && round % every === 0);
+    const warning = Boolean(enabled && round > 0 && (round+1) % every === 0);
+    return {sweep,warning,mp:sweep?skill.mp:0,power:sweep?skill.power:1,
+      skill:sweep?skill:null,label:sweep?skill.name:warning?`次の巡に${skill.name}（全体攻撃）`:'通常攻撃'};
+  }
   const sweepMp = Number(rule.sweep_mp ?? 4);
   const enabled = rule.enabled !== false && enemy.boss && (enemy.mp ?? Infinity) >= sweepMp;
   const locked = enemy.statuses?.fear || (enemy.magicRate >= 0.5 ? enemy.statuses?.silence : enemy.statuses?.seal);
@@ -2711,7 +2721,24 @@ function enemyTurn(data, game, b, e) {
   const alive = game.party.map((x, j) => j).filter((j) => game.party[j].hp > 0);
   if (!alive.length) { finish(); return; }
   const intent = enemyIntent(data, enemy, b.round);
-  if (!intent.sweep && enemy.tactics && (enemy.mp ?? 0) >= 3 && !enemy.statuses.silence && !enemy.statuses.fear) {
+  const choices = !intent.sweep ? enemySkillChoices(data,enemy,b.enemies,b.round) : [];
+  const skill = intent.skill ?? (choices.length ? weighted(b,choices,s=>s.weight) : null);
+  if (skill) {
+    spendEnemySkill(enemy,skill,b.round);
+    enemy.lastSkillId = skill.id;
+    if (skill.kind === 'heal') {
+      const friend = enemyHealTarget(data,b.enemies);
+      const amount = Math.min(friend.maxHp-friend.hp,Math.max(1,Math.round(friend.maxHp*skill.rate)));
+      friend.hp += amount;
+      log(b,`${enemy.name}の${skill.name}！ ${friend.name}のHPが${amount}回復した`);
+    } else if (skill.kind === 'buff') {
+      putBuff(enemy.buffs ??= {},skill.stat,skill.rate,3);
+      log(b,`${enemy.name}の${skill.name}！ ${ {str:'攻撃力',mag:'魔力',def:'防御力',res:'魔法防御'}[skill.stat]}が上がった`);
+    }
+    if (skill.kind !== 'attack') { finish({performed:true,magic:skill.magic,physical:!skill.magic}); return; }
+    intent.power = skill.power;
+  }
+  if (!enemy.skillProfile && !intent.sweep && enemy.tactics && (enemy.mp ?? 0) >= 3 && !enemy.statuses.silence && !enemy.statuses.fear) {
     const friend = enemy.tactics === 'heal' && b.enemies.find((unit) => enemyCanAct(unit) && !unit.statuses.curse && unit.hp <= unit.maxHp * 0.55);
     const ward = enemy.tactics === 'ward' && !enemy.buffs?.str && b.round % 3 === 1;
     const disrupt = enemy.tactics === 'disrupt' && b.round % 3 === 2;
@@ -2737,8 +2764,8 @@ function enemyTurn(data, game, b, e) {
       return;
     }
   }
-  if (intent.warning) log(b, `${enemy.name}が力をためている！ 次の巡は全体攻撃`);
-  if (intent.sweep && Number.isFinite(enemy.mp)) enemy.mp -= intent.mp;
+  if (intent.warning) log(b, `${enemy.name}が力をためている！ ${intent.label}`);
+  if (!skill && intent.sweep && Number.isFinite(enemy.mp)) enemy.mp -= intent.mp;
   if (intent.sweep) log(b, `${enemy.name}の${intent.label}！`);
   const tauntedBy = enemy.statuses.taunt?.actor;
   const eligible=alive.filter(index=>enemy.sureHit || !isAirborne(b,index));
@@ -2749,8 +2776,11 @@ function enemyTurn(data, game, b, e) {
   if(lure)delete enemy.decoyLure;
   const targets = intent.sweep ? alive : eligible.length ? [lured??(tauntValid ? tauntedBy : weighted(b, eligible, (j) => 1 + bval(b.allies[j].buffs, 'taunt') * f(data, 'taunt_weight')))] : [];
   if (!targets.length) {log(b,`${enemy.name}の攻撃は届かなかった`);finish();return;}
-  const actionMagic = chance(b, enemy.magicRate) && !enemy.statuses.silence && (intent.sweep || (enemy.mp ?? Infinity) >= 2);
-  if (actionMagic && !intent.sweep && Number.isFinite(enemy.mp)) enemy.mp -= 2;
+  const actionMagic = skill ? skill.magic : chance(b, enemy.magicRate) && !enemy.statuses.silence && (intent.sweep || (enemy.mp ?? Infinity) >= 2);
+  if (!skill && actionMagic && !intent.sweep && Number.isFinite(enemy.mp)) enemy.mp -= 2;
+  const attackElement = skill ? skill.element : enemy.attackElement;
+  const attackStatus = skill ? skill.status : enemy.status;
+  const attackStatusRate = skill ? skill.statusRate : enemy.statusRate;
   const stanceReactions = [], gearReactions = [];
   for (const original of targets) {
     if (!enemy.sureHit && isAirborne(b,original)) {log(b,`${game.party[original].name}は空中で攻撃を避けた`);continue;}
@@ -2809,7 +2839,7 @@ function enemyTurn(data, game, b, e) {
     const gearCut = affixSum(target, magic ? 'MAGIC_CUT' : 'PHYS_CUT') / 100;
     const counterStance = !magic && !isAirborne(b,t) && ta.masterCounter && !ta.masterCounterUsed
       && (ta.masterCounter.target == null || ta.masterCounter.target === e) ? ta.masterCounter : null;
-    const incomingElements = Array.isArray(enemy.attackElement) ? enemy.attackElement : String(enemy.attackElement ?? '').split('|');
+    const incomingElements = Array.isArray(attackElement) ? attackElement : String(attackElement ?? '').split('|');
     const orderCut=!intent.sweep&&t===original?Math.max(ta.strategistOrder?.type==='guard'?ta.strategistOrder.rate:0,
       ta.strategistUltimate?.guard??0):0;
     const cut = 1 - Math.min(f(data, 'damage_cut_cap'), bval(b.partyBuffs, 'cut') + bval(ta.buffs, 'cut')
@@ -2819,16 +2849,16 @@ function enemyTurn(data, game, b, e) {
       + (counterStance?.cut ?? 0) + readGuardCut(b, t, magic, incomingElements)
       + (masterCover && t !== original ? masterCover.cover.cut ?? 0 : 0)+orderCut+civicIncomingCut(data,game,b,t,e)+natureIncomingCut(data,game,b,t)
       +legendaryIncomingCut(data,game,b,t,incomingElements[0])+finalIncomingCut(data,game,b,t,incomingElements));
-    const ecut = allyElementMultiplier(data, game, b, t, enemy.attackElement, magic);
+    const ecut = allyElementMultiplier(data, game, b, t, attackElement, magic);
     const dmg = evaluate(f(data, 'enemy_damage'), { atk, df, r: between(b, f(data, 'enemy_rand')) })
       * Math.max(f(data, 'minimum_damage_share'), cover * cut * ecut)
       * (activeField(game,b) && incomingElements.includes(b.field.element)?1+b.field.rate:1);
-    const elName = enemy.attackElement ? data.elements.get(enemy.attackElement)?.name : null;
+    const elName = attackElement ? data.elements.get(attackElement)?.name : null;
     const beforeHp = target.hp;
     if(orderCut>0){if(ta.strategistOrder?.type==='guard')delete ta.strategistOrder;
       if(ta.strategistUltimate)delete ta.strategistUltimate.guard;}
     const remaining=!intent.sweep&&t===original ? absorbCompanionGuard(data,game,b,t,dmg) : dmg;
-    if(remaining>0)damageAlly(data, game, b, t, remaining, `${enemy.name}の${magic ? `${elName ?? ''}魔法` : '攻撃'}！ ${target.name}に`, { side: 'enemy', i: e, direct:true });
+    if(remaining>0)damageAlly(data, game, b, t, remaining, `${enemy.name}の${skill?.name ?? (magic ? `${elName ?? ''}魔法` : '攻撃')}！ ${target.name}に`, { side: 'enemy', i: e, direct:true });
     if (target.hp < beforeHp) noteDuelHit(game, b, t, e);
     legendaryAfterDamage(data,game,b,t,beforeHp);
     if (masterCover && t !== original && target.hp < beforeHp) {onMasterCover(data, game, b, t, true);legendaryOnCover(data,game,b,t,true);}
@@ -2836,14 +2866,14 @@ function enemyTurn(data, game, b, e) {
     if (target.hp <= 0) continue;
     const counter = Math.min(1, bval(ta.buffs, 'counter') + Math.min(f(data, 'counter_affix_cap'), affixSum(target, 'COUNTER') / 100));
     // 反撃から追撃・吸収・追加状態異常は発生しない。
-    if (enemy.status) {
-      const st = data.statusEffects.get(enemy.status);
-      if (enemy.status === 'statdown' && chance(b, allyStatusChance(data, game, b, t, 'statdown', enemy.statusRate, ts))) {
+    if (attackStatus) {
+      const st = data.statusEffects.get(attackStatus);
+      if (attackStatus === 'statdown' && chance(b, allyStatusChance(data, game, b, t, 'statdown', attackStatusRate, ts))) {
         for (const key of ABILITY_KEYS) putBuff(ta.buffs, 'down:' + key, OLD_DOWN_RATE, 3);
         log(b, target.name + 'の能力が下がった');
       }
       if (st) {
-        const inflicted = chance(b, allyStatusChance(data, game, b, t, st.id, enemy.statusRate, ts));
+        const inflicted = chance(b, allyStatusChance(data, game, b, t, st.id, attackStatusRate, ts));
         consumeStatusPreparation(b, t, st.id);
          if (inflicted && !ta.statuses[st.id] && ta.masterEffects?.shrine_maiden_U01?.preventCharges && st.id !== 'petrify') {
            delete ta.masterEffects.shrine_maiden_U01;

@@ -1,6 +1,6 @@
 import { availableAp } from '../ap.js?v=skill-growth-2';
 // パーティーの画面：キャラメイク・6人の一覧・能力値・装備8枠
-import { loadGameData } from '../gamedata.js?v=fixed-monsters-1';
+import { loadGameData } from '../gamedata.js?v=enemy-skills-1';
 import { GameSession } from '../save.js?v=world-journey-1';
 import { createNewGame, defaultPartySpecs, normalizeGame } from '../game-state.js?v=world-journey-1';
 import {
@@ -12,9 +12,9 @@ import {
   commonApCost, commonBlock, learnCommon, masteryLevel, isJobMastered, GROWTH_FORMULAS,
   skillMaxLevel, learnedSkillLevel, effectiveSkill, upgradeSkillBlock, upgradeSkill, skillWeaponBlock,
 } from '../growth.js?v=auto-equip-skills-1';
-import { skillMp } from '../battle.js?v=fixed-monsters-1';
-import { elementResistancePanel } from '../ui/element-resistance.js?v=fixed-monsters-1';
-import { statusSusceptibilityPanel } from '../ui/status-susceptibility.js?v=fixed-monsters-1';
+import { skillMp } from '../battle.js?v=enemy-skills-1';
+import { elementResistancePanel } from '../ui/element-resistance.js?v=enemy-skills-1';
+import { statusSusceptibilityPanel } from '../ui/status-susceptibility.js?v=enemy-skills-1';
 import { el, render, stars } from '../dom.js?v=skill-growth-2';
 import { describeFixedEffects } from '../equipment-effects.js?v=unique-reroll-1';
 import { describeSkillForUI } from '../skill-effects.js?v=tactical-jobs-1';

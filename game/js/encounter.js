@@ -1,5 +1,5 @@
 // 出てくる敵を決める（ダンジョンと階から）。
-import { makeEnemy } from './battle.js?v=fixed-monsters-1';
+import { makeEnemy } from './battle.js?v=enemy-skills-1';
 import { affixSum } from './character.js?v=advanced-jobs-1';
 import { memberMods } from './growth.js?v=advanced-jobs-1';
 import { rollMonsterElite } from './monster-stats.js?v=fixed-monsters-1';
