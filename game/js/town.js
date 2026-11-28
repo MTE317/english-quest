@@ -63,7 +63,7 @@ function monthEnd(data, game) {
 const questRules = (data) => data.balance.quest_board ?? {};
 const finiteMoney = (n) => Number.isFinite(Number(n)) ? Math.max(0, Math.floor(Number(n))) : 0;
 
-/** 掲示する未受注の件数。受注数には上限を設けない。 */
+/** 掲示する未受注の件数。同時受注の上限とは別に管理する。 */
 export function boardSize(data, game) {
   const configured = Number(questRules(data).size);
   if (Number.isSafeInteger(configured) && configured > 0) return configured;
@@ -234,8 +234,11 @@ export function questText(data, q) {
   return q.questId;
 }
 
+export const QUEST_ACCEPT_LIMIT = 5;
+
 export function canAcceptQuest(data, game, q) {
   if ((game.quests ?? []).some((active) => questKey(active) === questKey(q))) return { ok: false, reason: '同じ依頼を受注中です。' };
+  if ((game.quests ?? []).length >= QUEST_ACCEPT_LIMIT) return { ok: false, reason: `同時に受注できる依頼は${QUEST_ACCEPT_LIMIT}件までです。報告または放棄してから受注してください。` };
   if (finiteMoney(q.depositGold) > game.gold) return { ok: false, reason: `保証金 ${q.depositGold} G が必要です。` };
   return { ok: true, reason: '' };
 }
@@ -251,7 +254,8 @@ export function acceptQuest(dataOrGame, gameOrUid, uid, rng = Math.random) {
   if (i < 0 && !special) throw new Error('そのクエストはない');
   const q = special ? game.specialQuest : game.board[i];
   game.quests ??= [];
-  if (game.quests.some((active) => questKey(active) === questKey(q))) throw new Error('同じ依頼を受注中です。');
+  const acceptance = canAcceptQuest(data, game, q);
+  if (!acceptance.ok) throw new Error(acceptance.reason);
   const deposit = finiteMoney(q.depositGold);
   if (game.gold < deposit) throw new Error(`保証金 ${deposit} G が必要です。`);
   game.gold -= deposit;
