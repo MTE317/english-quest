@@ -49,10 +49,20 @@ fs.mkdirSync(out,{recursive:true});
    const {GameSession}=await import('/game/js/save.js?v=world-journey-1');
    const {startNextBattle,afterBattle,resolveLoot}=await import('/game/js/dungeon.js?v=world-journey-1');
    const data=await loadGameData(),session=new GameSession();
-   for(let i=0;i<3;i++){if(!session.run.battle)startNextBattle(data,session);session.run.battle.enemies.forEach(e=>e.hp=0);session.run.battle.result='win';afterBattle(data,session);while(session.run.pendingLoot.length)resolveLoot(data,session,null);}
+   for(let i=0;i<3;i++){if(!session.run.battle)startNextBattle(data,session);session.run.battle.enemies.forEach(e=>e.hp=0);session.run.battle.result='win';if(i===2){session.save();break;}afterBattle(data,session);while(session.run.pendingLoot.length)resolveLoot(data,session,null);}
   });
   await page.goto(base+'/game/dungeon.html');await page.locator('.journey-exits').waitFor();
   assert.equal(await page.locator('.journey-exits button').count(),3);
+  assert.deepEqual(await page.locator('.journey-exits button span').allTextContents(),['？？？','？？？','？？？']);
+  assert.equal(await page.locator('.journey-exits').innerText().then(t=>t.includes('敵Lv')||t.includes('帰還')),false);
+  const exitsRect=await page.locator('.journey-exits').boundingBox(),rewardsRect=await page.locator('.victory-rewards').boundingBox();
+  assert.ok(exitsRect.y+exitsRect.height<=rewardsRect.y);
+  assert.ok(exitsRect.y+exitsRect.height<844);
+  await page.screenshot({path:path.join(out,`victory-exits-${width}.png`),fullPage:true});
+  await page.reload();await page.locator('.journey-exits').waitFor();
+  assert.deepEqual(await page.locator('.journey-exits button span').allTextContents(),['？？？','？？？','？？？']);
+  const resumedExits=await page.locator('.journey-exits').boundingBox(),partyRect=await page.locator('.expedition-party').boundingBox();
+  assert.ok(resumedExits.y+resumedExits.height<=partyRect.y);
   await page.getByText('探索の地図を見る',{exact:true}).click();
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
   await page.screenshot({path:path.join(out,`exits-${width}.png`),fullPage:true});
@@ -62,6 +72,35 @@ fs.mkdirSync(out,{recursive:true});
   const after=await page.evaluate(k=>JSON.parse(localStorage.getItem(k)),key);
   assert.equal(after.run.dungeonId,'world_b');assert.deepEqual(after.run.backpack,before.run.backpack);
   await page.reload();await page.getByRole('button',{name:'次の戦闘へ',exact:true}).waitFor();
+  // BからAに戻って再踏破。到達済みの町であっても、未選択の方向は伏せる。
+  await page.goto(base+'/_world-test.html');
+  await page.evaluate(async()=>{
+   const {loadGameData}=await import('/game/js/gamedata.js?v=world-journey-1');
+   const {GameSession}=await import('/game/js/save.js?v=world-journey-1');
+   const {startNextBattle,afterBattle,resolveLoot,chooseWorldExit}=await import('/game/js/dungeon.js?v=world-journey-1');
+   const data=await loadGameData(),session=new GameSession();
+   for(const dir of ['left',null]){for(let i=0;i<3;i++){startNextBattle(data,session);session.run.battle.enemies.forEach(e=>e.hp=0);session.run.battle.result='win';afterBattle(data,session);while(session.run.pendingLoot.length)resolveLoot(data,session,null);}if(dir)chooseWorldExit(data,session,dir,session.run.worldVisit);}
+  });
+  await page.goto(base+'/game/dungeon.html');await page.locator('.journey-exits').waitFor();
+  assert.deepEqual(await page.locator('.journey-exits button span').allTextContents(),['街道の井戸','？？？','？？？']);
+  await page.locator('.journey-exits button').nth(1).click();
+  await page.getByText('町に到着した。',{exact:true}).waitFor();
+  await page.goto(base+'/_world-test.html');
+  await page.evaluate(async()=>{
+   const {loadGameData}=await import('/game/js/gamedata.js?v=world-journey-1');
+   const {GameSession}=await import('/game/js/save.js?v=world-journey-1');
+   const {startRun,startNextBattle,afterBattle,resolveLoot}=await import('/game/js/dungeon.js?v=world-journey-1');
+   const data=await loadGameData(),session=new GameSession();
+   startRun(data,session,{dungeonId:'world_a',stoneId:'00',quizState:{asked:0},seed:37});
+   for(let i=0;i<3;i++){startNextBattle(data,session);session.run.battle.enemies.forEach(e=>e.hp=0);session.run.battle.result='win';afterBattle(data,session);while(session.run.pendingLoot.length)resolveLoot(data,session,null);}
+  });
+  await page.goto(base+'/game/dungeon.html');await page.locator('.journey-exits').waitFor();
+  assert.deepEqual(await page.locator('.journey-exits button span').allTextContents(),['街道の井戸','町へ','？？？']);
+  await page.reload();await page.locator('.journey-exits').waitFor();
+  assert.deepEqual(await page.locator('.journey-exits button span').allTextContents(),['街道の井戸','町へ','？？？']);
+  // 後続の石到達確認は、保存したB入場直後の専用データから再開する。
+  await page.goto(base+'/_world-test.html');
+  await page.evaluate(({key,saved})=>localStorage.setItem(key,JSON.stringify(saved)),{key,saved:after});
   // G踏破直後を作り、石到着による帰還と再読込後のワープ解放をUIから確認する。
   await page.goto(base+'/_world-test.html');
   await page.evaluate(async()=>{
@@ -75,7 +114,7 @@ fs.mkdirSync(out,{recursive:true});
   assert.equal((await page.evaluate(k=>JSON.parse(localStorage.getItem(k)),key)).run,null);
   await page.goto(base+'/game/dungeon.html');await page.getByRole('button',{name:'ワールドストーン2',exact:true}).click();
   await page.getByText('この地域の続きは準備中です。ワープの解放記録は保存されています。',{exact:true}).waitFor();
-  assert.deepEqual(errors,[]);results.push({width,entryCount:4,exitCount:3,continued:true,reloaded:true,stoneUnlocked:true,errors});
+  assert.deepEqual(errors,[]);results.push({width,entryCount:4,exitCount:3,choicesAboveRewards:true,unknownExitsHidden:true,selectedDirectionOnly:true,continued:true,reloaded:true,stoneUnlocked:true,errors});
   await context.close();
  }}finally{await browser.close();}
  fs.writeFileSync(path.join(out,'browser-results.json'),JSON.stringify(results,null,2));console.log(JSON.stringify(results));

@@ -14,7 +14,7 @@ import {
 import { backpackSlots, backpackUsed, addItem } from '../loot.js?v=world-journey-1';
 import { maxHp, maxMp, partyCanAct } from '../character.js?v=unique-reroll-1';
 import { createBattleView } from '../ui/battle-view.js?v=world-journey-1';
-import { createVictoryView, createLootIcons } from '../ui/victory-view.js?v=advanced-jobs-1';
+import { createVictoryView, createLootIcons } from '../ui/victory-view.js?v=world-exit-choice-2';
 import { el, render, stars } from '../dom.js?v=skill-growth-2';
 import { buildWorldMap, newDiscoveries } from '../world-map.js?v=canyon-public-1';
 import { createWorldMapView } from '../ui/world-map-view.js?v=canyon-public-1';
@@ -209,9 +209,13 @@ function showJourneyDeparture(message) {
 
 function journeyExitActions(run, result) {
   const visit = run.worldVisit;
+  const key = worldNode(data, run.dungeonId).key;
+  const choices = exitChoices(data, session.game, run, run.worldSeason).map(exit => ({
+    ...exit, known: session.game.worldJourney.paths.includes(`${key}:${exit.direction}`),
+  }));
   return [el('p', { class: 'panel', role: 'status' }, 'ダンジョンを踏破した。次の道を選ぼう。'),
     el('div', { class: 'journey-exits', role: 'group', 'aria-label': 'クリア後の行き先' },
-      exitChoices(data, session.game, run, run.worldSeason).map(exit => el('button', { type: 'button', disabled: !exit.open,
+      choices.map(exit => el('button', { type: 'button', disabled: !exit.open,
         onclick: async event => {
           if (advancing) return;
           advancing = true;
@@ -224,8 +228,8 @@ function journeyExitActions(run, result) {
           } catch (error) { alert(error.message); session.run ? showRun() : showDeparture(); }
           finally { advancing = false; }
         },
-      }, el('strong', {}, exit.label), el('span', {}, exit.to === data.worldRoutes.startStone ? '町へ' : exit.target.name),
-      el('small', {}, exit.reason || [exit.target.level ? `敵Lv${exit.target.level}` : '到着後、町に帰還', exit.seasonLabel ? `${exit.seasonLabel}のみ` : ''].filter(Boolean).join('・'))))),
+      }, el('strong', {}, exit.label), el('span', {}, !exit.known ? '？？？' : exit.to === data.worldRoutes.startStone ? '町へ' : exit.target.name),
+      el('small', {}, exit.reason || [exit.known ? (exit.target.level ? `敵Lv${exit.target.level}` : '到着後、町に帰還') : '', exit.seasonLabel ? `${exit.seasonLabel}のみ` : ''].filter(Boolean).join('・'))))),
     el('div', { class: 'journey-utilities' }, el('button', { onclick: () => showFieldItems(result) }, '道具を使う'),
       ...returnItems(data, session.game).map(id => el('button', { onclick: () => {
         if (!confirm(`${data.items.get(id).name}で町に帰りますか？`)) return;
@@ -303,6 +307,7 @@ function showRun(result = null) {
       `・バックパック ${backpack}・稼いだお金 ${run.earned.gold}`),
   ];
   let actions = [];
+  let primaryActions = [];
   if (run.state === 'ready') {
     const boss = isBossBattle(data, run);
     actions = [
@@ -320,7 +325,9 @@ function showRun(result = null) {
       el('button', { onclick: () => showFieldItems(result) }, '道具を使う'),
     ];
   } else if (run.state === 'cleared' && run.worldVersion) {
-    actions = journeyExitActions(run, result);
+    const [message, choices, ...utilities] = journeyExitActions(run, result);
+    primaryActions = [message, choices];
+    actions = utilities;
   } else if (run.state === 'cleared') {
     actions = [
       el('div', { class: 'panel small' }, run.training ? '育成探索を完了した！' : '最後の戦闘を終えた！ 道具なしで町へ帰れます。'),
@@ -333,12 +340,12 @@ function showRun(result = null) {
   if (result?.result === 'win') {
     render(view, createVictoryView({
       data, dungeon: dg, party: g.party, result, backpack,
-      totalGold: run.earned.gold, gearName, actions: [notices, ...actions],
+      totalGold: run.earned.gold, gearName, primaryActions, actions: [notices, ...actions],
     }));
     view.querySelector('h2').focus({ preventScroll: true });
   } else {
     const escaped = result?.result === 'fled' ? el('div', { class: 'panel small' }, '逃げ切った') : null;
-    render(view, head, escaped, notices, partyPanel(), actions);
+    render(view, head, primaryActions, escaped, notices, partyPanel(), actions);
   }
   window.scrollTo(0, 0);
 }
