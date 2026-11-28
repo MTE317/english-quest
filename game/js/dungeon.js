@@ -1,4 +1,4 @@
-import { worldNode, ensureWorldJourney, worldEntries, knownWorldDungeons, exitChoices, revealWorldExits } from './world-journey.js?v=region1-encounters-1';
+import { worldNode, ensureWorldJourney, worldEntries, knownWorldDungeons, exitChoices, revealWorldExits } from './world-journey.js?v=playtest-balance-1';
 import { gainAp } from './ap.js?v=skill-growth-2';
 import { roundGold } from './gold.js?v=skill-growth-2';
 // ダンジョンの遠征：行き先・階層・戦利品・帰還を扱う。遠征の進み具合は session.run に保存する。
@@ -10,13 +10,13 @@ import { roundGold } from './gold.js?v=skill-growth-2';
 //   'cleared'      … 最終戦を終えた（新経路は出口3択、旧経路は帰還）
 import { createBattle, finishBattle, battleRewards, curedBy } from './battle.js?v=enemy-skills-1';
 import { recordMonsterDefeats } from './monster-knowledge.js?v=fixed-monsters-1';
-import { makeEncounter, floorRow, planBounty } from './encounter.js?v=region1-encounters-1';
+import { makeEncounter, floorRow, planBounty } from './encounter.js?v=playtest-balance-1';
 import { rollBattleLoot, addToBackpack, swapIntoBackpack, unloadBackpack } from './loot.js?v=fixed-monsters-1';
 import { gainXp, maxHp, maxMp, affixSum, partyCanAct } from './character.js?v=party-wipe-1';
-import { advanceDays, calendarOf, countKills, refreshBoard } from './town.js?v=region1-encounters-1';
+import { advanceDays, calendarOf, countKills, refreshBoard } from './town.js?v=playtest-balance-1';
 import { discoverJobs, recordStoredMaterials } from './temple.js?v=skill-growth-2';
 import { memberMods } from './growth.js?v=advanced-jobs-1';
-import { planExploration, resolveExploration, commitExploration, explorationEntryAllowed } from './exploration.js?v=region1-encounters-1';
+import { planExploration, resolveExploration, commitExploration, explorationEntryAllowed } from './exploration.js?v=playtest-balance-1';
 import { isTrialDungeonUnlocked, TRIAL_DUNGEON_IDS } from './world-map.js?v=canyon-public-1';
 
 /** 乱数の種から 0〜1 の乱数を返す関数（状態は obj[key] に入れて保存できる） */

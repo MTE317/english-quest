@@ -10,6 +10,7 @@ export function installWorldData(data, config) {
   data.worldRoutes = config;
   const keys = new Set(config.nodes.map(node => node.key));
   const stones = new Set(config.stones.map(stone => stone.id));
+  if (config.seasonalWeightMultiplier != null && (!Number.isFinite(config.seasonalWeightMultiplier) || config.seasonalWeightMultiplier < 1)) throw new Error('季節の出現倍率が不正です');
   if (config.maxHealersPerBattle != null && (!Number.isInteger(config.maxHealersPerBattle) || config.maxHealersPerBattle < 1)) throw new Error('回復役の上限が不正です');
   if (keys.size !== config.nodes.length || stones.size !== config.stones.length || !stones.has(config.startStone)) throw new Error('世界地図のIDが不正です');
   for (const stone of config.stones) if (stone.entries.some(key => !keys.has(key))) throw new Error('地域の入口が不正です');

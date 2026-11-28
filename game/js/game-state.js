@@ -1,4 +1,4 @@
-import { ensureWorldJourney } from './world-journey.js?v=region1-encounters-1';
+import { ensureWorldJourney } from './world-journey.js?v=playtest-balance-1';
 import { normalizeAp } from './ap.js?v=skill-growth-2';
 import { migrateGold, goldVersion } from './gold.js?v=skill-growth-2';
 // 新しいゲームの進み具合（セーブの game の中身）

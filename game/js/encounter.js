@@ -24,7 +24,8 @@ export function monsterPool(data, dungeonId, season, { legacy = false } = {}) {
 export function encounterWeights(data, dungeonId, season, { quests = [], legacy = false } = {}) {
   const pool = monsterPool(data, dungeonId, season, { legacy });
   const world = data.worldRoutes?.nodes.find(node => node.id === dungeonId);
-  if (world) return pool.map(monster => ({monster,weight:world.weights?.[monster.id] ?? 1,common:true}));
+  if (world) return pool.map(monster => ({monster,
+    weight:(world.weights?.[monster.id] ?? 1) * (monster.season === season ? data.worldRoutes.seasonalWeightMultiplier ?? 1 : 1),common:true}));
   const config = data.balance.encounters ?? {};
   const count = Math.min(pool.length, Math.max(1, Math.floor(config.common_count ?? pool.length)));
   const seasonal = pool.filter((m) => m.role === 'season');

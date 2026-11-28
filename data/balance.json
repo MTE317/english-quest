@@ -83,7 +83,7 @@
     "hp": "70 + g*30 + (Lv-1)*g*9",
     "other_stats": "8 + g*6 + (Lv-1)*g*1.6",
     "mp": "12 + gMAG*6 + (Lv-1)*2",
-    "xp_to_next": "25 * Lv^1.5"
+    "xp_to_next": "37.5 * Lv^1.5"
   },
   "rewards": {
     "fixed_monster_dungeons": ["windward_plain", "sunlit_forest", "mossy_cave", "goblin_quarry", "ruined_fort", "misty_marsh", "howling_canyon"],
@@ -817,8 +817,8 @@
       15
     ],
     "efficiency_vs_dungeon": 0.8,
-    "xp_min_level_fraction": 0.001,
-    "xp_min_level_fraction_note": "現行訓練の1問・1人XPはmax(直近安全帰還のパーティ合計XP/問×0.10,本人の次Lv必要XP×0.001)。Lv上限では下限補正なし。期限到来の初回正答×1.20。小数繰越・同項目1日1回は従来どおり。旧efficiency_vs_dungeonは現行訓練では不使用。",
+    "xp_min_level_fraction": 0.0006666666666666666,
+    "xp_min_level_fraction_note": "1問・1人XPはmax(直近安全帰還のパーティ合計XP/問×0.10,次Lv必要XP×(0.001/1.5))。必要XP増加に合わせて下限比率を補正し、鍛錬の最低獲得量は従来とほぼ同じに保つ。期限到来の初回正答×1.20、小数繰越、同項目1日1回、APは維持。",
     "days": 0
   },
   "accuracy_drop_per_rank": 0.03,

@@ -1,7 +1,7 @@
 import { el, stars } from '../dom.js?v=skill-growth-2';
 import { aptitudeGrade, canEquip, computeStats, equipFromStorage, gearDef, makeGear, SLOT_LABEL } from '../character.js?v=advanced-jobs-1';
 import { LOOT_FORMULAS } from '../loot.js?v=fixed-monsters-1';
-import { buyGear, buyItem, gearShopStock, itemShopStock, sellGear, sellPrice } from '../town.js?v=region1-encounters-1';
+import { buyGear, buyItem, gearShopStock, itemShopStock, sellGear, sellPrice } from '../town.js?v=playtest-balance-1';
 import { stackSellStock, sellStack } from '../shop-selling.js?v=sell-all-stock-1';
 import { uiIcon } from './pixel-icons.js?v=skill-growth-2';
 import { goldText, shopView } from './shop-view.js?v=skill-growth-2';

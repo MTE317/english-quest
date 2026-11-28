@@ -34,7 +34,7 @@ test('抽選比率は設定した重みを使い、上位種は低頻度の単�
  const weights=encounterWeights(data,n.id,'spring'),total=weights.reduce((s,e)=>s+e.weight,0),counts={};
  for(let i=0;i<6000;i++){const [e]=makeEncounter(data,n.id,1,rng,{season:'spring'});counts[e.monsterId]=(counts[e.monsterId]??0)+1;}
  for(const {monster,weight} of weights)assert.ok(Math.abs((counts[monster.id]??0)/6000-weight/total)<.025,monster.id);
- assert.ok(counts.kamaitachi<counts.canyon_wolf/4);
+ assert.ok(counts.kamaitachi<counts.canyon_wolf/2);
 });
 
 test('保存された戦闘を変更せず、同じ種と乱数で次の抽選を再現できる',()=>{
