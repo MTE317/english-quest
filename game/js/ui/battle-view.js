@@ -4,7 +4,7 @@ import { now } from '../storage.js?v=skill-growth-2';
 import { QuestionPicker, REASON_LABEL } from '../picker.js?v=skill-growth-2';
 import { makePracticeQuestion, questionDirection, questionSpeech, DIRECTION } from '../quiz.js?v=skill-growth-2';
 import { speak, canSpeak, stopSpeech } from '../speech.js?v=skill-growth-2';
-import { nextTurn, actionOptions, setPending, prepareQuizAction, resolvePending, targetKind, skillMp, collectBattleHits, enemyIntent, enemyCanAct } from '../battle.js?v=jobs-22-24-1';
+import { nextTurn, actionOptions, setPending, prepareQuizAction, resolvePending, targetKind, skillMp, collectBattleHits, enemyIntent, enemyCanAct } from '../battle.js?v=legendary-01-03-1';
 import { skillMaxLevel, learnedSkillLevel, effectiveSkill } from '../growth.js?v=advanced-jobs-1';
 import { maxHp, maxMp } from '../character.js?v=advanced-jobs-1';
 import { el, render } from '../dom.js?v=skill-growth-2';
@@ -559,6 +559,11 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
         el('div',{class:'battle-action-list'},
           listChoice('加護を残す',`MP ${battleMp(skill)}`,null,()=>chooseBoost({...selected,consumeBlessing:false})),
           listChoice('加護を消費する',`MP ${battleMp(skill)}`,`直接ダメージ +${Math.round(skill.effect.rules.optional_blessing*100)}%`,()=>chooseBoost({...selected,consumeBlessing:true}))),
+      ],{back});
+      if (entry.optionalCourage && selected.spendCourage == null) return showPanel(`${skill.name}の勇気`,[
+        el('div',{class:'battle-action-list'},
+          listChoice('勇気を残す',`MP ${battleMp(skill)}`,null,()=>chooseBoost({...selected,spendCourage:false})),
+          listChoice('勇気を1消費',`MP ${battleMp(skill)}`,'防護量 +20%',()=>chooseBoost({...selected,spendCourage:true}))),
       ],{back});
       if (!entry.boost) return chooseTarget(selected, 'skill', entry.targetReasons);
       const baseMp = battleMp(skill);
