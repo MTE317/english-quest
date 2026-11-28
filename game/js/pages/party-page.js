@@ -6,7 +6,7 @@ import { createNewGame, defaultPartySpecs, normalizeGame } from '../game-state.j
 import {
   computeStats, SLOTS, SLOT_LABEL, STAT_LABEL, canEquip, equipFromStorage, equipRecommended, unequip, gearDef,
   aptitudeGrade, xpToNext, levelCap, gainXp, makeGear,
-} from '../character.js?v=facilities-11-1';
+} from '../character.js?v=recommended-equipment-2';
 import {
   availableJobs, jobPaths, isLearned, learnBlock, learnAndEquipSkill, equipBlock, equipSkill, unequipSkill, capacity, usedCapacity,
   commonApCost, commonBlock, learnCommon, masteryLevel, isJobMastered, GROWTH_FORMULAS,
@@ -319,9 +319,20 @@ function showMember(index, tab = 'skills', selectedSlot = null, { scroll = true 
             SLOT_LABEL[slot]),
           el('span', { class: 'equipment-slot-name' }, gear ? gearLabel(gear, m.job) : '未装備'));
         slotButtons.set(slot, button);
-        return el('li', {}, button);
+          return el('li', {}, button,
+            el('label', { class: 'small' },
+              el('input', { type: 'checkbox', checked: !!m.equipmentLocks?.[slot], disabled: session.inDungeon,
+                onchange: (event) => {
+                  const checked = event.target.checked;
+                  session.update(game => {
+                    const member = game.party[index];
+                    member.equipmentLocks ??= {};
+                    member.equipmentLocks[slot] = checked;
+                  });
+                } }), 'おすすめ変更の対象外'));
       })),
     equipmentPanel,
+      el('p', { class: 'small muted' }, '適性・役割・セット中のスキルを考慮して選びます。固定した枠は変更しません。'),
     el('button', { type: 'button', class: 'primary', disabled: session.inDungeon,
       onclick: () => {
         session.update(game => equipRecommended(data, game, game.party[index]));

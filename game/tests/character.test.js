@@ -17,7 +17,7 @@ const party = [
 ];
 const fresh = () => createNewGame(data, party);
 
-test('おまかせ装備は装備可能な最高Lvを選び、同じLvなら強化値を優先する', () => {
+test('おまかせ装備は同系統なら性能の高い強化装備を選び、二刀流も組む', () => {
   const game = fresh();
   const member = game.party[0];
   const sword = makeGear(game, 'sword_t2');
