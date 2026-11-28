@@ -498,7 +498,7 @@ export function advancedTargetBlock(data, game, b, actor, skill, target, action)
   if (action.consumeClone && rule.optional_clone && !cloneCount(b.allies[actor])) return '消費できる分身がない';
   if (skill.kind==='attack' && !b.enemies.some(enemy=>enemy.hp>0)) return '生存している敵を選んでください';
   if (skill.kind==='attack' && !['all','random'].includes(skill.effect.tgt) && !(b.enemies[target]?.hp>0)) return '生存している敵を選んでください';
-  if (action.targets && !rule.orders_party && (!Array.isArray(action.targets) || !action.targets.length || new Set(action.targets).size!==action.targets.length
+  if (action.targets && !rule.orders_party && rule.legendary_final?.target!=='ko_allies' && (!Array.isArray(action.targets) || !action.targets.length || new Set(action.targets).size!==action.targets.length
     || action.targets.length>(skill.effect.target_limit??b.enemies.length) || action.targets.some(i=>!(b.enemies[i]?.hp>0)))) return '異なる生存敵を上限内で選んでください';
   return '';
 }

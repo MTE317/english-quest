@@ -108,13 +108,13 @@ test('武器条件は現職でなく現在の主武器を見て判定する', ()
   assert.equal(skillWeaponBlock(data, game.party[2], data.skills.get('monk_A01')), '');
 });
 
-test('技能準備中の9職は解放記録があっても転職できない', () => {
+test('50職すべての技能が準備でき、解放記録があれば転職できる', () => {
   const game = fresh();
   game.unlockedJobs = data.jobs.map((job) => job.id);
-  assert.equal(availableJobs(data, game).length,47);
-  const pending = data.jobs.find((job) => job.skillsReady === false);
-  assert.ok(pending);
-  assert.throws(() => changeJob(data, game, 0, pending.id), /選べない/);
+  assert.equal(availableJobs(data, game).length,50);
+  assert.ok(data.jobs.every((job)=>job.skillsReady));
+  changeJob(data,game,0,'overlord');
+  assert.equal(game.party[0].job,'overlord');
 });
 
 test('保存した専用奥義枠の選択は、旧形式の通常枠に混ざった別奥義より優先する', () => {

@@ -4,7 +4,7 @@ import { now } from '../storage.js?v=skill-growth-2';
 import { QuestionPicker, REASON_LABEL } from '../picker.js?v=skill-growth-2';
 import { makePracticeQuestion, questionDirection, questionSpeech, DIRECTION } from '../quiz.js?v=skill-growth-2';
 import { speak, canSpeak, stopSpeech } from '../speech.js?v=skill-growth-2';
-import { nextTurn, actionOptions, setPending, prepareQuizAction, resolvePending, targetKind, skillMp, collectBattleHits, enemyIntent, enemyCanAct } from '../battle.js?v=legendary-01-03-1';
+import { nextTurn, actionOptions, setPending, prepareQuizAction, resolvePending, targetKind, skillMp, collectBattleHits, enemyIntent, enemyCanAct } from '../battle.js?v=legendary-04-06-1';
 import { skillMaxLevel, learnedSkillLevel, effectiveSkill } from '../growth.js?v=advanced-jobs-1';
 import { maxHp, maxMp } from '../character.js?v=advanced-jobs-1';
 import { el, render } from '../dom.js?v=skill-growth-2';
@@ -202,6 +202,12 @@ export function allyEffectEntries(data, game, battle, index) {
   if(member.hp>0 && ally.seeds?.length)ongoing.push(entry(`種：${ally.seeds.map(s=>`成長${s.growth}/3・残り${s.remaining}行動`).join('／')}`));
   if(member.hp>0 && ally.beast)ongoing.push(entry(`獣化${duration(ally.beast.remaining)}`));
   if(member.hp>0 && ally.forecasts?.length)ongoing.push(entry(`予兆：${ally.forecasts.map(f=>`${f.name} 残り${f.remaining}行動`).join('／')}`));
+  if(member.hp>0 && member.job==='sage')ongoing.push(entry(`術式記憶：${ally.sageMemory?`${data.elements.get(ally.sageMemory.element)?.name??ally.sageMemory.element}・Lv${ally.sageMemory.level}`:'なし'}`));
+  if(member.hp>0 && member.job==='saint')ongoing.push(entry(`奇跡 ${ally.saintMiracles??0}/3`));
+  if(member.hp>0 && member.job==='overlord')ongoing.push(entry(`覇気 ${ally.overlordHaki??0}/3`));
+  if(member.hp>0 && ally.sageWard)ongoing.push(entry(`術式の防護：${data.elements.get(ally.sageWard.element)?.name??ally.sageWard.element}${duration(ally.sageWard.remaining)}`));
+  if(member.hp>0 && ally.saintWard)ongoing.push(entry(`命の護符${duration(ally.saintWard.remaining)}`));
+  if(member.hp>0 && ally.overlordMarch)ongoing.push(entry(`進軍の支援：残り${ally.overlordMarch.uses}回${duration(ally.overlordMarch.remaining)}`));
   if(member.hp>0 && ally.civicTransfer)ongoing.push(entry(`弱点の転写：${battle.enemies[ally.civicTransfer.enemy]?.name??'対象'}へ+${Math.round(ally.civicTransfer.rate*100)}%${duration(ally.civicTransfer.remaining)}`));
   if(member.hp>0){const inspected=(battle.enemies??[]).flatMap(enemy=>enemy.civicMarks?.[index]&&enemy.hp>0?[`${enemy.name}：${data.elements.get(enemy.civicMarks[index].element)?.name??enemy.civicMarks[index].element}`]:[]);if(inspected.length)ongoing.push(entry(`鑑定印 ${inspected.join('・')}`));}
   if(member.hp>0 && (member.job==='dancer'||(ally.rhythm??0)>0))ongoing.push(entry(`律動 ${ally.rhythm??0}/2`));
@@ -565,6 +571,11 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
           listChoice('勇気を残す',`MP ${battleMp(skill)}`,null,()=>chooseBoost({...selected,spendCourage:false})),
           listChoice('勇気を1消費',`MP ${battleMp(skill)}`,'防護量 +20%',()=>chooseBoost({...selected,spendCourage:true}))),
       ],{back});
+      if (entry.optionalHaki && selected.spendHaki == null) return showPanel(`${skill.name}の覇気`,[
+        el('div',{class:'battle-action-list'},
+          listChoice('覇気を残す',`MP ${battleMp(skill)}`,null,()=>chooseBoost({...selected,spendHaki:false})),
+          listChoice('覇気を1消費',`MP ${battleMp(skill)}`,'防護量 +20%',()=>chooseBoost({...selected,spendHaki:true}))),
+      ],{back});
       if (!entry.boost) return chooseTarget(selected, 'skill', entry.targetReasons);
       const baseMp = battleMp(skill);
       const extraMp = entry.boost.mp;
@@ -653,6 +664,15 @@ export function createBattleView({ view, data, lex, scheduler, store, session, o
           el('button',{disabled:!selected.size,onclick:()=>ask({...action,targets:[...selected]})},'この対象で攻撃する'),
         ],{back:()=>showCommand(sub)});
       };
+      return drawSelection();
+    }
+    if(kind==='ko_allies'){
+      const indices=g.party.flatMap((target,index)=>target.hp<=0&&!b.allies[index].statuses?.petrify?[index]:[]);
+      const selected=new Set();const select=index=>{if(selected.has(index))selected.delete(index);else if(selected.size<2)selected.add(index);drawSelection();};
+      const drawSelection=()=>{drawField(b.turn.i,{kind:'ko_ally',indices,select});
+        showPanel(skill.name,[el('p',{class:'battle-target-prompt'},`蘇生する味方を最大2人選ぶ（${selected.size}/2）`),
+          el('div',{class:'battle-targets'},indices.map(index=>el('button',{'aria-pressed':String(selected.has(index)),onclick:()=>select(index)},`${selected.has(index)?'✓ ':''}${g.party[index].name}`))),
+          el('button',{disabled:!selected.size,onclick:()=>ask({...action,targets:[...selected]})},'この味方を蘇生する')],{back:()=>showCommand(sub)});};
       return drawSelection();
     }
     if (!TARGET_PROMPT[kind]) return ask({ ...action, target: null });
