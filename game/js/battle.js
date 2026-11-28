@@ -11,6 +11,8 @@ import { fixedBattleRewards } from './monster-rewards.js?v=public-rewards-1';
 // 式・効果の上限は data/balance.json から読む。BATTLE_FORMULAS は旧データ向けの既定値。
 import { evaluate } from './expr.js?v=skill-growth-2';
 import { trioItems, trioBlock, trioTargetBlock, clearTrio, finishTrioOpportunity, runTrio } from './trio-combat.js?v=jobs-31-33-1';
+import { civicItems, civicBlock, civicTargetBlock, clearCivic, finishCivicOpportunity, finishCivicEnemy,
+  civicIncomingCut, civicAttackBonus, civicOnHit, runCivic } from './civic-combat.js?v=jobs-34-36-1';
 import { computeStats, gearDef, weaponPower, spellPower, scytheSpellPower, maxHp, maxMp, gearEffects, affixSum, memberCanAct } from './character.js?v=unique-reroll-1';
 import { actionSkills, ultimateSkill, memberMods, addMasteryKill, effectiveSkill } from './growth.js?v=unique-reroll-1';
 import { encounterMonsters, learnMonsterElements, hitEffectiveness } from './monster-knowledge.js?v=monster-catalog-1';
@@ -346,6 +348,7 @@ function endRound(data, game, b) {
     if (b.allies[i].lastOpportunityRound !== b.round) {
       finishMasterOpportunity(data, game, b, i, masterContext(data, game, b), null, false);
       finishTrioOpportunity(b,i);
+      finishCivicOpportunity(data,game,b,i);
     }
   }
   for (const enemy of b.enemies) {
@@ -433,6 +436,7 @@ export function nextTurn(data, game, b) {
     tickStatuses(data, b, a, m.name);
     finishMasterOpportunity(data, game, b, u.i, masterContext(data, game, b), null, false);
     finishTrioOpportunity(b,u.i);
+    finishCivicOpportunity(data,game,b,u.i);
   }
   throw new Error('戦闘が進まない');
 }
@@ -518,6 +522,7 @@ export function prepareQuizAction(data, game, b) {
   tickStatuses(data, b, b.allies[i], game.party[i].name);
   finishMasterOpportunity(data, game, b, i, masterContext(data, game, b), null, false);
   finishTrioOpportunity(b,i);
+  finishCivicOpportunity(data,game,b,i);
   b.turn = null;
   return false;
 }
@@ -562,6 +567,7 @@ function koAlly(game, b, i) {
   const m = game.party[i];
   m.hp = 0;
   clearTrio(b, i);
+  clearCivic(b, i);
   for (const ally of b.allies) if (ally.machine?.guard?.target===i) delete ally.machine.guard;
   // 戦闘不能時に戦闘中の状態を解除する現行ルールを維持する。
   b.allies[i].statuses = {};
@@ -653,6 +659,8 @@ function skillBlock(data, game, b, i, s) {
   if (mysticBlock) return mysticBlock;
   const trioReason = trioBlock(data, game, b, i, s);
   if (trioReason) return trioReason;
+  const civicReason = civicBlock(data, game, b, i, s);
+  if (civicReason) return civicReason;
   if (s.isFinal && (m.ultimateGauge ?? 0) < (ultimateRules(data).gauge_max ?? 100)) return '必殺技ゲージが足りない';
   if (s.isFinal && ultimateRules(data).once_per_battle && a.once.includes(s.id)) return 'この戦闘ではもう使った';
   if (s.effect.require_weapon && (!m.equip.weapon || gearDef(data, m.equip.weapon).kind !== s.effect.require_weapon)) {
@@ -701,6 +709,7 @@ export function actionOptions(data, game, b, i) {
       hpCost: hpPayment(data,game,b,i,s), optionalBlessing: Boolean(s.effect.rules?.optional_blessing && ownedBlessing(b,i)),
       optionalClone: Boolean(s.effect.rules?.optional_clone && cloneCount(b.allies[i])),
       itemChoices: trioItems(data, game, s),
+      civicItems: civicItems(data, game, s),
       elements: s.effect.rules?.choose_element ?? s.effect.rules?.choose_mode ?? s.effect.choose_element ?? [] };
   };
   const skills = knownSkills(data, game.party[i]).map(entry);
@@ -728,6 +737,7 @@ export function targetKind(data, action, member = null) {
   const s = member ? effectiveSkill(data, member, data.skills.get(action.skillId)) : data.skills.get(action.skillId);
   const tgt = s.effect.tgt;
   if (s.effect.rules?.trio) return s.effect.rules.trio.targetKind;
+  if (s.effect.rules?.civic) return s.effect.rules.civic.targetKind;
   if (tgt === 'selected_enemy') return 'enemy';
   if (tgt === 'self') return 'self';
   if (s.effect.rules?.revive && s.kind === 'heal_all') return 'ko_ally';
@@ -777,6 +787,7 @@ export function resolvePending(data, game, b, correct) {
     tickStatuses(data, b, a, m.name);
     finishMasterOpportunity(data, game, b, i, masterContext(data, game, b), null, false);
     finishTrioOpportunity(b,i);
+    finishCivicOpportunity(data,game,b,i);
     if (b.queue.length) checkEnd(game, b);
     else checkDefeat(game, b);
     return { cm };
@@ -815,6 +826,7 @@ export function resolvePending(data, game, b, correct) {
   tickStatuses(data, b, a, m.name);
   finishMasterOpportunity(data, game, b, i, masterContext(data, game, b), chosenSkill ?? (act.type === 'attack' ? null : { kind: 'utility', effect: {} }));
   finishTrioOpportunity(b,i);
+  finishCivicOpportunity(data,game,b,i);
   if (performed && correct && act.type !== 'flee' && !chosenSkill?.isFinal) gainUltimate(data, m, ultimateRules(data).gain_correct ?? 20);
   if (b.queue.length) checkEnd(game, b);
   else checkDefeat(game, b);
@@ -916,6 +928,7 @@ function attackDamage(data, game, b, i, e, skill, cm, { offhand = false, actionB
   const masterBonus=masterDamageBonus(data,game,b,i,e,skill,els);
   pm += masterBonus;
   pm += mysticDamageBonus(data, game, b, i, skill, els);
+  pm += civicAttackBonus(data,game,b,i,e,skill);
   if (els.some(el => elementMul(data, enemy, el) > 1)) pm += skill?.effect.rules?.weak_damage ?? 0;
   for (const [names, v] of mods.wdmg ?? []) if (base === 'weapon' && wt && names.some((n) => nameIs(data.weaponTypes, wt.id, n))) pm += v;
   for (const [name, v] of mods.edmg ?? []) if (els.some((el) => nameIs(data.elements, el, name))) pm += v;
@@ -1003,6 +1016,7 @@ function hitEnemy(data, game, b, i, e, damage, { prefix = '', em = 1, elements =
     recordHit(b, 'enemy', e, damage, i == null ? undefined : { side: 'ally', i }, hitEffectiveness(em));
   }
   enemy.hp = Math.max(0, enemy.hp - damage);
+  if(i!=null&&game.party[i])civicOnHit(data,game,b,i,e,primaryAction);
   if (wasAlive && enemy.hp <= 0 && game.party[i]) {
     const m = game.party[i];
     notePrimaryKill(b,i,e,primaryAction);
@@ -1406,6 +1420,8 @@ function doSkill(data, game, b, i, s, target, cm, normalSkillReady = false, acti
   if (targetBlock) { log(b, `${s.name}は使えなかった（${targetBlock}）`); return; }
   const trioReason = trioTargetBlock(data,game,b,i,s,target,action);
   if (trioReason) { log(b, `${s.name}は使えなかった（${trioReason}）`); return; }
+  const civicReason = civicTargetBlock(data,game,b,i,s,target,action);
+  if (civicReason) { log(b, `${s.name}は使えなかった（${civicReason}）`); return; }
   if (s.effect.rules?.mystic && (
     (s.kind === 'attack' && (s.effect.tgt === 'all' ? !livingEnemies(b).length : !enemyCanAct(b.enemies[target] ?? {hp:0})))
     || (s.kind === 'debuff' && !enemyCanAct(b.enemies[target] ?? {hp:0}))
@@ -1482,8 +1498,10 @@ function doSkill(data, game, b, i, s, target, cm, normalSkillReady = false, acti
     if(full)s={...s,effect:{...s.effect,m:(s.effect.m??1)*1.10}};
     delete a.decoy;
   }
-  if (e.rules?.trio) runTrio(data,game,b,i,s,target,cm,action,{
+  if (e.rules?.trio || e.rules?.civic) (e.rules?.civic ? runCivic : runTrio)(data,game,b,i,s,target,cm,action,{
     log: message=>log(b,message), spentMp, stats:()=>battleStats(data,game,b,i),
+    elementMultiplier:(enemy,element)=>elementMul(data,enemy,element),
+    elementName:element=>data.elements.get(element)?.name??element,
     heal:(t,power,cap=1)=>{
       const st=battleStats(data,game,b,i),traits=weaponTraits(data,m.equip.weapon);
       const amount=evaluate(f(data,'heal'),{MAG:st.mag,wpow:spellPower(data,m),m:power,heal_mul:traits.heal_mul??1})*cm
@@ -2450,7 +2468,7 @@ function enemyTurn(data, game, b, e) {
   const enemy = b.enemies[e];
   const trapBlocked = ['sleep','freeze','stun','petrify'].some(id=>enemy.statuses[id]);
   b.enemyActionClock = (b.enemyActionClock ?? 0) + 1;
-  const finish=(intent={})=>{finishCompanionEnemyAction(b);finishArcaneEnemy(data,game,b,e,intent);};
+  const finish=(intent={})=>{finishCompanionEnemyAction(b);finishArcaneEnemy(data,game,b,e,intent);finishCivicEnemy(b,e);};
   snapshotCloneDefense(b);
   // 罠は対象の行動機会に一度発動。反撃や資源蓄積を再帰させない。
   const triggered = (b.masterTraps ?? []).filter(trap => trap.target === e);
@@ -2653,7 +2671,7 @@ function enemyTurn(data, game, b, e) {
       + masterBuff(data, game, b, t, 'cut') + masterBuff(data, game, b, t, magic ? 'mcut' : 'pcut')
       + masterCutBonus(data, game, b, t, magic, e) + mysticCut(data, game, b, t, magic, incomingElements)
       + (counterStance?.cut ?? 0) + readGuardCut(b, t, magic, incomingElements)
-      + (masterCover && t !== original ? masterCover.cover.cut ?? 0 : 0)+orderCut);
+      + (masterCover && t !== original ? masterCover.cover.cut ?? 0 : 0)+orderCut+civicIncomingCut(data,game,b,t,e));
     const ecut = allyElementMultiplier(data, game, b, t, enemy.attackElement, magic);
     const dmg = evaluate(f(data, 'enemy_damage'), { atk, df, r: between(b, f(data, 'enemy_rand')) })
       * Math.max(f(data, 'minimum_damage_share'), cover * cut * ecut)
@@ -2749,6 +2767,7 @@ export function finishBattle(data, game, b) {
     ally.buffs = {};
     ally.masterEffects = {};
     clearTrio(b,i);
+    clearCivic(b,i);
     delete ally.familiar;
     delete ally.companion;
     delete ally.puppet;

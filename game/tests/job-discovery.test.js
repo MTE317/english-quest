@@ -10,7 +10,7 @@ import { readCsv, readJson, MemoryStorage } from './helpers.js';
 
 const master = buildGameData(Object.fromEntries(Object.entries(GAME_FILES).map(([key, name]) =>
   [key, name.endsWith('.json') ? readJson(name) : readCsv(name).rows])));
-// 発見処理は制御データで検証する。個別技能が未実装の15職は準備中のまま。
+// 発見処理は制御データで検証する。個別技能が未実装の9職は準備中のまま。
 const data = { ...master, jobsById: new Map(master.jobsById), jobUnlocks: new Map() };
 for (const [id, dungeon] of [['necromancer', 'ruined_fort'], ['onmyoji', 'howling_canyon']]) {
   data.jobsById.set(id, { ...master.jobsById.get(id), skillsReady: true });
@@ -21,11 +21,11 @@ const specs = ['warrior', 'knight', 'black_mage', 'white_mage', 'thief', 'bard']
 const discoveries = [['necromancer', 'ruined_fort'], ['onmyoji', 'howling_canyon']];
 const fresh = () => createNewGame(data, specs);
 
-test('新マスターの準備中15職は踏破しても解放せず、神殿投資と探索による職の解放を混同しない', () => {
+test('新マスターの準備中9職は踏破しても解放せず、神殿投資と探索による職の解放を混同しない', () => {
   const game = createNewGame(master, specs);
   for (const dungeon of master.dungeons.values()) discoverJobs(master, game, dungeon.id, () => 0);
   assert.deepEqual(game.unlockedJobs, []);
-  assert.equal(master.jobs.filter((job) => job.skillsReady === false).length,12);
+  assert.equal(master.jobs.filter((job) => job.skillsReady === false).length,9);
 });
 
 test('公開の発見2職だけ3踏破保証を持ち、元の10%抽選を維持する', () => {
