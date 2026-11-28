@@ -23,7 +23,7 @@ import { civicItems, civicBlock, civicTargetBlock, clearCivic, finishCivicOpport
   civicIncomingCut, civicAttackBonus, civicOnHit, runCivic } from './civic-combat.js?v=jobs-34-36-1';
 import { computeStats, gearDef, weaponPower, spellPower, scytheSpellPower, maxHp, maxMp, gearEffects, affixSum, memberCanAct } from './character.js?v=unique-reroll-1';
 import { actionSkills, ultimateSkill, memberMods, addMasteryKill, effectiveSkill } from './growth.js?v=unique-reroll-1';
-import { encounterMonsters, learnMonsterElements, hitEffectiveness } from './monster-knowledge.js?v=fixed-monsters-1';
+import { encounterMonsters, learnMonsterHp, learnMonsterElements, hitEffectiveness } from './monster-knowledge.js?v=inspect-hp-1';
 import { masterTags, weaponSkill, songSkill, healingSkill, weaponAllowed, passiveRules, ruleNumber, matchesTag,
   masterDamageBonus, masterCritBonus, masterEvasionBonus, masterCutBonus, grantMasterEffect, masterBuff, masterMpSave,
   masterHealingBonus, masterStatusResist, masterStatusMultiplier, beginMasterAction, startMasterOpportunity, finishMasterOpportunity,
@@ -1905,6 +1905,8 @@ function masterInspect(data, game, b, target, count) {
     .filter(id => !known.has(id));
   const selected = candidates.slice(0, Math.max(0, count));
   learnMonsterElements(game, enemy, selected);
+  learnMonsterHp(game, enemy);
+  log(b, `${enemy.name}のHP：${enemy.hp}/${enemy.maxHp}`);
   log(b, selected.length ? `${enemy.name}の${selected.map(id => data.elements.get(id)?.name ?? id).join('・')}相性を見極めた` : '調査済みの相性に新しい情報はなかった');
 }
 function masterSteal(data, game, b, actor, target, rule, cm) {

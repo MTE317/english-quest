@@ -1,6 +1,6 @@
 import { publicMonsterReward } from '../monster-rewards.js?v=fixed-monsters-1';
 import { el, render } from '../dom.js?v=skill-growth-2';
-import { catalogMonsters, monsterUnlocks } from '../monster-catalog.js?v=playtest-balance-1';
+import { catalogMonsters, monsterUnlocks } from '../monster-catalog.js?v=inspect-hp-1';
 import { monsterKnowledge } from '../monster-knowledge.js?v=fixed-monsters-1';
 
 const waiting = (count, threshold) => `未解放（討伐 ${count}/${threshold}）`;
@@ -8,7 +8,7 @@ const row = (label, value) => el('div', { class: 'monster-catalog-row' }, el('dt
 
 function detail(data, game, monster) {
   const count = game.catalog?.defeats?.[monster.id] ?? 0;
-  const known = monsterUnlocks(monster, count);
+  const known = monsterUnlocks(monster, count, game.catalog?.affinities?.[monster.id]);
   const threshold = monster.isBoss ? { elements: 2, hp: 1, types: 1, statuses: 3, stats: 4, drops: 5 }
     : { elements: 3, hp: 1, types: 2, statuses: 10, stats: 20, drops: 30 };
   const unlock = (key, value) => known[key] ? value : waiting(count, threshold[key]);

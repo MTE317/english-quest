@@ -28,6 +28,15 @@ export function learnMonsterElements(game, enemy, elements, scanned = false) {
   entry.scanned ||= scanned;
 }
 
+/** 調査でHPを図鑑に記録する。通常攻撃での属性判明とは分ける。 */
+export function learnMonsterHp(game, enemy) {
+  if (!enemy.monsterId) return;
+  encounterMonsters(game, [enemy]);
+  const discoveries = (game.catalog.affinities ??= {});
+  const entry = (discoveries[enemy.monsterId] ??= { elements: [], scanned: false });
+  entry.hp = true;
+}
+
 /** 敵データのうち、戦闘で確認した相性だけを図鑑に出す。 */
 export function monsterKnowledge(data, game, enemy) {
   const entry = game?.catalog?.affinities?.[enemy.monsterId ?? enemy.id];

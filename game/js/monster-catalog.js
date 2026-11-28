@@ -14,15 +14,15 @@ export function monsterBattleVisibility(data, game, enemy) {
   const id = enemy.monsterId ?? enemy.id;
   const monster = data.monsters.get(id);
   if (!monster) return {hp:false,mp:false,types:false};
-  const known = monsterUnlocks(monster,game.catalog?.defeats?.[id] ?? 0);
+  const known = monsterUnlocks(monster,game.catalog?.defeats?.[id] ?? 0, game.catalog?.affinities?.[id]);
   return {hp:known.hp,mp:known.stats,types:known.types};
 }
 
-export function monsterUnlocks(monster, defeats = 0) {
+export function monsterUnlocks(monster, defeats = 0, discovery = {}) {
   const boss = monster.isBoss;
   return {
     elements: defeats >= (boss ? 2 : 3),
-    hp: defeats >= 1,
+    hp: defeats >= 1 || Boolean(discovery.hp || discovery.scanned),
     types: defeats >= (boss ? 1 : 2),
     statuses: defeats >= (boss ? 3 : 10),
     stats: defeats >= (boss ? 4 : 20),
