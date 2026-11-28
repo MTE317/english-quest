@@ -748,6 +748,7 @@ export function targetKind(data, action, member = null) {
   const tgt = s.effect.tgt;
   if (s.effect.rules?.trio) return s.effect.rules.trio.targetKind;
   if (s.effect.rules?.civic) return s.effect.rules.civic.targetKind;
+  if (s.id==='summoner_U01'&&action.element!=='fire') return 'self';
   if (s.effect.rules?.nature) return s.effect.rules.nature_target;
   if (tgt === 'selected_enemy') return 'enemy';
   if (tgt === 'self') return 'self';
@@ -970,7 +971,7 @@ function attackDamage(data, game, b, i, e, skill, cm, { offhand = false, actionB
   if (!skill) pm += mods.normal_damage ?? 0;
   if (kind === 'mag') pm += mods.magic_damage ?? 0;
   if (mods.lowhp_dmg && m.hp < maxHp(data, m) * 0.5) pm += mods.lowhp_dmg;
-  const attackBase = (statVal + (base === 'weapon' || kind === 'mag' ? wpow : wpow * 0.8)) * mult * cm * dm * imb;
+  const attackBase = (statVal + (base === 'weapon' || kind === 'mag' || skill?.effect.rules?.nature_beast ? wpow : wpow * 0.8)) * mult * cm * dm * imb;
   const pierce = kind === 'phys'
     ? Math.min(data.basicJobRules?.caps?.def_ignore ?? .9, (qigong ? 0 : wt?.defPierce ?? 0) + (skill?.effect.defign ?? 0)
       + tacticalDefIgnore(b, i, skill) + pursuitDefIgnore(b,i,e,skill) + affixSum(m, 'DEF_PIERCE') / 100
