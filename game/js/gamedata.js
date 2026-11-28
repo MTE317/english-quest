@@ -1,4 +1,5 @@
-import { parseMonsterRewards } from './monster-rewards.js?v=public-rewards-1';
+import { installWorldData } from './world-journey.js?v=world-journey-1';
+import { parseMonsterRewards } from './monster-rewards.js?v=world-journey-1';
 import { denominateGoldData } from './gold.js?v=skill-growth-2';
 // ゲームで使う data/ のファイルをまとめて読み、ID で引ける形にする。
 import { loadCsv, loadJson, loadOptional } from './data.js?v=skill-growth-2';
@@ -7,6 +8,7 @@ import { STONE_STAGES, stoneFragmentId, ENCHANT_POWDER_ID } from './workshop-mat
 
 const FILES = {
   balance: 'balance.json',
+  worldRoutes: 'world_routes.json',
   basicJobRules: 'basic_job_rules.json',
   skillMigration: 'skill_migration.json',
   jobs: 'jobs.csv',
@@ -135,7 +137,7 @@ export function buildGameData(raw) {
   }
   const aptTable = (rows) => new Map(rows.map((r) => [r.job_id, r]));
 
-  return denominateGoldData({
+  return installWorldData(denominateGoldData({
     balance: raw.balance,
     basicJobRules: raw.basicJobRules ?? {},
     skillMigration: raw.skillMigration ?? {},
@@ -165,7 +167,7 @@ export function buildGameData(raw) {
     facilityEffects: raw.facilityEffects ?? [],
     kokuinSlots: raw.kokuinSlots ?? [],
     ...buildBattleData(raw),
-  });
+  }), raw.worldRoutes);
 }
 
 /** `STR:4|特効:beast:15` → { STR: 4, '特効:beast': 15 } */

@@ -12,6 +12,7 @@ const master = buildGameData(Object.fromEntries(Object.entries(GAME_FILES).map((
   [key, name.endsWith('.json') ? readJson(name) : readCsv(name).rows])));
 // 発見処理は制御データで検証する。個別技能が未実装の6職は準備中のまま。
 const data = { ...master, jobsById: new Map(master.jobsById), jobUnlocks: new Map() };
+delete data.worldRoutes; // 旧ダンジョンの発見保証・帰還処理の互換性。
 for (const [id, dungeon] of [['necromancer', 'ruined_fort'], ['onmyoji', 'howling_canyon']]) {
   data.jobsById.set(id, { ...master.jobsById.get(id), skillsReady: true });
   data.jobUnlocks.set(id, { job_id: id, method: '発見', discover_dungeon: dungeon,

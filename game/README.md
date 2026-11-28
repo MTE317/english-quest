@@ -1,5 +1,7 @@
 # game/ — English Quest 本体
 
+新規遠征は [ワールドストーンと連続攻略](../docs/specs/world-journey.md)：A・E・H・Mから出発し、A〜M各3戦のクリア後に出口3択を選ぶ。地図の発見・通過記録は全滅しても残る。地域2以降は石の解放までで、入口は今後追加する。
+
 冒険者ランク・施設の新設計は [E〜Sランク正本](../docs/specs/rank-promotion.md)（未実装）。この文書の旧Rランク・月会費などの記述は履歴であり、現行の動作はコードで確認する。
 
 職業・技能の現行マスターは [50職の基準](../docs/jobs-baseline-v2.md)、[基本8職120技能](../docs/basic-jobs-skills-v2.md)、[実装・検証](../docs/jobs-master-implementation.md) です。新規開始は無装備・技能なし。支度金と初期AP30から準備してください。

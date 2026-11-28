@@ -31,7 +31,7 @@ test('Dの素材は★2「崩れた砦」の通常敵から取得でき、受験
   game.rank = 'E+'; game.rankPoints = 1200;
   game.storage.materials[need.id] = 2;
   assert.throws(() => offerPromotionMaterials(data, game, 'D'), /素材/);
-  game.cleared.mossy_cave = 1;
+  game.worldJourney.seen.push('C');
   assert.equal(promotionMaterialStatus(data, game, data.ranks.find(rank => rank.id === 'D')).ready, true);
   offerPromotionMaterials(data, game, 'D');
   assert.equal(game.storage.materials[need.id], undefined);

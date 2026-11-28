@@ -214,7 +214,7 @@ export class GameSession {
     this.#needRun();
     const { run, game } = this.state;
     const town = clone(run.snapshot);
-    for (const key of ['chants', 'jp', 'catalog']) {
+    for (const key of ['chants', 'jp', 'catalog', 'worldJourney']) {
       if (game[key] != null) town[key] = clone(game[key]);
     }
     // 同じ道具は持ち込んだ分から消費したものとして精算する。

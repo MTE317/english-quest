@@ -4,9 +4,9 @@ import { roundGold, goldScale, goldLimit } from './gold.js?v=skill-growth-2';
 import { evaluate } from './expr.js?v=skill-growth-2';
 import { makeGear, maxHp, maxMp, gearDef } from './character.js?v=advanced-jobs-1';
 import { equipmentTier } from './equipment-scaling.js?v=equipment-rarity-1';
-import { addItem } from './loot.js?v=jobs-intro-1';
-import { currentRank, allowedDungeons } from './dungeon.js?v=canyon-public-1';
-import { monsterPool } from './encounter.js?v=canyon-public-1';
+import { addItem } from './loot.js?v=world-journey-1';
+import { currentRank, allowedDungeons } from './dungeon.js?v=world-journey-1';
+import { monsterPool } from './encounter.js?v=world-journey-1';
 import { unlockReportedHuntJobs } from './temple.js?v=skill-growth-2';
 
 export const TOWN_FORMULAS = Object.freeze({
@@ -361,6 +361,10 @@ export function reportQuest(data, game, uid, rng = Math.random) {
   game.rankPoints = (game.rankPoints ?? 0) + pts;
   lines.push(`ランクのポイント +${pts}`);
   lines.push(...unlockReportedHuntJobs(data, game, q));
+  if (game.worldJourney) {
+    game.worldJourney.completedQuests ??= [];
+    if (!game.worldJourney.completedQuests.includes(q.questId)) game.worldJourney.completedQuests.push(q.questId);
+  }
   game.quests.splice(i, 1);
   game.questBoardUsed ??= [];
   if (!game.questBoardUsed.includes(questKey(q))) game.questBoardUsed.push(questKey(q));
@@ -387,7 +391,8 @@ export function promotionMaterialStatus(data, game, rank) {
   if (!rank?.materialStar) return { ready: true, offered: true, needs: [], selected: [] };
   const offered = Boolean(game.promotionOfferings?.[rank.id]);
   if (rank.id === 'D') {
-    const discovered = allowedDungeons(data, game).some(dungeon => dungeon.id === 'ruined_fort');
+    const discovered = allowedDungeons(data, game).some(dungeon => dungeon.id === 'ruined_fort'
+      || data.worldRoutes?.nodes.some(node => node.id === dungeon.id && node.pool.includes('fort_bandit')));
     const needs = D_PROMOTION_MATERIALS.map(row => ({ ...row,
       name: data.materials.get(row.id)?.name ?? row.id,
       have: game.storage?.materials?.[row.id] ?? 0 }));
@@ -423,7 +428,7 @@ export function nextRankStatus(data, game) {
   if ((game.rankPoints ?? 0) < next.pointsRequired) needs.push(`ポイント ${game.rankPoints ?? 0} / ${next.pointsRequired}`);
   const material = promotionMaterialStatus(data, game, next);
   if (!material.ready) needs.push(next.id === 'D'
-    ? `崩れた砦の素材：${material.needs.map(row => `${row.name} ${row.have}/${row.count}`).join('・')}`
+      ? `砦の野盗の素材：${material.needs.map(row => `${row.name} ${row.have}/${row.count}`).join('・')}`
     : `★${next.materialStar}のモンスター素材が1個必要`);
 
   if (next.needsExam && !(game.examsPassed ?? []).includes(next.id)) needs.push('英語試験に合格する');

@@ -33,7 +33,7 @@ test('昇格には累積ポイントと訪問可能な★のモンスター素�
   game.rankPoints = 1200;
   game.storage.materials.fort_bandit_mat = 2;
   assert.equal(checkRankUp(data, game).length, 0);
-  game.cleared.mossy_cave = 1;
+  game.worldJourney.seen.push('C');
   assert.ok(nextRankStatus(data, game).needs.some(text => text.includes('試験')));
   game.examsPassed.push('D');
   assert.equal(checkRankUp(data, game).length, 1);

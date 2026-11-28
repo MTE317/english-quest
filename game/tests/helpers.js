@@ -33,9 +33,10 @@ export const T0 = new Date(2026, 10, 21, 12, 0, 0).getTime();
 
 import { buildGameData } from '../js/gamedata.js';
 /** data/ から GameData を作る（ブラウザの loadGameData と同じ中身） */
-export function realGameData() {
+export function realGameData({ world = false } = {}) {
   return buildGameData({
     balance: readJson('balance.json'),
+    worldRoutes: world ? readJson('world_routes.json') : undefined,
     basicJobRules: readJson('basic_job_rules.json'),
     skillMigration: readJson('skill_migration.json'),
     jobs: readCsv('jobs.csv').rows,

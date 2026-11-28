@@ -63,6 +63,6 @@
   "targets.csv",
   "type_bonus.csv",
   "uniques.csv",
-  "weapon_types.csv"
+  "weapon_types.csv",
+  "world_routes.json"
 ]
-

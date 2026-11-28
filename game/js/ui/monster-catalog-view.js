@@ -1,4 +1,4 @@
-import { publicMonsterReward } from '../monster-rewards.js?v=public-rewards-1';
+import { publicMonsterReward } from '../monster-rewards.js?v=world-journey-1';
 import { el, render } from '../dom.js?v=skill-growth-2';
 import { catalogMonsters, monsterUnlocks } from '../monster-catalog.js?v=canyon-public-1';
 import { monsterKnowledge } from '../monster-knowledge.js?v=monster-catalog-1';

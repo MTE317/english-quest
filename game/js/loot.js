@@ -37,7 +37,7 @@ export function goldRewardBudget(data, dungeonId, route = null) {
   const escorts = Number(/boss\s*\+\s*(\d+)/.exec(String(data.balance.dungeon?.boss_battle ?? ''))?.[1] ?? 0);
   return Math.max(1, rows.reduce((sum, row) => {
     const bosses = Number(row.lastBattleIsBoss);
-    return sum + Math.max(0, row.battles - bosses) * row.enemiesPerBattle + bosses * (bossWeight + (row.introEncounter ? 0 : escorts));
+    return sum + Math.max(0, row.battles - bosses) * row.enemiesPerBattle + bosses * (bossWeight + (row.introEncounter ? 0 : (row.bossEscorts ?? escorts)));
   }, 0));
 }
 

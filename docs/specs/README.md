@@ -8,8 +8,9 @@
 | --- | --- |
 | 冒険者ランク、昇級 | [E〜Sの現行仕様](rank-promotion.md) |
 | 施設投資・神殿の職解放 | [5施設・11段階](town-facilities-11.md) |
-| 入門ルート（実装済み） | [風渡りの原と初回進行](intro-route.md) |
-| ★3の公開・D+素材経路 | [風鳴りの峡谷](howling-canyon-public.md) |
+| 世界地図・連続攻略（現行） | [ワールドストーンと連続攻略](world-journey.md)。A〜M各3戦、踏破後3択 |
+| 旧入門ルート（途中セーブ互換） | [風渡りの原と初回進行](intro-route.md) |
+| 旧★3の公開・D+素材経路（履歴） | [風鳴りの峡谷](howling-canyon-public.md) |
 | 以前の5ダンジョン先行版（履歴） | [旧公開条件](trial-five-dungeons.md) |
 | 教材の中身 | [教材基本版v1.0](../../data/learning/v1/README.md) |
 | 職業・技能 | [50職の設計基準v2](../jobs-baseline-v2.md)。基本8職・追加36職の44職が実装済み。各追加職の実装記録は `docs/additional-jobs-*-implementation.md`、伝説6職は技能未実装 |

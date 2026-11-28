@@ -15,6 +15,7 @@ life_drop,命の雫,400,5,revive_pct,100,ally,戦闘不能の味方をHP100%で�
 antidote,毒消し,10,1,cure_status,poison,ally,毒・猛毒を治す,,店
 panacea,万能薬,50,2,cure_status,all,ally,すべての状態異常を治す（石化・呪いを含む）,,店
 return_feather,帰還の羽,40,1,return_town,,party,ダンジョンから拾ったものを持って帰還する,,店
+smoke_ball,煙玉,20,1,escape,,party,逃走可能な戦闘から確実に逃げる。最終戦を逃げても踏破にはならない,,店
 vital_s,活力の薬,300,3,heal_hp_pct,10,ally,味方1人のHPを最大の10%回復,,店
 vital_m,活力の霊薬,3000,6,heal_hp_pct,30,ally,味方1人のHPを最大の30%回復,,店
 vital_l,活力の神薬,15000,10,heal_hp_pct,60,ally,味方1人のHPを最大の60%回復,,店

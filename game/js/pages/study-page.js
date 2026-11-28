@@ -1,12 +1,12 @@
 // 英語学習は訓練場（単語・瞬間英作文・チャンク）と試験の間へ集約する。
-import { loadGameData } from '../gamedata.js?v=workshop-materials-1';
+import { loadGameData } from '../gamedata.js?v=world-journey-1';
 import { loadJson } from '../data.js?v=skill-growth-2';
 import { loadLearningCatalog } from '../learning-catalog.js?v=skill-growth-2';
 import { Scheduler } from '../srs.js?v=skill-growth-2';
 import { LearningStore, now } from '../storage.js?v=skill-growth-2';
-import { GameSession } from '../save.js?v=party-wipe-1';
-import { normalizeGame } from '../game-state.js?v=workshop-materials-1';
-import { nextRankStatus, checkRankUp, promotionMaterialStatus, offerPromotionMaterials } from '../town.js?v=canyon-public-1';
+import { GameSession } from '../save.js?v=world-journey-1';
+import { normalizeGame } from '../game-state.js?v=world-journey-1';
+import { nextRankStatus, checkRankUp, promotionMaterialStatus, offerPromotionMaterials } from '../town.js?v=world-journey-1';
 import { EXAM_RULES, promotionProgress, promotionExamState } from '../promotion.js?v=promotion-exam-1';
 import { runDualPromotionExam } from '../ui/learning-exams.js?v=promotion-exam-1';
 import { learningStatistics } from '../learning-stats.js?v=skill-growth-2';
@@ -294,7 +294,7 @@ function exam() {
     el('p', {}, '施設投資上限：Lv' + next.facilityCap),
     material.offered ? el('p', {}, '昇級素材：納品済み') : material.needs.length
       ? material.needs.map(row => el('p', {},
-        '必要素材：' + row.name + ' ' + row.have + '/' + row.count + '（崩れた砦）'))
+        '必要素材：' + row.name + ' ' + row.have + '/' + row.count + (session.game.worldJourney ? '（野盗の出るダンジョン）' : '（崩れた砦）')))
       : next.materialStar ? el('p', {}, '必要素材：★' + next.materialStar + 'のモンスター素材1個（種類は仮）') : null,
     progress ? el('p', {}, '学習履歴：単語 ' + progress.words + '/30件・英作文 ' + progress.phrases + '/15件') : null,
     rule ? el('p', {}, '試験：単語30問＋英作文15問・各' + Math.round(rule.passRate * 100) + '%以上で合格') : null,

@@ -1,3 +1,4 @@
+import { ensureWorldJourney } from './world-journey.js?v=world-journey-1';
 import { normalizeAp } from './ap.js?v=skill-growth-2';
 import { migrateGold, goldVersion } from './gold.js?v=skill-growth-2';
 // 新しいゲームの進み具合（セーブの game の中身）
@@ -66,7 +67,7 @@ export function createNewGame(data, partySpecs, { partySize = PARTY_SIZE } = {})
  * 専用制作の固定効果は現行マスタへそろえる。廃止したルーン能力と枠を移行する。
  * 遠征中は全滅時の復元元にも適用する。
  */
-export function normalizeGame(data, game, run = null, { expandParty = true } = {}) {
+export function normalizeGame(data, game, run = null, { expandParty = true, worldMigration = true } = {}) {
   if (!game) return game;
   migrateGold(data, game, run);
   // 更新前は全員が森・洞窟・石切り場へ進めた。既得の行き先だけを保持する。
@@ -141,7 +142,8 @@ export function normalizeGame(data, game, run = null, { expandParty = true } = {
   if (expandParty && !run) expandLegacyParty(data, game);
   // 入場時の写しも返還済みにし、全滅で旧能力が復活したり二重返還されたりしないようにする。
   // 戦闘中の能力値は毎回 game.party から算出されるため、行動順や進行の記録は変えない。
-  if (run?.snapshot && run.snapshot !== game) normalizeGame(data, run.snapshot, null, { expandParty: false });
+  if (run?.snapshot && run.snapshot !== game) normalizeGame(data, run.snapshot, null, { expandParty: false, worldMigration: false });
+  if (!run && worldMigration) ensureWorldJourney(data, game);
   return game;
 }
 

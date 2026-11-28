@@ -17,7 +17,7 @@ function configured(monster) {
 
 /** 地域は敵IDと独立。未対応の旧遠征は戦闘全体を従来計算へ戻す。 */
 export function fixedBattleRewards(data, enemies, dungeonId) {
-  if (!data.balance.rewards.fixed_monster_dungeons?.includes(dungeonId) || !enemies.length) return null;
+  if ((!data.balance.rewards.fixed_monster_dungeons?.includes(dungeonId) && !data.worldRoutes?.nodes.some(n => n.id === dungeonId)) || !enemies.length) return null;
   const monsters = enemies.map(e => data.monsters.get(e.monsterId));
   if (!monsters.every(configured)) return null;
   return monsters.map((monster, i) => ({ exp: monster.baseExp, ap: monster.baseAp + (enemies[i].eliteId ? 1 : 0) }));
