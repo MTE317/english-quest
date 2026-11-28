@@ -15,7 +15,7 @@ test('現行マスターは基本8・追加36・伝説6、基本120技能と追�
   assert.equal(new Set(data.jobs.map(j=>j.id)).size,50);
   for(const id of retiredJobs)assert.ok(!data.jobsById.has(id),id);
   const skills=[...data.skills.values()].filter(s=>s.job!=='common');
-  assert.equal(skills.length,660);
+  assert.equal(skills.length,705);
   assert.ok(skills.every(s=>s.effect.master&&data.jobsById.get(s.job)?.skillsReady));
   assert.ok(skills.every(s=>!/_p\d+_s\d+$/.test(s.id)));
 });

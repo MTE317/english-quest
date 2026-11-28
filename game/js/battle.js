@@ -13,6 +13,9 @@ import { evaluate } from './expr.js?v=skill-growth-2';
 import { trioItems, trioBlock, trioTargetBlock, clearTrio, finishTrioOpportunity, runTrio } from './trio-combat.js?v=jobs-31-33-1';
 import { natureResources, natureBlock, natureTargetBlock, natureMpSave, natureEvasion, natureIncomingCut,
   natureAttackBonus, clearNature, finishNature, runNature } from './nature-combat.js?v=jobs-22-24-1';
+import { legendaryTarget, legendaryBlock, legendaryTargetBlock, legendaryMpSave, legendaryAttackBonus, legendaryAccuracy,
+ legendaryAttackUsed, legendaryIncomingCut, legendaryAfterDamage, legendaryOnCover, legendaryOnHit,
+ clearLegendary, finishLegendaryOpportunity, runLegendary } from './legendary-combat.js';
 import { civicItems, civicBlock, civicTargetBlock, clearCivic, finishCivicOpportunity, finishCivicEnemy,
   civicIncomingCut, civicAttackBonus, civicOnHit, runCivic } from './civic-combat.js?v=jobs-34-36-1';
 import { computeStats, gearDef, weaponPower, spellPower, scytheSpellPower, maxHp, maxMp, gearEffects, affixSum, memberCanAct } from './character.js?v=unique-reroll-1';
@@ -352,6 +355,7 @@ function endRound(data, game, b) {
       finishTrioOpportunity(b,i);
       finishCivicOpportunity(data,game,b,i);
       finishNature(data,game,b,i,natureContext(data,game,b,i));
+      finishLegendaryOpportunity(b,i);
     }
   }
   for (const enemy of b.enemies) {
@@ -441,6 +445,7 @@ export function nextTurn(data, game, b) {
     finishTrioOpportunity(b,u.i);
     finishCivicOpportunity(data,game,b,u.i);
     finishNature(data,game,b,u.i,natureContext(data,game,b,u.i));
+    finishLegendaryOpportunity(b,u.i);
   }
   throw new Error('戦闘が進まない');
 }
@@ -528,6 +533,7 @@ export function prepareQuizAction(data, game, b) {
   finishTrioOpportunity(b,i);
   finishCivicOpportunity(data,game,b,i);
   finishNature(data,game,b,i,natureContext(data,game,b,i));
+  finishLegendaryOpportunity(b,i);
   b.turn = null;
   return false;
 }
@@ -574,6 +580,7 @@ function koAlly(game, b, i) {
   clearTrio(b, i);
   clearCivic(b, i);
   clearNature(b, i);
+  clearLegendary(b, i);
   for (const ally of b.allies) if (ally.machine?.guard?.target===i) delete ally.machine.guard;
   // 戦闘不能時に戦闘中の状態を解除する現行ルールを維持する。
   b.allies[i].statuses = {};
@@ -647,7 +654,8 @@ export function skillMp(data, member, skill, { battle = null, actor = null } = {
     && elements.length > 0 && elements.every(id => id === 'none');
   const reduction = Math.min(data.basicJobRules?.caps?.mp_save ?? 0.5, affixSum(member, 'MP_SAVE') / 100
     + (neutralMagic ? memberMods(data, member).neutral_magic_mp_save ?? 0 : 0)
-    + masterMpSave(data, member, skill, battle, actor) + natureMpSave(data,member,skill,battle,actor));
+    + masterMpSave(data, member, skill, battle, actor) + natureMpSave(data,member,skill,battle,actor)
+    + legendaryMpSave(data,member,skill,battle,actor));
   if(skill.id==='druid_A07'&&actor!=null&&battle?.allies[actor]?.beast)return 0;
   const weaponSkill = skill.kind === 'attack' && (skill.effect?.base ?? 'weapon') === 'weapon';
   const weaponMul = weaponSkill ? weaponTraits(data, member.equip?.weapon).weapon_skill_mp_mul ?? 1 : 1;
@@ -670,6 +678,8 @@ function skillBlock(data, game, b, i, s) {
   if (civicReason) return civicReason;
   const natureReason = natureBlock(data,game,b,i,s);
   if (natureReason) return natureReason;
+  const legendaryReason = legendaryBlock(data,game,b,i,s);
+  if (legendaryReason) return legendaryReason;
   if (s.isFinal && (m.ultimateGauge ?? 0) < (ultimateRules(data).gauge_max ?? 100)) return '必殺技ゲージが足りない';
   if (s.isFinal && ultimateRules(data).once_per_battle && a.once.includes(s.id)) return 'この戦闘ではもう使った';
   if (s.effect.require_weapon && (!m.equip.weapon || gearDef(data, m.equip.weapon).kind !== s.effect.require_weapon)) {
@@ -717,6 +727,7 @@ export function actionOptions(data, game, b, i) {
     return { skill: s, reason: skillBlock(data, game, b, i, s) || (noTarget ? '盗める通常物資を持つ敵がいない' : ''), targetReasons, boost: boost ? { mp: boost.mp, bonus: boost.damage } : null,
       hpCost: hpPayment(data,game,b,i,s), optionalBlessing: Boolean(s.effect.rules?.optional_blessing && ownedBlessing(b,i)),
       optionalClone: Boolean(s.effect.rules?.optional_clone && cloneCount(b.allies[i])),
+      optionalCourage: s.id==='hero_A05' && (b.allies[i].heroCourage??0)>0,
       itemChoices: trioItems(data, game, s),
       civicItems: civicItems(data, game, s),
       natureChoices: natureResources(b,i,s),
@@ -750,6 +761,7 @@ export function targetKind(data, action, member = null) {
   if (s.effect.rules?.civic) return s.effect.rules.civic.targetKind;
   if (s.id==='summoner_U01'&&action.element!=='fire') return 'self';
   if (s.effect.rules?.nature) return s.effect.rules.nature_target;
+  if (legendaryTarget(s)) return legendaryTarget(s);
   if (tgt === 'selected_enemy') return 'enemy';
   if (tgt === 'self') return 'self';
   if (s.effect.rules?.revive && s.kind === 'heal_all') return 'ko_ally';
@@ -801,6 +813,7 @@ export function resolvePending(data, game, b, correct) {
     finishTrioOpportunity(b,i);
     finishCivicOpportunity(data,game,b,i);
     finishNature(data,game,b,i,natureContext(data,game,b,i));
+    finishLegendaryOpportunity(b,i);
     if (b.queue.length) checkEnd(game, b);
     else checkDefeat(game, b);
     return { cm };
@@ -842,6 +855,7 @@ export function resolvePending(data, game, b, correct) {
   finishTrioOpportunity(b,i);
   finishCivicOpportunity(data,game,b,i);
   finishNature(data,game,b,i,natureContext(data,game,b,i));
+  finishLegendaryOpportunity(b,i,chosenSkill,performed);
   if (performed && correct && act.type !== 'flee' && !chosenSkill?.isFinal) gainUltimate(data, m, ultimateRules(data).gain_correct ?? 20);
   if (b.queue.length) checkEnd(game, b);
   else checkDefeat(game, b);
@@ -945,6 +959,7 @@ function attackDamage(data, game, b, i, e, skill, cm, { offhand = false, actionB
   pm += mysticDamageBonus(data, game, b, i, skill, els);
   pm += civicAttackBonus(data,game,b,i,e,skill);
   pm += natureAttackBonus(data,game,b,i,skill,els);
+  pm += legendaryAttackBonus(data,game,b,i,skill,e,els,kind);
   if (els.some(el => elementMul(data, enemy, el) > 1)) pm += skill?.effect.rules?.weak_damage ?? 0;
   for (const [names, v] of mods.wdmg ?? []) if (base === 'weapon' && wt && names.some((n) => nameIs(data.weaponTypes, wt.id, n))) pm += v;
   for (const [name, v] of mods.edmg ?? []) if (els.some((el) => nameIs(data.elements, el, name))) pm += v;
@@ -989,7 +1004,7 @@ function attackDamage(data, game, b, i, e, skill, cm, { offhand = false, actionB
   if (em > 1) em *= 1 + Math.min(0.6, affixSum(m, 'WEAK_DMG') / 100);
   const critBase = st.crit + (skill?.effect.crt ?? skill?.effect.crit ?? 0);
   const blind = statusOfKind(a, 'blind', data);
-  const accuracy = specialistAccuracy(b,i,skill)+pursuitAccuracy(data,game,b,i,e,skill);
+  const accuracy = specialistAccuracy(b,i,skill)+pursuitAccuracy(data,game,b,i,e,skill)+legendaryAccuracy(data,game,b,i,skill);
   const analyzed=masterTags(skill).some(tag=>['reaction','trap'].includes(tag))?0:a.analysisMarks?.[e]?.rate??0;
   let total = 0;
   let crits = 0;
@@ -1012,6 +1027,7 @@ function attackDamage(data, game, b, i, e, skill, cm, { offhand = false, actionB
     });
   }
   if (a.advancedAction && !masterTags(skill).some(tag => ['reaction','trap'].includes(tag))) a.advancedAction.elements = [...new Set([...(a.advancedAction.elements ?? []), ...els])];
+  legendaryAttackUsed(b,i);
   return { damage: Math.round(total), crits, misses, landed: misses < hits.length, em, elements: els };
 }
 
@@ -1032,6 +1048,7 @@ function hitEnemy(data, game, b, i, e, damage, { prefix = '', em = 1, elements =
     recordHit(b, 'enemy', e, damage, i == null ? undefined : { side: 'ally', i }, hitEffectiveness(em));
   }
   enemy.hp = Math.max(0, enemy.hp - damage);
+  if(i!=null&&game.party[i])legendaryOnHit(data,game,b,i,e,{landed,em},b.allies[i]?.advancedAction?.skillId ? data.skills.get(b.allies[i].advancedAction.skillId) : null,damage);
   if(i!=null&&game.party[i])civicOnHit(data,game,b,i,e,primaryAction);
   if (wasAlive && enemy.hp <= 0 && game.party[i]) {
     const m = game.party[i];
@@ -1475,6 +1492,8 @@ function doSkill(data, game, b, i, s, target, cm, normalSkillReady = false, acti
   const civicReason = civicTargetBlock(data,game,b,i,s,target,action);
   if (civicReason) { log(b, `${s.name}は使えなかった（${civicReason}）`); return; }
   const natureReason = natureTargetBlock(data,game,b,i,s,target,action);
+  const legendaryReason = legendaryTargetBlock(game,b,i,s,target);
+  if (legendaryReason) { log(b, `${s.name}: ${legendaryReason}`); return; }
   if (natureReason) { log(b, `${s.name}は使えなかった（${natureReason}）`); return; }
   if (s.effect.rules?.mystic && (
     (s.kind === 'attack' && (s.effect.tgt === 'all' ? !livingEnemies(b).length : !enemyCanAct(b.enemies[target] ?? {hp:0})))
@@ -1553,6 +1572,20 @@ function doSkill(data, game, b, i, s, target, cm, normalSkillReady = false, acti
     delete a.decoy;
   }
   if(e.rules?.nature){a.advancedAction.executed=true;runNature(data,game,b,i,s,target,cm,action,natureContext(data,game,b,i,cm));}
+  else if(e.rules?.legendary){a.advancedAction.executed=true;runLegendary(data,game,b,i,s,target,cm,action,{
+    stats:()=>battleStats(data,game,b,i),elementMultiplier:(enemy,element)=>elementMul(data,enemy,element),
+    heal:(t,power)=>{const st=battleStats(data,game,b,i);return healAlly(data,game,b,t,evaluate(f(data,'heal'),{MAG:st.mag,wpow:spellPower(data,m),m:power,heal_mul:weaponTraits(data,m.equip.weapon).heal_mul??1})*cm);},
+    healRaw:(t,amount)=>healAlly(data,game,b,t,amount),
+    shield:(t,amount,key)=>{const room=masterShieldRoom(data,game,b,t,key);const value=Math.max(0,Math.floor(Math.min(room,amount*cm,maxHp(data,game.party[t])*.5)));
+      if(value)grantMasterEffect(b,t,key,{shield:value,remaining:2,source:i,skillId:key,grantedClock:b.actionClock});return value;},
+    attack:(t,power,element,base='weapon',status=null,finalMultiplier=1)=>{
+      const proxy={...s,elements:element?[element]:s.elements,effect:{...s.effect,base,m:power,element,st:status,status_turns:status?2:undefined}};
+      const r=attackDamage(data,game,b,i,t,proxy,cm);r.damage=Math.max(0,Math.round(r.damage*finalMultiplier));
+      hitEnemy(data,game,b,i,t,r.damage,{...r,primaryAction:true});
+      if(r.landed&&r.damage>0&&status)applyAttackStatuses(data,game,b,i,t,proxy.effect,cm);
+      return r;
+    },
+  });}
   else if (e.rules?.trio || e.rules?.civic) (e.rules?.civic ? runCivic : runTrio)(data,game,b,i,s,target,cm,action,{
     log: message=>log(b,message), spentMp, stats:()=>battleStats(data,game,b,i),
     elementMultiplier:(enemy,element)=>elementMul(data,enemy,element),
@@ -2726,7 +2759,8 @@ function enemyTurn(data, game, b, e) {
       + masterBuff(data, game, b, t, 'cut') + masterBuff(data, game, b, t, magic ? 'mcut' : 'pcut')
       + masterCutBonus(data, game, b, t, magic, e) + mysticCut(data, game, b, t, magic, incomingElements)
       + (counterStance?.cut ?? 0) + readGuardCut(b, t, magic, incomingElements)
-      + (masterCover && t !== original ? masterCover.cover.cut ?? 0 : 0)+orderCut+civicIncomingCut(data,game,b,t,e)+natureIncomingCut(data,game,b,t));
+      + (masterCover && t !== original ? masterCover.cover.cut ?? 0 : 0)+orderCut+civicIncomingCut(data,game,b,t,e)+natureIncomingCut(data,game,b,t)
+      +legendaryIncomingCut(data,game,b,t,incomingElements[0]));
     const ecut = allyElementMultiplier(data, game, b, t, enemy.attackElement, magic);
     const dmg = evaluate(f(data, 'enemy_damage'), { atk, df, r: between(b, f(data, 'enemy_rand')) })
       * Math.max(f(data, 'minimum_damage_share'), cover * cut * ecut)
@@ -2738,7 +2772,8 @@ function enemyTurn(data, game, b, e) {
     const remaining=!intent.sweep&&t===original ? absorbCompanionGuard(data,game,b,t,dmg) : dmg;
     if(remaining>0)damageAlly(data, game, b, t, remaining, `${enemy.name}の${magic ? `${elName ?? ''}魔法` : '攻撃'}！ ${target.name}に`, { side: 'enemy', i: e });
     if (target.hp < beforeHp) noteDuelHit(game, b, t, e);
-    if (masterCover && t !== original && target.hp < beforeHp) onMasterCover(data, game, b, t, true);
+    legendaryAfterDamage(data,game,b,t,beforeHp);
+    if (masterCover && t !== original && target.hp < beforeHp) {onMasterCover(data, game, b, t, true);legendaryOnCover(data,game,b,t,true);}
     for (const id of Object.keys(ta.statuses)) if (data.statusEffects.get(id)?.kind === 'skip_until_hit') delete ta.statuses[id];
     if (target.hp <= 0) continue;
     const counter = Math.min(1, bval(ta.buffs, 'counter') + Math.min(f(data, 'counter_affix_cap'), affixSum(target, 'COUNTER') / 100));
@@ -2824,6 +2859,7 @@ export function finishBattle(data, game, b) {
     clearTrio(b,i);
     clearCivic(b,i);
     clearNature(b,i);
+    clearLegendary(b,i,true);
     delete ally.familiar;
     delete ally.companion;
     delete ally.puppet;

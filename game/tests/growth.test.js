@@ -135,7 +135,7 @@ test('基本職への転職は無料で武器を保持し、技能準備中の�
   assert.equal(member.equip.weapon.id, 'sword_t1');
   assert.equal(game.gold, gold);
   assert.deepEqual(member.learned, []);
-  game.unlockedJobs = ['hero'];
-  assert.ok(!availableJobs(data, game).some(job=>job.id==='hero'));
-  assert.throws(() => changeJob(data, game, 0, 'hero'), /選べない/);
+  game.unlockedJobs = ['sage'];
+  assert.ok(!availableJobs(data, game).some(job=>job.id==='sage'));
+  assert.throws(() => changeJob(data, game, 0, 'sage'), /選べない/);
 });
