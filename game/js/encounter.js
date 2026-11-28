@@ -7,7 +7,7 @@ import { rollMonsterElite } from './monster-stats.js?v=fixed-monsters-1';
 /** そのダンジョンにふだん出るモンスター */
 export function monsterPool(data, dungeonId, season, { legacy = false } = {}) {
   const world = data.worldRoutes?.nodes.find(node => node.id === dungeonId);
-  if (world) return world.pool.map(id => data.monsters.get(id)).filter(Boolean);
+  if (world) return world.pool.map(id => data.monsters.get(id)).filter(m => m && (m.season === 'all' || m.season === season));
   const intro = !legacy && data.balance.dungeon?.intro_routes?.[dungeonId];
   if (intro) {
     const ids = intro.formations.flat().filter(id => id !== data.dungeons.get(dungeonId)?.bossId)
@@ -23,6 +23,8 @@ export function monsterPool(data, dungeonId, season, { legacy = false } = {}) {
 /** 地域の常連と珍しい敵を分ける。候補を消さず、すべての種に遭遇できる重みを残す。 */
 export function encounterWeights(data, dungeonId, season, { quests = [], legacy = false } = {}) {
   const pool = monsterPool(data, dungeonId, season, { legacy });
+  const world = data.worldRoutes?.nodes.find(node => node.id === dungeonId);
+  if (world) return pool.map(monster => ({monster,weight:world.weights?.[monster.id] ?? 1,common:true}));
   const config = data.balance.encounters ?? {};
   const count = Math.min(pool.length, Math.max(1, Math.floor(config.common_count ?? pool.length)));
   const seasonal = pool.filter((m) => m.role === 'season');
@@ -111,10 +113,24 @@ export function makeEncounter(data, dungeonId, floor, rng, {
   const world = data.worldRoutes?.nodes.find(node => node.id === dungeonId);
   if (world) {
     const count = boss ? 1 : world.counts[0] + Math.floor(rng() * (world.counts[1] - world.counts[0] + 1));
+    const choices = encounterWeights(data,dungeonId,season);
+    if (!boss && !choices.length) throw new Error(`${dungeonId} に今の季節に出るモンスターがいない`);
+    const solo = new Set(world.soloMonsters ?? []);
+    const healer = id => data.monsters.get(id).skillProfile?.skills.some(s => s.kind === 'heal');
+    const ids = [];
+    if (boss) ids.push(world.bossId);
+    else for (let i=0;i<count;i++) {
+      const healerCount = ids.filter(healer).length;
+      const available = choices.filter(c => (!i || !solo.has(c.monster.id))
+        && (healerCount < (data.worldRoutes.maxHealersPerBattle ?? Infinity) || !healer(c.monster.id)));
+      if (!available.length) break;
+      const id = weightedMonster(available,rng,new Set(ids),1).id;
+      ids.push(id);
+      if (solo.has(id)) break;
+    }
     let eliteCount = 0;
     const eliteLimit = Math.min(maxElites, data.monsterElites?.maxPerBattle ?? 0);
-    const enemies = Array.from({ length: count }, () => {
-      const id = boss ? world.bossId : world.pool[Math.floor(rng() * world.pool.length)];
+    const enemies = ids.map(id => {
       const eliteId = elites && !boss && eliteCount < eliteLimit ? rollMonsterElite(data, id, rng) : null;
       const enemy = makeEnemy(data, id, { dungeonId, boss, eliteId });
       if (enemy.eliteId) eliteCount++;

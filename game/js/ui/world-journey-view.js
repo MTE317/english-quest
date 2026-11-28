@@ -1,5 +1,5 @@
 import { el } from '../dom.js?v=skill-growth-2';
-import { worldGraph, worldNode, worldEntries } from '../world-journey.js?v=world-journey-1';
+import { worldGraph, worldNode, worldEntries } from '../world-journey.js?v=region1-encounters-1';
 
 function svgElement(name, attrs, text) {
   const element = document.createElementNS('http://www.w3.org/2000/svg', name);

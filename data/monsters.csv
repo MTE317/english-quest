@@ -44,7 +44,7 @@ magma_slime,マグマスライム,🔴,5,obsidian_volcano|frozen_peak|ash_road|d
 ash_wraith,灰の亡霊,💨,5,obsidian_volcano|frozen_peak|ash_road|dragonbone_vale|aurora_field,undead,light,dark|pierce,1.18,1.18,1.0,1.0,1.0,0.6,curse,0.12,dark,autumn,flame_demon|frost_wolf|obsidian_dragoon|m05_003|mountain_giant,0,ash_wraith_mat,ash_wraith_rare,season,,,,,,
 frostbite_dragon,霜焼けの竜,🐲,5,obsidian_volcano|frozen_peak|ash_road|dragonbone_vale|aurora_field,dragon,thunder,fire|ice,1.3,1.3,1.2,1.0,1.0,0.0,,,ice,winter,obsidian_dragoon|mountain_giant|m05_004|m05_005|m05_006,0,frostbite_dragon_mat,frostbite_dragon_rare,season,,,,,,
 black_dragon,火山の主・黒竜,🐲,5,obsidian_volcano,dragon,ice|pierce,fire|dark,1.2,1.4,1.3,1.2,1.0,0.4,burn,0.25,fire,all,,1,black_dragon_mat,black_dragon_rare,boss,,,,,,
-wolf_pup,ワーグの仔,🐺,1,sunlit_forest,beast,fire,,0.73,0.85,1.0,1.0,1.3,0,bleed,0.1,,all,,0,wolf_pup_mat,wolf_pup_rare,normal,,,,,,
+wolf_pup,ワーグの仔,🐺,1,sunlit_forest,beast,fire,,0.73,0.85,1.0,1.0,1.3,0,bleed,0.1,,all,,0,wolf_pup_mat,wolf_pup_rare,normal,,,,,19,1
 poison_cap,毒キノコ,🍄,1,sunlit_forest,plant,fire|slash,earth,1.0,0.8,1.0,1.0,0.8,0,poison,0.25,,all,,0,poison_cap_mat,poison_cap_rare,normal,,,,,14,1
 nut_squirrel,スクル,🐿️,1,sunlit_forest,beast,ice,,0.7,0.8,0.9,1.0,1.6,0,,0,,all,,0,nut_squirrel_mat,nut_squirrel_rare,normal,,,,,13,1
 prank_pixie,いたずら妖精,🧚,1,sunlit_forest|goblin_quarry,fairy,dark,light,0.7,0.85,0.8,1.2,1.5,0.7,confusion,0.1,wind,all,,0,prank_pixie_mat,prank_pixie_rare,normal,,,,,14,1
@@ -54,10 +54,10 @@ mud_slime,泥スライム,🟤,2,misty_marsh,amorphous,fire|thunder,blunt|earth,
 wisp_dragonfly,鬼火トンボ,🪰,2,misty_marsh|migrant_cape,insect,ice,wind,0.93,1.13,0.9,1.0,1.5,0.3,paralysis,0.15,wind,all,,0,wisp_dragonfly_mat,wisp_dragonfly_rare,normal,,,,,35,2
 bog_zombie,沼のゾンビ,🧟,2,misty_marsh|roadside_well|migrant_cape,undead,light|fire,dark,1.28,1.08,1.0,0.8,0.6,0,poison,0.2,,all,,0,bog_zombie_mat,bog_zombie_rare,normal,,,,,36,2
 marsh_hydra,湿原の大蛇,🐍,2,misty_marsh,aquatic|dragon,thunder|ice,water,0.89,1.14,1.1,1.0,1.0,0.3,toxic,0.2,water,all,,1,marsh_hydra_mat,marsh_hydra_rare,boss,,,,,206,5
-living_tome,動く魔導書,📕,3,ancient_library|windmill_village|moonlit_lake,demon,fire,dark,1.04,1.13,0.8,1.3,1.1,0.9,silence,0.2,dark,all,,0,living_tome_mat,living_tome_rare,normal,,,,,,
-paper_golem,紙の兵隊,📜,3,ancient_library|amber_dig|moonlit_lake,golem,fire|slash,blunt,1.36,1.11,0.9,1.0,0.8,0,,0,,all,,0,paper_golem_mat,paper_golem_rare,normal,,,,,,
-rogue_mage,見習い魔術師,🧙,3,ancient_library|amber_dig|moonlit_lake,humanoid,pierce,thunder,0.98,1.23,0.8,1.2,1.1,0.8,,0,thunder,all,,0,rogue_mage_mat,rogue_mage_rare,normal,,,,,,
-owl_sage,知恵のフクロウ,🦉,3,ancient_library|amber_dig,bird,thunder|pierce,wind|dark,1.02,1.1,1.0,1.1,1.3,0.5,confusion,0.15,wind,all,,0,owl_sage_mat,owl_sage_rare,normal,,,,,,
+living_tome,動く魔導書,📕,3,ancient_library|windmill_village|moonlit_lake,demon,fire,dark,1.04,1.13,0.8,1.3,1.1,0.9,silence,0.2,dark,all,,0,living_tome_mat,living_tome_rare,normal,,,,,41,2
+paper_golem,紙の兵隊,📜,3,ancient_library|amber_dig|moonlit_lake,golem,fire|slash,blunt,1.36,1.11,0.9,1.0,0.8,0,,0,,all,,0,paper_golem_mat,paper_golem_rare,normal,,,,,38,2
+rogue_mage,見習い魔術師,🧙,3,ancient_library|amber_dig|moonlit_lake,humanoid,pierce,thunder,0.98,1.23,0.8,1.2,1.1,0.8,,0,thunder,all,,0,rogue_mage_mat,rogue_mage_rare,normal,,,,,41,2
+owl_sage,知恵のフクロウ,🦉,3,ancient_library|amber_dig,bird,thunder|pierce,wind|dark,1.02,1.1,1.0,1.1,1.3,0.5,confusion,0.15,wind,all,,0,owl_sage_mat,owl_sage_rare,normal,,,,,43,3
 forbidden_keeper,禁書の番人,👁️,3,ancient_library,aberration|demon,light|slash,dark|fire,1.54,1.57,1.1,1.3,1.0,0.6,curse,0.2,dark,all,,1,forbidden_keeper_mat,forbidden_keeper_rare,boss,,,"{""silence"":""△""}",disrupt,,
 drill_bot,採掘ロボ,🤖,4,clockwork_mine,machine,thunder|water,slash|pierce,1.2,1.1,1.5,0.8,0.8,0,,0,,all,,0,drill_bot_mat,drill_bot_rare,normal,,,,,,
 mine_spider,坑道グモ,🕷️,4,clockwork_mine|drifting_clouds,insect,fire,earth,1.0,1.1,1.0,1.0,1.3,0,poison,0.25,,all,,0,mine_spider_mat,mine_spider_rare,normal,,,,,,

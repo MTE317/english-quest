@@ -1,4 +1,4 @@
-import { installWorldData } from './world-journey.js?v=world-journey-1';
+import { installWorldData } from './world-journey.js?v=region1-encounters-1';
 import { installMonsterStats } from './monster-stats.js?v=fixed-monsters-1';
 import { installMonsterSkills } from './monster-skills.js?v=enemy-skills-1';
 import { parseMonsterRewards } from './monster-rewards.js?v=fixed-monsters-1';

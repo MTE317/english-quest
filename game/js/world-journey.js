@@ -10,6 +10,7 @@ export function installWorldData(data, config) {
   data.worldRoutes = config;
   const keys = new Set(config.nodes.map(node => node.key));
   const stones = new Set(config.stones.map(stone => stone.id));
+  if (config.maxHealersPerBattle != null && (!Number.isInteger(config.maxHealersPerBattle) || config.maxHealersPerBattle < 1)) throw new Error('回復役の上限が不正です');
   if (keys.size !== config.nodes.length || stones.size !== config.stones.length || !stones.has(config.startStone)) throw new Error('世界地図のIDが不正です');
   for (const stone of config.stones) if (stone.entries.some(key => !keys.has(key))) throw new Error('地域の入口が不正です');
   for (const node of config.nodes) {
@@ -18,6 +19,12 @@ export function installWorldData(data, config) {
       || !node.pool.length || node.pool.some(id => !data.monsters.has(id)) || (node.bossId && !data.monsters.has(node.bossId))
       || node.exits.length !== 3 || new Set(node.exits.map(e => e.direction)).size !== 3
       || node.exits.some(e => !DIRECTIONS[e.direction] || (!keys.has(e.to) && !stones.has(e.to)))) throw new Error(`世界地図の設定が不正です：${node.key}`);
+    if (new Set(node.pool).size !== node.pool.length || node.pool.some(id=>data.monsters.get(id).isBoss)
+      || !Array.isArray(node.counts) || node.counts.length !== 2 || node.counts.some(n=>!Number.isInteger(n)||n<1||n>8) || node.counts[0]>node.counts[1]
+      || (node.weights && (Object.keys(node.weights).length !== node.pool.length || node.pool.some(id=>!Number.isFinite(node.weights[id])||node.weights[id]<=0)))
+      || (node.soloMonsters ?? []).some(id=>!node.pool.includes(id))
+      || ['spring','summer','autumn','winter'].some(season=>!node.pool.some(id=>['all',season].includes(data.monsters.get(id).season))))
+      throw new Error(`世界地図の出現設定が不正です：${node.key}`);
     data.dungeons.set(node.id, { ...source, id: node.id, name: node.name, rank: node.rank, days: config.expeditionDays,
       floors: node.battles, returnPointFloor: 0, bossId: node.bossId, worldKey: node.key, character: '',
       enemyMul: source.enemyMul, incomeMul: source.incomeMul });

@@ -15,10 +15,10 @@ const reward=(g,b,id='windward_plain')=>battleRewards(data,g,b,{dungeonId:id});
 const enter=()=>{const s=new GameSession({storage:new MemoryStorage()});s.startNew(fresh());startRun(data,s,{dungeonId:'windward_plain',stoneId:'00',quizState:{asked:0},seed:12});startNextBattle(data,s);return s;};
 function win(s){s.run.battle.enemies.forEach(e=>e.hp=0);s.run.battle.result='win';return afterBattle(data,s);}
 
-test('101種の固定マスターが公開7地域の四季・全編成・賞金首を網羅し1024体を維持',()=>{
+test('106種の固定報酬が公開7地域と新地域1の39種を網羅し1024体を維持',()=>{
  assert.equal(data.monsters.size,1024);assert.equal(ids.length,7);
- const configured=[...data.monsters.values()].filter(m=>m.baseExp!==undefined);assert.equal(configured.length,101);
- const needed=new Set();
+ const configured=[...data.monsters.values()].filter(m=>m.baseExp!==undefined);assert.equal(configured.length,106);
+ const needed=new Set(Object.keys(data.monsterSkills.monsters));
  for(const id of ids){
   for(const season of ['spring','summer','autumn','winter'])for(const m of monsterPool(data,id,season))needed.add(m.id);
   if(data.dungeonFloors.some(r=>r.dungeonId===id&&r.lastBattleIsBoss))needed.add(data.dungeons.get(id).bossId);

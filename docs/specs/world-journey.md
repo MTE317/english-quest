@@ -64,20 +64,7 @@
 
 ## 敵とイベント
 
-既存の敵・報酬を再利用し、通常戦は指定した2種から毎回1〜2体を抽選する。G・Kの最終戦はボス1体。
-
-| 地点 | 通常敵ID | 最終戦ボスID |
-| --- | --- | --- |
-| A・E・H | slime / nut_squirrel | なし |
-| B | cave_rat / slime | なし |
-| C | skeleton / fort_bandit | なし |
-| D・I | goblin / wolf_pup | なし |
-| F | marsh_frog / mud_slime | なし |
-| J | marsh_frog / wandering_armor | なし |
-| G | fort_bandit / stone_statue | stone_giant |
-| K | canyon_wolf / wind_spirit | storm_eagle |
-| L | goblin / cave_rat | なし |
-| M | goblin / slime | なし |
+地域1の39種を全13ダンジョンへ配置し、通常戦は季節に合った候補から重み付きで毎回1〜2体を抽選する。詳しい敵・重み・季節は[配置一覧](../region1-encounters.md)を参照。Lv11〜12の通常敵は低確率で単独出現し、回復役は1戦1体まで。Gの最終戦は石の巨人Lv10、Kは嵐の大鷲Lv12が各1体。
 
 敵数、出現候補、ドロップ・収入の参照元は設定データを正とする。敵のLv・能力はmonster_stats.csvに固定し、ダンジョンごとのHP補正は廃止。対象種には同名・同Lvのエリートが低確率で出現する。連続9〜12戦の消耗・収入バランスは未確定。機能テストを難度調整の完了とは扱わない。
 

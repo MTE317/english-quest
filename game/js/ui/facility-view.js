@@ -1,7 +1,7 @@
 import { el, render } from '../dom.js?v=skill-growth-2';
 import { parseAmounts } from '../csv.js?v=skill-growth-2';
-import { craft, brew, canCraft, canBrew, enhance, dismantle, dismantlePowder, reroll, enchant, enchantFamilies, facilityUpgrade, facilityUnlocks } from '../workshop.js?v=enemy-skills-1';
-import { borrow, repayLoan, loanLimit } from '../town.js?v=enemy-skills-1';
+import { craft, brew, canCraft, canBrew, enhance, dismantle, dismantlePowder, reroll, enchant, enchantFamilies, facilityUpgrade, facilityUnlocks } from '../workshop.js?v=region1-encounters-1';
+import { borrow, repayLoan, loanLimit } from '../town.js?v=region1-encounters-1';
 import { unlockJob, jobDiscoveryProgress, offeringRevealed } from '../temple.js?v=skill-growth-2';
 import { effectLabel, describeEffect } from '../equipment-effects.js?v=unique-reroll-1';
 import { stoneRequirement, availableStones, dismantleFragment, stoneFragmentId, STONE_STAGES, ENCHANT_POWDER_ID, ENCHANT_POWDER_COST } from '../workshop-materials.js?v=stone-fragments-1';
